@@ -35,7 +35,8 @@ class GrapeMain implements Runnable {
     @Option(names = ['-D', '--define'], description = 'define a system property', paramLabel = '<name=value>')
     private final Map<String, String> sysProperties = new LinkedHashMap<String, String>()
 
-    @SuppressWarnings('UnusedPrivateField') // used in run()
+    @SuppressWarnings('UnusedPrivateField')
+    // used in run()
     @Option(names = ['-r', '--resolver'], description = 'define a grab resolver (for install)', paramLabel = '<url>')
     private final List<String> resolvers = new ArrayList<String>()
 
@@ -54,7 +55,8 @@ class GrapeMain implements Runnable {
     @Option(names = ['-d', '--debug'], description = 'Log level 4 - debug')
     private boolean debug
 
-    @Unmatched List<String> unmatched = new ArrayList<String>()
+    @Unmatched
+    List<String> unmatched = new ArrayList<String>()
 
     private CommandLine parser
 
@@ -76,14 +78,16 @@ class GrapeMain implements Runnable {
         }
     }
 
-    @SuppressWarnings('UnusedPrivateMethod') // used in run()
+    @SuppressWarnings('UnusedPrivateMethod')
+    // used in run()
     private void init() {
         sysProperties.each { k, v ->
             System.setProperty(k, v)
         }
     }
 
-    @SuppressWarnings('UnusedPrivateMethod') // used in run()
+    @SuppressWarnings('UnusedPrivateMethod')
+    // used in run()
     private void setupLogging(int defaultLevel = Message.MSG_INFO) {
         if (quiet) {
             Message.defaultLogger = new DefaultMessageLogger(Message.MSG_ERR)
@@ -109,12 +113,14 @@ class GrapeMain implements Runnable {
     // the unix standard short option for version help is uppercase -V, while previous versions
     // of this class use lowercase -v. This custom mixin preserves option compatibility.
     @Command(versionProvider = VersionProvider, sortOptions = false,
-            parameterListHeading = '%nParameters:%n',
-            optionListHeading = '%nOptions:%n',
-            descriptionHeading = '%n')
+        parameterListHeading = '%nParameters:%n',
+        optionListHeading = '%nOptions:%n',
+        descriptionHeading = '%n')
     private static class HelpOptionsMixin {
-        @Option(names = ['-h', '--help'], usageHelp = true, description = 'usage information') boolean isHelpRequested
-        @Option(names = ['-v', '--version'], versionHelp = true, description = 'display the Groovy and JVM versions') boolean isVersionRequested
+        @Option(names = ['-h', '--help'], usageHelp = true, description = 'usage information')
+        boolean isHelpRequested
+        @Option(names = ['-v', '--version'], versionHelp = true, description = 'display the Groovy and JVM versions')
+        boolean isVersionRequested
     }
 
     private static class VersionProvider implements CommandLine.IVersionProvider {
@@ -125,7 +131,7 @@ class GrapeMain implements Runnable {
     }
 
     @Command(name = 'install', header = 'Installs a particular grape',
-            description = 'Installs the specified groovy module or maven artifact. If a version is specified that specific version will be installed, otherwise the most recent version will be used (as if `*` was passed in).')
+        description = 'Installs the specified groovy module or maven artifact. If a version is specified that specific version will be installed, otherwise the most recent version will be used (as if `*` was passed in).')
     private static class Install implements Runnable {
         @Parameters(index = '0', arity = '1', description = 'Which module group the module comes from. Translates directly to a Maven groupId or an Ivy Organization. Any group matching /groovy[x][\\..*]^/ is reserved and may have special meaning to the groovy endorsed modules.')
         String group
@@ -139,7 +145,8 @@ class GrapeMain implements Runnable {
         @Parameters(index = '3', arity = '0..1', description = 'The optional classifier to use (for example, jdk15).')
         String classifier
 
-        @ParentCommand GrapeMain parentCommand
+        @ParentCommand
+        GrapeMain parentCommand
 
         void run() {
             parentCommand.init()
@@ -149,7 +156,7 @@ class GrapeMain implements Runnable {
             parentCommand.setupLogging()
 
             parentCommand.resolvers.each { String url ->
-                Grape.addResolver(name:url, root:url)
+                Grape.addResolver(name: url, root: url)
             }
 
             try {
@@ -161,10 +168,11 @@ class GrapeMain implements Runnable {
     }
 
     @Command(name = 'list', header = 'Lists all installed grapes',
-            description = 'Lists locally installed modules (with their full maven name in the case of groovy modules) and versions.')
+        description = 'Lists locally installed modules (with their full maven name in the case of groovy modules) and versions.')
     private static class ListCommand implements Runnable {
 
-        @ParentCommand GrapeMain parentCommand
+        @ParentCommand
+        GrapeMain parentCommand
 
         void run() {
             parentCommand.init()
@@ -178,8 +186,8 @@ class GrapeMain implements Runnable {
             Grape.instance
             parentCommand.setupLogging()
 
-            Grape.enumerateGrapes().each {String groupName, Map group ->
-                group.each {String moduleName, List<String> versions ->
+            Grape.enumerateGrapes().each { String groupName, Map group ->
+                group.each { String moduleName, List<String> versions ->
                     println "$groupName $moduleName  $versions"
                     moduleCount++
                     versionCount += versions.size()
@@ -192,21 +200,21 @@ class GrapeMain implements Runnable {
     }
 
     @Command(name = 'resolve', header = 'Enumerates the jars used by a grape',
-            customSynopsis = 'grape resolve [-adhisv] (<groupId> <artifactId> <version>)+',
-            description = [
-                    'Prints the file locations of the jars representing the artifacts for the specified module(s) and the respective transitive dependencies.',
-                    '',
-                    'Parameters:',
-                    '      <group>     Which module group the module comes from. Translates directly',
-                    '                    to a Maven groupId or an Ivy Organization. Any group',
-                    '                    matching /groovy[x][\\..*]^/ is reserved and may have',
-                    '                    special meaning to the groovy endorsed modules.',
-                    '      <module>    The name of the module to load. Translated directly to a',
-                    '                    Maven artifactId or an Ivy artifact.',
-                    '      <version>   The version of the module to use. Either a literal version',
-                    '                    `1.1-RC3` or an Ivy Range `[2.2.1,)` meaning 2.2.1 or any',
-                    '                    greater version).'
-    ])
+        customSynopsis = 'grape resolve [-adhisv] (<groupId> <artifactId> <version>)+',
+        description = [
+            'Prints the file locations of the jars representing the artifacts for the specified module(s) and the respective transitive dependencies.',
+            '',
+            'Parameters:',
+            '      <group>     Which module group the module comes from. Translates directly',
+            '                    to a Maven groupId or an Ivy Organization. Any group',
+            '                    matching /groovy[x][\\..*]^/ is reserved and may have',
+            '                    special meaning to the groovy endorsed modules.',
+            '      <module>    The name of the module to load. Translated directly to a',
+            '                    Maven artifactId or an Ivy artifact.',
+            '      <version>   The version of the module to use. Either a literal version',
+            '                    `1.1-RC3` or an Ivy Range `[2.2.1,)` meaning 2.2.1 or any',
+            '                    greater version).'
+        ])
     private static class Resolve implements Runnable {
 
         @Option(names = ['-a', '--ant'], description = 'Express dependencies in a format applicable for an ant script')
@@ -221,10 +229,12 @@ class GrapeMain implements Runnable {
         @Option(names = ['-i', '--ivy'], description = 'Express dependencies in an ivy-like format')
         private boolean ivyFormatRequested
 
-        @Parameters(hidden = true) // parameter description is embedded in the command description
+        @Parameters(hidden = true)
+        // parameter description is embedded in the command description
         List<String> args = new ArrayList<>() // the positional parameters
 
-        @ParentCommand GrapeMain parentCommand
+        @ParentCommand
+        GrapeMain parentCommand
 
         void run() {
             parentCommand.init()
@@ -278,7 +288,7 @@ class GrapeMain implements Runnable {
                 def results = []
                 def uris = Grape.resolve(*params)
                 if (!ivyFormatRequested) {
-                    for (URI uri: uris) {
+                    for (URI uri : uris) {
                         if (uri.scheme == 'file') {
                             results += new File(uri).path
                         } else {
@@ -304,7 +314,7 @@ class GrapeMain implements Runnable {
     }
 
     @Command(name = 'uninstall',
-            description = 'Uninstalls a particular grape (non-transitively removes the respective jar file from the grape cache).')
+        description = 'Uninstalls a particular grape (non-transitively removes the respective jar file from the grape cache).')
     private static class Uninstall implements Runnable {
         @Parameters(index = '0', arity = '1', description = 'Which module group the module comes from. Translates directly to a Maven groupId or an Ivy Organization. Any group matching /groovy[x][\\..*]^/ is reserved and may have special meaning to the groovy endorsed modules.')
         String group
@@ -319,7 +329,8 @@ class GrapeMain implements Runnable {
         //@Parameters(index = '3', arity = '0..1', description = 'The optional classifier to use (for example, jdk15).')
         //String classifier;
 
-        @ParentCommand GrapeMain parentCommand
+        @ParentCommand
+        GrapeMain parentCommand
 
         void run() {
             parentCommand.init()
@@ -328,16 +339,16 @@ class GrapeMain implements Runnable {
             Grape.instance
             parentCommand.setupLogging()
 
-            if (!Grape.enumerateGrapes().find {String groupName, Map g ->
-                g.any {String moduleName, List<String> versions ->
+            if (!Grape.enumerateGrapes().find { String groupName, Map g ->
+                g.any { String moduleName, List<String> versions ->
                     group == groupName && module == moduleName && version in versions
                 }
             }) {
                 println "uninstall did not find grape matching: $group $module $version"
                 def fuzzyMatches = Grape.enumerateGrapes().findAll { String groupName, Map g ->
-                    g.any {String moduleName, List<String> versions ->
+                    g.any { String moduleName, List<String> versions ->
                         groupName.contains(group) || moduleName.contains(module) ||
-                                group.contains(groupName) || module.contains(moduleName)
+                            group.contains(groupName) || module.contains(moduleName)
                     }
                 }
                 if (fuzzyMatches) {

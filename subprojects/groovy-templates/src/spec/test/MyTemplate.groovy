@@ -23,11 +23,12 @@ import groovy.text.markup.TemplateConfiguration
 // tag::basetemplate_class[]
 public abstract class MyTemplate extends BaseTemplate {
     private List<Module> modules
+
     public MyTemplate(
-            final MarkupTemplateEngine templateEngine,
-            final Map model,
-            final Map<String, String> modelTypes,
-            final TemplateConfiguration configuration) {
+        final MarkupTemplateEngine templateEngine,
+        final Map model,
+        final Map<String, String> modelTypes,
+        final TemplateConfiguration configuration) {
         super(templateEngine, model, modelTypes, configuration)
     }
 

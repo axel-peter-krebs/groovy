@@ -36,6 +36,18 @@ import static org.objectweb.asm.Opcodes.POP2;
 
 public class BinaryFloatExpressionHelper extends BinaryExpressionWriter {
 
+    private static final MethodCaller
+        floatArrayGet = MethodCaller.newStatic(BytecodeInterface8.class, "fArrayGet"),
+        floatArraySet = MethodCaller.newStatic(BytecodeInterface8.class, "fArraySet");
+    private static final int[] stdOperations = {
+        FADD,           //  PLUS        200
+        FSUB,           //  MINUS       201
+        FMUL,           //  MULTIPLY    202
+        0,              //  DIV, (203) but we don't want that one
+        FDIV,           //  INTDIV      204
+        FREM,           //  MOD         203
+    };
+
     public BinaryFloatExpressionHelper(WriterController controller) {
         super(controller, floatArraySet, floatArrayGet);
     }
@@ -44,10 +56,6 @@ public class BinaryFloatExpressionHelper extends BinaryExpressionWriter {
     protected void doubleTwoOperands(MethodVisitor mv) {
         mv.visitInsn(DUP2);
     }
-
-    private static final MethodCaller
-        floatArrayGet = MethodCaller.newStatic(BytecodeInterface8.class, "fArrayGet"),
-        floatArraySet = MethodCaller.newStatic(BytecodeInterface8.class, "fArraySet");
 
     @Override
     protected boolean writeBitwiseOp(int type, boolean simulate) {
@@ -80,15 +88,6 @@ public class BinaryFloatExpressionHelper extends BinaryExpressionWriter {
     protected int getShiftOperationBytecode(int type) {
         return -1;
     }
-
-    private static final int[] stdOperations = {
-        FADD,           //  PLUS        200
-        FSUB,           //  MINUS       201
-        FMUL,           //  MULTIPLY    202
-        0,              //  DIV, (203) but we don't want that one
-        FDIV,           //  INTDIV      204
-        FREM,           //  MOD         203
-    };
 
     @Override
     protected int getStandardOperationBytecode(int type) {

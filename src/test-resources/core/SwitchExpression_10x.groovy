@@ -18,37 +18,43 @@
  */
 
 def a = 6
-def result = switch(a) {
+def result = switch (a) {
     case 6 -> {
         def n = 1
         yield 'a' + n
     }
-    default -> { yield 'z' }
+    default -> {
+        yield 'z'
+    }
 }
 assert 'a1' == result
 
 a = 8
-result = switch(a) {
+result = switch (a) {
     case 6, 8 -> {
         def n = 1
         yield 'a' + n
     }
-    default -> { yield 'z' }
+    default -> {
+        yield 'z'
+    }
 }
 assert 'a1' == result
 
 a = 9
-result = switch(a) {
+result = switch (a) {
     case 6, 8 -> {
         def n = 1
         yield 'a' + n
     }
-    default -> { yield 'z' }
+    default -> {
+        yield 'z'
+    }
 }
 assert 'z' == result
 
 a = 9
-result = switch(a) {
+result = switch (a) {
     case 6, 8 -> {
         def n = 1
         yield 'a' + n

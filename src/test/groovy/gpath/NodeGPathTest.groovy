@@ -45,16 +45,16 @@ class NodeGPathTest extends GroovyTestCase {
     protected def createTree() {
         def builder = NodeBuilder.newInstance()
         def root = builder.people() {
-            person(name:'James') {
-                location(name:'London')
+            person(name: 'James') {
+                location(name: 'London')
                 projects {
-                    project(name:'geronimo')
+                    project(name: 'geronimo')
                 }
             }
-            person(name:'Bob') {
-                location(name:'Atlanta')
+            person(name: 'Bob') {
+                location(name: 'Atlanta')
                 projects {
-                    project(name:'drools')
+                    project(name: 'drools')
                 }
             }
         }

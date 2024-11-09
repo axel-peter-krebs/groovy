@@ -24,8 +24,7 @@ import org.codehaus.groovy.tools.shell.util.Logger
  * Support for running a {@link Shell}.
  */
 abstract class ShellRunner
-    implements Runnable
-{
+    implements Runnable {
     protected final Logger log = Logger.create(this.class)
 
     final Shell shell
@@ -41,7 +40,7 @@ abstract class ShellRunner
     }
 
     protected ShellRunner(final Shell shell) {
-        assert(shell != null)
+        assert (shell != null)
 
         this.shell = shell
     }

@@ -713,7 +713,8 @@ final class LambdaTest {
         '''
     }
 
-    @Test // GROOVY-10056
+    @Test
+    // GROOVY-10056
     void testConsumer10() {
         ['CompileStatic', 'TypeChecked'].each { xform ->
             assertScript """
@@ -732,7 +733,8 @@ final class LambdaTest {
         }
     }
 
-    @Test // GROOVY-10813
+    @Test
+    // GROOVY-10813
     void testConsumer11() {
         ['CompileStatic', 'TypeChecked'].each { xform ->
             assertScript """
@@ -929,7 +931,7 @@ final class LambdaTest {
 
     @Test
     void testFunctionWithUpdatingLocalVariable() {
-        for (mode in ['','static']) {
+        for (mode in ['', 'static']) {
             assertScript shell, """
                 $mode void p() {
                     int i = 1
@@ -1032,7 +1034,7 @@ final class LambdaTest {
 
     @Test
     void testNestedLambdaAccessingInstanceFields2() {
-        for (qual in ['','this.','thisObject.','getThisObject().']) {
+        for (qual in ['', 'this.', 'thisObject.', 'getThisObject().']) {
             assertScript shell, """
                 class Test1 {
                     def m() {
@@ -1049,7 +1051,7 @@ final class LambdaTest {
     // GROOVY-11480
     @Test
     void testNestedLambdaAccessingInstanceFields3() {
-        for (qual in ['','Test1.this.']) {
+        for (qual in ['', 'Test1.this.']) {
             assertScript shell, """
                 class Test1 {
                     class Test2 {

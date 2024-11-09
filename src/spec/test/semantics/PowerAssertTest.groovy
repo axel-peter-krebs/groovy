@@ -29,7 +29,7 @@ final class PowerAssertTest {
     void testPowerAssert() {
         def err = shouldFail {
             //tag::assert_code_1[]
-            assert 1+1 == 3
+            assert 1 + 1 == 3
             //end::assert_code_1[]
         }
         assert err.message == stripAsciidocMarkup('''
@@ -48,8 +48,8 @@ assert 1+1 == 3
             def x = 2
             def y = 7
             def z = 5
-            def calc = { a,b -> a*b+1 }
-            assert calc(x,y) == [x,z].sum()
+            def calc = { a, b -> a * b + 1 }
+            assert calc(x, y) == [x, z].sum()
             //end::assert_code_2[]
         }
         assert err.message == stripAsciidocMarkup('''
@@ -69,8 +69,8 @@ assert calc(x,y) == [x,z].sum()
             def x = 2
             def y = 7
             def z = 5
-            def calc = { a,b -> a*b+1 }
-            assert calc(x,y) == z*z : 'Incorrect computation result'
+            def calc = { a, b -> a * b + 1 }
+            assert calc(x, y) == z * z: 'Incorrect computation result'
             //end::assert_code_3[]
         }
         assert err.message == stripAsciidocMarkup('''

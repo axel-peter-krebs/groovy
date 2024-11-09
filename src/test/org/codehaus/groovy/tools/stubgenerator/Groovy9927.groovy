@@ -40,7 +40,7 @@ final class Groovy9927 extends StringSourcesStubTestCase {
                     }
                 }
             ''',
-            'Main.java': '''
+            'Main.java'         : '''
                 public class Main {
                     public static void main(String[] args) {
                         new other.Thing();

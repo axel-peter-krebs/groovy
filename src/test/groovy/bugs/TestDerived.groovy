@@ -22,13 +22,13 @@ package groovy.bugs
  * A base class for testing constructors
  */
 
- class TestDerived extends TestBase {
+class TestDerived extends TestBase {
 
-     TestDerived(String aFoo) {
-         super(aFoo)
-     }
+    TestDerived(String aFoo) {
+        super(aFoo)
+    }
 
-     def doSomething() {
-         "TestDerived" + super.doSomething()
-     }
- }
+    def doSomething() {
+        "TestDerived" + super.doSomething()
+    }
+}

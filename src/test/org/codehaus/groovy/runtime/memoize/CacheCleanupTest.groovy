@@ -56,7 +56,8 @@ public class CacheCleanupTest extends GroovyTestCase {
         assert cache.@map.size() == 2
         for (i in (3..1000)) {
             cache.put("key${i}", new SoftReference(null))  //Simulating evicted objects
-            cache.get('key1')  //touch the non-null cache entries to keep them hot to prevent a potential LRU algorithm from evicting them
+            cache.get('key1')
+            //touch the non-null cache entries to keep them hot to prevent a potential LRU algorithm from evicting them
             cache.get('key2')
         }
 

@@ -39,7 +39,7 @@ class EmptyBorderFactory extends SwingBorderFactory {
             } else if (value instanceof List && value.size() == 4) {
                 // we need GDK methods on Collection for boolean .any{} and boolean .all{} :(
                 boolean ints = true
-                value.each {ints = ints & it instanceof Integer}
+                value.each { ints = ints & it instanceof Integer }
                 if (ints) {
                     return BorderFactory.createEmptyBorder(*value)
                 }

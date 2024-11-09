@@ -114,7 +114,7 @@ class CustomMetaClassTest extends GroovyTestCase {
         // let's give it a chance to reinitialize
         metaClass = null
 
-        assert  "I am modified" == toString()
+        assert "I am modified" == toString()
 
         assert "I am modified" == metaClass.invokeMethod(this, "toString", null)
 

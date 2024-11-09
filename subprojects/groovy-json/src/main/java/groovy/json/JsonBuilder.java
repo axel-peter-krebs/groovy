@@ -104,13 +104,21 @@ public class JsonBuilder extends GroovyObjectSupport implements Writable {
      * Instantiates a JSON builder with some existing data structure
      * and a configured generator.
      *
-     * @param content a pre-existing data structure
+     * @param content   a pre-existing data structure
      * @param generator used to generate the output
      * @since 2.5.0
      */
     public JsonBuilder(Object content, JsonGenerator generator) {
         this.content = content;
         this.generator = generator;
+    }
+
+    private static List<Map<String, Object>> collectContentForEachEntry(Iterable coll, Closure closure) {
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        for (Object it : coll) {
+            list.add(JsonDelegate.curryDelegateAndGetContent(closure, it));
+        }
+        return list;
     }
 
     public Object getContent() {
@@ -199,8 +207,9 @@ public class JsonBuilder extends GroovyObjectSupport implements Writable {
      *
      * assert json.toString() == '[{"name":"Guillaume"},{"name":"Jochen"},{"name":"Paul"}]'
      * </code></pre>
+     *
      * @param coll a collection
-     * @param c a closure used to convert the objects of coll
+     * @param c    a closure used to convert the objects of coll
      * @return a list of values
      */
     public Object call(Iterable coll, Closure c) {
@@ -219,7 +228,7 @@ public class JsonBuilder extends GroovyObjectSupport implements Writable {
      * Delegates to {@link #call(Iterable, Closure)}
      */
     public Object call(Collection coll, Closure c) {
-        return call((Iterable)coll, c);
+        return call((Iterable) coll, c);
     }
 
     /**
@@ -268,7 +277,7 @@ public class JsonBuilder extends GroovyObjectSupport implements Writable {
      * assert result instanceof Map
      * assert json.toString() == '{"person":{"name":"Guillaume","age":33}}'
      * </code></pre>
-     *
+     * <p>
      * Or alternatively with a method call taking named arguments:
      * <pre><code class="groovyTestCase">
      * def json = new groovy.json.JsonBuilder()
@@ -276,7 +285,7 @@ public class JsonBuilder extends GroovyObjectSupport implements Writable {
      *
      * assert json.toString() == '{"person":{"name":"Guillaume","age":33}}'
      * </code></pre>
-     *
+     * <p>
      * If you use named arguments and a closure as last argument,
      * the key/value pairs of the map (as named arguments)
      * and the key/value pairs represented in the closure
@@ -289,7 +298,7 @@ public class JsonBuilder extends GroovyObjectSupport implements Writable {
      *
      * assert json.toString() == '{"person":{"name":"Guillaume","age":33,"town":"Paris"}}'
      * </code></pre>
-     *
+     * <p>
      * The empty args call will create a key whose value will be an empty JSON object:
      * <pre><code class="groovyTestCase">
      * def json = new groovy.json.JsonBuilder()
@@ -318,7 +327,7 @@ public class JsonBuilder extends GroovyObjectSupport implements Writable {
                 final Object first = arr[0];
                 final Object second = arr[1];
                 if (second instanceof Closure) {
-                    final Closure closure = (Closure)second;
+                    final Closure closure = (Closure) second;
                     if (first instanceof Map) {
                         Map<String, Object> subMap = new LinkedHashMap<>();
                         subMap.putAll(asMap(first));
@@ -330,7 +339,7 @@ public class JsonBuilder extends GroovyObjectSupport implements Writable {
 
                         return setAndGetContent(name, list);
                     } else if (first != null && first.getClass().isArray()) {
-                        final Iterable coll = Arrays.asList((Object[])first);
+                        final Iterable coll = Arrays.asList((Object[]) first);
                         List<Map<String, Object>> list = collectContentForEachEntry(coll, closure);
 
                         return setAndGetContent(name, list);
@@ -347,14 +356,6 @@ public class JsonBuilder extends GroovyObjectSupport implements Writable {
     @SuppressWarnings("unchecked")
     private Map<String, Object> asMap(Object first) {
         return (Map<String, Object>) first;
-    }
-
-    private static List<Map<String, Object>> collectContentForEachEntry(Iterable coll, Closure closure) {
-        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-        for (Object it : coll) {
-            list.add(JsonDelegate.curryDelegateAndGetContent(closure, it));
-        }
-        return list;
     }
 
     private Object setAndGetContent(String name, Object value) {

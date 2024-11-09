@@ -21,5 +21,6 @@ package org.codehaus.groovy.transform.traitx
 @groovy.transform.CompileStatic
 trait Groovy7215SupportTrait {
     void setText(String text) {}
+
     String getText() { 'ok' }
 }

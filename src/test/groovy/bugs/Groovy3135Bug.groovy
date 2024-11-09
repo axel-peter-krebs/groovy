@@ -50,23 +50,23 @@ class Groovy3135Bug extends GroovyTestCase {
         checkConversionAndVarArgCount(Double.TYPE, 8)
     }
 
-    def setVarArgsShort(String str, short... varArgValues) {
+    def setVarArgsShort(String str, short ... varArgValues) {
         values = varArgValues
     }
 
-    def setVarArgsInteger(String str, int... varArgValues) {
+    def setVarArgsInteger(String str, int ... varArgValues) {
         values = varArgValues
     }
 
-    def setVarArgsLong(String str, long... varArgValues) {
+    def setVarArgsLong(String str, long ... varArgValues) {
         values = varArgValues
     }
 
-    def setVarArgsFloat(String str, float... varArgValues) {
+    def setVarArgsFloat(String str, float ... varArgValues) {
         values = varArgValues
     }
 
-    def setVarArgsDouble(String str, double... varArgValues) {
+    def setVarArgsDouble(String str, double ... varArgValues) {
         values = varArgValues
     }
 

@@ -99,10 +99,10 @@ class UniqueOnCollectionTest extends GroovyTestCase {
     /** GROOVY-4742 */
     void testNonMutatingList() {
         def it = [-1, 0, 1, 1, 0, -1]
-        def uniq = it.unique( false )
+        def uniq = it.unique(false)
         assert uniq != it
         assert uniq == [-1, 0, 1]
-        assert it   == [-1, 0, 1, 1, 0, -1]
+        assert it == [-1, 0, 1, 1, 0, -1]
     }
 
     /** GROOVY-4742 */
@@ -116,8 +116,8 @@ class UniqueOnCollectionTest extends GroovyTestCase {
     /** GROOVY-11308 */
     void testNonMutatingEmpty() {
         def it = []
-        def uniq = it.unique( false )
-        assert uniq !== it : "Must be a different instance to preserve documented behavior"
+        def uniq = it.unique(false)
+        assert uniq !== it: "Must be a different instance to preserve documented behavior"
         assert uniq == []
         assert it == []
     }
@@ -125,8 +125,8 @@ class UniqueOnCollectionTest extends GroovyTestCase {
     /** GROOVY-11308 */
     void testNonMutatingSingleElement() {
         def it = [1]
-        def uniq = it.unique( false )
-        assert uniq !== it : "Must be a different instance to preserve documented behavior"
+        def uniq = it.unique(false)
+        assert uniq !== it: "Must be a different instance to preserve documented behavior"
         assert uniq == [1]
         assert it == [1]
     }

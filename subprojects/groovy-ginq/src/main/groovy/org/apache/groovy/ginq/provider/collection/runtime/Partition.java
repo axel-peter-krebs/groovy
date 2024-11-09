@@ -32,6 +32,7 @@ import java.util.List;
 public interface Partition<T> extends Queryable<T> {
     /**
      * Represents the empty Partition instance
+     *
      * @since 4.0.0
      */
     @SuppressWarnings("rawtypes")
@@ -41,7 +42,7 @@ public interface Partition<T> extends Queryable<T> {
      * Factory method to create {@link Partition} instance
      *
      * @param listWithIndex the list with index
-     * @param <T> the type of element
+     * @param <T>           the type of element
      * @return the {@link Partition} instance
      * @since 4.0.0
      */

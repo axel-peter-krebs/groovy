@@ -25,6 +25,28 @@ import static groovy.test.GroovyAssert.shouldFail;
 
 public final class Groovy8164 {
 
+    @Test
+    public void testStaticMethods1() throws Exception {
+        shouldFail(groovy.lang.MissingMethodException.class,
+            "class C implements " + I.class.getName() + ", " + J.class.getName() + " {\n" +
+                "}\n" +
+                "C.m()\n"
+        );
+    }
+
+    @Test
+    public void testStaticMethods2() throws Exception {
+        assertScript(
+            "class C implements " + I.class.getName() + ", " + J.class.getName() + " {\n" +
+                "  static m() { 'C' }\n" +
+                "}\n" +
+                "class D extends C {\n" +
+                "}\n" +
+                "assert C.m() == 'C'\n" +
+                "assert D.m() == 'C'\n"
+        );
+    }
+
     public interface I {
         static String m() {
             return "I";
@@ -35,27 +57,5 @@ public final class Groovy8164 {
         static String m() {
             return "J";
         }
-    }
-
-    @Test
-    public void testStaticMethods1() throws Exception {
-        shouldFail(groovy.lang.MissingMethodException.class,
-            "class C implements " + I.class.getName() + ", " + J.class.getName() + " {\n" +
-            "}\n" +
-            "C.m()\n"
-        );
-    }
-
-    @Test
-    public void testStaticMethods2() throws Exception {
-        assertScript(
-            "class C implements " + I.class.getName() + ", " + J.class.getName() + " {\n" +
-            "  static m() { 'C' }\n" +
-            "}\n" +
-            "class D extends C {\n" +
-            "}\n" +
-            "assert C.m() == 'C'\n" +
-            "assert D.m() == 'C'\n"
-        );
     }
 }

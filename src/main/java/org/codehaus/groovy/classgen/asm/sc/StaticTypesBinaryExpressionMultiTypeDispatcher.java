@@ -99,6 +99,18 @@ public class StaticTypesBinaryExpressionMultiTypeDispatcher extends BinaryExpres
         super(wc);
     }
 
+    private static void visitInsnByType(final ClassNode top, final MethodVisitor mv, final int iInsn, final int lInsn, final int fInsn, final int dInsn) {
+        if (WideningCategories.isIntCategory(top) || isPrimitiveChar(top)) {
+            mv.visitInsn(iInsn);
+        } else if (isPrimitiveLong(top)) {
+            mv.visitInsn(lInsn);
+        } else if (isPrimitiveFloat(top)) {
+            mv.visitInsn(fInsn);
+        } else if (isPrimitiveDouble(top)) {
+            mv.visitInsn(dInsn);
+        }
+    }
+
     @Override
     protected void writePostOrPrefixMethod(final int op, final String method, final Expression expression, final Expression orig) {
         MethodNode mn = orig.getNodeMetaData(DIRECT_METHOD_CALL_TARGET);
@@ -125,45 +137,33 @@ public class StaticTypesBinaryExpressionMultiTypeDispatcher extends BinaryExpres
         super.writePostOrPrefixMethod(op, method, expression, orig);
     }
 
-    private static void visitInsnByType(final ClassNode top, final MethodVisitor mv, final int iInsn, final int lInsn, final int fInsn, final int dInsn) {
-        if (WideningCategories.isIntCategory(top) || isPrimitiveChar(top)) {
-            mv.visitInsn(iInsn);
-        } else if (isPrimitiveLong(top)) {
-            mv.visitInsn(lInsn);
-        } else if (isPrimitiveFloat(top)) {
-            mv.visitInsn(fInsn);
-        } else if (isPrimitiveDouble(top)) {
-            mv.visitInsn(dInsn);
-        }
-    }
-
     @Override
     protected void evaluateBinaryExpressionWithAssignment(final String method, final BinaryExpression expression) {
         Expression leftExpression = expression.getLeftExpression();
         if (leftExpression instanceof PropertyExpression
-                && !(leftExpression instanceof AttributeExpression)) {
+            && !(leftExpression instanceof AttributeExpression)) {
             PropertyExpression pexp = (PropertyExpression) leftExpression;
 
             BinaryExpression expressionWithoutAssignment = binX(
-                    leftExpression,
-                    Token.newSymbol(
-                            TokenUtil.removeAssignment(expression.getOperation().getType()),
-                            expression.getOperation().getStartLine(),
-                            expression.getOperation().getStartColumn()
-                    ),
-                    expression.getRightExpression()
+                leftExpression,
+                Token.newSymbol(
+                    TokenUtil.removeAssignment(expression.getOperation().getType()),
+                    expression.getOperation().getStartLine(),
+                    expression.getOperation().getStartColumn()
+                ),
+                expression.getRightExpression()
             );
             expressionWithoutAssignment.copyNodeMetaData(expression);
             expressionWithoutAssignment.setSafe(expression.isSafe());
             expressionWithoutAssignment.setSourcePosition(expression);
 
             if (makeSetProperty(
-                    pexp.getObjectExpression(),
-                    pexp.getProperty(),
-                    expressionWithoutAssignment,
-                    pexp.isSafe(),
-                    pexp.isSpreadSafe(),
-                    pexp.isImplicitThis())) {
+                pexp.getObjectExpression(),
+                pexp.getProperty(),
+                expressionWithoutAssignment,
+                pexp.isSafe(),
+                pexp.isSpreadSafe(),
+                pexp.isImplicitThis())) {
                 return;
             }
         }
@@ -174,15 +174,15 @@ public class StaticTypesBinaryExpressionMultiTypeDispatcher extends BinaryExpres
     public void evaluateEqual(final BinaryExpression expression, final boolean defineVariable) {
         Expression leftExpression = expression.getLeftExpression();
         if (leftExpression instanceof PropertyExpression
-                && !(leftExpression instanceof AttributeExpression)) {
+            && !(leftExpression instanceof AttributeExpression)) {
             PropertyExpression pexp = (PropertyExpression) leftExpression;
             if (!defineVariable && makeSetProperty(
-                    pexp.getObjectExpression(),
-                    pexp.getProperty(),
-                    expression.getRightExpression(),
-                    pexp.isSafe(),
-                    pexp.isSpreadSafe(),
-                    pexp.isImplicitThis())) {
+                pexp.getObjectExpression(),
+                pexp.getProperty(),
+                expression.getRightExpression(),
+                pexp.isSafe(),
+                pexp.isSpreadSafe(),
+                pexp.isImplicitThis())) {
                 return;
             }
             // GROOVY-5620: spread-safe operator on LHS is not supported
@@ -230,9 +230,9 @@ public class StaticTypesBinaryExpressionMultiTypeDispatcher extends BinaryExpres
         add.setMethodTarget(ARRAYLIST_ADD_METHOD);
         // for (e in receiver) { result.add(e?.method(arguments) }
         ForStatement stmt = new ForStatement(
-                iterator,
-                receiver,
-                stmt(add)
+            iterator,
+            receiver,
+            stmt(add)
         );
         stmt.visit(controller.getAcg());
         // else { empty list }
@@ -264,12 +264,12 @@ public class StaticTypesBinaryExpressionMultiTypeDispatcher extends BinaryExpres
             PropertyNode propertyNode = receiverType.getProperty(propertyName);
             if (propertyNode != null && !propertyNode.isFinal()) {
                 setterMethod = new MethodNode(
-                        setterName,
-                        ACC_PUBLIC,
-                        ClassHelper.VOID_TYPE,
-                        new Parameter[]{new Parameter(propertyNode.getOriginType(), "value")},
-                        ClassNode.EMPTY_ARRAY,
-                        EmptyStatement.INSTANCE
+                    setterName,
+                    ACC_PUBLIC,
+                    ClassHelper.VOID_TYPE,
+                    new Parameter[]{new Parameter(propertyNode.getOriginType(), "value")},
+                    ClassNode.EMPTY_ARRAY,
+                    EmptyStatement.INSTANCE
                 );
                 setterMethod.setDeclaringClass(receiverType);
                 setterMethod.setSynthetic(true);
@@ -277,14 +277,14 @@ public class StaticTypesBinaryExpressionMultiTypeDispatcher extends BinaryExpres
         }
         if (setterMethod != null) {
             Expression call = StaticPropertyAccessHelper.transformToSetterCall(
-                    receiver,
-                    setterMethod,
-                    arguments,
-                    implicitThis,
-                    safe,
-                    spreadSafe,
-                    true, // to be replaced with a proper test whether a return value should be used or not
-                    message
+                receiver,
+                setterMethod,
+                arguments,
+                implicitThis,
+                safe,
+                spreadSafe,
+                true, // to be replaced with a proper test whether a return value should be used or not
+                message
             );
             call.visit(controller.getAcg());
             return true;
@@ -302,8 +302,8 @@ public class StaticTypesBinaryExpressionMultiTypeDispatcher extends BinaryExpres
         if (fieldNode != null) {
             ClassNode classNode = controller.getClassNode();
             if (fieldNode.isPrivate() && !receiverType.equals(classNode)
-                    && (StaticInvocationWriter.isPrivateBridgeMethodsCallAllowed(receiverType, classNode)
-                        || StaticInvocationWriter.isPrivateBridgeMethodsCallAllowed(classNode, receiverType))) {
+                && (StaticInvocationWriter.isPrivateBridgeMethodsCallAllowed(receiverType, classNode)
+                || StaticInvocationWriter.isPrivateBridgeMethodsCallAllowed(classNode, receiverType))) {
                 Map<String, MethodNode> mutators = receiverType.redirect().getNodeMetaData(PRIVATE_FIELDS_MUTATORS);
                 if (mutators != null) {
                     MethodNode methodNode = mutators.get(fieldName);

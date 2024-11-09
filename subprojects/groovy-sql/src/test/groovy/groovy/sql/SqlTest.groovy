@@ -138,7 +138,7 @@ final class SqlTest {
         def value = 'log entry'
         if (sql.dataSource.connection.metaData.supportsGetGeneratedKeys()) {
             def keys = sql.executeInsert('insert into LOG (value) values (?)', [value], ['ID'])
-            assert keys == [[ID:0]]
+            assert keys == [[ID: 0]]
         }
     }
 
@@ -147,7 +147,7 @@ final class SqlTest {
         def value = 'log entry'
         if (sql.dataSource.connection.metaData.supportsGetGeneratedKeys()) {
             def keys = sql.executeInsert('insert into LOG (value) values (?)', ['ID'] as String[], value)
-            assert keys == [[ID:0]]
+            assert keys == [[ID: 0]]
         }
     }
 
@@ -155,7 +155,7 @@ final class SqlTest {
     void testExecuteInsertWithColumnNamesNoVarargs() {
         if (sql.dataSource.connection.metaData.supportsGetGeneratedKeys()) {
             def keys = sql.executeInsert("insert into LOG (value) values 'log entry'", ['ID'] as String[])
-            assert keys == [[ID:0]]
+            assert keys == [[ID: 0]]
         }
     }
 
@@ -164,7 +164,7 @@ final class SqlTest {
         def value = 'log entry'
         if (sql.dataSource.connection.metaData.supportsGetGeneratedKeys()) {
             def keys = sql.executeInsert("insert into LOG (value) values $value", ['ID'])
-            assert keys == [[ID:0]]
+            assert keys == [[ID: 0]]
         } else {
             def count = sql.executeUpdate("insert into LOG (value) values $value")
             assert 1 == count
@@ -222,7 +222,8 @@ final class SqlTest {
         }
     }
 
-    @Test // GROOVY-168
+    @Test
+    // GROOVY-168
     void testBugInNormalMethod() {
         def li = ['a', 'b']
         for (x in li) {
@@ -234,7 +235,8 @@ final class SqlTest {
         sql.close()
     }
 
-    @Test // GROOVY-168
+    @Test
+    // GROOVY-168
     void testBugInsideScript() {
         assertScript '''
             import groovy.sql.SqlHelperTestCase
@@ -257,8 +259,8 @@ final class SqlTest {
 
     private Sql createSql() {
         javax.sql.DataSource ds = DB_DATASOURCE.newInstance(
-                (DB_DS_KEY): DB_URL_PREFIX + test.methodName,
-                user: DB_USER, password: DB_PASSWORD)
+            (DB_DS_KEY): DB_URL_PREFIX + test.methodName,
+            user: DB_USER, password: DB_PASSWORD)
         sql = new Sql(ds.connection)
         def sql = new Sql(ds)
 

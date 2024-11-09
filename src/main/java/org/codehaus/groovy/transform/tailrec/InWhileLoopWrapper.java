@@ -48,6 +48,9 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.tryCatchS;
  * </ol>
  */
 public class InWhileLoopWrapper {
+    public static final String LOOP_LABEL = "_RECUR_HERE_";
+    public static final GotoRecurHereException LOOP_EXCEPTION = new GotoRecurHereException();
+
     public void wrap(MethodNode method) {
         BlockStatement oldBody = (BlockStatement) method.getCode();
         TryCatchStatement tryCatchStatement = tryCatchS(oldBody, EmptyStatement.INSTANCE, catchS(param(ClassHelper.make(GotoRecurHereException.class), "ignore"), new ContinueStatement(InWhileLoopWrapper.LOOP_LABEL)));
@@ -59,7 +62,4 @@ public class InWhileLoopWrapper {
         newBody.addStatement(whileLoop);
         method.setCode(newBody);
     }
-
-    public static final String LOOP_LABEL = "_RECUR_HERE_";
-    public static final GotoRecurHereException LOOP_EXCEPTION = new GotoRecurHereException();
 }

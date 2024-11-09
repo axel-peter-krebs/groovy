@@ -25,7 +25,7 @@ import java.lang.reflect.Modifier;
 /**
  * A MetaMethod implementation where the underlying method is really a static
  * helper method on some class but it appears to be an instance method on a class.
- *
+ * <p>
  * This implementation is used to add new methods to the JDK writing them as normal
  * static methods with the first parameter being the class on which the method is added.
  */
@@ -48,7 +48,7 @@ public class NewInstanceMetaMethod extends NewMetaMethod {
     }
 
     @Override
-    public Object invoke(Object object, Object[] arguments)  {
+    public Object invoke(Object object, Object[] arguments) {
         // we need to cheat using the type
         int size = arguments.length;
         Object[] newArguments = new Object[size + 1];

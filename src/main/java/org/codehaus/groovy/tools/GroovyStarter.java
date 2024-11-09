@@ -41,14 +41,14 @@ public class GroovyStarter {
     }
 
     public static void rootLoader(String[] args) {
-        String conf = System.getProperty("groovy.starter.conf",null);
+        String conf = System.getProperty("groovy.starter.conf", null);
         final LoaderConfiguration lc = new LoaderConfiguration();
 
         // evaluate parameters
-        boolean hadMain=false, hadConf=false, hadCP=false;
+        boolean hadMain = false, hadConf = false, hadCP = false;
         int argsOffset = 0;
         label:
-        while (args.length-argsOffset>0 && !(hadMain && hadConf && hadCP)) {
+        while (args.length - argsOffset > 0 && !(hadMain && hadConf && hadCP)) {
             switch (args[argsOffset]) {
                 case "--classpath":
                     if (hadCP) break label;
@@ -83,18 +83,18 @@ public class GroovyStarter {
         }
 
         // this allows to override the commandline conf
-        String confOverride = System.getProperty("groovy.starter.conf.override",null);
-        if (confOverride!=null) conf = confOverride;
+        String confOverride = System.getProperty("groovy.starter.conf.override", null);
+        if (confOverride != null) conf = confOverride;
 
         // we need to know the class we want to start
-        if (lc.getMainClass()==null && conf==null) {
+        if (lc.getMainClass() == null && conf == null) {
             exit("no configuration file or main class specified");
         }
 
         // copy arguments for main class
         String[] mainArgs = Arrays.copyOfRange(args, argsOffset, args.length);
         // load configuration file
-        if (conf!=null) {
+        if (conf != null) {
             try {
                 lc.configure(new FileInputStream(conf));
             } catch (Exception e) {
@@ -118,7 +118,8 @@ public class GroovyStarter {
         }
     }
 
-    @SuppressWarnings("removal") // TODO: a future Groovy version should perform the operation not as a privileged action
+    @SuppressWarnings("removal")
+    // TODO: a future Groovy version should perform the operation not as a privileged action
     private static ClassLoader getLoader(LoaderConfiguration lc) {
         return java.security.AccessController.doPrivileged((java.security.PrivilegedAction<ClassLoader>) () -> new RootLoader(lc));
     }

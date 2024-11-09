@@ -47,16 +47,9 @@ import java.net.URL;
 public class SourceUnit extends ProcessingUnit {
 
     /**
-     * The pluggable parser used to generate the AST - we allow
-     * pluggability currently as we need to have Classic and JSR support
-     */
-    private ParserPlugin parserPlugin;
-
-    /**
      * Where we can get Readers for our source unit
      */
     protected ReaderSource source;
-
     /**
      * A descriptive name of the source unit. This name shouldn't
      * be used for controlling the SourceUnit, it is only for error
@@ -64,16 +57,19 @@ public class SourceUnit extends ProcessingUnit {
      * a script.
      */
     protected String name;
-
     /**
      * A Concrete Syntax Tree of the source
      */
     protected Reduction cst;
-
     /**
      * The root of the Abstract Syntax Tree for the source
      */
     protected ModuleNode ast;
+    /**
+     * The pluggable parser used to generate the AST - we allow
+     * pluggability currently as we need to have Classic and JSR support
+     */
+    private ParserPlugin parserPlugin;
 
     /**
      * Initializes the SourceUnit from existing machinery.
@@ -109,6 +105,28 @@ public class SourceUnit extends ProcessingUnit {
     }
 
     /**
+     * A convenience routine to create a standalone SourceUnit on a String
+     * with defaults for almost everything that is configurable.
+     */
+    public static SourceUnit create(String name, String source) {
+        CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.setTolerance(1);
+
+        return new SourceUnit(name, source, configuration, null, new ErrorCollector(configuration));
+    }
+
+    /**
+     * A convenience routine to create a standalone SourceUnit on a String
+     * with defaults for almost everything that is configurable.
+     */
+    public static SourceUnit create(String name, String source, int tolerance) {
+        CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.setTolerance(tolerance);
+
+        return new SourceUnit(name, source, configuration, null, new ErrorCollector(configuration));
+    }
+
+    /**
      * Returns the name for the SourceUnit. This name shouldn't
      * be used for controlling the SourceUnit, it is only for error
      * messages
@@ -123,6 +141,13 @@ public class SourceUnit extends ProcessingUnit {
     public Reduction getCST() {
         return this.cst;
     }
+
+    /*protected boolean isEofToken(groovyjarjarantlr.Token token) {
+        return token.getType() == groovyjarjarantlr.Token.EOF_TYPE;
+    }*/
+
+    //---------------------------------------------------------------------------
+    // FACTORIES
 
     /**
      * Returns the Abstract Syntax Tree produced during convert()ing
@@ -164,35 +189,6 @@ public class SourceUnit extends ProcessingUnit {
             return true;
         }
         return false;
-    }
-
-    /*protected boolean isEofToken(groovyjarjarantlr.Token token) {
-        return token.getType() == groovyjarjarantlr.Token.EOF_TYPE;
-    }*/
-
-    //---------------------------------------------------------------------------
-    // FACTORIES
-
-    /**
-     * A convenience routine to create a standalone SourceUnit on a String
-     * with defaults for almost everything that is configurable.
-     */
-    public static SourceUnit create(String name, String source) {
-        CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.setTolerance(1);
-
-        return new SourceUnit(name, source, configuration, null, new ErrorCollector(configuration));
-    }
-
-    /**
-     * A convenience routine to create a standalone SourceUnit on a String
-     * with defaults for almost everything that is configurable.
-     */
-    public static SourceUnit create(String name, String source, int tolerance) {
-        CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.setTolerance(tolerance);
-
-        return new SourceUnit(name, source, configuration, null, new ErrorCollector(configuration));
     }
 
     //---------------------------------------------------------------------------
@@ -330,7 +326,6 @@ public class SourceUnit extends ProcessingUnit {
      * @param text the error message
      * @param node for locating the offending code
      * @throws CompilationFailedException on error
-     *
      * @since 3.0.0
      */
     public void addFatalError(final String text, final ASTNode node) throws CompilationFailedException {

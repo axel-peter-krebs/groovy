@@ -18,91 +18,92 @@
  */
 def a
     =
-        1 + 2
+    1 + 2
 assert 3 == a
 
 a
     +=
-        2
+    2
 assert 5 == a
 
 int b
     =
-        1,
+    1,
     c
         =
-            2
+        2
 assert 1 == b
 assert 2 == c
 
 def (int x, int y)
-    =
-        [1, 2]
+=
+[1, 2]
 assert 1 == x
 assert 2 == y
 (x)
     =
-        [3]
+    [3]
 assert 3 == x
 
 @SuppressWarnings(value
-        =
-        "all")
+    =
+    "all")
 def m(p1
-        =
-            1,
+          =
+          1,
       p2
-        =
-            2,
-      int... p3
-                =
-                    [3]) {
+          =
+          2,
+      int ... p3
+          =
+          [3]) {
     return p1 + p2 + p3[0]
 }
+
 assert 6 == m()
 
 def w
     =
-        1
-            <<
-                2
+    1
+        <<
+        2
 assert 4 == w
 assert 'a'
-            instanceof
-                        String
+    instanceof
+    String
 assert 1
-            <
-                2
+    <
+    2
 
 assert 1
-            ==
-                1
+    ==
+    1
 
 assert 'a'
-            ==~
-                /a/
+    ==~
+    /a/
 assert true
-            &
-                true
+    &
+    true
 assert true
-            ^
-                false
+    ^
+    false
 assert true
-            |
-                true
+    |
+    true
 
 assert true
-            &&
-                true
+    &&
+    true
 
 assert true
-            ||
-                true
+    ||
+    true
 
 
 def z =
-        9
-            /
+    9
+/
                 3
                     *
                         2

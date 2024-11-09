@@ -24,17 +24,17 @@ import org.codehaus.groovy.classgen.BytecodeExpression;
 import org.objectweb.asm.MethodVisitor;
 
 /**
- * Helper class that takes an Expression and if visited will load it normally, 
+ * Helper class that takes an Expression and if visited will load it normally,
  * storing the result in a helper variable, which then can be requested after
- * the visit is completed. A copy of the variable will stay on the stack. 
- * Subsequent visits will load the stored value instead of visiting the 
+ * the visit is completed. A copy of the variable will stay on the stack.
+ * Subsequent visits will load the stored value instead of visiting the
  * expression again
  */
 public class ExpressionAsVariableSlot extends BytecodeExpression {
-    private int index = -1;
     private final Expression exp;
     private final WriterController controller;
     private final String name;
+    private int index = -1;
 
     public ExpressionAsVariableSlot(WriterController controller, Expression expression, String name) {
         this.exp = expression;

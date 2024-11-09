@@ -48,21 +48,21 @@ trait StaticCompilationTestSupport {
         astTrees = new HashMap<>()
         config = new CompilerConfiguration()
         config.addCompilationCustomizers(
-                new ImportCustomizer().tap {
-                    addImports(
-                            'groovy.transform.ASTTest',
-                            'groovy.transform.CompileStatic',
-                            'groovy.transform.stc.ClosureParams',
-                            'org.codehaus.groovy.ast.ClassHelper',
-                            'org.codehaus.groovy.transform.stc.StaticTypesMarker')
-                    addStaticStars(
-                            'groovy.transform.TypeCheckingMode',
-                            'org.codehaus.groovy.ast.ClassHelper',
-                            'org.codehaus.groovy.control.CompilePhase',
-                            'org.codehaus.groovy.transform.stc.StaticTypesMarker')
-                },
-                new ASTTransformationCustomizer(groovy.transform.CompileStatic),
-                new ASTTreeCollector(this)
+            new ImportCustomizer().tap {
+                addImports(
+                    'groovy.transform.ASTTest',
+                    'groovy.transform.CompileStatic',
+                    'groovy.transform.stc.ClosureParams',
+                    'org.codehaus.groovy.ast.ClassHelper',
+                    'org.codehaus.groovy.transform.stc.StaticTypesMarker')
+                addStaticStars(
+                    'groovy.transform.TypeCheckingMode',
+                    'org.codehaus.groovy.ast.ClassHelper',
+                    'org.codehaus.groovy.control.CompilePhase',
+                    'org.codehaus.groovy.transform.stc.StaticTypesMarker')
+            },
+            new ASTTransformationCustomizer(groovy.transform.CompileStatic),
+            new ASTTreeCollector(this)
         )
         configure()
 
@@ -88,9 +88,9 @@ trait StaticCompilationTestSupport {
         StaticCompilationTestSupport testCase
 
         CompilationUnitAwareGroovyClassLoader(
-                final ClassLoader loader,
-                final CompilerConfiguration config,
-                final StaticCompilationTestSupport testCase) {
+            final ClassLoader loader,
+            final CompilerConfiguration config,
+            final StaticCompilationTestSupport testCase) {
             super(loader, config)
             this.testCase = testCase
         }
@@ -118,7 +118,7 @@ trait StaticCompilationTestSupport {
                 try {
                     CheckClassAdapter.verify(new ClassReader(groovyClass.bytes),
                         source.classLoader, true, new PrintWriter(stringWriter))
-                } catch (Throwable t)  {
+                } catch (Throwable t) {
                     t.printStackTrace(new PrintWriter(stringWriter))
                 }
                 testCase.astTrees[groovyClass.name] = new Tuple2<>(classNode, stringWriter.toString())

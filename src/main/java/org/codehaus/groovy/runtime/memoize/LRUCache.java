@@ -35,8 +35,8 @@ public final class LRUCache<K, V> implements MemoizeCache<K, V> {
 
     public LRUCache(final int maxCacheSize) {
         map = new ConcurrentLinkedHashMap.Builder<K, V>()
-                .maximumWeightedCapacity(maxCacheSize)
-                .build();
+            .maximumWeightedCapacity(maxCacheSize)
+            .build();
     }
 
     @Override
@@ -52,7 +52,7 @@ public final class LRUCache<K, V> implements MemoizeCache<K, V> {
     /**
      * Try to get the value from cache.
      * If not found, create the value by {@link MemoizeCache.ValueProvider} and put it into the cache, at last return the value.
-     *
+     * <p>
      * The operation is completed atomically.
      *
      * @param key

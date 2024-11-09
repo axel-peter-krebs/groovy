@@ -195,8 +195,8 @@ class StatementReplacerTest {
         }[0]
 
         def replacer = new StatementReplacer(
-                { node, inClosure -> inClosure && node instanceof ExpressionStatement },
-                { new ExpressionStatement(aConstant('new')) }
+            { node, inClosure -> inClosure && node instanceof ExpressionStatement },
+            { new ExpressionStatement(aConstant('new')) }
         )
         replacer.replaceIn(closure)
 
@@ -214,8 +214,8 @@ class StatementReplacerTest {
         }[0]
 
         def replacer = new StatementReplacer(
-                { node, inClosure -> inClosure && node instanceof ExpressionStatement },
-                { assert false, 'Must not get here' }
+            { node, inClosure -> inClosure && node instanceof ExpressionStatement },
+            { assert false, 'Must not get here' }
         )
         replacer.replaceIn(block)
     }

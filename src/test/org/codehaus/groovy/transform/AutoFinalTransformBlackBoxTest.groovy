@@ -118,9 +118,9 @@ class AutoFinalTransformBlackBoxTest extends CompilableTestSupport {
 
 
     String autoFinalTestScript(
-            final boolean hasAnnotation,
-            final Map<String, Object> annotationParameters,
-            final String classPart, final String scriptPart = '') {
+        final boolean hasAnnotation,
+        final Map<String, Object> annotationParameters,
+        final String classPart, final String scriptPart = '') {
         assert !hasAnnotation || (annotationParameters != null); assert classPart
         final String annotationParametersTerm = annotationParameters ? "(${annotationParameters.collect { final Entry<String, Object> e -> "$e.key=$e.value" }.join(', ')})" : ''
         final String script = """

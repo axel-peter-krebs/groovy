@@ -66,17 +66,46 @@ import java.util.Set;
 public class GinqAstBuilder extends CodeVisitorSupport implements SyntaxErrorReportable {
     public static final String ROOT_GINQ_EXPRESSION = "__ROOT_GINQ_EXPRESSION";
     public static final String GINQ_SELECT_DISTINCT = "__GINQ_SELECT_DISTINCT";
-    private final Deque<GinqExpression> ginqExpressionStack = new ArrayDeque<>();
-    private GinqExpression latestGinqExpression;
-    private final SourceUnit sourceUnit;
+    private static final List<String> SHUTDOWN_OPTION_LIST = Arrays.asList("immediate", "abort");
+    private static final String __LATEST_GINQ_EXPRESSION_CLAUSE = "__latestGinqExpressionClause";
+    private static final String KW_WITH = "with"; // reserved keyword
+    private static final String KW_FROM = "from";
+    private static final String KW_IN = "in";
+    private static final String KW_ON = "on";
+    private static final String KW_WHERE = "where";
+    private static final String KW_EXISTS = "exists";
+    private static final String KW_GROUPBY = "groupby";
+    private static final String KW_HAVING = "having";
+    private static final String KW_ORDERBY = "orderby";
+    private static final String KW_LIMIT = "limit";
+    private static final String KW_OFFSET = "offset"; // reserved keyword
+    private static final String KW_SELECT = "select";
+    private static final String KW_DISTINCT = "distinct";
+    private static final String KW_WITHINGROUP = "withingroup"; // reserved keyword
+    private static final String KW_OVER = "over";
+    private static final String KW_AS = "as";
+    private static final String KW_SHUTDOWN = "shutdown";
+    private static final Set<String> KEYWORD_SET = new HashSet<>();
 
+    static {
+        KEYWORD_SET.addAll(Arrays.asList(KW_WITH, KW_FROM, KW_IN, KW_ON, KW_WHERE, KW_EXISTS, KW_GROUPBY, KW_HAVING, KW_ORDERBY,
+            KW_LIMIT, KW_OFFSET, KW_SELECT, KW_DISTINCT, KW_WITHINGROUP, KW_OVER, KW_AS, KW_SHUTDOWN));
+        KEYWORD_SET.addAll(JoinExpression.JOIN_NAME_LIST);
+    }
+
+    private final Deque<GinqExpression> ginqExpressionStack = new ArrayDeque<>();
+    private final SourceUnit sourceUnit;
+    private final List<MethodCallExpression> ignoredMethodCallExpressionList = new ArrayList<>();
+    private GinqExpression latestGinqExpression;
+    private boolean visitingOverClause;
     public GinqAstBuilder(SourceUnit sourceUnit) {
         this.sourceUnit = sourceUnit;
     }
 
-    private final List<MethodCallExpression> ignoredMethodCallExpressionList = new ArrayList<>();
+    private static boolean isSelectMethodCallExpression(Expression expression) {
+        return expression instanceof MethodCallExpression && KW_SELECT.equals(((MethodCallExpression) expression).getMethodAsString());
+    }
 
-    private static final List<String> SHUTDOWN_OPTION_LIST = Arrays.asList("immediate", "abort");
     public AbstractGinqExpression buildAST(ASTNode astNode) {
         if (astNode instanceof BlockStatement) {
             List<Statement> statementList = ((BlockStatement) astNode).getStatements();
@@ -92,7 +121,7 @@ public class GinqAstBuilder extends CodeVisitorSupport implements SyntaxErrorRep
                                 int mode = SHUTDOWN_OPTION_LIST.indexOf(argExpression.getText());
                                 if (-1 == mode) {
                                     this.collectSyntaxError(new GinqSyntaxError("Invalid option: " + argExpression.getText() + ". (supported options: " + SHUTDOWN_OPTION_LIST + ")",
-                                            argExpression.getLineNumber(), argExpression.getColumnNumber()));
+                                        argExpression.getLineNumber(), argExpression.getColumnNumber()));
                                 }
                                 return new ShutdownExpression(expression, mode);
                             }
@@ -112,7 +141,7 @@ public class GinqAstBuilder extends CodeVisitorSupport implements SyntaxErrorRep
         if (null == latestGinqExpression) {
             ASTNode node = ginqExpressionStack.isEmpty() ? astNode : ginqExpressionStack.peek();
             this.collectSyntaxError(new GinqSyntaxError("`select` clause is missing",
-                    node.getLineNumber(), node.getColumnNumber()));
+                node.getLineNumber(), node.getColumnNumber()));
         }
 
         latestGinqExpression.visit(new GinqAstBaseVisitor() {
@@ -126,7 +155,7 @@ public class GinqAstBuilder extends CodeVisitorSupport implements SyntaxErrorRep
         if (!ignoredMethodCallExpressionList.isEmpty()) {
             MethodCallExpression methodCallExpression = ignoredMethodCallExpressionList.get(0);
             this.collectSyntaxError(new GinqSyntaxError("Unknown clause: " + methodCallExpression.getMethodAsString(),
-                    methodCallExpression.getLineNumber(), methodCallExpression.getColumnNumber()));
+                methodCallExpression.getLineNumber(), methodCallExpression.getColumnNumber()));
         }
 
         latestGinqExpression.putNodeMetaData(ROOT_GINQ_EXPRESSION, latestGinqExpression);
@@ -143,12 +172,10 @@ public class GinqAstBuilder extends CodeVisitorSupport implements SyntaxErrorRep
         GinqExpression ginqExpression = ginqExpressionStack.peek();
         if (null == ginqExpression) {
             this.collectSyntaxError(new GinqSyntaxError("One `from` is expected and must be the first clause",
-                    call.getLineNumber(), call.getColumnNumber()));
+                call.getLineNumber(), call.getColumnNumber()));
         }
         return ginqExpression.getNodeMetaData(__LATEST_GINQ_EXPRESSION_CLAUSE);
     }
-
-    private boolean visitingOverClause;
 
     @Override
     public void visitMethodCallExpression(MethodCallExpression call) {
@@ -175,24 +202,24 @@ public class GinqAstBuilder extends CodeVisitorSupport implements SyntaxErrorRep
         GinqExpression currentGinqExpression = ginqExpressionStack.peek();
         AbstractGinqExpression latestGinqExpressionClause = getLatestGinqExpressionClause(call);
 
-        if (KW_FROM.equals(methodName)  || JoinExpression.isJoinExpression(methodName)) {
+        if (KW_FROM.equals(methodName) || JoinExpression.isJoinExpression(methodName)) {
             ArgumentListExpression arguments = (ArgumentListExpression) call.getArguments();
             if (arguments.getExpressions().size() != 1) {
                 this.collectSyntaxError(
-                        new GinqSyntaxError(
-                                "Only 1 argument expected for `" + methodName + "`, e.g. `" + methodName + " n in nums`",
-                                call.getLineNumber(), call.getColumnNumber()
-                        )
+                    new GinqSyntaxError(
+                        "Only 1 argument expected for `" + methodName + "`, e.g. `" + methodName + " n in nums`",
+                        call.getLineNumber(), call.getColumnNumber()
+                    )
                 );
             }
             final Expression expression = arguments.getExpression(0);
             if (!(expression instanceof BinaryExpression
-                    && ((BinaryExpression) expression).getOperation().getType() == Types.KEYWORD_IN)) {
+                && ((BinaryExpression) expression).getOperation().getType() == Types.KEYWORD_IN)) {
                 this.collectSyntaxError(
-                        new GinqSyntaxError(
-                                "`in` is expected for `" + methodName + "`, e.g. `" + methodName + " n in nums`",
-                                call.getLineNumber(), call.getColumnNumber()
-                        )
+                    new GinqSyntaxError(
+                        "`in` is expected for `" + methodName + "`, e.g. `" + methodName + " n in nums`",
+                        call.getLineNumber(), call.getColumnNumber()
+                    )
                 );
             }
             BinaryExpression binaryExpression = (BinaryExpression) expression;
@@ -232,8 +259,8 @@ public class GinqAstBuilder extends CodeVisitorSupport implements SyntaxErrorRep
             } else if (latestGinqExpressionClause instanceof DataSourceHolder && filterExpression instanceof WhereExpression) {
                 if (null != currentGinqExpression.getGroupExpression() || null != currentGinqExpression.getOrderExpression() || null != currentGinqExpression.getLimitExpression()) {
                     this.collectSyntaxError(new GinqSyntaxError(
-                            "The preceding clause of `" + methodName + "` should be `from`/" + "join clause",
-                            call.getLineNumber(), call.getColumnNumber()
+                        "The preceding clause of `" + methodName + "` should be `from`/" + "join clause",
+                        call.getLineNumber(), call.getColumnNumber()
                     ));
                 }
                 currentGinqExpression.setWhereExpression((WhereExpression) filterExpression);
@@ -241,8 +268,8 @@ public class GinqAstBuilder extends CodeVisitorSupport implements SyntaxErrorRep
                 ((GroupExpression) latestGinqExpressionClause).setHavingExpression((HavingExpression) filterExpression);
             } else {
                 this.collectSyntaxError(new GinqSyntaxError(
-                        "The preceding clause of `" + methodName + "` should be " + (KW_ON.equals(methodName) ? "" : "`from`/") + "join clause",
-                        call.getLineNumber(), call.getColumnNumber()
+                    "The preceding clause of `" + methodName + "` should be " + (KW_ON.equals(methodName) ? "" : "`from`/") + "join clause",
+                    call.getLineNumber(), call.getColumnNumber()
                 ));
             }
 
@@ -277,13 +304,13 @@ public class GinqAstBuilder extends CodeVisitorSupport implements SyntaxErrorRep
 
             if (latestGinqExpressionClause instanceof OrderExpression) {
                 this.collectSyntaxError(new GinqSyntaxError(
-                        "The clause `" + methodName + "` should be in front of `orderby`",
-                        call.getLineNumber(), call.getColumnNumber()
+                    "The clause `" + methodName + "` should be in front of `orderby`",
+                    call.getLineNumber(), call.getColumnNumber()
                 ));
             } else if (latestGinqExpressionClause instanceof LimitExpression) {
                 this.collectSyntaxError(new GinqSyntaxError(
-                        "The clause `" + methodName + "` should be in front of `limit`",
-                        call.getLineNumber(), call.getColumnNumber()
+                    "The clause `" + methodName + "` should be in front of `limit`",
+                    call.getLineNumber(), call.getColumnNumber()
                 ));
             }
 
@@ -303,8 +330,8 @@ public class GinqAstBuilder extends CodeVisitorSupport implements SyntaxErrorRep
 
             if (latestGinqExpressionClause instanceof LimitExpression) {
                 this.collectSyntaxError(new GinqSyntaxError(
-                        "The clause `" + methodName + "` should be in front of `limit`",
-                        call.getLineNumber(), call.getColumnNumber()
+                    "The clause `" + methodName + "` should be in front of `limit`",
+                    call.getLineNumber(), call.getColumnNumber()
                 ));
             }
 
@@ -347,8 +374,8 @@ public class GinqAstBuilder extends CodeVisitorSupport implements SyntaxErrorRep
                         MethodCallExpression mce = (MethodCallExpression) expression;
                         if (KW_DISTINCT.equals(mce.getMethodAsString())) {
                             this.collectSyntaxError(new GinqSyntaxError(
-                                    "Invalid usage of `distinct`",
-                                    mce.getLineNumber(), mce.getColumnNumber()
+                                "Invalid usage of `distinct`",
+                                mce.getLineNumber(), mce.getColumnNumber()
                             ));
                         }
                     }
@@ -390,10 +417,10 @@ public class GinqAstBuilder extends CodeVisitorSupport implements SyntaxErrorRep
     public void visitVariableExpression(VariableExpression expression) {
         if (KEYWORD_SET.contains(expression.getText())) {
             this.collectSyntaxError(
-                    new GinqSyntaxError(
-                            "Invalid syntax found in `" + expression.getText() + "` clause",
-                            expression.getLineNumber(), expression.getColumnNumber()
-                    )
+                new GinqSyntaxError(
+                    "Invalid syntax found in `" + expression.getText() + "` clause",
+                    expression.getLineNumber(), expression.getColumnNumber()
+                )
             );
         }
 
@@ -405,10 +432,10 @@ public class GinqAstBuilder extends CodeVisitorSupport implements SyntaxErrorRep
         super.visitPropertyExpression(expression);
         if (isSelectMethodCallExpression(expression.getObjectExpression())) {
             this.collectSyntaxError(
-                    new GinqSyntaxError(
-                            "Invalid syntax found in `select` clause, maybe `as` is missing when renaming field.",
-                            expression.getLineNumber(), expression.getColumnNumber()
-                    )
+                new GinqSyntaxError(
+                    "Invalid syntax found in `select` clause, maybe `as` is missing when renaming field.",
+                    expression.getLineNumber(), expression.getColumnNumber()
+                )
             );
         }
     }
@@ -418,10 +445,10 @@ public class GinqAstBuilder extends CodeVisitorSupport implements SyntaxErrorRep
         final String typeName = expression.getLeftExpression().getType().getNameWithoutPackage();
         if (KEYWORD_SET.contains(typeName)) {
             this.collectSyntaxError(
-                    new GinqSyntaxError(
-                            "`" + typeName + "` clause cannot contain assignment expression",
-                            expression.getLineNumber(), expression.getColumnNumber()
-                    )
+                new GinqSyntaxError(
+                    "`" + typeName + "` clause cannot contain assignment expression",
+                    expression.getLineNumber(), expression.getColumnNumber()
+                )
             );
         }
         super.visitDeclarationExpression(expression);
@@ -455,38 +482,8 @@ public class GinqAstBuilder extends CodeVisitorSupport implements SyntaxErrorRep
         }
     }
 
-    private static boolean isSelectMethodCallExpression(Expression expression) {
-        return expression instanceof MethodCallExpression && KW_SELECT.equals(((MethodCallExpression) expression).getMethodAsString());
-    }
-
     @Override
     public SourceUnit getSourceUnit() {
         return sourceUnit;
-    }
-
-    private static final String __LATEST_GINQ_EXPRESSION_CLAUSE = "__latestGinqExpressionClause";
-
-    private static final String KW_WITH = "with"; // reserved keyword
-    private static final String KW_FROM = "from";
-    private static final String KW_IN = "in";
-    private static final String KW_ON = "on";
-    private static final String KW_WHERE = "where";
-    private static final String KW_EXISTS = "exists";
-    private static final String KW_GROUPBY = "groupby";
-    private static final String KW_HAVING = "having";
-    private static final String KW_ORDERBY = "orderby";
-    private static final String KW_LIMIT = "limit";
-    private static final String KW_OFFSET = "offset"; // reserved keyword
-    private static final String KW_SELECT = "select";
-    private static final String KW_DISTINCT = "distinct";
-    private static final String KW_WITHINGROUP = "withingroup"; // reserved keyword
-    private static final String KW_OVER = "over";
-    private static final String KW_AS = "as";
-    private static final String KW_SHUTDOWN = "shutdown";
-    private static final Set<String> KEYWORD_SET = new HashSet<>();
-    static {
-        KEYWORD_SET.addAll(Arrays.asList(KW_WITH, KW_FROM, KW_IN, KW_ON, KW_WHERE, KW_EXISTS, KW_GROUPBY, KW_HAVING, KW_ORDERBY,
-                                         KW_LIMIT, KW_OFFSET, KW_SELECT, KW_DISTINCT, KW_WITHINGROUP, KW_OVER, KW_AS, KW_SHUTDOWN));
-        KEYWORD_SET.addAll(JoinExpression.JOIN_NAME_LIST);
     }
 }

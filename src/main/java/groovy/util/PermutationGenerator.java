@@ -28,15 +28,15 @@ import java.util.List;
 
 /**
  * Systematically generate permutations.
- *
+ * <p>
  * Adapted from Java Code by Michael Gilleland (released with no restrictions) using an algorithm described here:
  * Kenneth H. Rosen, Discrete Mathematics and Its Applications, 2nd edition (NY: McGraw-Hill, 1991), pp. 282-284
  */
 public class PermutationGenerator<E> implements Iterator<List<E>> {
     private final int[] a;
-    private BigInteger numLeft;
     private final BigInteger total;
     private final List<E> items;
+    private BigInteger numLeft;
 
     /**
      * WARNING: Don't make n too large.
@@ -63,6 +63,20 @@ public class PermutationGenerator<E> implements Iterator<List<E>> {
         this(DefaultGroovyMethods.asCollection(items));
     }
 
+    /**
+     * Compute factorial (TODO: expose this)
+     *
+     * @param n the input integer
+     * @return the factorial for n
+     */
+    private static BigInteger getFactorial(int n) {
+        BigInteger fact = BigInteger.ONE;
+        for (int i = n; i > 1; i--) {
+            fact = fact.multiply(new BigInteger(Integer.toString(i)));
+        }
+        return fact;
+    }
+
     public void reset() {
         for (int i = 0; i < a.length; i++) {
             a[i] = i;
@@ -77,20 +91,6 @@ public class PermutationGenerator<E> implements Iterator<List<E>> {
     @Override
     public boolean hasNext() {
         return numLeft.compareTo(BigInteger.ZERO) > 0;
-    }
-
-    /**
-     * Compute factorial (TODO: expose this)
-     *
-     * @param n the input integer
-     * @return the factorial for n
-     */
-    private static BigInteger getFactorial(int n) {
-        BigInteger fact = BigInteger.ONE;
-        for (int i = n; i > 1; i--) {
-            fact = fact.multiply(new BigInteger(Integer.toString(i)));
-        }
-        return fact;
     }
 
     /**

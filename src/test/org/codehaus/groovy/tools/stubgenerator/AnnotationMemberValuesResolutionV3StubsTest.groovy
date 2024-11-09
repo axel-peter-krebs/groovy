@@ -26,7 +26,7 @@ final class AnnotationMemberValuesResolutionV3StubsTest extends StringSourcesStu
     @Override
     Map<String, String> provideSources() {
         [
-            'foo/Foo4434V3.java': '''package foo;
+            'foo/Foo4434V3.java'    : '''package foo;
                 import java.lang.annotation.ElementType;
                 import java.lang.annotation.Retention;
                 import java.lang.annotation.RetentionPolicy;
@@ -45,7 +45,7 @@ final class AnnotationMemberValuesResolutionV3StubsTest extends StringSourcesStu
                 public class MyClass4434V3 {public static final String SOME_CONST = "some constant";}
             ''',
 
-            'Bar4434V3.groovy': '''
+            'Bar4434V3.groovy'      : '''
                 import foo.Foo4434V3
                 import baz.MyClass4434V3
 

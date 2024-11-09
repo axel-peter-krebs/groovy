@@ -28,11 +28,11 @@ import java.util.List;
 public class SimpleGroovyParameter implements GroovyParameter {
     private static final GroovyAnnotationRef[] EMPTY_GROOVYANNOTATIONREF_ARRAY = new GroovyAnnotationRef[0];
     private final String name;
+    private final List<GroovyAnnotationRef> annotationRefs;
     private String typeName;
     private String defaultValue;
     private GroovyType type;
     private boolean vararg;
-    private final List<GroovyAnnotationRef> annotationRefs;
 
     public SimpleGroovyParameter(String name) {
         this.name = name;

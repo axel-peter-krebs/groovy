@@ -75,7 +75,7 @@ import org.codehaus.groovy.runtime.InvokerHelper;
  * delegate.a = 1;
  * delegate.b(2);
  * </pre>
- *
+ * <p>
  * ... whereas in plain {@link Script}, this will be run as:
  *
  * <pre>
@@ -95,14 +95,6 @@ public abstract class DelegatingScript extends Script {
         super(binding);
     }
 
-    /**
-     * Sets the delegation target.
-     */
-    public void setDelegate(Object delegate) {
-        this.delegate = delegate;
-        this.metaClass = InvokerHelper.getMetaClass(delegate.getClass());
-    }
-
     @Override
     public Object invokeMethod(String name, Object args) {
         try {
@@ -118,7 +110,7 @@ public abstract class DelegatingScript extends Script {
     @Override
     public Object getProperty(String property) {
         try {
-            return metaClass.getProperty(delegate,property);
+            return metaClass.getProperty(delegate, property);
         } catch (MissingPropertyException e) {
             return super.getProperty(property);
         }
@@ -127,13 +119,21 @@ public abstract class DelegatingScript extends Script {
     @Override
     public void setProperty(String property, Object newValue) {
         try {
-            metaClass.setProperty(delegate,property,newValue);
+            metaClass.setProperty(delegate, property, newValue);
         } catch (MissingPropertyException e) {
-            super.setProperty(property,newValue);
+            super.setProperty(property, newValue);
         }
     }
 
     public Object getDelegate() {
         return delegate;
+    }
+
+    /**
+     * Sets the delegation target.
+     */
+    public void setDelegate(Object delegate) {
+        this.delegate = delegate;
+        this.metaClass = InvokerHelper.getMetaClass(delegate.getClass());
     }
 }

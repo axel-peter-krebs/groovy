@@ -40,7 +40,7 @@ class JmxOperationInfoManager {
     static List<ModelMBeanConstructorInfo> getConstructorInfosFromMap(Map metaMap) {
         if (!metaMap) return null
         def ctors = []
-        metaMap.each {ctorName, map ->
+        metaMap.each { ctorName, map ->
             ModelMBeanConstructorInfo info = getConstructorInfoFromMap(map)
             ctors << info
         }
@@ -70,15 +70,15 @@ class JmxOperationInfoManager {
         desc.setField(JmxBuilderTools.DESC_KEY_ROLE, map.remove(JmxBuilderTools.DESC_KEY_ROLE))
         desc.setField JmxBuilderTools.DESC_KEY_DISPLAY_NAME, map.remove(JmxBuilderTools.DESC_KEY_DISPLAY_NAME)
 
-        map.each {key, value ->
+        map.each { key, value ->
             desc.setField(key, value)
         }
 
         ModelMBeanConstructorInfo info = new ModelMBeanConstructorInfo(
-                ctor.name,
-                (String) desc.getFieldValue(JmxBuilderTools.DESC_KEY_DISPLAY_NAME),
-                params,
-                desc
+            ctor.name,
+            (String) desc.getFieldValue(JmxBuilderTools.DESC_KEY_DISPLAY_NAME),
+            params,
+            desc
         )
 
         return info
@@ -92,7 +92,7 @@ class JmxOperationInfoManager {
     static List<ModelMBeanOperationInfo> getOperationInfosFromMap(Map metaMap) {
         if (!metaMap) return null
         def ops = []
-        metaMap.each {opNames, map ->
+        metaMap.each { opNames, map ->
             ModelMBeanOperationInfo info = getOperationInfoFromMap(map)
             ops << info
         }
@@ -122,12 +122,12 @@ class JmxOperationInfoManager {
         desc.setField JmxBuilderTools.DESC_KEY_DISPLAY_NAME, map.remove(JmxBuilderTools.DESC_KEY_DISPLAY_NAME)
 
         ModelMBeanOperationInfo info = new ModelMBeanOperationInfo(
-                method.name,
-                (String) desc.getFieldValue(JmxBuilderTools.DESC_KEY_DISPLAY_NAME),
-                params,
-                method.returnType.name,
-                ModelMBeanOperationInfo.ACTION,
-                desc
+            method.name,
+            (String) desc.getFieldValue(JmxBuilderTools.DESC_KEY_DISPLAY_NAME),
+            params,
+            method.returnType.name,
+            ModelMBeanOperationInfo.ACTION,
+            desc
         )
 
         return info
@@ -142,7 +142,7 @@ class JmxOperationInfoManager {
         if (!metaMap || metaMap.size() == 0) return null
         List<MBeanParameterInfo> result = new ArrayList<MBeanParameterInfo>(metaMap.size())
 
-        metaMap.each {paramType, param ->
+        metaMap.each { paramType, param ->
             String type = (param.type instanceof String) ? JmxBuilderTools.getNormalizedType(param.type) : JmxBuilderTools.getNormalizedType(param.type.name)
             MBeanParameterInfo info = new MBeanParameterInfo(param.name, type, param.displayName)
             result << info
@@ -155,7 +155,7 @@ class JmxOperationInfoManager {
      * Returns a MBean operation info for getter operation specified by the MetaProperty.  Since no meta
      * map is provided, this method will generate all default descriptor values to describe the operation.
      * @param prop - the property object on the POGO/POJO that represents a getter
-     * @return a ModelMBeanOperation info built 
+     * @return a ModelMBeanOperation info built
      */
     static ModelMBeanOperationInfo createGetterOperationInfoFromProperty(MetaProperty prop) {
         if (prop == null) return null
@@ -170,12 +170,12 @@ class JmxOperationInfoManager {
         desc.setField JmxBuilderTools.DESC_KEY_DISPLAY_NAME, "Getter for attribute ${prop.name}".toString()
 
         ModelMBeanOperationInfo op = new ModelMBeanOperationInfo(
-                name, // name
-                (String) desc.getFieldValue(JmxBuilderTools.DESC_KEY_DISPLAY_NAME),
-                null,
-                prop.type.getName(),
-                ModelMBeanOperationInfo.INFO,
-                desc
+            name, // name
+            (String) desc.getFieldValue(JmxBuilderTools.DESC_KEY_DISPLAY_NAME),
+            null,
+            prop.type.getName(),
+            ModelMBeanOperationInfo.INFO,
+            desc
         )
 
         return op
@@ -197,20 +197,20 @@ class JmxOperationInfoManager {
         desc.setField JmxBuilderTools.DESC_KEY_DISPLAY_NAME, "Getter for attribute ${prop.name}".toString()
 
         MBeanParameterInfo[] params = (MBeanParameterInfo[]) [
-                new MBeanParameterInfo(
-                        "${prop.getName()}".toString(),
-                        prop.type.name,
-                        "Parameter for setter"
-                )
+            new MBeanParameterInfo(
+                "${prop.getName()}".toString(),
+                prop.type.name,
+                "Parameter for setter"
+            )
         ]
 
         ModelMBeanOperationInfo op = new ModelMBeanOperationInfo(
-                name,
-                (String) desc.getFieldValue(JmxBuilderTools.DESC_KEY_DISPLAY_NAME),
-                params,
-                Void.TYPE.name,
-                ModelMBeanOperationInfo.INFO,
-                desc
+            name,
+            (String) desc.getFieldValue(JmxBuilderTools.DESC_KEY_DISPLAY_NAME),
+            params,
+            Void.TYPE.name,
+            ModelMBeanOperationInfo.INFO,
+            desc
         )
 
         return op

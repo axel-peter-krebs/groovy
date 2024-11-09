@@ -18,6 +18,7 @@ import groovy.test.GroovyTestCase
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 class LogImprovementsASTTransformsTest extends GroovyTestCase {
 
     void testLogASTTransformation() {
@@ -123,7 +124,7 @@ g.greet()
     }
 
     void testLog4j2ASTTransformation() {
-                assertScript '''
+        assertScript '''
     // tag::log4j2_spec[]
     @groovy.util.logging.Log4j2
     class Greeter {
@@ -137,7 +138,7 @@ g.greet()
     g.greet()
             '''
 
-                assertScript '''
+        assertScript '''
     // tag::log4j2_equiv[]
     import org.apache.logging.log4j.LogManager
     import org.apache.logging.log4j.Logger

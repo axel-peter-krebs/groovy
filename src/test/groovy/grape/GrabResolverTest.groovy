@@ -39,7 +39,8 @@ final class GrabResolverTest {
         originalGrapeRoot = System.getProperty('grape.root')
     }
 
-    @Before @CompileDynamic
+    @Before
+    @CompileDynamic
     void setUp() {
         Grape.@instance = null // isolate each test
 

@@ -60,8 +60,8 @@ class ItemListList {
         try {
 // needs to be joint compiler
             FileSystemCompiler.commandLineCompile(
-                    "-j -sourcepath ${workDir.path} -d ${classesDir.path} ${itemJava.path} ${itemListListGroovy.path}".
-                            split(' '), true)
+                "-j -sourcepath ${workDir.path} -d ${classesDir.path} ${itemJava.path} ${itemListListGroovy.path}".
+                    split(' '), true)
 
             // So the bug would produce an ItemListList with a field of type:
             //   java.util.List<java.util.List<Item>>

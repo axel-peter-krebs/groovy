@@ -58,7 +58,8 @@ final class ClosureComposeTest {
         '''
     }
 
-    @Test // GROOVY-4512
+    @Test
+    // GROOVY-4512
     void testClosureCompositionInstance() {
         def inst = new ComposeTestHelper()
         assert inst.composedA.call() == 42
@@ -116,7 +117,8 @@ final class ClosureComposeTest {
         '''
     }
 
-    @Test // GROOVY-4994: failed with MissingPropertyException
+    @Test
+    // GROOVY-4994: failed with MissingPropertyException
     void testDelegate() {
         assertScript '''
             def a = { foo }

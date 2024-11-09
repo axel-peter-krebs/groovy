@@ -26,16 +26,16 @@ import java.util.concurrent.LinkedBlockingQueue
 import java.lang.ref.WeakReference
 
 class ActorTest extends GroovyTestCase {
-    void testSync () {
+    void testSync() {
         new FibCalculator().calcFibSync(15)
     }
 
-    void testAsync () {
+    void testAsync() {
         ReentrantLock.metaClass {
             withLock { Closure c ->
                 lock()
                 try {
-                    c.call ()
+                    c.call()
                 }
                 finally {
                     unlock()
@@ -50,7 +50,7 @@ class ActorTest extends GroovyTestCase {
 
         Thread thread = Thread.currentThread()
         thread.name = "Main App Thread"
-        thread.registerWorker ()
+        thread.registerWorker()
         new FibCalculator().calcFib(18)
 
         Object.metaClass = null
@@ -62,28 +62,28 @@ class ActorTest extends GroovyTestCase {
 class WorkerThread {
     static {
         Object.metaClass {
-            longOperation{ Closure c ->
-                new LongOperation (c)
+            longOperation { Closure c ->
+                new LongOperation(c)
             }
 
-            send{ Closure c ->
-                new LongOperation (c).send ()
+            send { Closure c ->
+                new LongOperation(c).send()
             }
 
-            post{ Closure c ->
-                new LongOperation (c).post ()
+            post { Closure c ->
+                new LongOperation(c).post()
             }
         }
     }
 
-    def list = new LinkedList ()
+    def list = new LinkedList()
 
     private static final ReentrantLock globalLock = new ReentrantLock()
-    private static final LinkedBlockingQueue globalQueue = new LinkedBlockingQueue ()
-    private static final ArrayList allWorkers = new ArrayList ()
+    private static final LinkedBlockingQueue globalQueue = new LinkedBlockingQueue()
+    private static final ArrayList allWorkers = new ArrayList()
     private static final Random r = new Random();
 
-    WorkerThread () {
+    WorkerThread() {
     }
 
     void registerWorker() {
@@ -101,21 +101,21 @@ class WorkerThread {
         }
     }
 
-    void schedule (Closure action) {
+    void schedule(Closure action) {
         withLock {
             list.addFirst action
         }
     }
 
-    void post (Closure action) {
+    void post(Closure action) {
         globalQueue.offer action
     }
 
-    Object[] send (List actions) {
+    Object[] send(List actions) {
         int len = actions.size()
         AtomicInteger counter = new AtomicInteger()
         def results = new Object[len]
-        actions.eachWithIndex {Closure action, int index ->
+        actions.eachWithIndex { Closure action, int index ->
             schedule {
                 Object res = action.call()
                 results[index] = res
@@ -129,59 +129,59 @@ class WorkerThread {
         return results
     }
 
-    void execute () {
-        Closure action = nextTask ()
+    void execute() {
+        Closure action = nextTask()
 
         if (action)
-          action ()
+            action()
     }
 
     Closure nextTask() {
         Closure action = withLock {
-            return list.isEmpty() ? null : (Closure)list.removeFirst()
+            return list.isEmpty() ? null : (Closure) list.removeFirst()
         }
 
         if (action != null)
-          return action
+            return action
 
         action = globalQueue.poll()
         if (action != null)
-          return action
+            return action
 
         globalLock.withLock {
-           int len = allWorkers.size()
-           if (len == 1)
-             return null
+            int len = allWorkers.size()
+            if (len == 1)
+                return null
 
-           int from = r.nextInt(len)
-           for (int i = from+1; i != from; ++i) {
-               if (i == len) {
-                 i = 0
-                 if (from == 0) {
-                     return null
-                 }
-               }
+            int from = r.nextInt(len)
+            for (int i = from + 1; i != from; ++i) {
+                if (i == len) {
+                    i = 0
+                    if (from == 0) {
+                        return null
+                    }
+                }
 
-               def worker = allWorkers[i]
-               if (worker) {
-                   worker = worker.get ()
-                   if (!worker) {
-                     allWorkers [i] = null
-                     continue
-                   }
+                def worker = allWorkers[i]
+                if (worker) {
+                    worker = worker.get()
+                    if (!worker) {
+                        allWorkers[i] = null
+                        continue
+                    }
 
-                   action = worker.withLock {
-                       if (!worker.list.isEmpty()) {
-                            worker.list.removeLast ()
-                       }
-                   }
+                    action = worker.withLock {
+                        if (!worker.list.isEmpty()) {
+                            worker.list.removeLast()
+                        }
+                    }
 
-                   if (action)
-                     return action
-               }
-           }
+                    if (action)
+                        return action
+                }
+            }
 
-           return null
+            return null
         }
     }
 
@@ -190,11 +190,11 @@ class WorkerThread {
             def n = i
             Thread.start {
                 Thread thread = Thread.currentThread()
-                thread.registerWorker ()
+                thread.registerWorker()
                 thread.name = "WorkerPool-" + n
                 try {
-                    while(true) {
-                        thread.execute ()
+                    while (true) {
+                        thread.execute()
                     }
                 }
                 finally {
@@ -206,8 +206,8 @@ class WorkerThread {
 }
 
 class FibCalculator {
-    def calcFib (value) {
-        def a = calcFibImpl (value)
+    def calcFib(value) {
+        def a = calcFibImpl(value)
         String calc = Thread.currentThread().name
         post {
             println "fib(${value})=$a $calc ${Thread.currentThread().name}"
@@ -216,28 +216,27 @@ class FibCalculator {
         a
     }
 
-    def calcFibImpl (value) {
+    def calcFibImpl(value) {
         if (value <= 0)
-           0
+            0
         else {
-           if (value <= 2) {
-               1
-           }
-           else
-               longOperation {
-                   calcFib (value-1)
-               }
-               .and {
-                   calcFib (value-2)
-               }
-               .send { Object [] it ->
-                   it [0] + it [1]
-               }
+            if (value <= 2) {
+                1
+            } else
+                longOperation {
+                    calcFib(value - 1)
+                }
+                    .and {
+                        calcFib(value - 2)
+                    }
+                    .send { Object[] it ->
+                        it[0] + it[1]
+                    }
         }
     }
 
-    def calcFibSync (value) {
-        def a = calcFibSyncImpl (value)
+    def calcFibSync(value) {
+        def a = calcFibSyncImpl(value)
         String calc = Thread.currentThread().name
         println "fib(${value})=$a $calc ${Thread.currentThread().name}"
         Thread.sleep(1)
@@ -245,15 +244,14 @@ class FibCalculator {
     }
 
 
-    def calcFibSyncImpl (value) {
+    def calcFibSyncImpl(value) {
         if (value <= 0)
-           0
+            0
         else {
-           if (value <= 2) {
-               1
-           }
-           else
-             calcFibSync(value-1) + calcFibSync(value-2)
+            if (value <= 2) {
+                1
+            } else
+                calcFibSync(value - 1) + calcFibSync(value - 2)
         }
     }
 }
@@ -261,26 +259,26 @@ class FibCalculator {
 class LongOperation {
     def actions = []
 
-    LongOperation (Closure action) {
+    LongOperation(Closure action) {
         actions << action
     }
 
-    LongOperation and (Closure c) {
+    LongOperation and(Closure c) {
         actions << c
         this
     }
 
-    def send (Closure op) {
-        op.call (send())
+    def send(Closure op) {
+        op.call(send())
     }
 
-    Object[] send () {
-        Thread.currentThread().send (actions)
+    Object[] send() {
+        Thread.currentThread().send(actions)
     }
 
-    void post () {
+    void post() {
         actions.each { Closure action ->
-           Thread.currentThread().post(action)
+            Thread.currentThread().post(action)
         }
     }
 }

@@ -66,6 +66,30 @@ public class ConfigObject extends GroovyObjectSupport implements Writable, Map, 
         this(null);
     }
 
+    private static void writeValue(String key, String space, String prefix, Object value, BufferedWriter out) throws IOException {
+//        key = key.indexOf('.') > -1 ? InvokerHelper.inspect(key) : key;
+        boolean isKeyword = KEYWORDS.contains(key);
+        key = isKeyword ? FormatHelper.inspect(key) : key;
+
+        if (!StringGroovyMethods.asBoolean(prefix) && isKeyword) prefix = "this.";
+        out.append(space).append(prefix).append(key).append('=').append(FormatHelper.inspect(value));
+        out.newLine();
+    }
+
+    private static Properties convertValuesToString(Map props) {
+        Properties newProps = new Properties();
+
+        for (Object o : props.entrySet()) {
+            Map.Entry next = (Map.Entry) o;
+            Object key = next.getKey();
+            Object value = next.getValue();
+
+            newProps.put(key, value != null ? value.toString() : null);
+        }
+
+        return newProps;
+    }
+
     public URL getConfigFile() {
         return configFile;
     }
@@ -91,7 +115,6 @@ public class ConfigObject extends GroovyObjectSupport implements Writable, Map, 
 
         return outArg;
     }
-
 
     /**
      * Overrides the default getProperty implementation to create nested ConfigObject instances on demand
@@ -142,7 +165,6 @@ public class ConfigObject extends GroovyObjectSupport implements Writable, Map, 
     public Map merge(ConfigObject other) {
         return doMerge(this, other);
     }
-
 
     /**
      * Converts this ConfigObject into the java.util.Properties format, flattening the tree structure beforehand
@@ -259,16 +281,6 @@ public class ConfigObject extends GroovyObjectSupport implements Writable, Map, 
         }
     }
 
-    private static void writeValue(String key, String space, String prefix, Object value, BufferedWriter out) throws IOException {
-//        key = key.indexOf('.') > -1 ? InvokerHelper.inspect(key) : key;
-        boolean isKeyword = KEYWORDS.contains(key);
-        key = isKeyword ? FormatHelper.inspect(key) : key;
-
-        if (!StringGroovyMethods.asBoolean(prefix) && isKeyword) prefix = "this.";
-        out.append(space).append(prefix).append(key).append('=').append(FormatHelper.inspect(value));
-        out.newLine();
-    }
-
     private void writeNode(String key, String space, int tab, ConfigObject value, BufferedWriter out) throws IOException {
         key = KEYWORDS.contains(key) ? FormatHelper.inspect(key) : key;
         out.append(space).append(key).append(" {");
@@ -276,20 +288,6 @@ public class ConfigObject extends GroovyObjectSupport implements Writable, Map, 
         writeConfig("", value, out, tab + 1, true);
         out.append(space).append('}');
         out.newLine();
-    }
-
-    private static Properties convertValuesToString(Map props) {
-        Properties newProps = new Properties();
-
-        for (Object o : props.entrySet()) {
-            Map.Entry next = (Map.Entry) o;
-            Object key = next.getKey();
-            Object value = next.getValue();
-
-            newProps.put(key, value != null ? value.toString() : null);
-        }
-
-        return newProps;
     }
 
     private void populate(String suffix, Map config, Map map) {
@@ -373,6 +371,7 @@ public class ConfigObject extends GroovyObjectSupport implements Writable, Map, 
 
     /**
      * Returns a shallow copy of this ConfigObject, keys and configuration entries are not cloned.
+     *
      * @return a shallow copy of this ConfigObject
      */
     @Override
@@ -394,7 +393,7 @@ public class ConfigObject extends GroovyObjectSupport implements Writable, Map, 
      * assert config.foo.isSet('password')
      * assert config.foo.isSet('username') == false
      * </pre>
-     *
+     * <p>
      * The check works <b>only</v> for options <b>one</b> block below the current block.
      * E.g. <code>config.isSet('foo.password')</code> will always return false.
      *

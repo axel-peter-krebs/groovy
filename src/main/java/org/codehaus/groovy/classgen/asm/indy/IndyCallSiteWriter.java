@@ -31,35 +31,49 @@ import org.codehaus.groovy.classgen.asm.WriterController;
  */
 public class IndyCallSiteWriter extends CallSiteWriter {
 
-    public IndyCallSiteWriter(final WriterController controller) {
-        super(controller); this.controller = controller;
-    }
     private final WriterController controller;
 
+    public IndyCallSiteWriter(final WriterController controller) {
+        super(controller);
+        this.controller = controller;
+    }
+
     @Override
-    public void generateCallSiteArray() {}
+    public void generateCallSiteArray() {
+    }
+
     @Override
-    public void makeCallSite(Expression receiver, String message, Expression arguments, boolean safe, boolean implicitThis, boolean callCurrent, boolean callStatic) {}
+    public void makeCallSite(Expression receiver, String message, Expression arguments, boolean safe, boolean implicitThis, boolean callCurrent, boolean callStatic) {
+    }
+
     @Override
     public void makeSingleArgumentCall(Expression receiver, String message, Expression arguments, boolean safe) {
         throw new GroovyBugError("At line " + receiver.getLineNumber() + " column " + receiver.getColumnNumber() + "\n" +
-                "On receiver: " + receiver.getText() + " with message: " + message + " and arguments: " + arguments.getText() + "\n" +
-                "This method should not have been called. Please try to create a simple example reproducing this error and file a bug report at https://issues.apache.org/jira/browse/GROOVY");
+            "On receiver: " + receiver.getText() + " with message: " + message + " and arguments: " + arguments.getText() + "\n" +
+            "This method should not have been called. Please try to create a simple example reproducing this error and file a bug report at https://issues.apache.org/jira/browse/GROOVY");
     }
+
     @Override
-    public void prepareCallSite(String message) {}
+    public void prepareCallSite(String message) {
+    }
+
     @Override
-    public void makeSiteEntry() {}
+    public void makeSiteEntry() {
+    }
+
     @Override
-    public void makeCallSiteArrayInitializer() {}
+    public void makeCallSiteArrayInitializer() {
+    }
+
     @Override
     public void makeGetPropertySite(Expression receiver, String name, boolean safe, boolean implicitThis) {
-        InvokeDynamicWriter idw = (InvokeDynamicWriter)controller.getInvocationWriter();
+        InvokeDynamicWriter idw = (InvokeDynamicWriter) controller.getInvocationWriter();
         idw.writeGetProperty(receiver, name, safe, implicitThis, false);
     }
+
     @Override
     public void makeGroovyObjectGetPropertySite(Expression receiver, String name, boolean safe, boolean implicitThis) {
-        InvokeDynamicWriter idw = (InvokeDynamicWriter)controller.getInvocationWriter();
+        InvokeDynamicWriter idw = (InvokeDynamicWriter) controller.getInvocationWriter();
         idw.writeGetProperty(receiver, name, safe, implicitThis, true);
     }
 }

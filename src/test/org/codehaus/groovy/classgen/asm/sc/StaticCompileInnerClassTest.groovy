@@ -22,7 +22,7 @@ import org.codehaus.groovy.classgen.asm.AbstractBytecodeTestCase
 
 class StaticCompileInnerClassTest extends AbstractBytecodeTestCase {
     void testStaticCompileCallToOwnerField() {
-        def bytecode = compile([method:'m'],'''
+        def bytecode = compile([method: 'm'], '''
             @groovy.transform.CompileStatic
             class Config {
                 String path
@@ -39,7 +39,7 @@ class StaticCompileInnerClassTest extends AbstractBytecodeTestCase {
     }
 
     void testStaticCompileCallToOwnerMethod() {
-        def bytecode = compile([method:'m'],'''
+        def bytecode = compile([method: 'm'], '''
             @groovy.transform.CompileStatic
             class Config {
                 String path
@@ -58,7 +58,7 @@ class StaticCompileInnerClassTest extends AbstractBytecodeTestCase {
 
     void testStaticCompileCallToOwnerPrivateMethod() {
 
-        def bytecode = compile([method:'m'],'''
+        def bytecode = compile([method: 'm'], '''
             @groovy.transform.CompileStatic
             class Config {
                 String path

@@ -107,7 +107,8 @@ final class StreamingJsonBuilderTest {
         '''
     }
 
-    @Test // GROOVY-9662
+    @Test
+    // GROOVY-9662
     void testStreamingJsonBuilderDelegationMetadata() {
         assertScript '''
             import groovy.json.*

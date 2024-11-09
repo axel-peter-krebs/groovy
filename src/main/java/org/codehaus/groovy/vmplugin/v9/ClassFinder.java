@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 
 /**
  * Find classes under the specified package via some classpath entry
- *
+ * <p>
  * Usage:
  * <pre><code>
  *   // find classes under `me.sunlan` package via classpath entry(directory) `D:/_APPS/git_apps/java8-labs/out/production/classes/`
@@ -61,11 +61,14 @@ import java.util.regex.Pattern;
  * @since 3.0.2
  */
 public class ClassFinder {
+    private ClassFinder() {
+    }
+
     /**
      * Returns the found classes
      *
      * @param classpathEntryURI the classpath entry
-     * @param packageName the package under which we find classes
+     * @param packageName       the package under which we find classes
      * @return the found classes
      * @since 3.0.2
      */
@@ -77,8 +80,8 @@ public class ClassFinder {
      * Returns the found classes
      *
      * @param classpathEntryURI the classpath entry
-     * @param packageName the package under which we find classes
-     * @param recursive whether to find sub-packages
+     * @param packageName       the package under which we find classes
+     * @param recursive         whether to find sub-packages
      * @return the found classes
      * @since 3.0.2
      */
@@ -90,9 +93,9 @@ public class ClassFinder {
      * Returns the found classes
      *
      * @param classpathEntryURI the classpath entry
-     * @param packageName the package under which we find classes
-     * @param recursive whether to find sub-packages
-     * @param innerClasses whether to find inner classes (class names containing a "$")
+     * @param packageName       the package under which we find classes
+     * @param recursive         whether to find sub-packages
+     * @param innerClasses      whether to find inner classes (class names containing a "$")
      * @return the found classes
      * @since 5.0.0
      */
@@ -166,9 +169,9 @@ public class ClassFinder {
         } catch (UnsupportedOperationException ignored) {
         } catch (Exception e) {
             throw new ClassFindFailedException(
-                    String.format("Failed to find classes via uri: %s, prefix: %s, packageName: %s, recursive: %s",
-                            uri, prefix, packageName, recursive
-                    ), e);
+                String.format("Failed to find classes via uri: %s, prefix: %s, packageName: %s, recursive: %s",
+                    uri, prefix, packageName, recursive
+                ), e);
         } finally {
             // we only close file systems we opened
             if (fsMaybeNew != null && fsMaybeNew.getV2()) {
@@ -193,6 +196,4 @@ public class ClassFinder {
             return new Tuple2<>(FileSystems.getFileSystem(uri), false);
         }
     }
-
-    private ClassFinder() {}
 }

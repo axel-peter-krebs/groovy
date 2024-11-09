@@ -58,7 +58,8 @@ final class Groovy9007 {
         '''
     }
 
-    @Test // GROOVY-8978
+    @Test
+    // GROOVY-8978
     void testProtectedFieldInChildWithExplicitThis() {
         assertScript '''
             import groovy.transform.CompileStatic

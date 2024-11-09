@@ -21,12 +21,12 @@ package groovy.bugs
 import groovy.test.GroovyTestCase
 
 class Groovy2351Bug extends GroovyTestCase {
-   void testVarArgs () {
+    void testVarArgs() {
 
-       def a = new VarArgs()
-       assertEquals( "method with Integer", a.method(1, 2, 3, 4, 5))
-       assertEquals( "method with Objects", a.method("", 2, "22", 4, 5))
-   }
+        def a = new VarArgs()
+        assertEquals("method with Integer", a.method(1, 2, 3, 4, 5))
+        assertEquals("method with Objects", a.method("", 2, "22", 4, 5))
+    }
 }
 
 class VarArgs {

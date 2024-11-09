@@ -48,17 +48,25 @@ import static org.objectweb.asm.Opcodes.POP;
 
 public class AssertionWriter {
 
-    private static class AssertionTracker {
-        int recorderIndex;
-        SourceText sourceText;
-    }
-
     private final WriterController controller;
     private AssertionTracker assertionTracker;
     private AssertionTracker disabledTracker;
-
     public AssertionWriter(final WriterController wc) {
         this.controller = wc;
+    }
+
+    private static void addVariableNames(final Expression expression, final List<String> list) {
+        if (expression instanceof BooleanExpression) {
+            BooleanExpression boolExp = (BooleanExpression) expression;
+            addVariableNames(boolExp.getExpression(), list);
+        } else if (expression instanceof BinaryExpression) {
+            BinaryExpression binExp = (BinaryExpression) expression;
+            addVariableNames(binExp.getLeftExpression(), list);
+            addVariableNames(binExp.getRightExpression(), list);
+        } else if (expression instanceof VariableExpression) {
+            VariableExpression varExp = (VariableExpression) expression;
+            list.add(varExp.getName());
+        }
     }
 
     public void writeAssertStatement(final AssertStatement statement) {
@@ -72,7 +80,7 @@ public class AssertionWriter {
             SourceText sourceText;
             // don't rewrite assertions with message or no source
             if (!isNullConstant(statement.getMessageExpression())
-                    || (sourceText = getSourceText(statement)) == null) {
+                || (sourceText = getSourceText(statement)) == null) {
                 // test the condition
                 statement.getBooleanExpression().visit(controller.getAcg());
                 Label falseBranch = operandStack.jump(IFEQ);
@@ -205,29 +213,13 @@ public class AssertionWriter {
         }
     }
 
-    private static void addVariableNames(final Expression expression, final List<String> list) {
-        if (expression instanceof BooleanExpression) {
-            BooleanExpression boolExp = (BooleanExpression) expression;
-            addVariableNames(boolExp.getExpression(), list);
-        } else if (expression instanceof BinaryExpression) {
-            BinaryExpression binExp = (BinaryExpression) expression;
-            addVariableNames(binExp.getLeftExpression(), list);
-            addVariableNames(binExp.getRightExpression(), list);
-        } else if (expression instanceof VariableExpression) {
-            VariableExpression varExp = (VariableExpression) expression;
-            list.add(varExp.getName());
-        }
-    }
-
     private void throwAssertError() {
         // GROOVY-10878: call method that returns throwable, then throw it from here for better coverage metrics
         controller.getMethodVisitor().visitMethodInsn(INVOKESTATIC, "org/codehaus/groovy/runtime/InvokerHelper",
-                "createAssertError", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/AssertionError;", false);
+            "createAssertError", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/AssertionError;", false);
         controller.getMethodVisitor().visitInsn(ATHROW); // throw AssertionError
         controller.getOperandStack().remove(2); // two call arguments
     }
-
-    //--------------------------------------------------------------------------
 
     public void disableTracker() {
         if (assertionTracker != null) {
@@ -235,6 +227,8 @@ public class AssertionWriter {
             assertionTracker = null;
         }
     }
+
+    //--------------------------------------------------------------------------
 
     public void reenableTracker() {
         if (disabledTracker != null) {
@@ -267,5 +261,10 @@ public class AssertionWriter {
         mv.visitMethodInsn(INVOKEVIRTUAL, "org/codehaus/groovy/runtime/powerassert/ValueRecorder", "record", "(Ljava/lang/Object;I)Ljava/lang/Object;", false);
         mv.visitInsn(POP);
         operandStack.remove(2);
+    }
+
+    private static class AssertionTracker {
+        int recorderIndex;
+        SourceText sourceText;
     }
 }

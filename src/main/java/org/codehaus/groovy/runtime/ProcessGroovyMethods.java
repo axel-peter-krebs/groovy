@@ -150,9 +150,18 @@ public class ProcessGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 2.1
      */
     public static void closeStreams(Process self) {
-        try { self.getErrorStream().close(); } catch (IOException ignore) {}
-        try { self.getInputStream().close(); } catch (IOException ignore) {}
-        try { self.getOutputStream().close(); } catch (IOException ignore) {}
+        try {
+            self.getErrorStream().close();
+        } catch (IOException ignore) {
+        }
+        try {
+            self.getInputStream().close();
+        } catch (IOException ignore) {
+        }
+        try {
+            self.getOutputStream().close();
+        } catch (IOException ignore) {
+        }
     }
 
     /**
@@ -168,7 +177,7 @@ public class ProcessGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.0
      */
     public static void consumeProcessOutput(Process self) {
-        consumeProcessOutput(self, (OutputStream)null, (OutputStream)null);
+        consumeProcessOutput(self, (OutputStream) null, (OutputStream) null);
     }
 
     /**
@@ -179,9 +188,9 @@ public class ProcessGroovyMethods extends DefaultGroovyMethodsSupport {
      * The threads will not be join()ed, even if waitFor() is called. To wait
      * for the output to be fully consumed call waitForProcessOutput().
      *
-     * @param self a Process
+     * @param self   a Process
      * @param output an Appendable to capture the process stdout
-     * @param error an Appendable to capture the process stderr
+     * @param error  an Appendable to capture the process stderr
      * @since 1.7.5
      */
     public static void consumeProcessOutput(Process self, Appendable output, Appendable error) {
@@ -197,9 +206,9 @@ public class ProcessGroovyMethods extends DefaultGroovyMethodsSupport {
      * The threads will not be join()ed, even if waitFor() is called. To wait
      * for the output to be fully consumed call waitForProcessOutput().
      *
-     * @param self a Process
+     * @param self   a Process
      * @param output an OutputStream to capture the process stdout
-     * @param error an OutputStream to capture the process stderr
+     * @param error  an OutputStream to capture the process stderr
      * @since 1.5.2
      */
     public static void consumeProcessOutput(Process self, OutputStream output, OutputStream error) {
@@ -222,7 +231,7 @@ public class ProcessGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.6.5
      */
     public static void waitForProcessOutput(Process self) {
-        waitForProcessOutput(self, (OutputStream)null, (OutputStream)null);
+        waitForProcessOutput(self, (OutputStream) null, (OutputStream) null);
     }
 
     /**
@@ -233,9 +242,9 @@ public class ProcessGroovyMethods extends DefaultGroovyMethodsSupport {
      * As implied by the waitFor... name, we also wait until we finish
      * as well. Finally, the input, output and error streams are closed.
      *
-     * @param self a Process
+     * @param self   a Process
      * @param output an Appendable to capture the process stdout
-     * @param error an Appendable to capture the process stderr
+     * @param error  an Appendable to capture the process stderr
      * @since 1.7.5
      */
     public static void waitForProcessOutput(Process self, Appendable output, Appendable error) {
@@ -243,9 +252,21 @@ public class ProcessGroovyMethods extends DefaultGroovyMethodsSupport {
         Thread terr = consumeProcessErrorStream(self, error);
         boolean interrupted = false;
         try {
-            try { tout.join(); } catch (InterruptedException ignore) { interrupted = true; }
-            try { terr.join(); } catch (InterruptedException ignore) { interrupted = true; }
-            try { self.waitFor(); } catch (InterruptedException ignore) { interrupted = true; }
+            try {
+                tout.join();
+            } catch (InterruptedException ignore) {
+                interrupted = true;
+            }
+            try {
+                terr.join();
+            } catch (InterruptedException ignore) {
+                interrupted = true;
+            }
+            try {
+                self.waitFor();
+            } catch (InterruptedException ignore) {
+                interrupted = true;
+            }
             closeStreams(self);
         } finally {
             if (interrupted) Thread.currentThread().interrupt();
@@ -260,9 +281,9 @@ public class ProcessGroovyMethods extends DefaultGroovyMethodsSupport {
      * As implied by the waitFor... name, we also wait until we finish
      * as well. Finally, the input, output and error streams are closed.
      *
-     * @param self a Process
+     * @param self   a Process
      * @param output an OutputStream to capture the process stdout
-     * @param error an OutputStream to capture the process stderr
+     * @param error  an OutputStream to capture the process stderr
      * @since 1.6.5
      */
     public static void waitForProcessOutput(Process self, OutputStream output, OutputStream error) {
@@ -270,9 +291,21 @@ public class ProcessGroovyMethods extends DefaultGroovyMethodsSupport {
         Thread terr = consumeProcessErrorStream(self, error);
         boolean interrupted = false;
         try {
-            try { tout.join(); } catch (InterruptedException ignore) { interrupted = true; }
-            try { terr.join(); } catch (InterruptedException ignore) { interrupted = true; }
-            try { self.waitFor(); } catch (InterruptedException ignore) { interrupted = true; }
+            try {
+                tout.join();
+            } catch (InterruptedException ignore) {
+                interrupted = true;
+            }
+            try {
+                terr.join();
+            } catch (InterruptedException ignore) {
+                interrupted = true;
+            }
+            try {
+                self.waitFor();
+            } catch (InterruptedException ignore) {
+                interrupted = true;
+            }
             closeStreams(self);
         } finally {
             if (interrupted) Thread.currentThread().interrupt();
@@ -286,7 +319,7 @@ public class ProcessGroovyMethods extends DefaultGroovyMethodsSupport {
      * A new Thread is started, so this method will return immediately.
      *
      * @param self a Process
-     * @param err an OutputStream to capture the process stderr
+     * @param err  an OutputStream to capture the process stderr
      * @return the Thread
      * @since 1.5.2
      */
@@ -302,7 +335,7 @@ public class ProcessGroovyMethods extends DefaultGroovyMethodsSupport {
      * The processed stream data is appended to the supplied Appendable.
      * A new Thread is started, so this method will return immediately.
      *
-     * @param self a Process
+     * @param self  a Process
      * @param error an Appendable to capture the process stderr
      * @return the Thread
      * @since 1.7.5
@@ -319,7 +352,7 @@ public class ProcessGroovyMethods extends DefaultGroovyMethodsSupport {
      * The processed stream data is appended to the supplied Appendable.
      * A new Thread is started, so this method will return immediately.
      *
-     * @param self a Process
+     * @param self   a Process
      * @param output an Appendable to capture the process stdout
      * @return the Thread
      * @since 1.7.5
@@ -336,7 +369,7 @@ public class ProcessGroovyMethods extends DefaultGroovyMethodsSupport {
      * The processed stream data is appended to the supplied OutputStream.
      * A new Thread is started, so this method will return immediately.
      *
-     * @param self a Process
+     * @param self   a Process
      * @param output an OutputStream to capture the process stdout
      * @return the Thread
      * @since 1.5.2
@@ -353,7 +386,7 @@ public class ProcessGroovyMethods extends DefaultGroovyMethodsSupport {
      * and closed after the closure returns.
      * A new Thread is started, so this method will return immediately.
      *
-     * @param self a Process
+     * @param self    a Process
      * @param closure a closure
      * @since 1.5.2
      */
@@ -373,7 +406,7 @@ public class ProcessGroovyMethods extends DefaultGroovyMethodsSupport {
      * and closed after the closure returns.
      * A new Thread is started, so this method will return immediately.
      *
-     * @param self a Process
+     * @param self    a Process
      * @param closure a closure
      * @since 1.5.2
      */
@@ -428,6 +461,210 @@ public class ProcessGroovyMethods extends DefaultGroovyMethodsSupport {
      */
     public static Process or(final Process left, final Process right) throws IOException {
         return pipeTo(left, right);
+    }
+
+    /**
+     * Executes the command specified by <code>self</code> as a command-line process.
+     * <p>For more control over Process construction you can use
+     * <code>java.lang.ProcessBuilder</code>.
+     *
+     * @param self a command line String
+     * @return the Process which has just started for this command line representation
+     * @throws IOException if an IOException occurs.
+     * @since 1.0
+     */
+    public static Process execute(final String self) throws IOException {
+        return Runtime.getRuntime().exec(self);
+    }
+
+    /**
+     * Executes the command specified by <code>self</code> with environment defined by <code>envp</code>
+     * and under the working directory <code>dir</code>.
+     * <p>For more control over Process construction you can use
+     * <code>java.lang.ProcessBuilder</code>.
+     *
+     * @param self a command line String to be executed.
+     * @param envp an array of Strings, each element of which
+     *             has environment variable settings in the format
+     *             <i>name</i>=<i>value</i>, or
+     *             <tt>null</tt> if the subprocess should inherit
+     *             the environment of the current process.
+     * @param dir  the working directory of the subprocess, or
+     *             <tt>null</tt> if the subprocess should inherit
+     *             the working directory of the current process.
+     * @return the Process which has just started for this command line representation.
+     * @throws IOException if an IOException occurs.
+     * @since 1.0
+     */
+    public static Process execute(final String self, final String[] envp, final File dir) throws IOException {
+        return Runtime.getRuntime().exec(self, envp, dir);
+    }
+
+    /**
+     * Executes the command specified by <code>self</code> with environment defined
+     * by <code>envp</code> and under the working directory <code>dir</code>.
+     * <p>For more control over Process construction you can use
+     * <code>java.lang.ProcessBuilder</code>.
+     *
+     * @param self a command line String to be executed.
+     * @param envp a List of Objects (converted to Strings using toString), each member of which
+     *             has environment variable settings in the format
+     *             <i>name</i>=<i>value</i>, or
+     *             <tt>null</tt> if the subprocess should inherit
+     *             the environment of the current process.
+     * @param dir  the working directory of the subprocess, or
+     *             <tt>null</tt> if the subprocess should inherit
+     *             the working directory of the current process.
+     * @return the Process which has just started for this command line representation.
+     * @throws IOException if an IOException occurs.
+     * @since 1.0
+     */
+    public static Process execute(final String self, final List envp, final File dir) throws IOException {
+        return execute(self, stringify(envp), dir);
+    }
+
+    /**
+     * Executes the command specified by the given <code>String</code> array.
+     * The first item in the array is the command; the others are the parameters.
+     * <p>For more control over Process construction you can use
+     * <code>java.lang.ProcessBuilder</code>.
+     *
+     * @param commandArray an array of <code>String</code> containing the command name and
+     *                     parameters as separate items in the array.
+     * @return the Process which has just started for this command line representation.
+     * @throws IOException if an IOException occurs.
+     * @since 1.0
+     */
+    public static Process execute(final String[] commandArray) throws IOException {
+        return Runtime.getRuntime().exec(commandArray);
+    }
+
+    /**
+     * Executes the command specified by the <code>String</code> array given in the first parameter,
+     * with the environment defined by <code>envp</code> and under the working directory <code>dir</code>.
+     * The first item in the array is the command; the others are the parameters.
+     * <p>For more control over Process construction you can use
+     * <code>java.lang.ProcessBuilder</code>.
+     *
+     * @param commandArray an array of <code>String</code> containing the command name and
+     *                     parameters as separate items in the array.
+     * @param envp         an array of Strings, each member of which
+     *                     has environment variable settings in the format
+     *                     <i>name</i>=<i>value</i>, or
+     *                     <tt>null</tt> if the subprocess should inherit
+     *                     the environment of the current process.
+     * @param dir          the working directory of the subprocess, or
+     *                     <tt>null</tt> if the subprocess should inherit
+     *                     the working directory of the current process.
+     * @return the Process which has just started for this command line representation.
+     * @throws IOException if an IOException occurs.
+     * @since 1.7.1
+     */
+    public static Process execute(final String[] commandArray, final String[] envp, final File dir) throws IOException {
+        return Runtime.getRuntime().exec(commandArray, envp, dir);
+    }
+
+    /**
+     * Executes the command specified by the <code>String</code> array given in the first parameter,
+     * with the environment defined by <code>envp</code> and under the working directory <code>dir</code>.
+     * The first item in the array is the command; the others are the parameters.
+     * <p>For more control over Process construction you can use
+     * <code>java.lang.ProcessBuilder</code>.
+     *
+     * @param commandArray an array of <code>String</code> containing the command name and
+     *                     parameters as separate items in the array.
+     * @param envp         a List of Objects (converted to Strings using toString), each member of which
+     *                     has environment variable settings in the format
+     *                     <i>name</i>=<i>value</i>, or
+     *                     <tt>null</tt> if the subprocess should inherit
+     *                     the environment of the current process.
+     * @param dir          the working directory of the subprocess, or
+     *                     <tt>null</tt> if the subprocess should inherit
+     *                     the working directory of the current process.
+     * @return the Process which has just started for this command line representation.
+     * @throws IOException if an IOException occurs.
+     * @since 1.7.1
+     */
+    public static Process execute(final String[] commandArray, final List envp, final File dir) throws IOException {
+        return Runtime.getRuntime().exec(commandArray, stringify(envp), dir);
+    }
+
+    /**
+     * Executes the command specified by the given list. The toString() method is called
+     * for each item in the list to convert into a resulting String.
+     * The first item in the list is the command the others are the parameters.
+     * <p>For more control over Process construction you can use
+     * <code>java.lang.ProcessBuilder</code>.
+     *
+     * @param commands a list containing the command name and
+     *                 parameters as separate items in the list.
+     * @return the Process which has just started for this command line representation.
+     * @throws IOException if an IOException occurs.
+     * @since 1.0
+     */
+    public static Process execute(final List commands) throws IOException {
+        return execute(stringify(commands));
+    }
+
+    /**
+     * Executes the command specified by the given list,
+     * with the environment defined by <code>envp</code> and under the working directory <code>dir</code>.
+     * The first item in the list is the command; the others are the parameters. The toString()
+     * method is called on items in the list to convert them to Strings.
+     * <p>For more control over Process construction you can use
+     * <code>java.lang.ProcessBuilder</code>.
+     *
+     * @param commands a List containing the command name and
+     *                 parameters as separate items in the list.
+     * @param envp     an array of Strings, each member of which
+     *                 has environment variable settings in the format
+     *                 <i>name</i>=<i>value</i>, or
+     *                 <tt>null</tt> if the subprocess should inherit
+     *                 the environment of the current process.
+     * @param dir      the working directory of the subprocess, or
+     *                 <tt>null</tt> if the subprocess should inherit
+     *                 the working directory of the current process.
+     * @return the Process which has just started for this command line representation.
+     * @throws IOException if an IOException occurs.
+     * @since 1.7.1
+     */
+    public static Process execute(final List commands, final String[] envp, final File dir) throws IOException {
+        return Runtime.getRuntime().exec(stringify(commands), envp, dir);
+    }
+
+    /**
+     * Executes the command specified by the given list,
+     * with the environment defined by <code>envp</code> and under the working directory <code>dir</code>.
+     * The first item in the list is the command; the others are the parameters. The toString()
+     * method is called on items in the list to convert them to Strings.
+     * <p>For more control over Process construction you can use
+     * <code>java.lang.ProcessBuilder</code>.
+     *
+     * @param commands a List containing the command name and
+     *                 parameters as separate items in the list.
+     * @param envp     a List of Objects (converted to Strings using toString), each member of which
+     *                 has environment variable settings in the format
+     *                 <i>name</i>=<i>value</i>, or
+     *                 <tt>null</tt> if the subprocess should inherit
+     *                 the environment of the current process.
+     * @param dir      the working directory of the subprocess, or
+     *                 <tt>null</tt> if the subprocess should inherit
+     *                 the working directory of the current process.
+     * @return the Process which has just started for this command line representation.
+     * @throws IOException if an IOException occurs.
+     * @since 1.7.1
+     */
+    public static Process execute(final List commands, final List envp, final File dir) throws IOException {
+        return Runtime.getRuntime().exec(stringify(commands), stringify(envp), dir);
+    }
+
+    private static String[] stringify(final List orig) {
+        if (orig == null) return null;
+        String[] result = new String[orig.size()];
+        for (int i = 0; i < orig.size(); i++) {
+            result[i] = orig.get(i).toString();
+        }
+        return result;
     }
 
     /**
@@ -525,210 +762,6 @@ public class ProcessGroovyMethods extends DefaultGroovyMethodsSupport {
                 throw new GroovyRuntimeException("exception while dumping process stream", e);
             }
         }
-    }
-
-    /**
-     * Executes the command specified by <code>self</code> as a command-line process.
-     * <p>For more control over Process construction you can use
-     * <code>java.lang.ProcessBuilder</code>.
-     *
-     * @param self a command line String
-     * @return the Process which has just started for this command line representation
-     * @throws IOException if an IOException occurs.
-     * @since 1.0
-     */
-    public static Process execute(final String self) throws IOException {
-        return Runtime.getRuntime().exec(self);
-    }
-
-    /**
-     * Executes the command specified by <code>self</code> with environment defined by <code>envp</code>
-     * and under the working directory <code>dir</code>.
-     * <p>For more control over Process construction you can use
-     * <code>java.lang.ProcessBuilder</code>.
-     *
-     * @param self a command line String to be executed.
-     * @param envp an array of Strings, each element of which
-     *             has environment variable settings in the format
-     *             <i>name</i>=<i>value</i>, or
-     *             <tt>null</tt> if the subprocess should inherit
-     *             the environment of the current process.
-     * @param dir  the working directory of the subprocess, or
-     *             <tt>null</tt> if the subprocess should inherit
-     *             the working directory of the current process.
-     * @return the Process which has just started for this command line representation.
-     * @throws IOException if an IOException occurs.
-     * @since 1.0
-     */
-    public static Process execute(final String self, final String[] envp, final File dir) throws IOException {
-        return Runtime.getRuntime().exec(self, envp, dir);
-    }
-
-    /**
-     * Executes the command specified by <code>self</code> with environment defined
-     * by <code>envp</code> and under the working directory <code>dir</code>.
-     * <p>For more control over Process construction you can use
-     * <code>java.lang.ProcessBuilder</code>.
-     *
-     * @param self a command line String to be executed.
-     * @param envp a List of Objects (converted to Strings using toString), each member of which
-     *             has environment variable settings in the format
-     *             <i>name</i>=<i>value</i>, or
-     *             <tt>null</tt> if the subprocess should inherit
-     *             the environment of the current process.
-     * @param dir  the working directory of the subprocess, or
-     *             <tt>null</tt> if the subprocess should inherit
-     *             the working directory of the current process.
-     * @return the Process which has just started for this command line representation.
-     * @throws IOException if an IOException occurs.
-     * @since 1.0
-     */
-    public static Process execute(final String self, final List envp, final File dir) throws IOException {
-        return execute(self, stringify(envp), dir);
-    }
-
-    /**
-     * Executes the command specified by the given <code>String</code> array.
-     * The first item in the array is the command; the others are the parameters.
-     * <p>For more control over Process construction you can use
-     * <code>java.lang.ProcessBuilder</code>.
-     *
-     * @param commandArray an array of <code>String</code> containing the command name and
-     *                     parameters as separate items in the array.
-     * @return the Process which has just started for this command line representation.
-     * @throws IOException if an IOException occurs.
-     * @since 1.0
-     */
-    public static Process execute(final String[] commandArray) throws IOException {
-        return Runtime.getRuntime().exec(commandArray);
-    }
-
-    /**
-     * Executes the command specified by the <code>String</code> array given in the first parameter,
-     * with the environment defined by <code>envp</code> and under the working directory <code>dir</code>.
-     * The first item in the array is the command; the others are the parameters.
-     * <p>For more control over Process construction you can use
-     * <code>java.lang.ProcessBuilder</code>.
-     *
-     * @param commandArray an array of <code>String</code> containing the command name and
-     *                     parameters as separate items in the array.
-     * @param envp an array of Strings, each member of which
-     *             has environment variable settings in the format
-     *             <i>name</i>=<i>value</i>, or
-     *             <tt>null</tt> if the subprocess should inherit
-     *             the environment of the current process.
-     * @param dir  the working directory of the subprocess, or
-     *             <tt>null</tt> if the subprocess should inherit
-     *             the working directory of the current process.
-     * @return the Process which has just started for this command line representation.
-     * @throws IOException if an IOException occurs.
-     * @since 1.7.1
-     */
-    public static Process execute(final String[] commandArray, final String[] envp, final File dir) throws IOException {
-        return Runtime.getRuntime().exec(commandArray, envp, dir);
-    }
-
-    /**
-     * Executes the command specified by the <code>String</code> array given in the first parameter,
-     * with the environment defined by <code>envp</code> and under the working directory <code>dir</code>.
-     * The first item in the array is the command; the others are the parameters.
-     * <p>For more control over Process construction you can use
-     * <code>java.lang.ProcessBuilder</code>.
-     *
-     * @param commandArray an array of <code>String</code> containing the command name and
-     *                     parameters as separate items in the array.
-     * @param envp a List of Objects (converted to Strings using toString), each member of which
-     *             has environment variable settings in the format
-     *             <i>name</i>=<i>value</i>, or
-     *             <tt>null</tt> if the subprocess should inherit
-     *             the environment of the current process.
-     * @param dir  the working directory of the subprocess, or
-     *             <tt>null</tt> if the subprocess should inherit
-     *             the working directory of the current process.
-     * @return the Process which has just started for this command line representation.
-     * @throws IOException if an IOException occurs.
-     * @since 1.7.1
-     */
-    public static Process execute(final String[] commandArray, final List envp, final File dir) throws IOException {
-        return Runtime.getRuntime().exec(commandArray, stringify(envp), dir);
-    }
-
-    /**
-     * Executes the command specified by the given list. The toString() method is called
-     * for each item in the list to convert into a resulting String.
-     * The first item in the list is the command the others are the parameters.
-     * <p>For more control over Process construction you can use
-     * <code>java.lang.ProcessBuilder</code>.
-     *
-     * @param commands a list containing the command name and
-     *                    parameters as separate items in the list.
-     * @return the Process which has just started for this command line representation.
-     * @throws IOException if an IOException occurs.
-     * @since 1.0
-     */
-    public static Process execute(final List commands) throws IOException {
-        return execute(stringify(commands));
-    }
-
-    /**
-     * Executes the command specified by the given list,
-     * with the environment defined by <code>envp</code> and under the working directory <code>dir</code>.
-     * The first item in the list is the command; the others are the parameters. The toString()
-     * method is called on items in the list to convert them to Strings.
-     * <p>For more control over Process construction you can use
-     * <code>java.lang.ProcessBuilder</code>.
-     *
-     * @param commands a List containing the command name and
-     *                     parameters as separate items in the list.
-     * @param envp an array of Strings, each member of which
-     *             has environment variable settings in the format
-     *             <i>name</i>=<i>value</i>, or
-     *             <tt>null</tt> if the subprocess should inherit
-     *             the environment of the current process.
-     * @param dir  the working directory of the subprocess, or
-     *             <tt>null</tt> if the subprocess should inherit
-     *             the working directory of the current process.
-     * @return the Process which has just started for this command line representation.
-     * @throws IOException if an IOException occurs.
-     * @since 1.7.1
-     */
-    public static Process execute(final List commands, final String[] envp, final File dir) throws IOException {
-        return Runtime.getRuntime().exec(stringify(commands), envp, dir);
-    }
-
-    /**
-     * Executes the command specified by the given list,
-     * with the environment defined by <code>envp</code> and under the working directory <code>dir</code>.
-     * The first item in the list is the command; the others are the parameters. The toString()
-     * method is called on items in the list to convert them to Strings.
-     * <p>For more control over Process construction you can use
-     * <code>java.lang.ProcessBuilder</code>.
-     *
-     * @param commands a List containing the command name and
-     *                     parameters as separate items in the list.
-     * @param envp a List of Objects (converted to Strings using toString), each member of which
-     *             has environment variable settings in the format
-     *             <i>name</i>=<i>value</i>, or
-     *             <tt>null</tt> if the subprocess should inherit
-     *             the environment of the current process.
-     * @param dir  the working directory of the subprocess, or
-     *             <tt>null</tt> if the subprocess should inherit
-     *             the working directory of the current process.
-     * @return the Process which has just started for this command line representation.
-     * @throws IOException if an IOException occurs.
-     * @since 1.7.1
-     */
-    public static Process execute(final List commands, final List envp, final File dir) throws IOException {
-        return Runtime.getRuntime().exec(stringify(commands), stringify(envp), dir);
-    }
-
-    private static String[] stringify(final List orig) {
-        if (orig == null) return null;
-        String[] result = new String[orig.size()];
-        for (int i = 0; i < orig.size(); i++) {
-            result[i] = orig.get(i).toString();
-        }
-        return result;
     }
 
 }

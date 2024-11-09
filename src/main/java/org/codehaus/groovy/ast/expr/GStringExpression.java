@@ -56,9 +56,9 @@ public class GStringExpression extends Expression {
     @Override
     public Expression transformExpression(ExpressionTransformer transformer) {
         Expression ret = new GStringExpression(
-                verbatimText,
-                transformExpressions(strings, transformer, ConstantExpression.class),
-                transformExpressions(values, transformer));
+            verbatimText,
+            transformExpressions(strings, transformer, ConstantExpression.class),
+            transformExpressions(values, transformer));
         ret.setSourcePosition(this);
         ret.copyNodeMetaData(this);
         return ret;

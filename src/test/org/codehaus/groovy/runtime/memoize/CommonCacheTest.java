@@ -30,13 +30,13 @@ public class CommonCacheTest {
     @Test
     public void get() {
         CommonCache<String, String> sc =
-                new CommonCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new CommonCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
         Assert.assertEquals("Daniel", sc.get("name"));
         Assert.assertEquals("Male", sc.get("gender"));
@@ -60,9 +60,9 @@ public class CommonCacheTest {
         CommonCache<String, String> sc = new CommonCache<>();
 
         EvictableCache.ValueProvider vp =
-                (EvictableCache.ValueProvider<String, String>) key -> "Chinese";
+            (EvictableCache.ValueProvider<String, String>) key -> "Chinese";
 
-        Assert.assertEquals("Chinese", sc.getAndPut("language", vp,false));
+        Assert.assertEquals("Chinese", sc.getAndPut("language", vp, false));
         Assert.assertNull(sc.get("language"));
 
         Assert.assertEquals("Chinese", sc.getAndPut("language", vp));
@@ -72,41 +72,41 @@ public class CommonCacheTest {
     @Test
     public void values() {
         CommonCache<String, String> sc =
-                new CommonCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new CommonCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
-        Assert.assertArrayEquals(new String[] {"Daniel", "Male", "Shanghai"}, sc.values().toArray(new String[0]));
+        Assert.assertArrayEquals(new String[]{"Daniel", "Male", "Shanghai"}, sc.values().toArray(new String[0]));
     }
 
     @Test
     public void keys() {
         CommonCache<String, String> sc =
-                new CommonCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new CommonCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
-        Assert.assertArrayEquals(new String[] {"name", "gender", "city"}, sc.keys().toArray(new String[0]));
+        Assert.assertArrayEquals(new String[]{"name", "gender", "city"}, sc.keys().toArray(new String[0]));
     }
 
     @Test
     public void containsKey() {
         CommonCache<String, String> sc =
-                new CommonCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new CommonCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
         Assert.assertTrue(sc.containsKey("name"));
     }
@@ -114,13 +114,13 @@ public class CommonCacheTest {
     @Test
     public void size() {
         CommonCache<String, String> sc =
-                new CommonCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new CommonCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
         Assert.assertEquals(3, sc.size());
     }
@@ -128,13 +128,13 @@ public class CommonCacheTest {
     @Test
     public void remove() {
         CommonCache<String, String> sc =
-                new CommonCache<>(
-                        new HashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new CommonCache<>(
+                new HashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
         Assert.assertEquals("Shanghai", sc.remove("city"));
         Assert.assertNull(sc.get("city"));
@@ -143,30 +143,30 @@ public class CommonCacheTest {
     @Test
     public void clear() {
         CommonCache<String, String> sc =
-                new CommonCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new CommonCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
-        Assert.assertArrayEquals(new String[] {"Daniel", "Male", "Shanghai"}, sc.clearAll().values().toArray(new String[0]));
+        Assert.assertArrayEquals(new String[]{"Daniel", "Male", "Shanghai"}, sc.clearAll().values().toArray(new String[0]));
     }
 
     @Test
     public void cleanUpNullReferences() {
         CommonCache<String, String> sc =
-                new CommonCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", null)
-                        )
-                );
+            new CommonCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", null)
+                )
+            );
 
         sc.cleanUpNullReferences();
-        Assert.assertArrayEquals(new String[] {"Daniel", "Male"}, sc.values().toArray(new String[0]));
+        Assert.assertArrayEquals(new String[]{"Daniel", "Male"}, sc.values().toArray(new String[0]));
     }
 
     @Test
@@ -191,7 +191,7 @@ public class CommonCacheTest {
         sc.put("c", "3");
         sc.put("a", "4");
         sc.put("d", "5");
-        Assert.assertArrayEquals(new String[] {"b", "c", "d"}, sc.keys().toArray(new String[0]));
+        Assert.assertArrayEquals(new String[]{"b", "c", "d"}, sc.keys().toArray(new String[0]));
         Assert.assertEquals("2", sc.get("b"));
         Assert.assertEquals("3", sc.get("c"));
         Assert.assertEquals("5", sc.get("d"));

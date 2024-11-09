@@ -11,6 +11,7 @@ public class random {
     public static final int IM = 139968;
     public static final int IA = 3877;
     public static final int IC = 29573;
+    public static int last = 42;
 
     public static void main(String args[]) {
         int N = Integer.parseInt(args[0]) - 1;
@@ -25,8 +26,7 @@ public class random {
         System.out.println(nf.format(gen_random(100)));
     }
 
-    public static int last = 42;
     public static double gen_random(double max) {
-        return( max * (last = (last * IA + IC) % IM) / IM );
+        return (max * (last = (last * IA + IC) % IM) / IM);
     }
 }

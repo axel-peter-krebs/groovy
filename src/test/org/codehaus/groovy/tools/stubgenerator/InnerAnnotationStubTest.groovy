@@ -31,7 +31,7 @@ final class InnerAnnotationStubTest extends StringSourcesStubTestCase {
                 class JacksonAnnotationTest {
                 }
             ''',
-            'JsonSubTypes.java': '''
+            'JsonSubTypes.java'           : '''
                 import java.lang.annotation.*;
 
                 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
@@ -45,7 +45,7 @@ final class InnerAnnotationStubTest extends StringSourcesStubTestCase {
                     }
                 }
             ''',
-            'AnnoWithEnum.java': '''
+            'AnnoWithEnum.java'           : '''
                 import java.lang.annotation.*;
 
                 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})

@@ -53,11 +53,11 @@ class LiteralTypesTest extends GroovyTestCase {
 
         x = 0xFFG //Hex
         assert x instanceof BigInteger
-        assert x == new BigInteger("FF",16)
+        assert x == new BigInteger("FF", 16)
 
         x = 0x9000000000000000
         assert x instanceof BigInteger
-        assert x == new BigInteger("9000000000000000",16)
+        assert x == new BigInteger("9000000000000000", 16)
 
         x = 077 //octal
         assert x instanceof Integer
@@ -69,7 +69,7 @@ class LiteralTypesTest extends GroovyTestCase {
 
         x = 077g //octal
         assert x instanceof BigInteger
-        assert x == new BigInteger("77",8)
+        assert x == new BigInteger("77", 8)
 
         x = 2147483647           // max integer value
         assert x instanceof Integer

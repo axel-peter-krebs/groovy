@@ -21,6 +21,7 @@ package org.codehaus.groovy.tools.groovydoc.testfiles.staticInit
 class UsesClassesWithFailingStaticInit {
 
     GroovyWithFailingStaticInit getGroovy() { null }
+
     JavaWithFailingStaticInit getJava() { null }
 
 }

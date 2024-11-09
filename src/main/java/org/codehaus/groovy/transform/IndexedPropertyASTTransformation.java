@@ -57,38 +57,6 @@ public class IndexedPropertyASTTransformation extends AbstractASTTransformation 
     private static final String MY_TYPE_NAME = "@" + MY_TYPE.getNameWithoutPackage();
     private static final ClassNode LIST_TYPE = makeWithoutCaching(List.class, false);
 
-    @Override
-    public void visit(ASTNode[] nodes, SourceUnit source) {
-        init(nodes, source);
-        AnnotatedNode parent = (AnnotatedNode) nodes[1];
-        AnnotationNode node = (AnnotationNode) nodes[0];
-        if (!MY_TYPE.equals(node.getClassNode())) return;
-
-        if (parent instanceof FieldNode) {
-            FieldNode fNode = (FieldNode) parent;
-            ClassNode cNode = fNode.getDeclaringClass();
-            if (cNode.getProperty(fNode.getName()) == null) {
-                addError("Error during " + MY_TYPE_NAME + " processing. Field '" + fNode.getName() +
-                        "' doesn't appear to be a property; incorrect visibility?", fNode);
-                return;
-            }
-            ClassNode fType = fNode.getType();
-            // TODO consider looking for an initial value expression that is a call to asUnmodifiable() or an
-            // explicit call to Collections.unmodifiableList(). But currently that is processed one stage too early.
-            boolean immutable = Boolean.TRUE.equals(fNode.getNodeMetaData(IMMUTABLE_BREADCRUMB));
-            if (fType.isArray()) {
-                if (!immutable) addArraySetter(fNode);
-                addArrayGetter(fNode);
-            } else if (fType.isDerivedFrom(LIST_TYPE)) {
-                if (!immutable) addListSetter(fNode);
-                addListGetter(fNode);
-            } else {
-                addError("Error during " + MY_TYPE_NAME + " processing. Non-Indexable property '" + fNode.getName() +
-                        "' found. Type must be array or list but found " + fType.getName(), fNode);
-            }
-        }
-    }
-
     private static void addListGetter(FieldNode fNode) {
         addGetter(fNode, getComponentTypeForList(fNode.getType()));
     }
@@ -118,8 +86,8 @@ public class IndexedPropertyASTTransformation extends AbstractASTTransformation 
         ClassNode cNode = fNode.getDeclaringClass();
         BlockStatement body = new BlockStatement();
         Parameter[] theParams = params(
-                new Parameter(ClassHelper.int_TYPE, "index"),
-                new Parameter(componentType, "value"));
+            new Parameter(ClassHelper.int_TYPE, "index"),
+            new Parameter(componentType, "value"));
         body.addStatement(assignS(indexX(varX(fNode), varX(theParams[0])), varX(theParams[1])));
         addGeneratedMethod(cNode, getSetterName(fNode.getName()), getModifiers(fNode), ClassHelper.VOID_TYPE, theParams, null, body);
     }
@@ -140,5 +108,37 @@ public class IndexedPropertyASTTransformation extends AbstractASTTransformation 
 
     private static String makeName(FieldNode fNode, String prefix) {
         return prefix + capitalize(fNode.getName());
+    }
+
+    @Override
+    public void visit(ASTNode[] nodes, SourceUnit source) {
+        init(nodes, source);
+        AnnotatedNode parent = (AnnotatedNode) nodes[1];
+        AnnotationNode node = (AnnotationNode) nodes[0];
+        if (!MY_TYPE.equals(node.getClassNode())) return;
+
+        if (parent instanceof FieldNode) {
+            FieldNode fNode = (FieldNode) parent;
+            ClassNode cNode = fNode.getDeclaringClass();
+            if (cNode.getProperty(fNode.getName()) == null) {
+                addError("Error during " + MY_TYPE_NAME + " processing. Field '" + fNode.getName() +
+                    "' doesn't appear to be a property; incorrect visibility?", fNode);
+                return;
+            }
+            ClassNode fType = fNode.getType();
+            // TODO consider looking for an initial value expression that is a call to asUnmodifiable() or an
+            // explicit call to Collections.unmodifiableList(). But currently that is processed one stage too early.
+            boolean immutable = Boolean.TRUE.equals(fNode.getNodeMetaData(IMMUTABLE_BREADCRUMB));
+            if (fType.isArray()) {
+                if (!immutable) addArraySetter(fNode);
+                addArrayGetter(fNode);
+            } else if (fType.isDerivedFrom(LIST_TYPE)) {
+                if (!immutable) addListSetter(fNode);
+                addListGetter(fNode);
+            } else {
+                addError("Error during " + MY_TYPE_NAME + " processing. Non-Indexable property '" + fNode.getName() +
+                    "' found. Type must be array or list but found " + fType.getName(), fNode);
+            }
+        }
     }
 }

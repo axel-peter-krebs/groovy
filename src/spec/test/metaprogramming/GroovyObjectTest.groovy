@@ -43,7 +43,7 @@ assert someGroovyClass.someMethod() == 'called invokeMethod someMethod []'
 '''
     }
 
-    void testGetProperty () {
+    void testGetProperty() {
         assertScript '''
 // tag::groovy_get_property[]
 class SomeGroovyClass {
@@ -74,12 +74,12 @@ assert someGroovyClass.field4 == 'hu'
 '''
     }
 
-    void testSetProperty () {
+    void testSetProperty() {
         assertScript '''
 // tag::groovy_set_property[]
 class POGO {
 
-    String property 
+    String property
 
     void setProperty(String name, Object value) {
         this.@"$name" = 'overridden'
@@ -94,7 +94,7 @@ assert pogo.property == 'overridden'
 '''
     }
 
-    void testGetAttribute () {
+    void testGetAttribute() {
         assertScript '''
 // tag::groovy_get_attribute[]
 class SomeGroovyClass {
@@ -115,7 +115,7 @@ assert someGroovyClass.metaClass.getAttribute(someGroovyClass, 'field2') == 'ho'
 '''
     }
 
-    void testSetAttribute () {
+    void testSetAttribute() {
         assertScript '''
 // tag::groovy_set_attribute[]
 class POGO {

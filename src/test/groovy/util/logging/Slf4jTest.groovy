@@ -293,7 +293,8 @@ final class Slf4jTest {
         assert events[ind].message == 'trace called'
     }
 
-    @Test // GROOVY-6373
+    @Test
+    // GROOVY-6373
     void testLogWithInnerClasses() {
         Class clazz = new GroovyClassLoader().parseClass('''
             @groovy.util.logging.Slf4j('logger')
@@ -323,7 +324,8 @@ final class Slf4jTest {
         assert events[ind].message == 'inner called'
     }
 
-    @Test // GROOVY-6834
+    @Test
+    // GROOVY-6834
     void testLogTransformInteractionWithAnonInnerClass() {
         assertScript '''
             @groovy.util.logging.Slf4j
@@ -344,7 +346,8 @@ final class Slf4jTest {
         '''
     }
 
-    @Test // GROOVY-6873
+    @Test
+    // GROOVY-6873
     void testLogTransformInteractionWithAnonInnerClass2() {
         Class clazz = new GroovyClassLoader().parseClass('''
             @groovy.util.logging.Slf4j

@@ -33,7 +33,8 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.ternaryX;
  */
 public class MethodCallUtils {
 
-    private MethodCallUtils() { }
+    private MethodCallUtils() {
+    }
 
     public static Statement appendS(Expression result, Expression expr) {
         MethodCallExpression append = callX(result, "append", expr);

@@ -31,7 +31,9 @@ import java.io.IOException;
 public abstract class AbstractReaderSource implements ReaderSource {
 
     protected CompilerConfiguration configuration;
-
+    private BufferedReader lineSource = null;    // If set, a reader on the current source file
+    private String line = null;    // The last line read from the current source file
+    private int number = 0;       // The last line number read
     public AbstractReaderSource(final CompilerConfiguration configuration) {
         this.configuration = configuration != null ? configuration : CompilerConfiguration.DEFAULT;
     }
@@ -44,10 +46,6 @@ public abstract class AbstractReaderSource implements ReaderSource {
     public boolean canReopenSource() {
         return true;
     }
-
-    private BufferedReader lineSource = null;    // If set, a reader on the current source file
-    private String line = null;    // The last line read from the current source file
-    private int number = 0;       // The last line number read
 
     /**
      * Returns a line from the source, or null, if unavailable.  If
@@ -77,8 +75,7 @@ public abstract class AbstractReaderSource implements ReaderSource {
                 try {
                     line = lineSource.readLine();
                     number++;
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     cleanup();
                 }
             }

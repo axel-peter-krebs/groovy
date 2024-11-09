@@ -170,10 +170,10 @@ public class FileSystemCompiler {
     public static CommandLine configureParser(CompilationOptions options) {
         CommandLine parser = new CommandLine(options);
         parser.getCommandSpec().parser()
-                .unmatchedArgumentsAllowed(true)
-                .unmatchedOptionsArePositionalParams(true)
-                .expandAtFiles(false)
-                .toggleBooleanFlags(false);
+            .unmatchedArgumentsAllowed(true)
+            .unmatchedOptionsArePositionalParams(true)
+            .expandAtFiles(false)
+            .toggleBooleanFlags(false);
         return parser;
     }
 
@@ -219,7 +219,7 @@ public class FileSystemCompiler {
         // if there are any joint compilation options set stubDir if not set
         try {
             if (configuration.getJointCompilationOptions() != null
-                    && !configuration.getJointCompilationOptions().containsKey("stubDir")) {
+                && !configuration.getJointCompilationOptions().containsKey("stubDir")) {
                 tmpDir = DefaultGroovyStaticMethods.createTempDir(null, "groovy-generated-", "-java-source");
                 configuration.getJointCompilationOptions().put("stubDir", tmpDir);
             }
@@ -236,7 +236,7 @@ public class FileSystemCompiler {
                 }
             } else {
                 compiler.unit.getClassLoader()
-                        .setResourceLoader(filename -> null);
+                    .setResourceLoader(filename -> null);
             }
             compiler.compile(filenames);
         } finally {
@@ -324,9 +324,9 @@ public class FileSystemCompiler {
         @Override
         public String[] getVersion() {
             return new String[]{
-                    "Groovy compiler version " + GroovySystem.getVersion(),
-                    "Copyright 2003-2024 The Apache Software Foundation. https://groovy-lang.org/",
-                    "",
+                "Groovy compiler version " + GroovySystem.getVersion(),
+                "Copyright 2003-2024 The Apache Software Foundation. https://groovy-lang.org/",
+                "",
             };
         }
     }
@@ -335,9 +335,9 @@ public class FileSystemCompiler {
      * @since 2.5
      */
     @Command(name = "groovyc",
-            customSynopsis = "groovyc [options] <source-files>",
-            sortOptions = false,
-            versionProvider = VersionProvider.class)
+        customSynopsis = "groovyc [options] <source-files>",
+        sortOptions = false,
+        versionProvider = VersionProvider.class)
     public static class CompilationOptions {
         // IMPLEMENTATION NOTE:
         // classpath must be the first argument, so that the `startGroovy(.bat)` script
@@ -404,7 +404,7 @@ public class FileSystemCompiler {
         private boolean versionRequested;
 
         @Parameters(description = "The groovy source files to compile, or @-files containing a list of source files to compile",
-                paramLabel = "<source-files>")
+            paramLabel = "<source-files>")
         private List<String> files;
 
         @Option(names = {"--compile-static"}, description = "Use CompileStatic")
@@ -434,9 +434,9 @@ public class FileSystemCompiler {
             }
 
             if (Integer.parseInt(warningLevel) == WarningMessage.NONE
-                    || Integer.parseInt(warningLevel) == WarningMessage.LIKELY_ERRORS
-                    || Integer.parseInt(warningLevel) == WarningMessage.POSSIBLE_ERRORS
-                    || Integer.parseInt(warningLevel) == WarningMessage.PARANOIA) {
+                || Integer.parseInt(warningLevel) == WarningMessage.LIKELY_ERRORS
+                || Integer.parseInt(warningLevel) == WarningMessage.POSSIBLE_ERRORS
+                || Integer.parseInt(warningLevel) == WarningMessage.PARANOIA) {
                 configuration.setWarningLevel(Integer.parseInt(warningLevel));
             } else {
                 System.err.println("error: warning level not recognized: " + warningLevel);

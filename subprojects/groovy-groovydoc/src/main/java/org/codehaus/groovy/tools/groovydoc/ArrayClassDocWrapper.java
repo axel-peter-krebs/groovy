@@ -265,6 +265,11 @@ public class ArrayClassDocWrapper implements GroovyClassDoc {
     }
 
     @Override
+    public void setRawCommentText(String arg0) {
+        delegate.setRawCommentText(arg0);
+    }
+
+    @Override
     public boolean isAnnotationType() {
         return delegate.isAnnotationType();
     }
@@ -342,11 +347,6 @@ public class ArrayClassDocWrapper implements GroovyClassDoc {
     @Override
     public String name() {
         return delegate.name();
-    }
-
-    @Override
-    public void setRawCommentText(String arg0) {
-        delegate.setRawCommentText(arg0);
     }
 
     @Override

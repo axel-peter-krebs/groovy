@@ -57,7 +57,7 @@ class BigIntegerOperationsTest extends GroovyTestCase {
         d *= d
         d *= d
         d *= d
-        assert (long)d != d
+        assert (long) d != d
         assert (BigInteger) d == d
     }
 

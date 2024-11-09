@@ -49,6 +49,10 @@ public class SourceURIASTTransformation extends AbstractASTTransformation {
     private static final String MY_TYPE_NAME = "@" + MY_TYPE.getNameWithoutPackage();
     private static final ClassNode URI_TYPE = ClassHelper.make(java.net.URI.class);
 
+    private static Expression getExpression(URI uri) {
+        return callX(URI_TYPE, "create", args(constX(uri.toString())));
+    }
+
     @Override
     public void visit(ASTNode[] nodes, SourceUnit source) {
         init(nodes, source);
@@ -102,10 +106,6 @@ public class SourceURIASTTransformation extends AbstractASTTransformation {
             // That may throw an IllegalArgumentExpression wrapping the URISyntaxException.
             fieldNode.setInitialValueExpression(getExpression(uri));
         }
-    }
-
-    private static Expression getExpression(URI uri) {
-        return callX(URI_TYPE, "create", args(constX(uri.toString())));
     }
 
     protected URI getSourceURI(AnnotationNode node) {

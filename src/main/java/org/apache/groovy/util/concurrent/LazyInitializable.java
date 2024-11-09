@@ -19,8 +19,8 @@
 package org.apache.groovy.util.concurrent;
 
 /**
- *  A {@code LazyInitializable} is an object that can be initialized lazily.
- *  Note: the instance field {@code initialized} of subclass should be {@code volatile} to avoid JVM instructions re-ordering
+ * A {@code LazyInitializable} is an object that can be initialized lazily.
+ * Note: the instance field {@code initialized} of subclass should be {@code volatile} to avoid JVM instructions re-ordering
  *
  * @since 3.0.0
  */

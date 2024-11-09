@@ -54,7 +54,7 @@ public class InlinedASTCustomizerFactory extends AbstractFactory implements Post
         if (attributes.isEmpty() || !attributes.containsKey("phase")) {
             throw new RuntimeException("You must specify a CompilePhase to run at, using the [phase] attribute");
         }
-        Map result = new HashMap(1+attributes.size());
+        Map result = new HashMap(1 + attributes.size());
         result.putAll(attributes);
         return result;
     }
@@ -62,7 +62,7 @@ public class InlinedASTCustomizerFactory extends AbstractFactory implements Post
     @Override
     public boolean onNodeChildren(final FactoryBuilderSupport builder, final Object node, final Closure childContent) {
         if (node instanceof Map) {
-            ((Map)node).put("call", childContent.clone());
+            ((Map) node).put("call", childContent.clone());
         }
         return false;
     }
@@ -72,12 +72,12 @@ public class InlinedASTCustomizerFactory extends AbstractFactory implements Post
         if (node instanceof Map) {
             Map map = (Map) node;
             ProxyGeneratorAdapter adapter = new ProxyGeneratorAdapter(
-                    map,
-                    map.containsKey("superClass")?(Class)map.get("superClass"):CompilationCustomizer.class,
-                    map.containsKey("interfaces")?(Class[])map.get("interfaces"):null,
-                    this.getClass().getClassLoader(),
-                    false,
-                    null
+                map,
+                map.containsKey("superClass") ? (Class) map.get("superClass") : CompilationCustomizer.class,
+                map.containsKey("interfaces") ? (Class[]) map.get("interfaces") : null,
+                this.getClass().getClassLoader(),
+                false,
+                null
             );
             Object phase = map.get("phase");
             if (!(phase instanceof CompilePhase)) {

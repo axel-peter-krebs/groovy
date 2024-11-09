@@ -178,7 +178,7 @@ class JsonSlurperTest extends GroovyTestCase {
 
     void testArrayOfArrayWithSimpleValues() {
         assert parser.parseText('[1, 2, 3, ["a", "b", "c", [true, false], "d"], 4]') ==
-                [1, 2, 3, ["a", "b", "c", [true, false], "d"], 4]
+            [1, 2, 3, ["a", "b", "c", [true, false], "d"], 4]
 
         shouldFail(JsonException) { parser.parseText('[') }
         shouldFail(JsonException) { parser.parseText('[,]') }
@@ -213,15 +213,15 @@ class JsonSlurperTest extends GroovyTestCase {
                 }
             }
         ''') == [
-                response: [
-                        status: "ok",
-                        code: 200,
-                        chuncked: false,
-                        "content-type-supported": ["text/html", "text/plain"],
-                        headers: [
-                                "If-Last-Modified": "2010"
-                        ]
+            response: [
+                status                  : "ok",
+                code                    : 200,
+                chuncked                : false,
+                "content-type-supported": ["text/html", "text/plain"],
+                headers                 : [
+                    "If-Last-Modified": "2010"
                 ]
+            ]
         ]
     }
 
@@ -242,36 +242,36 @@ class JsonSlurperTest extends GroovyTestCase {
                 }
             ]
         ''') == [
-                [
-                        firstname: "Guillaume",
-                        lastname: "Laforge"
-                ],
-                [
-                        firstname: "Paul",
-                        lastname: "King"
-                ],
-                [
-                        firstname: "Jochen",
-                        lastname: "Theodorou"
-                ]
+            [
+                firstname: "Guillaume",
+                lastname : "Laforge"
+            ],
+            [
+                firstname: "Paul",
+                lastname : "King"
+            ],
+            [
+                firstname: "Jochen",
+                lastname : "Theodorou"
+            ]
         ]
     }
 
     void testNullEmptyMalformedPayloads() {
-        shouldFail(IllegalArgumentException) { parser.parseText(null)   }
-        shouldFail(IllegalArgumentException) { parser.parseText("")     }
+        shouldFail(IllegalArgumentException) { parser.parseText(null) }
+        shouldFail(IllegalArgumentException) { parser.parseText("") }
 
-        shouldFail(JsonException) { parser.parseText("[")           }
-        shouldFail(JsonException) { parser.parseText("[a")          }
-        shouldFail(JsonException) { parser.parseText('{"')          }
-        shouldFail(JsonException) { parser.parseText('{"key"')      }
-        shouldFail(JsonException) { parser.parseText('{"key":')     }
-        shouldFail(JsonException) { parser.parseText('{"key":1')    }
-        shouldFail(JsonException) { parser.parseText('[')           }
-        shouldFail(JsonException) { parser.parseText('[a')          }
-        shouldFail(JsonException) { parser.parseText('["a"')        }
-        shouldFail(JsonException) { parser.parseText('["a", ')      }
-        shouldFail(JsonException) { parser.parseText('["a", true')  }
+        shouldFail(JsonException) { parser.parseText("[") }
+        shouldFail(JsonException) { parser.parseText("[a") }
+        shouldFail(JsonException) { parser.parseText('{"') }
+        shouldFail(JsonException) { parser.parseText('{"key"') }
+        shouldFail(JsonException) { parser.parseText('{"key":') }
+        shouldFail(JsonException) { parser.parseText('{"key":1') }
+        shouldFail(JsonException) { parser.parseText('[') }
+        shouldFail(JsonException) { parser.parseText('[a') }
+        shouldFail(JsonException) { parser.parseText('["a"') }
+        shouldFail(JsonException) { parser.parseText('["a", ') }
+        shouldFail(JsonException) { parser.parseText('["a", true') }
         shouldFail(JsonException) { parser.parseText('[-]') }
     }
 
@@ -311,7 +311,7 @@ class JsonSlurperTest extends GroovyTestCase {
         def o = new JsonSlurper().
             setType(JsonParserType.INDEX_OVERLAY).
             setCheckDates(true).
-            parseText(JsonOutput.toJson([a : new Date()]))
+            parseText(JsonOutput.toJson([a: new Date()]))
 
         assertEquals(Date.class, o.a.class)
     }
@@ -353,7 +353,7 @@ class JsonSlurperTest extends GroovyTestCase {
 
 
     void testParsePath() {
-        def file = File.createTempFile('test','json')
+        def file = File.createTempFile('test', 'json')
         file.deleteOnExit()
         file.text = '''
             {
@@ -372,15 +372,15 @@ class JsonSlurperTest extends GroovyTestCase {
         and:
         def result = new JsonSlurper().parse(file.toPath())
         assert result == [
-                response: [
-                        status: "ok",
-                        code: 200,
-                        chuncked: false,
-                        "content-type-supported": ["text/html", "text/plain"],
-                        headers: [
-                                "If-Last-Modified": "2010"
-                        ]
-                ] ]
+            response: [
+                status                  : "ok",
+                code                    : 200,
+                chuncked                : false,
+                "content-type-supported": ["text/html", "text/plain"],
+                headers                 : [
+                    "If-Last-Modified": "2010"
+                ]
+            ]]
 
     }
 
@@ -392,7 +392,7 @@ class JsonSlurperTest extends GroovyTestCase {
                             "b": {
                                 "c":2
                             }"""
-        shouldFail (JsonException) { jsonSlurper.parseText(inValid) }
+        shouldFail(JsonException) { jsonSlurper.parseText(inValid) }
 
         def valid = """
                             {
@@ -400,7 +400,7 @@ class JsonSlurperTest extends GroovyTestCase {
                             "b": {
                                 "c":2
                             }}"""
-        assert jsonSlurper.parseText(valid) == [a: 1, b:[c:2]]
+        assert jsonSlurper.parseText(valid) == [a: 1, b: [c: 2]]
     }
 
 }

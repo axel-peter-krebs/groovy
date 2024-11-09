@@ -25,6 +25,7 @@ class ClassWithPrivateConstructor extends ExprTestSupport {
     void testClass() {
         shell.execute('class K { private K(){} }')
     }
+
     void testEnum() {
         shell.execute('enum E {A,B,C}')
     }

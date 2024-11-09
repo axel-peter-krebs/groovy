@@ -22,39 +22,39 @@ import groovy.test.GroovyTestCase
 
 abstract class Groovy2365Base extends GroovyTestCase {
 
-    protected String createData () {
+    protected String createData() {
 
         File dir = File.createTempDir("groovy-src-", "-src")
         dir.deleteOnExit()
         assertNotNull dir
 
-        def fileList =  [
-          "Util.groovy" : """
+        def fileList = [
+            "Util.groovy"   : """
 
           class Util {
             static String NAME = "Util accessed"
           }
     """,
 
-         "Script1.groovy" : """
+            "Script1.groovy": """
          import Util
 
          println "Script1 \${Util.NAME}"
     """,
 
-    "Script2.groovy" : """
+            "Script2.groovy": """
                 import Util
 
                 println "Script2 \${Util.NAME}"
            """
-                ].collect {
+        ].collect {
             name, text ->
-              File file = new File(dir, name)
-              file.write text
-              file
-         }
+                File file = new File(dir, name)
+                file.write text
+                file
+        }
 
-         return dir.absolutePath
+        return dir.absolutePath
     }
 
 }

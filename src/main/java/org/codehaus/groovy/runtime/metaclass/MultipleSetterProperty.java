@@ -30,9 +30,9 @@ import org.codehaus.groovy.runtime.MetaClassHelper;
  * in this case. Instead invocation is done through the metaclass of the property receiver.
  */
 public class MultipleSetterProperty extends MetaProperty {
+    private final String setterName;
     private MetaMethod getter;
     private CachedField field;
-    private final String setterName;
 
     public MultipleSetterProperty(String name) {
         super(name, Object.class);
@@ -54,25 +54,25 @@ public class MultipleSetterProperty extends MetaProperty {
         InvokerHelper.getMetaClass(object).invokeMethod(object, setterName, new Object[]{newValue});
     }
 
-    public void setField(CachedField f) {
-        this.field = f;
-    }
-
     public CachedField getField() {
         return field;
     }
 
-    public void setGetter(MetaMethod getter) {
-        this.getter = getter;
+    public void setField(CachedField f) {
+        this.field = f;
     }
 
     public MetaMethod getGetter() {
         return getter;
     }
 
+    public void setGetter(MetaMethod getter) {
+        this.getter = getter;
+    }
+
     public MetaProperty createStaticVersion() {
-        boolean mf = field==null || field.isStatic();
-        boolean mg = getter==null || getter.isStatic();
+        boolean mf = field == null || field.isStatic();
+        boolean mg = getter == null || getter.isStatic();
         if (mf && mg) return this;
         if (mg) {
             MultipleSetterProperty newMsp = new MultipleSetterProperty(name);

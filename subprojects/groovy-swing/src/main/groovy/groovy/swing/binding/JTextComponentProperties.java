@@ -55,7 +55,7 @@ class JTextComponentTextBinding extends AbstractSyntheticBinding implements Prop
 
     @Override
     public synchronized void syntheticBind() {
-        boundTextComponent = (JTextComponent) ((PropertyBinding)sourceBinding).getBean();
+        boundTextComponent = (JTextComponent) ((PropertyBinding) sourceBinding).getBean();
         boundTextComponent.addPropertyChangeListener("document", this);
         boundTextComponent.getDocument().addDocumentListener(this);
     }
@@ -70,8 +70,8 @@ class JTextComponentTextBinding extends AbstractSyntheticBinding implements Prop
     @Override
     public void propertyChange(PropertyChangeEvent event) {
         update();
-        ((Document)event.getOldValue()).removeDocumentListener(this);
-        ((Document)event.getNewValue()).addDocumentListener(this);
+        ((Document) event.getOldValue()).removeDocumentListener(this);
+        ((Document) event.getNewValue()).addDocumentListener(this);
     }
 
     @Override

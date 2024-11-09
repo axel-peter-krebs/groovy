@@ -70,6 +70,19 @@ public class StatementWriter {
         this.controller = controller;
     }
 
+    private static Label startRange(final BlockRecorder br, final MethodVisitor mv) {
+        Label label = new Label();
+        mv.visitLabel(label);
+        br.startRange(label);
+        return label;
+    }
+
+    private static void closeRange(final BlockRecorder br, final MethodVisitor mv) {
+        Label label = new Label();
+        mv.visitLabel(label);
+        br.closeRange(label);
+    }
+
     protected void writeStatementLabel(final Statement statement) {
         Optional.ofNullable(statement.getStatementLabels()).ifPresent(labels -> {
             labels.stream().map(controller.getCompileStack()::createLocalLabel).forEach(label -> {
@@ -371,7 +384,7 @@ public class StatementWriter {
         // after the exception blocks so they are not superseded by this one
         compileStack.writeExceptionTable(tryBlock, catchAll, null);
         // same for the catch parts
-        compileStack.writeExceptionTable(catches , catchAll, null);
+        compileStack.writeExceptionTable(catches, catchAll, null);
 
         // pop for BlockRecorder
         compileStack.pop();
@@ -408,19 +421,6 @@ public class StatementWriter {
         };
         controller.getCompileStack().pushBlockRecorder(recorder);
         return recorder;
-    }
-
-    private static Label startRange(final BlockRecorder br, final MethodVisitor mv) {
-        Label label = new Label();
-        mv.visitLabel(label);
-        br.startRange(label);
-        return label;
-    }
-
-    private static void  closeRange(final BlockRecorder br, final MethodVisitor mv) {
-        Label label = new Label();
-        mv.visitLabel(label);
-        br.closeRange(label);
     }
 
     public void writeSwitch(final SwitchStatement statement) {

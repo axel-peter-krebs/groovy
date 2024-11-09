@@ -29,7 +29,7 @@ final class Groovy9589 {
     @Test
     void testParallelParse() {
         final cnt = 2
-        def sources = (1..cnt).inject([:]) { r, e ->  r["hello${e}.groovy"] = source(e); r }
+        def sources = (1..cnt).inject([:]) { r, e -> r["hello${e}.groovy"] = source(e); r }
         def ast1 = parse(sources, false)
         def ast2 = parse(sources, true)
 

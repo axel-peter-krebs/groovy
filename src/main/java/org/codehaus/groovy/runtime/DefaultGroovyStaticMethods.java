@@ -106,15 +106,15 @@ public class DefaultGroovyStaticMethods {
     /**
      * Dump the thread dump of all threads
      *
-     * @param self    placeholder variable used by Groovy categories; ignored for default static methods
+     * @param self placeholder variable used by Groovy categories; ignored for default static methods
      * @return the thread dump of all threads
      * @since 3.0.0
      */
-    public static String dumpAll(Thread self){
+    public static String dumpAll(Thread self) {
         ThreadMXBean threadMxBean = ManagementFactory.getThreadMXBean();
         return Arrays.stream(threadMxBean.dumpAllThreads(true, true))
-                .map(ThreadInfo::toString)
-                .collect(Collectors.joining(""));
+            .map(ThreadInfo::toString)
+            .collect(Collectors.joining(""));
     }
 
     /**
@@ -136,8 +136,8 @@ public class DefaultGroovyStaticMethods {
         }
 
         return Arrays.stream(threads)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toUnmodifiableList());
+            .filter(Objects::nonNull)
+            .collect(Collectors.toUnmodifiableList());
     }
 
     /**
@@ -264,10 +264,10 @@ public class DefaultGroovyStaticMethods {
     /**
      * Get the current time in seconds
      *
-     * @param self   placeholder variable used by Groovy categories; ignored for default static methods
-     * @return  the difference, measured in seconds, between
-     *          the current time and midnight, January 1, 1970 UTC.
-     * @see     System#currentTimeMillis()
+     * @param self placeholder variable used by Groovy categories; ignored for default static methods
+     * @return the difference, measured in seconds, between
+     * the current time and midnight, January 1, 1970 UTC.
+     * @see System#currentTimeMillis()
      */
     public static long currentTimeSeconds(System self) {
         return System.currentTimeMillis() / 1000;

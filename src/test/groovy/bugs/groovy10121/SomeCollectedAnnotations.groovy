@@ -21,4 +21,4 @@ package groovy.bugs.groovy10121
 import groovy.transform.AnnotationCollector
 
 @AnnotationCollector
-@interface SomeCollectedAnnotations { }
+@interface SomeCollectedAnnotations {}

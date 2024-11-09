@@ -27,21 +27,21 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             int i = new Object()
         ''',
-        'Cannot assign value of type java.lang.Object to variable of type int'
+            'Cannot assign value of type java.lang.Object to variable of type int'
     }
 
     void testAssignmentFailure2() {
         shouldFailWithMessages '''
             Set s = new Object()
         ''',
-        'Cannot assign value of type java.lang.Object to variable of type java.util.Set'
+            'Cannot assign value of type java.lang.Object to variable of type java.util.Set'
     }
 
     void testAssignmentFailure3() {
         shouldFailWithMessages '''
             Set s = new Integer(2)
         ''',
-        'Cannot assign value of type java.lang.Integer to variable of type java.util.Set'
+            'Cannot assign value of type java.lang.Integer to variable of type java.util.Set'
     }
 
     void testAssignmentFailure4() {
@@ -49,7 +49,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             def o = new Object()
             int i = o
         ''',
-        'Cannot assign value of type java.lang.Object to variable of type int'
+            'Cannot assign value of type java.lang.Object to variable of type int'
     }
 
     void testAssignmentFailure5() {
@@ -57,7 +57,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             def o = new Object()
             Set s = o
         ''',
-        'Cannot assign value of type java.lang.Object to variable of type java.util.Set'
+            'Cannot assign value of type java.lang.Object to variable of type java.util.Set'
     }
 
     void testAssignmentFailure6() {
@@ -65,7 +65,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             int i = 2
             Set s = i
         ''',
-        'Cannot assign value of type int to variable of type java.util.Set'
+            'Cannot assign value of type int to variable of type java.util.Set'
     }
 
     // GROOVY-11289
@@ -77,7 +77,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             }
             new C(p: new Object())
         ''',
-        'Cannot assign value of type java.lang.Object to variable of type java.util.regex.Matcher or java.util.regex.Pattern'
+            'Cannot assign value of type java.lang.Object to variable of type java.util.regex.Matcher or java.util.regex.Pattern'
     }
 
     void testAssignmentToEnum() {
@@ -92,7 +92,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             MyEnum e = MyEnum.a
             e = 1
         ''',
-        'Cannot assign value of type int to variable of type MyEnum'
+            'Cannot assign value of type int to variable of type MyEnum'
     }
 
     void testAssignmentToClass() {
@@ -108,9 +108,9 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
     }
 
     void testAssignmentToNumbers() {
-        for (type in ['byte','short','int','long','float','double',
-            'java.lang.Byte','java.lang.Short','java.lang.Integer',
-            'java.lang.Long','java.lang.Float','java.lang.Double']) {
+        for (type in ['byte', 'short', 'int', 'long', 'float', 'double',
+                      'java.lang.Byte', 'java.lang.Short', 'java.lang.Integer',
+                      'java.lang.Long', 'java.lang.Float', 'java.lang.Double']) {
             boolean primitive = !type.contains('.')
             shouldFailWithMessages """
                 $type x = 0
@@ -125,9 +125,9 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
               //x = 9.0g    // okay for float and double
                 x = (Number)10
             """,
-            "Cannot assign value of type ${primitive ? 'char' : 'java.lang.Character'} to variable of type $type",
-            "Cannot assign value of type java.math.BigInteger to variable of type $type",
-            "Cannot assign value of type java.lang.Number to variable of type $type"
+                "Cannot assign value of type ${primitive ? 'char' : 'java.lang.Character'} to variable of type $type",
+                "Cannot assign value of type java.math.BigInteger to variable of type $type",
+                "Cannot assign value of type java.lang.Number to variable of type $type"
         }
     }
 
@@ -153,7 +153,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             Collection z = 'z'
         ''',
-        'Cannot assign value of type java.lang.String to variable of type java.util.Collection'
+            'Cannot assign value of type java.lang.String to variable of type java.util.Collection'
     }
 
     // GROOVY-10744
@@ -186,11 +186,11 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
 
     // GROOVY-11371
     void testAssignNullToPrimitive() {
-        for (type in ['byte','char','double','float','int','long','short']) {
+        for (type in ['byte', 'char', 'double', 'float', 'int', 'long', 'short']) {
             shouldFailWithMessages """
                 $type v = null
             """,
-            "Cannot assign value of type java.lang.Object to variable of type $type"
+                "Cannot assign value of type java.lang.Object to variable of type $type"
         }
     }
 
@@ -210,7 +210,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             char c = (Integer) null
         ''',
-        'Cannot assign value of type java.lang.Integer to variable of type char'
+            'Cannot assign value of type java.lang.Integer to variable of type char'
     }
 
     void testAssignStringToChar() {
@@ -232,14 +232,14 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             char c = 'aa'
         ''',
-        'Cannot assign value of type java.lang.String to variable of type char'
+            'Cannot assign value of type java.lang.String to variable of type char'
     }
 
     void testAssignStringLongerThan1CharToCharacter() {
         shouldFailWithMessages '''
             Character c = 'aa'
         ''',
-        'Cannot assign value of type java.lang.String to variable of type java.lang.Character'
+            'Cannot assign value of type java.lang.String to variable of type java.lang.Character'
     }
 
     void testPossibleLossOfPrecision1() {
@@ -252,7 +252,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             byte b = 128 // will not fit in a byte
         ''',
-        'Possible loss of precision from int to byte'
+            'Possible loss of precision from int to byte'
     }
 
     void testPossibleLossOfPrecision3() {
@@ -265,7 +265,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             short s = 32768 // will not fit in a short
         ''',
-        'Possible loss of precision from int to short'
+            'Possible loss of precision from int to short'
     }
 
     void testPossibleLossOfPrecision5() {
@@ -290,14 +290,14 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             int i = 32768.1d
         ''',
-        'Possible loss of precision from double to int'
+            'Possible loss of precision from double to int'
     }
 
     void testPossibleLossOfPrecision9() {
         shouldFailWithMessages '''
             int i = Long.MAX_VALUE
         ''',
-        'Possible loss of precision from long to int'
+            'Possible loss of precision from long to int'
     }
 
     void testPossibleLossOfPrecision10() {
@@ -330,7 +330,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             int i = 0
             i += new Object()
         ''',
-        'Cannot find matching method java.lang.Integer#plus(java.lang.Object)'
+            'Cannot find matching method java.lang.Integer#plus(java.lang.Object)'
     }
 
     void testIntMinusEqualsObject() {
@@ -338,7 +338,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             int i = 0
             i -= new Object()
         ''',
-        'Cannot find matching method java.lang.Integer#minus(java.lang.Object)'
+            'Cannot find matching method java.lang.Integer#minus(java.lang.Object)'
     }
 
     void testStringPlusEqualsString() {
@@ -428,7 +428,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             List<Integer> foo = true ? new LinkedList<String>() : new LinkedList<Integer>()
         ''',
-        'Incompatible generic argument types. Cannot assign java.util.LinkedList<? extends java.io.Serializable & java.lang.Comparable','> to: java.util.List<java.lang.Integer>'
+            'Incompatible generic argument types. Cannot assign java.util.LinkedList<? extends java.io.Serializable & java.lang.Comparable', '> to: java.util.List<java.lang.Integer>'
     }
 
     void testIfElseBranch() {
@@ -442,7 +442,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             }
             x.toInteger()
         ''',
-        'Cannot find matching method java.io.Serializable#toInteger()'
+            'Cannot find matching method java.io.Serializable#toInteger()'
     }
 
     void testIfElseBranchParameter() {
@@ -458,7 +458,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             }
             foo('bar')
         ''',
-        'Cannot find matching method java.lang.Object#toInteger()'
+            'Cannot find matching method java.lang.Object#toInteger()'
     }
 
     void testIfOnly() {
@@ -470,7 +470,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             }
             x.toInteger()
         ''',
-        'Cannot find matching method java.io.Serializable#toInteger()'
+            'Cannot find matching method java.io.Serializable#toInteger()'
     }
 
     void testIfOnlyParameter() {
@@ -485,7 +485,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             }
             foo('123')
         ''',
-        'Cannot find matching method java.lang.Object#toInteger()'
+            'Cannot find matching method java.lang.Object#toInteger()'
     }
 
     void testIfWithCommonInterface() {
@@ -577,7 +577,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             }
             x.m() // x should be LUB(C,int)
         ''',
-        'Cannot find matching method java.lang.Object#m()'
+            'Cannot find matching method java.lang.Object#m()'
     }
 
     void testForLoopWithAssignment() {
@@ -588,7 +588,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             }
             x.toInteger()
         ''',
-        'Cannot find matching method java.io.Serializable#toInteger()'
+            'Cannot find matching method java.io.Serializable#toInteger()'
     }
 
     // GROOVY-11353
@@ -610,7 +610,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             }
             x.toInteger()
         ''',
-        'Cannot find matching method java.io.Serializable#toInteger()'
+            'Cannot find matching method java.io.Serializable#toInteger()'
     }
 
     // GROOVY-11474
@@ -623,7 +623,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
                 x = " "
             }
         ''',
-        'Cannot assign value of type (java.io.Serializable & java.lang.Comparable',') to variable of type java.lang.Integer'
+            'Cannot assign value of type (java.io.Serializable & java.lang.Comparable', ') to variable of type java.lang.Integer'
     }
 
     void testTernaryWithNestedAssignment() {
@@ -632,7 +632,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             def y = (false ? (x = new HashSet()) : 42)
             x.toInteger()
         ''',
-        'Cannot find matching method java.io.Serializable#toInteger()'
+            'Cannot find matching method java.io.Serializable#toInteger()'
     }
 
     // GROOVY-11457
@@ -661,7 +661,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             }
             Appendable y = x // Cannot cast object '1' with class 'Integer' to class 'Appendable'
         ''',
-        'Cannot assign value of type java.lang.Object to variable of type java.lang.Appendable'
+            'Cannot assign value of type java.lang.Object to variable of type java.lang.Appendable'
     }
 
     void testFloatSub() {
@@ -811,7 +811,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
     }
 
     void testBigIntegerMultDouble() {
-       assertScript '''
+        assertScript '''
             BigInteger a = 333
             double b = 2d
             BigDecimal c = a * b
@@ -824,7 +824,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             double b = 2d
             BigInteger c = a * b
         ''',
-        'Cannot assign value of type java.math.BigDecimal to variable of type java.math.BigInteger'
+            'Cannot assign value of type java.math.BigDecimal to variable of type java.math.BigInteger'
     }
 
     void testBigIntegerMultInteger() {
@@ -892,7 +892,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             }
             new Pogo().integer++
         ''',
-        'Cannot assign value of type java.lang.Integer to variable of type java.lang.Character'
+            'Cannot assign value of type java.lang.Integer to variable of type java.lang.Character'
     }
 
     void testPostfixOnObject() {
@@ -900,12 +900,12 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             Object o = new Object()
             o++
         ''',
-        'Cannot find matching method java.lang.Object#next()'
+            'Cannot find matching method java.lang.Object#next()'
         shouldFailWithMessages '''
             Object o = new Object()
             o--
         ''',
-        'Cannot find matching method java.lang.Object#previous()'
+            'Cannot find matching method java.lang.Object#previous()'
     }
 
     void testPrefixOnInt() {
@@ -935,12 +935,12 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             Object o = new Object()
             ++o
         ''',
-        'Cannot find matching method java.lang.Object#next()'
+            'Cannot find matching method java.lang.Object#next()'
         shouldFailWithMessages '''
             Object o = new Object()
             --o
         ''',
-        'Cannot find matching method java.lang.Object#previous()'
+            'Cannot find matching method java.lang.Object#previous()'
     }
 
     // GROOVY-5535, GROOVY-10623
@@ -1141,7 +1141,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             }
             new C().foo ?= 'bar'
         ''',
-        'Cannot assign value of type java.io.Serializable to variable of type java.lang.Number'
+            'Cannot assign value of type java.io.Serializable to variable of type java.lang.Number'
     }
 
     void testMultipleAssignment1() {
@@ -1168,7 +1168,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             List y
             (x,y) = [1,2]
         ''',
-        'Cannot assign value of type int to variable of type java.util.List'
+            'Cannot assign value of type int to variable of type java.util.List'
     }
 
     void testMultipleAssignmentWithoutEnoughArgs() {
@@ -1177,7 +1177,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             int y
             (x,y) = [1]
         ''',
-        'Incorrect number of values. Expected:2 Was:1'
+            'Incorrect number of values. Expected:2 Was:1'
     }
 
     void testMultipleAssignmentTooManyArgs() {
@@ -1195,7 +1195,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
             def list = [1,2,3]
             def (x,y) = list
         ''',
-        'Multiple assignments without list or tuple on the right-hand side are unsupported in static type checking mode'
+            'Multiple assignments without list or tuple on the right-hand side are unsupported in static type checking mode'
     }
 
     // GROOVY-8223, GROOVY-8887, GROOVY-10063
@@ -1214,7 +1214,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             def (String string, Integer number) = Tuple.tuple('answer', '42')
         ''',
-        'Cannot assign value of type java.lang.String to variable of type java.lang.Integer'
+            'Cannot assign value of type java.lang.String to variable of type java.lang.Integer'
 
         assertScript '''
             def (int a, int b, int c, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n, int o, int p) = Tuple.tuple(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)
@@ -1344,7 +1344,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
 
             m()
         ''',
-        'The variable [_] is undeclared'
+            'The variable [_] is undeclared'
     }
 
     // GROOVY-10943
@@ -1356,7 +1356,7 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
 
             m()
         ''',
-        'The variable [_] is undeclared'
+            'The variable [_] is undeclared'
     }
 
     // GROOVY-10943
@@ -1368,6 +1368,6 @@ class STCAssignmentTest extends StaticTypeCheckingTestCase {
 
             m()
         ''',
-        'The variable [_] is undeclared'
+            'The variable [_] is undeclared'
     }
 }

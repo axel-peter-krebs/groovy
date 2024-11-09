@@ -23,12 +23,20 @@ import org.apache.groovy.gradle.DocGDK
 plugins {
     id 'jvm-ecosystem'
     id 'org.apache.groovy-common'
-    id 'org.apache.groovy-aggregating-project'
+    //id 'org.apache.groovy-aggregating-project'
     id 'org.apache.groovy-doc-aggregator'
     id 'org.asciidoctor.jvm.pdf'
 }
 
 def distributionExtension = project.extensions.create('distribution', DistributionExtension, project)
+
+// exclude 'groovy-all', 'groovy-binary', 'groovy-bom', 'binary-compatibility' from dependency evaluation
+def thisProject = project
+rootProject.allprojects {
+    if (!(project.name in ['groovy-all', 'groovy-binary', 'groovy-bom', 'binary-compatibility'])) {
+        thisProject.evaluationDependsOn(project.path)
+    }
+}
 
 configurations {
     baseProjects {
@@ -152,7 +160,7 @@ def distSdk = tasks.register("distSdk", Zip) {
     doFirst {
         def av = project.version
         if ((av.endsWith('SNAPSHOT') && !groovyBundleVersion.endsWith('SNAPSHOT'))
-                || (!av.endsWith('SNAPSHOT') && groovyBundleVersion.endsWith('SNAPSHOT'))) {
+            || (!av.endsWith('SNAPSHOT') && groovyBundleVersion.endsWith('SNAPSHOT'))) {
             throw new GradleException("Incoherent versions. Found groovyVersion=$av and groovyBundleVersion=${versions.groovyBundle}")
         }
     }

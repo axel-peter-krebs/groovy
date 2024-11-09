@@ -74,28 +74,28 @@ class BigDecimalOperatorsTest extends GroovyTestCase {
         assert y == 12.0
 
         y = 11 * 3.333
-        assert y == 36.663 , "y = " + y
+        assert y == 36.663, "y = " + y
 
         y = 3.333 * 11
-        assert y == 36.663 , "y = " + y
+        assert y == 36.663, "y = " + y
     }
 
     void testDivide() {
         x = 80.0 / 4
-        assert x == 20.0 , "x = " + x
+        assert x == 20.0, "x = " + x
 
         x = 80 / 4.0
-        assert x == 20.0 , "x = " + x
+        assert x == 20.0, "x = " + x
 
         y = x / 2
-        assert y == 10.0 , "y = " + y
-        assert y == 10 , "y = " + y
+        assert y == 10.0, "y = " + y
+        assert y == 10, "y = " + y
 
         y = 34 / 3.000
-        assert y == 11.3333333333 , "y = " + y
+        assert y == 11.3333333333, "y = " + y
 
         y = 34.00000000000 / 3
-        assert y == 11.33333333333 , "y = " + y
+        assert y == 11.33333333333, "y = " + y
     }
 
     void testMod() {
@@ -124,7 +124,7 @@ class BigDecimalOperatorsTest extends GroovyTestCase {
         assert y == -1.5
     }
 
-    BigDecimal echoX ( BigDecimal x, BigDecimal y) {x}
+    BigDecimal echoX(BigDecimal x, BigDecimal y) { x }
 
     // test for Groovy-1250
     void testBigDecimalCoerce() {
@@ -165,7 +165,7 @@ class BigDecimalOperatorsTest extends GroovyTestCase {
         d *= d
         d *= d
         d *= d
-        assert (long)d != d
+        assert (long) d != d
         assert (BigDecimal) d == d
     }
 
@@ -173,16 +173,16 @@ class BigDecimalOperatorsTest extends GroovyTestCase {
     // GROOVY-5102
     // we need both variants, since one seems to disable prim opts
     void testMath1() {
-        assert BigDecimal == (3/2).getClass()
-        assert BigDecimal == (7.0/8.0).getClass()
-        assert BigDecimal == (new BigDecimal(3.0)/new BigDecimal(2.0)).getClass()
+        assert BigDecimal == (3 / 2).getClass()
+        assert BigDecimal == (7.0 / 8.0).getClass()
+        assert BigDecimal == (new BigDecimal(3.0) / new BigDecimal(2.0)).getClass()
         true
     }
 
     void testMath2() {
-        assert BigDecimal == (3/2).getClass()
-        assert BigDecimal == (7.0/8.0).getClass()
-        assert BigDecimal == (new BigDecimal(3.0)/new BigDecimal(2.0)).getClass()
+        assert BigDecimal == (3 / 2).getClass()
+        assert BigDecimal == (7.0 / 8.0).getClass()
+        assert BigDecimal == (new BigDecimal(3.0) / new BigDecimal(2.0)).getClass()
     }
     // -------------------------------------------------------
 

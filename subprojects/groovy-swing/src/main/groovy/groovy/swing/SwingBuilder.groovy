@@ -126,7 +126,7 @@ class SwingBuilder extends FactoryBuilderSupport {
         registerFactory("bind", bindFactory)
         addAttributeDelegate(bindFactory.&bindingAttributeDelegate)
         registerFactory("bindProxy", new BindProxyFactory())
-        registerFactory ("bindGroup", new BindGroupFactory())
+        registerFactory("bindGroup", new BindGroupFactory())
     }
 
     def registerPassThruNodes() {
@@ -276,9 +276,9 @@ class SwingBuilder extends FactoryBuilderSupport {
     }
 
     def registerEditors() {
-      registerFactory("cellEditor", new CellEditorFactory())
-      registerFactory("editorValue", new CellEditorGetValueFactory())
-      registerFactory("prepareEditor", new CellEditorPrepareFactory())
+        registerFactory("cellEditor", new CellEditorFactory())
+        registerFactory("editorValue", new CellEditorGetValueFactory())
+        registerFactory("prepareEditor", new CellEditorPrepareFactory())
     }
 
     def registerThreading() {
@@ -378,7 +378,7 @@ class SwingBuilder extends FactoryBuilderSupport {
         if (!(c instanceof MethodClosure)) {
             c = c.curry([this])
         }
-        if( SwingUtilities.isEventDispatchThread() )
+        if (SwingUtilities.isEventDispatchThread())
             new Thread(c).start()
         else
             c.call()
@@ -428,7 +428,8 @@ class SwingBuilder extends FactoryBuilderSupport {
         if (ks == null) {
             return null
         } else {
-            return KeyStroke.getKeyStroke(ks.getKeyCode(), ks.getModifiers() | modifier | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())        }
+            return KeyStroke.getKeyStroke(ks.getKeyCode(), ks.getModifiers() | modifier | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
+        }
     }
 
     static LookAndFeel lookAndFeel(Object laf, Closure initCode) {
@@ -489,7 +490,7 @@ class SwingBuilder extends FactoryBuilderSupport {
         def theID = attributes.remove(idAttr)
         if (theID) {
             builder.setVariable(theID, node)
-            if(node) {
+            if (node) {
                 try {
                     if (!node.name) node.name = theID
                 } catch (MissingPropertyException mpe) {
@@ -502,30 +503,30 @@ class SwingBuilder extends FactoryBuilderSupport {
     static clientPropertyAttributeDelegate(def builder, def node, def attributes) {
         def clientPropertyMap = attributes.remove("clientProperties")
         clientPropertyMap.each { key, value ->
-           node.putClientProperty key, value
+            node.putClientProperty key, value
         }
         attributes.findAll { it.key =~ /clientProperty(\w)/ }.each { key, value ->
-           attributes.remove(key)
-           node.putClientProperty(key - "clientProperty", value)
+            attributes.remove(key)
+            node.putClientProperty(key - "clientProperty", value)
         }
     }
 
-    void createKeyStrokeAction( Map attributes, JComponent component = null ) {
+    void createKeyStrokeAction(Map attributes, JComponent component = null) {
         component = findTargetComponent(attributes, component)
-        if( !attributes.containsKey("keyStroke") ) {
+        if (!attributes.containsKey("keyStroke")) {
             throw new RuntimeException("You must define a value for keyStroke:")
         }
-        if( !attributes.containsKey("action") ) {
+        if (!attributes.containsKey("action")) {
             throw new RuntimeException("You must define a value for action:")
         }
 
         def condition = attributes.remove("condition") ?: JComponent.WHEN_FOCUSED
         if (condition instanceof GString) condition = condition as String
-        if( condition instanceof String ) {
+        if (condition instanceof String) {
             condition = condition.toUpperCase().replace(" ", "_")
-            if( !condition.startsWith("WHEN_") ) condition = "WHEN_"+condition
+            if (!condition.startsWith("WHEN_")) condition = "WHEN_" + condition
         }
-        switch(condition) {
+        switch (condition) {
             case JComponent.WHEN_FOCUSED:
             case JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT:
             case JComponent.WHEN_IN_FOCUSED_WINDOW:
@@ -545,16 +546,16 @@ class SwingBuilder extends FactoryBuilderSupport {
                 condition = JComponent.WHEN_FOCUSED
         }
         def actionKey = attributes.remove("actionKey")
-        if( !actionKey ) actionKey = "Action"+Math.abs(random.nextLong())
+        if (!actionKey) actionKey = "Action" + Math.abs(random.nextLong())
 
         def keyStroke = attributes.remove("keyStroke")
         // accept String, Number, KeyStroke, List<String>, List<Number>, List<KeyStroke>
         def action = attributes.remove("action")
 
-        if( keyStroke instanceof GString ) keyStroke = keyStroke as String
-        if( keyStroke instanceof String || keyStroke instanceof Number ) keyStroke = [keyStroke]
+        if (keyStroke instanceof GString) keyStroke = keyStroke as String
+        if (keyStroke instanceof String || keyStroke instanceof Number) keyStroke = [keyStroke]
         keyStroke.each { ks ->
-            switch(ks) {
+            switch (ks) {
                 case KeyStroke:
                     component.getInputMap(condition).put(ks, actionKey)
                     break
@@ -571,17 +572,17 @@ class SwingBuilder extends FactoryBuilderSupport {
         component.actionMap.put(actionKey, action)
     }
 
-    private findTargetComponent( Map attributes, JComponent component ) {
-        if( component ) return component
-        if( attributes.containsKey("component") ) {
+    private findTargetComponent(Map attributes, JComponent component) {
+        if (component) return component
+        if (attributes.containsKey("component")) {
             def c = attributes.remove("component")
-            if( !(c instanceof JComponent) ) {
+            if (!(c instanceof JComponent)) {
                 throw new RuntimeException("The property component: is not of type JComponent.")
             }
             return c
         }
         def c = getCurrent()
-        if( c instanceof JComponent ) {
+        if (c instanceof JComponent) {
             return c
         }
         throw new RuntimeException("You must define one of the following: a value of type JComponent, a component: attribute or nest this node inside another one that produces a JComponent.")

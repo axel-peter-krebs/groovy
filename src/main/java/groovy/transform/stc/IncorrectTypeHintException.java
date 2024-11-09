@@ -25,10 +25,10 @@ public class IncorrectTypeHintException extends SyntaxException {
     private static final long serialVersionUID = 4481159236968540419L;
 
     public IncorrectTypeHintException(final MethodNode mn, final Throwable e, int line, int column) {
-        super("Incorrect type hint in @ClosureParams in class "+mn.getDeclaringClass().getName()+" method "+mn.getTypeDescriptor()+" : "+e.getMessage(), e, line, column);
+        super("Incorrect type hint in @ClosureParams in class " + mn.getDeclaringClass().getName() + " method " + mn.getTypeDescriptor() + " : " + e.getMessage(), e, line, column);
     }
 
     public IncorrectTypeHintException(final MethodNode mn, final String msg, final int line, final int column) {
-        super("Incorrect type hint in @ClosureParams in class "+mn.getDeclaringClass().getName()+" method "+mn.getTypeDescriptor()+" : "+msg, line, column);
+        super("Incorrect type hint in @ClosureParams in class " + mn.getDeclaringClass().getName() + " method " + mn.getTypeDescriptor() + " : " + msg, line, column);
     }
 }

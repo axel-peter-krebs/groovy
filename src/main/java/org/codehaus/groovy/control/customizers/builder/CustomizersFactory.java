@@ -31,7 +31,7 @@ import java.util.Map;
  *
  * @since 2.1.0
  */
-@SuppressWarnings({"unchecked","rawtypes"})
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class CustomizersFactory extends AbstractFactory implements PostCompletionFactory {
 
     @Override

@@ -27,6 +27,15 @@ public class MockManagedObject {
     private int somethingElse;
     private boolean avail;
 
+    public MockManagedObject() {
+    }
+
+    public MockManagedObject(String thing) {
+    }
+
+    public MockManagedObject(String thing, int count) {
+    }
+
     public String getSomething() {
         logger.log(Level.FINEST, "Returning Something " + something);
         return something;
@@ -46,15 +55,6 @@ public class MockManagedObject {
         somethingElse = thing;
     }
 
-    public MockManagedObject() {
-    }
-
-    public MockManagedObject(String thing) {
-    }
-
-    public MockManagedObject(String thing, int count) {
-    }
-
     public void doSomething() {
         logger.log(Level.FINER, "JMX Invoke - doSomething().. (no param)");
     }
@@ -70,12 +70,12 @@ public class MockManagedObject {
         logger.log(Level.FINER, "Jmx Invoke - method dontDoThis() with param : " + param);
     }
 
-    public void setAvailable(boolean flag) {
-        avail = flag;
-    }
-
     public boolean isAvailable() {
         return avail;
+    }
+
+    public void setAvailable(boolean flag) {
+        avail = flag;
     }
 
     public String get(String str) {

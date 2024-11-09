@@ -22,12 +22,12 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * DatumDependentDuration represents durations whose length in milliseconds 
+ * DatumDependentDuration represents durations whose length in milliseconds
  * cannot be determined without knowing the datum point.
  * <p>
  * I don't know how many days in a year unless I know if it's a leap year or not.
  * <p>
- * I don't know how many days in a month unless I know the name of the month 
+ * I don't know how many days in a month unless I know the name of the month
  * (and if it's a leap year if the month is February)
  */
 public class DatumDependentDuration extends BaseDuration {
@@ -47,9 +47,9 @@ public class DatumDependentDuration extends BaseDuration {
 
     public DatumDependentDuration plus(final DatumDependentDuration rhs) {
         return new DatumDependentDuration(this.getYears() + rhs.getYears(), this.getMonths() + rhs.getMonths(),
-                this.getDays() + rhs.getDays(), this.getHours() + rhs.getHours(),
-                this.getMinutes() + rhs.getMinutes(), this.getSeconds() + rhs.getSeconds(),
-                this.getMillis() + rhs.getMillis());
+            this.getDays() + rhs.getDays(), this.getHours() + rhs.getHours(),
+            this.getMinutes() + rhs.getMinutes(), this.getSeconds() + rhs.getSeconds(),
+            this.getMillis() + rhs.getMillis());
     }
 
     public DatumDependentDuration plus(final TimeDatumDependentDuration rhs) {
@@ -58,9 +58,9 @@ public class DatumDependentDuration extends BaseDuration {
 
     public DatumDependentDuration plus(final Duration rhs) {
         return new DatumDependentDuration(this.getYears(), this.getMonths(),
-                this.getDays() + rhs.getDays(), this.getHours() + rhs.getHours(),
-                this.getMinutes() + rhs.getMinutes(), this.getSeconds() + rhs.getSeconds(),
-                this.getMillis() + rhs.getMillis());
+            this.getDays() + rhs.getDays(), this.getHours() + rhs.getHours(),
+            this.getMinutes() + rhs.getMinutes(), this.getSeconds() + rhs.getSeconds(),
+            this.getMillis() + rhs.getMillis());
 
     }
 
@@ -71,25 +71,25 @@ public class DatumDependentDuration extends BaseDuration {
 
     public DatumDependentDuration minus(final DatumDependentDuration rhs) {
         return new DatumDependentDuration(this.getYears() - rhs.getYears(), this.getMonths() - rhs.getMonths(),
-                this.getDays() - rhs.getDays(), this.getHours() - rhs.getHours(),
-                this.getMinutes() - rhs.getMinutes(), this.getSeconds() - rhs.getSeconds(),
-                this.getMillis() - rhs.getMillis());
+            this.getDays() - rhs.getDays(), this.getHours() - rhs.getHours(),
+            this.getMinutes() - rhs.getMinutes(), this.getSeconds() - rhs.getSeconds(),
+            this.getMillis() - rhs.getMillis());
 
     }
 
     public DatumDependentDuration minus(final Duration rhs) {
         return new DatumDependentDuration(this.getYears(), this.getMonths(),
-                this.getDays() - rhs.getDays(), this.getHours() - rhs.getHours(),
-                this.getMinutes() - rhs.getMinutes(), this.getSeconds() - rhs.getSeconds(),
-                this.getMillis() - rhs.getMillis());
+            this.getDays() - rhs.getDays(), this.getHours() - rhs.getHours(),
+            this.getMinutes() - rhs.getMinutes(), this.getSeconds() - rhs.getSeconds(),
+            this.getMillis() - rhs.getMillis());
 
     }
 
     /**
      * @see groovy.time.BaseDuration#toMilliseconds()
-     *
+     * <p>
      * Change the duration into milliseconds, relative to 'now.'  Therefore
-     * things like timezone and time of year will affect how this conversion 
+     * things like timezone and time of year will affect how this conversion
      * occurs.
      */
     @Override

@@ -95,7 +95,7 @@ class ClassReloadingTest extends GroovyTestCase {
     }
 
     void testReloadingIfInitialFileMissesTimestamp() {
-        def parent = File.createTempDir("reload","test")
+        def parent = File.createTempDir("reload", "test")
         def file = File.createTempFile("TestReload", ".groovy", parent)
         file.deleteOnExit()
         def className = file.name - ".groovy"
@@ -140,7 +140,7 @@ class ClassReloadingTest extends GroovyTestCase {
             assert "goodbye" == message
         } finally {
             println parent.listFiles()
-            parent.eachFile {it.delete()}
+            parent.eachFile { it.delete() }
             parent.delete()
         }
     }

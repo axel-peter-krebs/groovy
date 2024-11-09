@@ -32,14 +32,15 @@ import java.util.function.Predicate;
  * @since 2.5.0
  */
 final class MacroMethodsCache extends AbstractExtensionMethodCache {
+    public static final MacroMethodsCache INSTANCE = new MacroMethodsCache();
     private static final ClassNode MACRO_ANNOTATION_CLASS_NODE = ClassHelper.make(Macro.class);
 
-    public static final MacroMethodsCache INSTANCE = new MacroMethodsCache();
-
-    private MacroMethodsCache() {}
+    private MacroMethodsCache() {
+    }
 
     @Override
-    protected void addAdditionalClassesToScan(Set<Class> instanceExtClasses, Set<Class> staticExtClasses) {}
+    protected void addAdditionalClassesToScan(Set<Class> instanceExtClasses, Set<Class> staticExtClasses) {
+    }
 
     @Override
     protected String getDisablePropertyName() {

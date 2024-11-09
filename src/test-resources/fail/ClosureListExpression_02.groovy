@@ -16,4 +16,4 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-def x = (1;2;3)
+def x = (1; 2; 3 )

@@ -71,6 +71,21 @@ public class GroovyDocTool {
         }
     }
 
+    @Deprecated
+    static String getPath(String filename) {
+        String path = new File(filename).getParent();
+        // path length of 1 indicates that probably is 'default package' i.e. "/"
+        if (path == null || (path.length() == 1 && !Character.isJavaIdentifierStart(path.charAt(0)))) {
+            path = "DefaultPackage"; // "DefaultPackage" for 'default package' path, rather than null...
+        }
+        return path;
+    }
+
+    @Deprecated
+    static String getFile(String filename) {
+        return new File(filename).getName();
+    }
+
     public void add(List<String> filenames) throws IOException {
         if (templateEngine != null) {
             // only print out if we are being used for template generation
@@ -97,21 +112,6 @@ public class GroovyDocTool {
         } else {
             throw new UnsupportedOperationException("No template engine was found");
         }
-    }
-
-    @Deprecated
-    static String getPath(String filename) {
-        String path = new File(filename).getParent();
-        // path length of 1 indicates that probably is 'default package' i.e. "/"
-        if (path == null || (path.length() == 1 && !Character.isJavaIdentifierStart(path.charAt(0)))) {
-            path = "DefaultPackage"; // "DefaultPackage" for 'default package' path, rather than null...
-        }
-        return path;
-    }
-
-    @Deprecated
-    static String getFile(String filename) {
-        return new File(filename).getName();
     }
 
 }

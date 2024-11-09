@@ -29,7 +29,7 @@ public class TupleListTest extends GroovyTestCase {
         StringBuilder buffer = new StringBuilder();
         for (Iterator iter = InvokerHelper.asIterator(InvokerHelper.createTuple(new Object[]{"a", "b", "c"}));
              iter.hasNext();
-                ) {
+        ) {
             Object i = iter.next();
             buffer.append(i);
         }
@@ -41,7 +41,7 @@ public class TupleListTest extends GroovyTestCase {
         StringBuilder buffer = new StringBuilder();
         for (Iterator iter = InvokerHelper.asIterator(InvokerHelper.createList(new Object[]{"a", "b", "c"}));
              iter.hasNext();
-                ) {
+        ) {
             Object i = iter.next();
             buffer.append(i);
         }

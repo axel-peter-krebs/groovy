@@ -134,8 +134,9 @@ class MacroCallTransformingVisitor extends ClassCodeVisitorSupport {
 
     /**
      * Attempts to call given macroMethod
-     * @param call MethodCallExpression before the transformation
-     * @param macroMethod a macro method candidate
+     *
+     * @param call           MethodCallExpression before the transformation
+     * @param macroMethod    a macro method candidate
      * @param macroArguments arguments to pass to
      * @return true if call succeeded and current call was transformed
      */

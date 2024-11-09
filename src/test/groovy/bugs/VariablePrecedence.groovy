@@ -24,7 +24,7 @@ class VariblePrecedence extends GroovyTestCase {
 
     void testVariablePrecedence() {
 
-        assertScript( """
+        assertScript("""
             class VariableFoo {
                 def x = 100
                 def y = 93
@@ -50,12 +50,12 @@ class VariblePrecedence extends GroovyTestCase {
                 }
             }
 
-        """ );
+        """);
 
     }
 
     void testVariablePrecedenceInScript_FAILS() {
-        assertScript( """
+        assertScript("""
             c = { x -> assert x == 1; assert y == 93; }
             x = 100;
             y = 93;

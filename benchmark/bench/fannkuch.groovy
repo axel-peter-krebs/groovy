@@ -27,7 +27,7 @@ def fannkuch(int n) {
 
     while (true) {
         // write-out the first 30 permutations
-        if (check < 30){
+        if (check < 30) {
             for (i in 0..<n) {
                 print(perm1[i] + 1)
             }

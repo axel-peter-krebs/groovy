@@ -105,73 +105,6 @@ public class AutoCloneASTTransformation extends AbstractASTTransformation {
     private static final ClassNode OIS_TYPE = make(ObjectInputStream.class);
     private static final ClassNode INVOKER_TYPE = make(InvokerHelper.class);
 
-    @Override
-    public void visit(ASTNode[] nodes, SourceUnit source) {
-        init(nodes, source);
-        AnnotatedNode parent = (AnnotatedNode) nodes[1];
-        AnnotationNode anno = (AnnotationNode) nodes[0];
-        if (!MY_TYPE.equals(anno.getClassNode())) return;
-
-        if (parent instanceof ClassNode) {
-            ClassNode cNode = (ClassNode) parent;
-            if (!checkNotInterface(cNode, MY_TYPE_NAME)) return;
-            cNode.addInterface(CLONEABLE_TYPE);
-            boolean includeFields = memberHasValue(anno, "includeFields", true);
-            AutoCloneStyle style = getStyle(anno, "style");
-            List<String> excludes = getMemberStringList(anno, "excludes");
-            if (!checkPropertyList(cNode, excludes, "excludes", anno, MY_TYPE_NAME, includeFields)) return;
-            List<FieldNode> list = getInstancePropertyFields(cNode);
-            if (includeFields) {
-                list.addAll(getInstanceNonPropertyFields(cNode));
-            }
-            if (style == null) style = AutoCloneStyle.CLONE;
-            switch (style) {
-                case COPY_CONSTRUCTOR:
-                    createCloneCopyConstructor(cNode, list, excludes);
-                    break;
-                case SERIALIZATION:
-                    createCloneSerialization(cNode);
-                    break;
-                case SIMPLE:
-                    createSimpleClone(cNode, list, excludes);
-                    break;
-                default:
-                    createClone(cNode, list, excludes);
-                    break;
-            }
-        }
-    }
-
-    private void createCloneSerialization(ClassNode cNode) {
-        final BlockStatement body = new BlockStatement();
-        // def baos = new ByteArrayOutputStream()
-        final Expression baos = localVarX("baos");
-        body.addStatement(declS(baos, ctorX(BAOS_TYPE)));
-
-        // baos.withObjectOutputStream{ it.writeObject(this) }
-        MethodCallExpression writeObject = callX(castX(OOS_TYPE, varX("it")), "writeObject", varX("this"));
-        writeObject.setImplicitThis(false);
-        ClosureExpression writeClos = closureX(block(stmt(writeObject)));
-        writeClos.setVariableScope(new VariableScope());
-        body.addStatement(stmt(callX(baos, "withObjectOutputStream", args(writeClos))));
-
-        // def bais = new ByteArrayInputStream(baos.toByteArray())
-        final Expression bais = localVarX("bais");
-        body.addStatement(declS(bais, ctorX(BAIS_TYPE, args(callX(baos, "toByteArray")))));
-
-        // return bais.withObjectInputStream(getClass().classLoader){ (<type>) it.readObject() }
-        MethodCallExpression readObject = callX(castX(OIS_TYPE, varX("it")), "readObject");
-        readObject.setImplicitThis(false);
-        ClosureExpression readClos = closureX(block(stmt(castX(GenericsUtils.nonGeneric(cNode), readObject))));
-        readClos.setVariableScope(new VariableScope());
-        Expression classLoader = callX(callThisX("getClass"), "getClassLoader");
-        body.addStatement(returnS(callX(bais, "withObjectInputStream", args(classLoader, readClos))));
-
-        new VariableScopeVisitor(sourceUnit, true).visitClass(cNode);
-        ClassNode[] exceptions = {make(CloneNotSupportedException.class)};
-        addGeneratedMethod(cNode, "clone", ACC_PUBLIC, GenericsUtils.nonGeneric(cNode), Parameter.EMPTY_ARRAY, exceptions, body);
-    }
-
     private static void createCloneCopyConstructor(ClassNode cNode, List<FieldNode> list, List<String> excludes) {
         if (cNode.getDeclaredConstructors().isEmpty()) {
             // add no-arg constructor
@@ -324,6 +257,73 @@ public class AutoCloneASTTransformation extends AbstractASTTransformation {
             }
         }
         return null;
+    }
+
+    @Override
+    public void visit(ASTNode[] nodes, SourceUnit source) {
+        init(nodes, source);
+        AnnotatedNode parent = (AnnotatedNode) nodes[1];
+        AnnotationNode anno = (AnnotationNode) nodes[0];
+        if (!MY_TYPE.equals(anno.getClassNode())) return;
+
+        if (parent instanceof ClassNode) {
+            ClassNode cNode = (ClassNode) parent;
+            if (!checkNotInterface(cNode, MY_TYPE_NAME)) return;
+            cNode.addInterface(CLONEABLE_TYPE);
+            boolean includeFields = memberHasValue(anno, "includeFields", true);
+            AutoCloneStyle style = getStyle(anno, "style");
+            List<String> excludes = getMemberStringList(anno, "excludes");
+            if (!checkPropertyList(cNode, excludes, "excludes", anno, MY_TYPE_NAME, includeFields)) return;
+            List<FieldNode> list = getInstancePropertyFields(cNode);
+            if (includeFields) {
+                list.addAll(getInstanceNonPropertyFields(cNode));
+            }
+            if (style == null) style = AutoCloneStyle.CLONE;
+            switch (style) {
+                case COPY_CONSTRUCTOR:
+                    createCloneCopyConstructor(cNode, list, excludes);
+                    break;
+                case SERIALIZATION:
+                    createCloneSerialization(cNode);
+                    break;
+                case SIMPLE:
+                    createSimpleClone(cNode, list, excludes);
+                    break;
+                default:
+                    createClone(cNode, list, excludes);
+                    break;
+            }
+        }
+    }
+
+    private void createCloneSerialization(ClassNode cNode) {
+        final BlockStatement body = new BlockStatement();
+        // def baos = new ByteArrayOutputStream()
+        final Expression baos = localVarX("baos");
+        body.addStatement(declS(baos, ctorX(BAOS_TYPE)));
+
+        // baos.withObjectOutputStream{ it.writeObject(this) }
+        MethodCallExpression writeObject = callX(castX(OOS_TYPE, varX("it")), "writeObject", varX("this"));
+        writeObject.setImplicitThis(false);
+        ClosureExpression writeClos = closureX(block(stmt(writeObject)));
+        writeClos.setVariableScope(new VariableScope());
+        body.addStatement(stmt(callX(baos, "withObjectOutputStream", args(writeClos))));
+
+        // def bais = new ByteArrayInputStream(baos.toByteArray())
+        final Expression bais = localVarX("bais");
+        body.addStatement(declS(bais, ctorX(BAIS_TYPE, args(callX(baos, "toByteArray")))));
+
+        // return bais.withObjectInputStream(getClass().classLoader){ (<type>) it.readObject() }
+        MethodCallExpression readObject = callX(castX(OIS_TYPE, varX("it")), "readObject");
+        readObject.setImplicitThis(false);
+        ClosureExpression readClos = closureX(block(stmt(castX(GenericsUtils.nonGeneric(cNode), readObject))));
+        readClos.setVariableScope(new VariableScope());
+        Expression classLoader = callX(callThisX("getClass"), "getClassLoader");
+        body.addStatement(returnS(callX(bais, "withObjectInputStream", args(classLoader, readClos))));
+
+        new VariableScopeVisitor(sourceUnit, true).visitClass(cNode);
+        ClassNode[] exceptions = {make(CloneNotSupportedException.class)};
+        addGeneratedMethod(cNode, "clone", ACC_PUBLIC, GenericsUtils.nonGeneric(cNode), Parameter.EMPTY_ARRAY, exceptions, body);
     }
 
 }

@@ -25,7 +25,7 @@ final class InterfaceWithPrimitiveFieldsStubTest extends StringSourcesStubTestCa
 
     Map<String, String> provideSources() {
         [
-            'Dummy.java': '''
+            'Dummy.java'      : '''
                 public class Dummy {
                 }
             ''',

@@ -18,6 +18,7 @@ import groovy.test.GroovyTestCase
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 class ExtensionModuleSpecTest extends GroovyTestCase {
     void testShouldAddMaxRetriesToInteger() {
         assertScript '''// tag::instance_extension_assert[]

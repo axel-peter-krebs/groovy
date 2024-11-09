@@ -56,8 +56,8 @@ class Groovy3871Bug extends GroovyTestCase {
 }
 
 /** a dummy base class */
-class G3871Base { }
+class G3871Base {}
 
 /** a dummy child class */
-class G3871Child extends G3871Base { }
+class G3871Child extends G3871Base {}
 

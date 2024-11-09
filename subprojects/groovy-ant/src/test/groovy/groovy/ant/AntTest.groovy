@@ -112,7 +112,7 @@ end SpoofTaskContainer execute
         def ant = new AntBuilder()
         def PATH = 'task.path'
 
-        // and now run it with the AntBuilder        
+        // and now run it with the AntBuilder
         ant.path(id: PATH) { ant.pathelement(location: 'classes') }
         ['spoofcontainer': SpoofTaskContainer, 'spoof': SpoofTask].each { pair ->
             ant.taskdef(name: pair.key, classname: pair.value.name, classpathref: PATH)
@@ -127,10 +127,10 @@ end SpoofTaskContainer execute
         SpoofTaskContainer.resetSpoof()
 
         // and now run it with the AntBuilder
-        antNS.path(id: PATH) {antNS.pathelement(location: 'classes')}
+        antNS.path(id: PATH) { antNS.pathelement(location: 'classes') }
         ['spoofcontainer': SpoofTaskContainer, 'spoof': SpoofTask].each { pair ->
             antNS.taskdef(name: pair.key, classname: pair.value.name, classpathref: PATH,
-                    uri: 'testNS')
+                uri: 'testNS')
         }
         def testNS = NamespaceBuilder.newInstance(antNS, 'testNS', 'testNSprefix')
         testNS.spoofcontainer {

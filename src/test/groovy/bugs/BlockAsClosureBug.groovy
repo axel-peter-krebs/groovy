@@ -25,7 +25,8 @@ class BlockAsClosureBug extends GroovyTestCase {
     void testBug() {
         def c = 0
 
-        block: {
+        block:
+        {
             c = 9
         }
 
@@ -43,7 +44,8 @@ class BlockAsClosureBug extends GroovyTestCase {
     static void staticMethod(args) {
         def c = 0
 
-        block: {
+        block:
+        {
             c = 9
         }
 
@@ -53,7 +55,8 @@ class BlockAsClosureBug extends GroovyTestCase {
     def foo() {
         def c = 0
 
-        block: {
+        block:
+        {
             c = 9
         }
 

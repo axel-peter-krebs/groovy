@@ -39,10 +39,9 @@ public class ClosureStaticMetaMethod extends MetaMethod implements ClosureInvoki
     private final String name;
 
     /**
-     *
-     * @param name The name of the MetaMethod
+     * @param name           The name of the MetaMethod
      * @param declaringClass The class which declared the MetaMethod
-     * @param c The closure that this ClosureMetaMethod will invoke when called
+     * @param c              The closure that this ClosureMetaMethod will invoke when called
      */
     public ClosureStaticMetaMethod(String name, Class declaringClass, Closure c) {
         this(name, declaringClass, c, c.getParameterTypes());

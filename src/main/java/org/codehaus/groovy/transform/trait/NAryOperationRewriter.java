@@ -112,15 +112,15 @@ class NAryOperationRewriter extends ClassCodeExpressionTransformer {
             return super.transform(exp);
         }
         BinaryExpression operation = new BinaryExpression(
-                exp.getLeftExpression(),
-                Token.newSymbol(token, -1, -1),
-                exp.getRightExpression()
+            exp.getLeftExpression(),
+            Token.newSymbol(token, -1, -1),
+            exp.getRightExpression()
         );
         operation.setSourcePosition(exp);
         BinaryExpression result = new BinaryExpression(
-                exp.getLeftExpression(),
-                Token.newSymbol(EQUAL, -1, -1),
-                operation
+            exp.getLeftExpression(),
+            Token.newSymbol(EQUAL, -1, -1),
+            operation
         );
         result.setSourcePosition(exp);
         return result;

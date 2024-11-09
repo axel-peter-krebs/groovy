@@ -46,45 +46,60 @@ import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
 
 public class MopWriter {
 
-    @FunctionalInterface
-    public interface Factory {
-        MopWriter create(WriterController controller);
-    }
-
     public static final Factory FACTORY = MopWriter::new;
-
-    private static class MopKey {
-        final int hash;
-        final String name;
-        final Parameter[] params;
-
-        MopKey(final String name, final Parameter[] params) {
-            this.name = name;
-            this.params = params;
-            hash = name.hashCode() << 2 + params.length;
-        }
-
-        @Override
-        public int hashCode() {
-            return hash;
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (!(obj instanceof MopKey)) {
-                return false;
-            }
-            MopKey other = (MopKey) obj;
-            return other.name.equals(name) && ParameterUtils.parametersEqual(other.params, params);
-        }
-    }
-
-    //--------------------------------------------------------------------------
-
     protected final WriterController controller;
 
     public MopWriter(final WriterController controller) {
         this.controller = requireNonNull(controller);
+    }
+
+    //--------------------------------------------------------------------------
+
+    private static Iterable<MethodNode> getSuperMethods(final ClassNode classNode) {
+        Map<String, MethodNode> result = classNode.getSuperClass().getDeclaredMethodsMap();
+        for (ClassNode in : classNode.getInterfaces()) { // declared!
+            if (!classNode.getSuperClass().implementsInterface(in)) {
+                for (MethodNode mn : in.getMethods()) { // only direct default methods!
+                    if (mn.isDefault()) result.putIfAbsent(mn.getTypeDescriptor(), mn);
+                }
+            }
+        }
+        return result.values();
+    }
+
+    /**
+     * Creates a MOP method name from a method.
+     *
+     * @param method  the method to be called by the mop method
+     * @param useThis if true, then it is a call on "this", "super" else
+     * @return the mop method name
+     */
+    public static String getMopMethodName(final MethodNode method, final boolean useThis) {
+        ClassNode declaringClass = method.getDeclaringClass();
+        int distance = 1;
+        if (!declaringClass.isInterface()) { // GROOVY-8693: fixed distance for interface methods
+            for (ClassNode sc = declaringClass.getSuperClass(); sc != null; sc = sc.getSuperClass()) {
+                distance += 1;
+            }
+        }
+        return (useThis ? "this" : "super") + "$" + distance + "$" + method.getName();
+    }
+
+    /**
+     * Determines if a method is a MOP method. This is done by the method name.
+     * If the name starts with "this$" or "super$" but does not contain "$dist$",
+     * then it is an MOP method.
+     *
+     * @param methodName name of the method to test
+     * @return true if the method is a MOP method
+     */
+    public static boolean isMopMethod(final String methodName) {
+        return (methodName.startsWith("this$") || methodName.startsWith("super$")) && !methodName.contains("$dist$");
+    }
+
+    @Deprecated
+    public static boolean equalParameterTypes(final Parameter[] p1, final Parameter[] p2) {
+        return ParameterUtils.parametersEqual(p1, p2);
     }
 
     public void createMopMethods() {
@@ -92,9 +107,11 @@ public class MopWriter {
         if (!ClassHelper.isGeneratedFunction(classNode)) {
             visitMopMethodList(classNode.getMethods(), true, Collections.emptySet(), Collections.emptyList());
             visitMopMethodList(getSuperMethods(classNode)/*GROOVY-8693, et al.*/, false, classNode.getMethods().stream()
-                    .map(mn -> new MopKey(mn.getName(), mn.getParameters())).collect(toSet()), controller.getSuperMethodNames());
+                .map(mn -> new MopKey(mn.getName(), mn.getParameters())).collect(toSet()), controller.getSuperMethodNames());
         }
     }
+
+    //--------------------------------------------------------------------------
 
     /**
      * Filters a list of method for MOP methods. For all methods that are not
@@ -105,7 +122,6 @@ public class MopWriter {
      *
      * @param methods unfiltered list of methods for MOP
      * @param isThis  if true, then we are creating a MOP method on "this", "super" else
-     *
      * @see #generateMopCalls(LinkedList, boolean)
      */
     private void visitMopMethodList(final Iterable<MethodNode> methods, final boolean isThis, final Set<MopKey> onlyIfThis, final List<String> orThis) {
@@ -167,7 +183,8 @@ public class MopWriter {
                 receiverType = receiverType.getSuperClass();
                 ClassNode declaringType = method.getDeclaringClass();
                 // GROOVY-8693, GROOVY-9909, et al.: method from interface not implemented by super class
-                if (declaringType.isInterface() && !receiverType.implementsInterface(declaringType)) receiverType = declaringType;
+                if (declaringType.isInterface() && !receiverType.implementsInterface(declaringType))
+                    receiverType = declaringType;
             }
             mv.visitMethodInsn(INVOKESPECIAL, BytecodeHelper.getClassInternalName(receiverType), method.getName(), signature, receiverType.isInterface());
 
@@ -179,52 +196,34 @@ public class MopWriter {
         }
     }
 
-    //--------------------------------------------------------------------------
+    @FunctionalInterface
+    public interface Factory {
+        MopWriter create(WriterController controller);
+    }
 
-    private static Iterable<MethodNode> getSuperMethods(final ClassNode classNode) {
-        Map<String, MethodNode> result = classNode.getSuperClass().getDeclaredMethodsMap();
-        for (ClassNode in : classNode.getInterfaces()) { // declared!
-            if (!classNode.getSuperClass().implementsInterface(in)) {
-                for (MethodNode mn : in.getMethods()) { // only direct default methods!
-                    if (mn.isDefault()) result.putIfAbsent(mn.getTypeDescriptor(), mn);
-                }
-            }
+    private static class MopKey {
+        final int hash;
+        final String name;
+        final Parameter[] params;
+
+        MopKey(final String name, final Parameter[] params) {
+            this.name = name;
+            this.params = params;
+            hash = name.hashCode() << 2 + params.length;
         }
-        return result.values();
-    }
 
-    /**
-     * Creates a MOP method name from a method.
-     *
-     * @param method  the method to be called by the mop method
-     * @param useThis if true, then it is a call on "this", "super" else
-     * @return the mop method name
-     */
-    public static String getMopMethodName(final MethodNode method, final boolean useThis) {
-        ClassNode declaringClass = method.getDeclaringClass();
-        int distance = 1;
-        if (!declaringClass.isInterface()) { // GROOVY-8693: fixed distance for interface methods
-            for (ClassNode sc = declaringClass.getSuperClass(); sc != null; sc = sc.getSuperClass()) {
-                distance += 1;
-            }
+        @Override
+        public int hashCode() {
+            return hash;
         }
-        return (useThis ? "this" : "super") + "$" + distance + "$" + method.getName();
-    }
 
-    /**
-     * Determines if a method is a MOP method. This is done by the method name.
-     * If the name starts with "this$" or "super$" but does not contain "$dist$",
-     * then it is an MOP method.
-     *
-     * @param methodName name of the method to test
-     * @return true if the method is a MOP method
-     */
-    public static boolean isMopMethod(final String methodName) {
-        return (methodName.startsWith("this$") || methodName.startsWith("super$")) && !methodName.contains("$dist$");
-    }
-
-    @Deprecated
-    public static boolean equalParameterTypes(final Parameter[] p1, final Parameter[] p2) {
-        return ParameterUtils.parametersEqual(p1, p2);
+        @Override
+        public boolean equals(final Object obj) {
+            if (!(obj instanceof MopKey)) {
+                return false;
+            }
+            MopKey other = (MopKey) obj;
+            return other.name.equals(name) && ParameterUtils.parametersEqual(other.params, params);
+        }
     }
 }

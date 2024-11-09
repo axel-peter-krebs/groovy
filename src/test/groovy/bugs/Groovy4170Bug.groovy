@@ -27,14 +27,16 @@ class Groovy4170Bug extends GroovyTestCase {
 }
 
 class CurryFoo4170 {
-     protected void foo1(String s, int i) {
-         println 'Hurray! Foo1 can be curried.'
-     }
-     private void foo2(String s, int i) {
-         println 'Hurray! Foo2 can be curried.'
-     }
-     public void bar() {
-         this.&foo1.curry('anything', 1).call()
-         this.&foo2.curry('anything', 1).call()
-     }
+    protected void foo1(String s, int i) {
+        println 'Hurray! Foo1 can be curried.'
+    }
+
+    private void foo2(String s, int i) {
+        println 'Hurray! Foo2 can be curried.'
+    }
+
+    public void bar() {
+        this.&foo1.curry('anything', 1).call()
+        this.&foo2.curry('anything', 1).call()
+    }
 }

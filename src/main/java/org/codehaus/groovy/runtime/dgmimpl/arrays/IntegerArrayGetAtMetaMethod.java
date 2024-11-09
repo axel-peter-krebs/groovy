@@ -60,7 +60,7 @@ public class IntegerArrayGetAtMetaMethod extends ArrayGetAtMetaMethod {
         @Override
         public Object call(Object receiver, Object arg) throws Throwable {
             if ((receiver instanceof int[] && arg instanceof Integer)
-                    && checkPojoMetaClass()) {
+                && checkPojoMetaClass()) {
                 final int[] objects = (int[]) receiver;
                 return objects[normaliseIndex((Integer) arg, objects.length)];
             } else

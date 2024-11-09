@@ -22,9 +22,14 @@ import groovy.cli.Option
 import groovy.cli.Unparsed
 
 // tag::withTypeCheckedInterfaceSpec[]
-interface TypeCheckedI{
-    @Option String name()
-    @Option int age()
-    @Unparsed List remaining()
+interface TypeCheckedI {
+    @Option
+    String name()
+
+    @Option
+    int age()
+
+    @Unparsed
+    List remaining()
 }
 // end::withTypeCheckedInterfaceSpec[]

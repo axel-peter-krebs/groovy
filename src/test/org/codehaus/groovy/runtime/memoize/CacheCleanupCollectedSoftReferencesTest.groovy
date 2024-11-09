@@ -26,8 +26,8 @@ class CacheCleanupCollectedSoftReferencesTest extends GroovyTestCase {
 
     void testCollectedCacheValuesAreEnqueued() {
 
-        Closure cl = { 
-            new Integer(it + 1) 
+        Closure cl = {
+            new Integer(it + 1)
         }
 
         UnlimitedConcurrentCache cache = new UnlimitedConcurrentCache()
@@ -46,8 +46,8 @@ class CacheCleanupCollectedSoftReferencesTest extends GroovyTestCase {
 
     void testCollectedCacheValuesAreRemovedFromCache() {
 
-        Closure cl = { 
-            new Integer(it + 1) 
+        Closure cl = {
+            new Integer(it + 1)
         }
 
         UnlimitedConcurrentCache cache = new UnlimitedConcurrentCache()
@@ -61,20 +61,20 @@ class CacheCleanupCollectedSoftReferencesTest extends GroovyTestCase {
 
         assert cache.map.size() == 1
 
-        // As there is not a cleanup thread polling the ReferenceQueue, 
+        // As there is not a cleanup thread polling the ReferenceQueue,
         // a call() invocation is needed to fire the cleaning up of null references.
         memoizedClosure.call(2)
 
-        assert cache.map.size() == 1 : 'collected SoftReferences should be removed from cache'
+        assert cache.map.size() == 1: 'collected SoftReferences should be removed from cache'
     }
 
     private void checkSoftReferenceAreSoftlyReachable(softReference) {
-        assert softReference.get() == null : 
+        assert softReference.get() == null:
             'cache values should be softly reachable and collected before an OOME'
     }
 
     private void checkCollectedSoftReferenceAreEnqueued(softReference) {
-        assert softReference.enqueued : 'collected cache values should be enqueued'
+        assert softReference.enqueued: 'collected cache values should be enqueued'
     }
 
     private void forceSoftReferencesRecollection() {

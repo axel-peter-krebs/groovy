@@ -21,5 +21,6 @@ package stubgenerator.traitStaticPropertiesStub
 trait GroovyXTrait {
     static int bar
     boolean foo
+
     String baz() { 'baz' }
 }

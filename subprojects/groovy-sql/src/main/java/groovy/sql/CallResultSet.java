@@ -37,6 +37,11 @@ class CallResultSet extends GroovyResultSetExtension {
         this.indx = indx;
     }
 
+    protected static GroovyResultSet getImpl(CallableStatement call, int idx) {
+        GroovyResultSetProxy proxy = new GroovyResultSetProxy(new CallResultSet(call, idx));
+        return proxy.getImpl();
+    }
+
     @Override
     protected ResultSet getResultSet() throws SQLException {
         if (firstCall) {
@@ -44,10 +49,5 @@ class CallResultSet extends GroovyResultSetExtension {
             firstCall = false;
         }
         return resultSet;
-    }
-
-    protected static GroovyResultSet getImpl(CallableStatement call, int idx) {
-        GroovyResultSetProxy proxy = new GroovyResultSetProxy(new CallResultSet(call, idx));
-        return proxy.getImpl();
     }
 }

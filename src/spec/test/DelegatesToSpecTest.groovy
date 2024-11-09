@@ -254,7 +254,7 @@ class DelegatesToSpecTest extends GroovyTestCase {
 
     void testDelegatesToWithStrategy() {
         shouldFail(MultipleCompilationErrorsException) {
-        assertScript '''
+            assertScript '''
             class BodySpec {
                 void p(String txt) {
                     println(txt)
@@ -338,6 +338,7 @@ class DelegatesToSpecTest extends GroovyTestCase {
             }
         '''
     }
+
     void testDelegatesToTargetFlowTyping() {
         assertScript '''
             def exec(@DelegatesTo.Target Object target, @DelegatesTo Closure code) {

@@ -143,7 +143,8 @@ final class NullObjectTest {
     }
 
     // GROOVY-7861
-    @Test @CompileStatic
+    @Test
+    @CompileStatic
     void testAsType3() {
         def nil = null
         assert nil.asType(String) === null
@@ -166,7 +167,7 @@ final class NullObjectTest {
     @Test
     void testPlus1() {
         def err = shouldFail(NullPointerException) {
-            null+null
+            null + null
         }
         assert err.message == 'Cannot execute null+null'
     }
@@ -174,7 +175,7 @@ final class NullObjectTest {
     @Test
     void testPlus2() {
         def err = shouldFail(NullPointerException) {
-            null+1
+            null + 1
         }
         assert err.message == 'Cannot execute null+1'
     }
@@ -240,7 +241,7 @@ final class NullObjectTest {
         assert nil + ' is a null value' == 'null is a null value'
         assert 'this is a null value ' + null == 'this is a null value null'
 
-        use (MyCategory) {
+        use(MyCategory) {
             assert "a $nil b" == 'a  b'
             assert nil.toString() == ''
             assert nil + ' is a null value' == ' is a null value'
@@ -251,7 +252,7 @@ final class NullObjectTest {
     @Test
     void testCategory2() {
         def nil = null
-        use (MyCategory) {
+        use(MyCategory) {
             assert nil.isNull()
             assert nil.isNull2()
         }

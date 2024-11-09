@@ -30,7 +30,6 @@ import java.util.Iterator;
  * a given associated java.lang.Class
  *
  * @see groovy.lang.MetaClass
- *
  */
 public interface MetaClassRegistry {
 
@@ -44,7 +43,7 @@ public interface MetaClassRegistry {
     /**
      * Adds a metaclass to the registry for the given class
      *
-     * @param theClass The class
+     * @param theClass     The class
      * @param theMetaClass The MetaClass for theClass
      */
     void setMetaClass(Class theClass, MetaClass theMetaClass);
@@ -129,12 +128,13 @@ public interface MetaClassRegistry {
 
         /**
          * Creates a metaclass implementation for theClass.
+         *
          * @param theClass The class to create a metaclass for
          * @param registry The metaclass registry the metaclass we be registered in.
          */
         public final MetaClass create(Class theClass, MetaClassRegistry registry) {
-           if (disableCustomMetaClassLookup)
-               return createNormalMetaClass(theClass, registry);
+            if (disableCustomMetaClassLookup)
+                return createNormalMetaClass(theClass, registry);
 
             return createWithCustomLookup(theClass, registry);
         }
@@ -145,23 +145,21 @@ public interface MetaClassRegistry {
                 if (DelegatingMetaClass.class.isAssignableFrom(customMetaClass)) {
                     final Constructor customMetaClassConstructor = customMetaClass.getConstructor(MetaClass.class);
                     MetaClass normalMetaClass = createNormalMetaClass(theClass, registry);
-                    return (MetaClass)customMetaClassConstructor.newInstance(normalMetaClass);
-                }
-                else {
+                    return (MetaClass) customMetaClassConstructor.newInstance(normalMetaClass);
+                } else {
                     final Constructor customMetaClassConstructor = customMetaClass.getConstructor(MetaClassRegistry.class, Class.class);
-                    return (MetaClass)customMetaClassConstructor.newInstance(registry, theClass);
+                    return (MetaClass) customMetaClassConstructor.newInstance(registry, theClass);
                 }
-            }
-            catch (final ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 return createNormalMetaClass(theClass, registry);
             } catch (final Exception e) {
                 throw new GroovyRuntimeException("Could not instantiate custom Metaclass for class: " + theClass.getName() + ". Reason: " + e, e);
             }
         }
 
-        protected MetaClass createNormalMetaClass(Class theClass,MetaClassRegistry registry) {
+        protected MetaClass createNormalMetaClass(Class theClass, MetaClassRegistry registry) {
             if (GeneratedClosure.class.isAssignableFrom(theClass)) {
-                return new ClosureMetaClass(registry,theClass);
+                return new ClosureMetaClass(registry, theClass);
             } else {
                 return new MetaClassImpl(registry, theClass);
             }
@@ -178,10 +176,11 @@ public interface MetaClassRegistry {
          * Set flag saying to disable lookup of custom metaclasses
          * It's enough to call this method only once in your application for handle which was set in to registry
          * as every new handle will inherit this property
+         *
          * @param disableCustomMetaClassLookup flag saying to disable lookup of custom metaclasses
          */
         public void setDisableCustomMetaClassLookup(boolean disableCustomMetaClassLookup) {
             this.disableCustomMetaClassLookup = disableCustomMetaClassLookup;
         }
     }
- }
+}

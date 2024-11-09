@@ -85,7 +85,7 @@ public class SimpleStrategy extends BuilderASTTransformation.AbstractBuilderStra
         if (!(annotatedNode instanceof ClassNode)) {
             String target = annotatedNode.getDeclaringClass().isRecord() ? "records" : annotatedNode.getClass().getSimpleName();
             transform.addError("Error during " + BuilderASTTransformation.MY_TYPE_NAME + " processing: building for " +
-                    target + " not supported by " + getClass().getSimpleName(), annotatedNode);
+                target + " not supported by " + getClass().getSimpleName(), annotatedNode);
             return;
         }
         ClassNode buildee = (ClassNode) annotatedNode;
@@ -117,11 +117,11 @@ public class SimpleStrategy extends BuilderASTTransformation.AbstractBuilderStra
                 String methodName = getSetterName(prefix, fieldName);
                 Parameter parameter = param(field.getType(), fieldName);
                 addGeneratedMethod(buildee, methodName, Opcodes.ACC_PUBLIC, newClass(buildee), params(parameter), NO_EXCEPTIONS, block(
-                        stmt(useSetters && !field.isFinal()
-                                ? callThisX(getSetterName("set", fieldName), varX(parameter))
-                                : assignX(fieldX(field), varX(parameter))
-                        ),
-                        returnS(varX("this")))
+                    stmt(useSetters && !field.isFinal()
+                        ? callThisX(getSetterName("set", fieldName), varX(parameter))
+                        : assignX(fieldX(field), varX(parameter))
+                    ),
+                    returnS(varX("this")))
                 );
             }
         }

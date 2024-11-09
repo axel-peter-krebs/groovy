@@ -8,15 +8,18 @@ import java.text.*;
 
 class Toggle {
     boolean state = true;
+
     public Toggle(boolean start_state) {
         this.state = start_state;
     }
+
     public boolean value() {
-        return(this.state);
+        return (this.state);
     }
+
     public Toggle activate() {
         this.state = !this.state;
-        return(this);
+        return (this);
     }
 }
 
@@ -29,13 +32,14 @@ class NthToggle extends Toggle {
         this.count_max = max_counter;
         this.counter = 0;
     }
+
     public Toggle activate() {
         this.counter += 1;
         if (this.counter >= this.count_max) {
             this.state = !this.state;
             this.counter = 0;
         }
-        return(this);
+        return (this);
     }
 }
 
@@ -45,14 +49,14 @@ public class methcall {
 
         boolean val = true;
         Toggle toggle = new Toggle(val);
-        for (int i=0; i<n; i++) {
+        for (int i = 0; i < n; i++) {
             val = toggle.activate().value();
         }
         System.out.println((val) ? "true" : "false");
 
         val = true;
         NthToggle ntoggle = new NthToggle(true, 3);
-        for (int i=0; i<n; i++) {
+        for (int i = 0; i < n; i++) {
             val = ntoggle.activate().value();
         }
         System.out.println((val) ? "true" : "false");

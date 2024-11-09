@@ -35,12 +35,12 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target({
-        ElementType.CONSTRUCTOR,
-        ElementType.FIELD,
-        ElementType.LOCAL_VARIABLE,
-        ElementType.METHOD,
-        ElementType.PARAMETER,
-        ElementType.TYPE})
+    ElementType.CONSTRUCTOR,
+    ElementType.FIELD,
+    ElementType.LOCAL_VARIABLE,
+    ElementType.METHOD,
+    ElementType.PARAMETER,
+    ElementType.TYPE})
 public @interface GrabExclude {
 
     /**

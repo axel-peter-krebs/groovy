@@ -24,14 +24,15 @@ import java.util.Set;
 
 /**
  * Represents an evictable memoize cache with its essential methods
+ *
  * @param <K> type of the keys
  * @param <V> type of the values
- *
  * @since 2.5.0
  */
 public interface EvictableCache<K, V> extends MemoizeCache<K, V>, Map<K, V>/* */ {
     /**
      * Remove the cached value by the key
+     *
      * @param key of the cached value
      * @return returns the removed value
      */
@@ -40,12 +41,14 @@ public interface EvictableCache<K, V> extends MemoizeCache<K, V>, Map<K, V>/* */
 
     /**
      * Clear the cache
+     *
      * @return returns the content of the cleared map
      */
     Map<K, V> clearAll();
 
     /**
      * Clear the cache
+     *
      * @see #clearAll()
      */
     @Override
@@ -55,6 +58,7 @@ public interface EvictableCache<K, V> extends MemoizeCache<K, V>, Map<K, V>/* */
 
     /**
      * Get all cached values
+     *
      * @return all cached values
      */
     @Override
@@ -62,12 +66,14 @@ public interface EvictableCache<K, V> extends MemoizeCache<K, V>, Map<K, V>/* */
 
     /**
      * Get all keys associated to cached values
+     *
      * @return all keys
      */
     Set<K> keys();
 
     /**
      * Determines if the cache contains an entry for the specified key.
+     *
      * @param key key whose presence in this cache is to be tested.
      * @return true if the cache contains a mapping for the specified key
      */
@@ -76,6 +82,7 @@ public interface EvictableCache<K, V> extends MemoizeCache<K, V>, Map<K, V>/* */
 
     /**
      * Get the size of the cache
+     *
      * @return the size of the cache
      */
     @Override
@@ -102,13 +109,13 @@ public interface EvictableCache<K, V> extends MemoizeCache<K, V>, Map<K, V>/* */
      * @param <K> key type
      * @param <V> value type
      * @param <R> result type
-     *
      * @since 3.0.0
      */
     @FunctionalInterface
     interface Action<K, V, R> {
         /**
          * Deal with the cache
+         *
          * @param evictableCache
          */
         R doWith(EvictableCache<K, V> evictableCache);

@@ -32,7 +32,7 @@ class Groovy3876Bug extends GroovyTestCase {
         try {
             ((Integer) "$a")
             fail('The cast should have failed with GroovyCastException')
-        }catch(GroovyCastException ex) {
+        } catch (GroovyCastException ex) {
             // fine
         }
 

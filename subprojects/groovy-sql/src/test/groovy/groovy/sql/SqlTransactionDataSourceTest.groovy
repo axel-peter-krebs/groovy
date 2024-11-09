@@ -28,9 +28,9 @@ import static groovy.sql.SqlTestConstants.*
 class SqlTransactionDataSourceTest extends SqlTransactionTestCase {
     protected Sql setUpSql() {
         DataSource ds = DB_DATASOURCE.newInstance(
-                (DB_DS_KEY): DB_URL_PREFIX + getMethodName(),
-                user: DB_USER,
-                password: DB_PASSWORD)
+            (DB_DS_KEY): DB_URL_PREFIX + getMethodName(),
+            user: DB_USER,
+            password: DB_PASSWORD)
         return new Sql(ds)
     }
 }

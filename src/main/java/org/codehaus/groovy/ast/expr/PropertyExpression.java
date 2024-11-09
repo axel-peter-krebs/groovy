@@ -25,8 +25,8 @@ import org.codehaus.groovy.ast.GroovyCodeVisitor;
  */
 public class PropertyExpression extends Expression {
 
-    private Expression objectExpression;
     private final Expression property;
+    private Expression objectExpression;
     private boolean safe;
     private boolean spreadSafe;
     private boolean isStatic;
@@ -98,7 +98,7 @@ public class PropertyExpression extends Expression {
     }
 
     public void setImplicitThis(final boolean implicitThis) {
-        this.implicitThis  = implicitThis;
+        this.implicitThis = implicitThis;
     }
 
     /**

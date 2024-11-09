@@ -37,7 +37,7 @@ final class Groovy7926 extends AbstractBytecodeTestCase {
     }
 
     void testThatVoidTypesAreNotUsedForVariableNamesInByteCode() {
-        def result = compile method:'delete', classNamePattern:'MyImpl', '''
+        def result = compile method: 'delete', classNamePattern: 'MyImpl', '''
             trait MyTrait<D> {
                 void delete() {
                     println 'works'

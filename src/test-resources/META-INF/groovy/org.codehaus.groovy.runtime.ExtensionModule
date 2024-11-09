@@ -16,7 +16,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 #
-
 // This file is used to test the extension module framework
 // TODO remove dup with src/spec/test-resources/META-INF/groovy/org.codehaus.groovy.runtime.ExtensionModule
 moduleName=Test module

@@ -71,29 +71,6 @@ public class ExternalizeMethodsASTTransformation extends AbstractASTTransformati
     private static final ClassNode OBJECTOUTPUT_TYPE = make(ObjectOutput.class);
     private static final ClassNode OBJECTINPUT_TYPE = make(ObjectInput.class);
 
-    @Override
-    public void visit(ASTNode[] nodes, SourceUnit source) {
-        init(nodes, source);
-        AnnotatedNode parent = (AnnotatedNode) nodes[1];
-        AnnotationNode anno = (AnnotationNode) nodes[0];
-        if (!MY_TYPE.equals(anno.getClassNode())) return;
-
-        if (parent instanceof ClassNode) {
-            ClassNode cNode = (ClassNode) parent;
-            if (!checkNotInterface(cNode, MY_TYPE_NAME)) return;
-            cNode.addInterface(EXTERNALIZABLE_TYPE);
-            boolean includeFields = memberHasValue(anno, "includeFields", true);
-            List<String> excludes = getMemberStringList(anno, "excludes");
-            if (!checkPropertyList(cNode, excludes, "excludes", anno, MY_TYPE_NAME, includeFields)) return;
-            List<FieldNode> list = getInstancePropertyFields(cNode);
-            if (includeFields) {
-                list.addAll(getInstanceNonPropertyFields(cNode));
-            }
-            createWriteExternal(cNode, excludes, list);
-            createReadExternal(cNode, excludes, list);
-        }
-    }
-
     private static void createWriteExternal(ClassNode cNode, List<String> excludes, List<FieldNode> list) {
         final BlockStatement body = new BlockStatement();
         Parameter out = param(OBJECTOUTPUT_TYPE, "out");
@@ -134,5 +111,28 @@ public class ExternalizeMethodsASTTransformation extends AbstractASTTransformati
         if (isPrimitiveFloat(fNode.getType())) return "Float";
         if (isPrimitiveDouble(fNode.getType())) return "Double";
         return "Object";
+    }
+
+    @Override
+    public void visit(ASTNode[] nodes, SourceUnit source) {
+        init(nodes, source);
+        AnnotatedNode parent = (AnnotatedNode) nodes[1];
+        AnnotationNode anno = (AnnotationNode) nodes[0];
+        if (!MY_TYPE.equals(anno.getClassNode())) return;
+
+        if (parent instanceof ClassNode) {
+            ClassNode cNode = (ClassNode) parent;
+            if (!checkNotInterface(cNode, MY_TYPE_NAME)) return;
+            cNode.addInterface(EXTERNALIZABLE_TYPE);
+            boolean includeFields = memberHasValue(anno, "includeFields", true);
+            List<String> excludes = getMemberStringList(anno, "excludes");
+            if (!checkPropertyList(cNode, excludes, "excludes", anno, MY_TYPE_NAME, includeFields)) return;
+            List<FieldNode> list = getInstancePropertyFields(cNode);
+            if (includeFields) {
+                list.addAll(getInstanceNonPropertyFields(cNode));
+            }
+            createWriteExternal(cNode, excludes, list);
+            createReadExternal(cNode, excludes, list);
+        }
     }
 }

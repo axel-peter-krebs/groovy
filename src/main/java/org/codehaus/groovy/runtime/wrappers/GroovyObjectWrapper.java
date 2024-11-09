@@ -35,32 +35,32 @@ public class GroovyObjectWrapper extends Wrapper {
     }
 
     /* (non-Javadoc)
-    * @see groovy.lang.GroovyObject#getProperty(java.lang.String)
-    */
+     * @see groovy.lang.GroovyObject#getProperty(java.lang.String)
+     */
     @Override
     public Object getProperty(final String property) {
         return this.wrapped.getProperty(property);
     }
 
     /* (non-Javadoc)
-    * @see groovy.lang.GroovyObject#invokeMethod(java.lang.String, java.lang.Object)
-    */
+     * @see groovy.lang.GroovyObject#invokeMethod(java.lang.String, java.lang.Object)
+     */
     @Override
     public Object invokeMethod(final String name, final Object args) {
         return this.wrapped.invokeMethod(name, args);
     }
 
     /* (non-Javadoc)
-    * @see groovy.lang.GroovyObject#setMetaClass(groovy.lang.MetaClass)
-    */
+     * @see groovy.lang.GroovyObject#setMetaClass(groovy.lang.MetaClass)
+     */
     @Override
     public void setMetaClass(final MetaClass metaClass) {
         this.wrapped.setMetaClass(metaClass);
     }
 
     /* (non-Javadoc)
-    * @see groovy.lang.GroovyObject#setProperty(java.lang.String, java.lang.Object)
-    */
+     * @see groovy.lang.GroovyObject#setProperty(java.lang.String, java.lang.Object)
+     */
     @Override
     public void setProperty(final String property, final Object newValue) {
         this.wrapped.setProperty(property, newValue);

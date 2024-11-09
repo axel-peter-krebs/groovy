@@ -64,9 +64,9 @@ public class MapEntryOrKeyValue extends ClosureSignatureHint {
             return Collections.emptyList();
         }
         GenericsType[] genericsTypes = node.getParameters()[opt.parameterIndex].getOriginType().getGenericsTypes();
-        if (genericsTypes==null) {
+        if (genericsTypes == null) {
             // would happen if you have a raw Map type for example
-            genericsTypes = new GenericsType[] {
+            genericsTypes = new GenericsType[]{
                 new GenericsType(ClassHelper.OBJECT_TYPE),
                 new GenericsType(ClassHelper.OBJECT_TYPE)
             };
@@ -76,12 +76,12 @@ public class MapEntryOrKeyValue extends ClosureSignatureHint {
         ClassNode mapEntry = MAPENTRY_TYPE.getPlainNodeReference();
         mapEntry.setGenericsTypes(genericsTypes);
         if (opt.generateIndex) {
-            firstSig = new ClassNode[] {genericsTypes[0].getType(), genericsTypes[1].getType(), ClassHelper.int_TYPE};
-            secondSig = new ClassNode[] {mapEntry, ClassHelper.int_TYPE};
+            firstSig = new ClassNode[]{genericsTypes[0].getType(), genericsTypes[1].getType(), ClassHelper.int_TYPE};
+            secondSig = new ClassNode[]{mapEntry, ClassHelper.int_TYPE};
 
         } else {
-            firstSig = new ClassNode[] {genericsTypes[0].getType(), genericsTypes[1].getType()};
-            secondSig = new ClassNode[] {mapEntry};
+            firstSig = new ClassNode[]{genericsTypes[0].getType(), genericsTypes[1].getType()};
+            secondSig = new ClassNode[]{mapEntry};
         }
         return Arrays.asList(firstSig, secondSig);
     }
@@ -100,7 +100,7 @@ public class MapEntryOrKeyValue extends ClosureSignatureHint {
             boolean generateIndex = false;
             for (String option : options) {
                 String[] keyValue = option.split("=");
-                if (keyValue.length==2) {
+                if (keyValue.length == 2) {
                     String key = keyValue[0];
                     String value = keyValue[1];
                     if ("argNum".equals(key)) {
@@ -108,7 +108,7 @@ public class MapEntryOrKeyValue extends ClosureSignatureHint {
                     } else if ("index".equals(key)) {
                         generateIndex = Boolean.parseBoolean(value);
                     } else {
-                        throw new IncorrectTypeHintException(mn, "Unrecognized option: "+key, source.getLineNumber(), source.getColumnNumber());
+                        throw new IncorrectTypeHintException(mn, "Unrecognized option: " + key, source.getLineNumber(), source.getColumnNumber());
                     }
                 } else {
                     throw new IncorrectTypeHintException(mn, "Incorrect option format. Should be argNum=<num> or index=<boolean> ", source.getLineNumber(), source.getColumnNumber());

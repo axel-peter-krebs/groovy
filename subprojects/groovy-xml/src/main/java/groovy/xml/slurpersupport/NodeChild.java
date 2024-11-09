@@ -36,20 +36,20 @@ public class NodeChild extends GPathResult {
     private final Node node;
 
     /**
-     * @param node a node
-     * @param parent the GPathResult prior to the application of the expression creating this GPathResult
-     * @param namespacePrefix the namespace prefix if any
+     * @param node              a node
+     * @param parent            the GPathResult prior to the application of the expression creating this GPathResult
+     * @param namespacePrefix   the namespace prefix if any
      * @param namespaceTagHints the known tag to namespace mappings
      */
     public NodeChild(final Node node, final GPathResult parent, final String namespacePrefix, final Map<String, String> namespaceTagHints) {
         super(parent, node.name(), namespacePrefix, namespaceTagHints);
         this.node = node;
-        ((NamespaceAwareHashMap)this.node.attributes()).setNamespaceTagHints(namespaceTagHints);
+        ((NamespaceAwareHashMap) this.node.attributes()).setNamespaceTagHints(namespaceTagHints);
     }
 
     /**
-     * @param node a node
-     * @param parent the GPathResult prior to the application of the expression creating this GPathResult
+     * @param node              a node
+     * @param parent            the GPathResult prior to the application of the expression creating this GPathResult
      * @param namespaceTagHints the known tag to namespace mappings
      */
     public NodeChild(final Node node, final GPathResult parent, final Map<String, String> namespaceTagHints) {
@@ -86,6 +86,7 @@ public class NodeChild extends GPathResult {
 
     /**
      * Returns the URI of the namespace of this NodeChild.
+     *
      * @return the namespace of this NodeChild
      */
     public String namespaceURI() {
@@ -122,6 +123,7 @@ public class NodeChild extends GPathResult {
 
     /**
      * Returns a map containing all attributes of the Node of this NodeChild.
+     *
      * @return a map containing all attributes
      */
     public Map attributes() {

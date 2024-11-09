@@ -146,15 +146,15 @@ class SwingBuilderConsoleTest extends GroovySwingTestCase {
 
             def swing = new SwingBuilder()
             swing.tabbedPane(id: 'tp',
-                    titleProperty: 'xTitle',
-                    tabIconProperty: 'xTabIcon',
-                    tabDisabledIconProperty: 'xTabDisabledIcon',
-                    tabToolTipProperty: 'xTabToolTip',
-                    tabBackgroundProperty: 'xTabBackground',
-                    tabForegroundProperty: 'xTabForeground',
-                    tabEnabledProperty: 'xTabEnabled',
-                    tabMnemonicProperty: 'xTabMnemonic',
-                    tabDisplayedMnemonicIndexProperty: 'xTabDisplayedMnemonicIndex'
+                titleProperty: 'xTitle',
+                tabIconProperty: 'xTabIcon',
+                tabDisabledIconProperty: 'xTabDisabledIcon',
+                tabToolTipProperty: 'xTabToolTip',
+                tabBackgroundProperty: 'xTabBackground',
+                tabForegroundProperty: 'xTabForeground',
+                tabEnabledProperty: 'xTabEnabled',
+                tabMnemonicProperty: 'xTabMnemonic',
+                tabDisplayedMnemonicIndexProperty: 'xTabDisplayedMnemonicIndex'
             ) {
                 panel(id: 'p1', name: 'Title 1')
                 panel(id: 'p2')
@@ -293,7 +293,6 @@ class SwingBuilderConsoleTest extends GroovySwingTestCase {
             swing.imageIcon(file: gresource, description: '<none>', id: 'ii')
             assert swing.ii != null
             assert swing.ii.description == '<none>'
-
 
 
             swing.imageIcon(gresource, class: Console, id: 'ii')
@@ -453,7 +452,7 @@ class SwingBuilderConsoleTest extends GroovySwingTestCase {
             ActionEvent event = new ActionEvent(inputArea, 1, '')
 
             inputArea.text =
-                    'import com.example.HelloWorldService\n' +  //0-36
+                'import com.example.HelloWorldService\n' +  //0-36
                     '    \n' +                                  //37-41
                     'def service = new HelloWorldService()\n' + //42-79
                     'service.init()\n' +                        //80-94
@@ -483,8 +482,8 @@ class SwingBuilderConsoleTest extends GroovySwingTestCase {
 
             console.selectBlock(event)
             assert inputArea.getSelectedText() ==
-                    'def service = new HelloWorldService()\n' +
-                    'service.init()\n'
+                'def service = new HelloWorldService()\n' +
+                'service.init()\n'
 
             inputArea.setCaretPosition(95)
             console.selectBlock(event)
@@ -504,9 +503,9 @@ class SwingBuilderConsoleTest extends GroovySwingTestCase {
 
             console.selectBlock(event)
             assert inputArea.getSelectedText() ==
-                    'if (service.isAvailable()) {\n' +
-                    '    service.printGreeting()\n' +
-                    '}\n'
+                'if (service.isAvailable()) {\n' +
+                '    service.printGreeting()\n' +
+                '}\n'
 
             inputArea.setCaretPosition(171)
             console.selectBlock(event)

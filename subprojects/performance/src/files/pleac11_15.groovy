@@ -53,9 +53,9 @@ b = a  // b is a reference to the same thing as a
 a.sort()
 println b // => [1, 2]
 
-nat = [ Name: "Leonhard Euler",
-        Address: "1729 Ramanujan Lane\nMathworld, PI 31416",
-        Birthday: 0x5bb5580
+nat = [Name    : "Leonhard Euler",
+       Address : "1729 Ramanujan Lane\nMathworld, PI 31416",
+       Birthday: 0x5bb5580
 ]
 println nat
 // =>["Address":"1729 Ramanujan Lane\nMathworld, PI 31416", "Name":"Leonhard Euler", "Birthday":96163200]
@@ -85,7 +85,7 @@ println implicitCreation[-1]
 //=> 10
 
 // And if you were looping through (and not using a list closure operator)
-(0..<aref.size()).each{ /* do something */ }
+(0..<aref.size()).each { /* do something */ }
 
 numItems = aref.size()
 
@@ -97,6 +97,7 @@ myList.sort() // sort is in place.
 myList += "an item" // append item
 
 def createList() { return [] }
+
 aref1 = createList()
 aref2 = createList()
 // aref1 and aref2 point to different lists.
@@ -113,10 +114,10 @@ anonList[3..5] = ["blackberry", "blueberry", "pumpkin"]
 
 // non index-based looping
 for (item in anonList) println item
-anonList.each{ println it }
+anonList.each { println it }
 
 // index-based looping
-(0..<anonList.size()).each{ idx -> println anonList[idx] }
+(0..<anonList.size()).each { idx -> println anonList[idx] }
 for (idx in 0..<anonList.size()) println anonList[idx]
 //----------------------------------------------------------------------------------
 
@@ -127,7 +128,7 @@ for (idx in 0..<anonList.size()) println anonList[idx]
 hash = [:] // empty map
 hash["KEYNAME"] = "new value"
 
-hash.each{ key, value -> println key + ' ' + value }
+hash.each { key, value -> println key + ' ' + value }
 
 hash["a key"] = [3, 4, 5]
 values = hash["a key"]
@@ -147,7 +148,7 @@ println hash
 // @@PLEAC@@_11.3
 //----------------------------------------------------------------------------------
 // Hashes are no different to other objects
-myHash = [ key1:100, key2:200 ]
+myHash = [key1: 100, key2: 200]
 myHashCopy = myHash.clone()
 
 value = myHash['key1']
@@ -157,8 +158,8 @@ keys = myHash.keySet()
 
 assert myHash instanceof Map
 
-[myHash, hash].each{ m ->
-    m.each{ k, v -> println "$k => $v"}
+[myHash, hash].each { m ->
+    m.each { k, v -> println "$k => $v" }
 }
 // =>
 // key1 => 100
@@ -167,7 +168,7 @@ assert myHash instanceof Map
 // KEYNAME => new value
 // a key => [3, 4, 5, 6]
 
-values = ['key1','key2'].collect{ myHash[it] }
+values = ['key1', 'key2'].collect { myHash[it] }
 println values  // => [100, 200]
 
 for (key in ["key1", "key2"]) {
@@ -181,12 +182,14 @@ println myHash  // => ["key1":107, "key2":207]
 //----------------------------------------------------------------------------------
 // you can use closures or the &method notation
 def joy() { println 'joy' }
+
 def sullen() { println 'sullen' }
+
 angry = { println 'angry' }
 commands = [happy: this.&joy,
-            sad:   this.&sullen,
-            done:  { System.exit(0) },
-            mad:   angry
+            sad  : this.&sullen,
+            done : { System.exit(0) },
+            mad  : angry
 ]
 
 print "How are you?"
@@ -197,18 +200,18 @@ else println "No such command: $cmd"
 
 // a counter of the type referred to in the original cookbook
 // would be implemented using a class
-def counterMaker(){
+def counterMaker() {
     def start = 0
-    return { -> start++; start-1 }
+    return { -> start++; start - 1 }
 }
 
 counter = counterMaker()
-5.times{ print "${counter()} " }; println()
+5.times { print "${counter()} " }; println()
 
 counter1 = counterMaker()
 counter2 = counterMaker()
 
-5.times{ println "${counter1()} " }
+5.times { println "${counter1()} " }
 println "${counter1()} ${counter2()}"
 //=> 0
 //=> 1
@@ -222,6 +225,7 @@ def timestamp() {
     def start = System.currentTimeMillis()
     return { (System.currentTimeMillis() - start).intdiv(1000) }
 }
+
 early = timestamp()
 //sleep(10000)
 later = timestamp()
@@ -242,6 +246,7 @@ println "It's been ${later()} seconds since later."
 // 15 is an Integer which is an immutable object.
 // passing 15 to a method passes a reference to the Integer object.
 void print(n) { println "${n.toString()}" }
+
 print(15)  // no need to create any kind of explicit reference
 
 // even though Integers are immutable, references to them are not
@@ -256,13 +261,13 @@ println "$x $y"  // => 2 4
 // Some objects (including ints and strings) are immutable, however, which
 // can give the illusion of a by-value/by-reference distinction:
 list = [[1], 1, 's']
-list.each{ it += 1 } // plus operator doesn't operate inplace
+list.each { it += 1 } // plus operator doesn't operate inplace
 print list //=> [[1] 1 s]
-list = list.collect{ it + 1 }
+list = list.collect { it + 1 }
 print list //=> [[1, 1], 2, s1]
 
 list = [['Z', 'Y', 'X'], ['C', 'B', 'A'], [5, 3, 1]]
-list.each{ it.sort() } // sort operation operates inline
+list.each { it.sort() } // sort operation operates inline
 println list // => [["X", "Y", "Z"], ["A", "B", "C"], [1, 3, 5]]
 //----------------------------------------------------------------------------------
 
@@ -277,7 +282,7 @@ mylist = [1, "s", [1]]
 print mylist
 //=> [1, s, [1]]
 
-mylist.each{ it *= 2 }
+mylist.each { it *= 2 }
 print mylist
 //=> [1, s, [1,1]]
 
@@ -289,7 +294,7 @@ print mylist
 // If you need to modify every value in a list, you use collect
 // which does NOT modify inplace but rather returns a new collection:
 mylist = 1..4
-println mylist.collect{ it**3 * 4/3 * Math.PI }
+println mylist.collect { it**3 * 4 / 3 * Math.PI }
 // => [4.188790204681671, 33.510321638395844, 113.09733552923255, 268.0825731062243]
 //----------------------------------------------------------------------------------
 
@@ -321,26 +326,27 @@ println "old  c2: ${c2["RESET"]()}" // 77
 // @@PLEAC@@_11.8
 //----------------------------------------------------------------------------------
 def addAndMultiply(a, b) {
-    println "${a+b} ${a*b}"
+    println "${a + b} ${a * b}"
 }
+
 methRef = this.&addAndMultiply
 // or use direct closure
-multiplyAndAdd = { a,b -> println "${a*b} ${a+b}" }
+multiplyAndAdd = { a, b -> println "${a * b} ${a + b}" }
 // later ...
-methRef(2,3)                   // => 5 6
-multiplyAndAdd(2,3)            // => 6 5
+methRef(2, 3)                   // => 5 6
+multiplyAndAdd(2, 3)            // => 6 5
 //----------------------------------------------------------------------------------
 
 
 // @@PLEAC@@_11.9
 //----------------------------------------------------------------------------------
 record = [
-    "name": "Jason",
-    "empno": 132,
-    "title": "deputy peon",
-    "age": 23,
+    "name"  : "Jason",
+    "empno" : 132,
+    "title" : "deputy peon",
+    "age"   : 23,
     "salary": 37000,
-    "pals": ["Norbert", "Rhys", "Phineas"],
+    "pals"  : ["Norbert", "Rhys", "Phineas"],
 ]
 println "I am ${record.'name'}, and my pals are ${record.'pals'.join(', ')}."
 // => I am Jason, and my pals are Norbert, Rhys, Phineas.
@@ -354,7 +360,7 @@ if (rp) println "Aron is employee ${rp["empno"]}."
 byname["Jason"]["pals"] += "Theodore"
 println "Jason now has ${byname['Jason']['pals'].size()} pals."
 
-byname.each{ name2, record ->
+byname.each { name2, record ->
     println "$name2 is employee number ${record['empno']}."
 }
 
@@ -370,16 +376,16 @@ println record
 // => ["pals":["Norbert", "Rhys", "Phineas", "Theodore"], "age":23,
 //      "title":"deputy peon", "name":"Jason", "salary":38295.000, "empno":132]
 
-peons = employees.findAll{ k, v -> v.'title' =~ /(?i)peon/ }
+peons = employees.findAll { k, v -> v.'title' =~ /(?i)peon/ }
 assert peons.size() == 1
-tsevens = employees.findAll{ k, v -> v.'age' == 27 }
+tsevens = employees.findAll { k, v -> v.'age' == 27 }
 assert tsevens.size() == 0
 
 // Go through all records
-println 'Names are: ' + employees.values().collect{r->r.'name'}.join(', ')
+println 'Names are: ' + employees.values().collect { r -> r.'name' }.join(', ')
 
-byAge = {a,b-> a.value().'age' <=> b.value().'age'}
-employees.values().sort{byAge}.each{ r->
+byAge = { a, b -> a.value().'age' <=> b.value().'age' }
+employees.values().sort { byAge }.each { r ->
     println "${r.'name'} is ${r.'age'}"
 }
 
@@ -387,8 +393,8 @@ employees.values().sort{byAge}.each{ r->
 byage = [:]
 byage[record["age"]] = byage.get(record["age"], []) + [record]
 
-byage.each{ age, list ->
-    println "Age $age: ${list.collect{it.'name'}.join(', ')}"
+byage.each { age, list ->
+    println "Age $age: ${list.collect { it.'name' }.join(', ')}"
 }
 //----------------------------------------------------------------------------------
 
@@ -398,15 +404,15 @@ byage.each{ age, list ->
 // if you are using a Properties (see 8.16) then just use load
 // and store (or storeToXML)
 // variation to original cookbook as Groovy can use Java's object serialization
-map = [1:'Jan', 2:'Feb', 3:'Mar']
+map = [1: 'Jan', 2: 'Feb', 3: 'Mar']
 // write
-new File('months.dat').withObjectOutputStream{ oos ->
+new File('months.dat').withObjectOutputStream { oos ->
     oos.writeObject(map)
 }
 // reset
 map = null
 // read
-new File('months.dat').withObjectInputStream{ ois ->
+new File('months.dat').withObjectInputStream { ois ->
     map = ois.readObject()
 }
 println map // => [1:"Jan", 2:"Feb", 3:"Mar"]
@@ -416,11 +422,11 @@ println map // => [1:"Jan", 2:"Feb", 3:"Mar"]
 // @@PLEAC@@_11.11
 //----------------------------------------------------------------------------------
 // Groovy automatically does pretty printing for some of the key types, e.g.
-mylist = [[1,2,3], [4, [5,6,7], 8,9, [0,3,5]], 7, 8]
+mylist = [[1, 2, 3], [4, [5, 6, 7], 8, 9, [0, 3, 5]], 7, 8]
 println mylist
 // => [[1, 2, 3], [4, [5, 6, 7], 8, 9, [0, 3, 5]], 7, 8]
 
-mydict = ["abc": "def", "ghi":[1,2,3]]
+mydict = ["abc": "def", "ghi": [1, 2, 3]]
 println mydict
 // => ["abc":"def", "ghi":[1, 2, 3]]
 
@@ -430,7 +436,8 @@ class PetLover {
     def age
     def pets
 }
-p = new PetLover(name:'Jason', age:23, pets:[dog:'Rover',cat:'Garfield'])
+
+p = new PetLover(name: 'Jason', age: 23, pets: [dog: 'Rover', cat: 'Garfield'])
 println p
 // => PetLover@b957ea
 println p.dump()
@@ -440,9 +447,13 @@ println p.dump()
 // or Jakarta Commons Lang *ToStringBuilders (jakarta.apache.org/commons)
 // Here's an example of Boost, just extend the supplied Primordial class
 //import au.net.netstorm.boost.primordial.Primordial
-class Primordial{}
-class PetLover2 extends Primordial { def name, age, pets }
-println new PetLover2(name:'Jason', age:23, pets:[dog:'Rover',cat:'Garfield'])
+class Primordial {}
+
+class PetLover2 extends Primordial {
+    def name, age, pets
+}
+
+println new PetLover2(name: 'Jason', age: 23, pets: [dog: 'Rover', cat: 'Garfield'])
 // =>
 // PetLover2[
 //     name=Jason
@@ -453,28 +464,33 @@ println new PetLover2(name:'Jason', age:23, pets:[dog:'Rover',cat:'Garfield'])
 
 // using Commons Lang ReflectionToStringBuilder (equivalent to dump())
 import org.apache.commons.lang.builder.*
+
 class PetLover3 {
     def name, age, pets
+
     String toString() {
         ReflectionToStringBuilder.toString(this)
     }
 }
-println new PetLover3(name:'Jason', age:23, pets:[dog:'Rover',cat:'Garfield'])
+
+println new PetLover3(name: 'Jason', age: 23, pets: [dog: 'Rover', cat: 'Garfield'])
 // => PetLover3@196e136[name=Jason,age=23,pets={cat=Garfield, dog=Rover}]
 
 // using Commons Lang ToStringBuilder if you want a custom format
 class PetLover4 {
     def name, dob, pets
+
     String toString() {
         def d1 = dob.time; def d2 = (new Date()).time
-        int age = (d2 - d1)/1000/60/60/24/365 // close approx good enough here
+        int age = (d2 - d1) / 1000 / 60 / 60 / 24 / 365 // close approx good enough here
         return new ToStringBuilder(this).
             append("Pet Lover's name", name).
             append('Pets', pets).
             append('Age', age)
     }
 }
-println new PetLover4(name:'Jason', dob:new Date(83,03,04), pets:[dog:'Rover',cat:'Garfield'])
+
+println new PetLover4(name: 'Jason', dob: new Date(83, 03, 04), pets: [dog: 'Rover', cat: 'Garfield'])
 // => PetLover4@fdfc58[Pet Lover's name=Jason,Pets={cat=Garfield, dog=Rover},Age=23]
 //----------------------------------------------------------------------------------
 
@@ -485,7 +501,7 @@ oldlist = [1, 2, 3]
 newlist = new ArrayList(oldlist) // shallow copy
 newlist = oldlist.clone() // shallow copy
 
-oldmap = [a:1, b:2, c:3]
+oldmap = [a: 1, b: 2, c: 3]
 newmap = new HashMap(oldmap) // shallow copy
 newmap = oldmap.clone() // shallow copy
 
@@ -509,16 +525,16 @@ println "$mylist $newlist"
 
 // standard deep copy implementation
 def deepcopy(orig) {
-     bos = new ByteArrayOutputStream()
-     oos = new ObjectOutputStream(bos)
-     oos.writeObject(orig); oos.flush()
-     bin = new ByteArrayInputStream(bos.toByteArray())
-     ois = new ObjectInputStream(bin)
-     return ois.readObject()
+    bos = new ByteArrayOutputStream()
+    oos = new ObjectOutputStream(bos)
+    oos.writeObject(orig); oos.flush()
+    bin = new ByteArrayInputStream(bos.toByteArray())
+    ois = new ObjectInputStream(bin)
+    return ois.readObject()
 }
 
 newlist = deepcopy(oldlist) // deep copy
-newmap  = deepcopy(oldmap)  // deep copy
+newmap = deepcopy(oldmap)  // deep copy
 
 mylist = [["1", "2", "3"], 4]
 newlist = deepcopy(mylist)
@@ -558,17 +574,25 @@ println "$mylist $newlist"
 // consolidate all changes made up to a certain point. The
 // journaling will begin again from that point.
 import org.prevayler.*
+
 class ImportantHash implements Serializable {
     private map = [:]
+
     def putAt(key, value) { map[key] = value }
+
     def getAt(key) { map[key] }
 }
+
 class StoreTransaction implements Transaction {
     private val
+
     StoreTransaction(val) { this.val = val }
-    void executeOn(prevayler, Date ignored) { prevayler.putAt(val,val*2) }
+
+    void executeOn(prevayler, Date ignored) { prevayler.putAt(val, val * 2) }
 }
-def save(n){ store.execute(new StoreTransaction(n)) }
+
+def save(n) { store.execute(new StoreTransaction(n)) }
+
 store = PrevaylerFactory.createPrevayler(new ImportantHash(), "pleac11")
 hash = store.prevalentSystem()
 for (i in 0..1000) {
@@ -589,6 +613,7 @@ println hash[750] // => 1500
 // bintree - binary tree demo program
 class BinaryTree {
     def value, left, right
+
     BinaryTree(val) {
         value = val
         left = null
@@ -663,13 +688,13 @@ class BinaryTree {
 // first generate 20 random inserts
 test = new BinaryTree(500)
 rand = new Random()
-20.times{
+20.times {
     test.insert(rand.nextInt(1000))
 }
 
 // now dump out the tree all three ways
-print "Pre order:  "; test.preOrder();  println ""
-print "In order:   "; test.inOrder();   println ""
+print "Pre order:  "; test.preOrder(); println ""
+print "In order:   "; test.inOrder(); println ""
 print "Post order: "; test.postOrder(); println ""
 
 println "\nSearch?"
@@ -802,7 +827,8 @@ for (driver in candidates) {
     try {
         loaded = Class.forName(driver).newInstance()
         break
-    } catch (Exception ex) { /* ignore */ }
+    } catch (Exception ex) { /* ignore */
+    }
 }
 println loaded?.class?.name // => sun.jdbc.odbc.JdbcOdbcDriver
 //----------------------------------------------------------------------------------
@@ -829,6 +855,7 @@ class DbHelper {
             driver = Class.forName('sun.jdbc.odbc.JdbcOdbcDriver')
     }
 }
+
 println new DbHelper().driver.name // => sun.jdbc.odbc.JdbcOdbcDriver
 // call program with -Ddriver=oracle to swap to other driver
 
@@ -941,11 +968,11 @@ class DateCategory2 {  // the class name by convention ends with category
     }
     // we can override existing functionality (now seconds since 1970 not millis)
     static long asSeconds(Date self) {
-        return (long) (self.getTime()/1000)
+        return (long) (self.getTime() / 1000)
     }
 }
 
-use (DateCategory2) {
+use(DateCategory2) {
     println new Date().floatTime    // => 1.1690195E12
     println new Date().asSeconds()  // => 1169019557
 }
@@ -953,8 +980,10 @@ use (DateCategory2) {
 // We can also use the 'as' keyword
 class MathLib {
     def triple(n) { n * 4 }
+
     def twice(n) { n * 2 }
 }
+
 def m = new MathLib()
 println m.twice(10)     // => 20
 println m.triple(10)    // => 40 (Intentional Bug!)
@@ -962,6 +991,7 @@ println m.triple(10)    // => 40 (Intentional Bug!)
 // library but want to later some of its features slightly or fix
 // some bugs, we can simply import the original using a different name
 import MathLib as BuggyMathLib
+
 // now we could define our own MathLib which extended or had a delegate
 // of the BuggyMathLib class
 //----------------------------------------------------------------------------------
@@ -1061,12 +1091,15 @@ println log100(1000000)  // => 3.0 (displays 2.9999999999999996 using doubles)
 //----------------------------------------------------------------------------------
 // example groovy file for a "module"
 //import org.apache.commons.lang.WordUtils
-class WordUtils{}
-class GroovyTestCase{}
+class WordUtils {}
+
+class GroovyTestCase {}
 
 class Greeter {
     def name
+
     Greeter(who) { name = WordUtils.capitalize(who) }
+
     def salute() { "Hello $name!" }
 }
 
@@ -1153,7 +1186,7 @@ class GreeterTest extends GroovyTestCase {
 // Classes and objects in Groovy are rather straigthforward
 class Person2 {
     // Class variables (also called static attributes) are prefixed by the keyword static
-    static personCounter=0
+    static personCounter = 0
     def age, name               // this creates setter and getter methods
     private alive
 
@@ -1189,8 +1222,8 @@ class Person2 {
 
     // Class method (also called static method)
     static getNumberOfPeople() { // accessors often start with get
-                                 // in which case you can call it like
-                                 // it was a field (without the get)
+        // in which case you can call it like
+        // it was a field (without the get)
         personCounter
     }
 }
@@ -1215,7 +1248,7 @@ println "$starling.name was born in $starling.yearOfBirth."
 // @@PLEAC@@_13.1
 //----------------------------------------------------------------------------------
 // Classes may have no constructor.
-class MyClass { }
+class MyClass {}
 
 aValidButNotVeryUsefulObject = new MyClass()
 
@@ -1225,17 +1258,20 @@ class MyClass2 {
     def start = new Date()
     def age = 0
 }
-println new MyClass2(age:4).age // => 4
+
+println new MyClass2(age: 4).age // => 4
 
 // One or more explicit constructors may also be provided
 class MyClass3 {
     def start
     def age
+
     MyClass3(date, age) {
         start = date
         this.age = age
     }
 }
+
 println new MyClass3(new Date(), 20).age // => 20
 //----------------------------------------------------------------------------------
 
@@ -1251,7 +1287,7 @@ println new MyClass3(new Date(), 20).age // => 20
 // it explicitly - perhaps by supporting your own lifecycle methods
 // on your class, e.g. close().
 
-class MyClass4{
+class MyClass4 {
     void finalize() {
         println "Object [internal id=${hashCode()}] is dying at ${new Date()}"
     }
@@ -1278,7 +1314,9 @@ class MyClass4{
 // One convention is to use set and get at the start of method names.
 class Person2B {
     private name
+
     def getName() { name }
+
     def setName(name) { this.name = name }
 }
 
@@ -1308,13 +1346,16 @@ class Person5 {
     static getPopulation() {
         personCounter
     }
+
     Person5() {
         personCounter += 1
     }
+
     void finalize() {
         personCounter -= 1
     }
 }
+
 people = []
 10.times {
     people += new Person5()
@@ -1335,6 +1376,7 @@ class FixedArray {
     def getMaxBounds() {
         maxBounds
     }
+
     def setMaxBounds(value) {
         maxBounds = value
     }
@@ -1348,7 +1390,10 @@ class FixedArray {
 // @@PLEAC@@_13.5
 //----------------------------------------------------------------------------------
 // The fields of this struct-like class are dynamically typed
-class DynamicPerson { def name, age, peers }
+class DynamicPerson {
+    def name, age, peers
+}
+
 p = new DynamicPerson()
 p.name = "Jason Smythe"
 p.age = 13
@@ -1359,19 +1404,29 @@ println "At age $p.age, $p.name's first friend is ${p.peers[0]}"
 // => At age 13, Jason Smythe's first friend is Wilbur
 
 // The fields of this struct-like class are statically typed
-class StaticPerson { String name; int age; List peers }
-p = new StaticPerson(name:'Jason', age:14, peers:['Fred','Wilbur','Ralph'])
+class StaticPerson {
+    String name;
+    int age;
+    List peers
+}
+
+p = new StaticPerson(name: 'Jason', age: 14, peers: ['Fred', 'Wilbur', 'Ralph'])
 println "At age $p.age, $p.name's first friend is ${p.peers[0]}"
 // => At age 14, Jason's first friend is Fred
 
 
-class Family { def head, address, members }
-folks = new Family(head:new DynamicPerson(name:'John',age:34))
+class Family {
+    def head, address, members
+}
+
+folks = new Family(head: new DynamicPerson(name: 'John', age: 34))
 
 // supply of own accessor method for the struct for error checking
 class ValidatingPerson {
     private age
+
     def printAge() { println 'Age=' + age }
+
     def setAge(value) {
         if (!(value instanceof Integer))
             throw new IllegalArgumentException("Argument '${value}' isn't an Integer")
@@ -1384,7 +1439,7 @@ class ValidatingPerson {
 // test ValidatingPerson
 def tryCreate(arg) {
     try {
-        new ValidatingPerson(age:arg).printAge()
+        new ValidatingPerson(age: arg).printAge()
     } catch (Exception ex) {
         println ex.message
     }
@@ -1414,11 +1469,13 @@ tryCreate(200)
 
 class A implements Cloneable {
     def name
+
     boolean equals(Object other) {
         other instanceof A && this.name == other.name
     }
 }
-ob1 = new A(name:'My named thing')
+
+ob1 = new A(name: 'My named thing')
 
 ob2 = ob1.clone()
 assert !ob1.is(ob2)
@@ -1433,18 +1490,22 @@ assert ob1 == ob2
 class CanFlicker {
     def flicker(arg) { return arg * 2 }
 }
+
 methname = 'flicker'
 assert new CanFlicker().invokeMethod(methname, 10) == 20
 assert new CanFlicker()."$methname"(10) == 20
 
 class NumberEcho {
     def one() { 1 }
+
     def two() { 2 }
+
     def three() { 3 }
 }
+
 obj = new NumberEcho()
 // call methods on the object, by name
-assert ['one', 'two', 'three', 'two', 'one'].collect{ obj."$it"() }.join() == '12321'
+assert ['one', 'two', 'three', 'two', 'one'].collect { obj."$it"() }.join() == '12321'
 //----------------------------------------------------------------------------------
 
 
@@ -1463,11 +1524,11 @@ assert !'a string'.class.isArray()
 
 // ask an object whether it is an instance of particular class
 n = 4.7f
-println (n instanceof Integer)          // false
-println (n instanceof Float)            // true
-println (n instanceof Double)           // false
-println (n instanceof String)           // false
-println (n instanceof StaticPerson)     // false
+println(n instanceof Integer)          // false
+println(n instanceof Float)            // true
+println(n instanceof Double)           // false
+println(n instanceof String)           // false
+println(n instanceof StaticPerson)     // false
 
 // ask if a class or interface is either the same as, or is a
 // superclass or superinterface of another class
@@ -1477,8 +1538,9 @@ println n.class.isAssignableFrom(String.class)      // false
 // can a Groovy object respond to a particular method?
 assert new CanFlicker().metaClass.methods*.name.contains('flicker')
 
-class POGO{}
-println (obj.metaClass.methods*.name - new POGO().metaClass.methods*.name)
+class POGO {}
+
+println(obj.metaClass.methods*.name - new POGO().metaClass.methods*.name)
 // => ["one", "two", "three"]
 //----------------------------------------------------------------------------------
 
@@ -1486,15 +1548,19 @@ println (obj.metaClass.methods*.name - new POGO().metaClass.methods*.name)
 // @@PLEAC@@_13.9
 //----------------------------------------------------------------------------------
 // Most classes in Groovy are inheritable
-class Person6{ def age, name }
-dude = new Person6(name:'Jason', age:23)
+class Person6 {
+    def age, name
+}
+
+dude = new Person6(name: 'Jason', age: 23)
 println "$dude.name is age $dude.age."
 
 // Inheriting from Person
 class Employee2B extends Person6 {
     def salary
 }
-empl = new Employee2B(name:'Jason', age:23, salary:200)
+
+empl = new Employee2B(name: 'Jason', age: 23, salary: 200)
 println "$empl.name is age $empl.age and has salary $empl.salary."
 
 // Many built-in class can be inherited the same way
@@ -1503,6 +1569,7 @@ class WierdList extends ArrayList {
         super.size() * 2
     }
 }
+
 a = new WierdList()
 a.add('dog')
 a.add('cat')
@@ -1512,17 +1579,25 @@ println a.size() // => 4
 
 // @@PLEAC@@_13.10
 //----------------------------------------------------------------------------------
-class Person7 { def firstname, surname; def getName(){ firstname + ' ' + surname } }
+class Person7 {
+    def firstname, surname;
+
+    def getName() { firstname + ' ' + surname }
+}
+
 class Employee2 extends Person7 {
     def employeeId
-    def getName(){ 'Employee Number ' + employeeId }
-    def getRealName(){ super.getName() }
+
+    def getName() { 'Employee Number ' + employeeId }
+
+    def getRealName() { super.getName() }
 }
-p = new Person7(firstname:'Jason', surname:'Smythe')
+
+p = new Person7(firstname: 'Jason', surname: 'Smythe')
 println p.name
 // =>
 // Jason Smythe
-e = new Employee2(firstname:'Jason', surname:'Smythe', employeeId:12349876)
+e = new Employee2(firstname: 'Jason', surname: 'Smythe', employeeId: 12349876)
 println e.name
 println e.realName
 // =>
@@ -1534,20 +1609,23 @@ println e.realName
 // @@PLEAC@@_13.11
 //----------------------------------------------------------------------------------
 // Groovy's built in constructor and auto getter/setter features
- // give you the required functionalty already but you could also
- // override invokeMethod() for trickier scenarios.
+// give you the required functionalty already but you could also
+// override invokeMethod() for trickier scenarios.
 class Person8 {
     def name, age, peers, parent
-    def newChild(args) { new Person8(parent:this, *:args) }
+
+    def newChild(args) { new Person8(parent: this, *: args) }
 }
 
-dad = new Person8(name:'Jason', age:23)
-kid = dad.newChild(name:'Rachel', age:2)
+dad = new Person8(name: 'Jason', age: 23)
+kid = dad.newChild(name: 'Rachel', age: 2)
 println "Kid's parent is ${kid.parent.name}"
 // => Kid's parent is Jason
 
 // additional fields ...
-class Employee3 extends Person8 { def salary, boss }
+class Employee3 extends Person8 {
+    def salary, boss
+}
 //----------------------------------------------------------------------------------
 
 
@@ -1558,13 +1636,17 @@ class Employee3 extends Person8 { def salary, boss }
 class Parent2 {
     private name // my child's name
     def setChildName(value) { name = value }
+
     def getChildName() { name }
 }
+
 class GrandParent extends Parent2 {
     private name // my grandchild's name
     def setgrandChildName(value) { name = value }
+
     def getGrandChildName() { name }
 }
+
 g = new GrandParent()
 g.childName = 'Jason'
 g.grandChildName = 'Rachel'
@@ -1579,6 +1661,7 @@ println g.grandChildName  // => Rachel
 // You can test it with this code:
 class Person9 {
     def friend
+
     void finalize() {
         println "Object [internal id=${hashCode()}] is dying at ${new Date()}"
     }
@@ -1586,15 +1669,15 @@ class Person9 {
 
 def makeSomeFriends() {
     def first = new Person9()
-    def second = new Person9(friend:first)
-    def third = new Person9(friend:second)
-    def fourth = new Person9(friend:third)
-    def fifth = new Person9(friend:fourth)
+    def second = new Person9(friend: first)
+    def third = new Person9(friend: second)
+    def fourth = new Person9(friend: third)
+    def fifth = new Person9(friend: fourth)
     first.friend = fifth
 }
 
 makeSomeFriends()
-100.times{
+100.times {
     System.gc()
 }
 // =>
@@ -1613,9 +1696,12 @@ makeSomeFriends()
 // Suppose we have a class with a compareTo operator, such as:
 class Person10 implements Comparable {
     def firstname, initial, surname
-    Person10(f,i,s) { firstname = f; initial = i; surname = s }
+
+    Person10(f, i, s) { firstname = f; initial = i; surname = s }
+
     int compareTo(other) { firstname <=> other.firstname }
 }
+
 a = new Person10('James', 'T', 'Kirk')
 b = new Person10('Samuel', 'L', 'Jackson')
 println a <=> b
@@ -1625,7 +1711,8 @@ println a <=> b
 // so that now comparisons are made using the middle initial
 // instead of the fisrtname:
 class Person11 extends Person10 {
-    Person11(f,i,s) { super(f,i,s) }
+    Person11(f, i, s) { super(f, i, s) }
+
     int compareTo(other) { initial <=> other.initial }
 }
 
@@ -1652,9 +1739,11 @@ println a <=> b
 // operator overloading.
 class TimeNumber {
     def h, m, s
+
     TimeNumber(hour, min, sec) { h = hour; m = min; s = sec }
 
     def toDigits(s) { s.toString().padLeft(2, '0') }
+
     String toString() {
         return toDigits(h) + ':' + toDigits(m) + ':' + toDigits(s)
     }
@@ -1689,8 +1778,8 @@ println t1 + sec + min + min
 //
 // Using Groovy's String class as is in this example:
 x = "Red"; y = "Black"
-z = x+y
-r = z*3 // r is "RedBlackRedBlackRedBlack"
+z = x + y
+r = z * 3 // r is "RedBlackRedBlackRedBlack"
 println "values are $x, $y, $z, and $r"
 println "$x is ${x < y ? 'LT' : 'GE'} $y"
 // prints:
@@ -1703,16 +1792,19 @@ class FixNum {
     static final DEFAULT_PLACES = 0
     def float value
     def int places
+
     FixNum(value) {
         initValue(value)
         def m = value.toString() =~ REGEX
         if (m) places = m[0][1].size() - 1
         else places = DEFAULT_PLACES
     }
+
     FixNum(value, places) {
         initValue(value)
         this.places = places
     }
+
     private initValue(value) {
         this.value = value
     }
@@ -1726,9 +1818,9 @@ class FixNum {
     }
 
     def div(other) {
-        println "DEUG: Divide = ${value/other.value}"
-        def result = new FixNum(value/other.value)
-        result.places = [places,other.places].max()
+        println "DEUG: Divide = ${value / other.value}"
+        def result = new FixNum(value / other.value)
+        result.places = [places, other.places].max()
         result
     }
 
@@ -1741,16 +1833,16 @@ class FixNum {
 x = new FixNum(40)
 y = new FixNum(12, 0)
 
-println "sum of $x and $y is ${x+y}"
-println "product of $x and $y is ${x*y}"
+println "sum of $x and $y is ${x + y}"
+println "product of $x and $y is ${x * y}"
 
-z = x/y
+z = x / y
 println "$z has $z.places places"
 z.places = 2
 println "$z now has $z.places places"
 
 println "div of $x by $y is $z"
-println "square of that is ${z*z}"
+println "square of that is ${z * z}"
 // =>
 // sum of STRFixNum: 40 and STRFixNum: 12 is STRFixNum: 52
 // product of STRFixNum: 40 and STRFixNum: 12 is STRFixNum: 480
@@ -1768,18 +1860,25 @@ println "square of that is ${z*z}"
 // similar results with Groovy's metaprogramming facilities
 class ValueRing {
     private values
+
     def add(value) { values.add(0, value) }
+
     def next() {
         def head = values[0]
         values = values[1..-1] + head
         return head
     }
 }
-ring = new ValueRing(values:['red', 'blue'])
+
+ring = new ValueRing(values: ['red', 'blue'])
+
 def getColor() { ring.next() }
+
 void setProperty(String n, v) {
-    if (n == 'color') { ring.add(v); return }
-    super.setProperty(n,v)
+    if (n == 'color') {
+        ring.add(v); return
+    }
+    super.setProperty(n, v)
 }
 
 println "$color $color $color $color $color $color"
@@ -1816,14 +1915,17 @@ new GroovyShell().evaluate(metaUnderscore + script)
 // as good Groovy style but mimicks the $_ behaviour in a sinple way.
 class UnderscoreAware implements GroovyInterceptable {
     private _saved
+
     void setProperty(String n, v) {
         _saved = v
         this.metaClass.setProperty(this, n, v)
     }
+
     def getProperty(String n) {
         if (n == '_') return _saved
         this.metaClass.getProperty(this, n)
     }
+
     def invokeMethod(String name, Object args) {
         if (name.startsWith('print') && args.size() == 0)
             args = [_saved] as Object[]
@@ -1833,8 +1935,11 @@ class UnderscoreAware implements GroovyInterceptable {
 
 class PerlishClass extends UnderscoreAware {
     private _age
-    def setAge(age){ _age = age }
-    def getAge(){ _age }
+
+    def setAge(age) { _age = age }
+
+    def getAge() { _age }
+
     def test() {
         age = 25
         println "$_"   // explicit $_ supported
@@ -1859,6 +1964,7 @@ class AutoMap extends HashMap {
         }
     }
 }
+
 m = new AutoMap()
 m.beer = 'guinness'
 m.food = 'potatoes'
@@ -1871,10 +1977,12 @@ class FoldedMap extends HashMap {
     void setProperty(String name, v) {
         put(name.toLowerCase(), v)
     }
+
     def getProperty(String name) {
         get(name.toLowerCase())
     }
 }
+
 tab = new FoldedMap()
 tab.VILLAIN = 'big '
 tab.herOine = 'red riding hood'
@@ -1884,14 +1992,16 @@ println tab
 
 // Hash That "Allows Look-Ups by Key or Value":
 class RevMap extends HashMap {
-    void setProperty(String n, v) { put(n,v); put(v,n) }
+    void setProperty(String n, v) { put(n, v); put(v, n) }
+
     def remove(n) { super.remove(get(n)); super.remove(n) }
 }
+
 rev = new RevMap()
 rev.Rojo = 'Red'
 rev.Azul = 'Blue'
 rev.Verde = 'Green'
-rev.EVIL = [ "No way!", "Way!!" ]
+rev.EVIL = ["No way!", "Way!!"]
 rev.remove('Red')
 rev.remove('Azul')
 println rev
@@ -1905,16 +2015,19 @@ println rev
 // Multiple Streams scenario:
 class MultiStream2 extends PrintStream {
     def streams
+
     MultiStream2(List streams) {
         super(streams[0])
         this.streams = streams
     }
+
     void println(String x) {
-        streams.each{ it.println(x) }
+        streams.each { it.println(x) }
     }
 }
+
 tee = new MultiStream2([System.out, System.err])
-tee.println ('This goes two places')
+tee.println('This goes two places')
 // =>
 // This goes two places
 // This goes two places
@@ -1952,6 +2065,7 @@ tee.println ('This goes two places')
 // Example shown using berkeley db Java edition - not quite as transparent as
 // cookbook example as Berkeley DB Java addition makes transactions visible.
 import com.sleepycat.je.*
+
 tx = null
 envHome = new File("D:/Projects/GroovyExamples/Pleac/data/db")
 
@@ -1978,8 +2092,9 @@ myEnv.close()
 
 // userstats using pbeans
 //import net.sourceforge.pbeans.*
-interface Persistent{}
-class Store{}
+interface Persistent {}
+
+class Store {}
 // on *nix use: whotext = "who".execute().text
 whotext = '''
 gnat ttyp1 May 29 15:39 (coprolith.frii.com)
@@ -1989,23 +2104,24 @@ gnit ttyp1 May 27 15:37 (somewhere.org)
 
 class LoginInfo implements Persistent {
     LoginInfo() {}
+
     LoginInfo(name) { this.name = name; loginCount = 1 }
     String name
     int loginCount
 }
 
 def printAllUsers(store) {
-    printUsers(store, store.select(LoginInfo.class).collect{it.name}.sort())
+    printUsers(store, store.select(LoginInfo.class).collect { it.name }.sort())
 }
 
 def printUsers(store, list) {
-    list.each{
+    list.each {
         println "$it  ${store.selectSingle(LoginInfo.class, 'name', it).loginCount}"
     }
 }
 
 def addUsers(store) {
-    whotext.trim().split('\n').each{
+    whotext.trim().split('\n').each {
         m = it =~ /^(\S+)/
         name = m[0][1]
         item = store.selectSingle(LoginInfo.class, 'name', name)
@@ -2083,18 +2199,18 @@ class PersonX implements Persistent {
 }
 
 // populate with test data
-store.insert(new PersonX(name:'Tom Christiansen', does:'book author', email:'tchrist@perl.com'))
-store.insert(new PersonX(name:'Tom Boutell', does:'Poet Programmer', email:'boutell@boutell.com'))
+store.insert(new PersonX(name: 'Tom Christiansen', does: 'book author', email: 'tchrist@perl.com'))
+store.insert(new PersonX(name: 'Tom Boutell', does: 'Poet Programmer', email: 'boutell@boutell.com'))
 
 people = store.select(PersonX.class)
 
 db = new Sql(ds)
 
 db.execute 'CREATE TABLE people ( name VARCHAR, does VARCHAR, email VARCHAR );'
-people.each{ p ->
+people.each { p ->
     db.execute "INSERT INTO people ( name, does, email ) VALUES ($p.name,$p.does,$p.email);"
 }
-db.eachRow("SELECT * FROM people where does like 'book%'"){
+db.eachRow("SELECT * FROM people where does like 'book%'") {
     println "$it.name, $it.does, $it.email"
 }
 db.execute 'DROP TABLE people;'
@@ -2158,19 +2274,20 @@ myEnv.close()
 
 // @@PLEAC@@_14.7
 //----------------------------------------------------------------------------------
- // We can write a category that allows the ArrayList class
- // to be persisted as required.
- class ArrayListCategory {
-     static file = new File('/temp.txt')
-     static void save(ArrayList self) {
-         def LS = System.getProperty('line.separator')
-         file.withWriter{ w ->
-             self.each{ w.write(it + LS)  }
-         }
-     }
- }
+// We can write a category that allows the ArrayList class
+// to be persisted as required.
+class ArrayListCategory {
+    static file = new File('/temp.txt')
 
- lines = '''
+    static void save(ArrayList self) {
+        def LS = System.getProperty('line.separator')
+        file.withWriter { w ->
+            self.each { w.write(it + LS) }
+        }
+    }
+}
+
+lines = '''
  zero
  one
  two
@@ -2178,46 +2295,46 @@ myEnv.close()
  four
  '''.trim().split('\n') as ArrayList
 
- use(ArrayListCategory) {
-     println "ORIGINAL"
-     for (i in 0..<lines.size())
-         println "${i}: ${lines[i]}"
+use(ArrayListCategory) {
+    println "ORIGINAL"
+    for (i in 0..<lines.size())
+        println "${i}: ${lines[i]}"
 
-     a = lines[-1]
-     lines[-1] = "last"
-     println "The last line was [$a]"
+    a = lines[-1]
+    lines[-1] = "last"
+    println "The last line was [$a]"
 
-     a = lines[0]
-     lines = ["first"] + lines[1..-1]
-     println "The first line was [$a]"
+    a = lines[0]
+    lines = ["first"] + lines[1..-1]
+    println "The first line was [$a]"
 
-     lines.add(3, 'Newbie')
-     lines.add(1, 'New One')
+    lines.add(3, 'Newbie')
+    lines.add(1, 'New One')
 
-     lines.remove(3)
+    lines.remove(3)
 
-     println "REVERSE"
-     (lines.size() - 1).downto(0){ i ->
-         println "${i}: ${lines[i]}"
-     }
-     lines.save()
- }
- // =>
- // ORIGINAL
- // 0: zero
- // 1: one
- // 2: two
- // 3: three
- // 4: four
- // The last line was [four]
- // The first line was [zero]
- // REVERSE
- // 5: last
- // 4: three
- // 3: Newbie
- // 2: one
- // 1: New One
- // 0: first
+    println "REVERSE"
+    (lines.size() - 1).downto(0) { i ->
+        println "${i}: ${lines[i]}"
+    }
+    lines.save()
+}
+// =>
+// ORIGINAL
+// 0: zero
+// 1: one
+// 2: two
+// 3: three
+// 4: four
+// The last line was [four]
+// The first line was [zero]
+// REVERSE
+// 5: last
+// 4: three
+// 3: Newbie
+// 2: one
+// 1: New One
+// 0: first
 //----------------------------------------------------------------------------------
 
 
@@ -2240,8 +2357,8 @@ class PersonY implements Persistent {
 name1 = 'Tom Christiansen'
 name2 = 'Tom Boutell'
 
-store.insert(new PersonY(name:name1, does:'book author', email:'tchrist@perl.com'))
-store.insert(new PersonY(name:name2, does:'shareware author', email:'boutell@boutell.com'))
+store.insert(new PersonY(name: name1, does: 'book author', email: 'tchrist@perl.com'))
+store.insert(new PersonY(name: name2, does: 'shareware author', email: 'boutell@boutell.com'))
 
 tom1 = store.selectSingle(PersonY.class, 'name', name1)
 tom2 = store.selectSingle(PersonY.class, 'name', name2)
@@ -2273,7 +2390,7 @@ store.save(tom2)
 //----------------------------------------------------------------------------------
 import groovy.sql.Sql
 
-users = ['20':'Joe Bloggs', '40':'Bill Clinton', '60':'Ben Franklin']
+users = ['20': 'Joe Bloggs', '40': 'Bill Clinton', '60': 'Ben Franklin']
 
 def source = new jdbcDataSource()
 source.database = 'jdbc:hsqldb:mem:PLEAC'
@@ -2282,10 +2399,10 @@ source.password = ''
 db = new Sql(source)
 
 db.execute 'CREATE TABLE users ( uid INT, login CHAR(8) );'
-users.each{ uid, login ->
+users.each { uid, login ->
     db.execute "INSERT INTO users ( uid, login ) VALUES ($uid,$login);"
 }
-db.eachRow('SELECT uid, login FROM users WHERE uid < 50'){
+db.eachRow('SELECT uid, login FROM users WHERE uid < 50') {
     println "$it.uid $it.login"
 }
 db.execute 'DROP TABLE users;'
@@ -2303,37 +2420,42 @@ db.execute 'DROP TABLE users;'
 // uses jmork mork dbm reading library:
 //     http://www.smartwerkz.com/projects/jmork/index.html
 //import mork.*
-class MorkDocument{}
-class CliBuilder{}
+class MorkDocument {}
+
+class CliBuilder {}
+
 def cli = new CliBuilder()
 cli.h(longOpt: 'help', 'print this message')
 cli.e(longOpt: 'exclude', 'exclude hidden history entries (js, css, ads and images)')
 cli.c(longOpt: 'clean', 'clean off url query string when reporting urls')
 cli.v(longOpt: 'verbose', 'show referrer and first visit date')
 def options = cli.parse(args)
-if (options.h) { cli.usage(); System.exit(0) }
+if (options.h) {
+    cli.usage(); System.exit(0)
+}
 regex = options.arguments()
 if (regex) regex = regex[0]
 reader = new FileReader('Pleac/data/history.dat')
 morkDocument = new MorkDocument(reader)
 tables = morkDocument.tables
-tables.each{ table ->
+tables.each { table ->
     table.rows.each { row ->
         url = row.getValue('URL')
         if (options.c) url = url.tokenize('?')[0]
         if (!regex || url =~ regex) {
             if (!options.e || row.getValue('Hidden') != '1') {
-                println "$url\n    Last Visited: ${date(row,'LastVisitDate')}"
+                println "$url\n    Last Visited: ${date(row, 'LastVisitDate')}"
                 if (options.v) {
-                    println "    First Visited: ${date(row,'FirstVisitDate')}"
+                    println "    First Visited: ${date(row, 'FirstVisitDate')}"
                     println "    Referrer: ${row.getValue('Referrer')}"
                 }
             }
         }
     }
 }
+
 def date(row, key) {
-    return new Date((long)(row.getValue(key).toLong()/1000))
+    return new Date((long) (row.getValue(key).toLong() / 1000))
 }
 // $ groovy gfh -ev oracle' =>
 // http://www.oracle.com/technology/products/jdev/index.html
@@ -2362,7 +2484,7 @@ cli.D(longOpt: 'Debug', 'display debug info')
 cli.o(longOpt: 'output', 'use/specify output file')
 options = cli.parse(args)
 if (options.v) // ...
-if (options.D) println 'Debugging info available'
+    if (options.D) println 'Debugging info available'
 if (options.o) {
     println 'Output file flag was specified'
     println "Output file is ${options.o}"
@@ -2381,13 +2503,13 @@ if (options.wasDetected('o')) {
 
 // jopt-simple example 2 (declarative form)
 op = new joptsimple.OptionParser()
-VERBOSE = 'v';  op.accepts( VERBOSE,  "verbose mode" )
-DEBUG   = 'D';  op.accepts( DEBUG,    "display debug info" )
-OUTPUT  = 'o';  op.accepts( OUTPUT,   "use/specify output file" ).withOptionalArg().
-    describedAs( "file" ).ofType( File.class )
+VERBOSE = 'v'; op.accepts(VERBOSE, "verbose mode")
+DEBUG = 'D'; op.accepts(DEBUG, "display debug info")
+OUTPUT = 'o'; op.accepts(OUTPUT, "use/specify output file").withOptionalArg().
+    describedAs("file").ofType(File.class)
 options = op.parse(args)
 params = options.nonOptionArguments()
-if (options.wasDetected( DEBUG )) println 'Debugging info available'
+if (options.wasDetected(DEBUG)) println 'Debugging info available'
 // ...
 //----------------------------------------------------------------------------------
 
@@ -2417,7 +2539,7 @@ if (options.wasDetected( DEBUG )) println 'Debugging info available'
 
 // If you are using a terminal/console that understands ANSI codes
 // (excludes WinNT derivatives) you can just print the ANSI codes
-print ((char)27 + '[2J')
+print((char) 27 + '[2J')
 
 // jline has constants for ANSI codes
 //import jline.ANSIBuffer
@@ -2427,6 +2549,7 @@ println new jline.console.ConsoleReader().clearScreen()
 
 // Using jcurses
 import jcurses.system.*
+
 bg = CharColor.BLACK
 fg = CharColor.WHITE
 screenColors = new CharColor(bg, fg)
@@ -2443,13 +2566,14 @@ Toolkit.clearScreen(screenColors)
 
 // 'barchart' example
 import jcurses.system.Toolkit
+
 numCols = Toolkit.screenWidth
 rand = new Random()
 if (numCols < 20) throw new RuntimeException("You must have at least 20 characters")
 values = (1..5).collect { rand.nextInt(20) }  // generate rand values
 max = values.max()
-ratio = (numCols - 12)/max
-values.each{ i ->
+ratio = (numCols - 12) / max
+values.each { i ->
     printf('%8.1f %s\n', [i as double, "*" * ratio * i])
 }
 
@@ -2471,14 +2595,14 @@ values.each{ i ->
 
 // If you are using a terminal/console that understands ANSI codes
 // (excludes WinNT derivatives) you can just print the ANSI codes
-ESC = "${(char)27}"
+ESC = "${(char) 27}"
 redOnBlack = ESC + '[31;40m'
 reset = ESC + '[0m'
-println (redOnBlack + 'Danger, Will Robinson!' + reset)
+println(redOnBlack + 'Danger, Will Robinson!' + reset)
 
 // jline has constants for ANSI codes
 //import jline.ANSIBuffer
-class ANSIBuffer{}
+class ANSIBuffer {}
 
 redOnBlack = ANSIBuffer.ANSICodes.attrib(31) + ANSIBuffer.ANSICodes.attrib(40)
 reset = ANSIBuffer.ANSICodes.attrib(0)
@@ -2497,10 +2621,11 @@ Toolkit.printString("This is just normal text.", 0, 1, whiteOnBlack)
 // Using jline constants for Blink
 blink = ANSIBuffer.ANSICodes.attrib(5)
 reset = ANSIBuffer.ANSICodes.attrib(0)
-println (blink + 'Do you hurt yet?' + reset)
+println(blink + 'Do you hurt yet?' + reset)
 
 // Using jline constants for Coral snake rhyme
 def ansi(code) { ANSIBuffer.ANSICodes.attrib(code) }
+
 redOnBlack = ansi(31) + ansi(40)
 redOnYellow = ansi(31) + ansi(43)
 greenOnCyanBlink = ansi(32) + ansi(46) + ansi(5)
@@ -2535,7 +2660,7 @@ assert ch.code == InputChar.KEY_END
 
 // @@PLEAC@@_15.7
 //----------------------------------------------------------------------------------
-print "${(char)7}"
+print "${(char) 7}"
 
 // Using jline constant
 print "${jline.ConsoleOperations.KEYBOARD_BELL}"
@@ -2593,7 +2718,8 @@ password = new jline.console.ConsoleReader().readLine(new Character('*'))
 // out" using font colors from white through to black. Then the new line
 // is faded in using the reverse process.
 //import jcurses.system.*
-class CharColor{}
+class CharColor {}
+
 color = new CharColor(CharColor.BLACK, CharColor.WHITE)
 Toolkit.clearScreen(color)
 maxcol = Toolkit.screenWidth
@@ -2604,13 +2730,15 @@ done = false
 refresh = false
 waittime = 8000
 oldlines = []
+
 def fade(line, row, colorList) {
     for (i in 0..<colorList.size()) {
         Toolkit.printString(line, 0, row, new CharColor(CharColor.BLACK, colorList[i]))
         sleep 10
     }
 }
-while(!done) {
+
+while (!done) {
     if (waittime > 9999 || refresh) {
         proc = args[0].execute()
         lines = proc.text.split('\n')
@@ -2631,8 +2759,8 @@ while(!done) {
 
 // Keyboard handling would be similar to 15.6.
 // Something like below but need to synchronize as we are in different threads.
-Thread.start{
-    while(!done) {
+Thread.start {
+    while (!done) {
         ch = Toolkit.readCharacter()
         if (ch.isSpecialCode() || ch.character == 'q') done = true
         else refresh = true
@@ -2668,41 +2796,43 @@ command.stop()
 // file menu items.
 
 def print() {}
+
 def save() {}
-frame = new SwingBuilder().frame(title:'Demo') {
+
+frame = new SwingBuilder().frame(title: 'Demo') {
     menuBar {
-        menu(mnemonic:'F', 'File') {
-            menuItem (actionPerformed:this.&print, 'Print')
+        menu(mnemonic: 'F', 'File') {
+            menuItem(actionPerformed: this.&print, 'Print')
             separator()
-            menuItem (actionPerformed:this.&save, 'Save')
-            menuItem (actionPerformed:{System.exit(0)}, 'Quit immediately')
+            menuItem(actionPerformed: this.&save, 'Save')
+            menuItem(actionPerformed: { System.exit(0) }, 'Quit immediately')
         }
-        menu(mnemonic:'O', 'Options') {
-            checkBoxMenuItem ('Create Debugging Info', state:true)
+        menu(mnemonic: 'O', 'Options') {
+            checkBoxMenuItem('Create Debugging Info', state: true)
         }
-        menu(mnemonic:'D', 'Debug') {
+        menu(mnemonic: 'D', 'Debug') {
             group = buttonGroup()
-            radioButtonMenuItem ('Log Level 1', buttonGroup:group, selected:true)
-            radioButtonMenuItem ('Log Level 2', buttonGroup:group)
-            radioButtonMenuItem ('Log Level 3', buttonGroup:group)
+            radioButtonMenuItem('Log Level 1', buttonGroup: group, selected: true)
+            radioButtonMenuItem('Log Level 2', buttonGroup: group)
+            radioButtonMenuItem('Log Level 3', buttonGroup: group)
         }
-        menu(mnemonic:'F', 'Format') {
+        menu(mnemonic: 'F', 'Format') {
             menu('Font') {
                 group = buttonGroup()
-                radioButtonMenuItem ('Times Roman', buttonGroup:group, selected:true)
-                radioButtonMenuItem ('Courier', buttonGroup:group)
+                radioButtonMenuItem('Times Roman', buttonGroup: group, selected: true)
+                radioButtonMenuItem('Courier', buttonGroup: group)
             }
         }
-        menu(mnemonic:'E', 'Edit') {
-            menuItem (actionPerformed:{}, 'Copy')
-            menuItem (actionPerformed:{}, 'Cut')
-            menuItem (actionPerformed:{}, 'Paste')
-            menuItem (actionPerformed:{}, 'Delete')
+        menu(mnemonic: 'E', 'Edit') {
+            menuItem(actionPerformed: {}, 'Copy')
+            menuItem(actionPerformed: {}, 'Cut')
+            menuItem(actionPerformed: {}, 'Paste')
+            menuItem(actionPerformed: {}, 'Delete')
             separator()
             menu('Object ...') {
-                menuItem (actionPerformed:{}, 'Circle')
-                menuItem (actionPerformed:{}, 'Square')
-                menuItem (actionPerformed:{}, 'Point')
+                menuItem(actionPerformed: {}, 'Circle')
+                menuItem(actionPerformed: {}, 'Square')
+                menuItem(actionPerformed: {}, 'Point')
             }
         }
     }
@@ -2716,27 +2846,30 @@ frame.show()
 //----------------------------------------------------------------------------------
 // Registration Example
 import groovy.swing.SwingBuilder
+
 def cancel(event) {
     println 'Sorry you decided not to register.'
     dialog.dispose()
 }
+
 def register(event) {
     if (swing.name?.text) {
         println "Welcome to the fold $swing.name.text"
         dialog.dispose()
     } else println "You didn't give me your name!"
 }
+
 def dialog(event) {
-    dialog = swing.createDialog(title:'Entry')
+    dialog = swing.createDialog(title: 'Entry')
     def panel = swing.panel {
         vbox {
             hbox {
-                label(text:'Name')
-                textField(columns:20, id:'name')
+                label(text: 'Name')
+                textField(columns: 20, id: 'name')
             }
             hbox {
-                button('Register', actionPerformed:this.&register)
-                button('Cancel', actionPerformed:this.&cancel)
+                button('Register', actionPerformed: this.&register)
+                button('Cancel', actionPerformed: this.&cancel)
             }
         }
     }
@@ -2744,12 +2877,13 @@ def dialog(event) {
     dialog.pack()
     dialog.show()
 }
+
 swing = new SwingBuilder()
-frame = swing.frame(title:'Registration Example') {
+frame = swing.frame(title: 'Registration Example') {
     panel {
-        button(actionPerformed:this.&dialog, 'Click Here For Registration Form')
+        button(actionPerformed: this.&dialog, 'Click Here For Registration Form')
         glue()
-        button(actionPerformed:{System.exit(0)}, 'Quit')
+        button(actionPerformed: { System.exit(0) }, 'Quit')
     }
 }
 frame.pack()
@@ -2760,6 +2894,7 @@ frame.show()
 import groovy.swing.SwingBuilder
 import javax.swing.WindowConstants as WC
 import javax.swing.JOptionPane
+
 def calculate(event) {
     try {
         swing.result.text = evaluate(swing.expr.text)
@@ -2767,24 +2902,25 @@ def calculate(event) {
         JOptionPane.showMessageDialog(frame, ex.message)
     }
 }
+
 swing = new SwingBuilder()
-frame = swing.frame(title:'Calculator Example',
-    defaultCloseOperation:WC.EXIT_ON_CLOSE) {
+frame = swing.frame(title: 'Calculator Example',
+    defaultCloseOperation: WC.EXIT_ON_CLOSE) {
     panel {
         vbox {
             hbox {
-                label(text:'Expression')
+                label(text: 'Expression')
                 hstrut()
-                textField(columns:12, id:'expr')
+                textField(columns: 12, id: 'expr')
             }
             hbox {
-                label(text:'Result')
+                label(text: 'Result')
                 glue()
-                label(id:'result')
+                label(id: 'result')
             }
             hbox {
-                button('Calculate', actionPerformed:this.&calculate)
-                button('Quit', actionPerformed:{System.exit(0)})
+                button('Calculate', actionPerformed: this.&calculate)
+                button('Quit', actionPerformed: { System.exit(0) })
             }
         }
     }
@@ -2834,20 +2970,26 @@ colors = [CharColor.RED, CharColor.BLUE, CharColor.YELLOW,
           CharColor.GREEN, CharColor.CYAN, CharColor.MAGENTA]
 delay = 20
 ch = null
-def nextChar(){
+
+def nextChar() {
     ch = chars[0]
     chars = chars[1..-1] + chars[0]
     color = new CharColor(CharColor.BLACK, colors[0])
     colors = colors[1..-1] + colors[0]
 }
+
 nextChar()
-while(true) {
+while (true) {
     Toolkit.printString(ch, row, col, color)
     sleep delay
     row = row + rowinc
     col = col + colinc
-    if (row in [0, maxrow]) { nextChar(); rowinc = -rowinc }
-    if (col in [0, maxcol]) { nextChar(); colinc = -colinc }
+    if (row in [0, maxrow]) {
+        nextChar(); rowinc = -rowinc
+    }
+    if (col in [0, maxcol]) {
+        nextChar(); colinc = -colinc
+    }
 }
 //----------------------------------------------------------------------------------
 
@@ -2863,7 +3005,7 @@ import javax.swing.*
 import javax.swing.ScrollPaneConstants as SPC
 
 class DragDropList extends JList implements
-        DragSourceListener, DropTargetListener, DragGestureListener {
+    DragSourceListener, DropTargetListener, DragGestureListener {
     def dragSource
     DropTarget dropTarget
     def dropTargetCell
@@ -2894,17 +3036,17 @@ class DragDropList extends JList implements
         repaint()
     }
 
-    void dragEnter(DragSourceDragEvent dsde) { }
+    void dragEnter(DragSourceDragEvent dsde) {}
 
-    void dragExit(DragSourceEvent dse) { }
+    void dragExit(DragSourceEvent dse) {}
 
-    void dragOver(DragSourceDragEvent dsde) { }
+    void dragOver(DragSourceDragEvent dsde) {}
 
-    void dropActionChanged(DragSourceDragEvent dsde) { }
+    void dropActionChanged(DragSourceDragEvent dsde) {}
 
-    void dropActionChanged(DropTargetDragEvent dtde) { }
+    void dropActionChanged(DropTargetDragEvent dtde) {}
 
-    void dragExit(DropTargetEvent dte) { }
+    void dragExit(DropTargetEvent dte) {}
 
     void dragEnter(DropTargetDragEvent dtde) {
         if (dtde.source != dropTarget) dtde.rejectDrag()
@@ -2970,7 +3112,7 @@ class DragDropCellRenderer extends DefaultListCellRenderer {
     }
 
     Component getListCellRendererComponent(JList list, Object value,
-            int index, boolean isSelected, boolean hasFocus) {
+                                           int index, boolean isSelected, boolean hasFocus) {
         isTargetCell = (value == ddlist.dropTargetCell)
         boolean showSelected = isSelected && !isTargetCell
         return super.getListCellRendererComponent(list, value, index, showSelected, hasFocus)
@@ -2992,7 +3134,7 @@ This is line 3
 This is line 4
 '''.trim().split('\n')
 def listModel = new DefaultListModel()
-lines.each{ listModel.addElement(it) }
+lines.each { listModel.addElement(it) }
 listModel.addElement(' ') // dummy
 def list = new DragDropList(listModel)
 def sp = new JScrollPane(list, SPC.VERTICAL_SCROLLBAR_ALWAYS, SPC.HORIZONTAL_SCROLLBAR_NEVER)

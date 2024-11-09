@@ -59,10 +59,10 @@ tasks.withType(Javadoc).configureEach {
         bottom = 'Copyright &copy; 2003-2024 The Apache Software Foundation. All rights reserved.'
         source = sharedConfiguration.targetJavaVersion.get()
         links('https://docs.oracle.com/en/java/javase/11/docs/api/',
-                'https://docs.oracle.com/javaee/7/api/',
-                'https://commons.apache.org/proper/commons-cli/javadocs/api-release/',
-                'https://junit.org/junit4/javadoc/latest/',
-                'https://docs.oracle.com/javaee/6/api/')
+            'https://docs.oracle.com/javaee/7/api/',
+            'https://commons.apache.org/proper/commons-cli/javadocs/api-release/',
+            'https://junit.org/junit4/javadoc/latest/',
+            'https://docs.oracle.com/javaee/6/api/')
     }
 }
 

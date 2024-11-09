@@ -101,6 +101,7 @@ class ResourceGMClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestC
 
         '''
     }
+
     void testEachFileXYZ() {
         assertScript '''import groovy.io.FileType
             File tmp = File.createTempDir()

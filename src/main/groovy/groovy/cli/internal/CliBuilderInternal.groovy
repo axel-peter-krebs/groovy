@@ -80,7 +80,7 @@ class CliBuilderInternal {
 
     /**
      * The PrintWriter to write to when invalid user input was provided to
-     * the {@link #parse(java.lang.String[])} method.
+     * the {@link #parse(java.lang.String [ ])} method.
      * Defaults to stderr but you can provide your own PrintWriter if desired.
      * @since 2.5
      */
@@ -110,12 +110,12 @@ class CliBuilderInternal {
     // Implementation note: this object is separate from the CommandSpec.
     // The values collected here are copied into the ParserSpec of the command.
     final CommandLine.Model.ParserSpec parser = new CommandLine.Model.ParserSpec()
-            .stopAtPositional(true)
-            .unmatchedOptionsArePositionalParams(true)
-            .aritySatisfiedByAttachedOptionParam(true)
-            .limitSplit(true)
-            .overwrittenOptionsAllowed(true)
-            .toggleBooleanFlags(false)
+        .stopAtPositional(true)
+        .unmatchedOptionsArePositionalParams(true)
+        .aritySatisfiedByAttachedOptionParam(true)
+        .limitSplit(true)
+        .overwrittenOptionsAllowed(true)
+        .toggleBooleanFlags(false)
 
     /**
      * Not normally accessed directly but allows fine-grained control over the
@@ -405,12 +405,12 @@ class CliBuilderInternal {
                 [[paramLabel: "<$v>"]]
             } else if (k == 'longOpt') {
                 acceptLongOptionsWithSingleHyphen ?
-                        [[names: ["-$shortname", "-$v", "--$v"] as String[] ]] :
-                        [[names: ["-$shortname",        "--$v"] as String[] ]]
+                    [[names: ["-$shortname", "-$v", "--$v"] as String[]]] :
+                    [[names: ["-$shortname", "--$v"] as String[]]]
             } else if (k == 'valueSeparator') {
                 [[splitRegex: "$v"]]
             } else if (k == 'convert') {
-                [[converters: [v] as CommandLine.ITypeConverter[] ]]
+                [[converters: [v] as CommandLine.ITypeConverter[]]]
             } else {
                 [[(k): v]]
             }

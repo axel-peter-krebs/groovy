@@ -54,6 +54,21 @@ import java.util.Map;
  */
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 public class TailRecursiveASTTransformation extends AbstractASTTransformation {
+    private static final Class MY_CLASS = TailRecursive.class;
+    private static final ClassNode MY_TYPE = new ClassNode(MY_CLASS);
+    private static final String MY_TYPE_NAME = "@" + MY_TYPE.getNameWithoutPackage();
+    private final HasRecursiveCalls hasRecursiveCalls = new HasRecursiveCalls();
+    private final TernaryToIfStatementConverter ternaryToIfStatement = new TernaryToIfStatementConverter();
+
+    public static String getMY_TYPE_NAME() {
+        return MY_TYPE_NAME;
+    }
+
+    private static <K, V, Value extends V> Value putAt0(Map<K, V> propOwner, K key, Value value) {
+        propOwner.put(key, value);
+        return value;
+    }
+
     @Override
     public void visit(ASTNode[] nodes, SourceUnit source) {
         init(nodes, source);
@@ -144,14 +159,14 @@ public class TailRecursiveASTTransformation extends AbstractASTTransformation {
     private void addLocalVariablesForAllParameters(MethodNode method, Map<String, Map> nameAndTypeMapping) {
         final BlockStatement code = (BlockStatement) method.getCode();
         nameAndTypeMapping.forEach((paramName, localNameAndType) ->
-                code.getStatements().add(
-                        0,
-                        AstHelper.createVariableDefinition(
-                                (String) localNameAndType.get("name"),
-                                (ClassNode) localNameAndType.get("type"),
-                                new VariableExpression(paramName, (ClassNode) localNameAndType.get("type"))
-                        )
+            code.getStatements().add(
+                0,
+                AstHelper.createVariableDefinition(
+                    (String) localNameAndType.get("name"),
+                    (ClassNode) localNameAndType.get("type"),
+                    new VariableExpression(paramName, (ClassNode) localNameAndType.get("type"))
                 )
+            )
         );
     }
 
@@ -279,20 +294,5 @@ public class TailRecursiveASTTransformation extends AbstractASTTransformation {
         if (methodCall instanceof StaticMethodCallExpression)
             return new RecursivenessTester().isRecursive(method, (StaticMethodCallExpression) methodCall);
         return false;
-    }
-
-    public static String getMY_TYPE_NAME() {
-        return MY_TYPE_NAME;
-    }
-
-    private static final Class MY_CLASS = TailRecursive.class;
-    private static final ClassNode MY_TYPE = new ClassNode(MY_CLASS);
-    private static final String MY_TYPE_NAME = "@" + MY_TYPE.getNameWithoutPackage();
-    private final HasRecursiveCalls hasRecursiveCalls = new HasRecursiveCalls();
-    private final TernaryToIfStatementConverter ternaryToIfStatement = new TernaryToIfStatementConverter();
-
-    private static <K, V, Value extends V> Value putAt0(Map<K, V> propOwner, K key, Value value) {
-        propOwner.put(key, value);
-        return value;
     }
 }

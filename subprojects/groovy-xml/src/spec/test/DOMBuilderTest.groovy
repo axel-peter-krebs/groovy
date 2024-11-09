@@ -50,5 +50,5 @@ class DOMBuilderTest extends GroovyTestCase {
             assert records.car.size() == 3
         }
         // end::dom_builder_process_result[]
-  }
+    }
 }

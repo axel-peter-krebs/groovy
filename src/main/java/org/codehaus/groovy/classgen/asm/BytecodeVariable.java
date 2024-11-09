@@ -31,9 +31,9 @@ public class BytecodeVariable {
     public static final BytecodeVariable SUPER_VARIABLE = new BytecodeVariable();
 
     private final int index;
+    private final int prevCurrent;
     private ClassNode type;
     private String name;
-    private final int prevCurrent;
     private boolean dynamicTyped;
     private boolean holder;
 
@@ -116,6 +116,6 @@ public class BytecodeVariable {
 
     @Override
     public String toString() {
-        return name + "(index=" + index + ",type=" + type + ",holder="+holder+")";
+        return name + "(index=" + index + ",type=" + type + ",holder=" + holder + ")";
     }
 }

@@ -48,78 +48,17 @@ import java.util.stream.Stream;
  * methods and classes.
  */
 public class IndyInterface {
-    private static final long INDY_OPTIMIZE_THRESHOLD = SystemUtil.getLongSafe("groovy.indy.optimize.threshold", 10_000L);
-    private static final long INDY_FALLBACK_THRESHOLD = SystemUtil.getLongSafe("groovy.indy.fallback.threshold", 10_000L);
-
     /**
      * flags for method and property calls
      */
     public static final int
-            SAFE_NAVIGATION = 1, THIS_CALL = 2,
-            GROOVY_OBJECT = 4, IMPLICIT_THIS = 8,
-            SPREAD_CALL = 16, UNCACHED_CALL = 32;
-    private static final MethodHandleWrapper NULL_METHOD_HANDLE_WRAPPER = MethodHandleWrapper.getNullMethodHandleWrapper();
-
+        SAFE_NAVIGATION = 1, THIS_CALL = 2,
+        GROOVY_OBJECT = 4, IMPLICIT_THIS = 8,
+        SPREAD_CALL = 16, UNCACHED_CALL = 32;
     /**
-     * Enum for easy differentiation between call types
+     * LOOKUP constant used for example in unreflect calls
      */
-    public enum CallType {
-        /**
-         * Method invocation type
-         */
-        METHOD("invoke", 0),
-        /**
-         * Constructor invocation type
-         */
-        INIT("init", 1),
-        /**
-         * Get property invocation type
-         */
-        GET("getProperty", 2),
-        /**
-         * Set property invocation type
-         */
-        SET("setProperty", 3),
-        /**
-         * Cast invocation type
-         */
-        CAST("cast", 4),
-
-        /**
-         * call to interface method
-         */
-        INTERFACE("interface", 5);
-
-        private static final Map<String, CallType> NAME_CALLTYPE_MAP =
-                Stream.of(CallType.values()).collect(Collectors.toMap(CallType::getCallSiteName, Function.identity()));
-
-        /**
-         * The name of the call site type
-         */
-        private final String name;
-        private final int orderNumber;
-
-        CallType(String callSiteName, int orderNumber) {
-            this.orderNumber = orderNumber;
-            this.name = callSiteName;
-        }
-
-        /**
-         * Returns the name of the call site type
-         */
-        public String getCallSiteName() {
-            return name;
-        }
-
-        public static CallType fromCallSiteName(String callSiteName) {
-            return NAME_CALLTYPE_MAP.get(callSiteName);
-        }
-
-        public int getOrderNumber() {
-            return this.orderNumber;
-        }
-    }
-
+    public static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     /**
      * Logger
      */
@@ -128,6 +67,18 @@ public class IndyInterface {
      * boolean to indicate if logging for indy is enabled
      */
     protected static final boolean LOG_ENABLED;
+    private static final long INDY_OPTIMIZE_THRESHOLD = SystemUtil.getLongSafe("groovy.indy.optimize.threshold", 10_000L);
+    private static final long INDY_FALLBACK_THRESHOLD = SystemUtil.getLongSafe("groovy.indy.fallback.threshold", 10_000L);
+    private static final MethodHandleWrapper NULL_METHOD_HANDLE_WRAPPER = MethodHandleWrapper.getNullMethodHandleWrapper();
+    /**
+     * handle for the fromCache method
+     */
+    private static final MethodHandle FROM_CACHE_METHOD;
+    /**
+     * handle for the selectMethod method
+     */
+    private static final MethodHandle SELECT_METHOD;
+    protected static SwitchPoint switchPoint = new SwitchPoint();
 
     static {
         boolean enableLogger = false;
@@ -146,21 +97,6 @@ public class IndyInterface {
         LOG_ENABLED = enableLogger;
     }
 
-    /**
-     * LOOKUP constant used for example in unreflect calls
-     */
-    public static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
-
-    /**
-     * handle for the fromCache method
-     */
-    private static final MethodHandle FROM_CACHE_METHOD;
-
-    /**
-     * handle for the selectMethod method
-     */
-    private static final MethodHandle SELECT_METHOD;
-
     static {
 
         try {
@@ -177,8 +113,6 @@ public class IndyInterface {
             throw new GroovyBugError(e);
         }
     }
-
-    protected static SwitchPoint switchPoint = new SwitchPoint();
 
     static {
         GroovySystem.getMetaClassRegistry().addMetaClassRegistryChangeEventListener(cmcu -> invalidateSwitchPoints());
@@ -268,39 +202,6 @@ public class IndyInterface {
         return mh.asCollector(Object[].class, type.parameterCount()).asType(type);
     }
 
-    private static class FallbackSupplier {
-        private final CacheableCallSite callSite;
-        private final Class<?> sender;
-        private final String methodName;
-        private final int callID;
-        private final Boolean safeNavigation;
-        private final Boolean thisCall;
-        private final Boolean spreadCall;
-        private final Object dummyReceiver;
-        private final Object[] arguments;
-        private MethodHandleWrapper result;
-
-        FallbackSupplier(CacheableCallSite callSite, Class<?> sender, String methodName, int callID, Boolean safeNavigation, Boolean thisCall, Boolean spreadCall, Object dummyReceiver, Object[] arguments) {
-            this.callSite = callSite;
-            this.sender = sender;
-            this.methodName = methodName;
-            this.callID = callID;
-            this.safeNavigation = safeNavigation;
-            this.thisCall = thisCall;
-            this.spreadCall = spreadCall;
-            this.dummyReceiver = dummyReceiver;
-            this.arguments = arguments;
-        }
-
-        MethodHandleWrapper get() {
-            if (null == result) {
-                result = fallback(callSite, sender, methodName, callID, safeNavigation, thisCall, spreadCall, dummyReceiver, arguments);
-            }
-
-            return result;
-        }
-    }
-
     /**
      * Get the cached methodhandle. if the related methodhandle is not found in the inline cache, cache and return it.
      */
@@ -308,19 +209,19 @@ public class IndyInterface {
         FallbackSupplier fallbackSupplier = new FallbackSupplier(callSite, sender, methodName, callID, safeNavigation, thisCall, spreadCall, dummyReceiver, arguments);
 
         MethodHandleWrapper mhw =
-                bypassCache(spreadCall, arguments)
-                    ? NULL_METHOD_HANDLE_WRAPPER
-                    : doWithCallSite(
-                            callSite, arguments,
-                            (cs, receiver) ->
-                                    cs.getAndPut(
-                                            receiver.getClass().getName(),
-                                            c -> {
-                                                MethodHandleWrapper fbMhw = fallbackSupplier.get();
-                                                return fbMhw.isCanSetTarget() ? fbMhw : NULL_METHOD_HANDLE_WRAPPER;
-                                            }
-                                    )
-                    );
+            bypassCache(spreadCall, arguments)
+                ? NULL_METHOD_HANDLE_WRAPPER
+                : doWithCallSite(
+                callSite, arguments,
+                (cs, receiver) ->
+                    cs.getAndPut(
+                        receiver.getClass().getName(),
+                        c -> {
+                            MethodHandleWrapper fbMhw = fallbackSupplier.get();
+                            return fbMhw.isCanSetTarget() ? fbMhw : NULL_METHOD_HANDLE_WRAPPER;
+                        }
+                    )
+            );
 
         if (NULL_METHOD_HANDLE_WRAPPER == mhw) {
             mhw = fallbackSupplier.get();
@@ -370,9 +271,9 @@ public class IndyInterface {
         selector.setCallSiteTarget();
 
         return new MethodHandleWrapper(
-                selector.handle.asSpreader(Object[].class, arguments.length).asType(MethodType.methodType(Object.class, Object[].class)),
-                selector.handle,
-                selector.cache
+            selector.handle.asSpreader(Object[].class, arguments.length).asType(MethodType.methodType(Object.class, Object[].class)),
+            selector.handle,
+            selector.cache
         );
     }
 
@@ -397,6 +298,99 @@ public class IndyInterface {
             return new ConstantCallSite(IndyArrayAccess.arrayGet(type));
         } else {
             return new ConstantCallSite(IndyArrayAccess.arraySet(type));
+        }
+    }
+
+    /**
+     * Enum for easy differentiation between call types
+     */
+    public enum CallType {
+        /**
+         * Method invocation type
+         */
+        METHOD("invoke", 0),
+        /**
+         * Constructor invocation type
+         */
+        INIT("init", 1),
+        /**
+         * Get property invocation type
+         */
+        GET("getProperty", 2),
+        /**
+         * Set property invocation type
+         */
+        SET("setProperty", 3),
+        /**
+         * Cast invocation type
+         */
+        CAST("cast", 4),
+
+        /**
+         * call to interface method
+         */
+        INTERFACE("interface", 5);
+
+        private static final Map<String, CallType> NAME_CALLTYPE_MAP =
+            Stream.of(CallType.values()).collect(Collectors.toMap(CallType::getCallSiteName, Function.identity()));
+
+        /**
+         * The name of the call site type
+         */
+        private final String name;
+        private final int orderNumber;
+
+        CallType(String callSiteName, int orderNumber) {
+            this.orderNumber = orderNumber;
+            this.name = callSiteName;
+        }
+
+        public static CallType fromCallSiteName(String callSiteName) {
+            return NAME_CALLTYPE_MAP.get(callSiteName);
+        }
+
+        /**
+         * Returns the name of the call site type
+         */
+        public String getCallSiteName() {
+            return name;
+        }
+
+        public int getOrderNumber() {
+            return this.orderNumber;
+        }
+    }
+
+    private static class FallbackSupplier {
+        private final CacheableCallSite callSite;
+        private final Class<?> sender;
+        private final String methodName;
+        private final int callID;
+        private final Boolean safeNavigation;
+        private final Boolean thisCall;
+        private final Boolean spreadCall;
+        private final Object dummyReceiver;
+        private final Object[] arguments;
+        private MethodHandleWrapper result;
+
+        FallbackSupplier(CacheableCallSite callSite, Class<?> sender, String methodName, int callID, Boolean safeNavigation, Boolean thisCall, Boolean spreadCall, Object dummyReceiver, Object[] arguments) {
+            this.callSite = callSite;
+            this.sender = sender;
+            this.methodName = methodName;
+            this.callID = callID;
+            this.safeNavigation = safeNavigation;
+            this.thisCall = thisCall;
+            this.spreadCall = spreadCall;
+            this.dummyReceiver = dummyReceiver;
+            this.arguments = arguments;
+        }
+
+        MethodHandleWrapper get() {
+            if (null == result) {
+                result = fallback(callSite, sender, methodName, callID, safeNavigation, thisCall, spreadCall, dummyReceiver, arguments);
+            }
+
+            return result;
         }
     }
 }

@@ -58,7 +58,6 @@ public class GroovydocManager {
 
     /**
      * Attach doc comment to member node as meta data
-     *
      */
     public void handle(ASTNode node, GroovyParser.GroovyParserRuleContext ctx) {
         if (!(groovydocEnabled || runtimeGroovydocEnabled)) {
@@ -156,9 +155,9 @@ public class GroovydocManager {
 
             // doc comments are treated as NL
             List<? extends TerminalNode> nlList =
-                    child instanceof GroovyParser.NlsContext
-                            ? ((GroovyParser.NlsContext) child).NL()
-                            : ((GroovyParser.SepContext) child).NL();
+                child instanceof GroovyParser.NlsContext
+                    ? ((GroovyParser.NlsContext) child).NL()
+                    : ((GroovyParser.SepContext) child).NL();
 
             int nlListSize = nlList.size();
             if (0 == nlListSize) {

@@ -28,15 +28,13 @@ import org.codehaus.groovy.util.ReleaseInfo;
 import java.util.Map;
 
 public final class GroovySystem {
-    //
-    //  TODO: make this initialization able to set useReflection true
-    //  TODO: have some way of specifying another MetaClass Registry implementation
-    //
-    static {
-        USE_REFLECTION = true;
-        META_CLASS_REGISTRY = new MetaClassRegistryImpl();
-    }
-
+    /**
+     * Reference to the Runtime Registry to be used by the Groovy run-time system to find classes capable of running scripts
+     *
+     * @deprecated use {@link GroovyRunnerRegistry}
+     */
+    @Deprecated
+    public static final Map<String, GroovyRunner> RUNNER_REGISTRY = GroovyRunnerRegistry.getInstance();
     /**
      * If true then the MetaClass will only use reflection for method dispatch, property access, etc.
      */
@@ -47,16 +45,16 @@ public final class GroovySystem {
      * Reference to the MetaClass Registry to be used by the Groovy run-time system to map classes to MetaClasses
      */
     private static final MetaClassRegistry META_CLASS_REGISTRY;
+    private static boolean keepJavaMetaClasses = false;
 
-    /**
-     * Reference to the Runtime Registry to be used by the Groovy run-time system to find classes capable of running scripts
-     *
-     * @deprecated use {@link GroovyRunnerRegistry}
-     */
-    @Deprecated
-    public static final Map<String, GroovyRunner> RUNNER_REGISTRY = GroovyRunnerRegistry.getInstance();
-
-    private static boolean keepJavaMetaClasses=false;
+    //
+    //  TODO: make this initialization able to set useReflection true
+    //  TODO: have some way of specifying another MetaClass Registry implementation
+    //
+    static {
+        USE_REFLECTION = true;
+        META_CLASS_REGISTRY = new MetaClassRegistryImpl();
+    }
 
     private GroovySystem() {
         // Do not allow this class to be instantiated
@@ -71,12 +69,12 @@ public final class GroovySystem {
         return META_CLASS_REGISTRY;
     }
 
-    public static void setKeepJavaMetaClasses(boolean keepJavaMetaClasses) {
-        GroovySystem.keepJavaMetaClasses = keepJavaMetaClasses;
-    }
-
     public static boolean isKeepJavaMetaClasses() {
         return keepJavaMetaClasses;
+    }
+
+    public static void setKeepJavaMetaClasses(boolean keepJavaMetaClasses) {
+        GroovySystem.keepJavaMetaClasses = keepJavaMetaClasses;
     }
 
     /**
@@ -85,9 +83,9 @@ public final class GroovySystem {
      * runtime itself is loaded through a class loader which should be disposed
      * off. Without calling this method and if a threaded reference manager is
      * active the class loader cannot be unloaded!
-     * 
+     * <p>
      * Per default no threaded manager will be used.
-     * 
+     *
      * @since 1.6
      */
     public static void stopThreadedReferenceManager() {

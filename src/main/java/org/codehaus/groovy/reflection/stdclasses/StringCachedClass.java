@@ -37,9 +37,9 @@ public class StringCachedClass extends CachedClass {
 
     @Override
     public boolean isAssignableFrom(Class classToTransformFrom) {
-        return  classToTransformFrom == null
-              || classToTransformFrom == STRING_CLASS
-              || GSTRING_CLASS.isAssignableFrom(classToTransformFrom);
+        return classToTransformFrom == null
+            || classToTransformFrom == STRING_CLASS
+            || GSTRING_CLASS.isAssignableFrom(classToTransformFrom);
     }
 
     @Override

@@ -49,11 +49,6 @@ public abstract class BaseVisitor extends ClassCodeVisitorSupport {
 
     protected final SourceUnit sourceUnit;
 
-    @Override
-    protected SourceUnit getSourceUnit() {
-        return sourceUnit;
-    }
-
     public BaseVisitor(final SourceUnit sourceUnit, final ReaderSource source) {
         this.sourceUnit = sourceUnit;
     }
@@ -86,5 +81,10 @@ public abstract class BaseVisitor extends ClassCodeVisitorSupport {
 
     protected static void replaceCondition(final AnnotationNode node, final Expression expr) {
         node.setMember("value", Objects.requireNonNull(expr));
+    }
+
+    @Override
+    protected SourceUnit getSourceUnit() {
+        return sourceUnit;
     }
 }

@@ -224,200 +224,51 @@ public class StreamingTemplateEngine extends TemplateEngine {
      * The class used to implement the Template interface for the StreamingTemplateEngine
      */
     private static class StreamingTemplate implements Template {
+        public static final StackTraceElement[] EMPTY_STACKTRACE = new StackTraceElement[0];
         /**
          * The 'header' we use for the resulting groovy script source.
          */
         private static final String SCRIPT_HEAD
-                = "package groovy.tmp.templates;"
-                + "def getTemplate() { "
-                    //the below params are:
-                    //  _p - parent class, for handling exceptions
-                    //  _s - sections, string sections list
-                    //  _b - binding map
-                    //  out - out stream
-                    //the three first parameters will be curried in as we move along
-                +   "return { _p, _s, _b, out -> "
-                +     "int _i = 0;"
-                +     "try {"
-                +       "delegate = new Binding(_b);";
-
+            = "package groovy.tmp.templates;"
+            + "def getTemplate() { "
+            //the below params are:
+            //  _p - parent class, for handling exceptions
+            //  _s - sections, string sections list
+            //  _b - binding map
+            //  out - out stream
+            //the three first parameters will be curried in as we move along
+            + "return { _p, _s, _b, out -> "
+            + "int _i = 0;"
+            + "try {"
+            + "delegate = new Binding(_b);";
         /**
          * The 'footer' we use for the resulting groovy script source
          */
         private static final String SCRIPT_TAIL
-                =     "} catch (Throwable e) { "
-                +       "_p.error(_i, _s, e);"
-                +     "}"
-                +   "}.asWritable()"
-                + "}";
-
-        private StringBuilder templateSource;
-
-        // we use a hard index instead of incrementing the _i variable due to previous
-        // bug where the increment was not executed when hitting non-executed if branch
-        private int index = 0;
-        final Closure template;
-
-        String scriptSource;
-
-        private static class FinishedReadingException extends Exception {
-            private static final long serialVersionUID = -3786157136157691230L;
-        }
-
+            = "} catch (Throwable e) { "
+            + "_p.error(_i, _s, e);"
+            + "}"
+            + "}.asWritable()"
+            + "}";
         //WE USE THIS AS REUSABLE
         //CHECKSTYLE.OFF: ConstantNameCheck - special case with a reusable exception
         private static final FinishedReadingException finishedReadingException;
-        //CHECKSTYLE.ON: ConstantNameCheck
-
-        public static final StackTraceElement[] EMPTY_STACKTRACE = new StackTraceElement[0];
 
         static {
             finishedReadingException = new FinishedReadingException();
             finishedReadingException.setStackTrace(EMPTY_STACKTRACE);
         }
 
-        private static final class Position {
-            //CHECKSTYLE.OFF: VisibilityModifierCheck - special case, direct access for performance
-            public int row;
-            public int column;
-            //CHECKSTYLE.ON: VisibilityModifierCheck
-
-            private Position(int row, int column) {
-                this.row = row;
-                this.column = column;
-            }
-
-            private Position(Position p) {
-                set(p);
-            }
-
-            private void set(Position p) {
-                this.row = p.row;
-                this.column = p.column;
-            }
-
-            @Override
-            public String toString() {
-                return row + ":" + column;
-            }
-        }
-
-        /**
-         * A StringSection represent a section in the template source
-         * with only string data (i.e. no branching, GString references, etc).
-         * As an example, the following template string:
-         *
-         * <pre>
-         * Alice why is a $bird like a writing desk
-         * </pre>
-         * <p>
-         * Would produce a string section "Alice why is a " followed by
-         * a dollar identifier expression followed by another string
-         * section " like a writing desk".
-         */
-        private static final class StringSection {
-            StringBuilder data;
-            Position firstSourcePosition;
-            Position lastSourcePosition;
-            Position lastTargetPosition;
-
-            private StringSection(Position firstSourcePosition) {
-                this.data = new StringBuilder();
-                this.firstSourcePosition = new Position(firstSourcePosition);
-            }
-
-            @Override
-            public String toString() {
-                return data.toString();
-            }
-        }
-
-        /**
-         * Called to handle the ending of a string section.
-         *
-         * @param sections            The list of string sections. The current section gets added to this section.
-         * @param currentSection      The current string section.
-         * @param templateExpressions Template expressions
-         * @param lastSourcePosition  The last read position in the source template stream.
-         * @param targetPosition      The last written to position in the target script stream.
-         */
-        private void finishStringSection(List<StringSection> sections, StringSection currentSection,
-                                         StringBuilder templateExpressions,
-                                         Position lastSourcePosition, Position targetPosition) {
-            //when we get exceptions from the parseXXX methods in the main loop, we might try to
-            //re-finish a section
-            if (currentSection.lastSourcePosition != null) {
-                return;
-            }
-            currentSection.lastSourcePosition = new Position(lastSourcePosition);
-            sections.add(currentSection);
-            append(templateExpressions, targetPosition, "out<<_s[_i=" + index++ + "];");
-            currentSection.lastTargetPosition = new Position(targetPosition.row, targetPosition.column);
-        }
-
-        public void error(int index, List<StringSection> sections, Throwable e) throws Throwable {
-            int i = Math.max(0, index);
-            StringSection precedingSection = sections.get(i);
-            int traceLine = -1;
-            for (StackTraceElement element : e.getStackTrace()) {
-                if (element.getClassName().contains(TEMPLATE_SCRIPT_PREFIX)) {
-                    traceLine = element.getLineNumber();
-                    break;
-                }
-            }
-
-            if (traceLine != -1) {
-                int actualLine = precedingSection.lastSourcePosition.row + traceLine - 1;
-                String message = "Template execution error at line " + actualLine + ":\n" + getErrorContext(actualLine);
-                TemplateExecutionException unsanitized = new TemplateExecutionException(actualLine, message, StackTraceUtils.sanitize(e));
-                throw StackTraceUtils.sanitize(unsanitized);
-            } else {
-                throw e;
-            }
-        }
-
-        @SuppressFBWarnings(value = "SR_NOT_CHECKED", justification = "safe to ignore return value of skip from reader backed by StringReader")
-        private int getLinesInSource() throws IOException {
-            int result;
-
-            try (LineNumberReader reader = new LineNumberReader(new StringReader(templateSource.toString()))) {
-                reader.skip(Long.MAX_VALUE); // SR_NOT_CHECKED
-                result = reader.getLineNumber();
-            }
-
-            return result;
-        }
-
-        private String getErrorContext(int actualLine) throws IOException {
-            int minLine = Math.max(0, actualLine - 1);
-            int maxLine = Math.min(getLinesInSource(), actualLine + 1);
-
-            LineNumberReader r = new LineNumberReader(new StringReader(templateSource.toString()));
-            int lineNr;
-            StringBuilder result = new StringBuilder();
-            while ((lineNr = r.getLineNumber() + 1) <= maxLine) {
-                String line = r.readLine();
-                if (lineNr < minLine) continue;
-
-                String nr = Integer.toString(lineNr);
-                if (lineNr == actualLine) {
-                    nr = " --> " + nr;
-                }
-
-                result.append(padLeft(nr, 10));
-                result.append(": ");
-                result.append(line);
-                result.append('\n');
-            }
-
-            return result.toString();
-        }
-
-        private String padLeft(String s, int len) {
-            StringBuilder b = new StringBuilder(s);
-            while (b.length() < len) b.insert(0, " ");
-            return b.toString();
-        }
+        final Closure template;
+        String scriptSource;
+        // SEE BELOW
+        boolean useLastRead = false;
+        //CHECKSTYLE.ON: ConstantNameCheck
+        private StringBuilder templateSource;
+        // we use a hard index instead of incrementing the _i variable due to previous
+        // bug where the increment was not executed when hitting non-executed if branch
+        private int index = 0;
+        private int lastRead = -1;
 
         /**
          * Turn the template into a writable Closure. When executed the closure
@@ -526,6 +377,93 @@ public class StreamingTemplateEngine extends TemplateEngine {
             lookAhead.delete(0, lookAhead.length());
         }
 
+        /**
+         * Called to handle the ending of a string section.
+         *
+         * @param sections            The list of string sections. The current section gets added to this section.
+         * @param currentSection      The current string section.
+         * @param templateExpressions Template expressions
+         * @param lastSourcePosition  The last read position in the source template stream.
+         * @param targetPosition      The last written to position in the target script stream.
+         */
+        private void finishStringSection(List<StringSection> sections, StringSection currentSection,
+                                         StringBuilder templateExpressions,
+                                         Position lastSourcePosition, Position targetPosition) {
+            //when we get exceptions from the parseXXX methods in the main loop, we might try to
+            //re-finish a section
+            if (currentSection.lastSourcePosition != null) {
+                return;
+            }
+            currentSection.lastSourcePosition = new Position(lastSourcePosition);
+            sections.add(currentSection);
+            append(templateExpressions, targetPosition, "out<<_s[_i=" + index++ + "];");
+            currentSection.lastTargetPosition = new Position(targetPosition.row, targetPosition.column);
+        }
+
+        public void error(int index, List<StringSection> sections, Throwable e) throws Throwable {
+            int i = Math.max(0, index);
+            StringSection precedingSection = sections.get(i);
+            int traceLine = -1;
+            for (StackTraceElement element : e.getStackTrace()) {
+                if (element.getClassName().contains(TEMPLATE_SCRIPT_PREFIX)) {
+                    traceLine = element.getLineNumber();
+                    break;
+                }
+            }
+
+            if (traceLine != -1) {
+                int actualLine = precedingSection.lastSourcePosition.row + traceLine - 1;
+                String message = "Template execution error at line " + actualLine + ":\n" + getErrorContext(actualLine);
+                TemplateExecutionException unsanitized = new TemplateExecutionException(actualLine, message, StackTraceUtils.sanitize(e));
+                throw StackTraceUtils.sanitize(unsanitized);
+            } else {
+                throw e;
+            }
+        }
+
+        @SuppressFBWarnings(value = "SR_NOT_CHECKED", justification = "safe to ignore return value of skip from reader backed by StringReader")
+        private int getLinesInSource() throws IOException {
+            int result;
+
+            try (LineNumberReader reader = new LineNumberReader(new StringReader(templateSource.toString()))) {
+                reader.skip(Long.MAX_VALUE); // SR_NOT_CHECKED
+                result = reader.getLineNumber();
+            }
+
+            return result;
+        }
+
+        private String getErrorContext(int actualLine) throws IOException {
+            int minLine = Math.max(0, actualLine - 1);
+            int maxLine = Math.min(getLinesInSource(), actualLine + 1);
+
+            LineNumberReader r = new LineNumberReader(new StringReader(templateSource.toString()));
+            int lineNr;
+            StringBuilder result = new StringBuilder();
+            while ((lineNr = r.getLineNumber() + 1) <= maxLine) {
+                String line = r.readLine();
+                if (lineNr < minLine) continue;
+
+                String nr = Integer.toString(lineNr);
+                if (lineNr == actualLine) {
+                    nr = " --> " + nr;
+                }
+
+                result.append(padLeft(nr, 10));
+                result.append(": ");
+                result.append(line);
+                result.append('\n');
+            }
+
+            return result.toString();
+        }
+
+        private String padLeft(String s, int len) {
+            StringBuilder b = new StringBuilder(s);
+            while (b.length() < len) b.insert(0, " ");
+            return b.toString();
+        }
+
         private void handleEscaping(final Reader source,
                                     final Position sourcePosition,
                                     final StringSection currentSection,
@@ -599,9 +537,9 @@ public class StreamingTemplateEngine extends TemplateEngine {
 
         private Closure createTemplateClosure(List<StringSection> sections, final ClassLoader parentLoader, StringBuilder target) throws ClassNotFoundException {
             final GroovyClassLoader loader =
-                    REUSE_CLASS_LOADER && parentLoader instanceof GroovyClassLoader
-                            ? (GroovyClassLoader) parentLoader
-                            : createClassLoader(parentLoader);
+                REUSE_CLASS_LOADER && parentLoader instanceof GroovyClassLoader
+                    ? (GroovyClassLoader) parentLoader
+                    : createClassLoader(parentLoader);
             final Class<?> groovyClass;
             try {
                 groovyClass = loader.parseClass(new GroovyCodeSource(target.toString(), TEMPLATE_SCRIPT_PREFIX + COUNTER.incrementAndGet() + ".groovy", "x"));
@@ -617,7 +555,8 @@ public class StreamingTemplateEngine extends TemplateEngine {
                 Closure chicken = (Closure) object.invokeMethod("getTemplate", null);
                 //bind the two first parameters of the generated closure to this class and the sections list
                 result = chicken.curry(this, sections);
-            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                     InvocationTargetException e) {
                 throw new ClassNotFoundException(e.getMessage());
             }
 
@@ -877,7 +816,7 @@ public class StreamingTemplateEngine extends TemplateEngine {
             StringSection result = null;
             for (StringSection s : sections) {
                 if (s.lastTargetPosition.row > p.row
-                        || (s.lastTargetPosition.row == p.row && s.lastTargetPosition.column > p.column)) {
+                    || (s.lastTargetPosition.row == p.row && s.lastTargetPosition.column > p.column)) {
                     break;
                 }
                 result = s;
@@ -909,10 +848,6 @@ public class StreamingTemplateEngine extends TemplateEngine {
             lookAhead.append((char) c);
             return c;
         }
-
-        // SEE BELOW
-        boolean useLastRead = false;
-        private int lastRead = -1;
 
         /* All \r\n sequences are treated as a single \n. By doing this we
          * produce the same output as the GStringTemplateEngine. Otherwise, some
@@ -963,6 +898,66 @@ public class StreamingTemplateEngine extends TemplateEngine {
             int c = reader.read();
             templateSource.append((char) c);
             return c;
+        }
+
+        private static class FinishedReadingException extends Exception {
+            private static final long serialVersionUID = -3786157136157691230L;
+        }
+
+        private static final class Position {
+            //CHECKSTYLE.OFF: VisibilityModifierCheck - special case, direct access for performance
+            public int row;
+            public int column;
+            //CHECKSTYLE.ON: VisibilityModifierCheck
+
+            private Position(int row, int column) {
+                this.row = row;
+                this.column = column;
+            }
+
+            private Position(Position p) {
+                set(p);
+            }
+
+            private void set(Position p) {
+                this.row = p.row;
+                this.column = p.column;
+            }
+
+            @Override
+            public String toString() {
+                return row + ":" + column;
+            }
+        }
+
+        /**
+         * A StringSection represent a section in the template source
+         * with only string data (i.e. no branching, GString references, etc).
+         * As an example, the following template string:
+         *
+         * <pre>
+         * Alice why is a $bird like a writing desk
+         * </pre>
+         * <p>
+         * Would produce a string section "Alice why is a " followed by
+         * a dollar identifier expression followed by another string
+         * section " like a writing desk".
+         */
+        private static final class StringSection {
+            StringBuilder data;
+            Position firstSourcePosition;
+            Position lastSourcePosition;
+            Position lastTargetPosition;
+
+            private StringSection(Position firstSourcePosition) {
+                this.data = new StringBuilder();
+                this.firstSourcePosition = new Position(firstSourcePosition);
+            }
+
+            @Override
+            public String toString() {
+                return data.toString();
+            }
         }
     }
 }

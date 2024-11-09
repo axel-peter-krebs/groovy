@@ -26,7 +26,7 @@ class Groovy4257Bug extends GroovyTestCase {
         Set clone = orig.clone()
         orig.unique()
         assert orig == clone
-        orig.unique{ it }
+        orig.unique { it }
         assert orig == clone
     }
 
@@ -36,7 +36,7 @@ class Groovy4257Bug extends GroovyTestCase {
         orig.unique()
         assert orig == expected
         orig = [3, 3L, 3.0] as Set
-        orig.unique{ it }
+        orig.unique { it }
         assert orig == expected
     }
 }

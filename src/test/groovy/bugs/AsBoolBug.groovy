@@ -28,7 +28,7 @@ import groovy.test.GroovyTestCase
 public class AsBoolBug extends GroovyTestCase {
 
     void testMapAsBool() {
-        def a = ["A":123]
+        def a = ["A": 123]
         assert a as Boolean == true
         a = [:]
         assert a as Boolean == false

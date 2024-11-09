@@ -35,7 +35,7 @@ class Bytecode3Bug extends GroovyTestCase {
     }
 
     void doLoop(args, m) {
-        args.each { 
+        args.each {
             m.put(it, count++)
         }
     }

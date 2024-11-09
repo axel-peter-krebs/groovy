@@ -83,7 +83,7 @@ final class DefaultTypeTransformationTest {
 
     @Test
     void testCastToType4() {
-        Object input = new int[] {0,1}, result
+        Object input = new int[]{0, 1}, result
 
         result = DefaultTypeTransformation.castToType(input, Number[])
         assert result instanceof Number[]
@@ -103,7 +103,7 @@ final class DefaultTypeTransformationTest {
 
     @Test
     void testCastToType5() {
-        Object input = Arrays.asList(0,1), result
+        Object input = Arrays.asList(0, 1), result
 
         result = DefaultTypeTransformation.castToType(input, Number[])
         assert result instanceof Number[]
@@ -126,22 +126,22 @@ final class DefaultTypeTransformationTest {
     void testCastToType6() {
         Object result
 
-        result = DefaultTypeTransformation.castToType(Arrays.stream(0,1), Number[])
+        result = DefaultTypeTransformation.castToType(Arrays.stream(0, 1), Number[])
         assert result instanceof Number[]
         assert result[0] == 0
         assert result[1] == 1
 
-        result = DefaultTypeTransformation.castToType(Arrays.stream(0,1), int[])
+        result = DefaultTypeTransformation.castToType(Arrays.stream(0, 1), int[])
         assert result instanceof int[]
         assert result[0] == 0
         assert result[1] == 1
 
-        result = DefaultTypeTransformation.castToType(Arrays.stream(0,1), List)
+        result = DefaultTypeTransformation.castToType(Arrays.stream(0, 1), List)
         assert result instanceof List
         assert result[0] == 0
         assert result[1] == 1
 
-        result = DefaultTypeTransformation.castToType(Arrays.stream(0,1), Set)
+        result = DefaultTypeTransformation.castToType(Arrays.stream(0, 1), Set)
         assert result instanceof Set
         assert result[0] == 0
         assert result[1] == 1
@@ -150,7 +150,7 @@ final class DefaultTypeTransformationTest {
     // GROOVY-11378
     @Test
     void testCastToType7() {
-        Object input = new org.codehaus.groovy.util.ArrayIterable<Integer>(0,1), result
+        Object input = new org.codehaus.groovy.util.ArrayIterable<Integer>(0, 1), result
 
         result = DefaultTypeTransformation.castToType(input, Number[])
         assert result instanceof Number[]
@@ -287,19 +287,19 @@ final class DefaultTypeTransformationTest {
         MyNumberComparable numComp2 = new MyNumberComparable(50)
 
         List lowers = [
-                Integer.valueOf(49), Long.valueOf(49L),
-                Double.valueOf(49.0),
-                Float.valueOf(49.0f),
-                49.0G, 49.00G,
-                char1, '1',
-                number1, numCompTo1, numComp1]
+            Integer.valueOf(49), Long.valueOf(49L),
+            Double.valueOf(49.0),
+            Float.valueOf(49.0f),
+            49.0G, 49.00G,
+            char1, '1',
+            number1, numCompTo1, numComp1]
         List highers = [
-                Integer.valueOf(50), Long.valueOf(50L),
-                Double.valueOf(50.0),
-                Float.valueOf(50.0f),
-                50.0G, 50.00G,
-                char2, '2',
-                number2, numCompTo2, numComp2]
+            Integer.valueOf(50), Long.valueOf(50L),
+            Double.valueOf(50.0),
+            Float.valueOf(50.0f),
+            50.0G, 50.00G,
+            char2, '2',
+            number2, numCompTo2, numComp2]
 
         for (lower in lowers) {
             for (lower2 in lowers) {
@@ -341,7 +341,7 @@ final class DefaultTypeTransformationTest {
         final Number N = 65
 
         assert N == S && S == G
-        assert N      ==      G
+        assert N == G
     }
 
     @Test
@@ -351,7 +351,7 @@ final class DefaultTypeTransformationTest {
         final GString G = "$S"
 
         assert C == S && S == G
-        assert C      ==      G
+        assert C == G
     }
 
     @Test
@@ -361,7 +361,7 @@ final class DefaultTypeTransformationTest {
         final GString G = "$S"
 
         assert S == C && G == S
-        assert      G == C
+        assert G == C
     }
 
     @Test
@@ -371,7 +371,7 @@ final class DefaultTypeTransformationTest {
         final Number N = 65
 
         assert S == N && G == S
-        assert      G == N
+        assert G == N
     }
 
     @Test
@@ -389,9 +389,9 @@ final class DefaultTypeTransformationTest {
         assert numList.indexOf(2) == -1
         assert numList.lastIndexOf(2) == -1
         assert numList.lastIndexOf(3) == 2
-        assert numList.containsAll([5,3,1])
-        assert !numList.containsAll([5,3,2])
-        assert !numList.containsAll([4,3,1])
+        assert numList.containsAll([5, 3, 1])
+        assert !numList.containsAll([5, 3, 2])
+        assert !numList.containsAll([4, 3, 1])
         assert !numList.isEmpty()
         assert numList.size() == 4
     }
@@ -410,19 +410,26 @@ final class DefaultTypeTransformationTest {
 
     static class MyNumber extends Number {
         def n
+
         MyNumber(n) {
             this.n = n
         }
+
         @Override
         int intValue() { n }
+
         @Override
         long longValue() { n }
+
         @Override
         float floatValue() { n }
+
         @Override
         double doubleValue() { n }
+
         @Override
         int hashCode() { -n }
+
         @Override
         boolean equals(other) {
             if (other instanceof MyNumber) {
@@ -430,6 +437,7 @@ final class DefaultTypeTransformationTest {
             }
             return false
         }
+
         @Override
         String toString() { n.toString() }
     }
@@ -438,6 +446,7 @@ final class DefaultTypeTransformationTest {
         MyNumberCompareTo(Object n) {
             super(n)
         }
+
         int compareTo(MyNumber other) {
             return n <=> other.n
         }
@@ -447,6 +456,7 @@ final class DefaultTypeTransformationTest {
         MyNumberComparable(Object n) {
             super(n)
         }
+
         int compareTo(Object other) {
             return n <=> (MyNumber) other;
         }

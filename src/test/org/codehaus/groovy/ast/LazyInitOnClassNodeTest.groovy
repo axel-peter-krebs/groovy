@@ -36,13 +36,13 @@ class LazyInitOnClassNodeTest extends GroovyTestCase {
           }
         """
         def listType = ClassHelper.make(List.class)
-        def last=0
+        def last = 0
         5.times {
-          def loader = new GroovyClassLoader(this.class.classLoader)
-          assert loader.parseClass(script).newInstance().get("default")=="ok"
-          def size = listType.redirect().getMethods().size()
-          if (last!=0) assert last==size
-          if (last==0) last = size
+            def loader = new GroovyClassLoader(this.class.classLoader)
+            assert loader.parseClass(script).newInstance().get("default") == "ok"
+            def size = listType.redirect().getMethods().size()
+            if (last != 0) assert last == size
+            if (last == 0) last = size
         }
     }
 }

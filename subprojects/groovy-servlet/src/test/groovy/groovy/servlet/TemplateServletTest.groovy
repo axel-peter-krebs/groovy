@@ -73,42 +73,42 @@ class TemplateServletTest {
 
     private mockRequest() {
         return [
-                getAttribute     : { null },
-                getPathInfo      : { 'pathInfo' },
-                getScriptUri     : 'scriptUri',
-                getServletPath   : { 'servletPath' },
-                getSession       : { null },
-                getParameterNames: { new Vector().elements() },
-                getHeaderNames   : { new Vector().elements() },
+            getAttribute     : { null },
+            getPathInfo      : { 'pathInfo' },
+            getScriptUri     : 'scriptUri',
+            getServletPath   : { 'servletPath' },
+            getSession       : { null },
+            getParameterNames: { new Vector().elements() },
+            getHeaderNames   : { new Vector().elements() },
         ] as HttpServletRequest
     }
 
     private mockResponse() {
         def data = [
-                writer: new StringWriter(),
-                status: null,
-                error : null,
+            writer: new StringWriter(),
+            status: null,
+            error : null,
         ]
         def mock = [
-                getWriter     : { new PrintWriter(data.writer) },
-                sendError     : { error -> data.error = error },
-                setContentType: { contentType -> },
-                setStatus     : { status -> data.status = status },
-                flushBuffer   : { -> },
+            getWriter     : { new PrintWriter(data.writer) },
+            sendError     : { error -> data.error = error },
+            setContentType: { contentType -> },
+            setStatus     : { status -> data.status = status },
+            flushBuffer   : { -> },
         ] as HttpServletResponse
         return [mock, data]
     }
 
     private mockServletConfigForUrlResource(URL mockedResourceUrl) {
         def servletContext = [
-                getRealPath: { arg -> null },
-                getResource: { arg -> mockedResourceUrl },
-                log        : { msg -> },
+            getRealPath: { arg -> null },
+            getResource: { arg -> mockedResourceUrl },
+            log        : { msg -> },
         ] as ServletContext
         [
-                getServletName   : { 'name' },
-                getServletContext: { servletContext },
-                getInitParameter : { null },
+            getServletName   : { 'name' },
+            getServletContext: { servletContext },
+            getInitParameter : { null },
         ] as ServletConfig
     }
 

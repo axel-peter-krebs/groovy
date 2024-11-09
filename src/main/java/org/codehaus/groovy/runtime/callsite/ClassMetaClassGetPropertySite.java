@@ -43,11 +43,11 @@ class ClassMetaClassGetPropertySite extends AbstractCallSite {
             || version != classInfo.getVersion()) // metaClass is invalid
             return createGetPropertySite(receiver);
         else
-          return this;
+            return this;
     }
 
     @Override
-    public final Object getProperty(Object receiver) throws Throwable{
+    public final Object getProperty(Object receiver) throws Throwable {
         try {
             return metaClass.getProperty(aClass, name);
         } catch (GroovyRuntimeException gre) {

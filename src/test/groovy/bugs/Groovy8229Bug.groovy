@@ -23,7 +23,7 @@ import groovy.test.GroovyTestCase
 class Groovy8229Bug extends GroovyTestCase {
     void testFinallyBlockInClosureCalledOnce() {
         assert shouldFail(
-                '''
+            '''
                 class TryCatchProblem {
                     static int count = 0
                     static void main(args) {

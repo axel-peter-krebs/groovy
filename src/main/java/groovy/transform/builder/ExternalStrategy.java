@@ -54,7 +54,7 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 /**
  * This strategy is used with the {@link Builder} AST transform to populate a builder helper class
  * so that it can be used for the fluent creation of instances of a specified class.&nbsp;The specified class is not modified in any way and may be a Java class.
- *
+ * <p>
  * You use it by creating and annotating an explicit builder class which will be filled in by during
  * annotation processing with the appropriate build method and setters. An example is shown here:
  * <pre class="groovyTestCase">
@@ -81,21 +81,43 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
  * <pre>
  * def p2 = new PersonBuilder().withFirstName("Robert").withLastName("Lewandowski").withAge(21).build()
  * </pre>
- *
+ * <p>
  * The properties to use can be filtered using either the 'includes' or 'excludes' annotation attributes for {@code @Builder}.
  * The {@code @Builder} 'buildMethodName' annotation attribute can be used for configuring the build method's name, default "build".
- *
+ * <p>
  * The {@code @Builder} 'builderMethodName' and 'builderClassName' annotation attributes aren't applicable for this strategy.
  * The {@code @Builder} 'useSetters' annotation attribute is ignored by this strategy which always uses setters.
  */
 public class ExternalStrategy extends BuilderASTTransformation.AbstractBuilderStrategy {
     private static final Expression DEFAULT_INITIAL_VALUE = null;
 
+    private static MethodNode createBuildMethod(BuilderASTTransformation transform, AnnotationNode anno, ClassNode sourceClass, List<PropertyInfo> fields) {
+        String buildMethodName = transform.getMemberStringValue(anno, "buildMethodName", "build");
+        final BlockStatement body = new BlockStatement();
+        Expression sourceClassInstance = initializeInstance(sourceClass, fields, body);
+        body.addStatement(returnS(sourceClassInstance));
+        return new MethodNode(buildMethodName, ACC_PUBLIC, sourceClass, NO_PARAMS, NO_EXCEPTIONS, body);
+    }
+
+    private static FieldNode createFieldCopy(ClassNode builderClass, PropertyInfo prop) {
+        String propName = prop.getName();
+        return new FieldNode("class".equals(propName) ? "clazz" : propName, ACC_PRIVATE, newClass(prop.getType()), builderClass, DEFAULT_INITIAL_VALUE);
+    }
+
+    private static Expression initializeInstance(ClassNode sourceClass, List<PropertyInfo> props, BlockStatement body) {
+        Expression instance = localVarX("_the" + sourceClass.getNameWithoutPackage(), sourceClass);
+        body.addStatement(declS(instance, ctorX(sourceClass)));
+        for (PropertyInfo prop : props) {
+            body.addStatement(stmt(assignX(propX(instance, prop.getName()), varX("class".equals(prop.getName()) ? "clazz" : prop.getName(), newClass(prop.getType())))));
+        }
+        return instance;
+    }
+
     @Override
     public void build(BuilderASTTransformation transform, AnnotatedNode annotatedNode, AnnotationNode anno) {
         if (!(annotatedNode instanceof ClassNode)) {
             transform.addError("Error during " + BuilderASTTransformation.MY_TYPE_NAME + " processing: building for " +
-                    annotatedNode.getClass().getSimpleName() + " not supported by " + getClass().getSimpleName(), annotatedNode);
+                annotatedNode.getClass().getSimpleName() + " not supported by " + getClass().getSimpleName(), annotatedNode);
             return;
         }
         ClassNode builder = (ClassNode) annotatedNode;
@@ -128,35 +150,13 @@ public class ExternalStrategy extends BuilderASTTransformation.AbstractBuilderSt
         addGeneratedMethod(builder, createBuildMethod(transform, anno, buildee, props));
     }
 
-    private static MethodNode createBuildMethod(BuilderASTTransformation transform, AnnotationNode anno, ClassNode sourceClass, List<PropertyInfo> fields) {
-        String buildMethodName = transform.getMemberStringValue(anno, "buildMethodName", "build");
-        final BlockStatement body = new BlockStatement();
-        Expression sourceClassInstance = initializeInstance(sourceClass, fields, body);
-        body.addStatement(returnS(sourceClassInstance));
-        return new MethodNode(buildMethodName, ACC_PUBLIC, sourceClass, NO_PARAMS, NO_EXCEPTIONS, body);
-    }
-
     private MethodNode createBuilderMethodForField(ClassNode builderClass, PropertyInfo prop, String prefix) {
         String propName = "class".equals(prop.getName()) ? "clazz" : prop.getName();
         String setterName = getSetterName(prefix, prop.getName());
         return new MethodNode(setterName, ACC_PUBLIC, newClass(builderClass), params(param(newClass(prop.getType()), propName)), NO_EXCEPTIONS, block(
-                stmt(assignX(propX(varX("this"), constX(propName)), varX(propName))),
-                returnS(varX("this", newClass(builderClass)))
+            stmt(assignX(propX(varX("this"), constX(propName)), varX(propName))),
+            returnS(varX("this", newClass(builderClass)))
         ));
-    }
-
-    private static FieldNode createFieldCopy(ClassNode builderClass, PropertyInfo prop) {
-        String propName = prop.getName();
-        return new FieldNode("class".equals(propName) ? "clazz" : propName, ACC_PRIVATE, newClass(prop.getType()), builderClass, DEFAULT_INITIAL_VALUE);
-    }
-
-    private static Expression initializeInstance(ClassNode sourceClass, List<PropertyInfo> props, BlockStatement body) {
-        Expression instance = localVarX("_the" + sourceClass.getNameWithoutPackage(), sourceClass);
-        body.addStatement(declS(instance, ctorX(sourceClass)));
-        for (PropertyInfo prop : props) {
-            body.addStatement(stmt(assignX(propX(instance, prop.getName()), varX("class".equals(prop.getName()) ? "clazz" : prop.getName(), newClass(prop.getType())))));
-        }
-        return instance;
     }
 
 }

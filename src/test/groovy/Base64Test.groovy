@@ -164,14 +164,14 @@ class Base64Test extends GroovyTestCase {
 
     void testUrlSafeEncodingByDefaultOmitsPadding() {
         assert testBytes.encodeBase64Url().toString() ==
-                'pzEyMzQ1Njc4OTAtPbEhQKMkJV4mKigpXytxd2VydHl1aW9wW11RV0VSVFlVSU9Qe31h' +
-                'c2RmZ2hqa2w7J1xBU0RGR0hKS0w6InxgenhjdmJubSwuL35aWENWQk5NPD4_A__wDw'
+            'pzEyMzQ1Njc4OTAtPbEhQKMkJV4mKigpXytxd2VydHl1aW9wW11RV0VSVFlVSU9Qe31h' +
+            'c2RmZ2hqa2w7J1xBU0RGR0hKS0w6InxgenhjdmJubSwuL35aWENWQk5NPD4_A__wDw'
     }
 
     void testUrlSafeEncodingWithPadding() {
         assert testBytes.encodeBase64Url(true).toString() ==
-                'pzEyMzQ1Njc4OTAtPbEhQKMkJV4mKigpXytxd2VydHl1aW9wW11RV0VSVFlVSU9Qe31h' +
-                'c2RmZ2hqa2w7J1xBU0RGR0hKS0w6InxgenhjdmJubSwuL35aWENWQk5NPD4_A__wDw=='
+            'pzEyMzQ1Njc4OTAtPbEhQKMkJV4mKigpXytxd2VydHl1aW9wW11RV0VSVFlVSU9Qe31h' +
+            'c2RmZ2hqa2w7J1xBU0RGR0hKS0w6InxgenhjdmJubSwuL35aWENWQk5NPD4_A__wDw=='
     }
 
     void testDecodingNonBase64Alphabet() {
@@ -203,7 +203,7 @@ class Base64Test extends GroovyTestCase {
         s.getBytes(StandardCharsets.UTF_8).encodeBase64().toString()
     }
 
-    private static String b64url(String s, boolean pad=false) {
+    private static String b64url(String s, boolean pad = false) {
         s.getBytes(StandardCharsets.UTF_8).encodeBase64Url(pad).toString()
     }
 

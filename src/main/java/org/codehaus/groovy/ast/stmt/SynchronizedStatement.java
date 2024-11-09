@@ -47,11 +47,12 @@ public class SynchronizedStatement extends Statement {
         return expression;
     }
 
+    public void setExpression(Expression expression) {
+        this.expression = expression;
+    }
+
     @Override
     public void visit(GroovyCodeVisitor visitor) {
         visitor.visitSynchronizedStatement(this);
-    }
-    public void setExpression(Expression expression) {
-        this.expression = expression;
     }
 }

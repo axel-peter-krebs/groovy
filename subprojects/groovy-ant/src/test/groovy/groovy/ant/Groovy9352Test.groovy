@@ -101,12 +101,12 @@ final class Groovy9352Test extends AntTestCase {
             }
 
             // 2) delete Gson, SubGson and GsonAnnotation related files:
-            assert new File(ant.project.baseDir,"src/p2/Gson.java").delete()
-            assert new File(ant.project.baseDir,"build/p2/Gson.class").delete()
-            assert new File(ant.project.baseDir,"src/p2/SubGson.java").delete()
-            assert new File(ant.project.baseDir,"build/p2/SubGson.class").delete()
-            assert new File(ant.project.baseDir,"src/p2/GsonAnnotation.java").delete()
-            assert new File(ant.project.baseDir,"build/p2/GsonAnnotation.class").delete()
+            assert new File(ant.project.baseDir, "src/p2/Gson.java").delete()
+            assert new File(ant.project.baseDir, "build/p2/Gson.class").delete()
+            assert new File(ant.project.baseDir, "src/p2/SubGson.java").delete()
+            assert new File(ant.project.baseDir, "build/p2/SubGson.class").delete()
+            assert new File(ant.project.baseDir, "src/p2/GsonAnnotation.java").delete()
+            assert new File(ant.project.baseDir, "build/p2/GsonAnnotation.class").delete()
 
             // 3) compile the Groovy source code
             ant.groovyc(srcdir: 'src', destdir: 'build', includes: 'p1/*') {

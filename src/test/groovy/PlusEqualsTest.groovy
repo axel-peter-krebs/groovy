@@ -75,11 +75,11 @@ class PlusEqualsTest extends GroovyTestCase {
         def sortedSet = new TreeSet()
         sortedSet += 'abc'
         assertTrue 'sortedSet should have been a SortedSet',
-                   sortedSet instanceof SortedSet
+            sortedSet instanceof SortedSet
         sortedSet += ['def', 'ghi']
         assertTrue 'sortedSet should have been a SortedSet',
-                   sortedSet instanceof SortedSet
+            sortedSet instanceof SortedSet
         assertEquals 'sortedSet had wrong number of elements',
-                     3, sortedSet.size()
+            3, sortedSet.size()
     }
 }

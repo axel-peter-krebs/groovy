@@ -36,7 +36,7 @@ public interface MetaMember {
     }
 
     default boolean isPackagePrivate() {
-      //return !isPublic() && !isPrivate() && !isProtected()
+        //return !isPublic() && !isPrivate() && !isProtected()
         return (getModifiers() & Modifier.PUBLIC + Modifier.PRIVATE + Modifier.PROTECTED) == 0;
     }
 

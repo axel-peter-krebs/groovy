@@ -38,8 +38,7 @@ class OverloadInvokeMethodTest extends GroovyTestCase {
         catch (MissingMethodException e) {
             if (name == 'foo') {
                 return metaClass.invokeMethod(this, 'bar', args)
-            }
-            else {
+            } else {
                 throw e
             }
         }

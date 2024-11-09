@@ -75,7 +75,7 @@ class MinusEqualsTest extends GroovyTestCase {
         sortedSet -= 'one'
         sortedSet -= ['two', 'three']
         assertTrue 'sortedSet should have been a SortedSet',
-                   sortedSet instanceof SortedSet
+            sortedSet instanceof SortedSet
         assertEquals 'sortedSet had the wrong number of elements', 1, sortedSet.size()
         assertTrue 'sortedSet should have contained the word four', sortedSet.contains('four')
     }

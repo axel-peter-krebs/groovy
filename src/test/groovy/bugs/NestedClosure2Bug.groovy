@@ -45,7 +45,7 @@ class NestedClosure2Bug extends TestSupport {
                 f = 2222111
 
                 def d = 678
-                return { 
+                return {
                     assert f == 2222111
                     return a
                 }
@@ -55,7 +55,7 @@ class NestedClosure2Bug extends TestSupport {
         def c3 = c2()
         def value = c3()
 
-        assert f == 2222111        
+        assert f == 2222111
         assert value == 123
     }
 
@@ -64,7 +64,7 @@ class NestedClosure2Bug extends TestSupport {
             def a = 123
             def closure = {
                 return {
-                    return { 
+                    return {
                         return a
                     }
                 }

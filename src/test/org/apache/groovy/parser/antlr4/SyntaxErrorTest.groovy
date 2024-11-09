@@ -43,8 +43,8 @@ final class SyntaxErrorTest {
         TestUtils.shouldFail('fail/Expression_01.groovy')
         TestUtils.shouldFail('fail/Expression_02.groovy')
         TestUtils.shouldFail('fail/Expression_03.groovy')
-      //TestUtils.shouldFail('fail/Expression_04.groovy')
-      //TestUtils.shouldFail('fail/Expression_05.groovy')
+        //TestUtils.shouldFail('fail/Expression_04.groovy')
+        //TestUtils.shouldFail('fail/Expression_05.groovy')
         TestUtils.shouldFail('fail/Expression_06.groovy')
         TestUtils.shouldFail('fail/Expression_07.groovy')
         TestUtils.shouldFail('fail/Expression_08.groovy')
@@ -61,7 +61,8 @@ final class SyntaxErrorTest {
         TestUtils.shouldFail('fail/Switch_01.groovy')
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void 'groovy core - LocalVariableDeclaration'() {
         TestUtils.shouldFail('fail/LocalVariableDeclaration_01.groovy')
     }
@@ -83,7 +84,8 @@ final class SyntaxErrorTest {
         TestUtils.doRunAndShouldFail('fail/UnexpectedCharacter_01x.groovy')
     }
 
-    @Test // TODO: Could the character be escaped in the error message?
+    @Test
+    // TODO: Could the character be escaped in the error message?
     void 'groovy core - UnexpectedCharacter 2'() {
         expectParseError '''\
             |def \u200Bname = null
@@ -512,7 +514,8 @@ final class SyntaxErrorTest {
         TestUtils.doRunAndShouldFail('fail/SwitchExpression_10x.groovy')
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void 'error alternative - Missing ")" 1'() {
         expectParseError '''\
             |println ((int 123)
@@ -525,7 +528,8 @@ final class SyntaxErrorTest {
             |'''.stripMargin()
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void 'error alternative - Missing ")" 2'() {
         expectParseError '''\
             |def x() {
@@ -540,7 +544,8 @@ final class SyntaxErrorTest {
             |'''.stripMargin()
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void 'error alternative - Missing ")" 3'() {
         expectParseError '''\
             |def m( {
@@ -554,27 +559,32 @@ final class SyntaxErrorTest {
             |'''.stripMargin()
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void 'CompilerErrorTest_001'() {
         unzipScriptAndShouldFail('scripts/CompilerErrorTest_001.groovy', [])
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void 'CompilerErrorTest_002'() {
         unzipScriptAndShouldFail('scripts/CompilerErrorTest_002.groovy', [])
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void 'DifferencesFromJavaTest_002'() {
         unzipScriptAndShouldFail('scripts/DifferencesFromJavaTest_002.groovy', [])
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void 'Groovy5212Bug_001'() {
         unzipScriptAndShouldFail('scripts/Groovy5212Bug_001.groovy', [])
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void 'GStringEndTest_001'() {
         unzipScriptAndShouldFail('scripts/GStringEndTest_001.groovy', [])
     }

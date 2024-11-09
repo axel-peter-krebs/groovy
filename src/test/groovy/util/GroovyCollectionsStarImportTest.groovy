@@ -23,8 +23,8 @@ import groovy.test.GroovyTestCase
 import static groovy.util.GroovyCollections.*
 
 /**
-* Tests GroovyCollections
-*/
+ * Tests GroovyCollections
+ */
 class GroovyCollectionsStarImportTest extends GroovyTestCase {
 
     void testCombinations() {

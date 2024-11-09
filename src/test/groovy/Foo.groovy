@@ -45,14 +45,14 @@ class Foo implements Serializable {
 
     // provide a getter method
     def getCount() {
-         if (count == null) {
-             count = 1
-         }
-         return count
+        if (count == null) {
+            count = 1
+        }
+        return count
     }
 
     def getBlah() {
-         return blah
+        return blah
     }
 
     public String getBody() {

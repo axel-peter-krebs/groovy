@@ -75,8 +75,8 @@ class CompareTypesTest extends GroovyTestCase {
 
     void testCompareCharToLong() {
         def a = Integer.MAX_VALUE
-        def b = ((long) a)+1
-        a=(char) a
+        def b = ((long) a) + 1
+        a = (char) a
 
         assert a instanceof Character
         assert b instanceof Long
@@ -86,7 +86,7 @@ class CompareTypesTest extends GroovyTestCase {
 
     void testCompareCharToInteger() {
         Character a = Integer.MAX_VALUE
-        Integer b = a-1
+        Integer b = a - 1
 
         assert a instanceof Character
         assert b instanceof Integer

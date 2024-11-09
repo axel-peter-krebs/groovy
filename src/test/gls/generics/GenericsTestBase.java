@@ -36,6 +36,28 @@ public abstract class GenericsTestBase extends GroovyTestCase {
     MyLoader loader;
     HashMap<String, String> signatures;
 
+    public void setUp() {
+        loader = new MyLoader(this.getClass().getClassLoader());
+        signatures = new HashMap<>();
+    }
+
+    public void createClassInfo(String script) {
+        loader.parseClass(script);
+    }
+
+    public Map<String, String> getSignatures() {
+        return signatures;
+    }
+
+    protected void shouldNotCompile(String script) {
+        try {
+            loader.parseClass(script);
+        } catch (CompilationFailedException cfe) {
+            return;
+        }
+        throw new AssertionError("compilation of script '" + script + "' should have failed, but did not.");
+    }
+
     private class MyLoader extends GroovyClassLoader {
         MyLoader(ClassLoader classLoader) {
             super(classLoader);
@@ -77,27 +99,5 @@ public abstract class GenericsTestBase extends GroovyTestCase {
             if (signature != null) signatures.put(name + desc, signature);
             return super.visitMethod(access, name, desc, signature, exceptions);
         }
-    }
-
-    public void setUp() {
-        loader = new MyLoader(this.getClass().getClassLoader());
-        signatures = new HashMap<>();
-    }
-
-    public void createClassInfo(String script) {
-        loader.parseClass(script);
-    }
-
-    public Map<String, String> getSignatures() {
-        return signatures;
-    }
-
-    protected void shouldNotCompile(String script) {
-        try {
-            loader.parseClass(script);
-        } catch (CompilationFailedException cfe) {
-            return;
-        }
-        throw new AssertionError("compilation of script '" + script + "' should have failed, but did not.");
     }
 }

@@ -41,12 +41,14 @@ import java.util.stream.Stream;
 public interface Queryable<T> {
     /**
      * Represents null of GINQ, e.g. it could be used as the default group field
+     *
      * @since 4.0.0
      */
     Object NULL = Null.INSTANCE;
 
     /**
      * Represents the empty Queryable instance
+     *
      * @since 4.0.0
      */
     @SuppressWarnings("rawtypes")
@@ -67,7 +69,7 @@ public interface Queryable<T> {
      * Factory method to create {@link Queryable} instance
      *
      * @param iterable iterable object, e.g. {@link List}
-     * @param <T> the type of element
+     * @param <T>      the type of element
      * @return the {@link Queryable} instance
      * @since 4.0.0
      */
@@ -79,7 +81,7 @@ public interface Queryable<T> {
      * Factory method to create {@link Queryable} instance
      *
      * @param array array object
-     * @param <T> the type of element
+     * @param <T>   the type of element
      * @return the {@link Queryable} instance
      * @since 4.0.0
      */
@@ -91,7 +93,7 @@ public interface Queryable<T> {
      * Factory method to create {@link Queryable} instance
      *
      * @param sourceStream stream object
-     * @param <T> the type of element
+     * @param <T>          the type of element
      * @return the {@link Queryable} instance
      * @since 4.0.0
      */
@@ -103,7 +105,7 @@ public interface Queryable<T> {
      * Returns the original {@link Queryable} instance directly
      *
      * @param queryable queryable object
-     * @param <T> the type of element
+     * @param <T>       the type of element
      * @return the {@link Queryable} instance
      * @since 4.0.0
      */
@@ -115,8 +117,8 @@ public interface Queryable<T> {
      * Inner join another {@link Queryable} instance, similar to SQL's {@code inner join}
      *
      * @param queryable another {@link Queryable} instance
-     * @param joiner join condition
-     * @param <U> the type of element from another {@link Queryable} instance
+     * @param joiner    join condition
+     * @param <U>       the type of element from another {@link Queryable} instance
      * @return the join result
      * @since 4.0.0
      */
@@ -126,10 +128,10 @@ public interface Queryable<T> {
      * Inner hash join another {@link Queryable} instance, similar to SQL's {@code inner hash join}.
      * Note: Inner hash join requires equijoin predicate, e.g. {@code on a == b}
      *
-     * @param queryable another {@link Queryable} instance
+     * @param queryable        another {@link Queryable} instance
      * @param fieldsExtractor1 extract fields of one data source
      * @param fieldsExtractor2 extract fields of the other data source
-     * @param <U> the type of element from another {@link Queryable} instance
+     * @param <U>              the type of element from another {@link Queryable} instance
      * @return the join result
      * @since 4.0.0
      */
@@ -139,8 +141,8 @@ public interface Queryable<T> {
      * Left join another {@link Queryable} instance, similar to SQL's {@code left join}
      *
      * @param queryable another {@link Queryable} instance
-     * @param joiner join condition
-     * @param <U> the type of element from another {@link Queryable} instance
+     * @param joiner    join condition
+     * @param <U>       the type of element from another {@link Queryable} instance
      * @return the join result
      * @since 4.0.0
      */
@@ -149,10 +151,10 @@ public interface Queryable<T> {
     /**
      * Left hash join another {@link Queryable} instance, similar to SQL's {@code left hash join}
      *
-     * @param queryable another {@link Queryable} instance
+     * @param queryable        another {@link Queryable} instance
      * @param fieldsExtractor1 extract fields of one data source
      * @param fieldsExtractor2 extract fields of the other data source
-     * @param <U> the type of element from another {@link Queryable} instance
+     * @param <U>              the type of element from another {@link Queryable} instance
      * @return the join result
      * @since 4.0.0
      */
@@ -162,8 +164,8 @@ public interface Queryable<T> {
      * Right join another {@link Queryable} instance, similar to SQL's {@code right join}
      *
      * @param queryable another {@link Queryable} instance
-     * @param joiner join condition
-     * @param <U> the type of element from another {@link Queryable} instance
+     * @param joiner    join condition
+     * @param <U>       the type of element from another {@link Queryable} instance
      * @return the join result
      * @since 4.0.0
      */
@@ -172,10 +174,10 @@ public interface Queryable<T> {
     /**
      * Right hash join another {@link Queryable} instance, similar to SQL's {@code right join}
      *
-     * @param queryable another {@link Queryable} instance
+     * @param queryable        another {@link Queryable} instance
      * @param fieldsExtractor1 extract fields of one data source
      * @param fieldsExtractor2 extract fields of the other data source
-     * @param <U> the type of element from another {@link Queryable} instance
+     * @param <U>              the type of element from another {@link Queryable} instance
      * @return the join result
      * @since 4.0.0
      */
@@ -185,8 +187,8 @@ public interface Queryable<T> {
      * Full join another {@link Queryable} instance, similar to SQL's {@code full join}
      *
      * @param queryable another {@link Queryable} instance
-     * @param joiner join condition
-     * @param <U> the type of element from another {@link Queryable} instance
+     * @param joiner    join condition
+     * @param <U>       the type of element from another {@link Queryable} instance
      * @return the join result
      * @since 4.0.0
      */
@@ -195,10 +197,10 @@ public interface Queryable<T> {
     /**
      * Full hash join another {@link Queryable} instance, similar to SQL's {@code full join}
      *
-     * @param queryable another {@link Queryable} instance
+     * @param queryable        another {@link Queryable} instance
      * @param fieldsExtractor1 extract fields of one data source
      * @param fieldsExtractor2 extract fields of the other data source
-     * @param <U> the type of element from another {@link Queryable} instance
+     * @param <U>              the type of element from another {@link Queryable} instance
      * @return the join result
      * @since 4.0.0
      */
@@ -208,7 +210,7 @@ public interface Queryable<T> {
      * Cross join another {@link Queryable} instance, similar to SQL's {@code cross join}
      *
      * @param queryable another {@link Queryable} instance
-     * @param <U> the type of element from another {@link Queryable} instance
+     * @param <U>       the type of element from another {@link Queryable} instance
      * @return the join result
      * @since 4.0.0
      */
@@ -227,7 +229,7 @@ public interface Queryable<T> {
      * Group by {@link Queryable} instance, similar to SQL's {@code group by}
      *
      * @param classifier the classifier for group by
-     * @param having the filter condition
+     * @param having     the filter condition
      * @return the result of group by
      * @since 4.0.0
      */
@@ -248,7 +250,7 @@ public interface Queryable<T> {
      * Sort {@link Queryable} instance, similar to SQL's {@code order by}
      *
      * @param orders the order rules for sorting
-     * @param <U> the type of field to sort
+     * @param <U>    the type of field to sort
      * @return the result of order by
      * @since 4.0.0
      */
@@ -258,7 +260,7 @@ public interface Queryable<T> {
      * Sort {@link Queryable} instance, similar to SQL's {@code order by}
      *
      * @param orders the order rules for sorting
-     * @param <U> the type of field to sort
+     * @param <U>    the type of field to sort
      * @return the result of order by
      * @since 4.0.0
      */
@@ -270,7 +272,7 @@ public interface Queryable<T> {
      * Paginate {@link Queryable} instance, similar to MySQL's {@code limit}
      *
      * @param offset the start position
-     * @param size the size to take
+     * @param size   the size to take
      * @return the result of paginating
      * @since 4.0.0
      */
@@ -291,7 +293,7 @@ public interface Queryable<T> {
      * Project {@link Queryable} instance, similar to SQL's {@code select}
      *
      * @param mapper project fields
-     * @param <U> the type of project record
+     * @param <U>    the type of project record
      * @return the result of projecting
      * @since 4.0.0
      */
@@ -353,6 +355,7 @@ public interface Queryable<T> {
     Queryable<T> minus(Queryable<? extends T> queryable);
 
     //  Built-in aggregate functions {
+
     /**
      * Aggregate function {@code count}, similar to SQL's {@code count}
      *
@@ -393,7 +396,7 @@ public interface Queryable<T> {
      * Aggregate function {@code min}, similar to SQL's {@code min}
      *
      * @param mapper choose the field to find the minimum
-     * @param <U> the field type
+     * @param <U>    the field type
      * @return min result
      * @since 4.0.0
      */
@@ -403,7 +406,7 @@ public interface Queryable<T> {
      * Aggregate function {@code max}, similar to SQL's {@code max}
      *
      * @param mapper choose the field to find the maximum
-     * @param <U> the field type
+     * @param <U>    the field type
      * @return min result
      * @since 4.0.0
      */
@@ -414,7 +417,7 @@ public interface Queryable<T> {
      * but various databases support a similar concept named: {@code list}, {@code listagg}, or {@code array_agg}.
      *
      * @param mapper choose the field to include in the list
-     * @param <U> the field type
+     * @param <U>    the field type
      * @return aggregate list result
      * @since 4.0.14
      */
@@ -469,7 +472,7 @@ public interface Queryable<T> {
      * The most powerful aggregate function in GINQ, it will receive the grouped result({@link Queryable} instance) and apply any processing
      *
      * @param mapper map the grouped result({@link Queryable} instance) to aggregate result
-     * @param <U> the type aggregate result
+     * @param <U>    the type aggregate result
      * @return aggregate result
      * @since 4.0.0
      */
@@ -505,9 +508,9 @@ public interface Queryable<T> {
     /**
      * Open window for current record
      *
-     * @param currentRecord current record
+     * @param currentRecord    current record
      * @param windowDefinition window definition
-     * @param <U> the type of window value
+     * @param <U>              the type of window value
      * @return the window
      */
     <U extends Comparable<? super U>> Window<T> over(Tuple2<T, Long> currentRecord, WindowDefinition<T, U> windowDefinition);
@@ -553,7 +556,7 @@ public interface Queryable<T> {
             if (!(o instanceof Order)) return false;
             Order<?, ?> order = (Order<?, ?>) o;
             return asc == order.asc &&
-                    keyExtractor.equals(order.keyExtractor);
+                keyExtractor.equals(order.keyExtractor);
         }
 
         @Override

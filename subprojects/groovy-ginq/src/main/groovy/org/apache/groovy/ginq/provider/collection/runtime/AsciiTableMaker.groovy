@@ -70,7 +70,7 @@ class AsciiTableMaker {
         def headerCnt = headers ? headers.length : 0
         def dataElementCnt = countElements(data)
         def allElementCnt = headerCnt + dataElementCnt
-                                            + headerCnt * 3 // 3 lines of separator
+        +headerCnt * 3 // 3 lines of separator
 
         StringBuilder tableBuilder = new StringBuilder(allElementCnt * 10)
         String separator = buildSeparator(columnWidths)
@@ -182,14 +182,14 @@ class AsciiTableMaker {
 
         // Unicode block check for full-width characters
         return block === Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS ||
-                block === Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS ||
-                block === Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A ||
-                block === Character.UnicodeBlock.GENERAL_PUNCTUATION ||
-                block === Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION ||
-                block === Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS ||
-                block === Character.UnicodeBlock.HIRAGANA ||
-                block === Character.UnicodeBlock.KATAKANA ||
-                block === Character.UnicodeBlock.HANGUL_SYLLABLES
+            block === Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS ||
+            block === Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A ||
+            block === Character.UnicodeBlock.GENERAL_PUNCTUATION ||
+            block === Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION ||
+            block === Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS ||
+            block === Character.UnicodeBlock.HIRAGANA ||
+            block === Character.UnicodeBlock.KATAKANA ||
+            block === Character.UnicodeBlock.HANGUL_SYLLABLES
     }
 
     private AsciiTableMaker() {}

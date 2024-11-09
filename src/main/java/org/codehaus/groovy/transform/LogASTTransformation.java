@@ -68,6 +68,81 @@ public class LogASTTransformation extends AbstractASTTransformation implements C
 
     private CompilationUnit compilationUnit;
 
+    private static String lookupLogFieldName(final AnnotationNode logAnnotation) {
+        Expression member = logAnnotation.getMember("value");
+        if (member != null && member.getText() != null) {
+            return member.getText();
+        } else {
+            return "log";
+        }
+    }
+
+    private static String lookupCategoryName(final AnnotationNode logAnnotation) {
+        Expression member = logAnnotation.getMember("category");
+        if (member != null && member.getText() != null) {
+            return member.getText();
+        }
+        return DEFAULT_CATEGORY_NAME;
+    }
+
+    private static int lookupLogFieldModifiers(final AnnotatedNode targetClass, final AnnotationNode logAnnotation) {
+        int modifiers = getVisibility(logAnnotation, targetClass, ClassNode.class, ACC_PRIVATE);
+        return ACC_FINAL | ACC_STATIC | ACC_TRANSIENT | modifiers;
+    }
+
+    private static LoggingStrategy createLoggingStrategy(final AnnotationNode logAnnotation, final ClassLoader classLoader, final ClassLoader xformLoader) {
+        String annotationName = logAnnotation.getClassNode().getName();
+
+        Class<?> annotationClass;
+        try {
+            annotationClass = Class.forName(annotationName, false, xformLoader);
+        } catch (Throwable t) {
+            throw new RuntimeException("Could not resolve class named " + annotationName);
+        }
+
+        Method annotationMethod;
+        try {
+            annotationMethod = annotationClass.getDeclaredMethod("loggingStrategy", (Class[]) null);
+        } catch (Throwable t) {
+            throw new RuntimeException("Could not find method named loggingStrategy on class named " + annotationName);
+        }
+
+        Object defaultValue;
+        try {
+            defaultValue = annotationMethod.getDefaultValue();
+        } catch (Throwable t) {
+            throw new RuntimeException("Could not find default value of method named loggingStrategy on class named " + annotationName);
+        }
+
+        if (!LoggingStrategy.class.isAssignableFrom((Class<?>) defaultValue)) {
+            throw new RuntimeException("Default loggingStrategy value on class named " + annotationName + " is not a LoggingStrategy");
+        }
+
+        // try configurable logging strategy
+        try {
+            Class<? extends LoggingStrategyV2> strategyClass = (Class<? extends LoggingStrategyV2>) defaultValue;
+            if (AbstractLoggingStrategy.class.isAssignableFrom(strategyClass)) {
+                return DefaultGroovyMethods.newInstance(strategyClass, new Object[]{classLoader});
+            } else {
+                return strategyClass.getDeclaredConstructor().newInstance();
+            }
+        } catch (Exception ignore) {
+        }
+
+        // try legacy logging strategy
+        try {
+            Class<? extends LoggingStrategy> strategyClass = (Class<? extends LoggingStrategy>) defaultValue;
+            if (AbstractLoggingStrategy.class.isAssignableFrom(strategyClass)) {
+                return DefaultGroovyMethods.newInstance(strategyClass, new Object[]{classLoader});
+            } else {
+                return strategyClass.getDeclaredConstructor().newInstance();
+            }
+        } catch (Exception ignore) {
+        }
+
+        return null;
+    }
+
     @Override
     public void setCompilationUnit(final CompilationUnit compilationUnit) {
         this.compilationUnit = compilationUnit;
@@ -152,7 +227,7 @@ public class LogASTTransformation extends AbstractASTTransformation implements C
                 }
                 VariableExpression variableExpression = (VariableExpression) mce.getObjectExpression();
                 if (!variableExpression.getName().equals(logFieldName)
-                        || !(variableExpression.getAccessedVariable() instanceof DynamicVariable)) {
+                    || !(variableExpression.getAccessedVariable() instanceof DynamicVariable)) {
                     return null;
                 }
 
@@ -190,81 +265,6 @@ public class LogASTTransformation extends AbstractASTTransformation implements C
 
         // GROOVY-6373: references to 'log' field are normally already FieldNodes by now, so revisit scoping
         new VariableScopeVisitor(sourceUnit, true).visitClass(classNode);
-    }
-
-    private static String lookupLogFieldName(final AnnotationNode logAnnotation) {
-        Expression member = logAnnotation.getMember("value");
-        if (member != null && member.getText() != null) {
-            return member.getText();
-        } else {
-            return "log";
-        }
-    }
-
-    private static String lookupCategoryName(final AnnotationNode logAnnotation) {
-        Expression member = logAnnotation.getMember("category");
-        if (member != null && member.getText() != null) {
-            return member.getText();
-        }
-        return DEFAULT_CATEGORY_NAME;
-    }
-
-    private static int lookupLogFieldModifiers(final AnnotatedNode targetClass, final AnnotationNode logAnnotation) {
-        int modifiers = getVisibility(logAnnotation, targetClass, ClassNode.class, ACC_PRIVATE);
-        return ACC_FINAL | ACC_STATIC | ACC_TRANSIENT | modifiers;
-    }
-
-    private static LoggingStrategy createLoggingStrategy(final AnnotationNode logAnnotation, final ClassLoader classLoader, final ClassLoader xformLoader) {
-        String annotationName = logAnnotation.getClassNode().getName();
-
-        Class<?> annotationClass;
-        try {
-            annotationClass = Class.forName(annotationName, false, xformLoader);
-        } catch (Throwable t) {
-            throw new RuntimeException("Could not resolve class named " + annotationName);
-        }
-
-        Method annotationMethod;
-        try {
-            annotationMethod = annotationClass.getDeclaredMethod("loggingStrategy", (Class[]) null);
-        } catch (Throwable t) {
-            throw new RuntimeException("Could not find method named loggingStrategy on class named " + annotationName);
-        }
-
-        Object defaultValue;
-        try {
-            defaultValue = annotationMethod.getDefaultValue();
-        } catch (Throwable t) {
-            throw new RuntimeException("Could not find default value of method named loggingStrategy on class named " + annotationName);
-        }
-
-        if (!LoggingStrategy.class.isAssignableFrom((Class<?>) defaultValue)) {
-            throw new RuntimeException("Default loggingStrategy value on class named " + annotationName + " is not a LoggingStrategy");
-        }
-
-        // try configurable logging strategy
-        try {
-            Class<? extends LoggingStrategyV2> strategyClass = (Class<? extends LoggingStrategyV2>) defaultValue;
-            if (AbstractLoggingStrategy.class.isAssignableFrom(strategyClass)) {
-                return DefaultGroovyMethods.newInstance(strategyClass, new Object[]{classLoader});
-            } else {
-                return strategyClass.getDeclaredConstructor().newInstance();
-            }
-        } catch (Exception ignore) {
-        }
-
-        // try legacy logging strategy
-        try {
-            Class<? extends LoggingStrategy> strategyClass = (Class<? extends LoggingStrategy>) defaultValue;
-            if (AbstractLoggingStrategy.class.isAssignableFrom(strategyClass)) {
-                return DefaultGroovyMethods.newInstance(strategyClass, new Object[]{classLoader});
-            } else {
-                return strategyClass.getDeclaredConstructor().newInstance();
-            }
-        } catch (Exception ignore) {
-        }
-
-        return null;
     }
 
     //--------------------------------------------------------------------------

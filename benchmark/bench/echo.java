@@ -10,7 +10,8 @@ public class echo {
         int iIterations = 1;
         try {
             iIterations = Integer.parseInt(args[0]);
-        } catch(Exception e) { }
+        } catch (Exception e) {
+        }
 
         EchoServer esServer = new EchoServer(0);
         new EchoClient(InetAddress.getLocalHost(), esServer.getPort(), iIterations);
@@ -20,8 +21,8 @@ public class echo {
 class EchoClient extends Thread {
     private static final String GREETING = "Hello there sailor\n";
     private final InetAddress inetaServer;
-    private final int         iPort;
-    private final int         iIterations;
+    private final int iPort;
+    private final int iIterations;
 
     public EchoClient(InetAddress inetaServer, int iPort, int iIterations) {
         this.inetaServer = inetaServer;
@@ -39,27 +40,28 @@ class EchoClient extends Thread {
 
             byte[] bytesOut = GREETING.getBytes();
             String strIn = GREETING.trim();
-            for(int i = 0; i < iIterations; ++i) {
-            out.write(bytesOut);
-            out.flush();
-            String strRead = in.readLine();
-            if(!strRead.equals(strIn))
-                throw new RuntimeException("client: \"" + strIn + "\" ne \"" + strRead + "\"");
+            for (int i = 0; i < iIterations; ++i) {
+                out.write(bytesOut);
+                out.flush();
+                String strRead = in.readLine();
+                if (!strRead.equals(strIn))
+                    throw new RuntimeException("client: \"" + strIn + "\" ne \"" + strRead + "\"");
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
             socketFromServer.close();
-        } catch(Exception e) { }
+        } catch (Exception e) {
+        }
     }
 }
 
 class EchoServer extends Thread {
-    private static final int   BUFFER_SIZE = 1024;
+    private static final int BUFFER_SIZE = 1024;
     private final ServerSocket ssAccepting;
-    private final int          iPort;
+    private final int iPort;
 
     public EchoServer(int iPort) throws IOException {
         ssAccepting = new ServerSocket(iPort);

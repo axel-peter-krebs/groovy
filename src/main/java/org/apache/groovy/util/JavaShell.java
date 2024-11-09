@@ -71,10 +71,10 @@ public class JavaShell {
      */
     public JavaShell(ClassLoader parentClassLoader) {
         jscl = new JavaShellClassLoader(
-                EMPTY_URL_ARRAY,
-                null == parentClassLoader
-                        ? JavaShell.class.getClassLoader()
-                        : parentClassLoader
+            EMPTY_URL_ARRAY,
+            null == parentClassLoader
+                ? JavaShell.class.getClassLoader()
+                : parentClassLoader
         );
 
         locale = Locale.ENGLISH;
@@ -85,9 +85,9 @@ public class JavaShell {
      * Run main method
      *
      * @param className the main class name
-     * @param options compiler options
-     * @param src the source code
-     * @param args arguments for main method
+     * @param options   compiler options
+     * @param src       the source code
+     * @param args      arguments for main method
      */
     public void run(String className, Iterable<String> options, String src, String... args) throws Throwable {
         Class<?> c = compile(className, options, src);
@@ -99,8 +99,8 @@ public class JavaShell {
      * Run main method
      *
      * @param className the main class name
-     * @param src the source code
-     * @param args arguments for main method
+     * @param src       the source code
+     * @param args      arguments for main method
      */
     public void run(String className, String src, String... args) throws Throwable {
         run(className, Collections.emptyList(), src, args);
@@ -108,9 +108,10 @@ public class JavaShell {
 
     /**
      * Compile and return the main class
+     *
      * @param className the main class name
-     * @param options compiler options
-     * @param src the source code
+     * @param options   compiler options
+     * @param src       the source code
      * @return the main class
      */
     public Class<?> compile(final String className, Iterable<String> options, String src) throws IOException, ClassNotFoundException {
@@ -121,8 +122,9 @@ public class JavaShell {
 
     /**
      * Compile and return the main class
+     *
      * @param className the main class name
-     * @param src the source code
+     * @param src       the source code
      * @return the main class
      */
     public Class<?> compile(final String className, String src) throws IOException, ClassNotFoundException {
@@ -133,8 +135,8 @@ public class JavaShell {
      * Compile and return all classes
      *
      * @param className the main class name
-     * @param options compiler options
-     * @param src the source code
+     * @param options   compiler options
+     * @param src       the source code
      * @return all classes
      */
     public Map<String, Class<?>> compileAll(final String className, Iterable<String> options, String src) throws IOException, ClassNotFoundException {
@@ -153,7 +155,7 @@ public class JavaShell {
      * Compile and return all classes
      *
      * @param className the main class name
-     * @param src the source code
+     * @param src       the source code
      * @return all classes
      */
     public Map<String, Class<?>> compileAll(final String className, String src) throws IOException, ClassNotFoundException {
@@ -165,16 +167,16 @@ public class JavaShell {
         try (BytesJavaFileManager bjfm = new BytesJavaFileManager(compiler.getStandardFileManager(null, locale, charset))) {
             StringBuilderWriter out = new StringBuilderWriter();
             JavaCompiler.CompilationTask task =
-                    compiler.getTask(
-                            out,
-                            bjfm,
-                            null,
-                            options,
-                            Collections.emptyList(),
-                            Collections.singletonList(
-                                    new MemJavaFileObject(className, src)
-                            )
-                    );
+                compiler.getTask(
+                    out,
+                    bjfm,
+                    null,
+                    options,
+                    Collections.emptyList(),
+                    Collections.singletonList(
+                        new MemJavaFileObject(className, src)
+                    )
+                );
 
             task.call();
 
@@ -197,8 +199,8 @@ public class JavaShell {
     }
 
     private static final class JavaShellClassLoader extends URLClassLoader {
-        private Map<String, byte[]> classMap = Collections.emptyMap();
         private final Map<String, Class<?>> classCache = new ConcurrentHashMap<>();
+        private Map<String, byte[]> classMap = Collections.emptyMap();
 
         public JavaShellClassLoader(URL[] urls, ClassLoader parent) {
             super(urls, parent);
@@ -238,10 +240,10 @@ public class JavaShell {
 
         @Override
         public JavaFileObject getJavaFileForOutput(
-                JavaFileManager.Location location,
-                String className,
-                JavaFileObject.Kind kind,
-                FileObject sibling) {
+            JavaFileManager.Location location,
+            String className,
+            JavaFileObject.Kind kind,
+            FileObject sibling) {
             BytesJavaFileObject bjfo = new BytesJavaFileObject(className, kind);
             fileObjectMap.put(className, bjfo);
             return bjfo;

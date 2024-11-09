@@ -43,6 +43,7 @@ class Parent {
     assert o.test() == 'ok'
 '''
     }
+
     void testShouldAccessOuterClassMethodFromSpecialConstructorCallUsingPropertyAccess() {
         assertScript '''
 class Parent {

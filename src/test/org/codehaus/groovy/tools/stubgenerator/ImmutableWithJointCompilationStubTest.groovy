@@ -25,11 +25,11 @@ class ImmutableWithJointCompilationStubTest extends StringSourcesStubTestCase {
 
     Map<String, String> provideSources() {
         [
-                'Dummy.java': '''
+            'Dummy.java'    : '''
                     class Dummy {}
                 ''',
 
-                'Foo4825.groovy': '''
+            'Foo4825.groovy': '''
                     @groovy.transform.Immutable class Foo4825 { }
                 '''
         ]

@@ -42,11 +42,8 @@ import java.util.regex.Pattern;
  */
 public abstract class GString extends GroovyObjectSupport implements Comparable, CharSequence, Writable, Buildable, Serializable {
 
-    private static final long serialVersionUID = -2638020355892246323L;
-
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
     public static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
-
     /**
      * A GString containing a single empty String and no values.
      */
@@ -64,7 +61,7 @@ public abstract class GString extends GroovyObjectSupport implements Comparable,
             return EMPTY_STRING;
         }
     };
-
+    private static final long serialVersionUID = -2638020355892246323L;
     private final Object[] values;
 
     public GString(Object values) {

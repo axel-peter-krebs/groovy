@@ -29,7 +29,8 @@ class Groovy4025Bug extends CompilableTestSupport {
                 }
             }
         """
-    }    
+    }
+
     public void testAbstractMethodInAClass() {
         shouldNotCompile """
             abstract class Test {
@@ -38,5 +39,5 @@ class Groovy4025Bug extends CompilableTestSupport {
                 }
             }
         """
-    }    
+    }
 }

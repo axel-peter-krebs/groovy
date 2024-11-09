@@ -82,16 +82,23 @@ public class BinaryObjectExpressionHelper extends BinaryExpressionWriter {
     }
 
     @Override
-    protected void removeTwoOperands(MethodVisitor mv) {}
+    protected void removeTwoOperands(MethodVisitor mv) {
+    }
+
     @Override
-    protected void writePlusPlus(MethodVisitor mv) {}
+    protected void writePlusPlus(MethodVisitor mv) {
+    }
+
     @Override
-    protected void writeMinusMinus(MethodVisitor mv) {}
+    protected void writeMinusMinus(MethodVisitor mv) {
+    }
+
     @Override
-    protected void doubleTwoOperands(MethodVisitor mv) {}
+    protected void doubleTwoOperands(MethodVisitor mv) {
+    }
 
     @Override
     protected ClassNode getArrayGetResultType() {
-    	return ClassHelper.OBJECT_TYPE.getPlainNodeReference();
+        return ClassHelper.OBJECT_TYPE.getPlainNodeReference();
     }
 }

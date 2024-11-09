@@ -24,14 +24,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NamespaceAwareHashMap extends HashMap<String, String> {
-    public void setNamespaceTagHints(Map namespaceTagHints) {
-        this.namespaceTagHints = namespaceTagHints;
-    }
-
     private Map namespaceTagHints = null;
 
     public Map getNamespaceTagHints() {
         return namespaceTagHints;
+    }
+
+    public void setNamespaceTagHints(Map namespaceTagHints) {
+        this.namespaceTagHints = namespaceTagHints;
     }
 
     @Override

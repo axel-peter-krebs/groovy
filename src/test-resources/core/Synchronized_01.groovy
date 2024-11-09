@@ -16,8 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-synchronized ('a')
-{
+synchronized ('a') {
     assert true
 }
 
@@ -25,12 +24,17 @@ synchronized ('a') {
     assert true
 }
 
-synchronized ('a') {assert true
+synchronized ('a') {
+    assert true
 }
 
-synchronized ('a') {assert true}
+synchronized ('a') {
+    assert true
+}
 
-synchronized ('a') {assert true;}
+synchronized ('a') {
+    assert true;
+}
 
 synchronized ('a') {
     assert true
@@ -46,9 +50,14 @@ synchronized ('a') {
     assert true; assert true
 }
 
-synchronized ('a') {assert true; assert true
+synchronized ('a') {
+    assert true; assert true
 }
 
-synchronized ('a') {assert true; assert true}
+synchronized ('a') {
+    assert true; assert true
+}
 
-synchronized ('a') {assert true; assert true;}
+synchronized ('a') {
+    assert true; assert true;
+}

@@ -43,6 +43,7 @@ import static org.apache.groovy.ast.tools.ClassNodeUtils.getNestHost;
 import static org.codehaus.groovy.ast.ClassHelper.isGeneratedFunction;
 
 public class WriterController {
+    public boolean optimizeForInt = true;
     private AsmClassGenerator acg;
     private MethodVisitor methodVisitor;
     private CompileStack compileStack;
@@ -62,7 +63,6 @@ public class WriterController {
     private ConstructorNode constructorNode;
     private GeneratorContext context;
     private InterfaceHelperClassNode interfaceClassLoadingClass;
-    public boolean optimizeForInt = true;
     private StatementWriter statementWriter;
     private boolean fastPath;
     private TypeChooser typeChooser;
@@ -73,9 +73,16 @@ public class WriterController {
     private MethodPointerExpressionWriter methodPointerExpressionWriter;
     private MethodReferenceExpressionWriter methodReferenceExpressionWriter;
 
+    private static ClassVisitor createClassVisitor(final ClassVisitor cv, final CompilerConfiguration config) {
+        if (!config.isLogClassgen() || cv instanceof LoggableClassVisitor) {
+            return cv;
+        }
+        return new LoggableClassVisitor(cv, config);
+    }
+
     public void init(final AsmClassGenerator asmClassGenerator, final GeneratorContext gcon, final ClassVisitor cv, final ClassNode cn) {
         CompilerConfiguration config = cn.getCompileUnit().getConfig();
-        Map<String,Boolean> optOptions = config.getOptimizationOptions();
+        Map<String, Boolean> optOptions = config.getOptimizationOptions();
         boolean invokedynamic = true;
         if (optOptions.isEmpty()) {
             // IGNORE
@@ -132,13 +139,6 @@ public class WriterController {
             this.statementWriter = new StatementWriter(this);
         }
         this.typeChooser = new StatementMetaTypeChooser();
-    }
-
-    private static ClassVisitor createClassVisitor(final ClassVisitor cv, final CompilerConfiguration config) {
-        if (!config.isLogClassgen() || cv instanceof LoggableClassVisitor) {
-            return cv;
-        }
-        return new LoggableClassVisitor(cv, config);
     }
 
     //--------------------------------------------------------------------------
@@ -348,7 +348,7 @@ public class WriterController {
 
     /**
      * @return true if we are in a script body, where all variables declared are no longer
-     *         local variables but are properties
+     * local variables but are properties
      */
     public boolean isInScriptBody() {
         return classNode.isScriptBody() || (methodNode != null && methodNode.isScriptBody());
@@ -376,12 +376,12 @@ public class WriterController {
         return lineNumber;
     }
 
-    public void resetLineNumber() {
-        setLineNumber(-1);
-    }
-
     public void setLineNumber(final int lineNumber) {
         this.lineNumber = lineNumber;
+    }
+
+    public void resetLineNumber() {
+        setLineNumber(-1);
     }
 
     public void visitLineNumber(final int lineNumber) {

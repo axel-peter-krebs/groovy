@@ -39,42 +39,6 @@ public class MetaMethodIndex {
 
     public final Class<?> mainClass;
 
-    public static class MetaMethodCache {
-        public final Class<?>[] params;
-        public final MetaMethod method;
-
-        /**
-         * create a new method entry
-         * @param params in case of caching params might not be the same as {@link MetaMethod#getParameterTypes}
-         * @param method the meta method
-         */
-        public MetaMethodCache(final Class<?>[] params, final MetaMethod method) {
-            this.params = params;
-            this.method = method;
-        }
-    }
-
-    public static class Cache {
-        public final String name;
-        public Object methods;
-        public Object methodsForSuper;
-        public Object staticMethods;
-        public MetaMethodCache cachedMethod;
-        public MetaMethodCache cachedMethodForSuper;
-        public MetaMethodCache cachedStaticMethod;
-
-        public Cache(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return "[name=" + name + "]";
-        }
-    }
-
-    //--------------------------------------------------------------------------
-
     public MetaMethodIndex(final CachedClass theCachedClass) {
         this.mainClass = theCachedClass.getTheClass();
         if (!theCachedClass.isInterface()) {
@@ -85,122 +49,6 @@ public class MetaMethodIndex {
             indexMap.put(Object.class, new ConcurrentHashMap<>());
             indexMap.put(mainClass, new ConcurrentHashMap<>());
         }
-    }
-
-    public final Cache getMethods(final Class<?> cls, final String name) {
-        var map = indexMap.get(cls);
-        return map == null ? null : map.get(name);
-    }
-
-    public void addMetaMethod(MetaMethod method, Map<String, Cache> map) {
-        var cache = map.computeIfAbsent(method.getName(), Cache::new);
-
-        if (method.isStatic()) {
-            cache.staticMethods = addMethodToList(cache.staticMethods, method);
-        }
-        cache.methods = addMethodToList(cache.methods, method);
-    }
-
-    private Cache getOrPutMethods(final String name, final Map<String, Cache> cacheIndex) {
-        return cacheIndex.computeIfAbsent(name, Cache::new);
-    }
-
-    public Map<String, Cache> getHeader(final Class<?> cls) {
-        return indexMap.get(cls);
-    }
-
-    public  void copyNonPrivateMethods(final Map<String, Cache> from, final Map<String, Cache> to) {
-        for (Cache e : from.values()) {
-            copyNonPrivateMethods(e, to);
-        }
-    }
-
-    private void copyNonPrivateMethods(final Cache from, final Map<String, Cache> to) {
-        var fastArrayOrMetaMethod = from.methods;
-        if (fastArrayOrMetaMethod instanceof FastArray) {
-            FastArray fastArray = (FastArray) fastArrayOrMetaMethod;
-            Cache e = null;
-            final int n = fastArray.size();
-            Object[] array = fastArray.getArray();
-            for (int i = 0; i != n; i += 1) {
-                MetaMethod method = (MetaMethod) array[i];
-                if (isNonPrivate(method)) {
-                    if (e == null)
-                        e = getOrPutMethods(from.name, to);
-                    e.methods = addMethodToList(e.methods, method);
-                }
-            }
-        } else {
-            MetaMethod method = (MetaMethod) fastArrayOrMetaMethod;
-            if (isNonPrivate(method)) {
-                Cache e = getOrPutMethods(from.name, to);
-                e.methods = addMethodToList(e.methods, method);
-            }
-        }
-    }
-
-    public  void copyNonPrivateNonNewMetaMethods(final Map<String, Cache> from, final Map<String, Cache> to) {
-        for (Cache e : from.values()) {
-            copyNonPrivateNonNewMetaMethods(e, to);
-        }
-    }
-
-    private void copyNonPrivateNonNewMetaMethods(final Cache from, final Map<String, Cache> to) {
-        var fastArrayOrMetaMethod = from.methods;
-        if (fastArrayOrMetaMethod instanceof FastArray) {
-            FastArray fastArray = (FastArray) fastArrayOrMetaMethod;
-            Cache e = null;
-            final int n = fastArray.size();
-            Object[] array = fastArray.getArray();
-            for (int i = 0; i != n; i += 1) {
-                MetaMethod method = (MetaMethod) array[i];
-                if (isNonPrivate(method) && !(method instanceof NewMetaMethod)) {
-                    if (e == null)
-                        e = getOrPutMethods(from.name, to);
-                    e.methods = addMethodToList(e.methods, method);
-                }
-            }
-        } else if (fastArrayOrMetaMethod != null) {
-            MetaMethod method = (MetaMethod) fastArrayOrMetaMethod;
-            if (isNonPrivate(method) && !(method instanceof NewMetaMethod)) {
-                Cache e = getOrPutMethods(from.name, to);
-                e.methods = addMethodToList(e.methods, method);
-            }
-        }
-    }
-
-    private boolean isNonPrivate(final MetaMethod method) {
-        return !method.isPrivate() && (!method.isPackagePrivate() || // GROOVY-11357
-                GeneralUtils.inSamePackage(method.getDeclaringClass().getTheClass(), mainClass));
-    }
-
-    public Object addMethodToList(final Object o, final MetaMethod toIndex) {
-        if (o == null) {
-            return toIndex;
-        }
-
-        if (o instanceof MetaMethod) {
-            final MetaMethod inIndex = (MetaMethod) o;
-            if (!isMatchingMethod(inIndex, toIndex)) {
-                return new FastArray(new Object[]{inIndex, toIndex});
-            }
-            return !isOverridden(inIndex, toIndex) ? inIndex : toIndex;
-        }
-
-        if (o instanceof FastArray) {
-            final FastArray array = (FastArray) o;
-            int found = findMatchingMethod(array, toIndex);
-            if (found == -1) {
-                array.add(toIndex);
-            } else {
-                final MetaMethod inIndex = (MetaMethod) array.get(found);
-                if (inIndex != toIndex && isOverridden(inIndex, toIndex)) {
-                    array.set(found, toIndex);
-                }
-            }
-        }
-
-        return o;
     }
 
     /**
@@ -221,8 +69,8 @@ public class MetaMethodIndex {
 
         // interface vs instance method; be careful...
         if (!inIndex.isStatic() && !toIndex.isStatic() // GROOVY-9815
-                && inIndexDC.isInterface() != toIndexDC.isInterface()
-                && !(toIndex instanceof ClosureMetaMethod || toIndex instanceof ClosureStaticMetaMethod)) { // GROOVY-3493
+            && inIndexDC.isInterface() != toIndexDC.isInterface()
+            && !(toIndex instanceof ClosureMetaMethod || toIndex instanceof ClosureStaticMetaMethod)) { // GROOVY-3493
             // this is the old logic created for GROOVY-2391 and GROOVY-7879, which was labeled as "do not overwrite interface methods with instance methods"
             return (isNonRealMethod(inIndex) || !inIndexDC.isInterface() || toIndexDC.isInterface()) && !toIndexDC.isAssignableFrom(inIndexDC.getTheClass());
         }
@@ -230,6 +78,8 @@ public class MetaMethodIndex {
         // prefer most-specific or most-recent for type disjunction
         return inIndexDC.isAssignableFrom(toIndexDC.getTheClass());
     }
+
+    //--------------------------------------------------------------------------
 
     private static boolean isNonRealMethod(final MetaMethod method) {
         return method instanceof NewMetaMethod
@@ -266,6 +116,122 @@ public class MetaMethodIndex {
         return -1;
     }
 
+    public final Cache getMethods(final Class<?> cls, final String name) {
+        var map = indexMap.get(cls);
+        return map == null ? null : map.get(name);
+    }
+
+    public void addMetaMethod(MetaMethod method, Map<String, Cache> map) {
+        var cache = map.computeIfAbsent(method.getName(), Cache::new);
+
+        if (method.isStatic()) {
+            cache.staticMethods = addMethodToList(cache.staticMethods, method);
+        }
+        cache.methods = addMethodToList(cache.methods, method);
+    }
+
+    private Cache getOrPutMethods(final String name, final Map<String, Cache> cacheIndex) {
+        return cacheIndex.computeIfAbsent(name, Cache::new);
+    }
+
+    public Map<String, Cache> getHeader(final Class<?> cls) {
+        return indexMap.get(cls);
+    }
+
+    public void copyNonPrivateMethods(final Map<String, Cache> from, final Map<String, Cache> to) {
+        for (Cache e : from.values()) {
+            copyNonPrivateMethods(e, to);
+        }
+    }
+
+    private void copyNonPrivateMethods(final Cache from, final Map<String, Cache> to) {
+        var fastArrayOrMetaMethod = from.methods;
+        if (fastArrayOrMetaMethod instanceof FastArray) {
+            FastArray fastArray = (FastArray) fastArrayOrMetaMethod;
+            Cache e = null;
+            final int n = fastArray.size();
+            Object[] array = fastArray.getArray();
+            for (int i = 0; i != n; i += 1) {
+                MetaMethod method = (MetaMethod) array[i];
+                if (isNonPrivate(method)) {
+                    if (e == null)
+                        e = getOrPutMethods(from.name, to);
+                    e.methods = addMethodToList(e.methods, method);
+                }
+            }
+        } else {
+            MetaMethod method = (MetaMethod) fastArrayOrMetaMethod;
+            if (isNonPrivate(method)) {
+                Cache e = getOrPutMethods(from.name, to);
+                e.methods = addMethodToList(e.methods, method);
+            }
+        }
+    }
+
+    public void copyNonPrivateNonNewMetaMethods(final Map<String, Cache> from, final Map<String, Cache> to) {
+        for (Cache e : from.values()) {
+            copyNonPrivateNonNewMetaMethods(e, to);
+        }
+    }
+
+    private void copyNonPrivateNonNewMetaMethods(final Cache from, final Map<String, Cache> to) {
+        var fastArrayOrMetaMethod = from.methods;
+        if (fastArrayOrMetaMethod instanceof FastArray) {
+            FastArray fastArray = (FastArray) fastArrayOrMetaMethod;
+            Cache e = null;
+            final int n = fastArray.size();
+            Object[] array = fastArray.getArray();
+            for (int i = 0; i != n; i += 1) {
+                MetaMethod method = (MetaMethod) array[i];
+                if (isNonPrivate(method) && !(method instanceof NewMetaMethod)) {
+                    if (e == null)
+                        e = getOrPutMethods(from.name, to);
+                    e.methods = addMethodToList(e.methods, method);
+                }
+            }
+        } else if (fastArrayOrMetaMethod != null) {
+            MetaMethod method = (MetaMethod) fastArrayOrMetaMethod;
+            if (isNonPrivate(method) && !(method instanceof NewMetaMethod)) {
+                Cache e = getOrPutMethods(from.name, to);
+                e.methods = addMethodToList(e.methods, method);
+            }
+        }
+    }
+
+    private boolean isNonPrivate(final MetaMethod method) {
+        return !method.isPrivate() && (!method.isPackagePrivate() || // GROOVY-11357
+            GeneralUtils.inSamePackage(method.getDeclaringClass().getTheClass(), mainClass));
+    }
+
+    public Object addMethodToList(final Object o, final MetaMethod toIndex) {
+        if (o == null) {
+            return toIndex;
+        }
+
+        if (o instanceof MetaMethod) {
+            final MetaMethod inIndex = (MetaMethod) o;
+            if (!isMatchingMethod(inIndex, toIndex)) {
+                return new FastArray(new Object[]{inIndex, toIndex});
+            }
+            return !isOverridden(inIndex, toIndex) ? inIndex : toIndex;
+        }
+
+        if (o instanceof FastArray) {
+            final FastArray array = (FastArray) o;
+            int found = findMatchingMethod(array, toIndex);
+            if (found == -1) {
+                array.add(toIndex);
+            } else {
+                final MetaMethod inIndex = (MetaMethod) array.get(found);
+                if (inIndex != toIndex && isOverridden(inIndex, toIndex)) {
+                    array.set(found, toIndex);
+                }
+            }
+        }
+
+        return o;
+    }
+
     public void copyMethodsToSuper() {
         allEntries().forEach(cacheEntry -> {
             if (cacheEntry.methods instanceof FastArray) {
@@ -290,5 +256,40 @@ public class MetaMethodIndex {
         allEntries().filter(cache -> cache.name.equals(name)).forEach(e ->
             e.cachedMethod = e.cachedMethodForSuper = e.cachedStaticMethod = null
         );
+    }
+
+    public static class MetaMethodCache {
+        public final Class<?>[] params;
+        public final MetaMethod method;
+
+        /**
+         * create a new method entry
+         *
+         * @param params in case of caching params might not be the same as {@link MetaMethod#getParameterTypes}
+         * @param method the meta method
+         */
+        public MetaMethodCache(final Class<?>[] params, final MetaMethod method) {
+            this.params = params;
+            this.method = method;
+        }
+    }
+
+    public static class Cache {
+        public final String name;
+        public Object methods;
+        public Object methodsForSuper;
+        public Object staticMethods;
+        public MetaMethodCache cachedMethod;
+        public MetaMethodCache cachedMethodForSuper;
+        public MetaMethodCache cachedStaticMethod;
+
+        public Cache(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "[name=" + name + "]";
+        }
     }
 }

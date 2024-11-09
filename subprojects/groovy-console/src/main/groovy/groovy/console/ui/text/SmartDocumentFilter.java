@@ -124,15 +124,18 @@ import static org.apache.groovy.parser.antlr4.GroovyLexer.YIELD;
  */
 public class SmartDocumentFilter extends DocumentFilter {
     public static final List<Integer> HIGHLIGHTED_TOKEN_TYPE_LIST = Arrays.asList(AS, DEF, IN, TRAIT, THREADSAFE,
-            VAR, BuiltInPrimitiveType, ABSTRACT, ASSERT, BREAK, CASE, CATCH, CLASS, CONST, CONTINUE, DEFAULT, DO,
-            ELSE, ENUM, EXTENDS, FINAL, FINALLY, FOR, IF, GOTO, IMPLEMENTS, IMPORT, INSTANCEOF, INTERFACE,
-            NATIVE, NEW, NON_SEALED, NOT_IN, NOT_INSTANCEOF, PACKAGE, PERMITS, PRIVATE, PROTECTED, PUBLIC,
-            RECORD, RETURN, SEALED, STATIC, STRICTFP, SUPER, SWITCH, SYNCHRONIZED,
-            THIS, THROW, THROWS, TRANSIENT, TRY, VOID, VOLATILE, WHILE, YIELD, NullLiteral, BooleanLiteral);
+        VAR, BuiltInPrimitiveType, ABSTRACT, ASSERT, BREAK, CASE, CATCH, CLASS, CONST, CONTINUE, DEFAULT, DO,
+        ELSE, ENUM, EXTENDS, FINAL, FINALLY, FOR, IF, GOTO, IMPLEMENTS, IMPORT, INSTANCEOF, INTERFACE,
+        NATIVE, NEW, NON_SEALED, NOT_IN, NOT_INSTANCEOF, PACKAGE, PERMITS, PRIVATE, PROTECTED, PUBLIC,
+        RECORD, RETURN, SEALED, STATIC, STRICTFP, SUPER, SWITCH, SYNCHRONIZED,
+        THIS, THROW, THROWS, TRANSIENT, TRY, VOID, VOLATILE, WHILE, YIELD, NullLiteral, BooleanLiteral);
     private static final String MONOSPACED = "Monospaced";
     private final DefaultStyledDocument styledDocument;
     private final StyleContext styleContext;
     private final Style defaultStyle;
+    private volatile boolean latest = false;
+    private volatile List<Token> latestTokenList = Collections.emptyList();
+    private volatile Tuple2<Integer, Integer> renderRange;
 
     public SmartDocumentFilter(DefaultStyledDocument styledDocument) {
         this.styledDocument = styledDocument;
@@ -156,7 +159,7 @@ public class SmartDocumentFilter extends DocumentFilter {
 
     @Override
     public void remove(DocumentFilter.FilterBypass fb, int offset, int length)
-            throws BadLocationException {
+        throws BadLocationException {
 
         fb.remove(offset, length);
         parseDocument();
@@ -165,7 +168,7 @@ public class SmartDocumentFilter extends DocumentFilter {
     @Override
     public void replace(DocumentFilter.FilterBypass fb, int offset,
                         int length, String text, AttributeSet attrs)
-            throws BadLocationException {
+        throws BadLocationException {
 
         // text might be null and indicates no replacement text
         if (text == null) text = "";
@@ -232,16 +235,16 @@ public class SmartDocumentFilter extends DocumentFilter {
             int tokenLength = tokenStopIndex - tokenStartIndex + 1;
 
             styledDocument.setCharacterAttributes(tokenStartIndex,
-                    tokenLength,
-                    findStyleByTokenType(tokenType),
-                    true);
+                tokenLength,
+                findStyleByTokenType(tokenType),
+                true);
 
             if (GStringBegin == tokenType || GStringPart == tokenType) {
                 styledDocument.setCharacterAttributes(
-                        tokenStartIndex + tokenLength - 1,
-                        1,
-                        defaultStyle,
-                        true);
+                    tokenStartIndex + tokenLength - 1,
+                    1,
+                    defaultStyle,
+                    true);
             }
         }
 
@@ -258,8 +261,8 @@ public class SmartDocumentFilter extends DocumentFilter {
             if (startLine < 0 || stopLine < 0) return tokenList; // should never happen
 
             return tokenList.stream()
-                    .filter(e -> e.getLine() >= startLine && PositionConfigureUtils.endPosition(e).getV1() <= stopLine)
-                    .collect(Collectors.toList());
+                .filter(e -> e.getLine() >= startLine && PositionConfigureUtils.endPosition(e).getV1() <= stopLine)
+                .collect(Collectors.toList());
         }
 
         List<Token> tmpLatestTokenList = filterNewlines(this.latestTokenList);
@@ -281,8 +284,8 @@ public class SmartDocumentFilter extends DocumentFilter {
             Token latestToken = tmpLatestTokenList.get(i);
 
             if (token.getType() == latestToken.getType()
-                    && token.getStartIndex() == latestToken.getStartIndex()
-                    && token.getStopIndex() == latestToken.getStopIndex()) {
+                && token.getStartIndex() == latestToken.getStartIndex()
+                && token.getStopIndex() == latestToken.getStopIndex()) {
                 continue;
             }
 
@@ -303,8 +306,8 @@ public class SmartDocumentFilter extends DocumentFilter {
             Token latestToken = newLatestTokenList.get(i);
 
             if ((token.getType() == latestToken.getType())
-                    && (token.getStartIndex() - lastToken.getStartIndex()) == (latestToken.getStartIndex() - lastLatestToken.getStartIndex())
-                    && ((token.getStopIndex() - lastToken.getStopIndex()) == (latestToken.getStopIndex() - lastLatestToken.getStopIndex()))) {
+                && (token.getStartIndex() - lastToken.getStartIndex()) == (latestToken.getStartIndex() - lastLatestToken.getStartIndex())
+                && ((token.getStopIndex() - lastToken.getStopIndex()) == (latestToken.getStopIndex() - lastLatestToken.getStopIndex()))) {
                 continue;
             }
 
@@ -341,8 +344,8 @@ public class SmartDocumentFilter extends DocumentFilter {
 
     private List<Token> filterNewlines(List<Token> tokenList) {
         return tokenList.stream()
-                .filter(e -> !(NL == e.getType() && e.getText().trim().isEmpty()))
-                .collect(Collectors.toList());
+            .filter(e -> !(NL == e.getType() && e.getText().trim().isEmpty()))
+            .collect(Collectors.toList());
     }
 
     private Style findStyleByTokenType(int tokenType) {
@@ -404,10 +407,6 @@ public class SmartDocumentFilter extends DocumentFilter {
         StyleConstants.setForeground(unexpectedChar, Color.CYAN.darker());
     }
 
-    private volatile boolean latest = false;
-    private volatile List<Token> latestTokenList = Collections.emptyList();
-    private volatile Tuple2<Integer, Integer> renderRange;
-
     public boolean isLatest() {
         return latest;
     }
@@ -416,10 +415,11 @@ public class SmartDocumentFilter extends DocumentFilter {
         return latestTokenList;
     }
 
-    public void setRenderRange(Tuple2<Integer, Integer> renderRange) {
-        this.renderRange = renderRange;
-    }
     public Tuple2<Integer, Integer> getRenderRange() {
         return renderRange;
+    }
+
+    public void setRenderRange(Tuple2<Integer, Integer> renderRange) {
+        this.renderRange = renderRange;
     }
 }

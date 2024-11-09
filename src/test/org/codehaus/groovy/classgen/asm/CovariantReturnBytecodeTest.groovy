@@ -19,8 +19,8 @@
 package org.codehaus.groovy.classgen.asm
 
 class CovariantReturnBytecodeTest extends AbstractBytecodeTestCase {
-    void testCovariance(){
-        def code = compile (method:'super$3$attach', classNamePattern:'C', '''
+    void testCovariance() {
+        def code = compile(method: 'super$3$attach', classNamePattern: 'C', '''
             abstract class A {
                 A attach(){return this}
             }

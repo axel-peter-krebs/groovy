@@ -42,7 +42,8 @@ final class Groovy4418 {
         '''
     }
 
-    @Test // GROOVY-6183
+    @Test
+    // GROOVY-6183
     void testStaticAttributeAccess() {
         assertScript '''
             class A {
@@ -57,7 +58,8 @@ final class Groovy4418 {
         '''
     }
 
-    @Test // GROOVY-8385
+    @Test
+    // GROOVY-8385
     void testParentClassStaticAttributeSetAccess() {
         assertScript '''
             class A {
@@ -106,7 +108,8 @@ final class Groovy4418 {
         '''
     }
 
-    @Test // GROOVY-8385
+    @Test
+    // GROOVY-8385
     void testParentClassNonStaticAttributeSetAccess() {
         assertScript '''
             class A {
@@ -155,7 +158,8 @@ final class Groovy4418 {
         '''
     }
 
-    @Test // GROOVY-8385
+    @Test
+    // GROOVY-8385
     void testParentClassPrivateStaticAttributeSetAccess() {
         shouldFail MissingFieldException, '''
             class A {
@@ -173,7 +177,8 @@ final class Groovy4418 {
         '''
     }
 
-    @Test // GROOVY-8385
+    @Test
+    // GROOVY-8385
     void testParentClassPrivateNonStaticAttributeSetAccess() {
         shouldFail MissingFieldException, '''
             class A {

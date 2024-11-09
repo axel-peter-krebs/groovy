@@ -43,23 +43,23 @@ import java.util.stream.Collectors;
 public class MethodRankHelper {
 
     // These are the costs for the various edit operations they are used by the two Damerau-Levenshtein implementations
-    public static final int DL_CASE          =  5;
-    public static final int DL_DELETE        = 10; // also the cost for insert
-    public static final int DL_SUBSTITUTION  = 10;
-    public static final int DL_TRANSPOSITION =  5;
+    public static final int DL_CASE = 5;
+    public static final int DL_DELETE = 10; // also the cost for insert
+    public static final int DL_SUBSTITUTION = 10;
+    public static final int DL_TRANSPOSITION = 5;
 
-    public static final int MAX_RECOMENDATIONS    =  5;
-    public static final int MAX_METHOD_SCORE      = 50;
+    public static final int MAX_RECOMENDATIONS = 5;
+    public static final int MAX_METHOD_SCORE = 50;
     public static final int MAX_CONSTRUCTOR_SCORE = 20;
-    public static final int MAX_FIELD_SCORE       = 30;
+    public static final int MAX_FIELD_SCORE = 30;
 
     /**
      * Returns a string detailing possible solutions to a missing method
      * if no good solutions can be found an empty string is returned.
      *
      * @param methodName the name of the method that doesn't exist
-     * @param type the class on which the method is invoked
-     * @param arguments the arguments passed to the method
+     * @param type       the class on which the method is invoked
+     * @param arguments  the arguments passed to the method
      * @return a string with probable solutions to the exception
      */
     public static String getMethodSuggestionString(final String methodName, final Class type, final Object[] arguments) {
@@ -78,12 +78,12 @@ public class MethodRankHelper {
             }
         }
         Class[] argumentClasses = getArgumentClasses(arguments);
-        List<Pair<Class,Class>> conflictClasses = getConflictClasses(sugg, argumentClasses);
+        List<Pair<Class, Class>> conflictClasses = getConflictClasses(sugg, argumentClasses);
         if (!conflictClasses.isEmpty()) {
             sb.append("\nThe following classes appear as argument class and as parameter class, ");
             sb.append("but are defined by different class loader:\n");
             boolean first = true;
-            for (Pair<Class,Class> pair: conflictClasses) {
+            for (Pair<Class, Class> pair : conflictClasses) {
                 if (!first) {
                     sb.append(", ");
                 } else {
@@ -101,8 +101,8 @@ public class MethodRankHelper {
         return sb.toString();
     }
 
-    private static List<Pair<Class,Class>> getConflictClasses(final List<MetaMethod> sugg, final Class[] argumentClasses) {
-        List<Pair<Class,Class>> ret = new LinkedList<>();
+    private static List<Pair<Class, Class>> getConflictClasses(final List<MetaMethod> sugg, final Class[] argumentClasses) {
+        List<Pair<Class, Class>> ret = new LinkedList<>();
         Set<Class> recordedClasses = new HashSet<>();
         for (MetaMethod method : sugg) {
             Class[] para = method.getNativeParameterTypes();
@@ -136,12 +136,12 @@ public class MethodRankHelper {
      * if no good solutions can be found an empty string is returned.
      *
      * @param arguments the arguments passed to the constructor
-     * @param type the class on which the constructor is invoked
+     * @param type      the class on which the constructor is invoked
      * @return a string with probable solutions to the exception
      */
-    public static String getConstructorSuggestionString(final Class type, final Object[] arguments){
+    public static String getConstructorSuggestionString(final Class type, final Object[] arguments) {
         Constructor[] sugg = rankConstructors(arguments, type.getConstructors());
-        if(sugg.length >0){
+        if (sugg.length > 0) {
             StringBuilder sb = new StringBuilder();
             sb.append("\nPossible solutions: ");
             for (int i = 0; i < sugg.length; ++i) {
@@ -219,18 +219,18 @@ public class MethodRankHelper {
         if (original == null) original = MetaClassHelper.EMPTY_ARRAY;
         Class[] ta = new Class[original.length];
 
-        Class nullC =  NullObject.class;
-        for(int i = 0; i < original.length; ++i) {
+        Class nullC = NullObject.class;
+        for (int i = 0; i < original.length; ++i) {
             // all nulls have to be wrapped so that they can be compared
             ta[i] = (original[i] == null ? nullC : original[i].getClass());
         }
 
-        for (MetaMethod m:methods) {
+        for (MetaMethod m : methods) {
             rm.add(new RankableMethod(name, ta, m));
         }
         Collections.sort(rm);
 
-        List<MetaMethod> l =  new ArrayList<>(rm.size());
+        List<MetaMethod> l = new ArrayList<>(rm.size());
         for (RankableMethod m : rm) {
             if (l.size() > MAX_RECOMENDATIONS) break;
             if (m.score > MAX_METHOD_SCORE) break;
@@ -274,10 +274,11 @@ public class MethodRankHelper {
      * If c is a primitive class this method returns a boxed version
      * otherwise c is returned.
      * In java 1.5 this can be simplified thanks to the Type class.
+     *
      * @param c
      * @return a boxed version of c if c can be boxed, else c
      */
-    protected static Class boxVar(final Class c){
+    protected static Class boxVar(final Class c) {
         if (Boolean.TYPE.equals(c)) {
             return Boolean.class;
         } else if (Character.TYPE.equals(c)) {
@@ -306,12 +307,13 @@ public class MethodRankHelper {
      * The "cost" for a substitution is given as 10 instead of 1 in this version,
      * this enables transpositions and case modifications to have a lower cost than
      * substitutions.
-     *
+     * <p>
      * Currently the lowercase versions of t_j and s_i isn't cached, its probable
      * that some speed could be gained from this.
-     *
+     * <p>
      * This version is based on Chas Emerick's implementation of Levenshtein Distance
      * for jakarta commons.
+     *
      * @param s a CharSequence
      * @param t the CharSequence to be compared to s
      * @return a value representing the edit distance between s and t
@@ -390,11 +392,12 @@ public class MethodRankHelper {
 
     /**
      * Compares two characters whilst ignoring case.
+     *
      * @param a the first character
      * @param b the second character
      * @return true if the characters are equal
      */
-    private static boolean caselessCompare(final char a, final char b){
+    private static boolean caselessCompare(final char a, final char b) {
         return Character.toLowerCase(a) == Character.toLowerCase(b);
     }
 
@@ -404,6 +407,7 @@ public class MethodRankHelper {
      * No objects may be null.
      * This implementation is based on Chas Emerick's implementation of Levenshtein Distance
      * for jakarta commons.
+     *
      * @param s an Object array
      * @param t this array is compared to s
      * @return the edit distance between the two arrays
@@ -436,21 +440,21 @@ public class MethodRankHelper {
         int cost; // cost
 
         for (i = 0; i <= n; ++i) {
-            vals[1][i] = i * DL_DELETE ;
+            vals[1][i] = i * DL_DELETE;
         }
 
         for (j = 1; j <= m; ++j) {
             t_j = t[j - 1];
-            vals[0][0] = j * DL_DELETE ;
+            vals[0][0] = j * DL_DELETE;
 
             for (i = 1; i <= n; ++i) {
-                cost = s[i - 1].equals(t_j)? 0 : DL_SUBSTITUTION;
+                cost = s[i - 1].equals(t_j) ? 0 : DL_SUBSTITUTION;
                 // minimum of cell to the left+1, to the top+1, diagonally left and up +cost
                 vals[0][i] = Math.min(Math.min(vals[0][i - 1] + DL_DELETE, vals[1][i] + DL_DELETE), vals[1][i - 1] + cost);
 
                 // check for transposition
-                if(i > 1 && j > 1 && s[i -1].equals(t[j -2]) && s[i- 2].equals(t_j)){
-                    vals[0][i] = Math.min(vals[0][i], vals[2][i-2] + DL_TRANSPOSITION);
+                if (i > 1 && j > 1 && s[i - 1].equals(t[j - 2]) && s[i - 2].equals(t_j)) {
+                    vals[0][i] = Math.min(vals[0][i], vals[2][i - 2] + DL_TRANSPOSITION);
                 }
             }
 
@@ -469,13 +473,14 @@ public class MethodRankHelper {
     /**
      * Sentinel for null.
      */
-    private static class NullObject{
+    private static class NullObject {
     }
 
-    private static final class Pair<U,V> {
+    private static final class Pair<U, V> {
         private final U u;
         private final V v;
-        public Pair(U u, V v){
+
+        public Pair(U u, V v) {
             this.u = u;
             this.v = v;
         }
@@ -491,7 +496,7 @@ public class MethodRankHelper {
 
         public RankableField(final String name, final MetaProperty mp) {
             this.f = mp;
-            this.score = delDistance(name,mp.getName());
+            this.score = delDistance(name, mp.getName());
         }
 
         @Override
@@ -519,11 +524,11 @@ public class MethodRankHelper {
 
             // unbox primitives
             Class[] mArgs = new Class[m2.getParameterTypes().length];
-            for(int i =0; i < mArgs.length; ++i) {
+            for (int i = 0; i < mArgs.length; ++i) {
                 //All args have to be boxed since argumentTypes is always boxed
                 mArgs[i] = boxVar(m2.getParameterTypes()[i].getTheClass());
             }
-            int argDist = damerauLevenshteinDistance(argumentTypes,mArgs);
+            int argDist = damerauLevenshteinDistance(argumentTypes, mArgs);
             this.score = nameDist + argDist;
         }
 
@@ -545,12 +550,12 @@ public class MethodRankHelper {
             this.c = c;
             // unbox primitives
             Class[] cArgs = new Class[c.getParameterTypes().length];
-            for(int i =0; i < cArgs.length; ++i) {
+            for (int i = 0; i < cArgs.length; ++i) {
                 // all args have to be boxed since argumentTypes is always boxed
                 cArgs[i] = boxVar(c.getParameterTypes()[i]);
             }
 
-            this.score = damerauLevenshteinDistance(argumentTypes,cArgs);
+            this.score = damerauLevenshteinDistance(argumentTypes, cArgs);
         }
 
         @Override

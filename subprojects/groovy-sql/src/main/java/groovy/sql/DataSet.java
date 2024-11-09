@@ -74,19 +74,18 @@ import java.util.Set;
 public class DataSet extends Sql {
 
     private static final int[] EMPTY_INT_ARRAY = new int[0];
-
+    private final String table;
+    private final Sql delegate;
     private Closure where;
     private Closure sort;
     private boolean reversed = false;
     private DataSet parent;
-    private final String table;
     private SqlWhereVisitor visitor;
     private SqlOrderByVisitor sortVisitor;
     private String sql;
     private List<Object> params;
     private List<Object> batchData;
     private Set<String> batchKeys;
-    private final Sql delegate;
     private boolean withinDataSetBatch = false;
 
     public DataSet(Sql sql, Class type) {
@@ -131,6 +130,27 @@ public class DataSet extends Sql {
         this.reversed = true;
     }
 
+    private static void visit(Closure closure, CodeVisitorSupport visitor) {
+        if (closure != null) {
+            ClassNode classNode = closure.getMetaClass().getClassNode();
+            if (classNode == null) {
+                throw new GroovyRuntimeException(
+                    "DataSet unable to evaluate expression. AST not available for closure: " + closure.getMetaClass().getTheClass().getName() +
+                        ". Is the source code on the classpath?");
+            }
+            List methods = classNode.getDeclaredMethods("doCall");
+            if (!methods.isEmpty()) {
+                MethodNode method = (MethodNode) methods.get(0);
+                if (method != null) {
+                    Statement statement = method.getCode();
+                    if (statement != null) {
+                        statement.visit(visitor);
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     protected Connection createConnection() throws SQLException {
         return delegate.createConnection();
@@ -172,8 +192,8 @@ public class DataSet extends Sql {
      *
      * @param closure the closure containing batch and optionally other statements
      * @return an array of update counts containing one element for each
-     *         command in the batch.  The elements of the array are ordered according
-     *         to the order in which commands were added to the batch.
+     * command in the batch.  The elements of the array are ordered according
+     * to the order in which commands were added to the batch.
      * @throws SQLException if a database access error occurs,
      *                      or this method is called on a closed <code>Statement</code>, or the
      *                      driver does not support batch statements. Throws {@link java.sql.BatchUpdateException}
@@ -202,8 +222,8 @@ public class DataSet extends Sql {
      *                  0 means manual calls to executeBatch are required
      * @param closure   the closure containing batch and optionally other statements
      * @return an array of update counts containing one element for each
-     *         command in the batch.  The elements of the array are ordered according
-     *         to the order in which commands were added to the batch.
+     * command in the batch.  The elements of the array are ordered according
+     * to the order in which commands were added to the batch.
      * @throws SQLException if a database access error occurs, or the driver does not support batch statements.
      *                      Throws {@link java.sql.BatchUpdateException} (a subclass of <code>SQLException</code>)
      *                      if one of the commands sent to the database fails to execute properly.
@@ -335,7 +355,7 @@ public class DataSet extends Sql {
      * @throws SQLException if a database access error occurs
      * @see groovy.sql.Sql#eachRow(String, java.util.List, groovy.lang.Closure)
      */
-    public void each(@ClosureParams(value=SimpleType.class, options="groovy.sql.GroovyResultSet") Closure closure) throws SQLException {
+    public void each(@ClosureParams(value = SimpleType.class, options = "groovy.sql.GroovyResultSet") Closure closure) throws SQLException {
         eachRow(getSql(), getParameters(), closure);
     }
 
@@ -350,7 +370,7 @@ public class DataSet extends Sql {
      * @see groovy.sql.Sql#eachRow(String, java.util.List, int, int, groovy.lang.Closure)
      */
     public void each(int offset, int maxRows,
-                     @ClosureParams(value=SimpleType.class, options="groovy.sql.GroovyResultSet") Closure closure) throws SQLException {
+                     @ClosureParams(value = SimpleType.class, options = "groovy.sql.GroovyResultSet") Closure closure) throws SQLException {
         eachRow(getSql(), getParameters(), offset, maxRows, closure);
     }
 
@@ -427,30 +447,9 @@ public class DataSet extends Sql {
         return sortVisitor;
     }
 
-    private static void visit(Closure closure, CodeVisitorSupport visitor) {
-        if (closure != null) {
-            ClassNode classNode = closure.getMetaClass().getClassNode();
-            if (classNode == null) {
-                throw new GroovyRuntimeException(
-                        "DataSet unable to evaluate expression. AST not available for closure: " + closure.getMetaClass().getTheClass().getName() +
-                                ". Is the source code on the classpath?");
-            }
-            List methods = classNode.getDeclaredMethods("doCall");
-            if (!methods.isEmpty()) {
-                MethodNode method = (MethodNode) methods.get(0);
-                if (method != null) {
-                    Statement statement = method.getCode();
-                    if (statement != null) {
-                        statement.visit(visitor);
-                    }
-                }
-            }
-        }
-    }
-
     /*
-    * create a subset of the original dataset
-    */
+     * create a subset of the original dataset
+     */
     public DataSet createView(Closure criteria) {
         return new DataSet(this, criteria);
     }
@@ -470,7 +469,7 @@ public class DataSet extends Sql {
      * is defined as starting at a 1-based offset, and containing a maximum number
      * of rows.
      *
-     * @param offset the 1-based offset for the first row to be processed
+     * @param offset  the 1-based offset for the first row to be processed
      * @param maxRows the maximum number of rows to be processed
      * @return a list of GroovyRowResult objects from the dataset
      * @throws SQLException if a database error occurs

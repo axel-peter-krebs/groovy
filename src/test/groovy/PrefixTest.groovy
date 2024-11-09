@@ -84,8 +84,8 @@ class PrefixTest extends GroovyTestCase {
     void testPrefixAndPostfix() {
         def u = 0
 
-        assert -1 == -- u --
-        assert 0 == ++ u ++
+        assert -1 == --u--
+        assert 0 == ++u++
         assert -2 == (--(--u))
         assert -1 == u
     }

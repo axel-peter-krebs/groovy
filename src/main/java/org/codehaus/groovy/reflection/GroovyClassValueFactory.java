@@ -23,17 +23,17 @@ import org.codehaus.groovy.reflection.GroovyClassValue.ComputeValue;
 import org.codehaus.groovy.reflection.v7.GroovyClassValueJava7;
 
 class GroovyClassValueFactory {
-	/**
-	 * This flag is introduced as a (hopefully) temporary workaround for a JVM bug, that is to say that using
-	 * ClassValue prevents the classes and classloaders from being unloaded.
-	 * See https://bugs.openjdk.java.net/browse/JDK-8136353
-	 * This issue does not exist on IBM Java (J9) so use ClassValue by default on that JVM.
-	 */
-	private static final boolean USE_CLASSVALUE = Boolean.parseBoolean(SystemUtil.getSystemPropertySafe("groovy.use.classvalue", "true"));
+    /**
+     * This flag is introduced as a (hopefully) temporary workaround for a JVM bug, that is to say that using
+     * ClassValue prevents the classes and classloaders from being unloaded.
+     * See https://bugs.openjdk.java.net/browse/JDK-8136353
+     * This issue does not exist on IBM Java (J9) so use ClassValue by default on that JVM.
+     */
+    private static final boolean USE_CLASSVALUE = Boolean.parseBoolean(SystemUtil.getSystemPropertySafe("groovy.use.classvalue", "true"));
 
-	public static <T> GroovyClassValue<T> createGroovyClassValue(ComputeValue<T> computeValue) {
-		return (USE_CLASSVALUE)
-                ? new GroovyClassValueJava7<>(computeValue)
-                : new GroovyClassValuePreJava7<>(computeValue);
-	}
+    public static <T> GroovyClassValue<T> createGroovyClassValue(ComputeValue<T> computeValue) {
+        return (USE_CLASSVALUE)
+            ? new GroovyClassValueJava7<>(computeValue)
+            : new GroovyClassValuePreJava7<>(computeValue);
+    }
 }

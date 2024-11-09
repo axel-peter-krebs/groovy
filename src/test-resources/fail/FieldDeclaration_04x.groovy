@@ -22,4 +22,5 @@ class FieldHolder {
     private num = 1
     def num
 }
+
 FieldHolder.class

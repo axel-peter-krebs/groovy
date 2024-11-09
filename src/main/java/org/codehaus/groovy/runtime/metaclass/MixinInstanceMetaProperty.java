@@ -36,45 +36,47 @@ public class MixinInstanceMetaProperty extends MetaBeanProperty {
     }
 
     private static MetaMethod createSetter(final MetaProperty property, final MixinInMetaClass mixinInMetaClass) {
-      return new MetaMethod() {
-          final String name = getSetterName(property.getName());
-          {
-              setParametersTypes (new CachedClass [] {ReflectionCache.getCachedClass(property.getType())} );
-          }
+        return new MetaMethod() {
+            final String name = getSetterName(property.getName());
 
-          @Override
-          public int getModifiers() {
-              return Modifier.PUBLIC;
-          }
+            {
+                setParametersTypes(new CachedClass[]{ReflectionCache.getCachedClass(property.getType())});
+            }
 
-          @Override
-          public String getName() {
-              return name;
-          }
+            @Override
+            public int getModifiers() {
+                return Modifier.PUBLIC;
+            }
 
-          @Override
-          public Class getReturnType() {
-              return property.getType();
-          }
+            @Override
+            public String getName() {
+                return name;
+            }
 
-          @Override
-          public CachedClass getDeclaringClass() {
-              return mixinInMetaClass.getInstanceClass();
-          }
+            @Override
+            public Class getReturnType() {
+                return property.getType();
+            }
 
-          @Override
-          public Object invoke(Object object, Object[] arguments) {
-              property.setProperty(mixinInMetaClass.getMixinInstance(object), arguments[0]);
-              return null;
-          }
-      };
+            @Override
+            public CachedClass getDeclaringClass() {
+                return mixinInMetaClass.getInstanceClass();
+            }
+
+            @Override
+            public Object invoke(Object object, Object[] arguments) {
+                property.setProperty(mixinInMetaClass.getMixinInstance(object), arguments[0]);
+                return null;
+            }
+        };
     }
 
     private static MetaMethod createGetter(final MetaProperty property, final MixinInMetaClass mixinInMetaClass) {
         return new MetaMethod() {
             final String name = getGetterName(property.getName(), property.getType());
+
             {
-                setParametersTypes (CachedClass.EMPTY_ARRAY);
+                setParametersTypes(CachedClass.EMPTY_ARRAY);
             }
 
             @Override

@@ -107,63 +107,7 @@ import java.util.WeakHashMap;
  */
 public class TemplateServlet extends AbstractHttpServlet {
 
-    /**
-     * Simple cache entry. If a file is supplied, then the entry is validated against
-     * last modified and length attributes of the specified file.
-     */
-    private static class TemplateCacheEntry {
-
-        final Date date;
-        long hit;
-        long lastModified;
-        long length;
-        final Template template;
-
-        TemplateCacheEntry(File file, Template template, boolean timestamp) {
-            if (template == null) {
-                throw new NullPointerException("template");
-            }
-            if (timestamp) {
-                this.date = new Date(System.currentTimeMillis());
-            } else {
-                this.date = null;
-            }
-            this.hit = 0;
-            if (file != null) {
-                this.lastModified = file.lastModified();
-                this.length = file.length();
-            }
-            this.template = template;
-        }
-
-        /**
-         * Checks the passed file attributes against those cached ones.
-         *
-         * @param file Other file handle to compare to the cached values. May be null in which case the validation is skipped.
-         * @return <code>true</code> if all measured values match, else <code>false</code>
-         */
-        public boolean validate(File file) {
-            if (file != null) {
-                if (file.lastModified() != this.lastModified) {
-                    return false;
-                }
-                if (file.length() != this.length) {
-                    return false;
-                }
-            }
-            hit++;
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            if (date == null) {
-                return "Hit #" + hit;
-            }
-            return "Hit #" + hit + " since " + date;
-        }
-    }
-
+    private static final String GROOVY_SOURCE_ENCODING = "groovy.source.encoding";
     /**
      * Simple file name to template cache map.
      */
@@ -181,8 +125,6 @@ public class TemplateServlet extends AbstractHttpServlet {
 
     private String fileEncodingParamVal;
 
-    private static final String GROOVY_SOURCE_ENCODING = "groovy.source.encoding";
-
     /**
      * Create new TemplateServlet.
      */
@@ -197,7 +139,8 @@ public class TemplateServlet extends AbstractHttpServlet {
      * Find a cached template for a given key. If a <code>File</code> is passed then
      * any cached object is validated against the File to determine if it is out of
      * date
-     * @param key a unique key for the template, such as a file's absolutePath or a URL.
+     *
+     * @param key  a unique key for the template, such as a file's absolutePath or a URL.
      * @param file a file to be used to determine if the cached template is stale. May be null.
      * @return The cached template, or null if there was no cached entry, or the entry was stale.
      */
@@ -234,9 +177,10 @@ public class TemplateServlet extends AbstractHttpServlet {
 
     /**
      * Compile the template and store it in the cache.
-     * @param key a unique key for the template, such as a file's absolutePath or a URL.
+     *
+     * @param key         a unique key for the template, such as a file's absolutePath or a URL.
      * @param inputStream an InputStream for the template's source.
-     * @param file a file to be used to determine if the cached template is stale. May be null.
+     * @param file        a file to be used to determine if the cached template is stale. May be null.
      * @return the created template.
      * @throws Exception Any exception when creating the template.
      */
@@ -249,7 +193,7 @@ public class TemplateServlet extends AbstractHttpServlet {
 
         try {
             String fileEncoding = (fileEncodingParamVal != null) ? fileEncodingParamVal :
-                    System.getProperty(GROOVY_SOURCE_ENCODING);
+                System.getProperty(GROOVY_SOURCE_ENCODING);
 
             reader = fileEncoding == null ? new InputStreamReader(inputStream) : new InputStreamReader(inputStream, fileEncoding);
             Template template = engine.createTemplate(reader);
@@ -289,8 +233,8 @@ public class TemplateServlet extends AbstractHttpServlet {
      * template engine. This new instance is put to the cache for consecutive
      * calls.
      *
-     * @return The template that will produce the response text.
      * @param file The file containing the template source.
+     * @return The template that will produce the response text.
      * @throws ServletException If the request specified an invalid template source file
      */
     protected Template getTemplate(File file) throws ServletException {
@@ -320,8 +264,8 @@ public class TemplateServlet extends AbstractHttpServlet {
      * created by the underlying template engine. This new instance is put
      * to the cache for consecutive calls.
      *
-     * @return The template that will produce the response text.
      * @param url The URL containing the template source..
+     * @return The template that will produce the response text.
      * @throws ServletException If the request specified an invalid template source URL
      */
     protected Template getTemplate(URL url) throws ServletException {
@@ -484,10 +428,10 @@ public class TemplateServlet extends AbstractHttpServlet {
 
         if (generateBy) {
             String sb = "\n<!-- Generated by Groovy TemplateServlet [create/get=" +
-                    Long.toString(getMillis) +
-                    " ms, make=" +
-                    Long.toString(makeMillis) +
-                    " ms] -->\n";
+                Long.toString(getMillis) +
+                " ms, make=" +
+                Long.toString(makeMillis) +
+                " ms] -->\n";
             out.write(sb);
         }
 
@@ -498,6 +442,63 @@ public class TemplateServlet extends AbstractHttpServlet {
 
         if (verbose) {
             log("Template \"" + name + "\" request responded. [create/get=" + getMillis + " ms, make=" + makeMillis + " ms]");
+        }
+    }
+
+    /**
+     * Simple cache entry. If a file is supplied, then the entry is validated against
+     * last modified and length attributes of the specified file.
+     */
+    private static class TemplateCacheEntry {
+
+        final Date date;
+        final Template template;
+        long hit;
+        long lastModified;
+        long length;
+
+        TemplateCacheEntry(File file, Template template, boolean timestamp) {
+            if (template == null) {
+                throw new NullPointerException("template");
+            }
+            if (timestamp) {
+                this.date = new Date(System.currentTimeMillis());
+            } else {
+                this.date = null;
+            }
+            this.hit = 0;
+            if (file != null) {
+                this.lastModified = file.lastModified();
+                this.length = file.length();
+            }
+            this.template = template;
+        }
+
+        /**
+         * Checks the passed file attributes against those cached ones.
+         *
+         * @param file Other file handle to compare to the cached values. May be null in which case the validation is skipped.
+         * @return <code>true</code> if all measured values match, else <code>false</code>
+         */
+        public boolean validate(File file) {
+            if (file != null) {
+                if (file.lastModified() != this.lastModified) {
+                    return false;
+                }
+                if (file.length() != this.length) {
+                    return false;
+                }
+            }
+            hit++;
+            return true;
+        }
+
+        @Override
+        public String toString() {
+            if (date == null) {
+                return "Hit #" + hit;
+            }
+            return "Hit #" + hit + " since " + date;
         }
     }
 }

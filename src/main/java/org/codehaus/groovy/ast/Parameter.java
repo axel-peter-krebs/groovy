@@ -29,9 +29,8 @@ import static org.objectweb.asm.Opcodes.ACC_MANDATED;
 public class Parameter extends AnnotatedNode implements Variable {
 
     public static final Parameter[] EMPTY_ARRAY = {};
-
-    private ClassNode type;
     private final String name;
+    private ClassNode type;
     private ClassNode originType;
     private boolean dynamicTyped;
     private boolean closureShare;

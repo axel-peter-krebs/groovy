@@ -28,7 +28,7 @@ class GetterBug extends GroovyTestCase {
     def bar
 
     String getFoo() {
-        if (foo == null) { 
+        if (foo == null) {
             foo = "James"
         }
         return foo
@@ -36,7 +36,7 @@ class GetterBug extends GroovyTestCase {
 
     void setFoo(String foo) {
         this.foo = foo
-       }
+    }
 
     void testTypedGetterAndSetter() {
         def value = getFoo()

@@ -56,88 +56,88 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.ctorX;
 import static org.codehaus.groovy.ast.tools.GeneralUtils.isOrImplements;
 
 public class ImmutablePropertyUtils {
+    public static final ClassNode IMMUTABLE_OPTIONS_TYPE = ClassHelper.makeWithoutCaching(ImmutableOptions.class, false);
     private static final ClassNode DATE_TYPE = ClassHelper.make(Date.class);
-    public  static final ClassNode IMMUTABLE_OPTIONS_TYPE = ClassHelper.makeWithoutCaching(ImmutableOptions.class, false);
-
     private static final String MEMBER_KNOWN_IMMUTABLE_CLASSES = "knownImmutableClasses";
     private static final String MEMBER_KNOWN_IMMUTABLES = "knownImmutables";
 
     /**
      * Currently leaving BigInteger and BigDecimal in list but see:
      * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6348370
-     *
+     * <p>
      * Also, Color is not final so while not normally used with child
      * classes, it isn't strictly immutable. Use at your own risk.
-     *
+     * <p>
      * This list can be extended by providing "known immutable" classes
      * via Immutable.knownImmutableClasses
      */
     private static final Set<String> BUILTIN_IMMUTABLES = Set.of(
-            "boolean",
-            "byte",
-            "char",
-            "double",
-            "float",
-            "int",
-            "long",
-            "short",
-            "java.lang.Class",
-            "java.lang.Boolean",
-            "java.lang.Byte",
-            "java.lang.Character",
-            "java.lang.Double",
-            "java.lang.Float",
-            "java.lang.Integer",
-            "java.lang.Long",
-            "java.lang.Short",
-            "java.lang.String",
-            "java.math.BigInteger",
-            "java.math.BigDecimal",
-            "java.awt.Color",
-            "java.net.URI",
-            "java.util.UUID",
-            "java.time.DayOfWeek",
-            "java.time.Duration",
-            "java.time.Instant",
-            "java.time.LocalDate",
-            "java.time.LocalDateTime",
-            "java.time.LocalTime",
-            "java.time.Month",
-            "java.time.MonthDay",
-            "java.time.OffsetDateTime",
-            "java.time.OffsetTime",
-            "java.time.Period",
-            "java.time.Year",
-            "java.time.YearMonth",
-            "java.time.ZonedDateTime",
-            "java.time.ZoneOffset",
-            "java.time.ZoneRegion",
-            "java.time.chrono.ChronoLocalDate",
-            "java.time.chrono.ChronoLocalDateTime",
-            "java.time.chrono.Chronology",
-            "java.time.chrono.ChronoPeriod",
-            "java.time.chrono.ChronoZonedDateTime",
-            "java.time.chrono.Era",
-            "java.time.format.DecimalStyle",
-            "java.time.format.FormatStyle",
-            "java.time.format.ResolverStyle",
-            "java.time.format.SignStyle",
-            "java.time.format.TextStyle",
-            "java.time.temporal.IsoFields",
-            "java.time.temporal.JulianFields",
-            "java.time.temporal.ValueRange",
-            "java.time.temporal.WeekFields",
-            "java.io.File"
+        "boolean",
+        "byte",
+        "char",
+        "double",
+        "float",
+        "int",
+        "long",
+        "short",
+        "java.lang.Class",
+        "java.lang.Boolean",
+        "java.lang.Byte",
+        "java.lang.Character",
+        "java.lang.Double",
+        "java.lang.Float",
+        "java.lang.Integer",
+        "java.lang.Long",
+        "java.lang.Short",
+        "java.lang.String",
+        "java.math.BigInteger",
+        "java.math.BigDecimal",
+        "java.awt.Color",
+        "java.net.URI",
+        "java.util.UUID",
+        "java.time.DayOfWeek",
+        "java.time.Duration",
+        "java.time.Instant",
+        "java.time.LocalDate",
+        "java.time.LocalDateTime",
+        "java.time.LocalTime",
+        "java.time.Month",
+        "java.time.MonthDay",
+        "java.time.OffsetDateTime",
+        "java.time.OffsetTime",
+        "java.time.Period",
+        "java.time.Year",
+        "java.time.YearMonth",
+        "java.time.ZonedDateTime",
+        "java.time.ZoneOffset",
+        "java.time.ZoneRegion",
+        "java.time.chrono.ChronoLocalDate",
+        "java.time.chrono.ChronoLocalDateTime",
+        "java.time.chrono.Chronology",
+        "java.time.chrono.ChronoPeriod",
+        "java.time.chrono.ChronoZonedDateTime",
+        "java.time.chrono.Era",
+        "java.time.format.DecimalStyle",
+        "java.time.format.FormatStyle",
+        "java.time.format.ResolverStyle",
+        "java.time.format.SignStyle",
+        "java.time.format.TextStyle",
+        "java.time.temporal.IsoFields",
+        "java.time.temporal.JulianFields",
+        "java.time.temporal.ValueRange",
+        "java.time.temporal.WeekFields",
+        "java.io.File"
     );
 
     private static final Set<String> BUILTIN_IMMUTABLE_ANNOTATIONS = Set.of(
-            "groovy.transform.Immutable",
-            "groovy.transform.KnownImmutable",
-          //"javax.annotation.concurrent.Immutable", // its RetentionPolicy is CLASS, can not be got via reflection
-            "net.jcip.annotations.Immutable" // supported by Findbugs and IntelliJ IDEA
+        "groovy.transform.Immutable",
+        "groovy.transform.KnownImmutable",
+        //"javax.annotation.concurrent.Immutable", // its RetentionPolicy is CLASS, can not be got via reflection
+        "net.jcip.annotations.Immutable" // supported by Findbugs and IntelliJ IDEA
     );
 
-    private ImmutablePropertyUtils() { }
+    private ImmutablePropertyUtils() {
+    }
 
     //--------------------------------------------------------------------------
 
@@ -153,8 +153,8 @@ public class ImmutablePropertyUtils {
                         expr.visit(visitor);
                         super.visit(visitor);
                     } else {
-                        CompileStack compileStack = ((AsmClassGenerator)visitor).getController().getCompileStack();
-                        OperandStack operandStack = ((AsmClassGenerator)visitor).getController().getOperandStack();
+                        CompileStack compileStack = ((AsmClassGenerator) visitor).getController().getCompileStack();
+                        OperandStack operandStack = ((AsmClassGenerator) visitor).getController().getOperandStack();
                         compileStack.pushLHS(false);
 
                         compileStack.pushImplicitThis(false);
@@ -166,14 +166,15 @@ public class ImmutablePropertyUtils {
                         compileStack.popLHS();
                     }
                 }
+
                 @Override
                 public void visit(final MethodVisitor mv) {
                     Handle bootstrap = new Handle(
-                            Opcodes.H_INVOKESTATIC,
-                            "org/codehaus/groovy/vmplugin/v8/IndyInterface",
-                            "bootstrap",
-                            MethodType.methodType(CallSite.class, MethodHandles.Lookup.class, String.class, MethodType.class, String.class, int.class).toMethodDescriptorString(),
-                            false);
+                        Opcodes.H_INVOKESTATIC,
+                        "org/codehaus/groovy/vmplugin/v8/IndyInterface",
+                        "bootstrap",
+                        MethodType.methodType(CallSite.class, MethodHandles.Lookup.class, String.class, MethodType.class, String.class, int.class).toMethodDescriptorString(),
+                        false);
                     mv.visitInvokeDynamicInsn("invoke", "(Ljava/lang/Object;)Ljava/lang/Object;", bootstrap, new Object[]{"clone", 0});
                 }
             };
@@ -195,12 +196,12 @@ public class ImmutablePropertyUtils {
 
     public static String createErrorMessage(final String className, final String fieldName, final String typeName, final String mode) {
         return "Unsupported type (" + prettyTypeName(typeName) + ") found for field '" + fieldName + "' while " + mode + " immutable class " + className + ".\n" +
-                "Immutable classes only support properties with effectively immutable types including:\n" +
-                "- Strings, primitive types, wrapper types, Class, BigInteger and BigDecimal, enums\n" +
-                "- classes annotated with @KnownImmutable and known immutables (java.awt.Color, java.net.URI)\n" +
-                "- Cloneable classes, collections, maps and arrays, and other classes with special handling\n" +
-                "  (java.util.Date and various java.time.* classes and interfaces)\n" +
-                "Other restrictions apply, please see the groovydoc for " + IMMUTABLE_OPTIONS_TYPE.getNameWithoutPackage() + " for further details";
+            "Immutable classes only support properties with effectively immutable types including:\n" +
+            "- Strings, primitive types, wrapper types, Class, BigInteger and BigDecimal, enums\n" +
+            "- classes annotated with @KnownImmutable and known immutables (java.awt.Color, java.net.URI)\n" +
+            "- Cloneable classes, collections, maps and arrays, and other classes with special handling\n" +
+            "  (java.util.Date and various java.time.* classes and interfaces)\n" +
+            "Other restrictions apply, please see the groovydoc for " + IMMUTABLE_OPTIONS_TYPE.getNameWithoutPackage() + " for further details";
     }
 
     private static String prettyTypeName(final String name) {
@@ -221,8 +222,8 @@ public class ImmutablePropertyUtils {
             }
         }
         return fieldType.isEnum() ||
-                ClassHelper.isPrimitiveType(fieldType) ||
-                hasImmutableAnnotation(fieldType);
+            ClassHelper.isPrimitiveType(fieldType) ||
+            hasImmutableAnnotation(fieldType);
     }
 
     private static boolean builtinOrDeemedType(final ClassNode fieldType, final List<String> knownImmutableClasses) {
@@ -279,7 +280,8 @@ public class ImmutablePropertyUtils {
                 immutables.add((String) ((ConstantExpression) listItemExpression).getValue());
             }
         }
-        if (!xform.checkPropertyList(cNode, immutables, "knownImmutables", anno, "immutable class", false)) return immutables;
+        if (!xform.checkPropertyList(cNode, immutables, "knownImmutables", anno, "immutable class", false))
+            return immutables;
 
         return immutables;
     }

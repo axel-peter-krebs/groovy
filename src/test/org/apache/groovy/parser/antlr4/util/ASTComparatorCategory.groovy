@@ -101,93 +101,97 @@ import org.codehaus.groovy.syntax.Token
 
 import java.util.logging.Level
 
-@CompileStatic @Log @SuppressWarnings('GroovyUnusedDeclaration')
+@CompileStatic
+@Log
+@SuppressWarnings('GroovyUnusedDeclaration')
 class ASTComparatorCategory {
-    static { log.level = Level.WARNING }
+    static {
+        log.level = Level.WARNING
+    }
     public static final List<String> LOCATION_IGNORE_LIST = ['columnNumber', 'lineNumber', 'lastColumnNumber', 'lastLineNumber', 'startLine'].asUnmodifiable()
     private static final List<String> EXPRESSION_IGNORE_LIST = (['text'] + LOCATION_IGNORE_LIST).asUnmodifiable()
 
     public static final Map<Class, List<String>> DEFAULT_CONFIGURATION = [
-            (ClassNode)                   : ['module', 'declaredMethodsMap', 'plainNodeReference', 'typeClass', 'allInterfaces', 'orAddStaticConstructorNode', 'allDeclaredMethods', 'unresolvedSuperClass', 'innerClasses'] + LOCATION_IGNORE_LIST,
-            (ConstructorNode)             : ['declaringClass'],
-            (DynamicVariable)             : [] as List<String>,
-            (EnumConstantClassNode)       : ['typeClass'],
-            (FieldNode)                   : ['owner', 'declaringClass', 'initialValueExpression', 'assignToken'],
-            (GenericsType)                : [] as List<String>,
-            (ImportNode)                  : LOCATION_IGNORE_LIST,
-            (InnerClassNode)              : ['module', 'declaredMethodsMap', 'plainNodeReference', 'typeClass', 'allInterfaces', 'orAddStaticConstructorNode', 'allDeclaredMethods', 'unresolvedSuperClass', 'innerClasses'] + LOCATION_IGNORE_LIST,
-            (InterfaceHelperClassNode)    : [] as List<String>,
-            (MethodNode)                  : ['text', 'declaringClass'],
-            (MixinNode)                   : [] as List<String>,
-            (ModuleNode)                  : ['context'],
-            (PackageNode)                 : [] as List<String>,
-            (Parameter)                   : [] as List<String>,
-            (PropertyNode)                : ['declaringClass', 'initialValueExpression', 'assignToken'],
-            (Variable)                    : [] as List<String>,
-            (VariableScope)               : ['clazzScope', 'parent', 'declaredVariablesIterator'],
-            (Token)                       : ['root', 'startColumn'],
-            (AnnotationNode)              : (['text'] + LOCATION_IGNORE_LIST),
-            (AssertStatement)             : ['text'],
-            (BlockStatement)              : ['columnNumber', 'lineNumber', 'lastColumnNumber', 'lastLineNumber', 'text'],
-            (BreakStatement)              : ['text'],
-            (CaseStatement)               : ['text'],
-            (CatchStatement)              : ['text'] + LOCATION_IGNORE_LIST,
-            (ContinueStatement)           : ['text'],
-            (DoWhileStatement)            : ['text'],
-            (EmptyStatement)              : ['text'],
-            (ExpressionStatement)         : ['text'],
-            (ForStatement)                : ['text'],
-            (IfStatement)                 : ['text'],
-            (LoopingStatement)            : ['text'],
-            (ReturnStatement)             : ['text'],
-            (SwitchStatement)             : ['columnNumber', 'lineNumber', 'lastColumnNumber', 'lastLineNumber', 'text'],
-            (SynchronizedStatement)       : ['text'],
-            (ThrowStatement)              : ['text'],
-            (TryCatchStatement)           : ['text'] + LOCATION_IGNORE_LIST,
-            (WhileStatement)              : ['text'],
-            (AnnotationConstantExpression): EXPRESSION_IGNORE_LIST,
-            (ArgumentListExpression)      : EXPRESSION_IGNORE_LIST,
-            (ArrayExpression)             : EXPRESSION_IGNORE_LIST,
-            (AttributeExpression)         : EXPRESSION_IGNORE_LIST,
-            (BinaryExpression)            : EXPRESSION_IGNORE_LIST,
-            (BitwiseNegationExpression)   : EXPRESSION_IGNORE_LIST,
-            (BooleanExpression)           : EXPRESSION_IGNORE_LIST,
-            (CastExpression)              : EXPRESSION_IGNORE_LIST,
-            (ClassExpression)             : EXPRESSION_IGNORE_LIST,
-            (ClosureExpression)           : EXPRESSION_IGNORE_LIST,
-            (ClosureListExpression)       : EXPRESSION_IGNORE_LIST,
-            (ConstantExpression)          : EXPRESSION_IGNORE_LIST,
-            (ConstructorCallExpression)   : EXPRESSION_IGNORE_LIST,
-            (DeclarationExpression)       : ['text', 'columnNumber', 'lineNumber', 'lastColumnNumber', 'lastLineNumber'],
-            (ElvisOperatorExpression)     : EXPRESSION_IGNORE_LIST,
-            (EmptyExpression)             : EXPRESSION_IGNORE_LIST,
-            (ExpressionTransformer)       : EXPRESSION_IGNORE_LIST,
-            (FieldExpression)             : EXPRESSION_IGNORE_LIST,
-            (GStringExpression)           : EXPRESSION_IGNORE_LIST,
-            (ListExpression)              : EXPRESSION_IGNORE_LIST,
-            (MapEntryExpression)          : EXPRESSION_IGNORE_LIST,
-            (MapExpression)               : EXPRESSION_IGNORE_LIST,
-            (MethodCall)                  : EXPRESSION_IGNORE_LIST,
-            (MethodCallExpression)        : EXPRESSION_IGNORE_LIST,
-            (MethodPointerExpression)     : EXPRESSION_IGNORE_LIST,
-            (NamedArgumentListExpression) : EXPRESSION_IGNORE_LIST,
-            (NotExpression)               : EXPRESSION_IGNORE_LIST,
-            (PostfixExpression)           : EXPRESSION_IGNORE_LIST,
-            (PrefixExpression)            : EXPRESSION_IGNORE_LIST,
-            (PropertyExpression)          : EXPRESSION_IGNORE_LIST,
-            (RangeExpression)             : EXPRESSION_IGNORE_LIST,
-            (SpreadExpression)            : EXPRESSION_IGNORE_LIST,
-            (SpreadMapExpression)         : EXPRESSION_IGNORE_LIST,
-            (StaticMethodCallExpression)  : EXPRESSION_IGNORE_LIST,
-            (TernaryExpression)           : EXPRESSION_IGNORE_LIST,
-            (TupleExpression)             : EXPRESSION_IGNORE_LIST,
-            (UnaryMinusExpression)        : EXPRESSION_IGNORE_LIST,
-            (UnaryPlusExpression)         : EXPRESSION_IGNORE_LIST,
-            (VariableExpression)          : EXPRESSION_IGNORE_LIST,
+        (ClassNode)                   : ['module', 'declaredMethodsMap', 'plainNodeReference', 'typeClass', 'allInterfaces', 'orAddStaticConstructorNode', 'allDeclaredMethods', 'unresolvedSuperClass', 'innerClasses'] + LOCATION_IGNORE_LIST,
+        (ConstructorNode)             : ['declaringClass'],
+        (DynamicVariable)             : [] as List<String>,
+        (EnumConstantClassNode)       : ['typeClass'],
+        (FieldNode)                   : ['owner', 'declaringClass', 'initialValueExpression', 'assignToken'],
+        (GenericsType)                : [] as List<String>,
+        (ImportNode)                  : LOCATION_IGNORE_LIST,
+        (InnerClassNode)              : ['module', 'declaredMethodsMap', 'plainNodeReference', 'typeClass', 'allInterfaces', 'orAddStaticConstructorNode', 'allDeclaredMethods', 'unresolvedSuperClass', 'innerClasses'] + LOCATION_IGNORE_LIST,
+        (InterfaceHelperClassNode)    : [] as List<String>,
+        (MethodNode)                  : ['text', 'declaringClass'],
+        (MixinNode)                   : [] as List<String>,
+        (ModuleNode)                  : ['context'],
+        (PackageNode)                 : [] as List<String>,
+        (Parameter)                   : [] as List<String>,
+        (PropertyNode)                : ['declaringClass', 'initialValueExpression', 'assignToken'],
+        (Variable)                    : [] as List<String>,
+        (VariableScope)               : ['clazzScope', 'parent', 'declaredVariablesIterator'],
+        (Token)                       : ['root', 'startColumn'],
+        (AnnotationNode)              : (['text'] + LOCATION_IGNORE_LIST),
+        (AssertStatement)             : ['text'],
+        (BlockStatement)              : ['columnNumber', 'lineNumber', 'lastColumnNumber', 'lastLineNumber', 'text'],
+        (BreakStatement)              : ['text'],
+        (CaseStatement)               : ['text'],
+        (CatchStatement)              : ['text'] + LOCATION_IGNORE_LIST,
+        (ContinueStatement)           : ['text'],
+        (DoWhileStatement)            : ['text'],
+        (EmptyStatement)              : ['text'],
+        (ExpressionStatement)         : ['text'],
+        (ForStatement)                : ['text'],
+        (IfStatement)                 : ['text'],
+        (LoopingStatement)            : ['text'],
+        (ReturnStatement)             : ['text'],
+        (SwitchStatement)             : ['columnNumber', 'lineNumber', 'lastColumnNumber', 'lastLineNumber', 'text'],
+        (SynchronizedStatement)       : ['text'],
+        (ThrowStatement)              : ['text'],
+        (TryCatchStatement)           : ['text'] + LOCATION_IGNORE_LIST,
+        (WhileStatement)              : ['text'],
+        (AnnotationConstantExpression): EXPRESSION_IGNORE_LIST,
+        (ArgumentListExpression)      : EXPRESSION_IGNORE_LIST,
+        (ArrayExpression)             : EXPRESSION_IGNORE_LIST,
+        (AttributeExpression)         : EXPRESSION_IGNORE_LIST,
+        (BinaryExpression)            : EXPRESSION_IGNORE_LIST,
+        (BitwiseNegationExpression)   : EXPRESSION_IGNORE_LIST,
+        (BooleanExpression)           : EXPRESSION_IGNORE_LIST,
+        (CastExpression)              : EXPRESSION_IGNORE_LIST,
+        (ClassExpression)             : EXPRESSION_IGNORE_LIST,
+        (ClosureExpression)           : EXPRESSION_IGNORE_LIST,
+        (ClosureListExpression)       : EXPRESSION_IGNORE_LIST,
+        (ConstantExpression)          : EXPRESSION_IGNORE_LIST,
+        (ConstructorCallExpression)   : EXPRESSION_IGNORE_LIST,
+        (DeclarationExpression)       : ['text', 'columnNumber', 'lineNumber', 'lastColumnNumber', 'lastLineNumber'],
+        (ElvisOperatorExpression)     : EXPRESSION_IGNORE_LIST,
+        (EmptyExpression)             : EXPRESSION_IGNORE_LIST,
+        (ExpressionTransformer)       : EXPRESSION_IGNORE_LIST,
+        (FieldExpression)             : EXPRESSION_IGNORE_LIST,
+        (GStringExpression)           : EXPRESSION_IGNORE_LIST,
+        (ListExpression)              : EXPRESSION_IGNORE_LIST,
+        (MapEntryExpression)          : EXPRESSION_IGNORE_LIST,
+        (MapExpression)               : EXPRESSION_IGNORE_LIST,
+        (MethodCall)                  : EXPRESSION_IGNORE_LIST,
+        (MethodCallExpression)        : EXPRESSION_IGNORE_LIST,
+        (MethodPointerExpression)     : EXPRESSION_IGNORE_LIST,
+        (NamedArgumentListExpression) : EXPRESSION_IGNORE_LIST,
+        (NotExpression)               : EXPRESSION_IGNORE_LIST,
+        (PostfixExpression)           : EXPRESSION_IGNORE_LIST,
+        (PrefixExpression)            : EXPRESSION_IGNORE_LIST,
+        (PropertyExpression)          : EXPRESSION_IGNORE_LIST,
+        (RangeExpression)             : EXPRESSION_IGNORE_LIST,
+        (SpreadExpression)            : EXPRESSION_IGNORE_LIST,
+        (SpreadMapExpression)         : EXPRESSION_IGNORE_LIST,
+        (StaticMethodCallExpression)  : EXPRESSION_IGNORE_LIST,
+        (TernaryExpression)           : EXPRESSION_IGNORE_LIST,
+        (TupleExpression)             : EXPRESSION_IGNORE_LIST,
+        (UnaryMinusExpression)        : EXPRESSION_IGNORE_LIST,
+        (UnaryPlusExpression)         : EXPRESSION_IGNORE_LIST,
+        (VariableExpression)          : EXPRESSION_IGNORE_LIST,
     ].asUnmodifiable()
 
     public static final Map<Class, List<String>> COLLECTION_PROPERTY_CONFIGURATION = [
-            (ModuleNode): ['classes', 'name'] as List<String>
+        (ModuleNode): ['classes', 'name'] as List<String>
     ].asUnmodifiable()
 
     public static Map<Class, List<String>> configuration = DEFAULT_CONFIGURATION
@@ -225,47 +229,47 @@ class ASTComparatorCategory {
         def objects = [a, b]
         Boolean res = this.objects[objects]
         if (res != null) {
-            log.info("Skipping [$a, $b] comparison as they are ${ res ? "" : "un" }equal.")
+            log.info("Skipping [$a, $b] comparison as they are ${res ? "" : "un"}equal.")
             return res
-        }
-        else if (this.objects.containsKey(objects)) {
+        } else if (this.objects.containsKey(objects)) {
             log.info("Skipping as they are processed at higher levels.")
             return true
         }
 
         this.objects[objects] = null
-        log.info("Equals was called for ${ a.getClass() } ${ a.hashCode() }, $lastName")
+        log.info("Equals was called for ${a.getClass()} ${a.hashCode()}, $lastName")
         if (a.is(b))
             return true
 
-        def difference = a.metaClass.properties.find { MetaProperty mp  ->
+        def difference = a.metaClass.properties.find { MetaProperty mp ->
             if (mp !instanceof MetaBeanProperty || !mp.getter)
                 return false
 
             def name = mp.name
-            lastName = "$name :::: ${ a.getClass() } ${ a.hashCode() }"
+            lastName = "$name :::: ${a.getClass()} ${a.hashCode()}"
 
             for (Map.Entry<Class, List<String>> me : COLLECTION_PROPERTY_CONFIGURATION) {
                 if (name != me.value[0] || !(me.key.isCase(a) && me.key.isCase(b))) {
                     continue
                 }
 
-                def aValue = a."${name}" // FIXME when the name is "classes", a classNode will be added to moduleNode.classes
+                def aValue = a."${name}"
+                // FIXME when the name is "classes", a classNode will be added to moduleNode.classes
                 def bValue = b."${name}"
 
                 String orderName = me.value[1]
 
-                return new LinkedList(aValue?.getClass()?.isArray() ? Arrays.asList(aValue) : (aValue ?: [])).sort {c1, c2 -> c1."${orderName}" <=> c2."${orderName}"} !=
-                        new LinkedList(bValue?.getClass()?.isArray() ? Arrays.asList(bValue) : (bValue ?: [])).sort {c1, c2 -> c1."${orderName}" <=> c2."${orderName}"}
+                return new LinkedList(aValue?.getClass()?.isArray() ? Arrays.asList(aValue) : (aValue ?: [])).sort { c1, c2 -> c1."${orderName}" <=> c2."${orderName}" } !=
+                    new LinkedList(bValue?.getClass()?.isArray() ? Arrays.asList(bValue) : (bValue ?: [])).sort { c1, c2 -> c1."${orderName}" <=> c2."${orderName}" }
             }
 
             !(name in ignore) && (name != 'groovydoc' && name != 'metaDataMap' && name != 'nodeMetaData') && !a."$name".equals(b."$name")
         }
 
         if (difference)
-            log.warning(" !!!! DIFFERENCE WAS FOUND! [${extractText(a)}][${a.class}][${difference.name}]:: ${ a."$difference.name" } != ${ b."$difference.name" }")
+            log.warning(" !!!! DIFFERENCE WAS FOUND! [${extractText(a)}][${a.class}][${difference.name}]:: ${a."$difference.name"} != ${b."$difference.name"}")
         else
-            log.info(" ==== Exit ${ a.getClass() } ${ a.hashCode() } ====== ")
+            log.info(" ==== Exit ${a.getClass()} ${a.hashCode()} ====== ")
 
         res = difference == null
         this.objects[objects] = res

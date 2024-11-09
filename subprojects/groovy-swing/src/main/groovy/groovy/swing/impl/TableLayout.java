@@ -43,6 +43,7 @@ public class TableLayout extends JPanel {
 
     /**
      * Adds a new cell to the current grid
+     *
      * @param cell the td component
      */
     public void addCell(TableLayoutCell cell) {
@@ -53,6 +54,7 @@ public class TableLayout extends JPanel {
 
     /**
      * Creates a new row index for child tr tags
+     *
      * @return nextRowIndex the row number
      */
     public int nextRowIndex() {

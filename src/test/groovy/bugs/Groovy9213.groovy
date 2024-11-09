@@ -25,9 +25,10 @@ import org.junit.Test
 
 import static org.codehaus.groovy.control.ParserPluginFactory.antlr4
 
-@CompileStatic @Ignore
+@CompileStatic
+@Ignore
 final class Groovy9213 {
-    @Test(timeout=15000L)
+    @Test(timeout = 15000L)
     void testUnmatchedParenInLongScript4() {
         def config = new CompilerConfiguration(pluginFactory: antlr4())
         new GroovyShell(config).evaluate('''

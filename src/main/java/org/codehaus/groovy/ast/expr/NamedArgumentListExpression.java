@@ -35,10 +35,10 @@ public class NamedArgumentListExpression extends MapExpression {
     @Override
     public Expression transformExpression(ExpressionTransformer transformer) {
         Expression ret = new NamedArgumentListExpression(
-            transformExpressions(getMapEntryExpressions(), transformer, MapEntryExpression.class)); 
+            transformExpressions(getMapEntryExpressions(), transformer, MapEntryExpression.class));
         ret.setSourcePosition(this);
         ret.copyNodeMetaData(this);
-        return ret;        
+        return ret;
     }
 
 }

@@ -31,7 +31,7 @@ class HistoryCommand extends ComplexCommandSupport {
     public static final String COMMAND_NAME = ':history'
 
     HistoryCommand(final Groovysh shell) {
-        super(shell, COMMAND_NAME, ':H', [ 'show', 'clear', 'flush', 'recall' ], 'show')
+        super(shell, COMMAND_NAME, ':H', ['show', 'clear', 'flush', 'recall'], 'show')
     }
 
     @Override
@@ -96,14 +96,14 @@ class HistoryCommand extends ComplexCommandSupport {
      * history recall - serves to rerun a command from the history by its index.
      * There is a moving window of indexes, so the first valid index will usually be greater than zero.
      */
-    def do_recall = {args ->
+    def do_recall = { args ->
         String line
 
-        if (!args || ((List)args).size() != 1) {
+        if (!args || ((List) args).size() != 1) {
             fail('History recall requires a single history identifier')
         }
 
-        String ids = ((List<String>)args)[0]
+        String ids = ((List<String>) args)[0]
 
         //
         // FIXME: This won't work as desired because the history shifts when we run recall and could internally shift more from alias redirection
@@ -121,10 +121,10 @@ class HistoryCommand extends ComplexCommandSupport {
             Iterator<History.Entry> listEntryIt = history.iterator()
             if (listEntryIt.hasNext()) {
                 History.Entry next = listEntryIt.next()
-                if (id < next.index() -1) {
+                if (id < next.index() - 1) {
                     // not using id on purpose, as might be decremented
                     fail("Unknown index: $ids")
-                } else if (id == next.index() -1) {
+                } else if (id == next.index() - 1) {
                     line = shell.evictedLine
                 } else if (next.index() == id) {
                     line = next.value()

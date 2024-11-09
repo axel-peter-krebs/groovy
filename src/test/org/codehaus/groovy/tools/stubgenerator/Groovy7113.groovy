@@ -23,7 +23,7 @@ final class Groovy7113 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'Foo.groovy': '''
+            'Foo.groovy'        : '''
                 trait Foo {
                     int foo() { 1 }
                     void bar(int x) { }
@@ -31,19 +31,19 @@ final class Groovy7113 extends StringSourcesStubTestCase {
                 }
             ''',
 
-            'Bar.java': '''
+            'Bar.java'          : '''
                 class Bar extends Baz { }
             ''',
 
-            'Baz.groovy': '''
+            'Baz.groovy'        : '''
                 class Baz implements Foo { void bar(int x) { } }
             ''',
 
-            'AbstractFoo.groovy':'''
+            'AbstractFoo.groovy': '''
                 abstract class AbstractFoo implements Foo { }
             ''',
 
-            'ConcreteBar.java': '''
+            'ConcreteBar.java'  : '''
                 public class ConcreteBar extends AbstractFoo { }
             '''
         ]
@@ -57,7 +57,7 @@ final class Groovy7113 extends StringSourcesStubTestCase {
         assert stub.contains('void baz(int y)')
         assert stub.contains('void bar(int x)')
 
-               stub = stubJavaSourceFor('Baz')
+        stub = stubJavaSourceFor('Baz')
         assert stub.contains('class Baz')
         assert stub.contains('int foo()')
         assert stub.contains('void baz(int y)')

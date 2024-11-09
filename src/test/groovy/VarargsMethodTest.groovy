@@ -48,6 +48,7 @@ final class VarargsMethodTest {
     def varargsOverloads1(arg) {
         '1'
     }
+
     def varargsOverloads1(arg, Object[] args) {
         "1+${args?.length}".toString()
     }
@@ -55,9 +56,11 @@ final class VarargsMethodTest {
     def varargsOverloads2(String key, Object[] args) {
         "key=$key, args=$args".toString()
     }
+
     def varargsOverloads2(String key, Object[] args, Object[] parts) {
         "key=$key, args=$args, parts=$parts".toString()
     }
+
     def varargsOverloads2(String key, Object[] args, String[] names) {
         "key=$key, args=$args, names=$names".toString()
     }
@@ -68,10 +71,10 @@ final class VarargsMethodTest {
     void testVarargsOnly() {
         assert varargsOnlyMethod('') == 1
         assert varargsOnlyMethod(11) == 1
-        assert varargsOnlyMethod('','') == 2
-        assert varargsOnlyMethod(['','']) == 1
-        assert varargsOnlyMethod(*['','']) == 2
-        assert varargsOnlyMethod(['',''] as Object[]) == 2
+        assert varargsOnlyMethod('', '') == 2
+        assert varargsOnlyMethod(['', '']) == 1
+        assert varargsOnlyMethod(*['', '']) == 2
+        assert varargsOnlyMethod(['', ''] as Object[]) == 2
 
         // GROOVY-1023
         assert varargsOnlyMethod() == 0
@@ -81,9 +84,9 @@ final class VarargsMethodTest {
         assert varargsOnlyMethod(null, null) == 2
 
         // GROOVY-6146
-        assert varargsOnlyMethod((Object)null) == 1
+        assert varargsOnlyMethod((Object) null) == 1
         assert varargsOnlyMethod(null as Object) == 1
-        assert varargsOnlyMethod((Object[])null) == -1
+        assert varargsOnlyMethod((Object[]) null) == -1
         assert varargsOnlyMethod(null as Object[]) == -1
 
         // GROOVY-10099
@@ -103,27 +106,28 @@ final class VarargsMethodTest {
     void testVarargsLast() {
         assert varargsLastMethod('') == 0
         assert varargsLastMethod(1) == 0
-        assert varargsLastMethod('','') == 1
-        assert varargsLastMethod('','','') == 2
-        assert varargsLastMethod('',['',''] ) == 1
-        assert varargsLastMethod('',['',''] as Object[]) == 2
-        assert varargsLastMethod('',*['',''] ) == 2
+        assert varargsLastMethod('', '') == 1
+        assert varargsLastMethod('', '', '') == 2
+        assert varargsLastMethod('', ['', '']) == 1
+        assert varargsLastMethod('', ['', ''] as Object[]) == 2
+        assert varargsLastMethod('', *['', '']) == 2
 
         // GROOVY-1026
-        assert varargsLastMethod('',null) == -1
-        assert varargsLastMethod('',null, null) == 2
+        assert varargsLastMethod('', null) == -1
+        assert varargsLastMethod('', null, null) == 2
     }
 
     @Test
     void testVarargsSelection1() {
         assert varargsOverloads1('') == '1'
-        assert varargsOverloads1('','') == '1+1'
-        assert varargsOverloads1('',null) == '1+null'
-        assert varargsOverloads1('','',null) == '1+2'
-        assert varargsOverloads1('',new Object[0]) == '1+0'
+        assert varargsOverloads1('', '') == '1+1'
+        assert varargsOverloads1('', null) == '1+null'
+        assert varargsOverloads1('', '', null) == '1+2'
+        assert varargsOverloads1('', new Object[0]) == '1+0'
     }
 
-    @Test // GROOVY-8737
+    @Test
+    // GROOVY-8737
     void testVarargsSelection2() {
         assert varargsOverloads2('hello', new Object[]{'world'}) == 'key=hello, args=[world]'
 

@@ -122,8 +122,8 @@ class CharScannerTest extends GroovyTestCase {
 
     void testManyDoubles() {
         List<String> doubles = ["" + 1.01d, "" + 123456789.234D, "" + 55D,
-                "" + Integer.MAX_VALUE + "." + Integer.MAX_VALUE,
-                "66666666.666", "-6666666666.6666", "1E10"]
+                                "" + Integer.MAX_VALUE + "." + Integer.MAX_VALUE,
+                                "66666666.666", "-6666666666.6666", "1E10"]
 
         for (String str : doubles) {
             testDouble(str)

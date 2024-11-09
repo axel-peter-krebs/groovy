@@ -61,6 +61,16 @@ public class NamespaceBuilderSupport extends BuilderSupport {
         this.nsMap = nsMap;
     }
 
+    private static Map findAttributes(Object args) {
+        List list = InvokerHelper.asList(args);
+        for (Object o : list) {
+            if (o instanceof Map) {
+                return (Map) o;
+            }
+        }
+        return Collections.EMPTY_MAP;
+    }
+
     public NamespaceBuilderSupport namespace(String namespaceURI) {
         nsMap.put("", namespaceURI);
         return this;
@@ -103,13 +113,13 @@ public class NamespaceBuilderSupport extends BuilderSupport {
         String prefix = autoPrefix ? nsMap.keySet().iterator().next() : "";
         String localPart = methodName;
         int idx = methodName.indexOf(':');
-        if (idx > 0 ) {
+        if (idx > 0) {
             prefix = methodName.substring(0, idx);
             localPart = methodName.substring(idx + 1);
         }
         String namespaceURI = nsMap.get(prefix);
         if (namespaceURI == null) {
-        	return methodName;
+            return methodName;
         }
         return new QName(namespaceURI, localPart, prefix);
     }
@@ -120,10 +130,10 @@ public class NamespaceBuilderSupport extends BuilderSupport {
     @Override
     public Object invokeMethod(String methodName, Object args) {
         // detect namespace declared on the added node like xmlns:foo="http:/foo"
-    	Map attributes = findAttributes(args);
-    	for (Iterator<Map.Entry> iter = attributes.entrySet().iterator(); iter.hasNext();) {
-    		Map.Entry entry = iter.next();
-    		String key = String.valueOf(entry.getKey());
+        Map attributes = findAttributes(args);
+        for (Iterator<Map.Entry> iter = attributes.entrySet().iterator(); iter.hasNext(); ) {
+            Map.Entry entry = iter.next();
+            String key = String.valueOf(entry.getKey());
             if (key.startsWith("xmlns:")) {
                 String prefix = key.substring(6);
                 String uri = String.valueOf(entry.getValue());
@@ -133,16 +143,6 @@ public class NamespaceBuilderSupport extends BuilderSupport {
         }
 
         return super.invokeMethod(methodName, args);
-    }
-
-    private static Map findAttributes(Object args) {
-        List list = InvokerHelper.asList(args);
-        for (Object o : list) {
-        	if (o instanceof Map) {
-        		return (Map) o;
-        	}
-        }
-        return Collections.EMPTY_MAP;
     }
 
     @Override

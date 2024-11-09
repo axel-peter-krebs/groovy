@@ -36,6 +36,7 @@ class OptionalTypingTest extends GroovyTestCase {
             // end::optionaltyping_var_def[]
         '''
     }
+
     void testOptionalTypingInMethodParameter() {
         assertScript '''
             // tag::optionaltyping_orig[]

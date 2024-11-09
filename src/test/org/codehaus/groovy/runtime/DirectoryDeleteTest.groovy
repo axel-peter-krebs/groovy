@@ -25,7 +25,7 @@ import groovy.test.GroovyTestCase;
  */
 class DirectoryDeleteTest extends GroovyTestCase {
 
-    void testDeleteDir(){
+    void testDeleteDir() {
         def file = File.createTempFile("deleteDirTest", "")
 
         // deleteDir for existing file should return false

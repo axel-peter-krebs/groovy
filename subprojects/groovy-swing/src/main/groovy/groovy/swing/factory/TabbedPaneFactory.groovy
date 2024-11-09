@@ -118,7 +118,7 @@ class TabbedPaneFactory extends BeanFactory {
                     parent.setMnemonicAt(index, mnemonic.charAt(0) as int)
                 } else {
                     parent.setMnemonicAt(index, mnemonic as int)
-                } 
+                }
             }
             if (title[8]) {
                 parent.setDisplayedMnemonicIndexAt(index, title[8])
@@ -128,8 +128,8 @@ class TabbedPaneFactory extends BeanFactory {
         }
     }
 
-    public void onNodeCompleted( FactoryBuilderSupport builder, Object parent, Object node ) {
-        super.onNodeCompleted (builder, parent, node)
+    public void onNodeCompleted(FactoryBuilderSupport builder, Object parent, Object node) {
+        super.onNodeCompleted(builder, parent, node)
         builder.removeAttributeDelegate(builder.context.tabbedPaneFactoryClosure)
         if (builder.context.selectedComponent != null) {
             node.selectedComponent = builder.context.selectedComponent

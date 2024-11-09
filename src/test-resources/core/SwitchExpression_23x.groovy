@@ -25,8 +25,8 @@ String quarter = switch (month) {
     case JANUARY,
         FEBRUARY,
         MARCH -> {
-            yield "First Quarter"
-        }
+        yield "First Quarter"
+    }
     case APRIL, MAY, JUNE -> {
         yield "Second Quarter"
     }

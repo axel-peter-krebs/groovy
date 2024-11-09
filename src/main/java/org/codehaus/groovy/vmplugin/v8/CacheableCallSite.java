@@ -40,19 +40,19 @@ public class CacheableCallSite extends MutableCallSite {
     private static final float LOAD_FACTOR = 0.75f;
     private static final int INITIAL_CAPACITY = (int) Math.ceil(CACHE_SIZE / LOAD_FACTOR) + 1;
     private final MethodHandles.Lookup lookup;
-    private volatile SoftReference<MethodHandleWrapper> latestHitMethodHandleWrapperSoftReference = null;
     private final AtomicLong fallbackCount = new AtomicLong();
+    private final Map<String, SoftReference<MethodHandleWrapper>> lruCache =
+        new LinkedHashMap<String, SoftReference<MethodHandleWrapper>>(INITIAL_CAPACITY, LOAD_FACTOR, true) {
+            private static final long serialVersionUID = 7785958879964294463L;
+
+            @Override
+            protected boolean removeEldestEntry(Map.Entry eldest) {
+                return size() > CACHE_SIZE;
+            }
+        };
+    private volatile SoftReference<MethodHandleWrapper> latestHitMethodHandleWrapperSoftReference = null;
     private MethodHandle defaultTarget;
     private MethodHandle fallbackTarget;
-    private final Map<String, SoftReference<MethodHandleWrapper>> lruCache =
-            new LinkedHashMap<String, SoftReference<MethodHandleWrapper>>(INITIAL_CAPACITY, LOAD_FACTOR, true) {
-                private static final long serialVersionUID = 7785958879964294463L;
-
-                @Override
-                protected boolean removeEldestEntry(Map.Entry eldest) {
-                    return size() > CACHE_SIZE;
-                }
-            };
 
     public CacheableCallSite(MethodType type, MethodHandles.Lookup lookup) {
         super(type);

@@ -22,7 +22,7 @@ import groovy.test.GroovyTestCase
 import org.codehaus.groovy.control.MultipleCompilationErrorsException
 
 class GStringEndTest extends GroovyTestCase {
-    void testInvalidEndContainsLineNumber(){
+    void testInvalidEndContainsLineNumber() {
         try {
             assertScript '''
                 def Target = "releases$"
@@ -38,7 +38,7 @@ class GStringEndTest extends GroovyTestCase {
         try {
             assertScript '''
             def scanFolders()
-            { doThis( ~"(?i)^sometext$", 
+            { doThis( ~"(?i)^sometext$",
             '''
         } catch (MultipleCompilationErrorsException mcee) {
             def text = mcee.toString();

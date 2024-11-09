@@ -29,9 +29,9 @@ class GrapeClassLoaderTest {
     @BeforeClass
     static void downloadToCache() {
         // ensure files are installed locally
-        Grape.resolve([autoDownload:true, classLoader:new GroovyClassLoader()],
-            [groupId:'com.jidesoft', artifactId:'jide-oss', version:jideVersion],
-            [groupId:'org.testng', artifactId:'testng', version:'5.8', classifier:'jdk15'])
+        Grape.resolve([autoDownload: true, classLoader: new GroovyClassLoader()],
+            [groupId: 'com.jidesoft', artifactId: 'jide-oss', version: jideVersion],
+            [groupId: 'org.testng', artifactId: 'testng', version: '5.8', classifier: 'jdk15'])
     }
 
     @Test
@@ -50,7 +50,7 @@ class GrapeClassLoaderTest {
                 }
             }
         """)
-        assert testClass.getConstructor().newInstance().field  == 'com.jidesoft.swing.JideSplitButton'
+        assert testClass.getConstructor().newInstance().field == 'com.jidesoft.swing.JideSplitButton'
     }
 
     @Test
@@ -69,7 +69,7 @@ class GrapeClassLoaderTest {
                 }
             }
         """)
-        assert testClass.getConstructor().newInstance().field  == 'com.jidesoft.swing.JideSplitButton'
+        assert testClass.getConstructor().newInstance().field == 'com.jidesoft.swing.JideSplitButton'
     }
 
     @Test
@@ -136,7 +136,8 @@ class GrapeClassLoaderTest {
     }
 
     @Test
-    @NotYetImplemented // annotations are discarded on local vars currently
+    @NotYetImplemented
+    // annotations are discarded on local vars currently
     void testScriptLocalVariableAnnotation() {
         GroovyClassLoader loader = new GroovyClassLoader()
         Class testClass = loader.parseClass("""

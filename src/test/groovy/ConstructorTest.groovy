@@ -22,7 +22,7 @@ import groovy.test.GroovyTestCase
 
 class ConstructorTest extends GroovyTestCase {
 
-    public ConstructorTest() { }
+    public ConstructorTest() {}
 
     public void testConstructor() {
         def foo = new ConstructorTest()

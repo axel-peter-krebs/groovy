@@ -22,7 +22,7 @@ import groovy.test.GroovyTestCase
 
 class StaticClosurePropertyBug extends GroovyTestCase {
 
-    static def out = {System.out.println(it)}
+    static def out = { System.out.println(it) }
 
     void testCallStaticClosure() {
         callStaticClosure()

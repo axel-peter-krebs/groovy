@@ -25,8 +25,8 @@ import groovy.text.Template
 class SimpleGStringTemplateEngineTest extends GroovyTestCase {
     void testRegressionCommentBug() {
         final Template template = new GStringTemplateEngine().createTemplate(
-                "<% // This is a comment that will be filtered from output %>\n" +
-                        "Hello World!"
+            "<% // This is a comment that will be filtered from output %>\n" +
+                "Hello World!"
         )
 
         final StringWriter sw = new StringWriter()

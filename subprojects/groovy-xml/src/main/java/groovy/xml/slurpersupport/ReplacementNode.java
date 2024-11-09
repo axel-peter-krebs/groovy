@@ -39,6 +39,7 @@ public abstract class ReplacementNode implements Buildable, Writable {
 
     /**
      * NOP
+     *
      * @return the Writer that was passed
      */
     @Override

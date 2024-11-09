@@ -48,8 +48,7 @@ class BooleanOperationsTest extends GroovyTestCase {
         def r = false
         if (x) {
             // ignore
-        }
-        else {
+        } else {
             r = true
         }
         assert r
@@ -58,16 +57,14 @@ class BooleanOperationsTest extends GroovyTestCase {
         r = false
         if (x) {
             r = true
-        }
-        else {
+        } else {
             // ignore
         }
         assert r
 
         if (!x) {
             r = false
-        }
-        else {
+        } else {
             r = true
         }
         assert r

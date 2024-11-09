@@ -37,7 +37,8 @@ import static org.junit.Assert.assertTrue
  */
 final class DelegateTransformTest {
 
-    @Test // GROOVY-3380
+    @Test
+    // GROOVY-3380
     void testDelegateImplementingNonPublicInterface() {
         assertScript '''
             import org.codehaus.groovy.transform.ClassImplementingANonPublicInterface
@@ -51,7 +52,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-3380
+    @Test
+    // GROOVY-3380
     void testDelegateImplementingNonPublicInterfaceWithZipFileConcreteCase() {
         assertScript '''
             import java.util.zip.*
@@ -64,7 +66,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-10439
+    @Test
+    // GROOVY-10439
     void testDelegateImplementingInterfaceWithDifferentTypeArgumentThanOwner() {
         def err = shouldFail '''
             class C extends ArrayList<String> {
@@ -82,7 +85,8 @@ final class DelegateTransformTest {
         assert err =~ /The interface Collection cannot be implemented more than once with different arguments: java.util.Collection<java.lang.Number> and java.util.Collection<java.lang.String>/
     }
 
-    @Test // GROOVY-5974
+    @Test
+    // GROOVY-5974
     void testDelegateExcludes() {
         assertScript '''
             class MapSet {
@@ -198,7 +202,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-3471
+    @Test
+    // GROOVY-3471
     void testDelegateOnAMapTypeFieldWithInitializationUsingConstructorProperties() {
         assertScript '''
             class Test3471 { @Delegate Map mp }
@@ -207,13 +212,15 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-3323
+    @Test
+    // GROOVY-3323
     void testDelegateTransformCorrectlyDelegatesMethodsFromSuperInterfaces() {
         assert new DelegateBarImpl(new DelegateFooImpl()).bar() == 'bar impl'
         assert new DelegateBarImpl(new DelegateFooImpl()).foo() == 'foo impl'
     }
 
-    @Test // GROOVY-3555
+    @Test
+    // GROOVY-3555
     void testDelegateTransformIgnoresDeprecatedMethodsByDefault() {
         def b1 = new DelegateBarForcingDeprecated(baz: new BazWithDeprecatedFoo())
         def b2 = new DelegateBarWithoutDeprecated(baz: new BazWithDeprecatedFoo())
@@ -225,7 +232,8 @@ final class DelegateTransformTest {
         }
     }
 
-    @Test // GROOVY-4163
+    @Test
+    // GROOVY-4163
     void testDelegateTransformAllowsInterfacesAndDelegation() {
         assertScript '''
             class Temp implements Runnable {
@@ -258,7 +266,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-4265
+    @Test
+    // GROOVY-4265
     void testShouldPreferDelegatedOverStaticSuperMethod() {
         assertScript '''
             class A {
@@ -274,7 +283,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-4244
+    @Test
+    // GROOVY-4244
     void testSetPropertiesThroughDelegate() {
         def foo = new Foo4244()
 
@@ -293,7 +303,8 @@ final class DelegateTransformTest {
         assert 'doSomething' in SomeClass4619.class.methods*.name
     }
 
-    @Test // GROOVY-5112
+    @Test
+    // GROOVY-5112
     void testGenericsOnArray() {
         assertScript '''
             class ListWrapper {
@@ -307,7 +318,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-5732
+    @Test
+    // GROOVY-5732
     void testInterfacesFromSuperClasses() {
         assertScript '''
             interface I5732 {
@@ -328,7 +340,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-5729
+    @Test
+    // GROOVY-5729
     void testDeprecationWithInterfaces() {
         assertScript '''
             interface I5729 {
@@ -356,7 +369,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-5446
+    @Test
+    // GROOVY-5446
     void testDelegateWithParameterAnnotations() {
         assertScript '''
             import java.lang.annotation.*
@@ -503,7 +517,8 @@ final class DelegateTransformTest {
         assert err.message.contains('@Delegate does not support keeping Closure annotation members.')
     }
 
-    @Test // GROOVY-5445
+    @Test
+    // GROOVY-5445
     void testDelegateToSuperProperties() {
         assertScript '''
             class Foo {
@@ -523,7 +538,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-7243
+    @Test
+    // GROOVY-7243
     void testInclude() {
         assertScript '''
             class Book {
@@ -568,7 +584,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-6329
+    @Test
+    // GROOVY-6329
     void testIncludeAndExcludeByType() {
         assertScript '''
             interface OddInclusionsTU<T, U> {
@@ -609,7 +626,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-5211
+    @Test
+    // GROOVY-5211
     void testAvoidFieldNameClashWithParameterName() {
         assertScript '''
             class A {
@@ -638,7 +656,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-6542
+    @Test
+    // GROOVY-6542
     void testLineNumberInStackTrace() {
         def err = shouldFail '''\
             @groovy.transform.ASTTest(phase=CANONICALIZATION, value={
@@ -692,7 +711,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-7118
+    @Test
+    // GROOVY-7118
     void testDelegateOfMethodHavingPlaceholder() {
         assertScript '''
             interface FooInt {
@@ -725,7 +745,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-7261
+    @Test
+    // GROOVY-7261
     void testShouldWorkWithLazyTransform() {
         assertScript '''
             class Foo {
@@ -741,7 +762,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-6454
+    @Test
+    // GROOVY-6454
     void testMethodsWithInternalNameShouldNotBeDelegatedTo() {
         assertScript '''
             class HasMethodWithInternalName {
@@ -758,7 +780,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-6454
+    @Test
+    // GROOVY-6454
     void testMethodsWithInternalNameShouldBeDelegatedToIfRequested() {
         assertScript '''
             interface HasMethodWithInternalName {
@@ -774,7 +797,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-6454
+    @Test
+    // GROOVY-6454
     void testProperitesWithInternalNameShouldBeDelegatedToIfRequested() {
         assertScript '''
             class HasPropertyWithInternalName {
@@ -802,7 +826,8 @@ final class DelegateTransformTest {
         assert foo.foo() == delegate().foo()
     }
 
-    @Test // GROOVY-5752
+    @Test
+    // GROOVY-5752
     void testDelegationShouldAccountForPrimitiveBooleanProperties() {
         assertScript '''
             class A {
@@ -831,7 +856,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test //GROOVY-8132
+    @Test
+    //GROOVY-8132
     void testOwnerPropertyPreferredToDelegateProperty() {
         assertScript '''
             class Foo {
@@ -863,7 +889,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-8204
+    @Test
+    // GROOVY-8204
     void testDelegateToArray() {
         assertScript '''
             class BugsMe {
@@ -877,7 +904,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-9289
+    @Test
+    // GROOVY-9289
     void testExcludesWithInvalidPropertyNameResultsInError() {
         def err = shouldFail '''
             class WMap {
@@ -897,7 +925,8 @@ final class DelegateTransformTest {
         assert err.message.contains("Error during @Delegate processing: 'excludes' property or method 'name' does not exist.")
     }
 
-    @Test // GROOVY-8825
+    @Test
+    // GROOVY-8825
     void testDelegateToPrecompiledGroovyGeneratedMethod() {
         assertScript '''
             import org.codehaus.groovy.transform.CompiledClass8825
@@ -909,7 +938,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-9414
+    @Test
+    // GROOVY-9414
     void testDelegateToPropertyViaGetter() {
         assertScript '''
             class Bar {
@@ -922,7 +952,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-4516
+    @Test
+    // GROOVY-4516
     void testParameterWithDefaultArgument1() {
         assertScript '''
             class C {
@@ -939,7 +970,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-4516
+    @Test
+    // GROOVY-4516
     void testParameterWithDefaultArgument2() {
         assertScript '''
             class C {
@@ -978,7 +1010,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-4320
+    @Test
+    // GROOVY-4320
     void testParameterWithDefaultArgument4() {
         assertScript '''
             interface I {
@@ -999,7 +1032,8 @@ final class DelegateTransformTest {
         '''
     }
 
-    @Test // GROOVY-4320
+    @Test
+    // GROOVY-4320
     void testParameterWithDefaultArgument5() {
         def config = new CompilerConfiguration(
             targetDirectory: File.createTempDir(),
@@ -1055,7 +1089,8 @@ final class DelegateTransformTest {
         }
     }
 
-    @Test // GROOVY-5204
+    @Test
+    // GROOVY-5204
     void testParameterWithDefaultArgument6() {
         assertScript '''
             class C {
@@ -1091,35 +1126,43 @@ interface DelegateBar extends DelegateFoo {
 }
 
 class DelegateBarImpl implements DelegateBar {
-    @Delegate DelegateFoo foo
+    @Delegate
+    DelegateFoo foo
 
     DelegateBarImpl(DelegateFoo foo) { this.foo = foo }
 
-    @Override bar() { 'bar impl' }
+    @Override
+    bar() { 'bar impl' }
 }
 
 class BazWithDeprecatedFoo {
-    @Deprecated foo() { 'foo' }
+    @Deprecated
+    foo() { 'foo' }
+
     def bar() { 'bar' }
 }
 
 class DelegateBarWithoutDeprecated {
-    @Delegate BazWithDeprecatedFoo baz
+    @Delegate
+    BazWithDeprecatedFoo baz
 }
 
 class DelegateBarForcingDeprecated {
-    @Delegate(deprecated=true) BazWithDeprecatedFoo baz
+    @Delegate(deprecated = true)
+    BazWithDeprecatedFoo baz
 }
 
 class Foo4244 {
-    @Delegate Bar4244 bar = new Bar4244()
+    @Delegate
+    Bar4244 bar = new Bar4244()
 }
 
-@groovy.transform.TupleConstructor(includeFields=true)
+@groovy.transform.TupleConstructor(includeFields = true)
 class FooToMethod {
     private final Callable<DelegateFoo> supplier
 
-    @Delegate DelegateFoo getStrategy() { supplier() }
+    @Delegate
+    DelegateFoo getStrategy() { supplier() }
 }
 
 class Bar4244 {
@@ -1134,7 +1177,8 @@ interface SomeInterface4619 {
 interface SomeOtherInterface4619 extends SomeInterface4619 {}
 
 class SomeClass4619 {
-    @Delegate SomeOtherInterface4619 delegate
+    @Delegate
+    SomeOtherInterface4619 delegate
 }
 
 interface BarInt {
@@ -1154,5 +1198,6 @@ class CompiledClass8825 {
 // DO NOT MOVE INSIDE THE TEST SCRIPT OR IT WILL NOT TEST
 // WHAT IT IS SUPPOSED TO TEST ANYMORE !
 class DelegateMap {
-    protected final @Delegate Map props = [x:'123']
+    protected final @Delegate
+    Map props = [x: '123']
 }

@@ -63,9 +63,9 @@ public class DynamicSetterInjectionVisitor extends BaseVisitor {
 
     protected Statement createSetterBlock(final ClassNode classNode, final FieldNode field, final Parameter parameter) {
         return block(
-                invariantAssertionBlockStatement, // check invariant before assignment
-                assignS(fieldX(field), varX(parameter)), // do assignment
-                invariantAssertionBlockStatement  // check invariant after assignment
+            invariantAssertionBlockStatement, // check invariant before assignment
+            assignS(fieldX(field), varX(parameter)), // do assignment
+            invariantAssertionBlockStatement  // check invariant after assignment
         );
     }
 

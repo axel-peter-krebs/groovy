@@ -22,8 +22,8 @@ import groovy.test.GroovyTestCase
 
 class NestedClassTest extends GroovyTestCase {
 
-    void testStaticInnerStaticMethod () {
-        def script = new GroovyClassLoader(getClass().getClassLoader()).parseClass ("""
+    void testStaticInnerStaticMethod() {
+        def script = new GroovyClassLoader(getClass().getClassLoader()).parseClass("""
         package groovy
 
         JavaClass.StaticInner.it
@@ -31,8 +31,8 @@ class NestedClassTest extends GroovyTestCase {
         assertEquals 30, script.run()
     }
 
-    void testStaticInnerInstanceMethod () {
-        def script = new GroovyClassLoader(getClass().getClassLoader()).parseClass ("""
+    void testStaticInnerInstanceMethod() {
+        def script = new GroovyClassLoader(getClass().getClassLoader()).parseClass("""
         package groovy
 
         new JavaClass.StaticInner ().result
@@ -40,8 +40,8 @@ class NestedClassTest extends GroovyTestCase {
         assertEquals 239, script.run()
     }
 
-    void testParam () {
-        def script = new GroovyClassLoader(getClass().getClassLoader()).parseClass ("""
+    void testParam() {
+        def script = new GroovyClassLoader(getClass().getClassLoader()).parseClass("""
         package groovy
 
         def method (JavaClass.StaticInner obj) { obj.result }
@@ -52,8 +52,8 @@ class NestedClassTest extends GroovyTestCase {
         assertEquals 239, script.run()
     }
 
-    void testTypeDecl () {
-        def script = new GroovyClassLoader(getClass().getClassLoader()).parseClass ("""
+    void testTypeDecl() {
+        def script = new GroovyClassLoader(getClass().getClassLoader()).parseClass("""
         package groovy
 
         JavaClass.StaticInner method () { 239 }
@@ -61,13 +61,13 @@ class NestedClassTest extends GroovyTestCase {
         method ()
         """).newInstance()
 
-        shouldFail (org.codehaus.groovy.runtime.typehandling.GroovyCastException) {
-          assertEquals 239, script.run()
+        shouldFail(org.codehaus.groovy.runtime.typehandling.GroovyCastException) {
+            assertEquals 239, script.run()
         }
     }
 
-    void testFieldDecl () {
-        def script = new GroovyClassLoader(getClass().getClassLoader()).parseClass ("""
+    void testFieldDecl() {
+        def script = new GroovyClassLoader(getClass().getClassLoader()).parseClass("""
         package groovy
 
         JavaClass.StaticInner field = 239
@@ -75,23 +75,23 @@ class NestedClassTest extends GroovyTestCase {
         field
         """).newInstance()
 
-        shouldFail (org.codehaus.groovy.runtime.typehandling.GroovyCastException) {
-          assertEquals 239, script.run()
+        shouldFail(org.codehaus.groovy.runtime.typehandling.GroovyCastException) {
+            assertEquals 239, script.run()
         }
     }
 
-    void testInstanceof () {
-        def script = new GroovyClassLoader(getClass().getClassLoader()).parseClass ("""
+    void testInstanceof() {
+        def script = new GroovyClassLoader(getClass().getClassLoader()).parseClass("""
         package groovy
 
         JavaClass.CONST instanceof JavaClass.StaticInner
         """).newInstance()
 
-        assertTrue script.run ()
+        assertTrue script.run()
     }
 
-    void testExtends () {
-        def script = new GroovyClassLoader(getClass().getClassLoader()).parseClass ("""
+    void testExtends() {
+        def script = new GroovyClassLoader(getClass().getClassLoader()).parseClass("""
         package groovy
 
         class U extends JavaClass.StaticInner.Inner2 {}
@@ -100,6 +100,6 @@ class NestedClassTest extends GroovyTestCase {
 
         """).newInstance()
 
-        assert script.run () instanceof JavaClass.StaticInner.Inner2
+        assert script.run() instanceof JavaClass.StaticInner.Inner2
     }
 }

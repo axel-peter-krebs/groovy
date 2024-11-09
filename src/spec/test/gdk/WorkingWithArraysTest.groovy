@@ -51,11 +51,11 @@ final class WorkingWithArraysTest {
         assert emptyStrings instanceof String[] && emptyStrings.size() == 0
 
         // multi-dimension examples
-        int[][] manyInts = [ [1,2], [3,4] ]
+        int[][] manyInts = [[1, 2], [3, 4]]
         assert manyInts instanceof int[][] && manyInts.size() == 2
         assert manyInts[0].size() == 2 && manyInts[1].size() == 2
 
-        def manyStrings = new String[][] { {'one','two'}, {'three','four'}, }
+        def manyStrings = new String[][]{{ 'one' , 'two' }, { 'three' , 'four' },}
         assert manyStrings instanceof String[][] && manyStrings.size() == 2
         assert manyStrings[0].size() == 2 && manyStrings[1].size() == 2
         assert manyStrings[0][0] == 'one'
@@ -96,8 +96,8 @@ final class WorkingWithArraysTest {
         def tripled = nums*.multiply(3)
         assert tripled == [3, 6, 9] && doubled instanceof List
 
-        assert nums.any{ it > 2 }
-        assert nums.every{ it < 4 }
+        assert nums.any { it > 2 }
+        assert nums.every { it < 4 }
         assert nums.average() == 2
         assert nums.min() == 1
         assert nums.max() == 3

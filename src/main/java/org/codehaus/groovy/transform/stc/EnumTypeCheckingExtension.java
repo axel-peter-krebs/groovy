@@ -53,7 +53,7 @@ public class EnumTypeCheckingExtension extends TypeCheckingExtension {
             if (null != fieldNode) {
                 int modifiers = fieldNode.getModifiers();
                 if (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers) && Modifier.isFinal(modifiers)
-                        && type.equals(fieldNode.getType())) {
+                    && type.equals(fieldNode.getType())) {
                     vexp.putNodeMetaData(SWITCH_CONDITION_EXPRESSION_TYPE, type);
                     return true;
                 }

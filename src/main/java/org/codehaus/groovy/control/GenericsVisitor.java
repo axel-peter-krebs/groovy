@@ -48,16 +48,20 @@ public class GenericsVisitor extends ClassCodeVisitorSupport {
 
     private final SourceUnit source;
 
-    @Override
-    protected SourceUnit getSourceUnit() {
-        return source;
-    }
-
     public GenericsVisitor(final SourceUnit source) {
         this.source = source;
     }
 
+    private static String plural(final String string, final int count) {
+        return "" + count + " " + (count == 1 ? string : string + "s");
+    }
+
     //--------------------------------------------------------------------------
+
+    @Override
+    protected SourceUnit getSourceUnit() {
+        return source;
+    }
 
     @Override
     public void visitClass(final ClassNode node) {
@@ -97,7 +101,7 @@ public class GenericsVisitor extends ClassCodeVisitorSupport {
     public void visitConstructorCallExpression(final ConstructorCallExpression expression) {
         ClassNode type = expression.getType();
         boolean isAIC = type instanceof InnerClassNode
-                && ((InnerClassNode) type).isAnonymous();
+            && ((InnerClassNode) type).isAnonymous();
         checkGenericsUsage(type, type.redirect(), isAIC);
 
         super.visitConstructorCallExpression(expression);
@@ -123,14 +127,14 @@ public class GenericsVisitor extends ClassCodeVisitorSupport {
         super.visitArrayExpression(expression);
     }
 
+    //--------------------------------------------------------------------------
+
     @Override
     public void visitCastExpression(final CastExpression expression) {
         checkGenericsUsage(expression.getType());
 
         super.visitCastExpression(expression);
     }
-
-    //--------------------------------------------------------------------------
 
     private boolean checkWildcard(final ClassNode sn) {
         boolean wildcard = false;
@@ -160,7 +164,7 @@ public class GenericsVisitor extends ClassCodeVisitorSupport {
         // you can't parameterize a non-generified type
         if (rnTypes == null) {
             String message = "The class " + cn.toString(false) + " (supplied with " + plural("type parameter", cnTypes.length) +
-                    ") refers to the class " + rn.toString(false) + " which takes no parameters";
+                ") refers to the class " + rn.toString(false) + " which takes no parameters";
             if (cnTypes.length == 0) {
                 message += " (invalid Diamond <> usage?)";
             }
@@ -177,7 +181,7 @@ public class GenericsVisitor extends ClassCodeVisitorSupport {
                 message = "Cannot use diamond <> with anonymous inner classes";
             } else {
                 message = "The class " + cn.toString(false) + " (supplied with " + plural("type parameter", cnTypes.length) +
-                        ") refers to the class " + rn.toString(false) + " which takes " + plural("parameter", rnTypes.length);
+                    ") refers to the class " + rn.toString(false) + " which takes " + plural("parameter", rnTypes.length);
                 if (cnTypes.length == 0) {
                     message += " (invalid Diamond <> usage?)";
                 }
@@ -214,9 +218,5 @@ public class GenericsVisitor extends ClassCodeVisitorSupport {
                 }
             }
         }
-    }
-
-    private static String plural(final String string, final int count) {
-        return "" + count + " " + (count == 1 ? string : string + "s");
     }
 }

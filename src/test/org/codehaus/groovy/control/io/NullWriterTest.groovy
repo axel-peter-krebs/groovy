@@ -30,6 +30,6 @@ class NullWriterTest extends GroovyTestCase {
         def writer = NullWriter.DEFAULT
         writer.close()
         writer.flush()
-        writer.write((char[])null, 0, 0)
+        writer.write((char[]) null, 0, 0)
     }
 }

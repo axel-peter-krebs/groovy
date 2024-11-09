@@ -26,7 +26,7 @@ final class Groovy6855 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'foo/Main.java': '''
+            'foo/Main.java' : '''
                 package foo;
 
                 import bar.Get;

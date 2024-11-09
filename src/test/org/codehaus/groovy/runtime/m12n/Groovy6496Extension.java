@@ -19,5 +19,7 @@
 package org.codehaus.groovy.runtime.m12n;
 
 public class Groovy6496Extension {
-    public static <T> T groovy6496(Number x, T t) { return t; }
+    public static <T> T groovy6496(Number x, T t) {
+        return t;
+    }
 }

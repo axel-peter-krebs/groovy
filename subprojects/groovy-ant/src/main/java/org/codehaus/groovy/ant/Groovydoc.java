@@ -44,11 +44,13 @@ import java.util.StringTokenizer;
  */
 public class Groovydoc extends Task {
     private final LoggingHelper log = new LoggingHelper(this);
-
-    private Path sourcePath;
-    private File destDir;
     private final List<String> packageNames;
     private final List<String> excludePackageNames;
+    private final List<DirSet> packageSets;
+    private final List<String> sourceFilesToDoc;
+    private final List<LinkArgument> links = new ArrayList<>();
+    private Path sourcePath;
+    private File destDir;
     private String windowTitle = "Groovy Documentation";
     private String docTitle = "Groovy Documentation";
     private String footer = "Groovy Documentation";
@@ -64,9 +66,6 @@ public class Groovydoc extends Task {
     private boolean includeNoSourcePackages;
     private Boolean noTimestamp;
     private Boolean noVersionStamp;
-    private final List<DirSet> packageSets;
-    private final List<String> sourceFilesToDoc;
-    private final List<LinkArgument> links = new ArrayList<>();
     private File overviewFile;
     private File styleSheetFile;
     // dev note: update javadoc comment for #setExtensions(String) if updating below
@@ -390,7 +389,7 @@ public class Groovydoc extends Task {
                 File pd = new File(baseDir, dir);
                 String[] files = pd.list((dir1, name) -> {
                     if (!includeNoSourcePackages
-                            && "package.html".equals(name)) return true;
+                        && "package.html".equals(name)) return true;
                     final StringTokenizer tokenizer = new StringTokenizer(extensions, ":");
                     while (tokenizer.hasMoreTokens()) {
                         String ext = tokenizer.nextToken();
@@ -406,8 +405,8 @@ public class Groovydoc extends Task {
                     if (files.length > 0) {
                         if (dir.isEmpty()) {
                             log.warn(baseDir
-                                    + " contains source files in the default package,"
-                                    + " you must specify them as source files not packages.");
+                                + " contains source files in the default package,"
+                                + " you must specify them as source files not packages.");
                         } else {
                             containsPackages = true;
                             String pn = dir.replace(File.separatorChar, '.');
@@ -460,13 +459,13 @@ public class Groovydoc extends Task {
         parsePackages(packagesToDoc, sourceDirs);
 
         GroovyDocTool htmlTool = new GroovyDocTool(
-                new ClasspathResourceManager(), // we're gonna get the default templates out of the dist jar file
-                sourcePath.list(),
-                getDocTemplates(),
-                getPackageTemplates(),
-                getClassTemplates(),
-                links,
-                properties
+            new ClasspathResourceManager(), // we're gonna get the default templates out of the dist jar file
+            sourcePath.list(),
+            getDocTemplates(),
+            getPackageTemplates(),
+            getClassTemplates(),
+            links,
+            properties
         );
 
         try {
@@ -484,7 +483,7 @@ public class Groovydoc extends Task {
                 ResourceGroovyMethods.setText(outfile, css);
             } catch (IOException e) {
                 System.out.println("Warning: Unable to copy specified stylesheet '" + styleSheetFile.getAbsolutePath() +
-                        "'. Using default stylesheet instead. Due to: " + e.getMessage());
+                    "'. Using default stylesheet instead. Due to: " + e.getMessage());
             }
         }
     }

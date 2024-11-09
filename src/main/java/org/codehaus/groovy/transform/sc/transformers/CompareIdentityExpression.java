@@ -40,7 +40,7 @@ import static org.objectweb.asm.Opcodes.IF_ACMPNE;
  * Compares two objects using identity comparison.
  * This expression will generate bytecode using the IF_ACMPNE instruction, instead of
  * using the "equals" method that is currently mapped to "==" in Groovy.
- *
+ * <p>
  * This expression should only be used to compare to objects, not primitives, and only
  * in the context of reference equality check.
  */

@@ -99,7 +99,7 @@ public class JsonFastParser extends JsonParserCharArray {
                 default:
 
                     complain(
-                            "expecting '}' or ',' but got current char " + charDescription(__currentChar));
+                        "expecting '}' or ',' but got current char " + charDescription(__currentChar));
             }
         }
         return value;
@@ -149,7 +149,7 @@ public class JsonFastParser extends JsonParserCharArray {
 
             default:
                 complain("Unable to determine the " +
-                        "current character, it is not a string, number, array, or object");
+                    "current character, it is not a string, number, array, or object");
                 return null;
         }
     }
@@ -180,17 +180,23 @@ public class JsonFastParser extends JsonParserCharArray {
             } else if (isDecimalChar(currentChar)) {
                 switch (currentChar) {
                     case DECIMAL_POINT:
-                        if (foundDot || foundExp) { complain("unexpected character " + currentChar); }
+                        if (foundDot || foundExp) {
+                            complain("unexpected character " + currentChar);
+                        }
                         foundDot = true;
                         break;
                     case LETTER_E:
                     case LETTER_BIG_E:
-                        if (foundExp) { complain("unexpected character " + currentChar); }
+                        if (foundExp) {
+                            complain("unexpected character " + currentChar);
+                        }
                         foundExp = true;
                         break;
                     case MINUS:
                     case PLUS:
-                        if (foundSign || !foundExp) { complain("unexpected character " + currentChar); }
+                        if (foundSign || !foundExp) {
+                            complain("unexpected character " + currentChar);
+                        }
                         if (foundExp && array[index - 1] != LETTER_E && array[index - 1] != LETTER_BIG_E) {
                             complain("unexpected character " + currentChar);
                         }
@@ -309,9 +315,9 @@ public class JsonFastParser extends JsonParserCharArray {
                     break arrayLoop;
                 default:
                     complain(
-                            String.format("expecting a ',' or a ']', " +
-                                    " but got \nthe current character of  %s " +
-                                    " on array size of %s \n", charDescription(__currentChar), list.size())
+                        String.format("expecting a ',' or a ']', " +
+                            " but got \nthe current character of  %s " +
+                            " on array size of %s \n", charDescription(__currentChar), list.size())
                     );
             }
         }

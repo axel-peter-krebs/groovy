@@ -59,8 +59,8 @@ public class DgmConverter {
     public static void main(String[] args) throws IOException {
         String targetDirectory = "build/classes/";
         boolean info = (args.length == 1 && "--info".equals(args[0]))
-                || (args.length==2 && "--info".equals(args[0]));
-        if (info && args.length==2) {
+            || (args.length == 2 && "--info".equals(args[0]));
+        if (info && args.length == 2) {
             targetDirectory = args[1];
             if (!targetDirectory.endsWith("/")) targetDirectory += "/";
         }
@@ -121,9 +121,9 @@ public class DgmConverter {
             }
         }
 
-        GeneratedMetaMethod.DgmMethodRecord.saveDgmInfo(records, targetDirectory+"/META-INF/dgminfo");
+        GeneratedMetaMethod.DgmMethodRecord.saveDgmInfo(records, targetDirectory + "/META-INF/dgminfo");
         if (info)
-            System.out.println("Saved " + cur + " dgm records to: "+targetDirectory+"/META-INF/dgminfo");
+            System.out.println("Saved " + cur + " dgm records to: " + targetDirectory + "/META-INF/dgminfo");
     }
 
     private static void createConstructor(ClassWriter cw) {

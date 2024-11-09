@@ -18,7 +18,9 @@
  */
 
 cnt = 0
+
 void prt() { cnt++ }
+
 def a = '123'
 switch (a) {
     case String -> prt()

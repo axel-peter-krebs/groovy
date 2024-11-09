@@ -156,7 +156,8 @@ class MemberSignatureParser {
     }
 
     private static ClassNode[] resolve(final AsmReferenceResolver resolver, final String[] names) {
-        int n = names.length; ClassNode[] nodes = new ClassNode[n];
+        int n = names.length;
+        ClassNode[] nodes = new ClassNode[n];
         for (int i = 0; i < n; i += 1) {
             nodes[i] = resolver.resolveClass(AsmDecompiler.fromInternalName(names[i]));
         }
@@ -164,7 +165,8 @@ class MemberSignatureParser {
     }
 
     private static ClassNode[] resolve(final AsmReferenceResolver resolver, final Type... types) {
-        int n = types.length; ClassNode[] nodes = new ClassNode[n];
+        int n = types.length;
+        ClassNode[] nodes = new ClassNode[n];
         for (int i = 0; i < n; i += 1) {
             nodes[i] = resolver.resolveType(types[i]);
         }

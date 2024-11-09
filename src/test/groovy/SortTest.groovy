@@ -75,10 +75,10 @@ class SortTest extends GroovyTestCase {
 
     void testSortClassHierarchy() {
         def aFooList = [
-                new AFoo(5),
-                new AFoo(7),
-                new ABar(4),
-                new ABar(6)
+            new AFoo(5),
+            new AFoo(7),
+            new ABar(4),
+            new ABar(6)
         ]
         def sorted = aFooList.sort()
         assert sorted.collect { it.class } == [ABar, AFoo, ABar, AFoo]

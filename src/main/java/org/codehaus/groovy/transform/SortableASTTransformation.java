@@ -98,47 +98,6 @@ public class SortableASTTransformation extends AbstractASTTransformation {
     private static final String ARG0 = "arg0";
     private static final String ARG1 = "arg1";
 
-    @Override
-    public void visit(ASTNode[] nodes, SourceUnit source) {
-        init(nodes, source);
-        AnnotationNode annotation = (AnnotationNode) nodes[0];
-        AnnotatedNode parent = (AnnotatedNode) nodes[1];
-        if (parent instanceof ClassNode) {
-            createSortable(annotation, (ClassNode) parent);
-        }
-    }
-
-    private void createSortable(AnnotationNode anno, ClassNode classNode) {
-        List<String> includes = getMemberStringList(anno, "includes");
-        List<String> excludes = getMemberStringList(anno, "excludes");
-        boolean reversed = memberHasValue(anno, "reversed", true);
-        boolean includeSuperProperties = memberHasValue(anno, "includeSuperProperties", true);
-        boolean allNames = memberHasValue(anno, "allNames", true);
-        boolean allProperties = !memberHasValue(anno, "allProperties", false);
-        if (!checkIncludeExcludeUndefinedAware(anno, excludes, includes, MY_TYPE_NAME)) return;
-        if (!checkPropertyList(classNode, includes, "includes", anno, MY_TYPE_NAME, false, includeSuperProperties, allProperties)) return;
-        if (!checkPropertyList(classNode, excludes, "excludes", anno, MY_TYPE_NAME, false, includeSuperProperties, allProperties)) return;
-        if (classNode.isInterface()) {
-            addError(MY_TYPE_NAME + " cannot be applied to interface " + classNode.getName(), anno);
-        }
-        List<PropertyNode> properties = findProperties(anno, classNode, includes, excludes, allProperties, includeSuperProperties, allNames);
-        implementComparable(classNode);
-
-        addGeneratedMethod(classNode,
-                "compareTo",
-                ACC_PUBLIC,
-                ClassHelper.int_TYPE,
-                params(param(newClass(classNode), OTHER)),
-                ClassNode.EMPTY_ARRAY,
-                createCompareToMethodBody(properties, reversed)
-        );
-
-        for (PropertyNode property : properties) {
-            createComparatorFor(classNode, property, reversed);
-        }
-        new VariableScopeVisitor(sourceUnit, true).visitClass(classNode);
-    }
-
     private static void implementComparable(ClassNode classNode) {
         if (!classNode.implementsInterface(COMPARABLE_TYPE)) {
             classNode.addInterface(makeClassSafeWithGenerics(Comparable.class, classNode));
@@ -179,14 +138,14 @@ public class SortableASTTransformation extends AbstractASTTransformation {
     private static Statement createCompareMethodBody(PropertyNode property, boolean reversed) {
         String propName = property.getName();
         return block(
-                // if (arg0 == arg1) return 0;
-                ifS(eqX(varX(ARG0), varX(ARG1)), returnS(constX(0))),
-                // if (arg0 != null && arg1 == null) return -1;
-                ifS(andX(notNullX(varX(ARG0)), equalsNullX(varX(ARG1))), returnS(constX(-1))),
-                // if (arg0 == null && arg1 != null) return 1;
-                ifS(andX(equalsNullX(varX(ARG0)), notNullX(varX(ARG1))), returnS(constX(1))),
-                // return arg0.prop <=> arg1.prop;
-                returnS(compareExpr(propX(varX(ARG0), propName), propX(varX(ARG1), propName), reversed))
+            // if (arg0 == arg1) return 0;
+            ifS(eqX(varX(ARG0), varX(ARG1)), returnS(constX(0))),
+            // if (arg0 != null && arg1 == null) return -1;
+            ifS(andX(notNullX(varX(ARG0)), equalsNullX(varX(ARG1))), returnS(constX(-1))),
+            // if (arg0 == null && arg1 != null) return 1;
+            ifS(andX(equalsNullX(varX(ARG0)), notNullX(varX(ARG1))), returnS(constX(1))),
+            // return arg0.prop <=> arg1.prop;
+            returnS(compareExpr(propX(varX(ARG0), propName), propX(varX(ARG1), propName), reversed))
         );
     }
 
@@ -198,30 +157,81 @@ public class SortableASTTransformation extends AbstractASTTransformation {
         addGeneratedInnerClass(classNode, cmpClass);
 
         addGeneratedMethod(cmpClass,
-                "compare",
-                ACC_PUBLIC,
-                ClassHelper.int_TYPE,
-                params(param(newClass(classNode), ARG0), param(newClass(classNode), ARG1)),
-                ClassNode.EMPTY_ARRAY,
-                createCompareMethodBody(property, reversed)
+            "compare",
+            ACC_PUBLIC,
+            ClassHelper.int_TYPE,
+            params(param(newClass(classNode), ARG0), param(newClass(classNode), ARG1)),
+            ClassNode.EMPTY_ARRAY,
+            createCompareMethodBody(property, reversed)
         );
 
         String fieldName = "this$" + propName + "Comparator";
         // private final Comparator this$<property>Comparator = new <type>$<property>Comparator();
         FieldNode cmpField = classNode.addField(
-                fieldName,
-                ACC_STATIC | ACC_FINAL | ACC_PRIVATE | ACC_SYNTHETIC,
-                COMPARATOR_TYPE,
-                ctorX(cmpClass));
+            fieldName,
+            ACC_STATIC | ACC_FINAL | ACC_PRIVATE | ACC_SYNTHETIC,
+            COMPARATOR_TYPE,
+            ctorX(cmpClass));
 
         addGeneratedMethod(classNode,
-                "comparatorBy" + propName,
-                ACC_PUBLIC | ACC_STATIC,
-                COMPARATOR_TYPE,
-                Parameter.EMPTY_ARRAY,
-                ClassNode.EMPTY_ARRAY,
-                returnS(fieldX(cmpField))
+            "comparatorBy" + propName,
+            ACC_PUBLIC | ACC_STATIC,
+            COMPARATOR_TYPE,
+            Parameter.EMPTY_ARRAY,
+            ClassNode.EMPTY_ARRAY,
+            returnS(fieldX(cmpField))
         );
+    }
+
+    /**
+     * Helper method used to build a binary expression that compares two values
+     * with the option to handle reverse order.
+     */
+    private static BinaryExpression compareExpr(Expression lhv, Expression rhv, boolean reversed) {
+        return (reversed) ? cmpX(rhv, lhv) : cmpX(lhv, rhv);
+    }
+
+    @Override
+    public void visit(ASTNode[] nodes, SourceUnit source) {
+        init(nodes, source);
+        AnnotationNode annotation = (AnnotationNode) nodes[0];
+        AnnotatedNode parent = (AnnotatedNode) nodes[1];
+        if (parent instanceof ClassNode) {
+            createSortable(annotation, (ClassNode) parent);
+        }
+    }
+
+    private void createSortable(AnnotationNode anno, ClassNode classNode) {
+        List<String> includes = getMemberStringList(anno, "includes");
+        List<String> excludes = getMemberStringList(anno, "excludes");
+        boolean reversed = memberHasValue(anno, "reversed", true);
+        boolean includeSuperProperties = memberHasValue(anno, "includeSuperProperties", true);
+        boolean allNames = memberHasValue(anno, "allNames", true);
+        boolean allProperties = !memberHasValue(anno, "allProperties", false);
+        if (!checkIncludeExcludeUndefinedAware(anno, excludes, includes, MY_TYPE_NAME)) return;
+        if (!checkPropertyList(classNode, includes, "includes", anno, MY_TYPE_NAME, false, includeSuperProperties, allProperties))
+            return;
+        if (!checkPropertyList(classNode, excludes, "excludes", anno, MY_TYPE_NAME, false, includeSuperProperties, allProperties))
+            return;
+        if (classNode.isInterface()) {
+            addError(MY_TYPE_NAME + " cannot be applied to interface " + classNode.getName(), anno);
+        }
+        List<PropertyNode> properties = findProperties(anno, classNode, includes, excludes, allProperties, includeSuperProperties, allNames);
+        implementComparable(classNode);
+
+        addGeneratedMethod(classNode,
+            "compareTo",
+            ACC_PUBLIC,
+            ClassHelper.int_TYPE,
+            params(param(newClass(classNode), OTHER)),
+            ClassNode.EMPTY_ARRAY,
+            createCompareToMethodBody(properties, reversed)
+        );
+
+        for (PropertyNode property : properties) {
+            createComparatorFor(classNode, property, reversed);
+        }
+        new VariableScopeVisitor(sourceUnit, true).visitClass(classNode);
     }
 
     private List<PropertyNode> findProperties(AnnotationNode annotation, final ClassNode classNode, final List<String> includes,
@@ -229,12 +239,12 @@ public class SortableASTTransformation extends AbstractASTTransformation {
                                               final boolean includeSuperProperties, final boolean allNames) {
         Set<String> names = new HashSet<String>();
         List<PropertyNode> props = getAllProperties(names, classNode, classNode, true, false, allProperties,
-                false, includeSuperProperties, false, false, allNames, false);
+            false, includeSuperProperties, false, false, allNames, false);
         List<PropertyNode> properties = new ArrayList<PropertyNode>();
         for (PropertyNode property : props) {
             String propertyName = property.getName();
             if ((excludes != null && excludes.contains(propertyName)) ||
-                    includes != null && !includes.contains(propertyName)) continue;
+                includes != null && !includes.contains(propertyName)) continue;
             properties.add(property);
         }
         for (PropertyNode pNode : properties) {
@@ -252,15 +262,7 @@ public class SortableASTTransformation extends AbstractASTTransformation {
             return;
         }
         addError("Error during " + MY_TYPE_NAME + " processing: property '" +
-                pNode.getName() + "' must be Comparable", pNode);
-    }
-
-    /**
-     * Helper method used to build a binary expression that compares two values
-     * with the option to handle reverse order.
-     */
-    private static BinaryExpression compareExpr(Expression lhv, Expression rhv, boolean reversed) {
-        return (reversed) ? cmpX(rhv, lhv) : cmpX(lhv, rhv);
+            pNode.getName() + "' must be Comparable", pNode);
     }
 
 }

@@ -16,4 +16,4 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-[].bar(1;2;3)
+[].bar(1 ; 2 ; 3)

@@ -47,14 +47,14 @@ public class StringHelper {
             }
             first = last;
         }
-        return (String[])tokens.toArray(EMPTY_STRING_ARRAY);
+        return (String[]) tokens.toArray(EMPTY_STRING_ARRAY);
     }
 
     private static int scanToken(String s, int pos0) {
         int pos = pos0;
         while (pos < s.length()) {
             char c = s.charAt(pos);
-            if (SPACE==c) break;
+            if (SPACE == c) break;
             pos++;
             if (SINGLE_QUOTE == c) {
                 pos = scanQuoted(s, pos, SINGLE_QUOTE);
@@ -78,7 +78,7 @@ public class StringHelper {
         int pos = pos0;
         while (pos < s.length()) {
             char c = s.charAt(pos);
-            if (SPACE!=c) break;
+            if (SPACE != c) break;
             pos++;
         }
         return pos;

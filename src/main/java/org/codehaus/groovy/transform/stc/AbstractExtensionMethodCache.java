@@ -60,19 +60,19 @@ public abstract class AbstractExtensionMethodCache {
     private Map<String, List<MethodNode>> getMethodsFromClassLoader(ClassLoader classLoader) {
         final List<ExtensionModule> modules = new LinkedList<>();
         ExtensionModuleScanner scanner = new ExtensionModuleScanner(
-                module -> {
-                    if (!(module instanceof MetaInfExtensionModule)) return;
+            module -> {
+                if (!(module instanceof MetaInfExtensionModule)) return;
 
-                    boolean skip = false;
-                    for (ExtensionModule extensionModule : modules) {
-                        if (extensionModule.getName().equals(module.getName())) {
-                            skip = true;
-                            break;
-                        }
+                boolean skip = false;
+                for (ExtensionModule extensionModule : modules) {
+                    if (extensionModule.getName().equals(module.getName())) {
+                        skip = true;
+                        break;
                     }
-                    if (!skip) modules.add(module);
-                },
-                classLoader
+                }
+                if (!skip) modules.add(module);
+            },
+            classLoader
         );
         scanner.scanClasspathModules();
 
@@ -119,7 +119,8 @@ public abstract class AbstractExtensionMethodCache {
         for (Class dgmLikeClass : allClasses) {
             ClassNode cn = makeWithoutCaching(dgmLikeClass, true);
             for (MethodNode methodNode : cn.getMethods()) {
-                if (!(methodNode.isStatic() && methodNode.isPublic()) || methodNode.getParameters().length == 0) continue;
+                if (!(methodNode.isStatic() && methodNode.isPublic()) || methodNode.getParameters().length == 0)
+                    continue;
                 if (methodFilter.test(methodNode)) continue;
                 if (disabling && disabledNames.contains(methodNode.getName())) continue;
 
@@ -129,23 +130,25 @@ public abstract class AbstractExtensionMethodCache {
     }
 
     protected abstract String getDisablePropertyName();
+
     protected abstract Predicate<MethodNode> getMethodFilter();
+
     protected abstract Function<MethodNode, String> getMethodMapper();
 
     private void accumulate(Map<String, List<MethodNode>> accumulator, boolean isStatic, MethodNode metaMethod,
-                                   Function<MethodNode, String> mapperFunction) {
+                            Function<MethodNode, String> mapperFunction) {
 
         Parameter[] types = metaMethod.getParameters();
         Parameter[] parameters = new Parameter[types.length - 1];
         System.arraycopy(types, 1, parameters, 0, parameters.length);
         ExtensionMethodNode node = new ExtensionMethodNode(
-                metaMethod,
-                metaMethod.getName(),
-                metaMethod.getModifiers(),
-                metaMethod.getReturnType(),
-                parameters,
-                ClassNode.EMPTY_ARRAY, null,
-                isStatic);
+            metaMethod,
+            metaMethod.getName(),
+            metaMethod.getModifiers(),
+            metaMethod.getReturnType(),
+            parameters,
+            ClassNode.EMPTY_ARRAY, null,
+            isStatic);
         node.setGenericsTypes(metaMethod.getGenericsTypes());
         ClassNode declaringClass = types[0].getType();
         node.setDeclaringClass(declaringClass);

@@ -40,7 +40,7 @@ class ConstructorsSTCTest extends StaticTypeCheckingTestCase {
             import java.awt.Dimension
             Dimension d = [100]
         ''',
-        'Cannot find matching constructor java.awt.Dimension(int)'
+            'Cannot find matching constructor java.awt.Dimension(int)'
     }
 
     void testWrongNumberOfArgumentsWithDefaultConstructor() {
@@ -51,7 +51,7 @@ class ConstructorsSTCTest extends StaticTypeCheckingTestCase {
             }
             println foo()
         ''',
-        'Cannot find matching constructor X(java.lang.String)'
+            'Cannot find matching constructor X(java.lang.String)'
     }
 
     void testCreateArrayWithDefaultConstructor() {
@@ -67,7 +67,7 @@ class ConstructorsSTCTest extends StaticTypeCheckingTestCase {
             import java.awt.Dimension
             Dimension d = ['100','200']
         ''',
-        'Cannot find matching constructor java.awt.Dimension(java.lang.String, java.lang.String)'
+            'Cannot find matching constructor java.awt.Dimension(java.lang.String, java.lang.String)'
     }
 
     void testConstructFromListAndVariables() {
@@ -97,7 +97,7 @@ class ConstructorsSTCTest extends StaticTypeCheckingTestCase {
             List args = [100,200]
             Dimension d = args // not supported
         ''',
-        'Cannot assign value of type java.util.ArrayList<java.lang.Integer> to variable of type java.awt.Dimension'
+            'Cannot assign value of type java.util.ArrayList<java.lang.Integer> to variable of type java.awt.Dimension'
     }
 
     void testConstructFromMap() {
@@ -246,7 +246,7 @@ class ConstructorsSTCTest extends StaticTypeCheckingTestCase {
             }
             A a = [x:100, y:200, z: 300]
         ''',
-        'No such property: z for class: A'
+            'No such property: z for class: A'
     }
 
     void testConstructWithNamedParamsAndMissingProperty() {
@@ -257,7 +257,7 @@ class ConstructorsSTCTest extends StaticTypeCheckingTestCase {
             }
             A a = new A(x:100, y:200, z: 300)
         ''',
-        'No such property: z for class: A'
+            'No such property: z for class: A'
     }
 
     void testConstructFromValuedMapAndIncorrectTypes() {
@@ -268,7 +268,7 @@ class ConstructorsSTCTest extends StaticTypeCheckingTestCase {
             }
             A a = [x:'100', y:200]
         ''',
-        'Cannot assign value of type java.lang.String to variable of type int'
+            'Cannot assign value of type java.lang.String to variable of type int'
     }
 
     void testConstructFromValuedMapAndDynamicKey() {
@@ -279,7 +279,7 @@ class ConstructorsSTCTest extends StaticTypeCheckingTestCase {
             }
             A a = ["${'x'}":'100']
         ''',
-        'Dynamic keys in map-style constructors are unsupported'
+            'Dynamic keys in map-style constructors are unsupported'
     }
 
     void testConstructWithMapAndInheritance() {
@@ -386,6 +386,7 @@ class ConstructorsSTCTest extends StaticTypeCheckingTestCase {
         assert bean.value == 'Cedric'
         '''
     }
+
     void testConstructJavaBeanFromMapAndSubclass() {
         assertScript '''import groovy.transform.stc.MyBean
         class MyBean2 extends MyBean<String> {
@@ -439,7 +440,7 @@ class ConstructorsSTCTest extends StaticTypeCheckingTestCase {
             }
             void m(OutputStream o) { new Foo(out:o) }
         ''',
-        'Cannot assign value of type java.io.OutputStream to variable of type java.io.ByteArrayOutputStream'
+            'Cannot assign value of type java.io.OutputStream to variable of type java.io.ByteArrayOutputStream'
     }
 
     void testTypeCheckingInfoShouldNotBeAddedToConstructor() {
@@ -618,6 +619,6 @@ class ConstructorsSTCTest extends StaticTypeCheckingTestCase {
                 }
             }
         ''',
-        'Cannot find matching constructor C()'
+            'Cannot find matching constructor C()'
     }
 }

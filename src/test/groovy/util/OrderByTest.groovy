@@ -21,7 +21,7 @@ package groovy.util
 import groovy.test.GroovyTestCase
 import org.codehaus.groovy.runtime.DefaultGroovyMethods
 
-/** 
+/**
  * Tests OrderBy
  */
 class OrderByTest extends GroovyTestCase {
@@ -29,20 +29,20 @@ class OrderByTest extends GroovyTestCase {
     void testSortByOneField() {
         def people = buildPeople()
 
-        def order = new OrderBy({it.get('@cheese')})
+        def order = new OrderBy({ it.get('@cheese') })
         def sorted = people.sort(false, order)
-        assert (0..3).collect{ sorted.get(it).get('@name') } == ['Joe', 'Bob', 'James', 'Chris']
+        assert (0..3).collect { sorted.get(it).get('@name') } == ['Joe', 'Bob', 'James', 'Chris']
 
-        order = new OrderBy({it.get('@name')})
+        order = new OrderBy({ it.get('@name') })
         sorted = people.sort(false, order)
-        assert (0..3).collect{ sorted.get(it).get('@name') } == ['Bob', 'Chris', 'James', 'Joe']
+        assert (0..3).collect { sorted.get(it).get('@name') } == ['Bob', 'Chris', 'James', 'Joe']
     }
 
     void testSortByMultipleFields() {
         def people = buildPeople()
-        def order = new OrderBy([{it.get('@location')}, {it.get('@cheese')}])
+        def order = new OrderBy([{ it.get('@location') }, { it.get('@cheese') }])
         def sorted = people.sort(false, order)
-        assert (0..3).collect{ sorted.get(it).get('@name') } == ['Bob', 'Joe', 'James', 'Chris']
+        assert (0..3).collect { sorted.get(it).get('@name') } == ['Bob', 'Joe', 'James', 'Chris']
     }
 
     private buildPeople() {
@@ -62,7 +62,7 @@ class OrderByTest extends GroovyTestCase {
         def raul = new TestPerson(first: 'Raul', last: 'Julia', age: '30')
 
         def people = [bobby, bob, raul]
-        def order = new OrderBy([{it}, {it.age}])
+        def order = new OrderBy([{ it }, { it.age }])
         def sorted = people.sort(false, order)
 
         assert sorted[0].first == 'Bob'

@@ -31,7 +31,7 @@ final class Groovy11019 extends StringSourcesStubTestCase {
                     }
                 }
             ''',
-            'J.java': '''
+            'J.java'  : '''
                 public class J {
                     String m() {
                         return G.STATIC_STRING;

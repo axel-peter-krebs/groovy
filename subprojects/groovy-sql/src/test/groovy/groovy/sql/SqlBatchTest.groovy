@@ -34,13 +34,13 @@ import static groovy.sql.SqlTestConstants.DB_USER
  */
 class SqlBatchTest extends GroovyTestCase {
     Sql sql
-    private final others = ['Jean':'Gabin', 'Lino':'Ventura']
+    private final others = ['Jean': 'Gabin', 'Lino': 'Ventura']
 
     void setUp() {
         DataSource ds = DB_DATASOURCE.newInstance(
-                (DB_DS_KEY): DB_URL_PREFIX + getMethodName(),
-                user: DB_USER,
-                password: DB_PASSWORD)
+            (DB_DS_KEY): DB_URL_PREFIX + getMethodName(),
+            user: DB_USER,
+            password: DB_PASSWORD)
         sql = new Sql(ds.connection)
         sql.execute("CREATE TABLE person ( id INTEGER, firstname VARCHAR(10), lastname VARCHAR(10), PRIMARY KEY (id))")
 
@@ -60,16 +60,16 @@ class SqlBatchTest extends GroovyTestCase {
         def numRows = sql.rows("SELECT * FROM PERSON").size()
         assert numRows == 3
         assert sql.connection.metaData.supportsBatchUpdates()
-        sql.cacheConnection {connection ->
+        sql.cacheConnection { connection ->
             try {
-            connection.autoCommit = false
-            def stmt = connection.createStatement()
-            others.eachWithIndex {k, v, index ->
-                def id = index + numRows + 1
-                stmt.addBatch("insert into PERSON (id, firstname, lastname) values ($id, '$k', '$v')")
-            }
-            assert stmt.executeBatch() == [1, 1]
-            connection.autoCommit = true
+                connection.autoCommit = false
+                def stmt = connection.createStatement()
+                others.eachWithIndex { k, v, index ->
+                    def id = index + numRows + 1
+                    stmt.addBatch("insert into PERSON (id, firstname, lastname) values ($id, '$k', '$v')")
+                }
+                assert stmt.executeBatch() == [1, 1]
+                connection.autoCommit = true
             } catch (Exception e) {
                 e.printStackTrace()
             }
@@ -93,7 +93,7 @@ class SqlBatchTest extends GroovyTestCase {
     void testWithBatchHavingSize() {
         def numRows = sql.rows("SELECT * FROM PERSON").size()
         assert numRows == 3
-        def myOthers = ['f4':'l4','f5':'l5','f6':'l6','f7':'l7']
+        def myOthers = ['f4': 'l4', 'f5': 'l5', 'f6': 'l6', 'f7': 'l7']
         def result = sql.withBatch(3) { stmt ->
             myOthers.eachWithIndex { k, v, index ->
                 def id = index + numRows + 1
@@ -110,7 +110,7 @@ class SqlBatchTest extends GroovyTestCase {
     void testWithBatchHavingSizeUsingPreparedStatement() {
         def numRows = sql.rows("SELECT * FROM PERSON").size()
         assert numRows == 3
-        def myOthers = ['f4':'l4','f5':'l5','f6':'l6','f7':'l7']
+        def myOthers = ['f4': 'l4', 'f5': 'l5', 'f6': 'l6', 'f7': 'l7']
         def result = sql.withBatch(3, "insert into PERSON (id, firstname, lastname) values (?, ?, ?)") { ps ->
             myOthers.eachWithIndex { k, v, index ->
                 def id = index + numRows + 1
@@ -127,7 +127,7 @@ class SqlBatchTest extends GroovyTestCase {
     void testWithBatchHavingSizeSameSizeAsStatements() {
         def numRows = sql.rows("SELECT * FROM PERSON").size()
         assert numRows == 3
-        def myOthers = ['f4':'l4','f5':'l5','f6':'l6','f7':'l7']
+        def myOthers = ['f4': 'l4', 'f5': 'l5', 'f6': 'l6', 'f7': 'l7']
         def result = sql.withBatch(myOthers.size(), "insert into PERSON (id, firstname, lastname) values (?, ?, ?)") { ps ->
             myOthers.eachWithIndex { k, v, index ->
                 def id = index + numRows + 1
@@ -165,7 +165,7 @@ class SqlBatchTest extends GroovyTestCase {
     void testWithBatchInsideWithTransaction() {
         def numRows = sql.rows("SELECT * FROM PERSON").size()
         assert numRows == 3
-        def myOthers = ['f4':'l4','f5':'l5','f6':'l6','f7':'l7']
+        def myOthers = ['f4': 'l4', 'f5': 'l5', 'f6': 'l6', 'f7': 'l7']
         shouldFail(IllegalStateException) {
             sql.withTransaction {
                 sql.withBatch(2, "insert into PERSON (id, firstname, lastname) values (?, ?, ?)") { ps ->
@@ -183,11 +183,11 @@ class SqlBatchTest extends GroovyTestCase {
     void testWithBatchHavingSizeUsingPreparedStatementNamedParams() {
         def numRows = sql.rows("SELECT * FROM PERSON").size()
         assert numRows == 3
-        def myOthers = ['f4':'l4','f5':'l5','f6':'l6','f7':'l7']
+        def myOthers = ['f4': 'l4', 'f5': 'l5', 'f6': 'l6', 'f7': 'l7']
         def result = sql.withBatch(3, "insert into PERSON (id, firstname, lastname) values (?.id, :first, :last)") { ps ->
             myOthers.eachWithIndex { k, v, index ->
                 def id = index + numRows + 1
-                ps.addBatch(id:id, first:k, last:v)
+                ps.addBatch(id: id, first: k, last: v)
             }
         }
         assert result == [1] * myOthers.size()
@@ -200,11 +200,11 @@ class SqlBatchTest extends GroovyTestCase {
     void testWithBatchHavingSizeUsingPreparedStatementNamedOrdinalParams() {
         def numRows = sql.rows("SELECT * FROM PERSON").size()
         assert numRows == 3
-        def myOthers = ['f4':'l4','f5':'l5','f6':'l6','f7':'l7']
+        def myOthers = ['f4': 'l4', 'f5': 'l5', 'f6': 'l6', 'f7': 'l7']
         def result = sql.withBatch(3, "insert into PERSON (id, firstname, lastname) values (?1, ?2.first, ?2.last)") { ps ->
             myOthers.eachWithIndex { k, v, index ->
                 def id = index + numRows + 1
-                ps.addBatch(id, [first:k, last:v])
+                ps.addBatch(id, [first: k, last: v])
             }
         }
         assert result == [1] * myOthers.size()
@@ -220,7 +220,7 @@ class SqlBatchTest extends GroovyTestCase {
         BatchingStatementWrapper wrapper = null
         sql.cacheStatements = true
         sql.withBatch(1) { stmt ->
-            wrapper = (BatchingStatementWrapper)stmt
+            wrapper = (BatchingStatementWrapper) stmt
             stmt.addBatch("insert into PERSON (id, firstname, lastname) values (999, 'Test', 'Closes')")
         }
         assert wrapper.@delegate.isClosed()
@@ -232,7 +232,7 @@ class SqlBatchTest extends GroovyTestCase {
 
         sql.cacheStatements = false
         sql.withBatch(20, sqlText) { ps ->
-            wrapper = (BatchingPreparedStatementWrapper)ps
+            wrapper = (BatchingPreparedStatementWrapper) ps
             ps.addBatch(111, 'Test1', 'Closes1')
             ps.addBatch(222, 'Test2', 'Closes2')
         }
@@ -240,7 +240,7 @@ class SqlBatchTest extends GroovyTestCase {
 
         sql.cacheStatements = true
         sql.withBatch(20, sqlText) { ps ->
-            wrapper = (BatchingPreparedStatementWrapper)ps
+            wrapper = (BatchingPreparedStatementWrapper) ps
             ps.addBatch(333, 'Test3', 'Closes3')
             ps.addBatch(444, 'Test4', 'Closes4')
         }

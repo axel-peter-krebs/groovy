@@ -35,20 +35,6 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.propX;
 
 class VariableExpressionTransformer {
 
-    Expression transformVariableExpression(final VariableExpression ve) {
-        Expression xe = tryTransformImplicitReceiver(ve);
-        if (xe == null) {
-            xe = tryTransformPrivateFieldAccess(ve);
-        }
-        if (xe == null) {
-            xe = tryTransformDirectMethodTarget(ve);
-        }
-        if (xe != null) {
-            return xe;
-        }
-        return ve;
-    }
-
     private static Expression tryTransformImplicitReceiver(final VariableExpression ve) {
         // we need to transform variable expressions that go to a delegate
         // to a property expression, as ACG would lose the information in
@@ -107,7 +93,21 @@ class VariableExpressionTransformer {
         mce.setMethodTarget(dmct);
         // GROOVY-10637: return type might be parameterized
         mce.putNodeMetaData(StaticTypesMarker.INFERRED_TYPE,
-         ve.getNodeMetaData(StaticTypesMarker.INFERRED_TYPE));
+            ve.getNodeMetaData(StaticTypesMarker.INFERRED_TYPE));
         return mce;
+    }
+
+    Expression transformVariableExpression(final VariableExpression ve) {
+        Expression xe = tryTransformImplicitReceiver(ve);
+        if (xe == null) {
+            xe = tryTransformPrivateFieldAccess(ve);
+        }
+        if (xe == null) {
+            xe = tryTransformDirectMethodTarget(ve);
+        }
+        if (xe != null) {
+            return xe;
+        }
+        return ve;
     }
 }

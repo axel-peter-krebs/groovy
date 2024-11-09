@@ -31,7 +31,7 @@ class Groovy6475Bug extends StaticTypeCheckingTestCase implements StaticCompilat
         '''
     }
 
-    public abstract static class TypeReference<T>  {
+    public abstract static class TypeReference<T> {
 
     }
 

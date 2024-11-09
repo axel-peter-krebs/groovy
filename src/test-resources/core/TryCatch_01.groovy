@@ -26,81 +26,56 @@ try {
 
 try {
     assert true;
-} catch(Exception e) {
+} catch (Exception e) {
     assert false;
 }
 
 try {
     assert true;
-} catch(Exception
-            e) {
+} catch (Exception
+e ) {
     assert false;
 }
 
 try {
     assert true;
-} catch(e) {
+} catch (e) {
     assert false;
 }
 
 try {
     assert true;
-} catch(e) {
+} catch (e) {
     assert false;
-} catch(t) {
-    assert false;
-}
-
-try {
-    assert true;
-} catch(final e) {
+} catch (t) {
     assert false;
 }
 
 try {
     assert true;
-} catch(final Exception e) {
+} catch (final e) {
     assert false;
 }
 
 try {
     assert true;
-} catch(IOException e) {
-    assert false;
-} catch(Exception e) {
+} catch (final Exception e) {
     assert false;
 }
 
 try {
     assert true;
-} catch(IOException e) {
+} catch (IOException e) {
     assert false;
-} catch(Exception e) {
+} catch (Exception e) {
     assert false;
-} finally {
-    return 0;
-}
-
-try
-{
-    assert true;
-}
-catch(IOException e)
-{
-    assert false;
-}
-catch(Exception e)
-{
-    assert false;
-}
-finally
-{
-    return 0;
 }
 
 try {
     assert true;
-} catch(Exception e) {
+} catch (IOException e) {
+    assert false;
+} catch (Exception e) {
     assert false;
 } finally {
     return 0;
@@ -108,7 +83,20 @@ try {
 
 try {
     assert true;
-} catch(NullPointerException | IOException e) {
+}
+catch (IOException e) {
+    assert false;
+}
+catch (Exception e) {
+    assert false;
+}
+finally {
+    return 0;
+}
+
+try {
+    assert true;
+} catch (Exception e) {
     assert false;
 } finally {
     return 0;
@@ -116,15 +104,23 @@ try {
 
 try {
     assert true;
-} catch(NullPointerException | IOException e) {
+} catch (NullPointerException | IOException e) {
+    assert false;
+} finally {
+    return 0;
+}
+
+try {
+    assert true;
+} catch (NullPointerException | IOException e) {
     assert false;
 }
 
 try {
     assert true;
-} catch(NullPointerException |
-        IOException |
-        SQLException
-                e) {
+} catch (NullPointerException |
+IOException |
+    SQLException
+e ) {
     assert false;
 }

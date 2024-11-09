@@ -20,22 +20,22 @@ package groovy
 
 import groovy.test.GroovyTestCase
 
-/** 
+/**
  * Tests creating Maps in Groovy
  */
 class MapConstructionTest extends GroovyTestCase {
 
     void testMap() {
-        def m = [ 1 : 'abc', 2 : 'def', 3 : 'xyz' ]
+        def m = [1: 'abc', 2: 'def', 3: 'xyz']
 
-        def mtoo = [ 1 : [ "innerKey" : "innerValue" ], 2 : m ]
+        def mtoo = [1: ["innerKey": "innerValue"], 2: m]
 
         assertMap(m)
         assert mtoo[2][2] == 'def'
     }
 
     void testMapAsParameter() {
-        assertMap([ 1 : 'abc', 2 : 'def', 3 : 'xyz' ])
+        assertMap([1: 'abc', 2: 'def', 3: 'xyz'])
     }
 
     void testMapViaHashMap() {
@@ -52,14 +52,14 @@ class MapConstructionTest extends GroovyTestCase {
 
         def result = 0
         def text = ""
-        for ( e in m ) {
+        for (e in m) {
             result = result + e.key
             text = text + e.value
         }
         assert result == 6
         assert text.contains('abc')
-		assert text.contains('def')
-		assert text.contains('xyz')
+        assert text.contains('def')
+        assert text.contains('xyz')
 
         assert m.size() == 3
 

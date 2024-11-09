@@ -53,8 +53,7 @@ public class GroovyRowResult extends GroovyObjectSupport implements Map<String, 
                 return result.get(key);
             }
             throw new MissingPropertyException(property, GroovyRowResult.class);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new MissingPropertyException(property, GroovyRowResult.class, e);
         }
     }
@@ -69,7 +68,7 @@ public class GroovyRowResult extends GroovyObjectSupport implements Map<String, 
         for (Object next : result.keySet()) {
             if (!(next instanceof String))
                 continue;
-            if (keyStr.equalsIgnoreCase((String)next))
+            if (keyStr.equalsIgnoreCase((String) next))
                 return next;
         }
         return null;
@@ -98,8 +97,7 @@ public class GroovyRowResult extends GroovyObjectSupport implements Map<String, 
                 i++;
             }
             return obj;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new MissingPropertyException(Integer.toString(index), GroovyRowResult.class, e);
         }
     }
@@ -154,7 +152,7 @@ public class GroovyRowResult extends GroovyObjectSupport implements Map<String, 
     @Override
     public Object get(Object property) {
         if (property instanceof String)
-            return getProperty((String)property);
+            return getProperty((String) property);
         return null;
     }
 
@@ -176,12 +174,12 @@ public class GroovyRowResult extends GroovyObjectSupport implements Map<String, 
     /**
      * Associates the specified value with the specified property name in this result.
      *
-     * @param key the property name for the result
+     * @param key   the property name for the result
      * @param value the property value for the result
      * @return the previous value associated with <tt>key</tt>, or
-     *         <tt>null</tt> if there was no mapping for <tt>key</tt>.
-     *         (A <tt>null</tt> return can also indicate that the map
-     *         previously associated <tt>null</tt> with <tt>key</tt>.)
+     * <tt>null</tt> if there was no mapping for <tt>key</tt>.
+     * (A <tt>null</tt> return can also indicate that the map
+     * previously associated <tt>null</tt> with <tt>key</tt>.)
      */
     @Override
     public Object put(String key, Object value) {

@@ -27,9 +27,9 @@ class Groovy2271Bug extends GroovyTestCase {
     def void testClosureMock() {
         StubFor fooStub = new StubFor(Groovy2271Foo)
 
-        fooStub.demand.createBar(0..2) {TEST_TEXT}
+        fooStub.demand.createBar(0..2) { TEST_TEXT }
 
-        Closure closure = {createBar()}
+        Closure closure = { createBar() }
 
         fooStub.use {
             Groovy2271Foo foo = new Groovy2271Foo()

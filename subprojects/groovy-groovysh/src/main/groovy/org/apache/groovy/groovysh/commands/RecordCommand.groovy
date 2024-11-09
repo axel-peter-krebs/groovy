@@ -29,7 +29,7 @@ class RecordCommand extends ComplexCommandSupport {
     public static final String COMMAND_NAME = ':record'
 
     RecordCommand(final Groovysh shell) {
-        super(shell, COMMAND_NAME, ':r', [ 'start', 'stop', 'status' ], 'status')
+        super(shell, COMMAND_NAME, ':r', ['start', 'stop', 'status'], 'status')
 
         addShutdownHook {
             if (isRecording()) {
@@ -78,7 +78,7 @@ class RecordCommand extends ComplexCommandSupport {
         }
     }
 
-    def do_start = {List<String> args ->
+    def do_start = { List<String> args ->
         if (isRecording()) {
             fail("Already recording to: \"$file\"")
         }

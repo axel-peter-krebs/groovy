@@ -35,10 +35,10 @@ import java.io.Serializable;
  */
 public class CharSequenceReader extends Reader implements Serializable {
     private static final long serialVersionUID = -6661279371843310693L;
+    private static final int EOF = -1;
     private final CharSequence charSequence;
     private int idx;
     private int mark;
-    private static final int EOF = -1;
 
     /**
      * Construct a new instance with the specified character sequence.
@@ -96,7 +96,7 @@ public class CharSequenceReader extends Reader implements Serializable {
     /**
      * Read the specified number of characters into the array.
      *
-     * @param array The array to store the characters in
+     * @param array  The array to store the characters in
      * @param offset The starting position in the array to store
      * @param length The maximum number of characters to read
      * @return The number of characters read or -1 if there are
@@ -112,7 +112,7 @@ public class CharSequenceReader extends Reader implements Serializable {
         }
         if (length < 0 || offset < 0 || offset + length > array.length) {
             throw new IndexOutOfBoundsException("Array Size=" + array.length +
-                    ", offset=" + offset + ", length=" + length);
+                ", offset=" + offset + ", length=" + length);
         }
         int count = 0;
         for (int i = 0; i < length; i++) {
@@ -120,7 +120,7 @@ public class CharSequenceReader extends Reader implements Serializable {
             if (c == EOF) {
                 return count;
             }
-            array[offset + i] = (char)c;
+            array[offset + i] = (char) c;
             count++;
         }
         return count;
@@ -145,12 +145,12 @@ public class CharSequenceReader extends Reader implements Serializable {
     public long skip(final long n) {
         if (n < 0) {
             throw new IllegalArgumentException(
-                    "Number of characters to skip is less than zero: " + n);
+                "Number of characters to skip is less than zero: " + n);
         }
         if (idx >= charSequence.length()) {
             return EOF;
         }
-        final int dest = (int)Math.min(charSequence.length(), idx + n);
+        final int dest = (int) Math.min(charSequence.length(), idx + n);
         final int count = dest - idx;
         idx = dest;
         return count;

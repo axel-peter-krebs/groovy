@@ -35,11 +35,11 @@ import java.util.Set;
  * <p>
  * This class is not thread-safe!
  */
-public class ListHashMap<K,V> implements Map<K,V> {
+public class ListHashMap<K, V> implements Map<K, V> {
 
     private final K[] keys;
     private final V[] values;
-    private Map<K,V> innerMap;
+    private Map<K, V> innerMap;
     private int size;
 
     public ListHashMap() {
@@ -93,7 +93,7 @@ public class ListHashMap<K,V> implements Map<K,V> {
     }
 
     @Override
-    public Set<Entry<K,V>> entrySet() {
+    public Set<Entry<K, V>> entrySet() {
         return (innerMap != null ? Collections.unmodifiableMap(innerMap) : toMap()).entrySet();
     }
 
@@ -139,11 +139,11 @@ public class ListHashMap<K,V> implements Map<K,V> {
                 }
             }
             if (size < keys.length) {
-                int i = (size ++);
+                int i = (size++);
                 values[i] = value;
                 keys[i] = key;
             } else { // evolve
-                Map<K,V> map = toMap();
+                Map<K, V> map = toMap();
                 map.put(key, value);
                 innerMap = map;
                 clearArrays();
@@ -168,7 +168,9 @@ public class ListHashMap<K,V> implements Map<K,V> {
                 if (value != null) {
                     size = innerMap.size();
                     if (size <= keys.length) { // devolve
-                        size = 0; Set<Entry<K,V>> entries = innerMap.entrySet(); innerMap = null;
+                        size = 0;
+                        Set<Entry<K, V>> entries = innerMap.entrySet();
+                        innerMap = null;
                         for (Entry<? extends K, ? extends V> entry : entries) {
                             int i = size++; // not atomic
                             values[i] = entry.getValue();
@@ -201,8 +203,8 @@ public class ListHashMap<K,V> implements Map<K,V> {
         return size;
     }
 
-    private Map<K,V> toMap() {
-        Map<K,V> m = new HashMap<>((int) (size / 0.75) + 1);
+    private Map<K, V> toMap() {
+        Map<K, V> m = new HashMap<>((int) (size / 0.75) + 1);
         for (int i = 0; i < size; i += 1) {
             m.put(keys[i], values[i]);
         }

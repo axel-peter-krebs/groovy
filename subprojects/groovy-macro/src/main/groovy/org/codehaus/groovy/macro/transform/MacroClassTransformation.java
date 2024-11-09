@@ -105,18 +105,18 @@ public class MacroClassTransformation extends MethodCallTransformation {
             ClassNode type = call.getType();
             if (type instanceof InnerClassNode) {
                 if (((InnerClassNode) type).isAnonymous() &&
-                        MACROCLASS_TYPE.getNameWithoutPackage().equals(type.getSuperClass().getNameWithoutPackage())) {
+                    MACROCLASS_TYPE.getNameWithoutPackage().equals(type.getSuperClass().getNameWithoutPackage())) {
                     try {
                         String source = convertInnerClassToSource(type);
 
                         MethodCallExpression macroCall = callX(
-                                propX(classX(ClassHelper.makeWithoutCaching(MacroBuilder.class, false)), "INSTANCE"),
-                                MACRO_METHOD,
-                                args(
-                                        constX(source),
-                                        MacroGroovyMethods.buildSubstitutions(sourceUnit, type),
-                                        classX(ClassHelper.make(ClassNode.class))
-                                )
+                            propX(classX(ClassHelper.makeWithoutCaching(MacroBuilder.class, false)), "INSTANCE"),
+                            MACRO_METHOD,
+                            args(
+                                constX(source),
+                                MacroGroovyMethods.buildSubstitutions(sourceUnit, type),
+                                classX(ClassHelper.make(ClassNode.class))
+                            )
                         );
 
                         macroCall.setSpreadSafe(false);

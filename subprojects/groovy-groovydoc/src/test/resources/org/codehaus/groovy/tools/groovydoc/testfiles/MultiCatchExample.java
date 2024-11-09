@@ -23,6 +23,8 @@ public class MultiCatchExample {
      * foo has a multi-catch exception inside
      */
     void foo() {
-        try { } catch(NumberFormatException | NullPointerException e) {}
+        try {
+        } catch (NumberFormatException | NullPointerException e) {
+        }
     }
 }

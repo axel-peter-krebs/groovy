@@ -52,9 +52,8 @@ public class LockableObject extends AbstractQueuedSynchronizer {
                 owner = current;
                 return true;
             }
-        }
-        else if (current == owner) {
-            setState(c+ acquires);
+        } else if (current == owner) {
+            setState(c + acquires);
             return true;
         }
         return false;

@@ -46,7 +46,8 @@ final class Groovy7722 {
         '''
     }
 
-    @Test // GROOVY-7864
+    @Test
+    // GROOVY-7864
     void testGenericsStackOverflow2() {
         assertScript '''
             // from RxJava 1.x

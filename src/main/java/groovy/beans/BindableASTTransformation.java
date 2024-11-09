@@ -91,11 +91,43 @@ public class BindableASTTransformation implements ASTTransformation, Opcodes {
         return false;
     }
 
+    /*
+     * Wrap an existing setter.
+     */
+    private static void wrapSetterMethod(ClassNode classNode, PropertyNode propertyNode) {
+        String getterName = propertyNode.getGetterNameOrDefault();
+        MethodNode setter = classNode.getSetterMethod(propertyNode.getSetterNameOrDefault());
+
+        if (setter != null) {
+            // Get the existing code block
+            Statement code = setter.getCode();
+
+            Expression oldValue = localVarX("$oldValue");
+            Expression newValue = localVarX("$newValue");
+            BlockStatement block = new BlockStatement();
+
+            // create a local variable to hold the old value from the getter
+            block.addStatement(declS(oldValue, callThisX(getterName)));
+
+            // call the existing block, which will presumably set the value properly
+            block.addStatement(code);
+
+            // get the new value to emit in the event
+            block.addStatement(declS(newValue, callThisX(getterName)));
+
+            // add the firePropertyChange method call
+            block.addStatement(stmt(callThisX("firePropertyChange", args(constX(propertyNode.getName()), oldValue, newValue))));
+
+            // replace the existing code block with our new one
+            setter.setCode(block);
+        }
+    }
+
     /**
      * Handles the bulk of the processing, mostly delegating to other methods.
      *
-     * @param nodes   the ast nodes
-     * @param source  the source unit for the nodes
+     * @param nodes  the ast nodes
+     * @param source the source unit for the nodes
      */
     @Override
     public void visit(ASTNode[] nodes, SourceUnit source) {
@@ -156,8 +188,7 @@ public class BindableASTTransformation implements ASTTransformation, Opcodes {
             if (hasBindableAnnotation(field)
                 || ((field.getModifiers() & Opcodes.ACC_FINAL) != 0)
                 || field.isStatic()
-                || VetoableASTTransformation.hasVetoableAnnotation(field))
-            {
+                || VetoableASTTransformation.hasVetoableAnnotation(field)) {
                 // explicitly labeled properties are already handled,
                 // don't transform final properties
                 // don't transform static properties
@@ -165,38 +196,6 @@ public class BindableASTTransformation implements ASTTransformation, Opcodes {
                 continue;
             }
             createListenerSetter(classNode, propertyNode);
-        }
-    }
-
-    /*
-     * Wrap an existing setter.
-     */
-    private static void wrapSetterMethod(ClassNode classNode, PropertyNode propertyNode) {
-        String getterName = propertyNode.getGetterNameOrDefault();
-        MethodNode setter = classNode.getSetterMethod(propertyNode.getSetterNameOrDefault());
-
-        if (setter != null) {
-            // Get the existing code block
-            Statement code = setter.getCode();
-
-            Expression oldValue = localVarX("$oldValue");
-            Expression newValue = localVarX("$newValue");
-            BlockStatement block = new BlockStatement();
-
-            // create a local variable to hold the old value from the getter
-            block.addStatement(declS(oldValue, callThisX(getterName)));
-
-            // call the existing block, which will presumably set the value properly
-            block.addStatement(code);
-
-            // get the new value to emit in the event
-            block.addStatement(declS(newValue, callThisX(getterName)));
-
-            // add the firePropertyChange method call
-            block.addStatement(stmt(callThisX("firePropertyChange", args(constX(propertyNode.getName()), oldValue, newValue))));
-
-            // replace the existing code block with our new one
-            setter.setCode(block);
         }
     }
 
@@ -216,7 +215,7 @@ public class BindableASTTransformation implements ASTTransformation, Opcodes {
      * Creates a statement body similar to:
      * <code>this.firePropertyChange("field", field, field = value)</code>
      *
-     * @param propertyNode           the field node for the property
+     * @param propertyNode    the field node for the property
      * @param fieldExpression a field expression for setting the property value
      * @return the created statement
      */
@@ -229,18 +228,18 @@ public class BindableASTTransformation implements ASTTransformation, Opcodes {
      * Creates a setter method with the given body.
      *
      * @param declaringClass the class to which we will add the setter
-     * @param propertyNode          the field to back the setter
+     * @param propertyNode   the field to back the setter
      * @param setterName     the name of the setter
      * @param setterBlock    the statement representing the setter block
      */
     protected void createSetterMethod(ClassNode declaringClass, PropertyNode propertyNode, String setterName, Statement setterBlock) {
         MethodNode setter = new MethodNode(
-                setterName,
-                PropertyNodeUtils.adjustPropertyModifiersForMethod(propertyNode),
-                ClassHelper.VOID_TYPE,
-                params(param(propertyNode.getType(), "value")),
-                ClassNode.EMPTY_ARRAY,
-                setterBlock);
+            setterName,
+            PropertyNodeUtils.adjustPropertyModifiersForMethod(propertyNode),
+            ClassHelper.VOID_TYPE,
+            params(param(propertyNode.getType(), "value")),
+            ClassNode.EMPTY_ARRAY,
+            setterBlock);
         setter.setSynthetic(true);
         // add it to the class
         addGeneratedMethod(declaringClass, setter);
@@ -254,13 +253,13 @@ public class BindableASTTransformation implements ASTTransformation, Opcodes {
      * must be defined or a compilation error results.
      *
      * @param declaringClass the class to search
-     * @param sourceUnit the source unit, for error reporting. {@code @NotNull}.
+     * @param sourceUnit     the source unit, for error reporting. {@code @NotNull}.
      * @return true if property change support should be added
      */
     protected boolean needsPropertyChangeSupport(ClassNode declaringClass, SourceUnit sourceUnit) {
         boolean foundAdd = false, foundRemove = false, foundFire = false;
         ClassNode consideredClass = declaringClass;
-        while (consideredClass!= null) {
+        while (consideredClass != null) {
             for (MethodNode method : consideredClass.getMethods()) {
                 // just check length, MOP will match it up
                 foundAdd = foundAdd || "addPropertyChangeListener".equals(method.getName()) && method.getParameters().length == 1;
@@ -274,7 +273,7 @@ public class BindableASTTransformation implements ASTTransformation, Opcodes {
         }
         // check if a super class has @Bindable annotations
         consideredClass = declaringClass.getSuperClass();
-        while (consideredClass!=null) {
+        while (consideredClass != null) {
             if (hasBindableAnnotation(consideredClass)) return false;
             for (FieldNode field : consideredClass.getFields()) {
                 if (hasBindableAnnotation(field)) return false;
@@ -286,7 +285,7 @@ public class BindableASTTransformation implements ASTTransformation, Opcodes {
                 new SimpleMessage("@Bindable cannot be processed on "
                     + declaringClass.getName()
                     + " because some but not all of addPropertyChangeListener, removePropertyChange, and firePropertyChange were declared in the current or super classes.",
-                sourceUnit)
+                    sourceUnit)
             );
             return false;
         }
@@ -320,97 +319,97 @@ public class BindableASTTransformation implements ASTTransformation, Opcodes {
         // add field:
         // protected final PropertyChangeSupport this$propertyChangeSupport = new java.beans.PropertyChangeSupport(this)
         FieldNode pcsField = declaringClass.addField(
-                "this$propertyChangeSupport",
-                ACC_FINAL | ACC_PRIVATE | ACC_SYNTHETIC,
-                pcsClassNode,
-                ctorX(pcsClassNode, args(varX("this"))));
+            "this$propertyChangeSupport",
+            ACC_FINAL | ACC_PRIVATE | ACC_SYNTHETIC,
+            pcsClassNode,
+            ctorX(pcsClassNode, args(varX("this"))));
 
         // add method:
         // void addPropertyChangeListener(listener) {
         //     this$propertyChangeSupport.addPropertyChangeListener(listener)
         //  }
         addGeneratedMethod(declaringClass,
-                new MethodNode(
-                        "addPropertyChangeListener",
-                        ACC_PUBLIC,
-                        ClassHelper.VOID_TYPE,
-                        params(param(pclClassNode, "listener")),
-                        ClassNode.EMPTY_ARRAY,
-                        stmt(callX(fieldX(pcsField), "addPropertyChangeListener", args(varX("listener", pclClassNode))))));
+            new MethodNode(
+                "addPropertyChangeListener",
+                ACC_PUBLIC,
+                ClassHelper.VOID_TYPE,
+                params(param(pclClassNode, "listener")),
+                ClassNode.EMPTY_ARRAY,
+                stmt(callX(fieldX(pcsField), "addPropertyChangeListener", args(varX("listener", pclClassNode))))));
 
         // add method:
         // void addPropertyChangeListener(name, listener) {
         //     this$propertyChangeSupport.addPropertyChangeListener(name, listener)
         //  }
         addGeneratedMethod(declaringClass,
-                new MethodNode(
-                        "addPropertyChangeListener",
-                        ACC_PUBLIC,
-                        ClassHelper.VOID_TYPE,
-                        params(param(ClassHelper.STRING_TYPE, "name"), param(pclClassNode, "listener")),
-                        ClassNode.EMPTY_ARRAY,
-                        stmt(callX(fieldX(pcsField), "addPropertyChangeListener", args(varX("name", ClassHelper.STRING_TYPE), varX("listener", pclClassNode))))));
+            new MethodNode(
+                "addPropertyChangeListener",
+                ACC_PUBLIC,
+                ClassHelper.VOID_TYPE,
+                params(param(ClassHelper.STRING_TYPE, "name"), param(pclClassNode, "listener")),
+                ClassNode.EMPTY_ARRAY,
+                stmt(callX(fieldX(pcsField), "addPropertyChangeListener", args(varX("name", ClassHelper.STRING_TYPE), varX("listener", pclClassNode))))));
 
         // add method:
         // boolean removePropertyChangeListener(listener) {
         //    return this$propertyChangeSupport.removePropertyChangeListener(listener);
         // }
         addGeneratedMethod(declaringClass,
-                new MethodNode(
-                        "removePropertyChangeListener",
-                        ACC_PUBLIC,
-                        ClassHelper.VOID_TYPE,
-                        params(param(pclClassNode, "listener")),
-                        ClassNode.EMPTY_ARRAY,
-                        stmt(callX(fieldX(pcsField), "removePropertyChangeListener", args(varX("listener", pclClassNode))))));
+            new MethodNode(
+                "removePropertyChangeListener",
+                ACC_PUBLIC,
+                ClassHelper.VOID_TYPE,
+                params(param(pclClassNode, "listener")),
+                ClassNode.EMPTY_ARRAY,
+                stmt(callX(fieldX(pcsField), "removePropertyChangeListener", args(varX("listener", pclClassNode))))));
 
         // add method: void removePropertyChangeListener(name, listener)
         addGeneratedMethod(declaringClass,
-                new MethodNode(
-                        "removePropertyChangeListener",
-                        ACC_PUBLIC,
-                        ClassHelper.VOID_TYPE,
-                        params(param(ClassHelper.STRING_TYPE, "name"), param(pclClassNode, "listener")),
-                        ClassNode.EMPTY_ARRAY,
-                        stmt(callX(fieldX(pcsField), "removePropertyChangeListener", args(varX("name", ClassHelper.STRING_TYPE), varX("listener", pclClassNode))))));
+            new MethodNode(
+                "removePropertyChangeListener",
+                ACC_PUBLIC,
+                ClassHelper.VOID_TYPE,
+                params(param(ClassHelper.STRING_TYPE, "name"), param(pclClassNode, "listener")),
+                ClassNode.EMPTY_ARRAY,
+                stmt(callX(fieldX(pcsField), "removePropertyChangeListener", args(varX("name", ClassHelper.STRING_TYPE), varX("listener", pclClassNode))))));
 
         // add method:
         // void firePropertyChange(String name, Object oldValue, Object newValue) {
         //     this$propertyChangeSupport.firePropertyChange(name, oldValue, newValue)
         //  }
         addGeneratedMethod(declaringClass,
-                new MethodNode(
-                        "firePropertyChange",
-                        ACC_PUBLIC,
-                        ClassHelper.VOID_TYPE,
-                        params(param(ClassHelper.STRING_TYPE, "name"), param(ClassHelper.OBJECT_TYPE, "oldValue"), param(ClassHelper.OBJECT_TYPE, "newValue")),
-                        ClassNode.EMPTY_ARRAY,
-                        stmt(callX(fieldX(pcsField), "firePropertyChange", args(varX("name", ClassHelper.STRING_TYPE), varX("oldValue"), varX("newValue"))))));
+            new MethodNode(
+                "firePropertyChange",
+                ACC_PUBLIC,
+                ClassHelper.VOID_TYPE,
+                params(param(ClassHelper.STRING_TYPE, "name"), param(ClassHelper.OBJECT_TYPE, "oldValue"), param(ClassHelper.OBJECT_TYPE, "newValue")),
+                ClassNode.EMPTY_ARRAY,
+                stmt(callX(fieldX(pcsField), "firePropertyChange", args(varX("name", ClassHelper.STRING_TYPE), varX("oldValue"), varX("newValue"))))));
 
         // add method:
         // PropertyChangeListener[] getPropertyChangeListeners() {
         //   return this$propertyChangeSupport.getPropertyChangeListeners
         // }
         addGeneratedMethod(declaringClass,
-                new MethodNode(
-                        "getPropertyChangeListeners",
-                        ACC_PUBLIC,
-                        pclClassNode.makeArray(),
-                        Parameter.EMPTY_ARRAY,
-                        ClassNode.EMPTY_ARRAY,
-                        returnS(callX(fieldX(pcsField), "getPropertyChangeListeners"))));
+            new MethodNode(
+                "getPropertyChangeListeners",
+                ACC_PUBLIC,
+                pclClassNode.makeArray(),
+                Parameter.EMPTY_ARRAY,
+                ClassNode.EMPTY_ARRAY,
+                returnS(callX(fieldX(pcsField), "getPropertyChangeListeners"))));
 
         // add method:
         // PropertyChangeListener[] getPropertyChangeListeners(String name) {
         //   return this$propertyChangeSupport.getPropertyChangeListeners(name)
         // }
         addGeneratedMethod(declaringClass,
-                new MethodNode(
-                        "getPropertyChangeListeners",
-                        ACC_PUBLIC,
-                        pclClassNode.makeArray(),
-                        params(param(ClassHelper.STRING_TYPE, "name")),
-                        ClassNode.EMPTY_ARRAY,
-                        returnS(callX(fieldX(pcsField), "getPropertyChangeListeners", args(varX("name", ClassHelper.STRING_TYPE))))));
+            new MethodNode(
+                "getPropertyChangeListeners",
+                ACC_PUBLIC,
+                pclClassNode.makeArray(),
+                params(param(ClassHelper.STRING_TYPE, "name")),
+                ClassNode.EMPTY_ARRAY,
+                returnS(callX(fieldX(pcsField), "getPropertyChangeListeners", args(varX("name", ClassHelper.STRING_TYPE))))));
     }
 }

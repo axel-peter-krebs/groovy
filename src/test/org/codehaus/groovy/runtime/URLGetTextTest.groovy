@@ -25,7 +25,7 @@ import groovy.test.GroovyTestCase
  */
 class URLGetTextTest extends GroovyTestCase {
     void testGetTextFromURLWithParameters() {
-        def url = new URL('http','groovy.codehaus.org',80, '/', new URLStreamHandler() {
+        def url = new URL('http', 'groovy.codehaus.org', 80, '/', new URLStreamHandler() {
             @Override
             protected URLConnection openConnection(URL u) {
                 new DummyURLConnection(new URL('http://groovy.codehaus.org'))
@@ -36,33 +36,33 @@ class URLGetTextTest extends GroovyTestCase {
         assert url.text == 'Groovy'
 
         shouldFail(SocketTimeoutException) {
-            url.getText(readTimeout:5)
+            url.getText(readTimeout: 5)
         }
 
         shouldFail(SocketTimeoutException) {
-            url.getText(connectTimeout:5)
+            url.getText(connectTimeout: 5)
         }
 
         shouldFail(SocketTimeoutException) {
-            url.getText('utf-8',connectTimeout:5)
+            url.getText('utf-8', connectTimeout: 5)
         }
 
         shouldFail(RuntimeException) {
-            url.getText(allowUserInteraction:true)
+            url.getText(allowUserInteraction: true)
         }
 
-        assert url.getText(useCaches:true) == 'Groovy cached'
+        assert url.getText(useCaches: true) == 'Groovy cached'
 
-        assert url.getText(requestProperties:[a:'b']) == 'Groovy a:b'
+        assert url.getText(requestProperties: [a: 'b']) == 'Groovy a:b'
 
-        assert url.getText(useCaches:true, requestProperties:[a:'b']) == 'Groovy cached a:b'
+        assert url.getText(useCaches: true, requestProperties: [a: 'b']) == 'Groovy cached a:b'
 
         assert url.getText() == url.getText()
 
-        assert url.getText() == url.getText((Map)null)
+        assert url.getText() == url.getText((Map) null)
 
         def val = 'b'
-        assert url.getText(requestProperties: [a:"$val"]) == "Groovy a:b"
+        assert url.getText(requestProperties: [a: "$val"]) == "Groovy a:b"
     }
 
     private static class DummyURLConnection extends URLConnection {
@@ -83,8 +83,8 @@ class URLGetTextTest extends GroovyTestCase {
             if (throwConnectTimeout) throw new SocketTimeoutException()
             if (throwReadTimeout) throw new SocketTimeoutException()
             if (allowUserInteraction) throw new RuntimeException('User interaction')
-            def string = useCache?'Groovy cached':'Groovy'
-            properties.each { k,v -> string = string + " $k:$v"}
+            def string = useCache ? 'Groovy cached' : 'Groovy'
+            properties.each { k, v -> string = string + " $k:$v" }
             new ByteArrayInputStream(string.bytes)
         }
 

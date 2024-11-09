@@ -27,8 +27,7 @@ class IfTest extends GroovyTestCase {
 
         if (x) {
             // expected
-        }
-        else {
+        } else {
             fail("should not be false")
         }
 
@@ -36,8 +35,7 @@ class IfTest extends GroovyTestCase {
 
         if (x) {
             fail("should not be true")
-        }
-        else {
+        } else {
             // expected
         }
 
@@ -48,8 +46,7 @@ class IfTest extends GroovyTestCase {
 
         if (x) {
             // expected
-        }
-        else {
+        } else {
             fail("should not be false")
         }
 
@@ -57,8 +54,7 @@ class IfTest extends GroovyTestCase {
 
         if (x) {
             fail("should not be true")
-        }
-        else {
+        } else {
             // expected
         }
     }

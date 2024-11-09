@@ -28,10 +28,11 @@ import org.codehaus.groovy.control.CompilerConfiguration
  * various compilation customizers by hand, you may use this builder instead, which provides a
  * shorter syntax and removes most of the verbosity.
  */
-@AutoFinal @CompileStatic
+@AutoFinal
+@CompileStatic
 class CompilerCustomizationBuilder extends FactoryBuilderSupport {
 
-    static CompilerConfiguration withConfig(CompilerConfiguration config, @DelegatesTo(type='org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder') Closure spec) {
+    static CompilerConfiguration withConfig(CompilerConfiguration config, @DelegatesTo(type = 'org.codehaus.groovy.control.customizers.builder.CompilerCustomizationBuilder') Closure spec) {
         config.invokeMethod('addCompilationCustomizers', new CompilerCustomizationBuilder().invokeMethod('customizers', spec))
         config
     }

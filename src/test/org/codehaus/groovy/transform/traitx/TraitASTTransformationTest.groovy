@@ -479,7 +479,7 @@ final class TraitASTTransformationTest {
 
     @Test
     void testTraitWithGenerics1() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 trait Provider<T> {
@@ -500,7 +500,7 @@ final class TraitASTTransformationTest {
 
     @Test
     void testTraitWithGenerics2() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 trait Provider<T> {
@@ -522,7 +522,7 @@ final class TraitASTTransformationTest {
     // GROOVY-9760
     @Test
     void testTraitWithGenerics3() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 trait Provider<T> {
@@ -543,7 +543,7 @@ final class TraitASTTransformationTest {
     // GROOVY-11012
     @Test
     void testTraitWithGenerics4() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 trait Provider<T> {
@@ -565,7 +565,7 @@ final class TraitASTTransformationTest {
 
     @Test
     void testTraitWithGenericProperty1() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 trait PropertyProvider<T> {
@@ -587,7 +587,7 @@ final class TraitASTTransformationTest {
 
     @Test
     void testTraitWithGenericProperty2() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 trait PropertyProvider<T> {
@@ -609,7 +609,7 @@ final class TraitASTTransformationTest {
 
     @Test
     void testTraitWithGenericProperty3() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 trait PropertyProvider<T> {
@@ -1724,7 +1724,7 @@ final class TraitASTTransformationTest {
     // GROOVY-7213, GROOVY-8859
     @Test
     void testPrivateMethodInTrait() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 trait T {
@@ -1762,7 +1762,7 @@ final class TraitASTTransformationTest {
 
     @Test
     void testPrivateMethodInTraitAccessingPrivateField() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 trait T {
@@ -1803,7 +1803,7 @@ final class TraitASTTransformationTest {
 
     @Test
     void testPrivateMethodInTraitAccessingPrivateFieldNoShadowing() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 trait T {
@@ -2019,7 +2019,7 @@ final class TraitASTTransformationTest {
 
     @Test
     void testTraitStaticMethod() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 trait T {
@@ -2109,7 +2109,7 @@ final class TraitASTTransformationTest {
 
     @Test
     void testTraitStaticField() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 trait T {
@@ -2141,7 +2141,7 @@ final class TraitASTTransformationTest {
 
     @Test
     void testTraitStaticProperty() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 trait T {
@@ -3241,7 +3241,7 @@ final class TraitASTTransformationTest {
             assert td == 'java.lang.Object m(java.lang.Class, java.lang.Object[])'
         """
 
-        System.setProperty('spock.iKnowWhatImDoing.disableGroovyVersionCheck','true')
+        System.setProperty('spock.iKnowWhatImDoing.disableGroovyVersionCheck', 'true')
         assertScript shell, """
             @Grab('org.spockframework:spock-core:2.4-M1-groovy-4.0')
             @GrabExclude('org.apache.groovy:*')
@@ -3321,6 +3321,7 @@ final class TraitASTTransformationTest {
 
     trait T7297 {
         String title
+
         def <U> List<U> m(U data) {
             [data]
         }
@@ -3444,7 +3445,7 @@ final class TraitASTTransformationTest {
     // GROOVY-8731
     @Test
     void testStaticMethodsIgnoredWhenExistingInstanceMethodsFound() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 trait StaticFooBarBaz {
@@ -3612,7 +3613,7 @@ final class TraitASTTransformationTest {
     // GROOVY-8954
     @Test
     void testTraitWithPropertyAlsoFromInterface() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 interface DomainProp {
@@ -3637,7 +3638,7 @@ final class TraitASTTransformationTest {
     // GROOVY-8272
     @Test
     void testTraitAccessToInheritedStaticMethods() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 trait Foo {
@@ -3663,7 +3664,7 @@ final class TraitASTTransformationTest {
     // GROOVY-10312
     @Test
     void testTraitAccessToInheritedStaticMethods2() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 trait Foo {
@@ -3698,7 +3699,7 @@ final class TraitASTTransformationTest {
     // GROOVY-10312
     @Test
     void testTraitAccessToInheritedStaticMethods3() {
-        for (mode in ['','@TypeChecked','@CompileStatic']) {
+        for (mode in ['', '@TypeChecked', '@CompileStatic']) {
             assertScript shell, """
                 $mode
                 interface Foo {
@@ -3811,7 +3812,8 @@ final class TraitASTTransformationTest {
     }
 
     // GROOVY-10598
-    @Ignore @Test
+    @Ignore
+    @Test
     void testAssignOperators() {
         assertScript shell, '''
             trait T {

@@ -20,21 +20,22 @@ package groovy;
 
 public class JavaClass {
 
+    static final StaticInner CONST = new StaticInner();
+
     public static class StaticInner {
-        int getResult () {
+        static long getIt() {
+            return 30;
+        }
+
+        int getResult() {
             return 239;
         }
 
-         static long getIt () {
-            return 30;
-         }
-
-        public static class Inner2 {}
+        public static class Inner2 {
+        }
     }
 
     class NonStaticInner {
 
     }
-
-    static final StaticInner CONST = new StaticInner();
 }

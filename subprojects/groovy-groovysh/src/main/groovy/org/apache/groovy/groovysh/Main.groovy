@@ -50,12 +50,13 @@ import static org.apache.groovy.util.SystemUtil.setSystemPropertyFrom
  *
  * Main CLI entry-point for <tt>groovysh</tt>.
  */
-@AutoFinal @CompileStatic
+@AutoFinal
+@CompileStatic
 class Main {
     final Groovysh groovysh
 
     /**
-     * @param io: may just be new IO(), which is the default
+     * @param io : may just be new IO(), which is the default
      */
     Main(IO io) {
         Logger.io = io
@@ -63,7 +64,7 @@ class Main {
     }
 
     /**
-     * @param io: may just be new IO(), which is the default
+     * @param io : may just be new IO(), which is the default
      */
     Main(IO io, CompilerConfiguration configuration) {
         Logger.io = io
@@ -78,7 +79,7 @@ class Main {
     static void main(String[] args) {
         MessageSource messages = new MessageSource(Main)
         def cli = new CliBuilderInternal(usage: 'groovysh [options] [...]', stopAtNonOption: false,
-                header: messages['cli.option.header'])
+            header: messages['cli.option.header'])
         cli.with {
             _(names: ['-cp', '-classpath', '--classpath'], messages['cli.option.classpath.description'])
             h(longOpt: 'help', messages['cli.option.help.description'])
@@ -208,10 +209,10 @@ class Main {
     }
 
     /**
-     * @param type: one of 'auto', 'unix', ('win', 'windows'), ('false', 'off', 'none')
+     * @param type : one of 'auto', 'unix', ('win', 'windows'), ('false', 'off', 'none')
      * @param suppressColor only has effect when ansi is enabled
      */
-    @AutoFinal(enabled=false)
+    @AutoFinal(enabled = false)
     static void setTerminalType(String type, boolean suppressColor) {
         assert type != null
 

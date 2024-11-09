@@ -57,6 +57,26 @@ public class AbstractCallSite implements CallSite {
         this.array = prev.getArray();
     }
 
+    static boolean noCoerce(final ParameterTypes metaMethod, final Object[] args) {
+        final CachedClass[] paramClasses = metaMethod.getParameterTypes();
+        if (paramClasses.length != args.length)
+            return false;
+
+        for (int i = 0; i < paramClasses.length; i++) {
+            CachedClass paramClass = paramClasses[i];
+            if (args[i] != null && !paramClass.isDirectlyAssignable(args[i]))
+                return true;
+        }
+        return false;
+    }
+
+    static boolean noWrappers(final Object[] args) {
+        for (int i = 0; i != args.length; i += 1)
+            if (args[i] instanceof Wrapper)
+                return false;
+        return true;
+    }
+
     @Override
     public int getIndex() {
         return index;
@@ -133,7 +153,7 @@ public class AbstractCallSite implements CallSite {
     @Override
     public Object call(final Object receiver, final Object arg1) throws Throwable {
         CallSite stored = array.array[index];
-        if (stored!=this) {
+        if (stored != this) {
             return stored.call(receiver, arg1);
         }
         return call(receiver, ArrayUtil.createArray(arg1));
@@ -142,7 +162,7 @@ public class AbstractCallSite implements CallSite {
     @Override
     public Object call(final Object receiver, final Object arg1, final Object arg2) throws Throwable {
         CallSite stored = array.array[index];
-        if (stored!=this) {
+        if (stored != this) {
             return stored.call(receiver, arg1, arg2);
         }
         return call(receiver, ArrayUtil.createArray(arg1, arg2));
@@ -151,7 +171,7 @@ public class AbstractCallSite implements CallSite {
     @Override
     public Object call(final Object receiver, final Object arg1, final Object arg2, final Object arg3) throws Throwable {
         CallSite stored = array.array[index];
-        if (stored!=this) {
+        if (stored != this) {
             return stored.call(receiver, arg1, arg2, arg3);
         }
         return call(receiver, ArrayUtil.createArray(arg1, arg2, arg3));
@@ -160,7 +180,7 @@ public class AbstractCallSite implements CallSite {
     @Override
     public Object call(final Object receiver, final Object arg1, final Object arg2, final Object arg3, final Object arg4) throws Throwable {
         CallSite stored = array.array[index];
-        if (stored!=this) {
+        if (stored != this) {
             return stored.call(receiver, arg1, arg2, arg3, arg4);
         }
         return call(receiver, ArrayUtil.createArray(arg1, arg2, arg3, arg4));
@@ -179,7 +199,7 @@ public class AbstractCallSite implements CallSite {
     @Override
     public Object callCurrent(final GroovyObject receiver, final Object arg1) throws Throwable {
         CallSite stored = array.array[index];
-        if (stored!=this) {
+        if (stored != this) {
             return stored.callCurrent(receiver, arg1);
         }
         return callCurrent(receiver, ArrayUtil.createArray(arg1));
@@ -188,7 +208,7 @@ public class AbstractCallSite implements CallSite {
     @Override
     public Object callCurrent(final GroovyObject receiver, final Object arg1, final Object arg2) throws Throwable {
         CallSite stored = array.array[index];
-        if (stored!=this) {
+        if (stored != this) {
             return stored.callCurrent(receiver, arg1, arg2);
         }
         return callCurrent(receiver, ArrayUtil.createArray(arg1, arg2));
@@ -197,7 +217,7 @@ public class AbstractCallSite implements CallSite {
     @Override
     public Object callCurrent(final GroovyObject receiver, final Object arg1, final Object arg2, final Object arg3) throws Throwable {
         CallSite stored = array.array[index];
-        if (stored!=this) {
+        if (stored != this) {
             return stored.callCurrent(receiver, arg1, arg2, arg3);
         }
         return callCurrent(receiver, ArrayUtil.createArray(arg1, arg2, arg3));
@@ -206,7 +226,7 @@ public class AbstractCallSite implements CallSite {
     @Override
     public Object callCurrent(final GroovyObject receiver, final Object arg1, final Object arg2, final Object arg3, final Object arg4) throws Throwable {
         CallSite stored = array.array[index];
-        if (stored!=this) {
+        if (stored != this) {
             return stored.callCurrent(receiver, arg1, arg2, arg3, arg4);
         }
         return callCurrent(receiver, ArrayUtil.createArray(arg1, arg2, arg3, arg4));
@@ -225,7 +245,7 @@ public class AbstractCallSite implements CallSite {
     @Override
     public Object callStatic(final Class receiver, final Object arg1) throws Throwable {
         CallSite stored = array.array[index];
-        if (stored!=this) {
+        if (stored != this) {
             return stored.callStatic(receiver, arg1);
         }
         return callStatic(receiver, ArrayUtil.createArray(arg1));
@@ -234,7 +254,7 @@ public class AbstractCallSite implements CallSite {
     @Override
     public Object callStatic(final Class receiver, final Object arg1, final Object arg2) throws Throwable {
         CallSite stored = array.array[index];
-        if (stored!=this) {
+        if (stored != this) {
             return stored.callStatic(receiver, arg1, arg2);
         }
         return callStatic(receiver, ArrayUtil.createArray(arg1, arg2));
@@ -243,7 +263,7 @@ public class AbstractCallSite implements CallSite {
     @Override
     public Object callStatic(final Class receiver, final Object arg1, final Object arg2, final Object arg3) throws Throwable {
         CallSite stored = array.array[index];
-        if (stored!=this) {
+        if (stored != this) {
             return stored.callStatic(receiver, arg1, arg2, arg3);
         }
         return callStatic(receiver, ArrayUtil.createArray(arg1, arg2, arg3));
@@ -252,7 +272,7 @@ public class AbstractCallSite implements CallSite {
     @Override
     public Object callStatic(final Class receiver, final Object arg1, final Object arg2, final Object arg3, final Object arg4) throws Throwable {
         CallSite stored = array.array[index];
-        if (stored!=this) {
+        if (stored != this) {
             return stored.callStatic(receiver, arg1, arg2, arg3, arg4);
         }
         return callStatic(receiver, ArrayUtil.createArray(arg1, arg2, arg3, arg4));
@@ -271,7 +291,7 @@ public class AbstractCallSite implements CallSite {
     @Override
     public Object callConstructor(final Object receiver, final Object arg1) throws Throwable {
         CallSite stored = array.array[index];
-        if (stored!=this) {
+        if (stored != this) {
             return stored.callConstructor(receiver, arg1);
         }
         return callConstructor(receiver, ArrayUtil.createArray(arg1));
@@ -280,7 +300,7 @@ public class AbstractCallSite implements CallSite {
     @Override
     public Object callConstructor(final Object receiver, final Object arg1, final Object arg2) throws Throwable {
         CallSite stored = array.array[index];
-        if (stored!=this) {
+        if (stored != this) {
             return stored.callConstructor(receiver, arg1, arg2);
         }
         return callConstructor(receiver, ArrayUtil.createArray(arg1, arg2));
@@ -289,7 +309,7 @@ public class AbstractCallSite implements CallSite {
     @Override
     public Object callConstructor(final Object receiver, final Object arg1, final Object arg2, final Object arg3) throws Throwable {
         CallSite stored = array.array[index];
-        if (stored!=this) {
+        if (stored != this) {
             return stored.callConstructor(receiver, arg1, arg2, arg3);
         }
         return callConstructor(receiver, ArrayUtil.createArray(arg1, arg2, arg3));
@@ -298,30 +318,10 @@ public class AbstractCallSite implements CallSite {
     @Override
     public Object callConstructor(final Object receiver, final Object arg1, final Object arg2, final Object arg3, final Object arg4) throws Throwable {
         CallSite stored = array.array[index];
-        if (stored!=this) {
+        if (stored != this) {
             return stored.callConstructor(receiver, arg1, arg2, arg3, arg4);
         }
         return callConstructor(receiver, ArrayUtil.createArray(arg1, arg2, arg3, arg4));
-    }
-
-    static boolean noCoerce(final ParameterTypes metaMethod, final Object[] args) {
-        final CachedClass[] paramClasses = metaMethod.getParameterTypes();
-        if (paramClasses.length != args.length)
-            return false;
-
-        for (int i = 0; i < paramClasses.length; i++) {
-            CachedClass paramClass = paramClasses[i];
-            if (args[i] != null && !paramClass.isDirectlyAssignable(args[i]))
-                return true;
-        }
-        return false;
-    }
-
-    static boolean noWrappers(final Object[] args) {
-        for (int i = 0; i != args.length; i += 1)
-            if (args[i] instanceof Wrapper)
-                return false;
-        return true;
     }
 
     @Override

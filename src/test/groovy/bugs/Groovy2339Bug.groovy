@@ -28,7 +28,7 @@ class Groovy2339Bug extends GroovyTestCase {
 
         shouldFail(MissingMethodException) {
             list.each {
-                map.keySet().each {Date d ->
+                map.keySet().each { Date d ->
                     println d
                 }
             }

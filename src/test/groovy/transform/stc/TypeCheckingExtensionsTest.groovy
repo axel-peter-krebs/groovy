@@ -87,7 +87,7 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             'foo'
         ''',
-        'Extension was executed properly'
+            'Extension was executed properly'
     }
 
     void testUndefinedVariable() {
@@ -106,7 +106,7 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             foo.toUpperCase() // normal type checker would fail here
         ''',
-        'The variable [foo] is undeclared'
+            'The variable [foo] is undeclared'
     }
 
     void testMissingMethod() {
@@ -115,7 +115,7 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
             String msg = 'foo'
             msg.TOUPPERCASE()
         ''',
-        'Cannot find matching method'
+            'Cannot find matching method'
 
         extension = 'groovy/transform/stc/MissingMethod1TestExtension.groovy'
         try {
@@ -135,7 +135,7 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
             msg.SIZE()
             msg.CONCAT('bar')
         ''',
-        'Cannot find matching method java.lang.String#SIZE()', 'Cannot find matching method java.lang.String#CONCAT(java.lang.String)'
+            'Cannot find matching method java.lang.String#SIZE()', 'Cannot find matching method java.lang.String#CONCAT(java.lang.String)'
 
         extension = 'groovy/transform/stc/MissingMethod2TestExtension.groovy'
         try {
@@ -164,7 +164,7 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
            int x = 'foo'
         ''',
-        '[Custom] - Cannot assign value of type java.lang.String to variable of type int'
+            '[Custom] - Cannot assign value of type java.lang.String to variable of type int'
     }
 
     void testAfterMethodCallHook() {
@@ -173,8 +173,8 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
             String count = 'foo'
             sprintf("Count = %d", count)
         ''',
-        'Parameter types didn\'t match types expected from the format String',
-        'For placeholder 1 [%d] expected \'int\' but was \'java.lang.String\''
+            'Parameter types didn\'t match types expected from the format String',
+            'For placeholder 1 [%d] expected \'int\' but was \'java.lang.String\''
     }
 
     void testBeforeMethodCallHook() {
@@ -185,7 +185,7 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
             method() // ok
             BOO() // error
         ''',
-        'Calling a method which is all uppercase is not allowed'
+            'Calling a method which is all uppercase is not allowed'
     }
 
     void testBeforeMethodHook() {
@@ -194,7 +194,7 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
             String method() { 'foo' } // ok
             String BOO() { 'bar' } // error
         ''',
-        'Defining method which is all uppercase is not allowed'
+            'Defining method which is all uppercase is not allowed'
     }
 
     void testAfterMethodHook() {
@@ -203,7 +203,7 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
             String method() { 'foo' } // ok
             String BOO() { 'bar' } // error
         ''',
-        'Defining method which is all uppercase is not allowed'
+            'Defining method which is all uppercase is not allowed'
     }
 
     void testMethodSelection() {
@@ -231,7 +231,7 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             'str'.FOO
         ''',
-        'No such property: FOO for class: java.lang.String'
+            'No such property: FOO for class: java.lang.String'
 
         extension = 'groovy/transform/stc/UnresolvedPropertyTestExtension.groovy'
         assertScript '''
@@ -247,7 +247,7 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             'str'.@FOO
         ''',
-        'No such attribute: FOO for class: java.lang.String'
+            'No such attribute: FOO for class: java.lang.String'
 
         extension = 'groovy/transform/stc/UnresolvedAttributeTestExtension.groovy'
         assertScript '''
@@ -268,7 +268,7 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
                 'a'.toUpperCase()
             }
         ''',
-        'Scope enter and exit behave correctly' // we're using shouldFail just to verify that the extension is ran
+            'Scope enter and exit behave correctly' // we're using shouldFail just to verify that the extension is ran
     }
 
     void testMatchingArguments() {
@@ -283,11 +283,11 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
             three('foo', 2, new Date())
             three('foo', (Integer)2, new Date())
         ''',
-        'Method [zero] with matching arguments found: 0',
-        'Method [concat] with matching arguments found: 1',
-        'Method [two] with matching arguments found: 2',
-        'Method [three] with matching arguments found: 3',
-        'Method [three] with matching arguments found: 3'
+            'Method [zero] with matching arguments found: 0',
+            'Method [concat] with matching arguments found: 1',
+            'Method [two] with matching arguments found: 2',
+            'Method [three] with matching arguments found: 3',
+            'Method [three] with matching arguments found: 3'
     }
 
     void testFirstArgsMatches() {
@@ -299,9 +299,9 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
             three('foo', 2, new Date())
             three('foo', (Integer)2, new Date())
         ''',
-        'Method [two] with matching arguments found: 2',
-        'Method [three] with matching arguments found: 3',
-        'Method [three] with matching arguments found: 3'
+            'Method [two] with matching arguments found: 2',
+            'Method [three] with matching arguments found: 3',
+            'Method [three] with matching arguments found: 3'
     }
 
     void testNthArgMatches() {
@@ -313,14 +313,14 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
             three('foo', 2, new Date())
             three('foo', (Integer)2, new Date())
         ''',
-        'Method [two] with matching argument found: [0, class java.lang.String]',
-        'Method [two] with matching argument found: [1, class java.lang.Integer]',
-        'Method [three] with matching argument found: [0, class java.lang.String]',
-        'Method [three] with matching argument found: [1, class java.lang.Integer]',
-        'Method [three] with matching argument found: [2, class java.util.Date]',
-        'Method [three] with matching argument found: [0, class java.lang.String]',
-        'Method [three] with matching argument found: [1, class java.lang.Integer]',
-        'Method [three] with matching argument found: [2, class java.util.Date]'
+            'Method [two] with matching argument found: [0, class java.lang.String]',
+            'Method [two] with matching argument found: [1, class java.lang.Integer]',
+            'Method [three] with matching argument found: [0, class java.lang.String]',
+            'Method [three] with matching argument found: [1, class java.lang.Integer]',
+            'Method [three] with matching argument found: [2, class java.util.Date]',
+            'Method [three] with matching argument found: [0, class java.lang.String]',
+            'Method [three] with matching argument found: [1, class java.lang.Integer]',
+            'Method [three] with matching argument found: [2, class java.util.Date]'
     }
 
     void testBinaryOperatorNotFound() {
@@ -330,7 +330,7 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
             Date y = new Date()
             x+y
         ''',
-        'Cannot find matching method java.lang.Integer#plus(java.util.Date)'
+            'Cannot find matching method java.lang.Integer#plus(java.util.Date)'
 
         extension = 'groovy/transform/stc/BinaryOperatorTestExtension.groovy'
         assertScript '''
@@ -349,7 +349,7 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
             Date y = new Date()
             x << y
         ''',
-        'Cannot find matching method java.lang.Integer#leftShift(java.util.Date)'
+            'Cannot find matching method java.lang.Integer#leftShift(java.util.Date)'
 
         extension = 'groovy/transform/stc/BinaryOperatorTestExtension.groovy'
         assertScript '''
@@ -528,7 +528,7 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             println 'Everything is ok'
         ''',
-        'Error thrown from extension'
+            'Error thrown from extension'
     }
 
     void testPrecompiledExtensionNotExtendingTypeCheckingDSL() {
@@ -541,6 +541,6 @@ class TypeCheckingExtensionsTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             println 'Everything is ok'
         ''',
-        'Error thrown from extension in onMethodSelection'
+            'Error thrown from extension in onMethodSelection'
     }
 }

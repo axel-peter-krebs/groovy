@@ -50,6 +50,22 @@ import java.util.List;
  */
 public class FromString extends ClosureSignatureHint {
 
+    /**
+     * Parses a string representing a type, that must be aligned with the current context.
+     * For example, <i>"List&lt;T&gt;"</i> must be converted into the appropriate ClassNode
+     * for which <i>T</i> matches the appropriate placeholder.
+     *
+     * @param option          a string representing a type
+     * @param sourceUnit      the source unit (of the file being compiled)
+     * @param compilationUnit the compilation unit (of the file being compiled)
+     * @param mn              the method node
+     * @param usage
+     * @return a class node if it could be parsed and resolved, null otherwise
+     */
+    private static ClassNode[] parseOption(final String option, final SourceUnit sourceUnit, final CompilationUnit compilationUnit, final MethodNode mn, final ASTNode usage) {
+        return GenericsUtils.parseClassNodesFromString(option, sourceUnit, compilationUnit, mn, usage);
+    }
+
     @Override
     public List<ClassNode[]> getClosureSignatures(final MethodNode node, final SourceUnit sourceUnit, final CompilationUnit compilationUnit, final String[] options, final ASTNode usage) {
         List<ClassNode[]> list = new ArrayList<ClassNode[]>(options.length);
@@ -57,23 +73,6 @@ public class FromString extends ClosureSignatureHint {
             list.add(parseOption(option, sourceUnit, compilationUnit, node, usage));
         }
         return list;
-    }
-
-    /**
-     * Parses a string representing a type, that must be aligned with the current context.
-     * For example, <i>"List&lt;T&gt;"</i> must be converted into the appropriate ClassNode
-     * for which <i>T</i> matches the appropriate placeholder.
-     *
-     *
-     * @param option a string representing a type
-     * @param sourceUnit the source unit (of the file being compiled)
-     * @param compilationUnit the compilation unit (of the file being compiled)
-     * @param mn the method node
-     * @param usage
-     * @return a class node if it could be parsed and resolved, null otherwise
-     */
-    private static ClassNode[] parseOption(final String option, final SourceUnit sourceUnit, final CompilationUnit compilationUnit, final MethodNode mn, final ASTNode usage) {
-        return GenericsUtils.parseClassNodesFromString(option, sourceUnit, compilationUnit, mn, usage);
     }
 
 }

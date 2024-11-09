@@ -25,7 +25,8 @@ public final class IntegerMath extends NumberMath {
 
     public static final IntegerMath INSTANCE = new IntegerMath();
 
-    private IntegerMath() {}
+    private IntegerMath() {
+    }
 
     @Override
     public Number absImpl(Number number) {

@@ -43,12 +43,18 @@ class Groovy1462_Bug extends GroovyTestCase {
 }
 
 class StringMethodName {
-    def foo0() {'foo0'} // control
-    def 'foo1'() {'foo1'}
-    public Integer 'foo2'() {2}
-    public int 'foo3'() {3}
-    Integer 'foo4'(x) { x * 4}
-    public def 'getFoo5'() {'foo5'}
-    private boolean 'fooFalse'() {false}
+    def foo0() { 'foo0' } // control
+    def 'foo1'() { 'foo1' }
+
+    public Integer 'foo2'() { 2 }
+
+    public int 'foo3'() { 3 }
+
+    Integer 'foo4'(x) { x * 4 }
+
+    public def 'getFoo5'() { 'foo5' }
+
+    private boolean 'fooFalse'() { false }
+
     public def 'fooDef'() {}
 }

@@ -44,7 +44,8 @@ class ClassSignatureParser {
         {
             final int nInterfaces = stub.interfaceNames.length;
             ClassNode[] interfaces = new ClassNode[nInterfaces];
-            for (int i = 0; i < nInterfaces; i += 1) { String name = stub.interfaceNames[i];
+            for (int i = 0; i < nInterfaces; i += 1) {
+                String name = stub.interfaceNames[i];
                 interfaces[i] = resolver.resolveClass(AsmDecompiler.fromInternalName(name));
             }
             classNode.setInterfaces(interfaces);
@@ -60,7 +61,7 @@ class ClassSignatureParser {
 
         if (!stub.recordComponents.isEmpty()) {
             List<RecordComponentNode> recordComponents =
-                    new ArrayList<>(stub.recordComponents.size());
+                new ArrayList<>(stub.recordComponents.size());
             for (RecordComponentStub rc : stub.recordComponents) {
                 ClassNode[] type = {resolver.resolveType(Type.getType(rc.descriptor))};
                 if (rc.signature != null) {
@@ -97,6 +98,7 @@ class ClassSignatureParser {
                     }
                 };
             }
+
             @Override
             public SignatureVisitor visitInterface() {
                 flushTypeParameter();
@@ -111,7 +113,7 @@ class ClassSignatureParser {
         new SignatureReader(signature).accept(parser);
 
         classNode.setInterfaces(interfaces.isEmpty() ? ClassNode.EMPTY_ARRAY :
-                                    interfaces.toArray(ClassNode.EMPTY_ARRAY));
+            interfaces.toArray(ClassNode.EMPTY_ARRAY));
 
         GenericsType[] typeParameters = parser.getTypeParameters();
         if (typeParameters.length > 0) classNode.setGenericsTypes(typeParameters);

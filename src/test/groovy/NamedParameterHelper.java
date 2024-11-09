@@ -25,15 +25,15 @@ import java.util.LinkedHashMap;
 
 public class NamedParameterHelper {
     public static String myJavaMethod(@NamedParams({
-            @NamedParam(value = "foo"),
-            @NamedParam(value = "bar", type = String.class, required = true)
+        @NamedParam(value = "foo"),
+        @NamedParam(value = "bar", type = String.class, required = true)
     }) LinkedHashMap params) {
         return "foo = " + params.get("foo") + ", bar = " + params.get("bar");
     }
 
     public static String myJavaMethod(@NamedParams({
-            @NamedParam(value = "foo", type = String.class, required = true),
-            @NamedParam(value = "bar", type = Integer.class)
+        @NamedParam(value = "foo", type = String.class, required = true),
+        @NamedParam(value = "bar", type = Integer.class)
     }) LinkedHashMap params, int num) {
         return "foo = " + params.get("foo") + ", bar = " + params.get("bar") + ", num = " + num;
     }

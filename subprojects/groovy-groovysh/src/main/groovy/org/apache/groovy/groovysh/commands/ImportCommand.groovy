@@ -62,19 +62,19 @@ class ImportCommand extends CommandSupport {
         PackageHelper packageHelper = shell.packageHelper
         Interpreter interp = shell.interp
         Completer nonStaticCompleter = new StricterArgumentCompleter([
-                impCompleter,
-                new ImportCompleter(packageHelper, interp, false),
-                asCompleter,
-                nullCompleter])
+            impCompleter,
+            new ImportCompleter(packageHelper, interp, false),
+            asCompleter,
+            nullCompleter])
         Completer staticCompleter = new StricterArgumentCompleter([
-                impCompleter,
-                new StringsCompleter('static '),
-                new ImportCompleter(packageHelper, interp, true),
-                asCompleter,
-                nullCompleter])
+            impCompleter,
+            new StringsCompleter('static '),
+            new ImportCompleter(packageHelper, interp, true),
+            asCompleter,
+            nullCompleter])
         Collection<Completer> argCompleters = [
-                nonStaticCompleter,
-                staticCompleter]
+            nonStaticCompleter,
+            staticCompleter]
         return new AggregateCompleter(argCompleters)
 
     }
@@ -128,7 +128,7 @@ class ImportCommand extends CommandSupport {
                 }
             } else {
                 // remove duplicates
-                imports.removeAll{
+                imports.removeAll {
                     def dup = simpleName(it) == sn
                     if (dup) {
                         log.debug("Removed duplicate import: $it")
@@ -140,7 +140,8 @@ class ImportCommand extends CommandSupport {
                 def classNames = classLoader.loadedClasses*.simpleName
 
                 if (classNames.contains(sn)) {
-                    def msg = "Invalid import definition: '${importSpec}'; conflicts with existing class: $sn" // TODO: i18n
+                    def msg = "Invalid import definition: '${importSpec}'; conflicts with existing class: $sn"
+                    // TODO: i18n
                     log.debug(msg)
                     fail(msg)
                 }

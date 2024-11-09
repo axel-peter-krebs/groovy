@@ -40,7 +40,8 @@ import static org.codehaus.groovy.runtime.metaclass.MetaClassRegistryImpl.EXTENS
 public class ExtensionMethodCache extends AbstractExtensionMethodCache {
     public static final ExtensionMethodCache INSTANCE = new ExtensionMethodCache();
 
-    private ExtensionMethodCache() {}
+    private ExtensionMethodCache() {
+    }
 
     @Override
     protected void addAdditionalClassesToScan(Set<Class> instanceExtClasses, Set<Class> staticExtClasses) {

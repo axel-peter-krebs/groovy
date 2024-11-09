@@ -33,17 +33,26 @@ public class Token extends CSTNode {
 
     //--------------------------------------------------------------------------
 
-    /** the actual type identified by the lexer */
+    /**
+     * the actual type identified by the lexer
+     */
     private final int type;
-    /** an interpretation applied to the token after the fact */
-    private int meaning;
-
-    /** the text of the token */
-    private String text;
-    /** the source line on which the token begins */
+    /**
+     * the source line on which the token begins
+     */
     private final int startLine;
-    /** the source column on which the token begins */
+    /**
+     * the source column on which the token begins
+     */
     private final int startColumn;
+    /**
+     * an interpretation applied to the token after the fact
+     */
+    private int meaning;
+    /**
+     * the text of the token
+     */
+    private String text;
 
     /**
      * Initializes the Token with the specified information.
@@ -57,6 +66,75 @@ public class Token extends CSTNode {
     }
 
     /**
+     * Creates a token that represents a keyword.  Returns null if the
+     * specified text isn't a keyword.
+     */
+    public static Token newKeyword(final String text, final int startLine, final int startColumn) {
+        int type = Types.lookupKeyword(text);
+        if (type != Types.UNKNOWN) {
+            return new Token(type, text, startLine, startColumn);
+        }
+        return null;
+    }
+
+    //--------------------------------------------------------------------------
+    // NODE IDENTIFICATION AND MEANING
+
+    /**
+     * Creates a token that represents a double-quoted string.
+     */
+    public static Token newString(final String text, final int startLine, final int startColumn) {
+        return new Token(Types.STRING, text, startLine, startColumn);
+    }
+
+    /**
+     * Creates a token that represents an identifier.
+     */
+    public static Token newIdentifier(final String text, final int startLine, final int startColumn) {
+        return new Token(Types.IDENTIFIER, text, startLine, startColumn);
+    }
+
+    /**
+     * Creates a token that represents an integer.
+     */
+    public static Token newInteger(final String text, final int startLine, final int startColumn) {
+        return new Token(Types.INTEGER_NUMBER, text, startLine, startColumn);
+    }
+
+    //--------------------------------------------------------------------------
+    // MEMBER ACCESS
+
+    /**
+     * Creates a token that represents a decimal number.
+     */
+    public static Token newDecimal(final String text, final int startLine, final int startColumn) {
+        return new Token(Types.DECIMAL_NUMBER, text, startLine, startColumn);
+    }
+
+    /**
+     * Creates a token that represents a symbol, using a library for the text.
+     */
+    public static Token newSymbol(final int type, final int startLine, final int startColumn) {
+        return new Token(type, Types.getText(type), startLine, startColumn);
+    }
+
+    /**
+     * Creates a token that represents a symbol, using a library for the type.
+     */
+    public static Token newSymbol(final String text, final int startLine, final int startColumn) {
+        return new Token(Types.lookupSymbol(text), text, startLine, startColumn);
+    }
+
+    /**
+     * Creates a token with the specified meaning.
+     */
+    public static Token newPlaceholder(final int meaning) {
+        Token token = new Token(Types.UNKNOWN, "", -1, -1);
+        token.setMeaning(meaning);
+        return token;
+    }
+
+    /**
      * Returns a copy of this Token.
      */
     public Token dup() {
@@ -64,9 +142,6 @@ public class Token extends CSTNode {
         token.setMeaning(this.meaning);
         return token;
     }
-
-    //--------------------------------------------------------------------------
-    // NODE IDENTIFICATION AND MEANING
 
     /**
      * Returns the meaning of this node.  If the node isEmpty(), returns
@@ -99,7 +174,7 @@ public class Token extends CSTNode {
     }
 
     //--------------------------------------------------------------------------
-    // MEMBER ACCESS
+    // OPERATIONS
 
     /**
      * Returns the number of elements in the node (including root).
@@ -141,6 +216,9 @@ public class Token extends CSTNode {
         return text;
     }
 
+    //--------------------------------------------------------------------------
+    // TOKEN FACTORIES
+
     /**
      * Returns the text of the token.  Equivalent to
      * <code>getRootText()</code> when called directly.
@@ -174,9 +252,6 @@ public class Token extends CSTNode {
     public int getStartColumn() {
         return startColumn;
     }
-
-    //--------------------------------------------------------------------------
-    // OPERATIONS
 
     /**
      * Creates a <code>Reduction</code> from this token.  Returns self if the
@@ -215,71 +290,5 @@ public class Token extends CSTNode {
         Reduction created = asReduction(second, third);
         created.add(fourth);
         return created;
-    }
-
-    //--------------------------------------------------------------------------
-    // TOKEN FACTORIES
-
-    /**
-     * Creates a token that represents a keyword.  Returns null if the
-     * specified text isn't a keyword.
-     */
-    public static Token newKeyword(final String text, final int startLine, final int startColumn) {
-        int type = Types.lookupKeyword(text);
-        if (type != Types.UNKNOWN) {
-            return new Token(type, text, startLine, startColumn);
-        }
-        return null;
-    }
-
-    /**
-     * Creates a token that represents a double-quoted string.
-     */
-    public static Token newString(final String text, final int startLine, final int startColumn) {
-        return new Token(Types.STRING, text, startLine, startColumn);
-    }
-
-    /**
-     * Creates a token that represents an identifier.
-     */
-    public static Token newIdentifier(final String text, final int startLine, final int startColumn) {
-        return new Token(Types.IDENTIFIER, text, startLine, startColumn);
-    }
-
-    /**
-     * Creates a token that represents an integer.
-     */
-    public static Token newInteger(final String text, final int startLine, final int startColumn) {
-        return new Token(Types.INTEGER_NUMBER, text, startLine, startColumn);
-    }
-
-    /**
-     * Creates a token that represents a decimal number.
-     */
-    public static Token newDecimal(final String text, final int startLine, final int startColumn) {
-        return new Token(Types.DECIMAL_NUMBER, text, startLine, startColumn);
-    }
-
-    /**
-     * Creates a token that represents a symbol, using a library for the text.
-     */
-    public static Token newSymbol(final int type, final int startLine, final int startColumn) {
-        return new Token(type, Types.getText(type), startLine, startColumn);
-    }
-
-    /**
-     * Creates a token that represents a symbol, using a library for the type.
-     */
-    public static Token newSymbol(final String text, final int startLine, final int startColumn) {
-        return new Token(Types.lookupSymbol(text), text, startLine, startColumn);
-    }
-
-    /**
-     * Creates a token with the specified meaning.
-     */
-    public static Token newPlaceholder(final int meaning) {
-        Token token = new Token(Types.UNKNOWN, "", -1, -1);
-        token.setMeaning(meaning);
-        return token;
     }
 }

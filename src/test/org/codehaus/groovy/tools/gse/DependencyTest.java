@@ -30,8 +30,8 @@ import java.util.Set;
 
 @SuppressWarnings("deprecation")
 public class DependencyTest extends GroovyTestCase {
-    private CompilationUnit cu;
     StringSetMap cache;
+    private CompilationUnit cu;
 
     @Override
     protected void setUp() throws Exception {
@@ -44,9 +44,9 @@ public class DependencyTest extends GroovyTestCase {
         }, Phases.CLASS_GENERATION);
     }
 
-    public void testDep(){
+    public void testDep() {
         cu.addSource("testDep.gtest", new StringBufferInputStream(
-                "class C1 {}\n" +
+            "class C1 {}\n" +
                 "class C2 {}\n" +
                 "class C3 {}\n" +
                 "class A1 {C1 x}\n" +
@@ -54,28 +54,28 @@ public class DependencyTest extends GroovyTestCase {
                 "class A3 {C1 foo(C2 x){new C3()}}\n"
         ));
         cu.compile(Phases.CLASS_GENERATION);
-        assertEquals(cache.get("C1").size(),1);
-        assertEquals(cache.get("C2").size(),1);
-        assertEquals(cache.get("C3").size(),1);
+        assertEquals(cache.get("C1").size(), 1);
+        assertEquals(cache.get("C2").size(), 1);
+        assertEquals(cache.get("C3").size(), 1);
 
         Set<String> dep = cache.get("A1");
-        assertEquals(dep.size(),2);
+        assertEquals(dep.size(), 2);
         assertTrue(dep.contains("C1"));
 
         dep = cache.get("A2");
-        assertEquals(dep.size(),2);
+        assertEquals(dep.size(), 2);
         assertTrue(dep.contains("C2"));
 
         dep = cache.get("A3");
-        assertEquals(dep.size(),4);
+        assertEquals(dep.size(), 4);
         assertTrue(dep.contains("C1"));
         assertTrue(dep.contains("C2"));
         assertTrue(dep.contains("C3"));
     }
 
-    public void testTransitiveDep(){
+    public void testTransitiveDep() {
         cu.addSource("testTransitiveDep.gtest", new StringBufferInputStream(
-                "class A1 {}\n" +
+            "class A1 {}\n" +
                 "class A2 extends A1{}\n" +
                 "class A3 extends A2{}\n"
         ));
@@ -83,14 +83,14 @@ public class DependencyTest extends GroovyTestCase {
         cache.makeTransitiveHull();
 
         Set<String> dep = cache.get("A1");
-        assertEquals(dep.size(),1);
+        assertEquals(dep.size(), 1);
 
         dep = cache.get("A2");
-        assertEquals(dep.size(),2);
+        assertEquals(dep.size(), 2);
         assertTrue(dep.contains("A1"));
 
         dep = cache.get("A3");
-        assertEquals(dep.size(),3);
+        assertEquals(dep.size(), 3);
         assertTrue(dep.contains("A1"));
         assertTrue(dep.contains("A2"));
     }

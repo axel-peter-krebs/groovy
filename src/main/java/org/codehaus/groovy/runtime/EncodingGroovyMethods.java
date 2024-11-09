@@ -51,7 +51,7 @@ public class EncodingGroovyMethods {
      * Calling toString() on the result returns the encoding as a String. For more
      * information on Base64 encoding and chunking see <code>RFC 4648</code>.
      *
-     * @param data Byte array to be encoded
+     * @param data    Byte array to be encoded
      * @param chunked whether the Base64 encoded data should be MIME chunked
      * @return object which will write the Base64 encoding of the byte array
      * @since 1.5.1
@@ -78,7 +78,7 @@ public class EncodingGroovyMethods {
      * Calling toString() on the result returns the encoding as a String. For more
      * information on Base64 encoding and chunking see <code>RFC 4648</code>.
      *
-     * @param data byte array to be encoded
+     * @param data    byte array to be encoded
      * @param chunked whether the Base64 encoded data should be MIME chunked
      * @return object which will write the Base64 encoding of the byte array
      * @since 1.5.7
@@ -187,7 +187,7 @@ public class EncodingGroovyMethods {
      * Base 64 Encoding with URL and Filename Safe Alphabet</code>.
      *
      * @param data Byte array to be encoded
-     * @param pad whether the encoded data should be padded
+     * @param pad  whether the encoded data should be padded
      * @return object which will write the Base64 URL and Filename Safe encoding of the byte array
      * @since 2.5.0
      */
@@ -221,7 +221,7 @@ public class EncodingGroovyMethods {
      * Base 64 Encoding with URL and Filename Safe Alphabet</code>.
      *
      * @param data Byte array to be encoded
-     * @param pad whether the encoded data should be padded
+     * @param pad  whether the encoded data should be padded
      * @return object which will write the Base64 URL and Filename Safe encoding of the byte array
      * @since 2.5.0
      */
@@ -370,6 +370,7 @@ public class EncodingGroovyMethods {
 
     /**
      * Calculate md5 of the CharSequence instance
+     *
      * @return md5 value
      * @throws NoSuchAlgorithmException if MD5 algorithm not found
      * @since 2.5.0
@@ -380,6 +381,7 @@ public class EncodingGroovyMethods {
 
     /**
      * Calculate md5 of the byte array
+     *
      * @return md5 value
      * @throws NoSuchAlgorithmException if MD5 algorithm not found
      * @since 2.5.0
@@ -390,6 +392,7 @@ public class EncodingGroovyMethods {
 
     /**
      * Calculate SHA-256 of the CharSequence instance
+     *
      * @return SHA-256 value
      * @throws NoSuchAlgorithmException if SHA-256 algorithm not found
      * @since 2.5.3
@@ -400,6 +403,7 @@ public class EncodingGroovyMethods {
 
     /**
      * Calculate SHA-256 of the byte array
+     *
      * @return SHA-256 value
      * @throws NoSuchAlgorithmException if SHA-256 algorithm not found
      * @since 2.5.3
@@ -410,11 +414,12 @@ public class EncodingGroovyMethods {
 
     /**
      * digest the CharSequence instance
+     *
      * @param algorithm the name of the algorithm requested, e.g. MD5, SHA-1, SHA-256, etc.
      * @return digested value
      * @throws NoSuchAlgorithmException if the algorithm not found
-     * @since 2.5.0
      * @see MessageDigest#getInstance(java.lang.String)
+     * @since 2.5.0
      */
     public static String digest(CharSequence self, String algorithm) throws NoSuchAlgorithmException {
         final String text = self.toString();
@@ -424,11 +429,12 @@ public class EncodingGroovyMethods {
 
     /**
      * digest the byte array
+     *
      * @param algorithm the name of the algorithm requested, e.g. MD5, SHA-1, SHA-256, etc.
      * @return digested value
      * @throws NoSuchAlgorithmException if the algorithm not found
-     * @since 2.5.0
      * @see MessageDigest#getInstance(java.lang.String)
+     * @since 2.5.0
      */
     public static String digest(byte[] self, String algorithm) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance(algorithm);

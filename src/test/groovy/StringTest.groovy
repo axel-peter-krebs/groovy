@@ -79,7 +79,7 @@ class StringTest extends GroovyTestCase {
     }
 
     void testApppendAndSubscipt() {
-        def result =  'hello' << " Gromit!"
+        def result = 'hello' << " Gromit!"
         result[1..4] = 'i'
         assert result.toString() == "hi Gromit!"
     }
@@ -168,7 +168,7 @@ foo
         /
         def finder = (str =~ re)
         def out = str
-        (0..<finder.count).each{
+        (0..<finder.count).each {
             def adr = finder[it][0]
             out = out.replaceAll(adr, "$adr[${adr.size()}]")
         }
@@ -200,7 +200,7 @@ foo
         /$
         def finder = (str =~ re)
         def out = str
-        (0..<finder.count).each{
+        (0..<finder.count).each {
             def adr = finder[it][0]
             out = out.replaceAll(adr, "$adr[${adr.size()}]")
         }
@@ -375,13 +375,13 @@ foo
     }
 
     private assertLength(s, len) {
-        if (s.length() != len)  println "*** length != $len: $s"
+        if (s.length() != len) println "*** length != $len: $s"
         assert s.length() == len
     }
 
     private assertContains(s, len, subs) {
         assertLength(s, len)
-        if (s.indexOf(subs) < 0)  println "*** missing $subs: $s"
+        if (s.indexOf(subs) < 0) println "*** missing $subs: $s"
         assert s.indexOf(subs) >= 0
     }
 
@@ -394,16 +394,16 @@ foo
 
     void "test JDK14 Escape-S should be replaced by space"() {
         assert 'ab\scd\s'.size() == 6
-        assert 'ab\scd\s'.bytes  == [97, 98, 32, 99, 100, 32]
+        assert 'ab\scd\s'.bytes == [97, 98, 32, 99, 100, 32]
         assert "ab\scd\s".size() == 6
-        assert "ab\scd\s".bytes  == [97, 98, 32, 99, 100, 32]
+        assert "ab\scd\s".bytes == [97, 98, 32, 99, 100, 32]
     }
 
     void "test JDK14 Escape-S should not impact slashy or dollar-slashy strings"() {
-        assert /ab\scd\s/.size() == 8
-        assert /ab\scd\s/.bytes  == [97, 98, 92, 115, 99, 100, 92, 115]
-        assert $/ab\scd\s/$.size() == 8
-        assert $/ab\scd\s/$.bytes == [97, 98, 92, 115, 99, 100, 92, 115]
+        assert / ab \ scd \ s /.size() == 8
+        assert / ab \ scd \ s /.bytes == [97, 98, 92, 115, 99, 100, 92, 115]
+        assert $ / ab \ scd \ s / $.size() == 8
+        assert $ / ab \ scd \ s / $.bytes == [97, 98, 92, 115, 99, 100, 92, 115]
     }
 
     void "test JDK14 Escape-S multi-line example"() {

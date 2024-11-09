@@ -19,39 +19,41 @@
 package org.codehaus.groovy.util;
 
 @Deprecated
-public class ManagedConcurrentMap<K,V> extends AbstractConcurrentMap<K,V> {
+public class ManagedConcurrentMap<K, V> extends AbstractConcurrentMap<K, V> {
     protected ReferenceBundle bundle;
+
     public ManagedConcurrentMap(ReferenceBundle bundle) {
         super(bundle);
         this.bundle = bundle;
-        if (bundle==null) throw new IllegalArgumentException("bundle must not be null");
+        if (bundle == null) throw new IllegalArgumentException("bundle must not be null");
     }
 
     @Override
-    protected Segment<K,V> createSegment(Object segmentInfo, int cap) {
+    protected Segment<K, V> createSegment(Object segmentInfo, int cap) {
         ReferenceBundle bundle = (ReferenceBundle) segmentInfo;
-        if (bundle==null) throw new IllegalArgumentException("bundle must not be null");
-        return new ManagedConcurrentMap.Segment<K,V>(bundle, cap);
+        if (bundle == null) throw new IllegalArgumentException("bundle must not be null");
+        return new ManagedConcurrentMap.Segment<K, V>(bundle, cap);
     }
 
-    public static class Segment<K,V> extends AbstractConcurrentMap.Segment<K,V>{
+    public static class Segment<K, V> extends AbstractConcurrentMap.Segment<K, V> {
         private static final long serialVersionUID = 2742952509311037869L;
         protected final ReferenceBundle bundle;
+
         public Segment(ReferenceBundle bundle, int cap) {
             super(cap);
             this.bundle = bundle;
-            if (bundle==null) throw new IllegalArgumentException("bundle must not be null");
+            if (bundle == null) throw new IllegalArgumentException("bundle must not be null");
 
         }
 
         @Override
-        protected AbstractConcurrentMap.Entry<K,V> createEntry(K key, int hash, V value) {
-            if (bundle==null) throw new IllegalArgumentException("bundle must not be null");
-            return new EntryWithValue<K,V>(bundle, this, key, hash, value);
+        protected AbstractConcurrentMap.Entry<K, V> createEntry(K key, int hash, V value) {
+            if (bundle == null) throw new IllegalArgumentException("bundle must not be null");
+            return new EntryWithValue<K, V>(bundle, this, key, hash, value);
         }
     }
 
-    public static class Entry<K,V> extends ManagedReference<K> implements AbstractConcurrentMap.Entry<K,V> {
+    public static class Entry<K, V> extends ManagedReference<K> implements AbstractConcurrentMap.Entry<K, V> {
         private final Segment segment;
         private final int hash;
 
@@ -73,7 +75,7 @@ public class ManagedConcurrentMap<K,V> extends AbstractConcurrentMap<K,V> {
 
         @Override
         public V getValue() {
-            return (V)this;
+            return (V) this;
         }
 
         @Override
@@ -100,7 +102,7 @@ public class ManagedConcurrentMap<K,V> extends AbstractConcurrentMap<K,V> {
         }
     }
 
-    public static class EntryWithValue<K,V> extends Entry<K,V> {
+    public static class EntryWithValue<K, V> extends Entry<K, V> {
         private V value;
 
         public EntryWithValue(ReferenceBundle bundle, Segment segment, K key, int hash, V value) {

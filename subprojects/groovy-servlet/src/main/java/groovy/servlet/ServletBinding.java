@@ -81,7 +81,7 @@ import java.util.Map;
  * <li><tt>"include"</tt></li>
  * <li><tt>"redirect"</tt></li>
  * </ul>
- *
+ * <p>
  * If <code>response.getWriter()</code> is called directly (without using out), then a write method
  * call on 'sout' will not cause the <code>IllegalStateException</code>, but it will still be invalid.
  * It is the responsibility of the user of this class to not mix these different usage
@@ -95,143 +95,6 @@ import java.util.Map;
  * </ul>
  */
 public class ServletBinding extends Binding {
-
-    /**
-     * A OutputStream dummy that will throw a GroovyBugError for any
-     * write method call to it.
-     */
-    private static final class InvalidOutputStream extends OutputStream {
-        /**
-         * Will always throw a GroovyBugError
-         * @see java.io.OutputStream#write(int)
-         */
-        @Override
-        public void write(int b) {
-            throw new GroovyBugError("Any write calls to this stream are invalid!");
-        }
-    }
-    /**
-     * A class to manage the response output stream and writer.
-     * If the stream have been 'used', then using the writer will cause
-     * a IllegalStateException. If the writer have been 'used', then
-     * using the stream will cause a IllegalStateException. 'used' means
-     * any write method has been called. Simply requesting the objects will
-     * not cause an exception.
-     */
-    private static class ServletOutput {
-        private final HttpServletResponse response;
-        private ServletOutputStream outputStream;
-        private PrintWriter writer;
-
-        ServletOutput(HttpServletResponse response) {
-            this.response = response;
-        }
-        private ServletOutputStream getResponseStream() throws IOException {
-            if (writer != null) throw new IllegalStateException("The variable 'out' or 'html' have been used already. Use either out/html or sout, not both.");
-            if (outputStream == null) outputStream = response.getOutputStream();
-            return outputStream;
-        }
-        public ServletOutputStream getOutputStream() {
-            return new ServletOutputStream() {
-                @Override
-                public boolean isReady() {
-                    try {
-                        return getResponseStream().isReady();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-                @Override
-                public void setWriteListener(WriteListener writeListener) {
-                    try {
-                        getResponseStream().setWriteListener(writeListener);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-                @Override
-                public void write(int b) throws IOException {
-                    getResponseStream().write(b);
-                }
-                @Override
-                public void close() throws IOException {
-                    getResponseStream().close();
-                }
-                @Override
-                public void flush() throws IOException {
-                    getResponseStream().flush();
-                }
-                @Override
-                public void write(byte[] b) throws IOException {
-                    getResponseStream().write(b);
-                }
-                @Override
-                public void write(byte[] b, int off, int len) throws IOException {
-                    getResponseStream().write(b, off, len);
-                }
-            };
-        }
-        private PrintWriter getResponseWriter() {
-            if (outputStream != null) throw new IllegalStateException("The variable 'sout' have been used already. Use either out/html or sout, not both.");
-            if (writer == null) {
-                try {
-                    writer = response.getWriter();
-                } catch (IOException ioe) {
-                    writer = new PrintWriter(new ByteArrayOutputStream());
-                    throw new IllegalStateException("unable to get response writer",ioe);
-                }
-            }
-            return writer;
-        }
-        public PrintWriter getWriter() {
-            return new PrintWriter(new InvalidOutputStream()) {
-                @Override
-                public boolean checkError() {
-                    return getResponseWriter().checkError();
-                }
-                @Override
-                public void close() {
-                    getResponseWriter().close();
-                }
-                @Override
-                public void flush() {
-                    getResponseWriter().flush();
-                }
-                @Override
-                public void write(char[] buf) {
-                    getResponseWriter().write(buf);
-                }
-                @Override
-                public void write(char[] buf, int off, int len) {
-                    getResponseWriter().write(buf, off, len);
-                }
-                @Override
-                public void write(int c) {
-                    getResponseWriter().write(c);
-                }
-                @Override
-                public void write(String s, int off, int len) {
-                    getResponseWriter().write(s, off, len);
-                }
-                @Override
-                public void println() {
-                    getResponseWriter().println();
-                }
-                @Override
-                public PrintWriter format(String format, Object... args) {
-                    getResponseWriter().format(format, args);
-                    return this;
-                }
-                @Override
-                public PrintWriter format(Locale l, String format, Object... args) {
-                    getResponseWriter().format(l, format, args);
-                    return this;
-                }
-            };
-        }
-    }
 
     private boolean initialized;
 
@@ -269,7 +132,7 @@ public class ServletBinding extends Binding {
          * Bind request header key-value hash map.
          */
         Map<String, String> headers = new LinkedHashMap<String, String>();
-        for (Enumeration names = request.getHeaderNames(); names.hasMoreElements();) {
+        for (Enumeration names = request.getHeaderNames(); names.hasMoreElements(); ) {
             String headerName = (String) names.nextElement();
             String headerValue = request.getHeader(headerName);
             headers.put(headerName, headerValue);
@@ -277,10 +140,25 @@ public class ServletBinding extends Binding {
         super.setVariable("headers", headers);
     }
 
+    private static void validateArgs(String name, String message) {
+        if (name == null) {
+            throw new IllegalArgumentException(message + " null key.");
+        }
+        if (name.length() == 0) {
+            throw new IllegalArgumentException(message + " blank key name. [length=0]");
+        }
+    }
+
+    private static void excludeReservedName(String name, String reservedName) {
+        if (reservedName.equals(name)) {
+            throw new IllegalArgumentException("Can't bind variable to key named '" + name + "'.");
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private Map collectParams(HttpServletRequest request) {
         Map params = new LinkedHashMap();
-        for (Enumeration names = request.getParameterNames(); names.hasMoreElements();) {
+        for (Enumeration names = request.getParameterNames(); names.hasMoreElements(); ) {
             String name = (String) names.nextElement();
             if (!super.getVariables().containsKey(name)) {
                 String[] values = request.getParameterValues(name);
@@ -301,7 +179,7 @@ public class ServletBinding extends Binding {
         excludeReservedName(name, "out");
         excludeReservedName(name, "sout");
         excludeReservedName(name, "html");
-		excludeReservedName(name, "json");
+        excludeReservedName(name, "json");
         excludeReservedName(name, "forward");
         excludeReservedName(name, "include");
         excludeReservedName(name, "redirect");
@@ -364,21 +242,6 @@ public class ServletBinding extends Binding {
         return jsonBuilderClass.getConstructor(Writer.class);
     }
 
-    private static void validateArgs(String name, String message) {
-        if (name == null) {
-            throw new IllegalArgumentException(message + " null key.");
-        }
-        if (name.length() == 0) {
-            throw new IllegalArgumentException(message + " blank key name. [length=0]");
-        }
-    }
-
-    private static void excludeReservedName(String name, String reservedName) {
-        if (reservedName.equals(name)) {
-            throw new IllegalArgumentException("Can't bind variable to key named '" + name + "'.");
-        }
-    }
-
     public void forward(String path) throws ServletException, IOException {
         HttpServletRequest request = (HttpServletRequest) super.getVariable("request");
         HttpServletResponse response = (HttpServletResponse) super.getVariable("response");
@@ -396,5 +259,163 @@ public class ServletBinding extends Binding {
     public void redirect(String location) throws IOException {
         HttpServletResponse response = (HttpServletResponse) super.getVariable("response");
         response.sendRedirect(location);
+    }
+
+    /**
+     * A OutputStream dummy that will throw a GroovyBugError for any
+     * write method call to it.
+     */
+    private static final class InvalidOutputStream extends OutputStream {
+        /**
+         * Will always throw a GroovyBugError
+         *
+         * @see java.io.OutputStream#write(int)
+         */
+        @Override
+        public void write(int b) {
+            throw new GroovyBugError("Any write calls to this stream are invalid!");
+        }
+    }
+
+    /**
+     * A class to manage the response output stream and writer.
+     * If the stream have been 'used', then using the writer will cause
+     * a IllegalStateException. If the writer have been 'used', then
+     * using the stream will cause a IllegalStateException. 'used' means
+     * any write method has been called. Simply requesting the objects will
+     * not cause an exception.
+     */
+    private static class ServletOutput {
+        private final HttpServletResponse response;
+        private ServletOutputStream outputStream;
+        private PrintWriter writer;
+
+        ServletOutput(HttpServletResponse response) {
+            this.response = response;
+        }
+
+        private ServletOutputStream getResponseStream() throws IOException {
+            if (writer != null)
+                throw new IllegalStateException("The variable 'out' or 'html' have been used already. Use either out/html or sout, not both.");
+            if (outputStream == null) outputStream = response.getOutputStream();
+            return outputStream;
+        }
+
+        public ServletOutputStream getOutputStream() {
+            return new ServletOutputStream() {
+                @Override
+                public boolean isReady() {
+                    try {
+                        return getResponseStream().isReady();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+                @Override
+                public void setWriteListener(WriteListener writeListener) {
+                    try {
+                        getResponseStream().setWriteListener(writeListener);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+                @Override
+                public void write(int b) throws IOException {
+                    getResponseStream().write(b);
+                }
+
+                @Override
+                public void close() throws IOException {
+                    getResponseStream().close();
+                }
+
+                @Override
+                public void flush() throws IOException {
+                    getResponseStream().flush();
+                }
+
+                @Override
+                public void write(byte[] b) throws IOException {
+                    getResponseStream().write(b);
+                }
+
+                @Override
+                public void write(byte[] b, int off, int len) throws IOException {
+                    getResponseStream().write(b, off, len);
+                }
+            };
+        }
+
+        private PrintWriter getResponseWriter() {
+            if (outputStream != null)
+                throw new IllegalStateException("The variable 'sout' have been used already. Use either out/html or sout, not both.");
+            if (writer == null) {
+                try {
+                    writer = response.getWriter();
+                } catch (IOException ioe) {
+                    writer = new PrintWriter(new ByteArrayOutputStream());
+                    throw new IllegalStateException("unable to get response writer", ioe);
+                }
+            }
+            return writer;
+        }
+
+        public PrintWriter getWriter() {
+            return new PrintWriter(new InvalidOutputStream()) {
+                @Override
+                public boolean checkError() {
+                    return getResponseWriter().checkError();
+                }
+
+                @Override
+                public void close() {
+                    getResponseWriter().close();
+                }
+
+                @Override
+                public void flush() {
+                    getResponseWriter().flush();
+                }
+
+                @Override
+                public void write(char[] buf) {
+                    getResponseWriter().write(buf);
+                }
+
+                @Override
+                public void write(char[] buf, int off, int len) {
+                    getResponseWriter().write(buf, off, len);
+                }
+
+                @Override
+                public void write(int c) {
+                    getResponseWriter().write(c);
+                }
+
+                @Override
+                public void write(String s, int off, int len) {
+                    getResponseWriter().write(s, off, len);
+                }
+
+                @Override
+                public void println() {
+                    getResponseWriter().println();
+                }
+
+                @Override
+                public PrintWriter format(String format, Object... args) {
+                    getResponseWriter().format(format, args);
+                    return this;
+                }
+
+                @Override
+                public PrintWriter format(Locale l, String format, Object... args) {
+                    getResponseWriter().format(l, format, args);
+                    return this;
+                }
+            };
+        }
     }
 }

@@ -37,28 +37,28 @@ class StreamingJsonBuilderTest extends GroovyTestCase {
                 call "pages", 242
                 call "orderBy", "newest"
                 call("results",
-                [
-                        id: "world/video/2011/jan/19/tunisia-demonstrators-democracy-video",
-                        sectionId: "world",
-                        sectionName: "World news",
+                    [
+                        id                : "world/video/2011/jan/19/tunisia-demonstrators-democracy-video",
+                        sectionId         : "world",
+                        sectionName       : "World news",
                         webPublicationDate: "2011-01-19T15:12:46Z",
-                        webTitle: "Tunisian demonstrators demand new democracy - video",
-                        webUrl: "http://www.guardian.co.uk/world/video/2011/jan/19/tunisia-demonstrators-democracy-video",
-                        apiUrl: "http://content.guardianapis.com/world/video/2011/jan/19/tunisia-demonstrators-democracy-video"
-                ],
-                        [
-                                id: "world/gallery/2011/jan/19/tunisia-protests-pictures",
-                                sectionId: "world",
-                                sectionName: "World news",
-                                webPublicationDate: "2011-01-19T15:01:09Z",
-                                webTitle: "Tunisia protests continue in pictures ",
-                                webUrl: "http://www.guardian.co.uk/world/gallery/2011/jan/19/tunisia-protests-pictures",
-                                apiUrl: "http://content.guardianapis.com/world/gallery/2011/jan/19/tunisia-protests-pictures"
-                        ])
+                        webTitle          : "Tunisian demonstrators demand new democracy - video",
+                        webUrl            : "http://www.guardian.co.uk/world/video/2011/jan/19/tunisia-demonstrators-democracy-video",
+                        apiUrl            : "http://content.guardianapis.com/world/video/2011/jan/19/tunisia-demonstrators-democracy-video"
+                    ],
+                    [
+                        id                : "world/gallery/2011/jan/19/tunisia-protests-pictures",
+                        sectionId         : "world",
+                        sectionName       : "World news",
+                        webPublicationDate: "2011-01-19T15:01:09Z",
+                        webTitle          : "Tunisia protests continue in pictures ",
+                        webUrl            : "http://www.guardian.co.uk/world/gallery/2011/jan/19/tunisia-protests-pictures",
+                        apiUrl            : "http://content.guardianapis.com/world/gallery/2011/jan/19/tunisia-protests-pictures"
+                    ])
             }
 
             assert w.toString() ==
-                    '''{"response":{"status":"ok","userTier":"free","total":2413,"startIndex":1,"pageSize":10,"currentPage":1,"pages":242,"orderBy":"newest","results":[{"id":"world/video/2011/jan/19/tunisia-demonstrators-democracy-video","sectionId":"world","sectionName":"World news","webPublicationDate":"2011-01-19T15:12:46Z","webTitle":"Tunisian demonstrators demand new democracy - video","webUrl":"http://www.guardian.co.uk/world/video/2011/jan/19/tunisia-demonstrators-democracy-video","apiUrl":"http://content.guardianapis.com/world/video/2011/jan/19/tunisia-demonstrators-democracy-video"},{"id":"world/gallery/2011/jan/19/tunisia-protests-pictures","sectionId":"world","sectionName":"World news","webPublicationDate":"2011-01-19T15:01:09Z","webTitle":"Tunisia protests continue in pictures ","webUrl":"http://www.guardian.co.uk/world/gallery/2011/jan/19/tunisia-protests-pictures","apiUrl":"http://content.guardianapis.com/world/gallery/2011/jan/19/tunisia-protests-pictures"}]}}'''
+                '''{"response":{"status":"ok","userTier":"free","total":2413,"startIndex":1,"pageSize":10,"currentPage":1,"pages":242,"orderBy":"newest","results":[{"id":"world/video/2011/jan/19/tunisia-demonstrators-democracy-video","sectionId":"world","sectionName":"World news","webPublicationDate":"2011-01-19T15:12:46Z","webTitle":"Tunisian demonstrators demand new democracy - video","webUrl":"http://www.guardian.co.uk/world/video/2011/jan/19/tunisia-demonstrators-democracy-video","apiUrl":"http://content.guardianapis.com/world/video/2011/jan/19/tunisia-demonstrators-democracy-video"},{"id":"world/gallery/2011/jan/19/tunisia-protests-pictures","sectionId":"world","sectionName":"World news","webPublicationDate":"2011-01-19T15:01:09Z","webTitle":"Tunisia protests continue in pictures ","webUrl":"http://www.guardian.co.uk/world/gallery/2011/jan/19/tunisia-protests-pictures","apiUrl":"http://content.guardianapis.com/world/gallery/2011/jan/19/tunisia-protests-pictures"}]}}'''
         }
     }
 
@@ -284,7 +284,7 @@ class StreamingJsonBuilderTest extends GroovyTestCase {
 
     void testIterableAndClosure() {
         def authors = [new Author(name: "Guillaume"), new Author(name: "Jochen"), new Author(name: "Paul")]
-        Iterable it = [iterator:{->
+        Iterable it = [iterator: { ->
             authors.iterator()
         }] as Iterable
         new StringWriter().with { w ->
@@ -299,7 +299,7 @@ class StreamingJsonBuilderTest extends GroovyTestCase {
 
     void testMethodWithIterableAndClosure() {
         def authors = [new Author(name: "Guillaume"), new Author(name: "Jochen"), new Author(name: "Paul")]
-        Iterable it = [iterator:{->
+        Iterable it = [iterator: { ->
             authors.iterator()
         }] as Iterable
 
@@ -368,23 +368,23 @@ class StreamingJsonBuilderTest extends GroovyTestCase {
                 pages 242
                 orderBy "newest"
                 results([
-                    id: "world/video/2011/jan/19/tunisia-demonstrators-democracy-video",
-                    sectionId: "world",
-                    sectionName: "World news",
+                    id                : "world/video/2011/jan/19/tunisia-demonstrators-democracy-video",
+                    sectionId         : "world",
+                    sectionName       : "World news",
                     webPublicationDate: "2011-01-19T15:12:46Z",
-                    webTitle: "Tunisian demonstrators demand new democracy - video",
-                    webUrl: "http://www.guardian.co.uk/world/video/2011/jan/19/tunisia-demonstrators-democracy-video",
-                    apiUrl: "http://content.guardianapis.com/world/video/2011/jan/19/tunisia-demonstrators-democracy-video"
+                    webTitle          : "Tunisian demonstrators demand new democracy - video",
+                    webUrl            : "http://www.guardian.co.uk/world/video/2011/jan/19/tunisia-demonstrators-democracy-video",
+                    apiUrl            : "http://content.guardianapis.com/world/video/2011/jan/19/tunisia-demonstrators-democracy-video"
                 ],
-                [
-                    id: "world/gallery/2011/jan/19/tunisia-protests-pictures",
-                    sectionId: "world",
-                    sectionName: "World news",
-                    webPublicationDate: "2011-01-19T15:01:09Z",
-                    webTitle: "Tunisia protests continue in pictures ",
-                    webUrl: "http://www.guardian.co.uk/world/gallery/2011/jan/19/tunisia-protests-pictures",
-                    apiUrl: "http://content.guardianapis.com/world/gallery/2011/jan/19/tunisia-protests-pictures"
-                ])
+                    [
+                        id                : "world/gallery/2011/jan/19/tunisia-protests-pictures",
+                        sectionId         : "world",
+                        sectionName       : "World news",
+                        webPublicationDate: "2011-01-19T15:01:09Z",
+                        webTitle          : "Tunisia protests continue in pictures ",
+                        webUrl            : "http://www.guardian.co.uk/world/gallery/2011/jan/19/tunisia-protests-pictures",
+                        apiUrl            : "http://content.guardianapis.com/world/gallery/2011/jan/19/tunisia-protests-pictures"
+                    ])
             }
 
             assert w.toString() ==
@@ -416,21 +416,21 @@ class StreamingJsonBuilderTest extends GroovyTestCase {
         new StringWriter().with { w ->
             def json = new StreamingJsonBuilder(w)
             json.trends {
-                "2010-06-22 17:20" ([
-                        name: "Groovy rules",
-                        query: "Groovy rules"
+                "2010-06-22 17:20"([
+                    name : "Groovy rules",
+                    query: "Groovy rules"
                 ], {
-                        name "#worldcup"
-                        query "#worldcup"
+                    name "#worldcup"
+                    query "#worldcup"
                 }, [
-                        name: "Uruguai",
-                        query: "Uruguai"
+                    name : "Uruguai",
+                    query: "Uruguai"
                 ])
-                "2010-06-22 06:20" ({
+                "2010-06-22 06:20"({
                     name "#groovy"
                     query "#groovy"
                 }, [
-                    name: "#java",
+                    name : "#java",
                     query: "#java"
                 ])
             }
@@ -496,12 +496,12 @@ class StreamingJsonBuilderTest extends GroovyTestCase {
 
     void testWithGenerator() {
         def generator = new JsonGenerator.Options()
-                .excludeNulls()
-                .dateFormat('yyyyMM')
-                .excludeFieldsByName('secretKey', 'creditCardNumber')
-                .excludeFieldsByType(URL)
-                .addConverter(java.util.concurrent.atomic.AtomicBoolean) { ab -> ab.get() }
-                .build()
+            .excludeNulls()
+            .dateFormat('yyyyMM')
+            .excludeFieldsByName('secretKey', 'creditCardNumber')
+            .excludeFieldsByType(URL)
+            .addConverter(java.util.concurrent.atomic.AtomicBoolean) { ab -> ab.get() }
+            .build()
 
         new StringWriter().with { w ->
             def builder = new StreamingJsonBuilder(w, generator)
@@ -522,18 +522,18 @@ class StreamingJsonBuilderTest extends GroovyTestCase {
     @CompileStatic
     void testWithGeneratorCompileStatic() {
         def generator = new JsonGenerator.Options()
-                .excludeNulls()
-                .dateFormat('yyyyMM')
-                .excludeFieldsByName('secretKey', 'creditCardNumber')
-                .excludeFieldsByType(URL)
-                .addConverter(java.util.concurrent.atomic.AtomicBoolean) { ab -> ab.get() }
-                .build()
+            .excludeNulls()
+            .dateFormat('yyyyMM')
+            .excludeFieldsByName('secretKey', 'creditCardNumber')
+            .excludeFieldsByType(URL)
+            .addConverter(java.util.concurrent.atomic.AtomicBoolean) { ab -> ab.get() }
+            .build()
 
         new StringWriter().with { w ->
             def builder = new StreamingJsonBuilder(w, generator)
             builder.call('payload') {
                 call 'id', 'YT-1234'
-                call 'location', (String)null
+                call 'location', (String) null
                 call 'secretKey', 'J79-A25'
                 call 'creditCardNumber', '123-444-789-2233'
                 call 'site', new URL('http://groovy-lang.org')

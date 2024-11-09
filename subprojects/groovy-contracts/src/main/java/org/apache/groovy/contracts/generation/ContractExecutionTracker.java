@@ -27,6 +27,26 @@ import java.util.Set;
  */
 public class ContractExecutionTracker {
 
+    private static final ThreadLocal<Set<ContractExecution>> executions = new ContractExecutionThreadLocal();
+
+    public static boolean track(String className, String methodIdentifier, String assertionType, boolean isStatic) {
+        final ContractExecution ce = new ContractExecution(className, methodIdentifier, assertionType, isStatic);
+        final Set<ContractExecution> contractExecutions = executions.get();
+
+        if (!contractExecutions.contains(ce)) {
+            contractExecutions.add(ce);
+            return true;
+        }
+
+        return false;
+    }
+
+    public static void clear(String className, String methodIdentifier, String assertionType, boolean isStatic) {
+        final Set<ContractExecution> contractExecutions = executions.get();
+
+        contractExecutions.remove(new ContractExecution(className, methodIdentifier, assertionType, isStatic));
+    }
+
     public static final class ContractExecution {
         final String className;
         final String methodIdentifier;
@@ -71,32 +91,11 @@ public class ContractExecutionTracker {
         }
     }
 
-
     static class ContractExecutionThreadLocal extends ThreadLocal<Set<ContractExecution>> {
 
         @Override
         protected Set<ContractExecution> initialValue() {
             return new HashSet<>();
         }
-    }
-
-    private static final ThreadLocal<Set<ContractExecution>> executions = new ContractExecutionThreadLocal();
-
-    public static boolean track(String className, String methodIdentifier, String assertionType, boolean isStatic) {
-        final ContractExecution ce = new ContractExecution(className, methodIdentifier, assertionType, isStatic);
-        final Set<ContractExecution> contractExecutions = executions.get();
-
-        if (!contractExecutions.contains(ce)) {
-            contractExecutions.add(ce);
-            return true;
-        }
-
-        return false;
-    }
-
-    public static void clear(String className, String methodIdentifier, String assertionType, boolean isStatic) {
-        final Set<ContractExecution> contractExecutions = executions.get();
-
-        contractExecutions.remove(new ContractExecution(className, methodIdentifier, assertionType, isStatic));
     }
 }

@@ -33,47 +33,47 @@ import org.codehaus.groovy.transform.sc.StaticCompilationVisitor
 import org.codehaus.groovy.transform.sc.transformers.StaticCompilationTransformer
 import org.objectweb.asm.Opcodes
 
-class Groovy7222OptimizationsTest extends StaticTypeCheckingTestCase implements StaticCompilationTestSupport  {
+class Groovy7222OptimizationsTest extends StaticTypeCheckingTestCase implements StaticCompilationTestSupport {
     void testShouldOptimizeConstantInitialization() {
         def values = [
-                (short) 2,
-                (byte) 2,
-                2i,
-                2.0G,
-                2.5G,
-                2.0f,
-                2.5f,
-                2.5d,
-                2L
+            (short) 2,
+            (byte) 2,
+            2i,
+            2.0G,
+            2.5G,
+            2.0f,
+            2.5f,
+            2.5d,
+            2L
         ]
         def types = [
-                ClassHelper.byte_TYPE,
-                ClassHelper.short_TYPE,
-                ClassHelper.int_TYPE,
-                ClassHelper.long_TYPE,
-                ClassHelper.float_TYPE,
-                ClassHelper.double_TYPE,
+            ClassHelper.byte_TYPE,
+            ClassHelper.short_TYPE,
+            ClassHelper.int_TYPE,
+            ClassHelper.long_TYPE,
+            ClassHelper.float_TYPE,
+            ClassHelper.double_TYPE,
 
-                ClassHelper.Byte_TYPE,
-                ClassHelper.Short_TYPE,
-                ClassHelper.Integer_TYPE,
-                ClassHelper.Long_TYPE,
-                ClassHelper.Float_TYPE,
-                ClassHelper.Double_TYPE,
+            ClassHelper.Byte_TYPE,
+            ClassHelper.Short_TYPE,
+            ClassHelper.Integer_TYPE,
+            ClassHelper.Long_TYPE,
+            ClassHelper.Float_TYPE,
+            ClassHelper.Double_TYPE,
 
-                ClassHelper.BigInteger_TYPE,
-                ClassHelper.BigDecimal_TYPE
+            ClassHelper.BigInteger_TYPE,
+            ClassHelper.BigDecimal_TYPE
         ]
         // dummy source setup
         ClassNode cn = new ClassNode('Foo', Opcodes.ACC_PUBLIC, ClassHelper.OBJECT_TYPE)
         CompilerConfiguration conf = new CompilerConfiguration()
         SourceUnit su = new SourceUnit('Foo.groovy', '', conf, new GroovyClassLoader(), new ErrorCollector(conf))
         StaticCompilationTransformer transformer = new StaticCompilationTransformer(su, new StaticCompilationVisitor(su, cn))
-        [types,values].combinations { declarationType, value ->
+        [types, values].combinations { declarationType, value ->
             DeclarationExpression dex = new DeclarationExpression(
-                    new VariableExpression("x", declarationType),
-                    Token.newSymbol(Types.EQUAL, -1, -1),
-                    new ConstantExpression(value,true)
+                new VariableExpression("x", declarationType),
+                Token.newSymbol(Types.EQUAL, -1, -1),
+                new ConstantExpression(value, true)
             )
             def optimized = transformer.transform(dex)
             assert optimized instanceof DeclarationExpression

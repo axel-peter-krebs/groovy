@@ -26,7 +26,7 @@ final class Groovy7747 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'Main.java': '''
+            'Main.java'                          : '''
                 import enums.EnumWithAbstractMethod;
                 public class Main {
                     public static void main(String[] args) {

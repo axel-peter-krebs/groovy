@@ -24,9 +24,13 @@ import java.util.Map;
 
 /**
  * Map utilities.
+ *
  * @since 2.5.0
  */
 public class Maps {
+
+    private Maps() {
+    }
 
     public static <K, V> Map<K, V> of(K k1, V v1) {
         Map<K, V> map = new LinkedHashMap<K, V>();
@@ -5793,10 +5797,10 @@ public class Maps {
     /**
      * Returns the inverse view of this map
      *
-     * @param map the map to inverse
+     * @param map   the map to inverse
      * @param force whether to put anyway even if duplicated key exists
-     * @param <K> key type
-     * @param <V> value type
+     * @param <K>   key type
+     * @param <V>   value type
      * @return the inverse view of this map
      */
     public static <K, V> Map<V, K> inverse(Map<K, V> map, boolean force) {
@@ -5817,6 +5821,4 @@ public class Maps {
 
         return Collections.unmodifiableMap(resultMap);
     }
-
-    private Maps() {}
 }

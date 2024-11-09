@@ -68,7 +68,7 @@ class ConsolePreferences {
 
     private void buildDialog() {
         dialog = console.swing.dialog(
-                title: T['prefs.dialog.title'], owner: console.frame, modal: true
+            title: T['prefs.dialog.title'], owner: console.frame, modal: true
         ) {
             vbox {
                 vbox(border: titledBorder(T['prefs.output.settings.title'])) {
@@ -76,30 +76,30 @@ class ConsolePreferences {
                         label "${T['prefs.max.characters.output']}:"
 
                         formattedTextField value: maxOutputChars, id: 'txtMaxOutputChars',
-                                text:
-                                        bind(target: this, targetProperty: 'maxOutputChars',
-                                                validator: this.&isInteger, converter: Integer.&parseInt),
-                                columns: 6
+                            text:
+                                bind(target: this, targetProperty: 'maxOutputChars',
+                                    validator: this.&isInteger, converter: Integer.&parseInt),
+                            columns: 6
                     }
 
                     hbox {
                         label "${T['prefs.loop.mode.title']}:"
 
                         formattedTextField value: loopModeDelay, id: 'txtLoopModeDelay',
-                                text:
-                        bind(target: this, targetProperty: 'loopModeDelay',
-                                validator: this.&isInteger, converter: Integer.&parseInt),
-                        columns: 8
+                            text:
+                                bind(target: this, targetProperty: 'loopModeDelay',
+                                    validator: this.&isInteger, converter: Integer.&parseInt),
+                            columns: 8
                     }
 
                     hbox {
                         checkBox T['prefs.output.file'], id: 'outputFileCheckBox', selected: false
                         hglue()
                         label T['prefs.output.file.name'], id: 'outputFileName',
-                                enabled: bind(source: outputFileCheckBox, sourceProperty: 'selected')
+                            enabled: bind(source: outputFileCheckBox, sourceProperty: 'selected')
                         button T['prefs.output.file.select'], id: 'outputFileNameButton',
-                                enabled: bind(source: outputFileCheckBox, sourceProperty: 'selected'),
-                                actionPerformed: this.&onChooseFile
+                            enabled: bind(source: outputFileCheckBox, sourceProperty: 'selected'),
+                            actionPerformed: this.&onChooseFile
                     }
                 }
 

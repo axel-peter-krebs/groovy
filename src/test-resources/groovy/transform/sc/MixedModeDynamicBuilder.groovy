@@ -24,7 +24,7 @@ setup {
 }
 
 methodNotFound { receiver, name, argumentList, argTypes, call ->
-    if (receiver==classNodeFor(MarkupBuilder) && argTypes[-1]==CLOSURE_TYPE) {
+    if (receiver == classNodeFor(MarkupBuilder) && argTypes[-1] == CLOSURE_TYPE) {
         // we recognized a call directly made on markupBuilder, like in
         // mkp.html { ... }
         // so we create a new "scope" so that subsequent unresolved calls are made dynamically

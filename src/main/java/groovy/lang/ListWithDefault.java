@@ -43,6 +43,22 @@ public final class ListWithDefault<T> implements List<T> {
         this.initClosure = initClosure;
     }
 
+    public static <T> ListWithDefault<T> newInstance(List<T> items, boolean lazyDefaultValues, Closure initClosure) {
+        if (items == null)
+            throw new IllegalArgumentException("Parameter \"items\" must not be null");
+        if (initClosure == null)
+            throw new IllegalArgumentException("Parameter \"initClosure\" must not be null");
+
+        return new ListWithDefault<T>(new ArrayList<T>(items), lazyDefaultValues, (Closure) initClosure.clone());
+    }
+
+    private static int normaliseIndex(int index, int size) {
+        if (index < 0) {
+            index += size;
+        }
+        return index;
+    }
+
     public List<T> getDelegate() {
         return delegate != null ? new ArrayList<T>(delegate) : null;
     }
@@ -53,15 +69,6 @@ public final class ListWithDefault<T> implements List<T> {
 
     public Closure getInitClosure() {
         return initClosure != null ? (Closure) initClosure.clone() : null;
-    }
-
-    public static <T> ListWithDefault<T> newInstance(List<T> items, boolean lazyDefaultValues, Closure initClosure) {
-        if (items == null)
-            throw new IllegalArgumentException("Parameter \"items\" must not be null");
-        if (initClosure == null)
-            throw new IllegalArgumentException("Parameter \"initClosure\" must not be null");
-
-        return new ListWithDefault<T>(new ArrayList<T>(items), lazyDefaultValues, (Closure) initClosure.clone());
     }
 
     @Override
@@ -210,13 +217,6 @@ public final class ListWithDefault<T> implements List<T> {
     @SuppressWarnings("unchecked")
     private T getDefaultValue(int idx) {
         return (T) initClosure.call(new Object[]{idx});
-    }
-
-    private static int normaliseIndex(int index, int size) {
-        if (index < 0) {
-            index += size;
-        }
-        return index;
     }
 
     @Override

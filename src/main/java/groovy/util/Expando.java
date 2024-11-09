@@ -73,8 +73,7 @@ public class Expando extends GroovyObjectSupport {
         if (result != null) return result;
         try {
             return super.getProperty(property);
-        }
-        catch (MissingPropertyException e) {
+        } catch (MissingPropertyException e) {
             // IGNORE
         }
         return null;
@@ -90,8 +89,7 @@ public class Expando extends GroovyObjectSupport {
     public Object invokeMethod(String name, Object args) {
         try {
             return super.invokeMethod(name, args);
-        }
-        catch (GroovyRuntimeException e) {
+        } catch (GroovyRuntimeException e) {
             // br should get a "native" property match first. getProperty includes such fall-back logic
             Object value = this.getProperty(name);
             if (value instanceof Closure) {

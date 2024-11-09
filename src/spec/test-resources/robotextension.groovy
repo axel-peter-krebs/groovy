@@ -20,7 +20,7 @@ import typing.Robot
 
 // tag::example_robot_extension[]
 unresolvedVariable { var ->
-    if ('robot'==var.name) {
+    if ('robot' == var.name) {
         storeType(var, classNodeFor(Robot))
         handled = true
     }

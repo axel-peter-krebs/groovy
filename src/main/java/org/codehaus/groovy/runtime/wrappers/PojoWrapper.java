@@ -21,8 +21,8 @@ package org.codehaus.groovy.runtime.wrappers;
 import groovy.lang.MetaClass;
 
 public class PojoWrapper extends Wrapper {
-    protected MetaClass delegate;
     protected final Object wrapped;
+    protected MetaClass delegate;
 
     public PojoWrapper(final Object wrapped, final Class constrainedType) {
         super(constrainedType);
@@ -35,32 +35,32 @@ public class PojoWrapper extends Wrapper {
     }
 
     /* (non-Javadoc)
-    * @see groovy.lang.GroovyObject#getProperty(java.lang.String)
-    */
+     * @see groovy.lang.GroovyObject#getProperty(java.lang.String)
+     */
     @Override
     public Object getProperty(final String property) {
         return this.delegate.getProperty(this.wrapped, property);
     }
 
     /* (non-Javadoc)
-    * @see groovy.lang.GroovyObject#invokeMethod(java.lang.String, java.lang.Object)
-    */
+     * @see groovy.lang.GroovyObject#invokeMethod(java.lang.String, java.lang.Object)
+     */
     @Override
     public Object invokeMethod(final String methodName, final Object arguments) {
         return this.delegate.invokeMethod(this.wrapped, methodName, arguments);
     }
 
     /* (non-Javadoc)
-    * @see groovy.lang.GroovyObject#setMetaClass(groovy.lang.MetaClass)
-    */
+     * @see groovy.lang.GroovyObject#setMetaClass(groovy.lang.MetaClass)
+     */
     @Override
     public void setMetaClass(final MetaClass metaClass) {
         this.delegate = metaClass;
     }
 
     /* (non-Javadoc)
-    * @see groovy.lang.GroovyObject#setProperty(java.lang.String, java.lang.Object)
-    */
+     * @see groovy.lang.GroovyObject#setProperty(java.lang.String, java.lang.Object)
+     */
     @Override
     public void setProperty(final String property, final Object newValue) {
         this.delegate.setProperty(this.wrapped, property, newValue);

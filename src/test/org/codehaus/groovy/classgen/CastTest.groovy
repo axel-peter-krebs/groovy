@@ -20,8 +20,8 @@ package org.codehaus.groovy.classgen
 
 import groovy.test.GroovyShellTestCase
 
-class  CastTest extends GroovyShellTestCase {
-    void testCast () {
+class CastTest extends GroovyShellTestCase {
+    void testCast() {
         parse(new File("src/test/org/codehaus/groovy/benchmarks/alioth/binarytrees.groovy"))
     }
 }

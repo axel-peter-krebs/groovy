@@ -44,7 +44,7 @@ import java.lang.annotation.Target;
  *     }
  * }
  * </pre>
- *
+ * <p>
  * which becomes (approximately):
  *
  * <pre>
@@ -75,7 +75,7 @@ import java.lang.annotation.Target;
  * println instance.sum(2, 3)
  * println instance.sum(2, 3)
  * </pre>
- *
+ * <p>
  * The following will be output:
  *
  * <pre>

@@ -58,28 +58,6 @@ public class GroovyShell extends GroovyObjectSupport {
     private final CompilerConfiguration config;
     private final GroovyClassLoader loader;
 
-    public static void main(final String[] args) {
-        GroovyMain.main(args);
-    }
-
-    /**
-     * @since 4.0.3
-     */
-    public static GroovyShell withConfig(@DelegatesTo(type = CONFIGURATION_CUSTOMIZER) final Closure<Void> spec) {
-        //TODO return new GroovyShell(CompilerCustomizationBuilder.withConfig(new CompilerConfiguration(), spec));
-        CompilerConfiguration config = new CompilerConfiguration();
-        try {
-            Class.forName(CONFIGURATION_CUSTOMIZER)
-                .getDeclaredMethod("withConfig", CompilerConfiguration.class, Closure.class)
-                .invoke(null, config, spec);
-        } catch (ReflectiveOperationException e) {
-            throw new GroovyRuntimeException(e);
-        }
-        return new GroovyShell(config);
-    }
-
-    //--------------------------------------------------------------------------
-
     public GroovyShell() {
         this(null, new Binding());
     }
@@ -87,6 +65,8 @@ public class GroovyShell extends GroovyObjectSupport {
     public GroovyShell(Binding binding) {
         this(null, binding);
     }
+
+    //--------------------------------------------------------------------------
 
     public GroovyShell(ClassLoader parent, CompilerConfiguration config) {
         this(parent, new Binding(), config);
@@ -115,16 +95,84 @@ public class GroovyShell extends GroovyObjectSupport {
         if (config == null) {
             throw new IllegalArgumentException("Compiler configuration must not be null.");
         }
-        final ClassLoader parentLoader = (parent!=null)?parent:GroovyShell.class.getClassLoader();
+        final ClassLoader parentLoader = (parent != null) ? parent : GroovyShell.class.getClassLoader();
 
         if (parentLoader instanceof GroovyClassLoader
             && ((GroovyClassLoader) parentLoader).hasCompatibleConfiguration(config)) {
-          this.loader = (GroovyClassLoader) parentLoader;
+            this.loader = (GroovyClassLoader) parentLoader;
         } else {
-          this.loader = doPrivileged((PrivilegedAction<GroovyClassLoader>) () -> new GroovyClassLoader(parentLoader, config));
+            this.loader = doPrivileged((PrivilegedAction<GroovyClassLoader>) () -> new GroovyClassLoader(parentLoader, config));
         }
         this.context = binding;
         this.config = config;
+    }
+
+    /**
+     * Creates a child shell using a new ClassLoader which uses the parent shell's
+     * class loader as its parent
+     *
+     * @param shell is the parent shell used for the variable bindings and the parent class loader
+     */
+    public GroovyShell(GroovyShell shell) {
+        this(shell.loader, shell.context);
+    }
+
+    public static void main(final String[] args) {
+        GroovyMain.main(args);
+    }
+
+    /**
+     * @since 4.0.3
+     */
+    public static GroovyShell withConfig(@DelegatesTo(type = CONFIGURATION_CUSTOMIZER) final Closure<Void> spec) {
+        //TODO return new GroovyShell(CompilerCustomizationBuilder.withConfig(new CompilerConfiguration(), spec));
+        CompilerConfiguration config = new CompilerConfiguration();
+        try {
+            Class.forName(CONFIGURATION_CUSTOMIZER)
+                .getDeclaredMethod("withConfig", CompilerConfiguration.class, Closure.class)
+                .invoke(null, config, spec);
+        } catch (ReflectiveOperationException e) {
+            throw new GroovyRuntimeException(e);
+        }
+        return new GroovyShell(config);
+    }
+
+    private static Object runRunnable(Class scriptClass, String[] args) {
+        Constructor constructor = null;
+        Runnable runnable = null;
+        Throwable reason = null;
+
+        try {
+            // first, fetch the constructor taking String[] as parameter
+            constructor = scriptClass.getConstructor(String[].class);
+            try {
+                // instantiate a runnable and run it
+                runnable = (Runnable) constructor.newInstance(new Object[]{args});
+            } catch (Throwable t) {
+                reason = t;
+            }
+        } catch (NoSuchMethodException e1) {
+            try {
+                // otherwise, find the default constructor
+                constructor = scriptClass.getConstructor();
+                try {
+                    // instantiate a runnable and run it
+                    runnable = (Runnable) constructor.newInstance();
+                } catch (InvocationTargetException ite) {
+                    throw new InvokerInvocationException(ite.getTargetException());
+                } catch (Throwable t) {
+                    reason = t;
+                }
+            } catch (NoSuchMethodException nsme) {
+                reason = nsme;
+            }
+        }
+        if (constructor != null && runnable != null) {
+            runnable.run();
+        } else {
+            throw new GroovyRuntimeException("This script or class was runnable but could not be run. ", reason);
+        }
+        return null;
     }
 
     @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
@@ -139,16 +187,6 @@ public class GroovyShell extends GroovyObjectSupport {
 
     public void resetLoadedClasses() {
         loader.clearCache();
-    }
-
-    /**
-     * Creates a child shell using a new ClassLoader which uses the parent shell's
-     * class loader as its parent
-     *
-     * @param shell is the parent shell used for the variable bindings and the parent class loader
-     */
-    public GroovyShell(GroovyShell shell) {
-        this(shell.loader, shell.context);
     }
 
     public Binding getContext() {
@@ -288,7 +326,8 @@ public class GroovyShell extends GroovyObjectSupport {
             try {
                 Script script = InvokerHelper.newScript(scriptClass, context);
                 return script.run();
-            } catch (InstantiationException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+            } catch (InstantiationException | InvocationTargetException | IllegalAccessException |
+                     NoSuchMethodException e) {
                 // ignore instantiation errors, try to do main
             }
         }
@@ -302,7 +341,8 @@ public class GroovyShell extends GroovyObjectSupport {
                 Object script = InvokerHelper.invokeNoArgumentsConstructorOf(scriptClass);
                 return InvokerHelper.invokeMethod(script, MAIN_METHOD_NAME, args);
             }
-        } catch (NoSuchMethodException ignore) { }
+        } catch (NoSuchMethodException ignore) {
+        }
         try {
             // let's find an Object main method
             Method stringArrayMain = scriptClass.getMethod(MAIN_METHOD_NAME, Object.class);
@@ -313,7 +353,8 @@ public class GroovyShell extends GroovyObjectSupport {
                 Object script = InvokerHelper.invokeNoArgumentsConstructorOf(scriptClass);
                 return InvokerHelper.invokeMethod(script, MAIN_METHOD_NAME, new Object[]{args});
             }
-        } catch (NoSuchMethodException ignore) { }
+        } catch (NoSuchMethodException ignore) {
+        }
         try {
             // let's find a no-arg main method
             Method noArgMain = scriptClass.getMethod(MAIN_METHOD_NAME);
@@ -324,7 +365,8 @@ public class GroovyShell extends GroovyObjectSupport {
                 Object script = InvokerHelper.invokeNoArgumentsConstructorOf(scriptClass);
                 return InvokerHelper.invokeMethod(script, MAIN_METHOD_NAME, EMPTY_ARGS);
             }
-        } catch (NoSuchMethodException ignore) { }
+        } catch (NoSuchMethodException ignore) {
+        }
         // if it implements Runnable, try to instantiate it
         if (Runnable.class.isAssignableFrom(scriptClass)) {
             return runRunnable(scriptClass, args);
@@ -336,11 +378,11 @@ public class GroovyShell extends GroovyObjectSupport {
             }
         }
         StringBuilder message = new StringBuilder("This script or class could not be run.\n" +
-                "It should either:\n" +
-                "- have a main method,\n" +
-                "- be a JUnit test or extend GroovyTestCase,\n" +
-                "- implement the Runnable interface,\n" +
-                "- or be compatible with a registered script runner. Known runners:\n");
+            "It should either:\n" +
+            "- have a main method,\n" +
+            "- be a JUnit test or extend GroovyTestCase,\n" +
+            "- implement the Runnable interface,\n" +
+            "- or be compatible with a registered script runner. Known runners:\n");
         if (runnerRegistry.isEmpty()) {
             message.append("  * <none>");
         } else {
@@ -349,44 +391,6 @@ public class GroovyShell extends GroovyObjectSupport {
             }
         }
         throw new GroovyRuntimeException(message.toString());
-    }
-
-    private static Object runRunnable(Class scriptClass, String[] args) {
-        Constructor constructor = null;
-        Runnable runnable = null;
-        Throwable reason = null;
-
-        try {
-            // first, fetch the constructor taking String[] as parameter
-            constructor = scriptClass.getConstructor(String[].class);
-            try {
-                // instantiate a runnable and run it
-                runnable = (Runnable) constructor.newInstance(new Object[]{args});
-            } catch (Throwable t) {
-                reason = t;
-            }
-        } catch (NoSuchMethodException e1) {
-            try {
-                // otherwise, find the default constructor
-                constructor = scriptClass.getConstructor();
-                try {
-                    // instantiate a runnable and run it
-                    runnable = (Runnable) constructor.newInstance();
-                } catch (InvocationTargetException ite) {
-                    throw new InvokerInvocationException(ite.getTargetException());
-                } catch (Throwable t) {
-                    reason = t;
-                }
-            } catch (NoSuchMethodException nsme) {
-                reason = nsme;
-            }
-        }
-        if (constructor != null && runnable != null) {
-            runnable.run();
-        } else {
-            throw new GroovyRuntimeException("This script or class was runnable but could not be run. ", reason);
-        }
-        return null;
     }
 
     /**
@@ -404,8 +408,8 @@ public class GroovyShell extends GroovyObjectSupport {
     /**
      * Runs the given script source with command line arguments
      *
-     * @param source    is the source content of the script
-     * @param args      the command line arguments to pass in
+     * @param source is the source content of the script
+     * @param args   the command line arguments to pass in
      */
     public Object run(GroovyCodeSource source, List<String> args) throws CompilationFailedException {
         return run(source, args.toArray(EMPTY_STRING_ARRAY));
@@ -414,8 +418,8 @@ public class GroovyShell extends GroovyObjectSupport {
     /**
      * Runs the given script source with command line arguments
      *
-     * @param source    is the source content of the script
-     * @param args      the command line arguments to pass in
+     * @param source is the source content of the script
+     * @param args   the command line arguments to pass in
      */
     public Object run(GroovyCodeSource source, String[] args) throws CompilationFailedException {
         Class scriptClass = parseClass(source);
@@ -425,8 +429,8 @@ public class GroovyShell extends GroovyObjectSupport {
     /**
      * Runs the given script source with command line arguments
      *
-     * @param source    is the source content of the script
-     * @param args      the command line arguments to pass in
+     * @param source is the source content of the script
+     * @param args   the command line arguments to pass in
      */
     public Object run(URI source, List<String> args) throws CompilationFailedException, IOException {
         return run(new GroovyCodeSource(source), args.toArray(EMPTY_STRING_ARRAY));
@@ -435,8 +439,8 @@ public class GroovyShell extends GroovyObjectSupport {
     /**
      * Runs the given script source with command line arguments
      *
-     * @param source    is the source content of the script
-     * @param args      the command line arguments to pass in
+     * @param source is the source content of the script
+     * @param args   the command line arguments to pass in
      */
     public Object run(URI source, String[] args) throws CompilationFailedException, IOException {
         return run(new GroovyCodeSource(source), args);
@@ -573,8 +577,8 @@ public class GroovyShell extends GroovyObjectSupport {
     /**
      * Parses the given script and returns it ready to be run
      *
-     * @param reader    the stream reading the script
-     * @param fileName  is the logical file name of the script (which is used to create the class name of the script)
+     * @param reader   the stream reading the script
+     * @param fileName is the logical file name of the script (which is used to create the class name of the script)
      * @return the parsed script which is ready to be run via {@link Script#run()}
      */
     public Script parse(final Reader reader, final String fileName) throws CompilationFailedException {
@@ -584,9 +588,9 @@ public class GroovyShell extends GroovyObjectSupport {
     /**
      * Parses the given script and returns it ready to be run
      *
-     * @param reader    the stream reading the script
-     * @param fileName  is the logical file name of the script (which is used to create the class name of the script)
-     * @param binding   the context eval the script
+     * @param reader   the stream reading the script
+     * @param fileName is the logical file name of the script (which is used to create the class name of the script)
+     * @param binding  the context eval the script
      * @return the parsed script which is ready to be run via {@link Script#run()}
      */
     public Script parse(final Reader reader, final String fileName, Binding binding) throws CompilationFailedException {
@@ -648,7 +652,7 @@ public class GroovyShell extends GroovyObjectSupport {
      * Parses the given script and returns it ready to be run
      *
      * @param scriptText the text of the script
-     * @param binding the context eval the script
+     * @param binding    the context eval the script
      */
     public Script parse(String scriptText, Binding binding) throws CompilationFailedException {
         return parse(scriptText, generateScriptName(), binding);
@@ -684,7 +688,7 @@ public class GroovyShell extends GroovyObjectSupport {
     /**
      * Parses the given script and returns it ready to be run
      *
-     * @param in the stream reading the script
+     * @param in      the stream reading the script
      * @param binding the context eval the script
      */
     public Script parse(Reader in, Binding binding) throws CompilationFailedException {

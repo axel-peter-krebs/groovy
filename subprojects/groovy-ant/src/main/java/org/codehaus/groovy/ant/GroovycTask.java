@@ -32,8 +32,7 @@ import java.io.File;
  * Compiles Groovy source files.
  */
 public class GroovycTask
-    extends CompileTaskSupport
-{
+    extends CompileTaskSupport {
     protected boolean force;
 
     public void setForce(final boolean flag) {
@@ -98,8 +97,7 @@ public class GroovycTask
             log.info("Compiling " + count + " source file" + (count > 1 ? "s" : "") + " to " + destdir);
 
             compilation.compile();
-        }
-        else {
+        } else {
             log.info("No sources found to compile");
         }
     }

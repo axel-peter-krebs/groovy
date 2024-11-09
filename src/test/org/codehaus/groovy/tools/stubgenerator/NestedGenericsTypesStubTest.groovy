@@ -31,7 +31,7 @@ class NestedGenericsTypesStubTest extends StringSourcesStubTestCase {
                 }
             ''',
 
-            'Main.java': '''
+            'Main.java'     : '''
                 import java.util.List;
                 public class Main {
                    public void main() {

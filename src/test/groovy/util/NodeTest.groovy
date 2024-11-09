@@ -140,16 +140,16 @@ class NodeTest extends GroovyTestCase {
 
     void testRemove() {
         Node foo = new Node(null, 'foo')
-        new Node(foo, 'bar', [id:'1'])
-        new Node(foo, 'bar', [id:'2'])
-        new Node(foo, 'bar', [id:'3'])
-        new Node(foo, 'bar', [id:'4'])
+        new Node(foo, 'bar', [id: '1'])
+        new Node(foo, 'bar', [id: '2'])
+        new Node(foo, 'bar', [id: '3'])
+        new Node(foo, 'bar', [id: '4'])
 
         assert foo.bar.size() == 4
         assert foo.children().size() == 4
         assert foo.children().collect { it.@id.toInteger() } == [1, 2, 3, 4]
 
-        def bar2 = foo.bar.find {it.@id == '2'}
+        def bar2 = foo.bar.find { it.@id == '2' }
         bar2.parent().remove(bar2)
         assert !bar2.parent()
         assert foo.bar.size() == 3
@@ -168,21 +168,21 @@ class NodeTest extends GroovyTestCase {
 
     void testMove() {
         Node foo = new Node(null, 'foo')
-        new Node(foo, 'bar', [id:'1'])
-        new Node(foo, 'bar', [id:'2'])
+        new Node(foo, 'bar', [id: '1'])
+        new Node(foo, 'bar', [id: '2'])
         new Node(foo, 'baz')
 
         assert foo.bar.size() == 2
         assert foo.children().size() == 3
-        assert foo.children().collect { it.@id?.toInteger() }.grep {it} == [1, 2]
+        assert foo.children().collect { it.@id?.toInteger() }.grep { it } == [1, 2]
 
-        def bar2 = foo.bar.find {it.@id == '2'}
+        def bar2 = foo.bar.find { it.@id == '2' }
         bar2.parent().remove(bar2)
         def baz = foo.baz[0]
         assert !bar2.parent()
         baz.append(bar2)
         assert bar2.parent() == baz
-        assert foo.children().collect { it.@id?.toInteger() }.grep {it} == [1]
+        assert foo.children().collect { it.@id?.toInteger() }.grep { it } == [1]
         assert foo.baz.bar[0] == bar2
     }
 
@@ -197,14 +197,14 @@ class NodeTest extends GroovyTestCase {
     void testUnsupportedReplaceForRootNode() {
         Node root = new Node(null, 'root')
         shouldFail(UnsupportedOperationException) {
-            root.replaceNode{}
+            root.replaceNode {}
         }
     }
 
     void testUnsupportedPlusOnRootNode() {
         Node root = new Node(null, 'root')
         shouldFail(UnsupportedOperationException) {
-            root.plus{}
+            root.plus {}
         }
     }
 

@@ -36,11 +36,11 @@ final class IncrementalRecompilationWithStubsTest extends StubTestCase {
         File groovy1 = createFile(stubDir, "AsmClass1.groovy", "class AsmClass1 {}")
         File groovy2 = createFile(stubDir, "AsmClass2.groovy", "class AsmClass2 extends AsmClass1 {}")
         File groovy3 = createFile(stubDir, "AsmClass3.groovy", "class AsmClass3 extends AsmClass2 {}")
-        File javaOne = createFile(stubDir, "JavaClass.java"  , "class JavaClass {}")
+        File javaOne = createFile(stubDir, "JavaClass.java", "class JavaClass {}")
 
         compile([groovy1, groovy2, groovy3, javaOne])
 
-        File   class1 = new File(targetDir, "AsmClass1.class")
+        File class1 = new File(targetDir, "AsmClass1.class")
         assert class1.exists()
         assert class1.delete()
 

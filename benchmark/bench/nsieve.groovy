@@ -45,10 +45,10 @@ if (n < 2)
     n = 2
 
 def m = (1 << n) * 10000
-def flags = new boolean[m+1]
+def flags = new boolean[m + 1]
 
-[n, n-1, n-2].each {
-    def k = (1<<it) * 10000
+[n, n - 1, n - 2].each {
+    def k = (1 << it) * 10000
     def s1 = padNumber(k, 8)
     def s2 = padNumber(countSieve(k, flags), 9)
     println("Primes up to $s1$s2")

@@ -83,113 +83,119 @@ import static org.codehaus.groovy.transform.stc.StaticTypeCheckingSupport.implem
  */
 public class ClassHelper {
 
-    private static final Class[] classes = new Class[]{
-            Object.class, Boolean.TYPE, Character.TYPE, Byte.TYPE, Short.TYPE,
-            Integer.TYPE, Long.TYPE, Double.TYPE, Float.TYPE, Void.TYPE,
-            Closure.class, GString.class, List.class, Map.class, Range.class,
-            Pattern.class, Script.class, String.class, Boolean.class,
-            Character.class, Byte.class, Short.class, Integer.class, Long.class,
-            Double.class, Float.class, BigDecimal.class, BigInteger.class,
-            Number.class, Void.class, Reference.class, Class.class, MetaClass.class,
-            Iterator.class, GeneratedClosure.class, GeneratedLambda.class, GroovyObjectSupport.class
-    };
-
     public static final Class[] TUPLE_CLASSES = new Class[]{
-            Tuple0.class, Tuple1.class, Tuple2.class, Tuple3.class, Tuple4.class, Tuple5.class, Tuple6.class,
-            Tuple7.class, Tuple8.class, Tuple9.class, Tuple10.class, Tuple11.class, Tuple12.class, Tuple13.class,
-            Tuple14.class, Tuple15.class, Tuple16.class
+        Tuple0.class, Tuple1.class, Tuple2.class, Tuple3.class, Tuple4.class, Tuple5.class, Tuple6.class,
+        Tuple7.class, Tuple8.class, Tuple9.class, Tuple10.class, Tuple11.class, Tuple12.class, Tuple13.class,
+        Tuple14.class, Tuple15.class, Tuple16.class
     };
-
-    private static final String[] primitiveClassNames = new String[]{
-            "", "boolean", "char", "byte", "short", "int", "long", "double", "float", "void"
-    };
-
     public static final ClassNode
-            OBJECT_TYPE = makeCached(Object.class),
-            CLOSURE_TYPE = makeCached(Closure.class),
-            GSTRING_TYPE = makeCached(GString.class),
-            RANGE_TYPE = makeCached(Range.class),
-            PATTERN_TYPE = makeCached(Pattern.class),
-            STRING_TYPE = makeCached(String.class),
-            SCRIPT_TYPE = makeCached(Script.class),
-            BINDING_TYPE = makeCached(Binding.class),
-            THROWABLE_TYPE = makeCached(Throwable.class),
+        OBJECT_TYPE = makeCached(Object.class),
+        CLOSURE_TYPE = makeCached(Closure.class),
+        GSTRING_TYPE = makeCached(GString.class),
+        RANGE_TYPE = makeCached(Range.class),
+        PATTERN_TYPE = makeCached(Pattern.class),
+        STRING_TYPE = makeCached(String.class),
+        SCRIPT_TYPE = makeCached(Script.class),
+        BINDING_TYPE = makeCached(Binding.class),
+        THROWABLE_TYPE = makeCached(Throwable.class),
 
-            boolean_TYPE = makeCached(boolean.class),
-            char_TYPE = makeCached(char.class),
-            byte_TYPE = makeCached(byte.class),
-            int_TYPE = makeCached(int.class),
-            long_TYPE = makeCached(long.class),
-            short_TYPE = makeCached(short.class),
-            double_TYPE = makeCached(double.class),
-            float_TYPE = makeCached(float.class),
-            Byte_TYPE = makeCached(Byte.class),
-            Short_TYPE = makeCached(Short.class),
-            Integer_TYPE = makeCached(Integer.class),
-            Long_TYPE = makeCached(Long.class),
-            Character_TYPE = makeCached(Character.class),
-            Float_TYPE = makeCached(Float.class),
-            Double_TYPE = makeCached(Double.class),
-            Boolean_TYPE = makeCached(Boolean.class),
-            BigInteger_TYPE = makeCached(java.math.BigInteger.class),
-            BigDecimal_TYPE = makeCached(java.math.BigDecimal.class),
-            Number_TYPE = makeCached(Number.class),
+    boolean_TYPE = makeCached(boolean.class),
+        char_TYPE = makeCached(char.class),
+        byte_TYPE = makeCached(byte.class),
+        int_TYPE = makeCached(int.class),
+        long_TYPE = makeCached(long.class),
+        short_TYPE = makeCached(short.class),
+        double_TYPE = makeCached(double.class),
+        float_TYPE = makeCached(float.class),
+        Byte_TYPE = makeCached(Byte.class),
+        Short_TYPE = makeCached(Short.class),
+        Integer_TYPE = makeCached(Integer.class),
+        Long_TYPE = makeCached(Long.class),
+        Character_TYPE = makeCached(Character.class),
+        Float_TYPE = makeCached(Float.class),
+        Double_TYPE = makeCached(Double.class),
+        Boolean_TYPE = makeCached(Boolean.class),
+        BigInteger_TYPE = makeCached(java.math.BigInteger.class),
+        BigDecimal_TYPE = makeCached(java.math.BigDecimal.class),
+        Number_TYPE = makeCached(Number.class),
 
-            VOID_TYPE = makeCached(Void.TYPE),
-            void_WRAPPER_TYPE = makeCached(Void.class),
-            METACLASS_TYPE = makeCached(MetaClass.class),
-            Iterator_TYPE = makeCached(Iterator.class),
-            Annotation_TYPE = makeCached(Annotation.class),
-            ELEMENT_TYPE_TYPE = makeCached(ElementType.class),
-            AUTOCLOSEABLE_TYPE = makeCached(AutoCloseable.class),
-            CLONEABLE_TYPE = makeCached(Cloneable.class),
-            SERIALIZABLE_TYPE = makeCached(Serializable.class),
-            SERIALIZEDLAMBDA_TYPE = makeCached(SerializedLambda.class),
-            SEALED_TYPE = makeCached(Sealed.class),
-            OVERRIDE_TYPE = makeCached(Override.class),
-            DEPRECATED_TYPE = makeCached(Deprecated.class),
+    VOID_TYPE = makeCached(Void.TYPE),
+        void_WRAPPER_TYPE = makeCached(Void.class),
+        METACLASS_TYPE = makeCached(MetaClass.class),
+        Iterator_TYPE = makeCached(Iterator.class),
+        Annotation_TYPE = makeCached(Annotation.class),
+        ELEMENT_TYPE_TYPE = makeCached(ElementType.class),
+        AUTOCLOSEABLE_TYPE = makeCached(AutoCloseable.class),
+        CLONEABLE_TYPE = makeCached(Cloneable.class),
+        SERIALIZABLE_TYPE = makeCached(Serializable.class),
+        SERIALIZEDLAMBDA_TYPE = makeCached(SerializedLambda.class),
+        SEALED_TYPE = makeCached(Sealed.class),
+        OVERRIDE_TYPE = makeCached(Override.class),
+        DEPRECATED_TYPE = makeCached(Deprecated.class),
 
-            // uncached constants
-            MAP_TYPE = makeWithoutCaching(Map.class),
-            SET_TYPE = makeWithoutCaching(Set.class),
-            LIST_TYPE = makeWithoutCaching(List.class),
-            Enum_Type = makeWithoutCaching(Enum.class),
-            CLASS_Type = makeWithoutCaching(Class.class),
-            TUPLE_TYPE = makeWithoutCaching(Tuple.class),
-            STREAM_TYPE = makeWithoutCaching(Stream.class),
-            ITERABLE_TYPE = makeWithoutCaching(Iterable.class),
-            REFERENCE_TYPE = makeWithoutCaching(Reference.class),
-            COLLECTION_TYPE = makeWithoutCaching(Collection.class),
-            COMPARABLE_TYPE = makeWithoutCaching(Comparable.class),
-            GROOVY_OBJECT_TYPE = makeWithoutCaching(GroovyObject.class),
-            GENERATED_LAMBDA_TYPE = makeWithoutCaching(GeneratedLambda.class),
-            GENERATED_CLOSURE_Type = makeWithoutCaching(GeneratedClosure.class),
-            GROOVY_INTERCEPTABLE_TYPE = makeWithoutCaching(GroovyInterceptable.class),
-            GROOVY_OBJECT_SUPPORT_TYPE = makeWithoutCaching(GroovyObjectSupport.class);
-
+    // uncached constants
+    MAP_TYPE = makeWithoutCaching(Map.class),
+        SET_TYPE = makeWithoutCaching(Set.class),
+        LIST_TYPE = makeWithoutCaching(List.class),
+        Enum_Type = makeWithoutCaching(Enum.class),
+        CLASS_Type = makeWithoutCaching(Class.class),
+        TUPLE_TYPE = makeWithoutCaching(Tuple.class),
+        STREAM_TYPE = makeWithoutCaching(Stream.class),
+        ITERABLE_TYPE = makeWithoutCaching(Iterable.class),
+        REFERENCE_TYPE = makeWithoutCaching(Reference.class),
+        COLLECTION_TYPE = makeWithoutCaching(Collection.class),
+        COMPARABLE_TYPE = makeWithoutCaching(Comparable.class),
+        GROOVY_OBJECT_TYPE = makeWithoutCaching(GroovyObject.class),
+        GENERATED_LAMBDA_TYPE = makeWithoutCaching(GeneratedLambda.class),
+        GENERATED_CLOSURE_Type = makeWithoutCaching(GeneratedClosure.class),
+        GROOVY_INTERCEPTABLE_TYPE = makeWithoutCaching(GroovyInterceptable.class),
+        GROOVY_OBJECT_SUPPORT_TYPE = makeWithoutCaching(GroovyObjectSupport.class);
     @Deprecated
     public static final ClassNode DYNAMIC_TYPE = OBJECT_TYPE;
-
-    private static final ClassNode[] types = new ClassNode[]{
-            OBJECT_TYPE,
-            boolean_TYPE, char_TYPE, byte_TYPE, short_TYPE,
-            int_TYPE, long_TYPE, double_TYPE, float_TYPE,
-            VOID_TYPE, CLOSURE_TYPE, GSTRING_TYPE,
-            LIST_TYPE, MAP_TYPE, RANGE_TYPE, PATTERN_TYPE,
-            SCRIPT_TYPE, STRING_TYPE, Boolean_TYPE, Character_TYPE,
-            Byte_TYPE, Short_TYPE, Integer_TYPE, Long_TYPE,
-            Double_TYPE, Float_TYPE, BigDecimal_TYPE, BigInteger_TYPE,
-            Number_TYPE,
-            void_WRAPPER_TYPE, REFERENCE_TYPE, CLASS_Type, METACLASS_TYPE,
-            Iterator_TYPE, GENERATED_CLOSURE_Type, GENERATED_LAMBDA_TYPE, GROOVY_OBJECT_SUPPORT_TYPE,
-            GROOVY_OBJECT_TYPE, GROOVY_INTERCEPTABLE_TYPE, Enum_Type, Annotation_TYPE
-    };
-
-    private static final String DYNAMIC_TYPE_METADATA = "_DYNAMIC_TYPE_METADATA_";
-
-    protected static final ClassNode[] EMPTY_TYPE_ARRAY = ClassNode.EMPTY_ARRAY;
-
     public static final String OBJECT = "java.lang.Object";
+    protected static final ClassNode[] EMPTY_TYPE_ARRAY = ClassNode.EMPTY_ARRAY;
+    private static final Class[] classes = new Class[]{
+        Object.class, Boolean.TYPE, Character.TYPE, Byte.TYPE, Short.TYPE,
+        Integer.TYPE, Long.TYPE, Double.TYPE, Float.TYPE, Void.TYPE,
+        Closure.class, GString.class, List.class, Map.class, Range.class,
+        Pattern.class, Script.class, String.class, Boolean.class,
+        Character.class, Byte.class, Short.class, Integer.class, Long.class,
+        Double.class, Float.class, BigDecimal.class, BigInteger.class,
+        Number.class, Void.class, Reference.class, Class.class, MetaClass.class,
+        Iterator.class, GeneratedClosure.class, GeneratedLambda.class, GroovyObjectSupport.class
+    };
+    private static final String[] primitiveClassNames = new String[]{
+        "", "boolean", "char", "byte", "short", "int", "long", "double", "float", "void"
+    };
+    private static final ClassNode[] types = new ClassNode[]{
+        OBJECT_TYPE,
+        boolean_TYPE, char_TYPE, byte_TYPE, short_TYPE,
+        int_TYPE, long_TYPE, double_TYPE, float_TYPE,
+        VOID_TYPE, CLOSURE_TYPE, GSTRING_TYPE,
+        LIST_TYPE, MAP_TYPE, RANGE_TYPE, PATTERN_TYPE,
+        SCRIPT_TYPE, STRING_TYPE, Boolean_TYPE, Character_TYPE,
+        Byte_TYPE, Short_TYPE, Integer_TYPE, Long_TYPE,
+        Double_TYPE, Float_TYPE, BigDecimal_TYPE, BigInteger_TYPE,
+        Number_TYPE,
+        void_WRAPPER_TYPE, REFERENCE_TYPE, CLASS_Type, METACLASS_TYPE,
+        Iterator_TYPE, GENERATED_CLOSURE_Type, GENERATED_LAMBDA_TYPE, GROOVY_OBJECT_SUPPORT_TYPE,
+        GROOVY_OBJECT_TYPE, GROOVY_INTERCEPTABLE_TYPE, Enum_Type, Annotation_TYPE
+    };
+    private static final String DYNAMIC_TYPE_METADATA = "_DYNAMIC_TYPE_METADATA_";
+    private static final Map<ClassNode, ClassNode> PRIMITIVE_TYPE_TO_WRAPPER_TYPE_MAP = Maps.of(
+        boolean_TYPE, Boolean_TYPE,
+        byte_TYPE, Byte_TYPE,
+        char_TYPE, Character_TYPE,
+        short_TYPE, Short_TYPE,
+        int_TYPE, Integer_TYPE,
+        long_TYPE, Long_TYPE,
+        float_TYPE, Float_TYPE,
+        double_TYPE, Double_TYPE,
+        VOID_TYPE, void_WRAPPER_TYPE
+    );
+    private static final Map<ClassNode, ClassNode> WRAPPER_TYPE_TO_PRIMITIVE_TYPE_MAP = Maps.inverse(PRIMITIVE_TYPE_TO_WRAPPER_TYPE_MAP);
+    private static final Set<String> OBJECT_METHOD_NAME_SET =
+        Collections.unmodifiableSet(Arrays.stream(Object.class.getMethods()).map(m -> m.getName()).collect(Collectors.toSet()));
 
     public static ClassNode dynamicType() {
         ClassNode node = OBJECT_TYPE.getPlainNodeReference();
@@ -306,18 +312,6 @@ public class ClassHelper {
         return makeWithoutCaching(name);
     }
 
-    private static final Map<ClassNode, ClassNode> PRIMITIVE_TYPE_TO_WRAPPER_TYPE_MAP = Maps.of(
-            boolean_TYPE, Boolean_TYPE,
-            byte_TYPE, Byte_TYPE,
-            char_TYPE, Character_TYPE,
-            short_TYPE, Short_TYPE,
-            int_TYPE, Integer_TYPE,
-            long_TYPE, Long_TYPE,
-            float_TYPE, Float_TYPE,
-            double_TYPE, Double_TYPE,
-            VOID_TYPE, void_WRAPPER_TYPE
-    );
-
     /**
      * Creates a ClassNode containing the wrapper of a ClassNode
      * of primitive type. Any ClassNode representing a primitive
@@ -350,8 +344,6 @@ public class ClassHelper {
 
         return cn;
     }
-
-    private static final Map<ClassNode, ClassNode> WRAPPER_TYPE_TO_PRIMITIVE_TYPE_MAP = Maps.inverse(PRIMITIVE_TYPE_TO_WRAPPER_TYPE_MAP);
 
     public static ClassNode getUnwrapper(ClassNode cn) {
         cn = cn.redirect();
@@ -394,29 +386,29 @@ public class ClassHelper {
      */
     public static boolean isStaticConstantInitializerType(final ClassNode cn) {
         return isPrimitiveInt(cn) ||
-                isPrimitiveFloat(cn) ||
-                isPrimitiveLong(cn) ||
-                isPrimitiveDouble(cn) ||
-                isStringType(cn) ||
-                // the next items require conversion to int when initializing
-                isPrimitiveByte(cn) ||
-                isPrimitiveChar(cn) ||
-                isPrimitiveShort(cn);
+            isPrimitiveFloat(cn) ||
+            isPrimitiveLong(cn) ||
+            isPrimitiveDouble(cn) ||
+            isStringType(cn) ||
+            // the next items require conversion to int when initializing
+            isPrimitiveByte(cn) ||
+            isPrimitiveChar(cn) ||
+            isPrimitiveShort(cn);
     }
 
     public static boolean isNumberType(final ClassNode cn) {
         return isWrapperByte(cn) ||
-                isWrapperShort(cn) ||
-                isWrapperInteger(cn) ||
-                isWrapperLong(cn) ||
-                isWrapperFloat(cn) ||
-                isWrapperDouble(cn) ||
-                isPrimitiveByte(cn) ||
-                isPrimitiveShort(cn) ||
-                isPrimitiveInt(cn) ||
-                isPrimitiveLong(cn) ||
-                isPrimitiveFloat(cn) ||
-                isPrimitiveDouble(cn);
+            isWrapperShort(cn) ||
+            isWrapperInteger(cn) ||
+            isWrapperLong(cn) ||
+            isWrapperFloat(cn) ||
+            isWrapperDouble(cn) ||
+            isPrimitiveByte(cn) ||
+            isPrimitiveShort(cn) ||
+            isPrimitiveInt(cn) ||
+            isPrimitiveLong(cn) ||
+            isPrimitiveFloat(cn) ||
+            isPrimitiveDouble(cn);
     }
 
     public static ClassNode makeReference() {
@@ -534,10 +526,6 @@ public class ClassHelper {
         return CLASS_Type.equals(type);
     }
 
-    static class ClassHelperCache {
-        static ManagedIdentityConcurrentMap<Class, SoftReference<ClassNode>> classCache = new ManagedIdentityConcurrentMap<>(128);
-    }
-
     public static boolean isSAMType(final ClassNode type) {
         return findSAM(type) != null;
     }
@@ -639,6 +627,7 @@ public class ClassHelper {
         return source.getUnresolvedSuperClass();
     }
 
-    private static final Set<String> OBJECT_METHOD_NAME_SET =
-            Collections.unmodifiableSet(Arrays.stream(Object.class.getMethods()).map(m -> m.getName()).collect(Collectors.toSet()));
+    static class ClassHelperCache {
+        static ManagedIdentityConcurrentMap<Class, SoftReference<ClassNode>> classCache = new ManagedIdentityConcurrentMap<>(128);
+    }
 }

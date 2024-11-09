@@ -33,7 +33,8 @@ final class MethodReferenceTest {
         }
     }
 
-    @Test // class::instanceMethod
+    @Test
+    // class::instanceMethod
     void testFunctionCI1() {
         assertScript shell, '''
             @CompileStatic
@@ -46,7 +47,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // class::instanceMethod
+    @Test
+    // class::instanceMethod
     void testFunctionCI2() {
         assertScript shell, '''
             @CompileStatic
@@ -60,7 +62,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-10047
-    @Test // class::instanceMethod
+    @Test
+    // class::instanceMethod
     void testFunctionCI3() {
         assertScript shell, '''
             @CompileStatic
@@ -87,7 +90,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // class::instanceMethod
+    @Test
+    // class::instanceMethod
     void testFunctionCI4() {
         def err = shouldFail shell, '''
             @CompileStatic
@@ -99,7 +103,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-9814
-    @Test // class::instanceMethod
+    @Test
+    // class::instanceMethod
     void testFunctionCI5() {
         assertScript shell, '''
             class One { String id }
@@ -124,7 +129,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-9813
-    @Test // class::instanceMethod
+    @Test
+    // class::instanceMethod
     void testFunctionCI6() {
         String head = '''
             @CompileStatic
@@ -158,7 +164,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-9853
-    @Test // class::instanceMethod
+    @Test
+    // class::instanceMethod
     void testFunctionCI7() {
         assertScript shell, '''
             @CompileStatic
@@ -219,7 +226,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-10054, GROOVY-10734
-    @Test // class::instanceMethod
+    @Test
+    // class::instanceMethod
     void testFunctionCI8() {
         assertScript shell, '''
             class C {
@@ -238,7 +246,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-9803
-    @Test // class::instanceMethod
+    @Test
+    // class::instanceMethod
     void testFunctionCI9() {
         assertScript shell, '''
             class Try<X> { X x
@@ -266,7 +275,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-11241
-    @Test // class::instanceMethod
+    @Test
+    // class::instanceMethod
     void testFunctionCI10() {
         assertScript shell, '''
             @Grab('io.vavr:vavr:0.10.4')
@@ -329,7 +339,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-11259
-    @Test // class::instanceMethod
+    @Test
+    // class::instanceMethod
     void testFunctionCI11() {
         assertScript shell, '''
             def consume(Set<String> keys){keys}
@@ -348,7 +359,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-9974
-    @Test // class::instanceMethod
+    @Test
+    // class::instanceMethod
     void testPredicateCI1() {
         assertScript shell, '''
             @CompileStatic
@@ -362,9 +374,10 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-11051
-    @Test // class::instanceMethod
+    @Test
+    // class::instanceMethod
     void testPredicateCI2() {
-        [['null','Empty'],['new Object()','Present']].each { value, which ->
+        [['null', 'Empty'], ['new Object()', 'Present']].each { value, which ->
             assertScript """import java.util.concurrent.atomic.AtomicReference
                 def opt = new AtomicReference<Object>($value).stream()
                              .filter(AtomicReference::get).findFirst()
@@ -374,7 +387,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-10791
-    @Test // class::instanceMethod
+    @Test
+    // class::instanceMethod
     void testBiConsumerCI() {
         assertScript shell, '''
             @CompileStatic
@@ -388,7 +402,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-10974
-    @Test // instance::instanceMethod
+    @Test
+    // instance::instanceMethod
     void testBiConsumerII() {
         assertScript shell, '''import java.util.stream.*
             @CompileStatic
@@ -403,7 +418,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // class::instanceMethod
+    @Test
+    // class::instanceMethod
     void testBinaryOperatorCI() {
         assertScript shell, '''
             @CompileStatic
@@ -417,7 +433,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-10933
-    @Test // instance::instanceMethod
+    @Test
+    // instance::instanceMethod
     void testConsumerII() {
         assertScript shell, '''
             @CompileStatic
@@ -433,7 +450,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-11020
-    @Test // instance::instanceMethod
+    @Test
+    // instance::instanceMethod
     void testConsumerII2() {
         assertScript shell, '''
             def <C extends Consumer<String>> void m(C c) {
@@ -470,7 +488,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-11068
-    @Test // instance::instanceMethod
+    @Test
+    // instance::instanceMethod
     void testConsumerII3() {
         assertScript shell, '''
             @Grab('org.apache.pdfbox:pdfbox:2.0.28')
@@ -494,7 +513,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-11068
-    @Test // instance::instanceMethod
+    @Test
+    // instance::instanceMethod
     void testConsumerII4() {
         assertScript shell, '''
             @Grab('org.apache.pdfbox:pdfbox:2.0.28')
@@ -520,7 +540,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-9813
-    @Test // instance::instanceMethod
+    @Test
+    // instance::instanceMethod
     void testFunctionII() {
         String asList = '''
             def <T> List<T> asList(T... a) {
@@ -579,7 +600,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-10653
-    @Test // instance::instanceMethod
+    @Test
+    // instance::instanceMethod
     void testFunctionII2() {
         assertScript shell, '''
             class C {
@@ -603,7 +625,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-10653
-    @Test // instance::instanceGroovyMethod
+    @Test
+    // instance::instanceGroovyMethod
     void testFunctionII3() {
         assertScript shell, '''
             @CompileStatic
@@ -618,7 +641,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-10972
-    @Test // instance::instanceMethod
+    @Test
+    // instance::instanceMethod
     void testFunctionII4() {
         assertScript shell, '''
             @CompileStatic
@@ -634,7 +658,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-11364
-    @Test // instance::instanceMethod
+    @Test
+    // instance::instanceMethod
     void testFunctionII5() {
         assertScript shell, '''
             abstract class A<N extends Number> {
@@ -658,7 +683,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-10057
-    @Test // instance::instanceMethod
+    @Test
+    // instance::instanceMethod
     void testPredicateII() {
         assertScript shell, '''
             Class c = Integer
@@ -687,7 +713,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-10994
-    @Test // instance::instanceMethod
+    @Test
+    // instance::instanceMethod
     void testPredicateII2() {
         assertScript shell, '''
             @CompileStatic
@@ -700,7 +727,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-10975
-    @Test // instance::instanceMethod
+    @Test
+    // instance::instanceMethod
     void testComparatorII() {
         assertScript shell, '''
             @CompileStatic
@@ -715,7 +743,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-11026
-    @Test // instance::instanceMethod
+    @Test
+    // instance::instanceMethod
     void testBiFunctionII() {
         assertScript shell, '''
             @CompileDynamic
@@ -733,7 +762,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // instance::instanceMethod
+    @Test
+    // instance::instanceMethod
     void testBinaryOperatorII() {
         assertScript shell, '''
             class Adder {
@@ -753,7 +783,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // instance::instanceMethod
+    @Test
+    // instance::instanceMethod
     void testBinaryOperatorII2() {
         assertScript shell, '''
             class Adder {
@@ -773,7 +804,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // expression::instanceMethod
+    @Test
+    // expression::instanceMethod
     void testBinaryOperatorII_EXPRESSION() {
         assertScript shell, '''
             class Adder {
@@ -792,7 +824,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // expression::instanceMethod
+    @Test
+    // expression::instanceMethod
     void testBinaryOperatorII_EXPRESSION2() {
         assertScript shell, '''
             class Adder {
@@ -815,7 +848,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // instance::instanceMethod
+    @Test
+    // instance::instanceMethod
     void testBinaryOperatorII_RHS() {
         assertScript shell, '''
             class Adder {
@@ -836,7 +870,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // expression::instanceMethod
+    @Test
+    // expression::instanceMethod
     void testBinaryOperatorII_RHS2() {
         assertScript shell, '''
             class Adder {
@@ -856,7 +891,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // instance::staticMethod
+    @Test
+    // instance::staticMethod
     void testBinaryOperatorIS() {
         assertScript shell, '''
             class Adder {
@@ -876,7 +912,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // expression::staticMethod
+    @Test
+    // expression::staticMethod
     void testBinaryOperatorIS_EXPRESSION() {
         assertScript shell, '''
             class Adder {
@@ -895,7 +932,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // expression::staticMethod
+    @Test
+    // expression::staticMethod
     void testBinaryOperatorIS_EXPRESSION2() {
         assertScript shell, '''
             class Adder {
@@ -918,7 +956,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // class::new
+    @Test
+    // class::new
     void testFunctionCN1() {
         assertScript shell, '''
             @CompileStatic
@@ -931,7 +970,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // class::new
+    @Test
+    // class::new
     void testFunctionCN2() {
         assertScript shell, '''
             @CompileStatic
@@ -946,7 +986,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-10033
-    @Test // class::new
+    @Test
+    // class::new
     void testFunctionCN3() {
         assertScript shell, '''
             @CompileStatic
@@ -965,7 +1006,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-10033
-    @Test // class::new
+    @Test
+    // class::new
     void testFunctionCN4() {
         assertScript shell, '''
             class A {
@@ -996,7 +1038,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-10930
-    @Test // class::new
+    @Test
+    // class::new
     void testFunctionCN5() {
         def err = shouldFail shell, '''
             class Foo { Foo() { } }
@@ -1013,7 +1056,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-10971
-    @Test // class::new
+    @Test
+    // class::new
     void testFunctionCN6() {
         assertScript shell, '''
             class Foo { Foo(String s) { } }
@@ -1028,7 +1072,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-11001
-    @Test // class::new
+    @Test
+    // class::new
     void testFunctionCN7() {
         assertScript shell, '''
             @Grab('io.vavr:vavr:0.10.4')
@@ -1051,7 +1096,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-11385
-    @Test // class::new
+    @Test
+    // class::new
     void testFunctionCN8() {
         def err = shouldFail shell, '''
             abstract class A {
@@ -1067,7 +1113,7 @@ final class MethodReferenceTest {
         '''
         assert err =~ /Cannot instantiate the type A/
 
-        for (op in ['::','.&']) {
+        for (op in ['::', '.&']) {
             err = shouldFail shell, """
                 @CompileStatic
                 void test() {
@@ -1081,7 +1127,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-11440
-    @Test // arrayClass::new
+    @Test
+    // arrayClass::new
     void testFunctionCN9() {
         def err = shouldFail shell, '''
             @CompileStatic
@@ -1095,7 +1142,8 @@ final class MethodReferenceTest {
         assert err =~ /Cannot call java.lang.Integer\[\]#<init>\(int\) with arguments /
     }
 
-    @Test // arrayClass::new
+    @Test
+    // arrayClass::new
     void testIntFunctionCN() {
         assertScript shell, '''
             @CompileStatic
@@ -1109,7 +1157,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // class::staticMethod
+    @Test
+    // class::staticMethod
     void testFunctionCS() {
         assertScript shell, '''
             @CompileStatic
@@ -1122,9 +1171,10 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // class::staticMethod
+    @Test
+    // class::staticMethod
     void testFunctionCS2() {
-        for (makeList in ['Collections::singletonList','List::of']) {
+        for (makeList in ['Collections::singletonList', 'List::of']) {
             assertScript shell, """
                 @CompileStatic
                 def test(List<String> list) {
@@ -1137,7 +1187,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-9799
-    @Test // class::staticMethod
+    @Test
+    // class::staticMethod
     void testFunctionCS3() {
         assertScript shell, '''
             class C {
@@ -1161,7 +1212,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // class::staticMethod
+    @Test
+    // class::staticMethod
     void testFunctionCS4() {
         assertScript shell, '''
             @CompileStatic
@@ -1175,7 +1227,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // class::staticMethod
+    @Test
+    // class::staticMethod
     void testFunctionCS5() {
         assertScript shell, '''
             @CompileStatic
@@ -1190,7 +1243,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-9813
-    @Test // class::staticMethod
+    @Test
+    // class::staticMethod
     void testFunctionCS6() {
         assertScript shell, '''
             @CompileStatic
@@ -1230,7 +1284,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-10807
-    @Test // class::staticMethod
+    @Test
+    // class::staticMethod
     void testFunctionCS7() {
         assertScript shell, '''
             @CompileStatic
@@ -1249,7 +1304,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-10807
-    @Test // class::staticMethod
+    @Test
+    // class::staticMethod
     void testFunctionCS8() {
         assertScript shell, '''
             @CompileStatic
@@ -1268,7 +1324,8 @@ final class MethodReferenceTest {
     }
 
     // GROOVY-11009
-    @Test // class::staticMethod
+    @Test
+    // class::staticMethod
     void testFunctionCS9() {
         assertScript shell, '''
             class C {
@@ -1287,7 +1344,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // class::instanceGroovyMethod
+    @Test
+    // class::instanceGroovyMethod
     void testFunctionCI_DGM() {
         assertScript shell, '''
             @CompileStatic
@@ -1300,7 +1358,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // class::staticGroovyMethod
+    @Test
+    // class::staticGroovyMethod
     void testFunctionCS_DGSM() {
         assertScript shell, '''
             @CompileStatic
@@ -1313,7 +1372,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // class::instanceGroovyMethod
+    @Test
+    // class::instanceGroovyMethod
     void testFunctionCI_SHADOW_DGM() {
         assertScript shell, '''
             @CompileStatic
@@ -1326,7 +1386,8 @@ final class MethodReferenceTest {
         '''
     }
 
-    @Test // class::staticGroovyMethod
+    @Test
+    // class::staticGroovyMethod
     void testFunctionCS_MULTI_DGSM() {
         assertScript shell, '''
             @CompileStatic

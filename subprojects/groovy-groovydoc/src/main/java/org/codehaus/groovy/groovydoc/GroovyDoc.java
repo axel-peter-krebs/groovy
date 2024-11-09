@@ -24,6 +24,8 @@ public interface GroovyDoc extends Comparable<GroovyDoc> {
 
     String getRawCommentText();
 
+    void setRawCommentText(String arg0);
+
     boolean isAnnotationType();
 
     boolean isAnnotationTypeElement();
@@ -55,8 +57,6 @@ public interface GroovyDoc extends Comparable<GroovyDoc> {
     boolean isOrdinaryClass();
 
     String name();
-
-    void setRawCommentText(String arg0);
 
     String firstSentenceCommentText();
 }

@@ -31,6 +31,8 @@ public class CachedConstructor extends ParameterTypes implements MetaMember {
 
     private final CachedClass clazz;
     private final Constructor cachedConstructor;
+    private boolean makeAccessibleDone = false;
+    private boolean accessAllowed = false;
 
     public CachedConstructor(final CachedClass clazz, final Constructor c) {
         this.clazz = clazz;
@@ -41,10 +43,32 @@ public class CachedConstructor extends ParameterTypes implements MetaMember {
         this(ReflectionCache.getCachedClass(c.getDeclaringClass()), c);
     }
 
+    public static CachedConstructor find(Constructor constructor) {
+        CachedConstructor[] constructors = ReflectionCache.getCachedClass(constructor.getDeclaringClass()).getConstructors();
+        for (CachedConstructor cachedConstructor : constructors) {
+            if (cachedConstructor.cachedConstructor.equals(constructor))
+                return cachedConstructor;
+        }
+        throw new RuntimeException("Couldn't find method: " + constructor);
+    }
+
+    private static GroovyRuntimeException createException(String init, Constructor constructor, Object[] argumentArray, Throwable e, boolean setReason) {
+        return new GroovyRuntimeException(
+            init
+                + constructor
+                + " with arguments: "
+                + FormatHelper.toString(argumentArray)
+                + " reason: "
+                + e,
+            setReason ? e : null);
+    }
+
     @Override
     protected Class[] getPT() {
         return cachedConstructor.getParameterTypes();
     }
+
+    //--------------------------------------------------------------------------
 
     @Override
     public String getName() {
@@ -66,17 +90,6 @@ public class CachedConstructor extends ParameterTypes implements MetaMember {
         return cachedConstructor.toString();
     }
 
-    //--------------------------------------------------------------------------
-
-    public static CachedConstructor find(Constructor constructor) {
-        CachedConstructor[] constructors = ReflectionCache.getCachedClass(constructor.getDeclaringClass()).getConstructors();
-        for (CachedConstructor cachedConstructor : constructors) {
-            if (cachedConstructor.cachedConstructor.equals(constructor))
-                return cachedConstructor;
-        }
-        throw new RuntimeException("Couldn't find method: " + constructor);
-    }
-
     public Object doConstructorInvoke(Object[] argumentArray) {
         argumentArray = coerceArgumentsToClasses(argumentArray);
         return invoke(argumentArray);
@@ -94,28 +107,17 @@ public class CachedConstructor extends ParameterTypes implements MetaMember {
         try {
             return constr.newInstance(argumentArray);
         } catch (InvocationTargetException e) {
-            throw e.getCause() instanceof RuntimeException ? (RuntimeException)e.getCause() : new InvokerInvocationException(e);
+            throw e.getCause() instanceof RuntimeException ? (RuntimeException) e.getCause() : new InvokerInvocationException(e);
         } catch (IllegalArgumentException e) {
             throw createException("failed to invoke constructor: ", constr, argumentArray, e, false);
         } catch (IllegalAccessException e) {
             throw createException("could not access constructor: ", constr, argumentArray, e, false);
         } catch (Exception e) {
             if (e instanceof RuntimeException)
-                throw (RuntimeException)e;
+                throw (RuntimeException) e;
             else
                 throw createException("failed to invoke constructor: ", constr, argumentArray, e, true);
         }
-    }
-
-    private static GroovyRuntimeException createException(String init, Constructor constructor, Object[] argumentArray, Throwable e, boolean setReason) {
-        return new GroovyRuntimeException(
-                init
-                        + constructor
-                        + " with arguments: "
-                        + FormatHelper.toString(argumentArray)
-                        + " reason: "
-                        + e,
-                setReason ? e : null);
     }
 
     public CachedClass getCachedClass() {
@@ -135,7 +137,6 @@ public class CachedConstructor extends ParameterTypes implements MetaMember {
         return cachedConstructor;
     }
 
-    private boolean makeAccessibleDone = false;
     private void makeAccessibleIfNecessary() {
         if (!makeAccessibleDone) {
             ReflectionUtils.makeAccessibleInPrivilegedAction(cachedConstructor);
@@ -146,6 +147,4 @@ public class CachedConstructor extends ParameterTypes implements MetaMember {
     private boolean isConstructorOfAbstractClass() {
         return Modifier.isAbstract(cachedConstructor.getDeclaringClass().getModifiers());
     }
-
-    private boolean accessAllowed = false;
 }

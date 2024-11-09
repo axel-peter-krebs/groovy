@@ -50,14 +50,14 @@ final class Groovy10281 {
         assert result.contains('LDC "Hello, world!"')
     }
 
-    private static String logClassGen(boolean stacktrace, int maxDepth=50) {
+    private static String logClassGen(boolean stacktrace, int maxDepth = 50) {
         def code = """
                 println 'Hello, world!'
             """
         def result = new StringWriter()
         PrintWriter pw = new PrintWriter(result)
         def config = stacktrace ? new CompilerConfiguration(logClassgen: true, logClassgenStackTraceMaxDepth: maxDepth, output: pw)
-                                                    : new CompilerConfiguration(logClassgen: true, output: pw)
+            : new CompilerConfiguration(logClassgen: true, output: pw)
 
         new CompilationUnit(config).with {
             addSource 'helloWorld.groovy', code

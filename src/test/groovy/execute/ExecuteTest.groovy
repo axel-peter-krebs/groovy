@@ -19,6 +19,7 @@
 package groovy.execute
 
 import groovy.test.GroovyTestCase
+
 /**
  *  Cross platform tests for the DGM#execute() family of methods.
  */
@@ -69,11 +70,11 @@ final class ExecuteTest extends GroovyTestCase {
 
     void testExecuteCommandLineProcessAndUseWaitForOrKill() {
         List<String> javaArgs = [System.getProperty('java.home') + "/bin/java",
-                "-classpath",
-                System.getProperty('java.class.path'),
-                "groovy.ui.GroovyMain",
-                "-e",
-                "sleep(2000); println('Done'); System.exit(0)"]
+                                 "-classpath",
+                                 System.getProperty('java.class.path'),
+                                 "groovy.ui.GroovyMain",
+                                 "-e",
+                                 "sleep(2000); println('Done'); System.exit(0)"]
 
         String[] java = javaArgs.toArray()
         println "Executing this command for two cases:\n${java.join(' ')}"
@@ -118,12 +119,12 @@ final class ExecuteTest extends GroovyTestCase {
 
     void testExecuteCommandLineWithEnvironmentProperties() {
         List<String> java = [
-                System.getProperty('java.home') + '/bin/java',
-                '-classpath',
-                System.getProperty('java.class.path'),
-                'groovy.ui.GroovyMain',
-                '-e',
-                "println(System.getenv('foo'))"
+            System.getProperty('java.home') + '/bin/java',
+            '-classpath',
+            System.getProperty('java.class.path'),
+            'groovy.ui.GroovyMain',
+            '-e',
+            "println(System.getenv('foo'))"
         ]
 
         println "Executing this command:\n${java.join(' ')}"
@@ -139,13 +140,13 @@ final class ExecuteTest extends GroovyTestCase {
     // GROOVY-9392
     void testExecuteCommandLineProcessWithGroovySystemClassLoader() {
         List<String> java = [
-                System.getProperty('java.home') + '/bin/java',
-                '-classpath',
-                System.getProperty('java.class.path'),
-                '-Djava.system.class.loader=groovy.lang.GroovyClassLoader',
-                'groovy.ui.GroovyMain',
-                '-e',
-                "println('hello')"
+            System.getProperty('java.home') + '/bin/java',
+            '-classpath',
+            System.getProperty('java.class.path'),
+            '-Djava.system.class.loader=groovy.lang.GroovyClassLoader',
+            'groovy.ui.GroovyMain',
+            '-e',
+            "println('hello')"
         ]
 
         println "Executing this command:\n${java.join(' ')}"

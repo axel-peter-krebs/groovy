@@ -36,13 +36,14 @@ import org.codehaus.groovy.tools.shell.util.Preferences
 /**
  * Support for running a {@link Shell} interactively using the JLine library.
  */
-@AutoFinal @CompileStatic
+@AutoFinal
+@CompileStatic
 class InteractiveShellRunner extends ShellRunner implements Runnable {
 
     ConsoleReader reader
     final Closure prompt
     final CommandsMultiCompleter completer
-    WrappedInputStream  wrappedInputStream
+    WrappedInputStream wrappedInputStream
 
     @CompileDynamic
     InteractiveShellRunner(Groovysh shell, Closure prompt) {
@@ -79,7 +80,7 @@ class InteractiveShellRunner extends ShellRunner implements Runnable {
 
         reader.addCompleter(completer)
         reader.addCompleter(new org.apache.groovy.groovysh.completion.antlr4.GroovySyntaxCompleter(
-                shell, reflectionCompleter, classnameCompleter, identifierCompleters, filenameCompleter))
+            shell, reflectionCompleter, classnameCompleter, identifierCompleters, filenameCompleter))
     }
 
     @Override
@@ -96,7 +97,8 @@ class InteractiveShellRunner extends ShellRunner implements Runnable {
         super.run()
     }
 
-    @Override @CompileDynamic
+    @Override
+    @CompileDynamic
     protected String readLine() {
         try {
             if (Boolean.valueOf(Preferences.get(Groovysh.AUTOINDENT_PREFERENCE_KEY))) {
@@ -158,7 +160,8 @@ class InteractiveShellRunner extends ShellRunner implements Runnable {
 /**
  * Completer for interactive shells.
  */
-@AutoFinal @CompileStatic
+@AutoFinal
+@CompileStatic
 class CommandsMultiCompleter extends AggregateCompleter {
 
     protected final Logger log = Logger.create(getClass())

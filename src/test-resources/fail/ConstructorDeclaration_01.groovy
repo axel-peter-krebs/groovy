@@ -16,4 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-class Foo { static final Foo() {}}
+
+class Foo {
+    static final Foo() {}
+}

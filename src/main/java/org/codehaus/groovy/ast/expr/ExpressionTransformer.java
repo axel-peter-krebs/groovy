@@ -24,7 +24,7 @@ package org.codehaus.groovy.ast.expr;
  */
 public interface ExpressionTransformer {
 
-    /** 
+    /**
      * Transforms the given expression into another expression
      */
     Expression transform(Expression expression);

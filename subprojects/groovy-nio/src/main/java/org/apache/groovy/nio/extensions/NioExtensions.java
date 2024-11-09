@@ -104,6 +104,7 @@ public class NioExtensions extends DefaultGroovyMethodsSupport {
 
     /**
      * Provide the name of the file or directory.
+     *
      * @param self a path object
      * @return the name of the file or directory denoted by this path as a string, or an empty string if this path has zero path elements.
      * @since 5.0.0
@@ -156,7 +157,7 @@ public class NioExtensions extends DefaultGroovyMethodsSupport {
     /**
      * Tests whether the file at the path exists.
      *
-     * @param path a {@code Path} object
+     * @param path    a {@code Path} object
      * @param options options indicating how symbolic links are handled .
      * @return {@code true} if the file exists; {@code false} if the file does not exist or its existence cannot be determined
      * @see Files#exists(Path, LinkOption...)
@@ -936,8 +937,8 @@ public class NioExtensions extends DefaultGroovyMethodsSupport {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(self)) {
             for (Path path : stream) {
                 if (fileType == FileType.ANY ||
-                        (fileType != FileType.FILES && Files.isDirectory(path)) ||
-                        (fileType != FileType.DIRECTORIES && Files.isRegularFile(path))) {
+                    (fileType != FileType.FILES && Files.isDirectory(path)) ||
+                    (fileType != FileType.DIRECTORIES && Files.isRegularFile(path))) {
                     closure.call(path);
                 }
             }
@@ -1063,22 +1064,20 @@ public class NioExtensions extends DefaultGroovyMethodsSupport {
      * @since 2.3.0
      */
     public static void traverse(
-            final Path self,
-            @NamedParam(value = "type", type = FileType.class)
-            @NamedParam(value = "preDir", type = Closure.class)
-            @NamedParam(value = "preRoot", type = Boolean.class)
-            @NamedParam(value = "postDir", type = Closure.class)
-            @NamedParam(value = "postRoot", type = Boolean.class)
-            @NamedParam(value = "visitRoot", type = Boolean.class)
-            @NamedParam(value = "maxDepth", type = Integer.class)
-            @NamedParam(value = "filter")
-            @NamedParam(value = "nameFilter")
-            @NamedParam(value = "excludeFilter")
-            @NamedParam(value = "excludeNameFilter")
-            @NamedParam(value = "sort", type = Closure.class)
-            final Map<String, Object> options,
-            @ClosureParams(value = SimpleType.class, options = "java.nio.file.Path")
-            final Closure closure
+        final Path self,
+        @NamedParam(value = "type", type = FileType.class)
+        @NamedParam(value = "preDir", type = Closure.class)
+        @NamedParam(value = "preRoot", type = Boolean.class)
+        @NamedParam(value = "postDir", type = Closure.class)
+        @NamedParam(value = "postRoot", type = Boolean.class)
+        @NamedParam(value = "visitRoot", type = Boolean.class)
+        @NamedParam(value = "maxDepth", type = Integer.class)
+        @NamedParam(value = "filter")
+        @NamedParam(value = "nameFilter")
+        @NamedParam(value = "excludeFilter")
+        @NamedParam(value = "excludeNameFilter")
+        @NamedParam(value = "sort", type = Closure.class) final Map<String, Object> options,
+        @ClosureParams(value = SimpleType.class, options = "java.nio.file.Path") final Closure closure
     ) throws IOException {
         Number maxDepthNumber = DefaultGroovyMethods.asType(options.remove("maxDepth"), Number.class);
         int maxDepth = maxDepthNumber == null ? -1 : maxDepthNumber.intValue();
@@ -1097,7 +1096,7 @@ public class NioExtensions extends DefaultGroovyMethodsSupport {
             preResult = pre.call(self);
         }
         if (preResult == FileVisitResult.TERMINATE ||
-                preResult == FileVisitResult.SKIP_SUBTREE) return;
+            preResult == FileVisitResult.SKIP_SUBTREE) return;
 
         FileVisitResult terminated = traverse(self, options, closure, maxDepth);
 
@@ -1156,7 +1155,7 @@ public class NioExtensions extends DefaultGroovyMethodsSupport {
      * @since 2.3.0
      */
     public static void traverse(final Path self, @ClosureParams(value = SimpleType.class, options = "java.nio.file.Path") final Closure closure)
-            throws IOException {
+        throws IOException {
         traverse(self, new HashMap<>(), closure);
     }
 
@@ -1174,27 +1173,26 @@ public class NioExtensions extends DefaultGroovyMethodsSupport {
      * @since 2.3.0
      */
     public static void traverse(
-            final Path self,
-            @NamedParam(value = "type", type = FileType.class)
-            @NamedParam(value = "preDir", type = Closure.class)
-            @NamedParam(value = "preRoot", type = Boolean.class)
-            @NamedParam(value = "postDir", type = Closure.class)
-            @NamedParam(value = "postRoot", type = Boolean.class)
-            @NamedParam(value = "visitRoot", type = Boolean.class)
-            @NamedParam(value = "maxDepth", type = Integer.class)
-            @NamedParam(value = "filter")
-            @NamedParam(value = "nameFilter")
-            @NamedParam(value = "excludeFilter")
-            @NamedParam(value = "excludeNameFilter")
-            @NamedParam(value = "sort", type = Closure.class)
-            final Map<String, Object> options
+        final Path self,
+        @NamedParam(value = "type", type = FileType.class)
+        @NamedParam(value = "preDir", type = Closure.class)
+        @NamedParam(value = "preRoot", type = Boolean.class)
+        @NamedParam(value = "postDir", type = Closure.class)
+        @NamedParam(value = "postRoot", type = Boolean.class)
+        @NamedParam(value = "visitRoot", type = Boolean.class)
+        @NamedParam(value = "maxDepth", type = Integer.class)
+        @NamedParam(value = "filter")
+        @NamedParam(value = "nameFilter")
+        @NamedParam(value = "excludeFilter")
+        @NamedParam(value = "excludeNameFilter")
+        @NamedParam(value = "sort", type = Closure.class) final Map<String, Object> options
     ) throws IOException {
         final Closure visit = (Closure) options.remove("visit");
         traverse(self, options, visit);
     }
 
     private static FileVisitResult traverse(final Path self, final Map<String, Object> options, @ClosureParams(value = SimpleType.class, options = "java.nio.file.Path") final Closure closure, final int maxDepth)
-            throws IOException {
+        throws IOException {
         checkDir(self);
         final Closure pre = (Closure) options.get("preDir");
         final Closure post = (Closure) options.get("postDir");
@@ -1325,7 +1323,7 @@ public class NioExtensions extends DefaultGroovyMethodsSupport {
             while (itr.hasNext()) {
                 Path currentPath = itr.next();
                 if ((fileType != FileType.FILES && Files.isDirectory(currentPath)) ||
-                        (fileType != FileType.DIRECTORIES && Files.isRegularFile(currentPath))) {
+                    (fileType != FileType.DIRECTORIES && Files.isRegularFile(currentPath))) {
                     if (bmi.invoke(nameFilter, currentPath.getFileName().toString()))
                         closure.call(currentPath);
                 }

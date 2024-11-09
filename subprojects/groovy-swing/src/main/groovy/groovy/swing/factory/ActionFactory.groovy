@@ -41,10 +41,10 @@ class ActionFactory extends AbstractFactory {
         return action
     }
 
-    boolean onHandleNodeAttributes( FactoryBuilderSupport builder, Object action, Map attributes) {
-        if ((attributes.get("closure") instanceof Closure) && (action instanceof DefaultAction)){
+    boolean onHandleNodeAttributes(FactoryBuilderSupport builder, Object action, Map attributes) {
+        if ((attributes.get("closure") instanceof Closure) && (action instanceof DefaultAction)) {
             Closure closure = (Closure) attributes.remove("closure")
-            ((DefaultAction)action).setClosure(closure)
+            ((DefaultAction) action).setClosure(closure)
         }
 
         Object accel = attributes.remove("accelerator")

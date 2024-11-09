@@ -46,7 +46,7 @@ import java.lang.annotation.Target;
  * The "empty" implementation provided by default when using {@code @AutoImplement}
  * will suffice - which effectively returns {@code null} in Groovy for non-void,
  * non-primitive methods.
- *
+ * <p>
  * As a point of interest, the default implementation for methods returning primitive
  * types is to return the default value (which incidentally never satisfies Groovy truth).
  * For {@code boolean} this means returning {@code false}, so for the above example we
@@ -73,7 +73,7 @@ import java.lang.annotation.Target;
  * }
  * </pre>
  * All implemented methods will throw an instance of this exception constructed using its no-arg constructor.
- *
+ * <p>
  * You can also supply a single {@code message} annotation attribute in which case the message will be passed
  * as an argument during exception construction as shown in the following example:
  * <pre>

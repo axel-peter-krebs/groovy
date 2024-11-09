@@ -56,7 +56,8 @@ final class InterfaceConversionTest {
         '''
     }
 
-    @Test // GROOVY-7104
+    @Test
+    // GROOVY-7104
     void testDefaultInterfaceMethodCallOnProxy() {
         assertScript '''
             Comparator<?> c = { a,b -> a <=> b }
@@ -66,7 +67,8 @@ final class InterfaceConversionTest {
         '''
     }
 
-    @Test // GROOVY-10391
+    @Test
+    // GROOVY-10391
     void testDefaultInterfaceMethodCallOnProxy2() {
         assertScript '''
             java.util.function.Predicate<?> p = { q -> false }

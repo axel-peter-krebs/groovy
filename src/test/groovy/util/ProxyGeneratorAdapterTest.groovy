@@ -85,7 +85,7 @@ class ProxyGeneratorAdapterTest extends GroovyTestCase {
 
     void testImplementMethodFromInterfaceAndSuperClass() {
         def x = null
-        def map = ['foo': { 'HELLO' }, 'bar': { x='WORLD'} ]
+        def map = ['foo': { 'HELLO' }, 'bar': { x = 'WORLD' }]
         ProxyGeneratorAdapter adapter = new ProxyGeneratorAdapter(map, Bar, [FooInterface] as Class[], this.class.classLoader, false, null)
         def obj = adapter.proxy(map)
         assert obj instanceof GroovyObject
@@ -98,7 +98,7 @@ class ProxyGeneratorAdapterTest extends GroovyTestCase {
     }
 
     void testImplementMethodFromInterfaceWithPrimitiveTypes() {
-        def map = ['calc': { x -> x*2 } ]
+        def map = ['calc': { x -> x * 2 }]
         ProxyGeneratorAdapter adapter = new ProxyGeneratorAdapter(map, Bar, [OtherInterface] as Class[], this.class.classLoader, false, null)
         def obj = adapter.proxy(map)
         assert obj instanceof GroovyObject
@@ -107,7 +107,7 @@ class ProxyGeneratorAdapterTest extends GroovyTestCase {
     }
 
     void testWildcardProxy() {
-        def map = ['*': { '1' } ]
+        def map = ['*': { '1' }]
         ProxyGeneratorAdapter adapter = new ProxyGeneratorAdapter(map, Foo, null, this.class.classLoader, false, null)
         def obj = adapter.proxy(map)
         assert obj instanceof GroovyObject
@@ -132,7 +132,7 @@ class ProxyGeneratorAdapterTest extends GroovyTestCase {
     // GROOVY-5925
     void testProxyForLongConstructor() {
 
-        def map =  [nextInt: { x -> return 0 }]
+        def map = [nextInt: { x -> return 0 }]
         def gen = new ProxyGenerator()
 
         // Random(long) is special as the long param has a register length == 2
@@ -174,7 +174,10 @@ class ProxyGeneratorAdapterTest extends GroovyTestCase {
     }
 
     static class ClassA {}
-    static trait Trait1 { def method1() { 'Trait1 method' } }
+
+    static trait Trait1 {
+        def method1() { 'Trait1 method' }
+    }
 
     // GROOVY-7443
     void testTraitFromDifferentClassloader() {
@@ -206,9 +209,9 @@ class ProxyGeneratorAdapterTest extends GroovyTestCase {
         assert 1 == proxyGeneratorAdapter.getTypeArgsRegisterLength(types([org.objectweb.asm.Type.BOOLEAN_TYPE]))
 
         assert 5 == proxyGeneratorAdapter.getTypeArgsRegisterLength(types([
-                org.objectweb.asm.Type.LONG_TYPE,
-                org.objectweb.asm.Type.LONG_TYPE,
-                org.objectweb.asm.Type.INT_TYPE ] as org.objectweb.asm.Type[]))
+            org.objectweb.asm.Type.LONG_TYPE,
+            org.objectweb.asm.Type.LONG_TYPE,
+            org.objectweb.asm.Type.INT_TYPE] as org.objectweb.asm.Type[]))
     }
 
     abstract static class Foo {

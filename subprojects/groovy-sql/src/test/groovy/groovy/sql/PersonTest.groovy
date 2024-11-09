@@ -64,12 +64,12 @@ class PersonTest extends GroovyTestCase {
         def persons = createDataSet()
         def blogs = persons.findAll { it.size < 10 && it.lastName == "Bloggs" }
         def complexBlogs = blogs.
-                findAll { it.lastName < 'Zulu' || it.lastName > 'Alpha' }.
-                findAll { it.age < 99 }.
-                findAll { it.age > 5 }.
-                sort { it.firstName }.reverse().
-                findAll { it.firstName != 'Bert' }.
-                sort { it.age }
+            findAll { it.lastName < 'Zulu' || it.lastName > 'Alpha' }.
+            findAll { it.age < 99 }.
+            findAll { it.age > 5 }.
+            sort { it.firstName }.reverse().
+            findAll { it.firstName != 'Bert' }.
+            sort { it.age }
         def expectedParams = [10, "Bloggs", "Zulu", "Alpha", 99, 5, "Bert"]
         def expectedSql = '''select * from person \
 where (size < ? and lastName = ?) and (lastName < ? or lastName > ?) and age < ? and age > ? and firstName != ? \
@@ -105,14 +105,14 @@ order by firstName DESC, age'''
 
     protected DataSource createDataSource() {
         return DB_DATASOURCE.newInstance(
-                (DB_DS_KEY): DB_URL_PREFIX + getMethodName(),
-                user: DB_USER,
-                password: DB_PASSWORD)
+            (DB_DS_KEY): DB_URL_PREFIX + getMethodName(),
+            user: DB_USER,
+            password: DB_PASSWORD)
     }
 
     protected createDataSet() {
         def type = Person
-        assert type != null , "failed to load Person class"
+        assert type != null, "failed to load Person class"
         def dataSource = createDataSource()
         def sql = new Sql(dataSource)
         return sql.dataSet(type)

@@ -98,15 +98,15 @@ class UserGuideMarkupBuilderTest extends GroovyTestCase {
         def xmlMarkup = new MarkupBuilder(xmlWriter)
 
         xmlMarkup
-                .'x:movies'('xmlns:x': 'http://www.groovy-lang.org') { // <1>
-            'x:movie'(id: 1, 'the godfather')
-            'x:movie'(id: 2, 'ronin')
-        }
+            .'x:movies'('xmlns:x': 'http://www.groovy-lang.org') { // <1>
+                'x:movie'(id: 1, 'the godfather')
+                'x:movie'(id: 2, 'ronin')
+            }
 
         def movies =
-                new XmlSlurper() // <2>
-                        .parseText(xmlWriter.toString())
-                        .declareNamespace(x: 'http://www.groovy-lang.org')
+            new XmlSlurper() // <2>
+                .parseText(xmlWriter.toString())
+                .declareNamespace(x: 'http://www.groovy-lang.org')
 
         assert movies.'x:movie'.last().@id == 2
         assert movies.'x:movie'.last().text() == 'ronin'
@@ -119,19 +119,19 @@ class UserGuideMarkupBuilderTest extends GroovyTestCase {
         def xmlMarkup = new MarkupBuilder(xmlWriter)
 
         xmlMarkup
-                .'x:movies'('xmlns:x': 'http://www.groovy-lang.org') {
-            (1..3).each { n -> // <1>
-                'x:movie'(id: n, "the godfather $n")
-                if (n % 2 == 0) { // <2>
-                    'x:movie'(id: n, "the godfather $n (Extended)")
+            .'x:movies'('xmlns:x': 'http://www.groovy-lang.org') {
+                (1..3).each { n -> // <1>
+                    'x:movie'(id: n, "the godfather $n")
+                    if (n % 2 == 0) { // <2>
+                        'x:movie'(id: n, "the godfather $n (Extended)")
+                    }
                 }
             }
-        }
 
         def movies =
-                new XmlSlurper()
-                        .parseText(xmlWriter.toString())
-                        .declareNamespace(x: 'http://www.groovy-lang.org')
+            new XmlSlurper()
+                .parseText(xmlWriter.toString())
+                .declareNamespace(x: 'http://www.groovy-lang.org')
 
         assert movies.'x:movie'.size() == 4
         assert movies.'x:movie'*.text().every { name -> name.startsWith('the') }
@@ -160,9 +160,9 @@ class UserGuideMarkupBuilderTest extends GroovyTestCase {
         }
 
         def movies =
-                new XmlSlurper()
-                        .parseText(xmlWriter.toString())
-                        .declareNamespace(x: 'http://www.groovy-lang.org')
+            new XmlSlurper()
+                .parseText(xmlWriter.toString())
+                .declareNamespace(x: 'http://www.groovy-lang.org')
 
         assert movies.'x:movie'.size() == 4
         assert movies.'x:movie'*.text().every { name -> name.startsWith('the') }
@@ -181,7 +181,7 @@ class UserGuideMarkupBuilderTest extends GroovyTestCase {
         """
 
         def builder =
-                javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder()
+            javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder()
 
         def inputStream = new ByteArrayInputStream(songs.bytes)
         def document = builder.parse(inputStream)
@@ -191,8 +191,8 @@ class UserGuideMarkupBuilderTest extends GroovyTestCase {
         converter.print(document) // <2>
 
         String xmlRecovered =
-                new GroovyShell()
-                        .evaluate("""
+            new GroovyShell()
+                .evaluate("""
                    def writer = new StringWriter()
                    def builder = new groovy.xml.MarkupBuilder(writer)
                    builder.${output}

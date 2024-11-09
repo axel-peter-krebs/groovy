@@ -26,7 +26,7 @@ final class AnnotationMemberValuesResolutionV2StubsTest extends StringSourcesStu
     @Override
     Map<String, String> provideSources() {
         [
-            'foo/Foo4434V2.java': '''package foo;
+            'foo/Foo4434V2.java'   : '''package foo;
                 import java.lang.annotation.ElementType;
                 import java.lang.annotation.Retention;
                 import java.lang.annotation.RetentionPolicy;
@@ -45,7 +45,7 @@ final class AnnotationMemberValuesResolutionV2StubsTest extends StringSourcesStu
                 public enum MyEnum4434V2 {SOME_VALUE, OTHER_VALUE}
             ''',
 
-            'Bar4434V2.groovy': '''
+            'Bar4434V2.groovy'     : '''
                 import foo.Foo4434V2
                 import baz.MyEnum4434V2
 

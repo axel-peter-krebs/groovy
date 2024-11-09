@@ -34,37 +34,6 @@ import static org.junit.Assert.assertNotEquals;
 public abstract class NumberRangeTestCase extends TestCase {
 
     /**
-     * Records the values passed to a closure.
-     */
-    protected static class RecordingClosure extends Closure {
-        /**
-         * Holds the values passed in
-         */
-        final List callLog;
-
-        /**
-         * Creates a new <code>RecordingClosure</code>
-         *
-         * @param callLog is filled with the values passed to <code>doCall</code>
-         */
-        RecordingClosure(final List callLog) {
-            super(null);
-            this.callLog = callLog;
-        }
-
-        /**
-         * Stores <code>params</code> in the <code>callLog</code>.
-         *
-         * @param params the parameters.
-         * @return null
-         */
-        public Object doCall(final Object params) {
-            callLog.add(params);
-            return null;
-        }
-    }
-
-    /**
      * Creates a {@link Range} to test.
      *
      * @param from the first value in the range.
@@ -119,8 +88,7 @@ public abstract class NumberRangeTestCase extends TestCase {
         try {
             new ObjectRange(null, createValue(5));
             fail("null 'from' accepted");
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             assertTrue("expected exception thrown", true);
         }
     }
@@ -132,8 +100,7 @@ public abstract class NumberRangeTestCase extends TestCase {
         try {
             new ObjectRange(createValue(23), null);
             fail("null 'to' accepted");
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             assertTrue("expected exception thrown", true);
         }
     }
@@ -320,15 +287,13 @@ public abstract class NumberRangeTestCase extends TestCase {
         try {
             r.get(-1);
             fail("Should have thrown IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             assertTrue("expected exception thrown", true);
         }
         try {
             r.get(11);
             fail("Should have thrown IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             assertTrue("expected exception thrown", true);
         }
 
@@ -367,8 +332,7 @@ public abstract class NumberRangeTestCase extends TestCase {
             final Range range = createRange(1, 5);
             range.subList(-1, 3);
             fail("accepted sub list with negative index");
-        }
-        catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             assertTrue("expected exception thrown", true);
         }
     }
@@ -381,8 +345,7 @@ public abstract class NumberRangeTestCase extends TestCase {
             final Range range = createRange(0, 3);
             range.subList(0, 5);
             fail("accepted sub list with invalid 'to'");
-        }
-        catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             assertTrue("expected exception thrown", true);
         }
     }
@@ -395,8 +358,7 @@ public abstract class NumberRangeTestCase extends TestCase {
             final Range range = createRange(1, 5);
             range.subList(3, 2);
             fail("accepted sub list with 'from' greater than 'to'");
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             assertTrue("expected exception thrown", true);
         }
     }
@@ -429,7 +391,7 @@ public abstract class NumberRangeTestCase extends TestCase {
         try {
             iter.next();
             fail("successfully got element from exhausted iterator");
-        } catch(NoSuchElementException ignore) {
+        } catch (NoSuchElementException ignore) {
         }
     }
 
@@ -443,8 +405,7 @@ public abstract class NumberRangeTestCase extends TestCase {
             final Iterator iter = range.iterator();
             iter.remove();
             fail("successfully removed an element using an iterator");
-        }
-        catch (UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException e) {
             assertTrue("expected exception thrown", true);
         }
     }
@@ -642,8 +603,7 @@ public abstract class NumberRangeTestCase extends TestCase {
             final Range range = createRange(1, 5);
             range.add(createValue(20));
             fail("expected exception not thrown");
-        }
-        catch (UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException e) {
             assertTrue("expected exception thrown", true);
         }
     }
@@ -656,8 +616,7 @@ public abstract class NumberRangeTestCase extends TestCase {
             final Range range = createRange(1, 5);
             range.remove(0);
             fail("expected exception not thrown");
-        }
-        catch (UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException e) {
             assertTrue("expected exception thrown", true);
         }
     }
@@ -738,6 +697,37 @@ public abstract class NumberRangeTestCase extends TestCase {
         final Range range = createRange(10, 20);
         for (int i = 0; i <= 10; i++) {
             assertEquals("Item at index: " + i, createValue(i + 10), range.get(i));
+        }
+    }
+
+    /**
+     * Records the values passed to a closure.
+     */
+    protected static class RecordingClosure extends Closure {
+        /**
+         * Holds the values passed in
+         */
+        final List callLog;
+
+        /**
+         * Creates a new <code>RecordingClosure</code>
+         *
+         * @param callLog is filled with the values passed to <code>doCall</code>
+         */
+        RecordingClosure(final List callLog) {
+            super(null);
+            this.callLog = callLog;
+        }
+
+        /**
+         * Stores <code>params</code> in the <code>callLog</code>.
+         *
+         * @param params the parameters.
+         * @return null
+         */
+        public Object doCall(final Object params) {
+            callLog.add(params);
+            return null;
         }
     }
 }

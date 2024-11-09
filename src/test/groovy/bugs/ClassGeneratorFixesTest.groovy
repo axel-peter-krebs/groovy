@@ -38,8 +38,8 @@ class ClassGeneratorFixesTest extends GroovyTestCase {
         assert count == 1
 
         def foo =
-            {i->
-                return {j->
+            { i ->
+                return { j ->
                     i += j
                     i
                 }
@@ -50,33 +50,33 @@ class ClassGeneratorFixesTest extends GroovyTestCase {
         println x(2.3)
     }
 
-    void testIfAndSwitchInClosure (){ // 321, 324, 412
+    void testIfAndSwitchInClosure() { // 321, 324, 412
 
         def a = 1
         1.times {
-            if (a ==1) {
+            if (a == 1) {
                 a = 2
             }
         }
 
-        def noneYet=true;
-        ["a","b","c","d"].each { c ->
-          if (noneYet) {
-            noneYet=false;
-          } else {
-            print(" > ");
-          }
-          print( c );
+        def noneYet = true;
+        ["a", "b", "c", "d"].each { c ->
+            if (noneYet) {
+                noneYet = false;
+            } else {
+                print(" > ");
+            }
+            print(c);
         }
 
         a = 1
         switch (a) {
-        case 1:
-            a = 2;
-        case 2:
-            break;
-        default:
-            break;
+            case 1:
+                a = 2;
+            case 2:
+                break;
+            default:
+                break;
         }
     }
 
@@ -89,10 +89,10 @@ class ClassGeneratorFixesTest extends GroovyTestCase {
     }
 
     void testBooleanValue() { // groovy-385
-            /** @todo
-            boolean value
-            */
-        }
+        /** @todo
+         boolean value
+         */
+    }
 
 }
 

@@ -32,10 +32,10 @@ import static org.junit.Assume.assumeTrue
 class WorkingWithIOSpecTest extends GroovyTestCase {
 
     private final static boolean unixlike =
-            System.getProperty('os.name').contains('Linux') ||
-                    System.getProperty('os.name').contains('Mac OS')
+        System.getProperty('os.name').contains('Linux') ||
+            System.getProperty('os.name').contains('Mac OS')
     private final static boolean windoz =
-            System.getProperty('os.name').contains('Windows')
+        System.getProperty('os.name').contains('Windows')
 
     private assumeUnixLikeSystem() {
         assumeTrue('Test requires unix like system.', unixlike)
@@ -71,13 +71,13 @@ Le bruit de l'eau.''')
             // end::print_file_lines2[]
 
             // tag::collect_lines[]
-            def list = new File(baseDir, 'haiku.txt').collect {it}
+            def list = new File(baseDir, 'haiku.txt').collect { it }
             // end::collect_lines[]
             // tag::lines_as_strings[]
             def array = new File(baseDir, 'haiku.txt') as String[]
             // end::lines_as_strings[]
-            assert list.size()==3
-            assert array.length==3
+            assert list.size() == 3
+            assert array.length == 3
 
             def file = new File(baseDir, 'haiku.txt')
             // tag::file_bytes[]
@@ -97,7 +97,7 @@ Fin.''')
             try {
                 // tag::withreader_exception[]
                 def count = 0, MAXSIZE = 3
-                new File(baseDir,"haiku.txt").withReader { reader ->
+                new File(baseDir, "haiku.txt").withReader { reader ->
                     while (reader.readLine()) {
                         if (++count > MAXSIZE) {
                             throw new RuntimeException('Haiku should only have 3 verses')
@@ -117,7 +117,7 @@ Fin.''')
         doInTmpDir { dir ->
             File baseDir = dir.baseDir
             // tag::withwriter_example[]
-            new File(baseDir,'haiku.txt').withWriter('utf-8') { writer ->
+            new File(baseDir, 'haiku.txt').withWriter('utf-8') { writer ->
                 writer.writeLine 'Into the ancient pond'
                 writer.writeLine 'A frog jumps'
                 writer.writeLine 'Water’s sound!'
@@ -131,7 +131,7 @@ Fin.''')
         doInTmpDir { dir ->
             File baseDir = dir.baseDir
             // tag::file_leftshift[]
-            new File(baseDir,'haiku.txt') << '''Into the ancient pond
+            new File(baseDir, 'haiku.txt') << '''Into the ancient pond
             A frog jumps
             Water’s sound!'''
             // end::file_leftshift[]
@@ -144,7 +144,7 @@ Fin.''')
             File baseDir = dir.baseDir
             def file = new File(baseDir, 'binary.bin')
             // tag::file_setbytes[]
-            file.bytes = [66,22,11]
+            file.bytes = [66, 22, 11]
             // end::file_setbytes[]
         }
     }
@@ -202,7 +202,7 @@ Fin.''')
             }
             // tag::traverse[]
             dir.traverse { file ->
-                if (file.directory && file.name=='bin') {
+                if (file.directory && file.name == 'bin') {
                     FileVisitResult.TERMINATE                   // <1>
                 } else {
                     println file.name
@@ -223,13 +223,13 @@ Une grenouille qui plonge,
 Le bruit de l'eau.
 Fin.''')
             // tag::newinputstream[]
-            def is = new File(baseDir,'haiku.txt').newInputStream()
+            def is = new File(baseDir, 'haiku.txt').newInputStream()
             // do something ...
             is.close()
             // end::newinputstream[]
 
             // tag::withinputstream[]
-            new File(baseDir,'haiku.txt').withInputStream { stream ->
+            new File(baseDir, 'haiku.txt').withInputStream { stream ->
                 // do something ...
             }
             // end::withinputstream[]
@@ -241,13 +241,13 @@ Fin.''')
         doInTmpDir { dir ->
             File baseDir = dir.baseDir
             // tag::newoutputstream[]
-            def os = new File(baseDir,'data.bin').newOutputStream()
+            def os = new File(baseDir, 'data.bin').newOutputStream()
             // do something ...
             os.close()
             // end::newoutputstream[]
 
             // tag::withoutputstream[]
-            new File(baseDir,'data.bin').withOutputStream { stream ->
+            new File(baseDir, 'data.bin').withOutputStream { stream ->
                 // do something ...
             }
             // end::withoutputstream[]
@@ -283,7 +283,7 @@ Fin.''')
             File baseDir = dir.baseDir
             def file = new File(baseDir, 'data.bin')
             // tag::object_in_out[]
-            Person p = new Person(name:'Bob', age:76)
+            Person p = new Person(name: 'Bob', age: 76)
             // Serialize data into a file
             file.withObjectOutputStream { out ->
                 out.writeObject(p)
@@ -327,7 +327,7 @@ Fin.''')
 
     @Test
     void testProcess2() {
-       assumeUnixLikeSystem()
+        assumeUnixLikeSystem()
 
         // tag::process_list_files_line_by_line[]
         def process = "ls -l".execute()             // <1>

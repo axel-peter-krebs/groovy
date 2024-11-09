@@ -99,13 +99,13 @@ class SemanticsTest extends CompilableTestSupport {
         def x = false
         def y = false
 
-        if ( !x ) {
+        if (!x) {
             x = true
         }
 
         assert x == true
 
-        if ( x ) {
+        if (x) {
             x = false
         } else {
             y = true
@@ -163,9 +163,9 @@ class SemanticsTest extends CompilableTestSupport {
     void testSwitchExpression() {
         def person = 'Romeo'
         // tag::switch_expression[]
-        def partner = switch(person) {
-            case 'Romeo'  -> 'Juliet'
-            case 'Adam'   -> 'Eve'
+        def partner = switch (person) {
+            case 'Romeo' -> 'Juliet'
+            case 'Adam' -> 'Eve'
             case 'Antony' -> 'Cleopatra'
             case 'Bonnie' -> 'Clyde'
         }
@@ -187,14 +187,14 @@ class SemanticsTest extends CompilableTestSupport {
         // tag::groovy_for_loop_example[]
         // iterate over a range
         def x = 0
-        for ( i in 0..9 ) {
+        for (i in 0..9) {
             x += i
         }
         assert x == 45
 
         // iterate over a list
         x = 0
-        for ( i in [0, 1, 2, 3, 4] ) {
+        for (i in [0, 1, 2, 3, 4]) {
             x += i
         }
         assert x == 10
@@ -202,22 +202,22 @@ class SemanticsTest extends CompilableTestSupport {
         // iterate over an array
         def array = (0..4).toArray()
         x = 0
-        for ( i in array ) {
+        for (i in array) {
             x += i
         }
         assert x == 10
 
         // iterate over a map
-        def map = ['abc':1, 'def':2, 'xyz':3]
+        def map = ['abc': 1, 'def': 2, 'xyz': 3]
         x = 0
-        for ( e in map ) {
+        for (e in map) {
             x += e.value
         }
         assert x == 6
 
         // iterate over values in a map
         x = 0
-        for ( v in map.values() ) {
+        for (v in map.values()) {
             x += v
         }
         assert x == 6
@@ -237,7 +237,7 @@ class SemanticsTest extends CompilableTestSupport {
         def x = 0
         def y = 5
 
-        while ( y-- > 0 ) {
+        while (y-- > 0) {
             x++
         }
 
@@ -250,7 +250,7 @@ class SemanticsTest extends CompilableTestSupport {
         try {
             'moo'.toLong()   // this will generate an exception
             assert false     // asserting that this point should never be reached
-        } catch ( e ) {
+        } catch (e) {
             assert e in NumberFormatException
         }
         // end::try_catch_example[]
@@ -267,7 +267,7 @@ class SemanticsTest extends CompilableTestSupport {
             } finally {
                 z = 'reached here'  //always executed even if Exception thrown
             }
-        } catch ( e ) {
+        } catch (e) {
             assert e in ArithmeticException
             assert z == 'reached here'
         }

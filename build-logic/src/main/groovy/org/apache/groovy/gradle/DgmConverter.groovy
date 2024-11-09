@@ -24,13 +24,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Classpath
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 
 import javax.inject.Inject
@@ -60,7 +54,7 @@ class DgmConverter extends DefaultTask {
         classpath = project.objects.fileCollection()
         sources = project.objects.fileTree()
         outputDirectory = project.objects.directoryProperty().convention(
-                project.layout.buildDirectory.dir("dgm")
+            project.layout.buildDirectory.dir("dgm")
         )
     }
 

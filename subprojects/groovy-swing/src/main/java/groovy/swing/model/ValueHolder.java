@@ -22,12 +22,12 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 /**
- * A simple ValueModel implementation which is a holder of an object value. 
+ * A simple ValueModel implementation which is a holder of an object value.
  * Used to share local variables with closures
  */
 public class ValueHolder implements ValueModel {
-    private Object value;
     private final Class type;
+    private Object value;
     private PropertyChangeSupport propertyChangeSupport;
     private boolean editable = true;
 
@@ -44,23 +44,25 @@ public class ValueHolder implements ValueModel {
         this.type = (value != null) ? value.getClass() : Object.class;
     }
 
-    /** 
+    /**
      * Add a PropertyChangeListener to the listener list.
+     *
      * @param listener The listener to add.
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
-        if ( propertyChangeSupport == null ) {
+        if (propertyChangeSupport == null) {
             propertyChangeSupport = new PropertyChangeSupport(this);
         }
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
 
-    /** 
+    /**
      * Removes a PropertyChangeListener from the listener list.
+     *
      * @param listener The listener to remove.
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
-        if ( propertyChangeSupport != null ) {
+        if (propertyChangeSupport != null) {
             propertyChangeSupport.removePropertyChangeListener(listener);
         }
     }
@@ -75,7 +77,7 @@ public class ValueHolder implements ValueModel {
     public void setValue(Object value) {
         Object oldValue = this.value;
         this.value = value;
-        if ( propertyChangeSupport != null ) {
+        if (propertyChangeSupport != null) {
             propertyChangeSupport.firePropertyChange("value", oldValue, value);
         }
     }

@@ -19,21 +19,41 @@
 package org.codehaus.groovy.tools.groovydoc.testfiles;
 
 public class ExampleVisibilityJ {
-    public void a1() { }
-    public void a2() { }
-    protected void b() { }
-    void c1() { }
-    void c2() { }
-    private void d() { }
-
     public Object _a;
     protected Object _b;
     Object _c;
     private Object _d;
 
-    public class A1 {}
-    public class A2 {}
-    protected class B {}
-    class C {}
-    private class D {}
+    public void a1() {
+    }
+
+    public void a2() {
+    }
+
+    protected void b() {
+    }
+
+    void c1() {
+    }
+
+    void c2() {
+    }
+
+    private void d() {
+    }
+
+    public class A1 {
+    }
+
+    public class A2 {
+    }
+
+    protected class B {
+    }
+
+    class C {
+    }
+
+    private class D {
+    }
 }

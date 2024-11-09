@@ -40,15 +40,16 @@ import java.security.CodeSource;
 import java.util.HashSet;
 import java.util.Set;
 
+enum ClassLoaderDefinitionType {
+    CONSTRUCTOR,
+    INJECTION,
+    REFLECTION
+}
+
 /**
  * Test for GROOVY-3946 and GROOVY-5255.
  */
 public class JSR223SecurityTest {
-
-    class TestFixture {
-        String script = "System.exit 2";
-        String forbiddenInstruction = "java.lang.System";
-    }
 
     TestFixture testFixture;
 
@@ -84,15 +85,14 @@ public class JSR223SecurityTest {
 
     private ScriptEngine createScriptEngine(ClassLoaderDefinitionType classLoaderDefType) {
         return (classLoaderDefType == ClassLoaderDefinitionType.CONSTRUCTOR)
-                ? new GroovyScriptEngineImpl(new CustomGroovyClassLoader())
-                : new ScriptEngineManager().getEngineByName("groovy");
+            ? new GroovyScriptEngineImpl(new CustomGroovyClassLoader())
+            : new ScriptEngineManager().getEngineByName("groovy");
     }
-}
 
-enum ClassLoaderDefinitionType {
-    CONSTRUCTOR,
-    INJECTION,
-    REFLECTION
+    class TestFixture {
+        String script = "System.exit 2";
+        String forbiddenInstruction = "java.lang.System";
+    }
 }
 
 class GroovySecurityManager {
@@ -101,7 +101,8 @@ class GroovySecurityManager {
 
     private Set<String> forbiddenList = new HashSet<String>();
 
-    private GroovySecurityManager() { }
+    private GroovySecurityManager() {
+    }
 
     public synchronized static GroovySecurityManager instance() {
         return instance;
@@ -111,12 +112,10 @@ class GroovySecurityManager {
         try {
             if (classLoaderDefType == ClassLoaderDefinitionType.REFLECTION) {
                 overrideDefaultGroovyClassLoaderUsingReflection(engine);
-            }
-            else if (classLoaderDefType == ClassLoaderDefinitionType.INJECTION) {
+            } else if (classLoaderDefType == ClassLoaderDefinitionType.INJECTION) {
                 overrideDefaultGroovyClassLoaderUsingInjection(engine);
             }
-        }
-        catch (Throwable ex) {
+        } catch (Throwable ex) {
             throw new RuntimeException("Could not initialize the security manager", ex);
         }
     }

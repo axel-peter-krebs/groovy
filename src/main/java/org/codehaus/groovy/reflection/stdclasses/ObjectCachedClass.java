@@ -23,7 +23,7 @@ import org.codehaus.groovy.reflection.ClassInfo;
 
 public class ObjectCachedClass extends CachedClass {
     public ObjectCachedClass(ClassInfo classInfo) {
-        super(Object.class,classInfo);
+        super(Object.class, classInfo);
     }
 
     @Override

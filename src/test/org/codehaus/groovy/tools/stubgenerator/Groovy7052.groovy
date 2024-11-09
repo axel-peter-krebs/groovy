@@ -27,7 +27,7 @@ final class Groovy7052 extends StringSourcesStubTestCase {
                 trait Foo {}
             ''',
 
-            'Bar.java': '''
+            'Bar.java'  : '''
                 class Bar implements Foo {}
             ''',
 

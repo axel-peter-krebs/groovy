@@ -26,25 +26,6 @@ import java.util.Map;
 public class EmptyStatement extends Statement {
 
     /**
-     * @see EmptyStatement#INSTANCE
-     */
-    public EmptyStatement() {
-        super();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return true;
-    }
-
-    @Override
-    public void visit(GroovyCodeVisitor visitor) {
-        visitor.visitEmptyStatement(this);
-    }
-
-    //--------------------------------------------------------------------------
-
-    /**
      * Immutable singleton that is recommended for use when source range or any
      * other occurrence-specific metadata is not needed.
      */
@@ -98,4 +79,23 @@ public class EmptyStatement extends Statement {
             throwUnsupportedOperationException();
         }
     };
+
+    /**
+     * @see EmptyStatement#INSTANCE
+     */
+    public EmptyStatement() {
+        super();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return true;
+    }
+
+    //--------------------------------------------------------------------------
+
+    @Override
+    public void visit(GroovyCodeVisitor visitor) {
+        visitor.visitEmptyStatement(this);
+    }
 }

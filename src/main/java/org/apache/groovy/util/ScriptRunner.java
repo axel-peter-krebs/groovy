@@ -31,6 +31,9 @@ import java.net.URISyntaxException;
  * @since 3.0.0
  */
 public class ScriptRunner {
+    private ScriptRunner() {
+    }
+
     /**
      * Run the script file specified by the file path
      *
@@ -39,7 +42,7 @@ public class ScriptRunner {
      */
     public static void runScript(File path) {
         try {
-            GroovyStarter.main(new String[] {"--main", "groovy.ui.GroovyMain", path.getCanonicalPath()});
+            GroovyStarter.main(new String[]{"--main", "groovy.ui.GroovyMain", path.getCanonicalPath()});
         } catch (IOException e) {
             throw new GroovyRuntimeException("Failed to run script: " + path, e);
         }
@@ -58,6 +61,4 @@ public class ScriptRunner {
             throw new GroovyRuntimeException("Failed to run script: " + cp, e);
         }
     }
-
-    private ScriptRunner() {}
 }

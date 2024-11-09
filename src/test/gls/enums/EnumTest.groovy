@@ -27,7 +27,7 @@ class EnumTest extends CompilableTestSupport {
 
     void testValues() {
         assert UsCoin.values().size() == 4
-        assert UsCoin.values().toList().sum{ it.value } == 41
+        assert UsCoin.values().toList().sum { it.value } == 41
     }
 
     void testNext() {
@@ -51,25 +51,25 @@ class EnumTest extends CompilableTestSupport {
     void testMinValue() {
         assert UsCoin.MIN_VALUE == UsCoin.penny
         shouldFail(MissingPropertyException) {
-           EmptyEnum.MIN_VALUE
+            EmptyEnum.MIN_VALUE
         }
     }
 
     void testMaxValue() {
         assert UsCoin.MAX_VALUE == UsCoin.quarter
         shouldFail(MissingPropertyException) {
-           EmptyEnum.MAX_VALUE
+            EmptyEnum.MAX_VALUE
         }
     }
 
     void testComparators() {
-        assert UsCoin.nickel <=> UsCoin.penny  ==  1
-        assert UsCoin.nickel <=> UsCoin.nickel ==  0
-        assert UsCoin.nickel <=> UsCoin.dime   == -1
-        assert UsCoin.nickel <=  UsCoin.nickel
-        assert UsCoin.nickel <=  UsCoin.dime
-        assert UsCoin.nickel >=  UsCoin.penny
-        assert UsCoin.nickel >=  UsCoin.nickel
+        assert UsCoin.nickel <=> UsCoin.penny == 1
+        assert UsCoin.nickel <=> UsCoin.nickel == 0
+        assert UsCoin.nickel <=> UsCoin.dime == -1
+        assert UsCoin.nickel <= UsCoin.nickel
+        assert UsCoin.nickel <= UsCoin.dime
+        assert UsCoin.nickel >= UsCoin.penny
+        assert UsCoin.nickel >= UsCoin.nickel
     }
 
     void testStepWithRange() {
@@ -363,7 +363,7 @@ class EnumTest extends CompilableTestSupport {
             // cause loading of enum that causes its fields to be set and
             // their instance initializer to be executed
             println Color3985
-        }catch(ExceptionInInitializerError err) {
+        } catch (ExceptionInInitializerError err) {
             assert err.cause.message == 'Color3985 RED instance initializer called successfully'
         }
     }
@@ -830,12 +830,14 @@ class EnumTest extends CompilableTestSupport {
 
 enum UsCoin {
     penny(1), nickel(5), dime(10), quarter(25)
+
     UsCoin(int value) { this.value = value }
     private final int value
+
     int getValue() { value }
 }
 
-enum EmptyEnum{}
+enum EmptyEnum {}
 
 enum GroovyColors3161 {
     red, blue, green
@@ -844,8 +846,9 @@ enum GroovyColors3161 {
 
 enum Foo3284 {
     A({ "A" })
+
     Foo3284(Closure c) {
-      call = c
+        call = c
     }
     final Closure call
 }
@@ -853,16 +856,18 @@ enum Foo3284 {
 enum GroovyColors3693 {
     r, g, b
     static List list = [1, 2]
+
     static init() {
         assert list == [1, 2]
     }
+
     static {
         init()
     }
 }
 
 enum Color3985 {
-    RED {
+    RED{
         {
             throw new RuntimeException('Color3985 RED instance initializer called successfully')
         }

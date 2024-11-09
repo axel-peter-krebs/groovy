@@ -346,10 +346,10 @@ class ListenerListTransformTest extends GroovyTestCase {
         assert evt.message.is(message)
     }
 
-        // GROOVY-4795
-        void testSynchronized() {
-            GroovyShell shell = new GroovyShell()
-            shell.evaluate("""
+    // GROOVY-4795
+    void testSynchronized() {
+        GroovyShell shell = new GroovyShell()
+        shell.evaluate("""
                 import groovy.beans.ListenerList
                 import java.lang.reflect.Modifier
 
@@ -367,12 +367,12 @@ class ListenerListTransformTest extends GroovyTestCase {
                 assert !Modifier.isSynchronized(C2.class.getMethod('getEventListeners').modifiers)
                 assert !Modifier.isSynchronized(C3.class.getMethod('getEventListeners').modifiers)
             """)
-        }
+    }
 
-        // GROOVY-4797
-        void testPrimitiveTypes() {
-            GroovyShell shell = new GroovyShell()
-            shell.evaluate("""
+    // GROOVY-4797
+    void testPrimitiveTypes() {
+        GroovyShell shell = new GroovyShell()
+        shell.evaluate("""
                 import groovy.beans.ListenerList
                 import java.lang.reflect.Modifier
 
@@ -382,7 +382,7 @@ class ListenerListTransformTest extends GroovyTestCase {
 
                 assert C.class.getMethod('getObjects')
             """)
-        }
+    }
 
     // GROOVY-8156
     void testListenerListWithEventClassInSameCompilationUnit() {

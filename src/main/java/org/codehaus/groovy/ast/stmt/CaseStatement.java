@@ -48,7 +48,7 @@ public class CaseStatement extends Statement {
     }
 
     public void setExpression(Expression e) {
-        expression=e;
+        expression = e;
     }
 
     @Override

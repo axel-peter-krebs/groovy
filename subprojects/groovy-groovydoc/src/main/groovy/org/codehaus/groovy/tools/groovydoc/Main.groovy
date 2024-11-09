@@ -60,7 +60,7 @@ class Main {
         Logger.io = io
 
         def cli = new CliBuilderInternal(usage: 'groovydoc [options] [packagenames] [sourcefiles]', writer: io.out, posix: false,
-                header: messages['cli.option.header'])
+            header: messages['cli.option.header'])
 
         cli._(names: ['-h', '-help', '--help'], messages['cli.option.help.description'])
         cli._(longOpt: 'version', messages['cli.option.version.description'])
@@ -70,26 +70,26 @@ class Main {
         cli._(longOpt: 'debug', messages['cli.option.debug.description'])
         cli.classpath(messages['cli.option.classpath.description'])
         cli.cp(longOpt: 'classpath', messages['cli.option.cp.description'])
-        cli.d(longOpt: 'destdir', args:1, argName: 'dir', messages['cli.option.destdir.description'])
+        cli.d(longOpt: 'destdir', args: 1, argName: 'dir', messages['cli.option.destdir.description'])
         cli.author(messages['cli.option.author.description'])
         cli.noscripts(messages['cli.option.noscripts.description'])
         cli.nomainforscripts(messages['cli.option.nomainforscripts.description'])
         cli.notimestamp(messages['cli.option.notimestamp.description'])
         cli.noversionstamp(messages['cli.option.noversionstamp.description'])
-        cli.overview(args:1, argName: 'file', messages['cli.option.overview.description'])
+        cli.overview(args: 1, argName: 'file', messages['cli.option.overview.description'])
         cli.public(messages['cli.option.public.description'])
         cli.protected(messages['cli.option.protected.description'])
         cli.package(messages['cli.option.package.description'])
         cli.private(messages['cli.option.private.description'])
-        cli.charset(args:1, argName: 'charset', messages['cli.option.charset.description'])
-        cli.fileEncoding(args:1, argName: 'charset', messages['cli.option.fileEncoding.description'])
-        cli.windowtitle(args:1, argName: 'text', messages['cli.option.windowtitle.description'])
-        cli.doctitle(args:1, argName: 'html', messages['cli.option.doctitle.description'])
-        cli.header(args:1, argName: 'html', messages['cli.option.header.description'])
-        cli.footer(args:1, argName: 'html', messages['cli.option.footer.description'])
-        cli.exclude(args:1, argName: 'pkglist', messages['cli.option.exclude.description'])
-        cli.stylesheetfile(args:1, argName: 'path', messages['cli.option.stylesheetfile.description'])
-        cli.sourcepath(args:1, argName: 'pathlist', messages['cli.option.sourcepath.description'])
+        cli.charset(args: 1, argName: 'charset', messages['cli.option.charset.description'])
+        cli.fileEncoding(args: 1, argName: 'charset', messages['cli.option.fileEncoding.description'])
+        cli.windowtitle(args: 1, argName: 'text', messages['cli.option.windowtitle.description'])
+        cli.doctitle(args: 1, argName: 'html', messages['cli.option.doctitle.description'])
+        cli.header(args: 1, argName: 'html', messages['cli.option.header.description'])
+        cli.footer(args: 1, argName: 'html', messages['cli.option.footer.description'])
+        cli.exclude(args: 1, argName: 'pkglist', messages['cli.option.exclude.description'])
+        cli.stylesheetfile(args: 1, argName: 'path', messages['cli.option.stylesheetfile.description'])
+        cli.sourcepath(args: 1, argName: 'pathlist', messages['cli.option.sourcepath.description'])
 
         def options = cli.parse(args)
 
@@ -208,13 +208,13 @@ class Main {
         def links = new ArrayList<LinkArgument>();
         collectSourceFileNames(remainingArgs, sourcepath, exclusions)
         GroovyDocTool htmlTool = new GroovyDocTool(
-                new ClasspathResourceManager(), // we're gonna get the default templates out of the dist jar file
-                sourcepath,
-                GroovyDocTemplateInfo.DEFAULT_DOC_TEMPLATES,
-                GroovyDocTemplateInfo.DEFAULT_PACKAGE_TEMPLATES,
-                GroovyDocTemplateInfo.DEFAULT_CLASS_TEMPLATES,
-                links,
-                properties
+            new ClasspathResourceManager(), // we're gonna get the default templates out of the dist jar file
+            sourcepath,
+            GroovyDocTemplateInfo.DEFAULT_DOC_TEMPLATES,
+            GroovyDocTemplateInfo.DEFAULT_PACKAGE_TEMPLATES,
+            GroovyDocTemplateInfo.DEFAULT_CLASS_TEMPLATES,
+            links,
+            properties
         )
 
         htmlTool.add(sourceFilesToDoc)

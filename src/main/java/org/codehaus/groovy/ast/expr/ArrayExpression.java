@@ -41,16 +41,6 @@ public class ArrayExpression extends Expression {
     private final List<Expression> initExpressions;
     private final List<Expression> sizeExpressions;
 
-    private static ClassNode makeArray(final ClassNode base, final List<Expression> sizeExpressions) {
-        ClassNode ret = base.makeArray();
-        if (sizeExpressions == null) return ret;
-        int size = sizeExpressions.size();
-        for (int i = 1; i < size; i++) {
-            ret = ret.makeArray();
-        }
-        return ret;
-    }
-
     public ArrayExpression(final ClassNode elementType, final List<Expression> initExpressions, final List<Expression> sizeExpressions) {
         super.setType(makeArray(elementType, sizeExpressions));
         this.elementType = elementType;
@@ -63,7 +53,7 @@ public class ArrayExpression extends Expression {
         }
         if (!this.initExpressions.isEmpty() && sizeExpressions != null && !sizeExpressions.isEmpty()) {
             throw new IllegalArgumentException("Both an initializer (" + formatInitExpressions() +
-                    ") and a defined size (" + formatSizeExpressions() + ") cannot be given");
+                ") and a defined size (" + formatSizeExpressions() + ") cannot be given");
         }
         for (Object item : this.initExpressions) {
             if (item != null && !(item instanceof Expression)) {
@@ -84,6 +74,16 @@ public class ArrayExpression extends Expression {
      */
     public ArrayExpression(final ClassNode elementType, final List<Expression> initExpressions) {
         this(elementType, initExpressions, null);
+    }
+
+    private static ClassNode makeArray(final ClassNode base, final List<Expression> sizeExpressions) {
+        ClassNode ret = base.makeArray();
+        if (sizeExpressions == null) return ret;
+        int size = sizeExpressions.size();
+        for (int i = 1; i < size; i++) {
+            ret = ret.makeArray();
+        }
+        return ret;
     }
 
     @Override
@@ -144,7 +144,7 @@ public class ArrayExpression extends Expression {
             return "new " + formatTypeName(getType()) + formatInitExpressions();
         } else {
             ClassNode basicType = getElementType();
-            while (basicType.isArray()) basicType= basicType.getComponentType();
+            while (basicType.isArray()) basicType = basicType.getComponentType();
             return "new " + formatTypeName(basicType) + formatSizeExpressions();
         }
     }

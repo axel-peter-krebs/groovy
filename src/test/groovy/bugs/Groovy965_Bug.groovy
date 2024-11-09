@@ -26,17 +26,17 @@ import groovy.test.GroovyTestCase
  */
 class Groovy965_Bug extends GroovyTestCase {
 
-  void testUnicodeVariableNamesAndStrings ( ) {
-    def âøñè = 'âøñè'
-    assertEquals ( 'âøñè' , âøñè )
-  }
+    void testUnicodeVariableNamesAndStrings() {
+        def âøñè = 'âøñè'
+        assertEquals('âøñè', âøñè)
+    }
 
-  void testUnicodeMëthødName ( ) { }
+    void testUnicodeMëthødName() {}
 
-  void testUnicodeClassName ( ) {
-    def object = new Bläh ( ) 
-    assert true
-  }
+    void testUnicodeClassName() {
+        def object = new Bläh()
+        assert true
+    }
 }
 
-class Bläh { }
+class Bläh {}

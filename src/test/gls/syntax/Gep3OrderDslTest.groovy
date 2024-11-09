@@ -88,8 +88,8 @@ abstract class OrderDslBaseScriptClass extends Script {
     /** Script helper method for "GOOG {}", "VMW {}", etc. */
     def methodMissing(String name, args) {
         new SecurityAndCharacteristics(
-                security: new Security(name: name),
-                characteristics: args[0]
+            security: new Security(name: name),
+            characteristics: args[0]
         )
     }
 
@@ -101,7 +101,9 @@ abstract class OrderDslBaseScriptClass extends Script {
     }
 }
 
-enum Action { Buy, Sell }
+enum Action {
+    Buy, Sell
+}
 
 class Order {
     Security security

@@ -76,10 +76,11 @@ public class GroovyRunnerRegistry implements Map<String, GroovyRunner>, Iterable
     private static final GroovyRunnerRegistry INSTANCE = new GroovyRunnerRegistry();
 
     private static final Logger LOG = Logger.getLogger(GroovyRunnerRegistry.class.getName());
-
+    private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
+    private final Lock readLock = rwLock.readLock();
+    private final Lock writeLock = rwLock.writeLock();
     // Lazily initialized and loaded, should be accessed internally using getMap()
     private volatile Map<String, GroovyRunner> runnerMap;
-
     /*
      * Cached unmodifiable List used for iteration. Any method that mutates
      * the runnerMap must set to null to invalidate the cache. Volatile is
@@ -89,19 +90,6 @@ public class GroovyRunnerRegistry implements Map<String, GroovyRunner>, Iterable
      */
     private volatile List<GroovyRunner> cachedValues;
 
-    private final ReadWriteLock rwLock = new ReentrantReadWriteLock();
-    private final Lock readLock = rwLock.readLock();
-    private final Lock writeLock = rwLock.writeLock();
-
-    /**
-     * Returns a reference to the one and only registry instance.
-     *
-     * @return registry instance
-     */
-    public static GroovyRunnerRegistry getInstance() {
-        return INSTANCE;
-    }
-
     // package-private for use in testing to avoid calling ServiceLoader.load
     GroovyRunnerRegistry(Map<? extends String, ? extends GroovyRunner> runners) {
         // Preserve insertion order
@@ -110,6 +98,15 @@ public class GroovyRunnerRegistry implements Map<String, GroovyRunner>, Iterable
     }
 
     private GroovyRunnerRegistry() {
+    }
+
+    /**
+     * Returns a reference to the one and only registry instance.
+     *
+     * @return registry instance
+     */
+    public static GroovyRunnerRegistry getInstance() {
+        return INSTANCE;
     }
 
     /**
@@ -302,11 +299,11 @@ public class GroovyRunnerRegistry implements Map<String, GroovyRunner>, Iterable
     /**
      * Registers a runner with the specified key.
      *
-     * @param key to associate with the runner
+     * @param key    to associate with the runner
      * @param runner the runner to register
      * @return the previously registered runner for the given key,
-     *          if no runner was previously registered for the key
-     *          then {@code null}
+     * if no runner was previously registered for the key
+     * then {@code null}
      */
     @Override
     public GroovyRunner put(String key, GroovyRunner runner) {
@@ -328,7 +325,7 @@ public class GroovyRunnerRegistry implements Map<String, GroovyRunner>, Iterable
      *
      * @param key of the runner to remove
      * @return the runner instance that was removed, if no runner
-     *          instance was removed then {@code null}
+     * instance was removed then {@code null}
      */
     @Override
     public GroovyRunner remove(Object key) {

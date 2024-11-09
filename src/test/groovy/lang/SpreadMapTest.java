@@ -29,7 +29,7 @@ public class SpreadMapTest extends GroovyTestCase {
     Map map;
 
     public void setUp() {
-        String[] list = new String[] { "key", "value", "name", "tim" };
+        String[] list = new String[]{"key", "value", "name", "tim"};
         map = new SpreadMap(list);
     }
 

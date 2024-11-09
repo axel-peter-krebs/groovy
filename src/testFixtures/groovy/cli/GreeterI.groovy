@@ -23,8 +23,11 @@ import groovy.cli.Unparsed
 
 // tag::annotationInterfaceSpec[]
 interface GreeterI {
-    @Option(shortName='h', description='display usage') Boolean help()        // <1>
-    @Option(shortName='a', description='greeting audience') String audience() // <2>
-    @Unparsed(description = "positional parameters") List remaining()         // <3>
+    @Option(shortName = 'h', description = 'display usage')
+    Boolean help()        // <1>
+    @Option(shortName = 'a', description = 'greeting audience')
+    String audience() // <2>
+    @Unparsed(description = "positional parameters")
+    List remaining()         // <3>
 }
 // end::annotationInterfaceSpec[]

@@ -48,7 +48,7 @@ class ConstructorMismatchTest extends GroovyTestCase {
     }
 
     void testMapConstructorThroughEMC() {
-        assertScript'''
+        assertScript '''
             class Person {
                 String name
                 Person(String name)  {

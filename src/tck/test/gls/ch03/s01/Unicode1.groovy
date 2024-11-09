@@ -31,16 +31,16 @@ class Unicode1 extends GroovyTestCase {
     //TODO: find some way to assert that Unicode3.0 + is available
 
     /**
-      * This doc comment checks that Unicode is allowed in javadoc.
-      * e.g. \u05D0\u2136\u05d3\u05d7
-      */
+     * This doc comment checks that Unicode is allowed in javadoc.
+     * e.g. \u05D0\u2136\u05d3\u05d7
+     */
     void testComments() {
         // Unicode is allowed in comments
         // This is a comment \u0410\u0406\u0414\u0419
         /* Another comment \u05D0\u2136\u05d3\u05d7 */
 
         /**/ // Tiny comment
-        /***/ // Also valid
+        /** */ // Also valid
     }
 
     void testStringLiterals() {

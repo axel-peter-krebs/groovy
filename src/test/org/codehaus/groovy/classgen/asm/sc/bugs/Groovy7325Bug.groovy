@@ -50,6 +50,6 @@ final class Groovy7325Bug extends StaticTypeCheckingTestCase implements StaticCo
 
             def set = new C().history
         ''',
-        'Cannot access method: clone() of class: java.lang.Object'
+            'Cannot access method: clone() of class: java.lang.Object'
     }
 }

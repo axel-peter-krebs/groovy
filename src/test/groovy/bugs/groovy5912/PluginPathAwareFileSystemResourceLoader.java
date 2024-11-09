@@ -22,5 +22,6 @@ package groovy.bugs.groovy5912;
 import java.util.Collection;
 
 public class PluginPathAwareFileSystemResourceLoader {
-    void setSearchLocations(Collection c) {}
+    void setSearchLocations(Collection c) {
+    }
 }

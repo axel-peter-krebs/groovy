@@ -28,17 +28,18 @@ import org.codehaus.groovy.transform.stc.AbstractTypeCheckingExtension
 
 import static org.codehaus.groovy.ast.tools.GenericsUtils.makeClassSafeWithGenerics
 
-@AutoFinal @InheritConstructors
+@AutoFinal
+@InheritConstructors
 class PrecompiledExtensionNotExtendingDSL extends AbstractTypeCheckingExtension {
     @Override
     void onMethodSelection(Expression expression, MethodNode target) {
         switch (target.name) {
-          case 'println':
-            addStaticTypeError('Error thrown from extension in onMethodSelection', expression.arguments[0])
-            break
-          case 'iterator':
-            ClassNode iteratorType = makeClassSafeWithGenerics(ClassHelper.Iterator_TYPE, ClassHelper.STRING_TYPE.asGenericsType())
-            storeType(expression, iteratorType) // indicate "string.iterator()" returns Iterator<String>
+            case 'println':
+                addStaticTypeError('Error thrown from extension in onMethodSelection', expression.arguments[0])
+                break
+            case 'iterator':
+                ClassNode iteratorType = makeClassSafeWithGenerics(ClassHelper.Iterator_TYPE, ClassHelper.STRING_TYPE.asGenericsType())
+                storeType(expression, iteratorType) // indicate "string.iterator()" returns Iterator<String>
         }
     }
 }

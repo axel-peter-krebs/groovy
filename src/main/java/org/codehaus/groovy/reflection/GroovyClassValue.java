@@ -18,19 +18,20 @@
  */
 package org.codehaus.groovy.reflection;
 
-/** Abstraction for Java version dependent ClassValue implementations.
- * @see java.lang.ClassValue
+/**
+ * Abstraction for Java version dependent ClassValue implementations.
  *
  * @param <T>
+ * @see java.lang.ClassValue
  */
 public interface GroovyClassValue<T> {
-	
-	interface ComputeValue<T>{
-		T computeValue(Class<?> type);
-	}
-	
-	T get(Class<?> type);
-	
-	void remove(Class<?> type);
-	
+
+    T get(Class<?> type);
+
+    void remove(Class<?> type);
+
+    interface ComputeValue<T> {
+        T computeValue(Class<?> type);
+    }
+
 }

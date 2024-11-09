@@ -61,6 +61,55 @@ public class PackageScopeASTTransformation extends AbstractASTTransformation {
     private static final Class TARGET_CLASS = groovy.transform.PackageScopeTarget.class;
     private static final String TARGET_CLASS_NAME = ClassHelper.make(TARGET_CLASS).getNameWithoutPackage();
 
+    private static void revertVisibility(FieldNode fNode) {
+        fNode.setModifiers(fNode.getModifiers() & ~ACC_PRIVATE);
+        fNode.setSynthetic(false);
+    }
+
+    private static void revertVisibility(MethodNode mNode) {
+        mNode.setModifiers(mNode.getModifiers() & ~ACC_PUBLIC);
+    }
+
+    private static void revertVisibility(ClassNode cNode) {
+        cNode.setModifiers(cNode.getModifiers() & ~ACC_PUBLIC);
+    }
+
+    private static List<groovy.transform.PackageScopeTarget> determineTargets(Expression expr) {
+        List<groovy.transform.PackageScopeTarget> list = new ArrayList<groovy.transform.PackageScopeTarget>();
+        if (expr instanceof PropertyExpression) {
+            list.add(extractTarget((PropertyExpression) expr));
+        } else if (expr instanceof ListExpression) {
+            final ListExpression expressionList = (ListExpression) expr;
+            final List<Expression> expressions = expressionList.getExpressions();
+            for (Expression ex : expressions) {
+                if (ex instanceof PropertyExpression) {
+                    list.add(extractTarget((PropertyExpression) ex));
+                }
+            }
+        }
+        return list;
+    }
+
+    private static groovy.transform.PackageScopeTarget extractTarget(PropertyExpression expr) {
+        Expression oe = expr.getObjectExpression();
+        if (oe instanceof ClassExpression) {
+            ClassExpression ce = (ClassExpression) oe;
+            if ("groovy.transform.PackageScopeTarget".equals(ce.getType().getName())) {
+                Expression prop = expr.getProperty();
+                if (prop instanceof ConstantExpression) {
+                    String propName = (String) ((ConstantExpression) prop).getValue();
+                    try {
+                        return PackageScopeTarget.valueOf(propName);
+                    } catch (IllegalArgumentException iae) {
+                        /* ignore */
+                    }
+                }
+            }
+        }
+        throw new GroovyBugError("Internal error during " + MY_TYPE_NAME
+            + " processing. Annotation parameters must be of type: " + TARGET_CLASS_NAME + ".");
+    }
+
     @Override
     public void visit(ASTNode[] nodes, SourceUnit source) {
         init(nodes, source);
@@ -72,14 +121,15 @@ public class PackageScopeASTTransformation extends AbstractASTTransformation {
         Expression value = node.getMember("value");
         if (parent instanceof ClassNode) {
             List<groovy.transform.PackageScopeTarget> targets;
-            if (value == null) targets = Collections.singletonList(legacyMode ? PackageScopeTarget.FIELDS : PackageScopeTarget.CLASS);
+            if (value == null)
+                targets = Collections.singletonList(legacyMode ? PackageScopeTarget.FIELDS : PackageScopeTarget.CLASS);
             else targets = determineTargets(value);
             visitClassNode((ClassNode) parent, targets);
             parent.getAnnotations();
         } else {
             if (value != null) {
                 addError("Error during " + MY_TYPE_NAME
-                        + " processing: " + TARGET_CLASS_NAME + " only allowed at class level.", parent);
+                    + " processing: " + TARGET_CLASS_NAME + " only allowed at class level.", parent);
                 return;
             }
             if (parent instanceof MethodNode) {
@@ -92,7 +142,8 @@ public class PackageScopeASTTransformation extends AbstractASTTransformation {
 
     private void visitMethodNode(MethodNode methodNode) {
         if (methodNode.isSyntheticPublic()) revertVisibility(methodNode);
-        else addError("Can't use " + MY_TYPE_NAME + " for method '" + methodNode.getName() + "' which has explicit visibility.", methodNode);
+        else
+            addError("Can't use " + MY_TYPE_NAME + " for method '" + methodNode.getName() + "' which has explicit visibility.", methodNode);
     }
 
     private void visitClassNode(ClassNode cNode, List<PackageScopeTarget> value) {
@@ -102,7 +153,8 @@ public class PackageScopeASTTransformation extends AbstractASTTransformation {
         }
         if (value.contains(groovy.transform.PackageScopeTarget.CLASS)) {
             if (cNode.isSyntheticPublic()) revertVisibility(cNode);
-            else addError("Can't use " + MY_TYPE_NAME + " for class '" + cNode.getName() + "' which has explicit visibility.", cNode);
+            else
+                addError("Can't use " + MY_TYPE_NAME + " for class '" + cNode.getName() + "' which has explicit visibility.", cNode);
         }
         if (value.contains(groovy.transform.PackageScopeTarget.METHODS)) {
             final List<MethodNode> mList = cNode.getMethods();
@@ -170,55 +222,6 @@ public class PackageScopeASTTransformation extends AbstractASTTransformation {
                 foundProp.setField(fNode);
             }
         }
-    }
-
-    private static void revertVisibility(FieldNode fNode) {
-        fNode.setModifiers(fNode.getModifiers() & ~ACC_PRIVATE);
-        fNode.setSynthetic(false);
-    }
-
-    private static void revertVisibility(MethodNode mNode) {
-        mNode.setModifiers(mNode.getModifiers() & ~ACC_PUBLIC);
-    }
-
-    private static void revertVisibility(ClassNode cNode) {
-        cNode.setModifiers(cNode.getModifiers() & ~ACC_PUBLIC);
-    }
-
-    private static List<groovy.transform.PackageScopeTarget> determineTargets(Expression expr) {
-        List<groovy.transform.PackageScopeTarget> list = new ArrayList<groovy.transform.PackageScopeTarget>();
-        if (expr instanceof PropertyExpression) {
-            list.add(extractTarget((PropertyExpression) expr));
-        } else if (expr instanceof ListExpression) {
-            final ListExpression expressionList = (ListExpression) expr;
-            final List<Expression> expressions = expressionList.getExpressions();
-            for (Expression ex : expressions) {
-                if (ex instanceof PropertyExpression) {
-                    list.add(extractTarget((PropertyExpression) ex));
-                }
-            }
-        }
-        return list;
-    }
-
-    private static groovy.transform.PackageScopeTarget extractTarget(PropertyExpression expr) {
-        Expression oe = expr.getObjectExpression();
-        if (oe instanceof ClassExpression) {
-            ClassExpression ce = (ClassExpression) oe;
-            if ("groovy.transform.PackageScopeTarget".equals(ce.getType().getName())) {
-                Expression prop = expr.getProperty();
-                if (prop instanceof ConstantExpression) {
-                    String propName = (String) ((ConstantExpression) prop).getValue();
-                    try {
-                        return PackageScopeTarget.valueOf(propName);
-                    } catch(IllegalArgumentException iae) {
-                        /* ignore */
-                    }
-                }
-            }
-        }
-        throw new GroovyBugError("Internal error during " + MY_TYPE_NAME
-                + " processing. Annotation parameters must be of type: " + TARGET_CLASS_NAME + ".");
     }
 
 }

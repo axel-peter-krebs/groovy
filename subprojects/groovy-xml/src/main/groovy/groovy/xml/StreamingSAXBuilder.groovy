@@ -27,14 +27,14 @@ import org.xml.sax.helpers.AttributesImpl
 class StreamingSAXBuilder extends AbstractStreamingBuilder {
     def pendingStack = []
 
-    def commentClosure = {doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, contentHandler ->
+    def commentClosure = { doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, contentHandler ->
         if (contentHandler instanceof LexicalHandler) {
             contentHandler.comment(body.toCharArray(), 0, body.size())
         }
     }
 
-    def piClosure = {doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, contentHandler ->
-        attrs.each {target, instruction ->
+    def piClosure = { doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, contentHandler ->
+        attrs.each { target, instruction ->
             if (instruction instanceof Map) {
                 contentHandler.processingInstruction(target, toMapStringClosure(instruction))
             } else {
@@ -43,19 +43,19 @@ class StreamingSAXBuilder extends AbstractStreamingBuilder {
         }
     }
 
-    def noopClosure = {doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, contentHandler ->
+    def noopClosure = { doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, contentHandler ->
         if (body != null) {
             processBody(body, doc, contentHandler)
         }
     }
 
-    def tagClosure = {tag, doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, contentHandler ->
+    def tagClosure = { tag, doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, contentHandler ->
         def attributes = new AttributesImpl()
-        attrs.each {key, value ->
+        attrs.each { key, value ->
             addAttributes(attributes, key, value, namespaces)
         }
         def hiddenNamespaces = [:]
-        pendingNamespaces.each {key, value ->
+        pendingNamespaces.each { key, value ->
             def k = (key == ':' ? '' : key)
             hiddenNamespaces[k] = namespaces[key]
             namespaces[k] = value
@@ -86,7 +86,7 @@ class StreamingSAXBuilder extends AbstractStreamingBuilder {
             pendingNamespaces.putAll pendingStack.pop()
         }
         contentHandler.endElement(uri, tag, qualifiedName)
-        hiddenNamespaces.each {key, value ->
+        hiddenNamespaces.each { key, value ->
             contentHandler.endPrefixMapping(key)
             if (value == null)
                 namespaces.remove key
@@ -139,21 +139,21 @@ class StreamingSAXBuilder extends AbstractStreamingBuilder {
     def builder = null
 
     StreamingSAXBuilder() {
-        specialTags.putAll(['yield': noopClosure,
-                'yieldUnescaped': noopClosure,
-                'comment': commentClosure,
-                'pi': piClosure])
+        specialTags.putAll(['yield'         : noopClosure,
+                            'yieldUnescaped': noopClosure,
+                            'comment'       : commentClosure,
+                            'pi'            : piClosure])
 
-        def nsSpecificTags = [':': [tagClosure, tagClosure, [:]],    // the default namespace
-                'http://www.w3.org/XML/1998/namespace': [tagClosure, tagClosure, [:]],
-                'http://www.codehaus.org/Groovy/markup/keywords': [badTagClosure, tagClosure, specialTags]]
+        def nsSpecificTags = [':'                                             : [tagClosure, tagClosure, [:]],    // the default namespace
+                              'http://www.w3.org/XML/1998/namespace'          : [tagClosure, tagClosure, [:]],
+                              'http://www.codehaus.org/Groovy/markup/keywords': [badTagClosure, tagClosure, specialTags]]
 
         this.builder = new BaseMarkupBuilder(nsSpecificTags)
     }
 
     def bind(closure) {
         def boundClosure = this.builder.bind(closure)
-        return {contentHandler ->
+        return { contentHandler ->
             contentHandler.startDocument()
             boundClosure.trigger = contentHandler
             contentHandler.endDocument()

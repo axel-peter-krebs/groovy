@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  * Using `{@code final}` and directly using `{@code @Final}` will have the same result.
  * However, the intention is almost never to use `{@code @Final}` directly but rather as part
  * of an annotation collector (meta-annotation).
- *
+ * <p>
  * If you like the behavior of an existing annotation but would really like a version that
  * also ensured the respective annotated node was final, you can create such an element, e.g.:
  * <pre>

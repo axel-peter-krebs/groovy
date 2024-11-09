@@ -26,18 +26,18 @@ import groovy.test.GroovyTestCase
 class Groovy770_Bug extends GroovyTestCase {
 
     void testBug() {
-        def a = new Pair(sym:"x")
-        def b = new Pair(sym:"y")
-        def c = new Pair(sym:"y")
+        def a = new Pair(sym: "x")
+        def b = new Pair(sym: "y")
+        def c = new Pair(sym: "y")
 
         def l1 = [a, b]
         def l2 = [c]
         assert l1 - l2 == l1
 
 
-        a = new CPair(sym:"x")
-        b = new CPair(sym:"y")
-        c = new CPair(sym:"y")
+        a = new CPair(sym: "x")
+        b = new CPair(sym: "y")
+        c = new CPair(sym: "y")
         l1 = [a, b]
         l2 = [c]
         assert l1 - l2 == [a]
@@ -47,14 +47,15 @@ class Groovy770_Bug extends GroovyTestCase {
 import java.util.*
 
 class Pair {
-  String sym
+    String sym
 }
 
 class CPair implements Comparable {
-  public String sym
-  int compareTo(Object o) {
-      return sym.compareTo(((CPair) o).sym);
-  }
+    public String sym
+
+    int compareTo(Object o) {
+        return sym.compareTo(((CPair) o).sym);
+    }
 }
 
 

@@ -91,21 +91,21 @@ public class MetaBeanProperty extends MetaProperty {
     }
 
     /**
-     * Get the setter method.
-     *
-     * @return the setter method for this property.
-     */
-    public MetaMethod getSetter() {
-        return setter;
-    }
-
-    /**
      * This is for MetaClass to patch up the object later when looking for get*() methods.
      *
      * @param getter The getter for this property
      */
     void setGetter(MetaMethod getter) {
         this.getter = getter;
+    }
+
+    /**
+     * Get the setter method.
+     *
+     * @return the setter method for this property.
+     */
+    public MetaMethod getSetter() {
+        return setter;
     }
 
     /**
@@ -140,20 +140,20 @@ public class MetaBeanProperty extends MetaProperty {
     }
 
     /**
-     * Sets the field of this property
-     *
-     * @param field
-     */
-    public void setField(CachedField field) {
-        this.field = field;
-    }
-
-    /**
      * Gets the field of this property
      *
      * @return The field of this property
      */
     public CachedField getField() {
         return field;
+    }
+
+    /**
+     * Sets the field of this property
+     *
+     * @param field
+     */
+    public void setField(CachedField field) {
+        this.field = field;
     }
 }

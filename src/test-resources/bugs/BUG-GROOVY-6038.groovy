@@ -29,7 +29,7 @@ import java.lang.annotation.*
 }
 
 class X {
-    @Upper.Inner(testInner='abc')
+    @Upper.Inner(testInner = 'abc')
     def m() {}
 }
 

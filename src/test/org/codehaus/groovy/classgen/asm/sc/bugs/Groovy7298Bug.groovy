@@ -25,7 +25,7 @@ import org.codehaus.groovy.classgen.asm.sc.StaticCompilationTestSupport
 
 class Groovy7298Bug extends StaticTypeCheckingTestCase implements StaticCompilationTestSupport {
     void testShouldNotThrowNPEInTypeResolver() {
-            assertScript '''
+        assertScript '''
 
 public <T> T tryToExecuteWithFreePort(Closure<T> closure) {
     [1].each {

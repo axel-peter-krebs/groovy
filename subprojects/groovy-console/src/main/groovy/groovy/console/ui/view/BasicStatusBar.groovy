@@ -26,10 +26,10 @@ statusPanel = panel(constraints: BorderLayout.SOUTH) {
     gridBagLayout()
     separator(gridwidth: GridBagConstraints.REMAINDER, fill: GridBagConstraints.HORIZONTAL)
     status = label("Welcome to Groovy ${GroovySystem.version}.",
-            weightx: 1.0,
-            anchor: GridBagConstraints.WEST,
-            fill: GridBagConstraints.HORIZONTAL,
-            insets: [1, 3, 1, 3])
+        weightx: 1.0,
+        anchor: GridBagConstraints.WEST,
+        fill: GridBagConstraints.HORIZONTAL,
+        insets: [1, 3, 1, 3])
     separator(orientation: SwingConstants.VERTICAL, fill: GridBagConstraints.VERTICAL)
     rowNumAndColNum = label('1:1', insets: [1, 3, 1, 3])
 }

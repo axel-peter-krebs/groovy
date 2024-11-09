@@ -145,19 +145,19 @@ public abstract class AbstractHttpServlet extends HttpServlet implements Resourc
      * See AbstractHttpServlet#logGROOVY861
      */
     protected boolean reflection;
-
+    /**
+     * a.fink: it was in {@link #removeNamePrefix}, but was extracted to var for optimization
+     */
+    protected String namePrefix;
     /**
      * Debug flag logging the classloader of the request.
      */
     private boolean logGROOVY861;
 
-    /** a.fink: it was in {@link #removeNamePrefix}, but was extracted to var for optimization*/
-    protected String namePrefix;
-
     /**
      * Initializes all fields with default values.
      */
-    public AbstractHttpServlet () {
+    public AbstractHttpServlet() {
         this.servletContext = null;
         this.resourceNameReplacement = null;
         this.resourceNameReplaceAll = true;
@@ -166,15 +166,19 @@ public abstract class AbstractHttpServlet extends HttpServlet implements Resourc
         this.logGROOVY861 = false;
     }
 
-    protected void generateNamePrefixOnce () {
+    protected void generateNamePrefixOnce() {
         URI uri = null;
 
         String realPath = servletContext.getRealPath("/");
-        if (realPath != null) { uri = new File(realPath).toURI();}//prevent NPE if in .war
+        if (realPath != null) {
+            uri = new File(realPath).toURI();
+        }//prevent NPE if in .war
 
         try {
             URL res = servletContext.getResource("/");
-            if (res != null) { uri = res.toURI(); }
+            if (res != null) {
+                uri = res.toURI();
+            }
         } catch (MalformedURLException | URISyntaxException ignore) {
         }
 
@@ -183,7 +187,7 @@ public abstract class AbstractHttpServlet extends HttpServlet implements Resourc
                 namePrefix = uri.toURL().toExternalForm();
                 return;
             } catch (MalformedURLException e) {
-                log("generateNamePrefixOnce [ERROR] Malformed URL for base path / == '"+ uri +'\'', e);
+                log("generateNamePrefixOnce [ERROR] Malformed URL for base path / == '" + uri + '\'', e);
             }
         }
 
@@ -204,7 +208,7 @@ public abstract class AbstractHttpServlet extends HttpServlet implements Resourc
      * Interface method for ResourceContainer. This is used by the GroovyScriptEngine.
      */
     @Override
-    public URLConnection getResourceConnection (String name) throws ResourceException {
+    public URLConnection getResourceConnection(String name) throws ResourceException {
         name = removeNamePrefix(name).replace('\\', '/');
 
         //remove the leading / as we are trying with a leading / now
@@ -215,8 +219,8 @@ public abstract class AbstractHttpServlet extends HttpServlet implements Resourc
         }
 
         /*
-        * Try to locate the resource and return an opened connection to it.
-        */
+         * Try to locate the resource and return an opened connection to it.
+         */
         try {
             URL url = servletContext.getResource('/' + name);
             if (url == null) {
@@ -236,7 +240,7 @@ public abstract class AbstractHttpServlet extends HttpServlet implements Resourc
      *
      * @param request the http request to analyze
      * @return the include-aware uri either parsed from request attributes or
-     *         hints provided by the servlet container
+     * hints provided by the servlet container
      */
     protected String getScriptUri(HttpServletRequest request) {
         /*
@@ -302,7 +306,7 @@ public abstract class AbstractHttpServlet extends HttpServlet implements Resourc
         return applyResourceNameMatcher(uri);
     }
 
-    protected String applyResourceNameMatcher (String uri) {
+    protected String applyResourceNameMatcher(String uri) {
         if (resourceNamePattern != null) {// mangle resource name with the compiled pattern.
             Matcher matcher = resourceNamePattern.matcher(uri);
 
@@ -325,12 +329,11 @@ public abstract class AbstractHttpServlet extends HttpServlet implements Resourc
     /**
      * Parses the http request for the real script or template source file.
      *
-     * @param request
-     *            the http request to analyze
+     * @param request the http request to analyze
      * @return a file object using an absolute file path name, or <code>null</code> if the
-     *         servlet container cannot translate the virtual path to a real
-     *         path for any reason (such as when the content is being made
-     *         available from a .war archive).
+     * servlet container cannot translate the virtual path to a real
+     * path for any reason (such as when the content is being made
+     * available from a .war archive).
      */
     protected File getScriptUriAsFile(HttpServletRequest request) {
         String uri = getScriptUri(request);
@@ -391,7 +394,7 @@ public abstract class AbstractHttpServlet extends HttpServlet implements Resourc
             int flags = 0; // TODO : Parse pattern compile flags (literal names).
             String flagsStr = config.getInitParameter(INIT_PARAM_RESOURCE_NAME_REGEX_FLAGS);
             if (flagsStr != null && flagsStr.length() > 0) {
-              flags = Integer.decode(flagsStr.trim());//throws NumberFormatException
+                flags = Integer.decode(flagsStr.trim());//throws NumberFormatException
             }
             resourceNamePattern = Pattern.compile(regex, flags);
             this.resourceNameReplacement = replacement;

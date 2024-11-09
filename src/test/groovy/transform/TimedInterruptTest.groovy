@@ -145,7 +145,8 @@ final class TimedInterruptTest {
         '''
     }
 
-    @Test // TODO: not sure all these tests are pulling their weight - testing Groovy annotation type handing not subject
+    @Test
+    // TODO: not sure all these tests are pulling their weight - testing Groovy annotation type handing not subject
     void testErrorHandling() {
         shouldFail shell, MultipleCompilationErrorsException, '''
             @TimedInterrupt(value = "5")
@@ -221,7 +222,7 @@ final class TimedInterruptTest {
 
     //--------------------------------------------------------------------------
 
-    static void assertPassesNormalFailsSlowExecution(Map<String,?> args, Class type) {
+    static void assertPassesNormalFailsSlowExecution(Map<String, ?> args, Class type) {
         def system = new StubFor(System)
         system.demand.nanoTime() { 666L }
         def instance

@@ -339,7 +339,7 @@ class SyntaxTest extends CompilableTestSupport {
         */
         // tag::gstring_3b3[]
         assert 'The x-coordinate of the treasure is represented by treasure.x' ==
-                "The x-coordinate of the $thing is represented by ${thing}.x"  // <= Curly braces required
+            "The x-coordinate of the $thing is represented by ${thing}.x"  // <= Curly braces required
         // end::gstring_3b3[]
 
         // tag::gstring_4[]
@@ -365,7 +365,7 @@ class SyntaxTest extends CompilableTestSupport {
         def c2 = 'B' as char // <2>
         assert c2 instanceof Character
 
-        def c3 = (char)'C' // <3>
+        def c3 = (char) 'C' // <3>
         assert c3 instanceof Character
         // end::char[]
     }
@@ -375,21 +375,21 @@ class SyntaxTest extends CompilableTestSupport {
         def sParameterLessClosure = "1 + 2 == ${-> 3}" // <1>
         assert sParameterLessClosure == '1 + 2 == 3'
 
-        def sOneParamClosure = "1 + 2 == ${ w -> w << 3}" // <2>
+        def sOneParamClosure = "1 + 2 == ${w -> w << 3}" // <2>
         assert sOneParamClosure == '1 + 2 == 3'
         // end::closure_in_gstring_1[]
 
         // tag::closure_in_gstring_2[]
         def number = 1 // <1>
         def eagerGString = "value == ${number}"
-        def lazyGString = "value == ${ -> number }"
+        def lazyGString = "value == ${-> number}"
 
         assert eagerGString == "value == 1" // <2>
-        assert lazyGString ==  "value == 1" // <3>
+        assert lazyGString == "value == 1" // <3>
 
         number = 2 // <4>
         assert eagerGString == "value == 1" // <5>
-        assert lazyGString ==  "value == 2" // <6>
+        assert lazyGString == "value == 2" // <6>
         // end::closure_in_gstring_2[]
     }
 
@@ -539,44 +539,44 @@ class SyntaxTest extends CompilableTestSupport {
     void testIntegralNumberDeclarations() {
         // tag::int_decl[]
         // primitive types
-        byte  b = 1
-        char  c = 2
+        byte b = 1
+        char c = 2
         short s = 3
-        int   i = 4
-        long  l = 5
+        int i = 4
+        long l = 5
 
         // infinite precision
-        BigInteger bi =  6
+        BigInteger bi = 6
         // end::int_decl[]
 
-        assert b  instanceof Byte
-        assert c  instanceof Character
-        assert s  instanceof Short
-        assert i  instanceof Integer
-        assert l  instanceof Long
+        assert b instanceof Byte
+        assert c instanceof Character
+        assert s instanceof Short
+        assert i instanceof Integer
+        assert l instanceof Long
         assert bi instanceof BigInteger
     }
 
     void testDecimalNumberDeclarations() {
         // tag::float_decl[]
         // primitive types
-        float  f = 1.234
+        float f = 1.234
         double d = 2.345
 
         // infinite precision
-        BigDecimal bd =  3.456
+        BigDecimal bd = 3.456
         // end::float_decl[]
 
-        assert f  instanceof Float
-        assert d  instanceof Double
+        assert f instanceof Float
+        assert d instanceof Double
         assert bd instanceof BigDecimal
 
         // tag::float_exp[]
-        assert 1e3  ==  1_000.0
-        assert 2E4  == 20_000.0
-        assert 3e+1 ==     30.0
-        assert 4E-2 ==      0.04
-        assert 5e-1 ==      0.5
+        assert 1e3 == 1_000.0
+        assert 2E4 == 20_000.0
+        assert 3e+1 == 30.0
+        assert 4E-2 == 0.04
+        assert 5e-1 == 0.5
         // end::float_exp[]
     }
 
@@ -629,42 +629,42 @@ class SyntaxTest extends CompilableTestSupport {
     void testNumberPower() {
         // tag::number_power[]
         // base and exponent are ints and the result can be represented by an Integer
-        assert    2    **   3    instanceof Integer    //  8
-        assert   10    **   9    instanceof Integer    //  1_000_000_000
+        assert 2**3 instanceof Integer    //  8
+        assert 10**9 instanceof Integer    //  1_000_000_000
 
         // the base is a long, so fit the result in a Long
         // (although it could have fit in an Integer)
-        assert    5L   **   2    instanceof Long       //  25
+        assert 5L**2 instanceof Long       //  25
 
         // the result can't be represented as an Integer or Long, so return a BigInteger
-        assert  100    **  10    instanceof BigInteger //  10e20
-        assert 1234    ** 123    instanceof BigInteger //  170515806212727042875...
+        assert 100**10 instanceof BigInteger //  10e20
+        assert 1234**123 instanceof BigInteger //  170515806212727042875...
 
         // the base is a BigDecimal and the exponent a negative int
         // but the result can be represented as an Integer
-        assert    0.5  **  -2    instanceof Integer    //  4
+        assert 0.5**-2 instanceof Integer    //  4
 
         // the base is an int, and the exponent a negative float
         // but again, the result can be represented as an Integer
-        assert    1    **  -0.3f instanceof Integer    //  1
+        assert 1**-0.3f instanceof Integer    //  1
 
         // the base is an int, and the exponent a negative int
         // but the result will be calculated as a Double
         // (both base and exponent are actually converted to doubles)
-        assert   10    **  -1    instanceof Double     //  0.1
+        assert 10**-1 instanceof Double     //  0.1
 
         // the base is a BigDecimal, and the exponent is an int, so return a BigDecimal
-        assert    1.2  **  10    instanceof BigDecimal //  6.1917364224
+        assert 1.2**10 instanceof BigDecimal //  6.1917364224
 
         // the base is a float or double, and the exponent is an int
         // but the result can only be represented as a Double value
-        assert    3.4f **   5    instanceof Double     //  454.35430372146965
-        assert    5.6d **   2    instanceof Double     //  31.359999999999996
+        assert 3.4f**5 instanceof Double     //  454.35430372146965
+        assert 5.6d**2 instanceof Double     //  31.359999999999996
 
         // the exponent is a decimal value
         // and the result can only be represented as a Double value
-        assert    7.8  **   1.9  instanceof Double     //  49.542708423868476
-        assert    2    **   0.1f instanceof Double     //  1.0717734636432956
+        assert 7.8**1.9 instanceof Double     //  49.542708423868476
+        assert 2**0.1f instanceof Double     //  1.0717734636432956
         // end::number_power[]
     }
 
@@ -707,7 +707,7 @@ class SyntaxTest extends CompilableTestSupport {
         assert letters[2] == 'C'
 
         letters << 'e'               // <4>
-        assert letters[ 4] == 'e'
+        assert letters[4] == 'e'
         assert letters[-1] == 'e'
 
         assert letters[1, 3] == ['b', 'd']         // <5>
@@ -756,10 +756,10 @@ class SyntaxTest extends CompilableTestSupport {
         def colors = [red: '#FF0000', green: '#00FF00', blue: '#0000FF']   // <1>
 
         assert colors['red'] == '#FF0000'    // <2>
-        assert colors.green  == '#00FF00'    // <3>
+        assert colors.green == '#00FF00'    // <3>
 
         colors['pink'] = '#FF00FF'           // <4>
-        colors.yellow  = '#FFFF00'           // <5>
+        colors.yellow = '#FFFF00'           // <5>
 
         assert colors.pink == '#FF00FF'
         assert colors['yellow'] == '#FFFF00'

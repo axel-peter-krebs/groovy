@@ -259,7 +259,7 @@ final class MixedModeStaticCompilationTest extends StaticTypeCheckingTestCase im
                 }
             }
         ''',
-        'Cannot statically compile constructor implicitly including non-static elements from fields, properties or initializers'
+            'Cannot statically compile constructor implicitly including non-static elements from fields, properties or initializers'
     }
 
     void testSCClosureCanAccessPrivateFieldsOfNonSCEnclosingClass() {

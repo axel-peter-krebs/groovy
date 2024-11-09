@@ -49,10 +49,10 @@ abstract class CompleterTestSupport extends GroovyTestCase {
 
         groovyshMocker = new MockFor(Groovysh)
         // no-arg constructor
-        groovyshMocker.demand.getClass( 1) { Groovysh }
+        groovyshMocker.demand.getClass(1) { Groovysh }
         groovyshMocker.demand.getIo(0..21) { testio }
         groovyshMocker.demand.register(18) { it }
         // new command
-        groovyshMocker.demand.getIo( 0..3) { testio }
+        groovyshMocker.demand.getIo(0..3) { testio }
     }
 }

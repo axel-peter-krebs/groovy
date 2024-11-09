@@ -334,7 +334,7 @@ class WorkingWithCollectionsTest extends GroovyTestCase {
 
         def list2 = [7, 4, -6, -1, 11, 2, 3, -9, 5, -13]
         assert list2.sort { a, b -> a == b ? 0 : Math.abs(a) < Math.abs(b) ? -1 : 1 } ==
-                [-1, 2, 3, 4, 5, -6, 7, -9, 11, -13]
+            [-1, 2, 3, 4, 5, -6, 7, -9, 11, -13]
 
         Comparator mc = { a, b -> a == b ? 0 : Math.abs(a) < Math.abs(b) ? -1 : 1 }
 
@@ -499,9 +499,9 @@ class WorkingWithCollectionsTest extends GroovyTestCase {
     void testMapIteration() {
         // tag::map_iteration[]
         def map = [
-                Bob  : 42,
-                Alice: 54,
-                Max  : 33
+            Bob  : 42,
+            Alice: 54,
+            Max  : 33
         ]
 
         // `entry` is a map entry
@@ -646,8 +646,8 @@ class WorkingWithCollectionsTest extends GroovyTestCase {
     void testMapConstruct() {
         // tag::map_construct[]
         def map = [
-                simple : 123,
-                complex: [a: 1, b: 2]
+            simple : 123,
+            complex: [a: 1, b: 2]
         ]
         def map2 = map.clone()
         assert map2.get('simple') == map.get('simple')
@@ -670,12 +670,12 @@ class WorkingWithCollectionsTest extends GroovyTestCase {
 
         // tag::gpath_support_2[]
         // But this will only collect non-null values
-        assert listOfMaps.a == [11,21]
+        assert listOfMaps.a == [11, 21]
         // end::gpath_support_2[]
 
         // tag::gpath_support_3[]
-        assert [ 'z': 900,
-                 *: ['a': 100, 'b': 200], 'a': 300] == ['a': 300, 'b': 200, 'z': 900]
+        assert ['z': 900,
+                *  : ['a': 100, 'b': 200], 'a': 300] == ['a': 300, 'b': 200, 'z': 900]
         //spread map notation in map definition
         assert [*: [3: 3, *: [5: 5]], 7: 7] == [3: 3, 5: 5, 7: 7]
 
@@ -688,7 +688,7 @@ class WorkingWithCollectionsTest extends GroovyTestCase {
         f = { m, i, j, k -> [m, i, j, k] }
         //using spread map notation with mixed unnamed and named arguments
         assert f('e': 100, *[4, 5], *: ['a': 10, 'b': 20, 'c': 30], 6) ==
-                [["e": 100, "b": 20, "c": 30, "a": 10], 4, 5, 6]
+            [["e": 100, "b": 20, "c": 30, "a": 10], 4, 5, 6]
         // end::gpath_support_3[]
 
     }
@@ -721,8 +721,8 @@ class WorkingWithCollectionsTest extends GroovyTestCase {
         assert sub == 'cheese'
 
         def list = [10, 11, 12, 13]
-        def answer = list[2,3]
-        assert answer == [12,13]
+        def answer = list[2, 3]
+        assert answer == [12, 13]
         // end::subscript[]
 
         // tag::subscript_2[]
@@ -732,9 +732,9 @@ class WorkingWithCollectionsTest extends GroovyTestCase {
         // end::subscript_2[]
 
         // tag::subscript_3[]
-        list = ['a','x','x','d']
-        list[1..2] = ['b','c']
-        assert list == ['a','b','c','d']
+        list = ['a', 'x', 'x', 'd']
+        list[1..2] = ['b', 'c']
+        assert list == ['a', 'b', 'c', 'd']
         // end::subscript_3[]
 
         // tag::subscript_4[]

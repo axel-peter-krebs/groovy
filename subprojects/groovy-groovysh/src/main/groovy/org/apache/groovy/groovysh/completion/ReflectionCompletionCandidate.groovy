@@ -48,7 +48,7 @@ class ReflectionCompletionCandidate implements Comparable<ReflectionCompletionCa
         boolean otherBracket = o.value.contains('(')
         if (hasBracket == otherBracket) {
             this.value.compareTo(o.value)
-        } else if (hasBracket && ! otherBracket) {
+        } else if (hasBracket && !otherBracket) {
             return -1
         } else {
             return 1

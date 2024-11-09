@@ -35,5 +35,5 @@ class ClosureCloneTest extends GroovyTestCase {
 
         value = c2(6)
         assert value == 12
-    }  
+    }
 }

@@ -16,6 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 class Foo extends Specification {
     def foo() {
         expect: true

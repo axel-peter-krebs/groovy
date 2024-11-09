@@ -134,7 +134,7 @@ final class AbstractClassAndInterfaceTest extends CompilableTestSupport {
             return b.methodTwo()
         '''
 
-       shouldNotCompile '''
+        shouldNotCompile '''
             abstract class A {
                 abstract void methodOne(Object o)
                 Object methodTwo(){
@@ -221,7 +221,7 @@ final class AbstractClassAndInterfaceTest extends CompilableTestSupport {
             }
             assert new B().foo()==1
        '''
-       shell.evaluate(text)
+        shell.evaluate(text)
     }
 
     void testImplementsDuplicateInterface() {

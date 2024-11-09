@@ -6257,7 +6257,7 @@ class GinqTest {
 
     @Test
     void "testGinq - window - 90"() {
-        assertGinqScript'''
+        assertGinqScript '''
             assert [[1, 4], [2, 2], [3, 4]] == GQ {
                 from n in [1, 2, 3]
                 join m in [1, 2, 3] on m == n

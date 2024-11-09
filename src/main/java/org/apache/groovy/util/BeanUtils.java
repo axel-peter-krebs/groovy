@@ -20,6 +20,9 @@ package org.apache.groovy.util;
 
 public class BeanUtils {
 
+    private BeanUtils() {
+    }
+
     /**
      * Returns a string which is the same as the original except the first letter
      * will be lowercase except for some special cases as per JavaBean handling.
@@ -30,14 +33,13 @@ public class BeanUtils {
      *
      * @param property a string representing the name of a JavaBean-like property
      * @return the decapitalized string
-     *
-     * @since 3.0.0
      * @see <a href="https://stackoverflow.com/questions/4052840/most-efficient-way-to-make-the-first-character-of-a-string-lower-case/4052914">A relevant stack overflow question</a>
+     * @since 3.0.0
      */
     public static String decapitalize(final String property) {
         int propertyLength = (property == null ? 0 : property.length());
         if (propertyLength == 0 || !Character.isUpperCase(property.charAt(0))
-                || (propertyLength > 1 && Character.isUpperCase(property.charAt(1)))) {
+            || (propertyLength > 1 && Character.isUpperCase(property.charAt(1)))) {
             return property;
         }
         final char[] c = property.toCharArray();
@@ -52,20 +54,16 @@ public class BeanUtils {
      *
      * @param property the property name to capitalize
      * @return the name capitalized, except when we don't
-     *
      * @since 3.0.0
      */
     public static String capitalize(final String property) {
         int propertyLength = (property == null ? 0 : property.length());
         if (propertyLength == 0 || !Character.isLowerCase(property.charAt(0))
-                || (propertyLength > 1 && Character.isUpperCase(property.charAt(1)))) {
+            || (propertyLength > 1 && Character.isUpperCase(property.charAt(1)))) {
             return property;
         }
         final char[] c = property.toCharArray();
         c[0] = Character.toUpperCase(c[0]);
         return new String(c);
-    }
-
-    private BeanUtils() {
     }
 }

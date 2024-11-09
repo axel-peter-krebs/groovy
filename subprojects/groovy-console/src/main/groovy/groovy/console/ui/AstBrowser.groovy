@@ -123,62 +123,63 @@ class AstBrowser {
         showTreeView = prefs.showTreeView
 
         frame = swing.frame(title: 'Groovy AST Browser' + (name ? " - $name" : ''),
-                location: prefs.frameLocation,
-                size: prefs.frameSize,
-                iconImage: swing.imageIcon(Console.ICON_PATH).image,
-                defaultCloseOperation: WindowConstants.DISPOSE_ON_CLOSE,
-                windowClosing: { event -> prefs.save(frame, splitterPane, mainSplitter, showScriptFreeForm, showScriptClass, showClosureClasses, phasePicker.selectedItem, showTreeView) }) {
+            location: prefs.frameLocation,
+            size: prefs.frameSize,
+            iconImage: swing.imageIcon(Console.ICON_PATH).image,
+            defaultCloseOperation: WindowConstants.DISPOSE_ON_CLOSE,
+            windowClosing: { event -> prefs.save(frame, splitterPane, mainSplitter, showScriptFreeForm, showScriptClass, showClosureClasses, phasePicker.selectedItem, showTreeView) }) {
 
             menuBar {
                 menu(text: 'Show Script', mnemonic: 'S') {
                     checkBoxMenuItem(selected: showScriptFreeForm) {
                         action(name: 'Free Form', closure: this.&showScriptFreeForm,
-                                mnemonic: 'F',)
+                            mnemonic: 'F',)
                     }
                     checkBoxMenuItem(selected: showScriptClass) {
                         action(name: 'Class Form', closure: this.&showScriptClass,
-                                mnemonic: 'C')
+                            mnemonic: 'C')
                     }
                     checkBoxMenuItem(selected: showClosureClasses) {
                         action(name: 'Generated Closure/Lambda Classes', closure: this.&showClosureClasses,
-                                mnemonic: 'G')
+                            mnemonic: 'G')
                     }
                     checkBoxMenuItem(selected: showTreeView) {
                         action(name: 'Tree View', closure: this.&showTreeView,
-                                mnemonic: 'T')
+                            mnemonic: 'T')
                     }
                 }
                 menu(text: 'View', mnemonic: 'V') {
                     menuItem {
                         action(
-                                name: 'Larger Font',
-                                closure: this.&largerFont,
-                                mnemonic: 'L',
-                                smallIcon: imageIcon(resource: 'icons/font_up.png', class: this),
-                                accelerator: shortcut('shift L'))
+                            name: 'Larger Font',
+                            closure: this.&largerFont,
+                            mnemonic: 'L',
+                            smallIcon: imageIcon(resource: 'icons/font_up.png', class: this),
+                            accelerator: shortcut('shift L'))
                     }
                     menuItem {
                         action(name: 'Smaller Font',
-                                closure: this.&smallerFont,
-                                mnemonic: 'S',
-                                smallIcon: imageIcon(resource: 'icons/font_down.png', class: this),
-                                accelerator: shortcut('shift S'))
+                            closure: this.&smallerFont,
+                            mnemonic: 'S',
+                            smallIcon: imageIcon(resource: 'icons/font_down.png', class: this),
+                            accelerator: shortcut('shift S'))
                     }
                     menuItem {
                         refreshAction = action(
-                                name: 'Refresh',
-                                closure: {
-                                    decompile(phasePicker.selectedItem.phaseId, script())
-                                    compile(jTree, script(), phasePicker.selectedItem.phaseId)
-                                    initAuxViews()
-                                },
-                                mnemonic: 'R',
-                                smallIcon: imageIcon(resource: 'icons/page_refresh.png', class: this),
-                                accelerator: KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0))
+                            name: 'Refresh',
+                            closure: {
+                                decompile(phasePicker.selectedItem.phaseId, script())
+                                compile(jTree, script(), phasePicker.selectedItem.phaseId)
+                                initAuxViews()
+                            },
+                            mnemonic: 'R',
+                            smallIcon: imageIcon(resource: 'icons/page_refresh.png', class: this),
+                            accelerator: KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0))
                     }
                 }
                 menu(text: 'Help', mnemonic: 'H') {
-                    menuItem { action(
+                    menuItem {
+                        action(
                             name: 'About',
                             closure: this.&aboutAction,
                             smallIcon: imageIcon(resource: 'icons/information.png', class: this),
@@ -189,68 +190,68 @@ class AstBrowser {
             panel {
                 gridBagLayout()
                 label(text: 'At end of Phase: ',
-                        constraints: gbc(gridx: 0, gridy: 0, gridwidth: 1, gridheight: 1, weightx: 0, weighty: 0, anchor: WEST, fill: HORIZONTAL, insets: [2, 2, 2, 2]))
+                    constraints: gbc(gridx: 0, gridy: 0, gridwidth: 1, gridheight: 1, weightx: 0, weighty: 0, anchor: WEST, fill: HORIZONTAL, insets: [2, 2, 2, 2]))
                 phasePicker = comboBox(items: CompilePhaseAdapter.values(),
-                        selectedItem: prefs.selectedPhase,
-                        actionPerformed: {
-                            // reset text to the default as the phase change removes the focus from the class node
-                            initAuxViews()
+                    selectedItem: prefs.selectedPhase,
+                    actionPerformed: {
+                        // reset text to the default as the phase change removes the focus from the class node
+                        initAuxViews()
 
-                            decompile(phasePicker.selectedItem.phaseId, script())
-                            compile(jTree, script(), phasePicker.selectedItem.phaseId)
-                        },
-                        constraints: gbc(gridx: 1, gridy: 0, gridwidth: 1, gridheight: 1, weightx: 1.0, weighty: 0, anchor: NORTHWEST, fill: NONE, insets: [2, 2, 2, 2]))
+                        decompile(phasePicker.selectedItem.phaseId, script())
+                        compile(jTree, script(), phasePicker.selectedItem.phaseId)
+                    },
+                    constraints: gbc(gridx: 1, gridy: 0, gridwidth: 1, gridheight: 1, weightx: 1.0, weighty: 0, anchor: NORTHWEST, fill: NONE, insets: [2, 2, 2, 2]))
                 button(text: 'Refresh',
-                        actionPerformed: {
-                            decompile(phasePicker.selectedItem.phaseId, script())
-                            compile(jTree, script(), phasePicker.selectedItem.phaseId)
-                            initAuxViews()
-                        },
-                        constraints: gbc(gridx: 2, gridy: 0, gridwidth: 1, gridheight: 1, weightx: 0, weighty: 0, anchor: NORTHEAST, fill: NONE, insets: [2, 2, 2, 3]))
+                    actionPerformed: {
+                        decompile(phasePicker.selectedItem.phaseId, script())
+                        compile(jTree, script(), phasePicker.selectedItem.phaseId)
+                        initAuxViews()
+                    },
+                    constraints: gbc(gridx: 2, gridy: 0, gridwidth: 1, gridheight: 1, weightx: 0, weighty: 0, anchor: NORTHEAST, fill: NONE, insets: [2, 2, 2, 3]))
                 splitterPane = splitPane(
-                        visible: showTreeView,
-                        leftComponent: scrollPane {
-                            jTree = tree(
-                                    name: 'AstTreeView', rowHeight: 0, /* force recalc */
-                                    model: new DefaultTreeModel(new DefaultMutableTreeNode('Loading...'))) {}
-                        },
-                        rightComponent: scrollPane {
-                            propertyTable = table(new CellValueToolTipJTable(), selectionMode: SINGLE_SELECTION) {
-                                tableModel(list: [[:]]) {
-                                    propertyColumn(header: 'Name', propertyName: 'name')
-                                    propertyColumn(header: 'Value  (double-click to browse)', propertyName: 'value')
-                                    propertyColumn(header: 'Type', propertyName: 'type')
-                                    propertyColumn(header: 'Raw', propertyName: 'raw')
-                                }
+                    visible: showTreeView,
+                    leftComponent: scrollPane {
+                        jTree = tree(
+                            name: 'AstTreeView', rowHeight: 0, /* force recalc */
+                            model: new DefaultTreeModel(new DefaultMutableTreeNode('Loading...'))) {}
+                    },
+                    rightComponent: scrollPane {
+                        propertyTable = table(new CellValueToolTipJTable(), selectionMode: SINGLE_SELECTION) {
+                            tableModel(list: [[:]]) {
+                                propertyColumn(header: 'Name', propertyName: 'name')
+                                propertyColumn(header: 'Value  (double-click to browse)', propertyName: 'value')
+                                propertyColumn(header: 'Type', propertyName: 'type')
+                                propertyColumn(header: 'Raw', propertyName: 'raw')
                             }
-                            propertyTable.columnModel.with {
-                                // raw column hidden
-                                getColumn(3).with {
-                                    minWidth = 0
-                                    maxWidth = 0
-                                    width = 0
-                                    preferredWidth = 0
-                                }
-                                // allow more space for value column
-                                getColumn(0).preferredWidth = 100
-                                getColumn(1).preferredWidth = 400
-                                getColumn(2).preferredWidth = 100
-                            }
-                            propertyTable.addMouseListener(mouseListener(3) { row ->
-                                'Browsing ' + jTree.lastSelectedPathComponent.userObject + ": " + propertyTable.model.getValueAt(row, 0)
-                            })
-                            propertyTable.setDefaultEditor(Object, null)
                         }
+                        propertyTable.columnModel.with {
+                            // raw column hidden
+                            getColumn(3).with {
+                                minWidth = 0
+                                maxWidth = 0
+                                width = 0
+                                preferredWidth = 0
+                            }
+                            // allow more space for value column
+                            getColumn(0).preferredWidth = 100
+                            getColumn(1).preferredWidth = 400
+                            getColumn(2).preferredWidth = 100
+                        }
+                        propertyTable.addMouseListener(mouseListener(3) { row ->
+                            'Browsing ' + jTree.lastSelectedPathComponent.userObject + ": " + propertyTable.model.getValueAt(row, 0)
+                        })
+                        propertyTable.setDefaultEditor(Object, null)
+                    }
                 ) {}
                 mainSplitter = splitPane(
-                        orientation: JSplitPane.VERTICAL_SPLIT,
-                        topComponent: splitterPane,
-                        bottomComponent: tabbedPane {
-                            widget(decompiledSource = new ConsoleTextEditor(editable: false, showLineNumbers: false), title: 'Source')
-                            widget(bytecodeView = new ConsoleTextEditor(editable: false, showLineNumbers: false), title: getByteCodeTitle())
-                            widget(asmifierView = new ConsoleTextEditor(editable: false, showLineNumbers: false), title: getASMifierTitle())
-                        },
-                        constraints: gbc(gridx: 0, gridy: 2, gridwidth: 3, gridheight: 1, weightx: 1.0, weighty: 1.0, anchor: NORTHWEST, fill: BOTH, insets: [2, 2, 2, 2])) {
+                    orientation: JSplitPane.VERTICAL_SPLIT,
+                    topComponent: splitterPane,
+                    bottomComponent: tabbedPane {
+                        widget(decompiledSource = new ConsoleTextEditor(editable: false, showLineNumbers: false), title: 'Source')
+                        widget(bytecodeView = new ConsoleTextEditor(editable: false, showLineNumbers: false), title: getByteCodeTitle())
+                        widget(asmifierView = new ConsoleTextEditor(editable: false, showLineNumbers: false), title: getASMifierTitle())
+                    },
+                    constraints: gbc(gridx: 0, gridy: 2, gridwidth: 3, gridheight: 1, weightx: 1.0, weighty: 1.0, anchor: NORTHWEST, fill: BOTH, insets: [2, 2, 2, 2])) {
                 }
 
             }
@@ -379,19 +380,19 @@ class AstBrowser {
                 if (e.isPopupTrigger()) {
                     def popup = swing.popupMenu {
                         menuItem(action(
-                                name: 'Copy',
-                                closure: outer.&copyAction.curry(table, e),
-                                mnemonic: 'C',
-                                accelerator: shortcut('C'),
-                                smallIcon: imageIcon(resource: 'icons/page_copy.png', class: this),
-                                shortDescription: 'Copy'
+                            name: 'Copy',
+                            closure: outer.&copyAction.curry(table, e),
+                            mnemonic: 'C',
+                            accelerator: shortcut('C'),
+                            smallIcon: imageIcon(resource: 'icons/page_copy.png', class: this),
+                            shortDescription: 'Copy'
                         ))
                         menuItem(action(
-                                name: 'Browse',
-                                enabled: table.model.getValueAt(table.selectedRow, valueCol) != null,
-                                closure: outer.&launchAction.curry(table, valueCol, pathClosure),
-                                smallIcon: imageIcon(resource: 'icons/page_white_go.png', class: this),
-                                shortDescription: 'Browse'
+                            name: 'Browse',
+                            enabled: table.model.getValueAt(table.selectedRow, valueCol) != null,
+                            closure: outer.&launchAction.curry(table, valueCol, pathClosure),
+                            smallIcon: imageIcon(resource: 'icons/page_white_go.png', class: this),
+                            shortDescription: 'Browse'
                         ))
                     }
                     popup.show(e.component, e.x, e.y)
@@ -576,11 +577,11 @@ class AstBrowserUiPreferences {
     AstBrowserUiPreferences() {
         Preferences prefs = Preferences.userNodeForPackage(AstBrowserUiPreferences)
         frameLocation = [
-                prefs.getInt('frameX', 200),
-                prefs.getInt('frameY', 200)]
+            prefs.getInt('frameX', 200),
+            prefs.getInt('frameY', 200)]
         frameSize = [
-                prefs.getInt('frameWidth', 800),
-                prefs.getInt('frameHeight', 600)]
+            prefs.getInt('frameWidth', 800),
+            prefs.getInt('frameHeight', 600)]
 
         decompiledSourceFontSize = prefs.getInt('decompiledFontSize', 12)
         verticalDividerLocation = Math.max(prefs.getInt('verticalSplitterLocation', 100), 100)

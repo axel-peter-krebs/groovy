@@ -63,12 +63,14 @@ switch (a) {
     default: break;
 }
 
-switch (a) {case 1:
+switch (a) {
+    case 1:
     case 2 + 3: break;
     case 3: break;
     case 4 + 2:
     case 5:
-    default: break;}
+    default: break;
+}
 
 switch (a) {
     case 1:

@@ -53,7 +53,7 @@ class JSliderValueBinding extends AbstractSyntheticBinding implements PropertyCh
 
     @Override
     public synchronized void syntheticBind() {
-        boundSlider = (JSlider) ((PropertyBinding)sourceBinding).getBean();
+        boundSlider = (JSlider) ((PropertyBinding) sourceBinding).getBean();
         boundSlider.addPropertyChangeListener("model", this);
         boundSlider.getModel().addChangeListener(this);
     }

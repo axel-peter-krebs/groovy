@@ -70,8 +70,8 @@ public abstract class GeneratedMetaMethod extends MetaMethod {
     }
 
     public static class Proxy extends GeneratedMetaMethod {
-        private volatile MetaMethod proxy;
         private final String className;
+        private volatile MetaMethod proxy;
 
         public Proxy(String className, String name, CachedClass declaringClass, Class returnType, Class[] parameters) {
             super(name, declaringClass, returnType, parameters);
@@ -95,7 +95,7 @@ public abstract class GeneratedMetaMethod extends MetaMethod {
 
         public final MetaMethod proxy() {
             if (proxy == null) {
-                synchronized(this) {
+                synchronized (this) {
                     if (proxy == null) createProxy();
                 }
             }
@@ -116,27 +116,26 @@ public abstract class GeneratedMetaMethod extends MetaMethod {
 
     public static class DgmMethodRecord implements Serializable {
         private static final long serialVersionUID = -5639988016452884450L;
+        private static final Class[] PRIMITIVE_CLASSES = {
+            Boolean.TYPE, Character.TYPE, Byte.TYPE, Short.TYPE,
+            Integer.TYPE, Long.TYPE, Double.TYPE, Float.TYPE, Void.TYPE,
+
+            boolean[].class, char[].class, byte[].class, short[].class,
+            int[].class, long[].class, double[].class, float[].class,
+            boolean[][].class, char[][].class, byte[][].class, short[][].class,
+            int[][].class, long[][].class, double[][].class, float[][].class,
+            Object[].class, String[].class, Class[].class, Byte[].class, CharSequence[].class,
+        };
         public String className;
         public String methodName;
         public Class returnType;
         public Class[] parameters;
 
-        private static final Class[] PRIMITIVE_CLASSES = {
-                Boolean.TYPE, Character.TYPE, Byte.TYPE, Short.TYPE,
-                Integer.TYPE, Long.TYPE, Double.TYPE, Float.TYPE, Void.TYPE,
-
-                boolean[].class, char[].class, byte[].class, short[].class,
-                int[].class, long[].class, double[].class, float[].class,
-                boolean[][].class, char[][].class, byte[][].class, short[][].class,
-                int[][].class, long[][].class, double[][].class, float[][].class,
-                Object[].class, String[].class, Class[].class, Byte[].class, CharSequence[].class,
-        };
-
         public static void saveDgmInfo(List<DgmMethodRecord> records, String file) throws IOException {
             try (DataOutputStream out =
-                         new DataOutputStream(
-                                 new BufferedOutputStream(
-                                         new FileOutputStream(file)))) {
+                     new DataOutputStream(
+                         new BufferedOutputStream(
+                             new FileOutputStream(file)))) {
                 Map<String, Integer> classes = new LinkedHashMap<String, Integer>();
 
                 int nextClassId = 0;
@@ -187,9 +186,9 @@ public abstract class GeneratedMetaMethod extends MetaMethod {
             ClassLoader loader = DgmMethodRecord.class.getClassLoader();
 
             try (DataInputStream in =
-                         new DataInputStream(
-                                 new BufferedInputStream(
-                                         loader.getResourceAsStream("META-INF/dgminfo")))) {
+                     new DataInputStream(
+                         new BufferedInputStream(
+                             loader.getResourceAsStream("META-INF/dgminfo")))) {
 
                 final int initialCapacity = 2048;
                 Map<Integer, Class> classes = new ConcurrentHashMap<>(initialCapacity);
@@ -198,7 +197,7 @@ public abstract class GeneratedMetaMethod extends MetaMethod {
                 }
                 final Map<Integer, String> names = new HashMap<>(initialCapacity);
                 int skip = 0;
-                for (;;) {
+                for (; ; ) {
                     String name = in.readUTF();
                     if (name.isEmpty())
                         break;

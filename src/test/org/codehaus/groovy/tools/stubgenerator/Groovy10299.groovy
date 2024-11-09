@@ -28,7 +28,7 @@ final class Groovy10299 extends StringSourcesStubTestCase {
                     public final boolean must_init
                 }
             ''',
-            'Main.java': '''
+            'Main.java'  : '''
                 public class Main {
                     public static void main(String[] args) {
                         new Pogo();

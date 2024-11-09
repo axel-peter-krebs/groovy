@@ -37,18 +37,18 @@ class MethodOverridingDeniedTest {
     @Parameterized.Parameters(name = '{1} should not override {0}')
     static data() {
         [
-                ['public', 'private'],
-                ['public', '@groovy.transform.PackageScope'],
-                ['public', 'protected'],
-                ['protected', 'private'],
-                ['protected', '@groovy.transform.PackageScope'],
-                ['@groovy.transform.PackageScope', 'private'],
+            ['public', 'private'],
+            ['public', '@groovy.transform.PackageScope'],
+            ['public', 'protected'],
+            ['protected', 'private'],
+            ['protected', '@groovy.transform.PackageScope'],
+            ['@groovy.transform.PackageScope', 'private'],
         ]*.toArray()
     }
 
     @Test
     void 'weaker access must not override stronger'() {
-        def ex = shouldFail(CompilationFailedException,"""
+        def ex = shouldFail(CompilationFailedException, """
             abstract class Base {
                 $baseVisibility abstract myMethod()
             }

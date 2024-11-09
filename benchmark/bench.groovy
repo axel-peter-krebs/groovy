@@ -17,9 +17,9 @@
  *  under the License.
  */
 def benchData = [
-    hello           :   [1],
-    ackermann       :   [5, 6, 7, 8],
-    ary             :   [10,100,1000,1000000],
+    hello    : [1],
+    ackermann: [5, 6, 7, 8],
+    ary      : [10, 100, 1000, 1000000],
 /*    binarytrees     :   [1],
     chameneos       :   [1],
     echo            :   [1],
@@ -27,7 +27,7 @@ def benchData = [
     fannkuch        :   [1],
     fannkuchredux   :   [1],
     fasta           :   [1],*/
-    fibo            :   [30, 31, 32, 33, 34],
+    fibo     : [30, 31, 32, 33, 34],
 /*    harmonic        :   [1],
     hash            :   [1],
     hash2           :   [1],
@@ -73,7 +73,7 @@ println "Groovy benchmarking test"
 showJavaVersion()
 println "Groovy lib: $GROOVY_LIB"
 horizontalBreak()
-def executeBench= { bench, input ->
+def executeBench = { bench, input ->
     println "Benchmark $bench"
     [".java", ".groovy"].each { ending ->
         println("\t$bench$ending :")
@@ -88,10 +88,10 @@ def executeBench= { bench, input ->
     }
     horizontalBreak()
 }
-if (args.length==0) {
+if (args.length == 0) {
     benchData.each(executeBench)
 } else {
-    executeBench(args[0],benchData[args[0]])
+    executeBench(args[0], benchData[args[0]])
 }
 
 
@@ -106,11 +106,11 @@ boolean prepare(bench, ending) {
 
     // compile file using groovy compiler
     // in = orig, out = exec
-    Compiler.main("-j","-d", "exec", orig.absolutePath)
+    Compiler.main("-j", "-d", "exec", orig.absolutePath)
     true
 }
 
-void cleanFolder(){
+void cleanFolder() {
     def dir = new File("exec/")
     dir.eachFile { file -> file.delete() }
 }
@@ -141,26 +141,26 @@ void execBenchmark(bench, input) {
         def time1 = System.nanoTime()
 
         print "\t\trunning  "
-        20.times { n->
+        20.times { n ->
             printProgress(n)
             def p = [javaCommand(), "-cp", cp, bench, param].execute()
             p.consumeProcessOutputStream(null)
             p.consumeProcessErrorStream(System.err)
-            p.waitForOrKill(10 * 60  *1000)
+            p.waitForOrKill(10 * 60 * 1000)
         }
         def time2 = System.nanoTime()
-        long td = (time2-time1) / 1000000 / 20
+        long td = (time2 - time1) / 1000000 / 20
         print "\b" * 9
         println "time ($param) = $td"
     }
 }
 
 void printProgress(it) {
-  def n = it % 4
-  if (n==0) print "\b/"
-  if (n==1) print "\b-"
-  if (n==2) print "\b\\"
-  if (n==3) print "\b-"
+    def n = it % 4
+    if (n == 0) print "\b/"
+    if (n == 1) print "\b-"
+    if (n == 2) print "\b\\"
+    if (n == 3) print "\b-"
 }
 
 void setGroovyLib() {

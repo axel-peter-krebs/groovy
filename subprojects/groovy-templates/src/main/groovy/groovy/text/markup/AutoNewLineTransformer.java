@@ -64,7 +64,7 @@ class AutoNewLineTransformer extends ClassCodeVisitorSupport {
                     call.getObjectExpression().visit(this);
                     call.getMethod().visit(this);
                     for (Expression expression : expressions) {
-                        inBuilderMethod =  (expression == lastArg);
+                        inBuilderMethod = (expression == lastArg);
                         expression.visit(this);
                     }
                 }
@@ -80,18 +80,18 @@ class AutoNewLineTransformer extends ClassCodeVisitorSupport {
         super.visitClosureExpression(expression);
         if (inBuilderMethod) {
             Statement oldCode = expression.getCode();
-            BlockStatement block = oldCode instanceof BlockStatement?
-                    ((BlockStatement)oldCode):
-                    new BlockStatement(Collections.singletonList(oldCode), new VariableScope());
+            BlockStatement block = oldCode instanceof BlockStatement ?
+                ((BlockStatement) oldCode) :
+                new BlockStatement(Collections.singletonList(oldCode), new VariableScope());
             List<Statement> statements = block.getStatements();
             if (!statements.isEmpty()) {
                 Statement first = statements.get(0);
-                Statement last = statements.get(statements.size()-1);
-                if (expression.getLineNumber()<first.getLineNumber()) {
+                Statement last = statements.get(statements.size() - 1);
+                if (expression.getLineNumber() < first.getLineNumber()) {
                     // there's a new line between { -> ... and the first statement
-                    statements.add(0,createNewLine(expression));
+                    statements.add(0, createNewLine(expression));
                 }
-                if (expression.getLastLineNumber()>last.getLastLineNumber()) {
+                if (expression.getLastLineNumber() > last.getLastLineNumber()) {
                     // there's a new line between { -> ... and the first statement
                     statements.add(createNewLine(expression));
                 }
@@ -102,9 +102,9 @@ class AutoNewLineTransformer extends ClassCodeVisitorSupport {
 
     private Statement createNewLine(final ASTNode node) {
         MethodCallExpression mce = new MethodCallExpression(
-                new VariableExpression("this"),
-                "newLine",
-                ArgumentListExpression.EMPTY_ARGUMENTS
+            new VariableExpression("this"),
+            "newLine",
+            ArgumentListExpression.EMPTY_ARGUMENTS
         );
         mce.setImplicitThis(true);
         mce.setSourcePosition(node);

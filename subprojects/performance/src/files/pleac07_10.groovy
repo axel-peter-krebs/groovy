@@ -31,7 +31,7 @@ import groovy.ant.AntBuilder
 //----------------------------------------------------------------------------------
 //testfile = new File('/usr/local/widgets/data')  // unix
 testfile = new File('Pleac/data/blue.txt')      // windows
-testfile.eachLine{ if (it =~ /blue/) println it }
+testfile.eachLine { if (it =~ /blue/) println it }
 
 // Groovy (like Java) uses the File class as an abstraction for
 // the path representing a potential file system resource.
@@ -85,8 +85,8 @@ testfile.eachLine{ if (it =~ /blue/) println it }
 // numericCheckingScript:
 prompt = '\n> '
 print 'Enter text including a digit:' + prompt
-new BufferedReader(new InputStreamReader(System.in)).eachLine{ line ->
-                                               // line is read from System.in
+new BufferedReader(new InputStreamReader(System.in)).eachLine { line ->
+    // line is read from System.in
     if (line =~ '\\d') println "Read: $line"   // normal output to System.out
     else System.err.println 'No digit found.'  // this message to System.err
 }
@@ -95,7 +95,7 @@ new BufferedReader(new InputStreamReader(System.in)).eachLine{ line ->
 // @@PLEAC@@_7.1
 //----------------------------------------------------------------------------------
 // test values (change for your os and directories)
-inputPath='Pleac/src/pleac7.groovy'; outPath='Pleac/temp/junk.txt'
+inputPath = 'Pleac/src/pleac7.groovy'; outPath = 'Pleac/temp/junk.txt'
 
 // For input Java uses InputStreams (for byte-oriented processing) or Readers
 // (for character-oriented processing). These can throw FileNotFoundException.
@@ -186,15 +186,18 @@ Last script update: Wed Jan 10 19:05:58 EST 2007
 ls = System.getProperty('line.separator')
 file = new File('Pleac/src/pleac7.groovy')
 regex = /(?ms)(?<=^pleac_7_6_embeddedFileInfo = ''')(.*)(?=^''')/
+
 def readEmbeddedInfo() {
     m = file.text =~ regex
     println 'Found:\n' + m[0][1]
 }
+
 def writeEmbeddedInfo() {
     lastMod = new Date(file.lastModified())
     newInfo = "${ls}Script size is ${file.size()}${ls}Last script update: ${lastMod}${ls}"
     file.write(file.text.replaceAll(regex, newInfo))
 }
+
 readEmbeddedInfo()
 // writeEmbeddedInfo()  // uncomment to make script update itself
 // readEmbeddedInfo()   // uncomment to redisplay the embedded info after the update
@@ -250,27 +253,27 @@ assert args == ["somefile"]
 assert columns == 30
 
 // demo3: multiple args (again consider option parsing package)
-args = ['-n','-a','file1','file2']
+args = ['-n', '-a', 'file1', 'file2']
 nostdout = false
 append = false
 unbuffer = false
 ignore_ints = false
 files = []
-args.each{ arg ->
-    switch(arg) {
-        case '-n': nostdout    = true; break
-        case '-a': append      = true; break
-        case '-u': unbuffer    = true; break
+args.each { arg ->
+    switch (arg) {
+        case '-n': nostdout = true; break
+        case '-a': append = true; break
+        case '-u': unbuffer = true; break
         case '-i': ignore_ints = true; break
         default: files += arg
     }
 }
-if (files.any{ it.startsWith('-')}) {
+if (files.any { it.startsWith('-') }) {
     System.err.println("usage: demo3 [-ainu] [filenames]")
 }
 // process files ...
 assert nostdout && append && !unbuffer && !ignore_ints
-assert files == ['file1','file2']
+assert files == ['file1', 'file2']
 
 // find login: print all lines containing the string "login" (command-line version)
 //% groovy -ne "if (line =~ 'login') println line" filename
@@ -291,7 +294,9 @@ for (line in lines) {
     words = line.split(/[^\w#]+/).toList()
     for (word in words) {
         if (word =~ /^#/) break
-        if (word in ["__DATA__", "__END__"]) { done = true; break }
+        if (word in ["__DATA__", "__END__"]) {
+            done = true; break
+        }
         chunks += 1
     }
     if (done) break
@@ -321,7 +326,7 @@ def processWithBackup(inputPath, Closure processLine) {
     def out = File.createTempFile("prefix", ".suffix")
     out.write('') // create empty file
     count = 0
-    input.eachLine{ line ->
+    input.eachLine { line ->
         count++
         processLine(out, line, count)
     }
@@ -422,7 +427,7 @@ def processFileWithTryLock(file, processStream) {
 
 
 // non-blocking multithreaded example: print first line while holding lock
-Thread.start{
+Thread.start {
     processFileWithLock(testfile) { source ->
         println 'First reader: ' + source.readLine().toUpperCase()
         Thread.sleep(2000) // 2000 millis = 2 secs
@@ -489,7 +494,7 @@ printWriter = new PrintWriter(outStream, autoFlush)
 // InputStreams in Java/Groovy block if input is not yet available.
 // This is not normally an issue, because if you have a potential blocking
 // operation, e.g. save a large file, you normally just create a thread
- // and save it in the background.
+// and save it in the background.
 
 // Channels are one way to do non-blocking stream-based IO.
 // Classes which implement the AbstractSelectableChannel interface provide
@@ -578,7 +583,7 @@ printWriter = new PrintWriter(outStream, autoFlush)
 //----------------------------------------------------------------------------------
 datafile = new File('Pleac/data/pleac8_0.txt') // change on your system
 
-datafile.eachLine{ line -> print line.size() }
+datafile.eachLine { line -> print line.size() }
 
 lines = datafile.readLines()
 
@@ -600,7 +605,7 @@ wholeTextFile = datafile.text
 
 // no BEGIN and END in Groovy (has been proposed, may be added soon)
 
-datafile.withOutputStream{ stream ->
+datafile.withOutputStream { stream ->
     stream.print "one" + "two" + "three"    // "onetwothree" -> file
     println "Baa baa black sheep."          // sent to $stdout
 }
@@ -639,8 +644,8 @@ testfile = new File('Pleac/data/pleac8_1.txt') // change on your system
 lines = []
 continuing = false
 regex = /\\$/
-testfile.eachLine{ line ->
-    stripped = line.replaceAll(regex,'')
+testfile.eachLine { line ->
+    stripped = line.replaceAll(regex, '')
     if (continuing) lines[-1] += stripped
     else lines += stripped
     continuing = (line =~ regex)
@@ -654,30 +659,32 @@ println lines.join('\n')
 def trimtail(line) {
     line = line.replaceAll(/(?<=\\)\s*$/, '')
 }
-b = /\\/  // backslash
-assert "abc  $b"   == trimtail("abc  $b")
-assert "abc  "     == trimtail("abc  ")
-assert "abc  $b"   == trimtail("abc  $b  ")
+
+b = /\\/  / / backslash
+assert "abc  $b" == trimtail("abc  $b")
+assert "abc  " == trimtail("abc  ")
+assert "abc  $b" == trimtail("abc  $b  ")
 //----------------------------------------------------------------------------------
 
 
 // @@PLEAC@@_8.2
 //----------------------------------------------------------------------------------
 // unixScript:
-println ("wc -l < $filename".execute().text)
+println("wc -l < $filename".execute().text)
 
 // for small files which fit in memory
 println testfile.readLines().size()
 
 // streaming approach (lines and paras)
 lines = 0; paras = 1
-testfile.eachLine{ lines++; if (it =~ /^$/) paras++ }
+testfile.eachLine { lines++; if (it =~ /^$/) paras++ }
 println "Found $lines lines and $paras paras."
 // note: counts blank line at end as start of next empty para
 
 // with a StreamTokenizer
 st = new StreamTokenizer(testfile.newReader())
-while (st.nextToken() != StreamTokenizer.TT_EOF) {}
+while (st.nextToken() != StreamTokenizer.TT_EOF) {
+}
 println st.lineno()
 //----------------------------------------------------------------------------------
 
@@ -687,7 +694,7 @@ println st.lineno()
 // general pattern
 def processWordsInFile(file, processWord) {
     testfile.splitEachLine(/\W+/) { matched ->
-        matched.each{ w -> if (w) processWord(w) }
+        matched.each { w -> if (w) processWord(w) }
     }
 }
 
@@ -695,7 +702,7 @@ testfile = new File('Pleac/src/pleac8.groovy')  // change path on your system
 
 // count words
 count = 0
-processWordsInFile(testfile){ count++ }
+processWordsInFile(testfile) { count++ }
 println count
 
 // (variation to Perl example)
@@ -718,8 +725,8 @@ processWordsInFile(testfile) {
     else seen[w] = 1
 }
 // output map in a descending numeric sort of its values
-seen.entrySet().sort { a,b -> b.value <=> a.value }.each{ e ->
-    printf("%5d %s\n", [e.value, e.key] )
+seen.entrySet().sort { a, b -> b.value <=> a.value }.each { e ->
+    printf("%5d %s\n", [e.value, e.key])
 }
 // =>
 //    25 pleac
@@ -734,14 +741,14 @@ seen.entrySet().sort { a,b -> b.value <=> a.value }.each{ e ->
 
 // @@PLEAC@@_8.4
 //----------------------------------------------------------------------------------
-testfile.readLines().reverseEach{
+testfile.readLines().reverseEach {
     println it
 }
 
 lines = testfile.readLines()
 // normally one would use the reverseEach, but you can use
 // a numerical index if you want
-((lines.size() - 1)..0).each{
+((lines.size() - 1)..0).each {
     println lines[it]
 }
 
@@ -758,27 +765,27 @@ lines = testfile.readLines()
 logfile = new File('Pleac/data/sampleLog.txt')
 // logTailingScript:
 sampleInterval = 2000 // 2000 millis = 2 secs
-file = new RandomAccessFile( logfile, "r" )
+file = new RandomAccessFile(logfile, "r")
 filePointer = 0 // set to logfile.size() to begin tailing from the end of the file
-while( true ) {
+while (true) {
     // Compare the length of the file to the file pointer
     long fileLength = logfile.size()
-    if( fileLength < filePointer ) {
+    if (fileLength < filePointer) {
         // Log file must have been rotated or deleted;
         System.err.println "${new Date()}: Reopening $logfile"
-        file = new RandomAccessFile( logfile, "r" )
+        file = new RandomAccessFile(logfile, "r")
         filePointer = 0
     }
-    if( fileLength > filePointer ) {
+    if (fileLength > filePointer) {
         // There is data to read
-        file.seek( filePointer )
-        while( (line = file.readLine()) != null ) {
+        file.seek(filePointer)
+        while ((line = file.readLine()) != null) {
             println '##' + line
         }
         filePointer = file.filePointer
     }
     // Sleep for the specified interval
-    Thread.sleep( sampleInterval )
+    Thread.sleep(sampleInterval)
 }
 //----------------------------------------------------------------------------------
 
@@ -795,7 +802,7 @@ println lines[random.nextInt(lines.size())]
 // streamed alternative
 count = 0
 def adage
-testfile.eachLine{ line ->
+testfile.eachLine { line ->
     count++
     if (random.nextInt(count) < 1) adage = line
 }
@@ -817,13 +824,13 @@ println lines.join('\n')
 desiredLine = 235
 // for small files
 lines = testfile.readLines()
-println "Line $desiredLine: ${lines[desiredLine-1]}"
+println "Line $desiredLine: ${lines[desiredLine - 1]}"
 
 // streaming solution
 reader = testfile.newReader()
 count = 0
 def line
-while ((line = reader.readLine())!= null) {
+while ((line = reader.readLine()) != null) {
     if (++count == desiredLine) break
 }
 println "Line $desiredLine: $line"
@@ -839,9 +846,9 @@ println testfile.text.split(/@@pleac@@_8./).size()
 
 // @@PLEAC@@_8.10
 //----------------------------------------------------------------------------------
-file = new RandomAccessFile( logfile, "rw" )
+file = new RandomAccessFile(logfile, "rw")
 long previous, lastpos = 0
-while( (line = file.readLine()) != null ) {
+while ((line = file.readLine()) != null) {
     previous = lastpos
     lastpos = file.filePointer
 }
@@ -858,20 +865,21 @@ if (previous) file.setLength(previous)
 // Print first ten bytes of a binary file:
 def dumpStart(filename) {
     bytes = new File(filename).newInputStream()
-    10.times{
+    10.times {
         print bytes.read() + ' '
     }
     println()
 }
-dumpStart(System.getProperty('java.home')+'/lib/rt.jar')
+
+dumpStart(System.getProperty('java.home') + '/lib/rt.jar')
 // => 80 75 3 4 10 0 0 0 0 0 (note first two bytes = PK - you might recognize this
 // as the starting sequence of a zip file)
 dumpStart('Pleac/classes/pleac8.class') // after running groovyc compiler in src directory
 // => 202 254 186 190 0 0 0 47 2 20 (starting bytes in HEX: CAFEBABE)
 
 binfile = new File('Pleac/data/temp.bin')
-binfile.withOutputStream{ stream -> (0..<20).each{ stream.write(it) }}
-binfile.eachByte{ print it + ' ' }; println()
+binfile.withOutputStream { stream -> (0..<20).each { stream.write(it) } }
+binfile.eachByte { print it + ' ' }; println()
 // => 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
 //----------------------------------------------------------------------------------
 
@@ -884,7 +892,7 @@ recno = 2 // index starts at 0
 address = recsize * recno
 randomaccess = new RandomAccessFile(binfile, 'r')
 randomaccess.seek(address)
-recsize.times{ print randomaccess.read() + ' ' }; println()  // => 8 9 10 11
+recsize.times { print randomaccess.read() + ' ' }; println()  // => 8 9 10 11
 randomaccess.close()
 //----------------------------------------------------------------------------------
 
@@ -902,11 +910,11 @@ address = recsize * recno
 randomaccess = new RandomAccessFile(binfile, 'rw')
 randomaccess.seek(address)
 bytes = []
-recsize.times{ bytes += randomaccess.read() }
+recsize.times { bytes += randomaccess.read() }
 randomaccess.seek(address)
-bytes.each{ b -> randomaccess.write(90 - b) }
+bytes.each { b -> randomaccess.write(90 - b) }
 randomaccess.close()
-binfile.eachByte{ print it + ' ' }; println()
+binfile.eachByte { print it + ' ' }; println()
 // => 0 1 2 3 4 5 6 7 82 81 80 79 12 13 14 15 16 17 18 19
 //----------------------------------------------------------------------------------
 
@@ -919,7 +927,7 @@ binfile.eachByte{ print it + ' ' }; println()
 // this is similar to the revised 8.13 but would look for the terminating 0
 
 // simplistic strings functionality
-binfile.eachByte{ b -> if ((int)b in 32..126) print ((char)b) }; println() // => RQPO
+binfile.eachByte { b -> if ((int) b in 32..126) print((char) b) }; println() // => RQPO
 //----------------------------------------------------------------------------------
 
 
@@ -940,15 +948,16 @@ binfile.eachByte{ b -> if ((int)b in 32..126) print ((char)b) }; println() // =>
 // fixed-length byte-oriented records using channels
 // typical approach used with low-level protocols or file formats
 import java.nio.*
+
 binfile.delete(); binfile.createNewFile() // start from scratch
-buf1 = ByteBuffer.wrap([10,11,12,13] as byte[]) // simulate 4 byte field
-buf2 = ByteBuffer.wrap([44,45] as byte[])       // 2 byte field
+buf1 = ByteBuffer.wrap([10, 11, 12, 13] as byte[]) // simulate 4 byte field
+buf2 = ByteBuffer.wrap([44, 45] as byte[])       // 2 byte field
 buf3 = ByteBuffer.wrap('Hello'.bytes)           // String
 records = [buf1, buf2, buf3] as ByteBuffer[]
 channel = new FileOutputStream(binfile).channel
 channel.write(records) // gathering byte records
 channel.close()
-binfile.eachByte{ print it + ' ' }; println()
+binfile.eachByte { print it + ' ' }; println()
 // => 10 11 12 13 44 45 72 101 108 108 111
 // ScatteringInputStream would convert this back into an array of byte[]
 
@@ -967,10 +976,10 @@ channel = new FileInputStream(binfile).channel
 buf = ByteBuffer.allocate(24)
 channel.read(buf)
 buf.flip()
-3.times{ print ((char)buf.get()) }
-println (buf.getDouble())
-5.times{ print ((char)buf.get()) }
-println (new Date(buf.getLong()))
+3.times { print((char) buf.get()) }
+println(buf.getDouble())
+5.times { print((char) buf.get()) }
+println(new Date(buf.getLong()))
 channel.close()
 // =>
 // PI=3.141592653589793
@@ -978,14 +987,17 @@ channel.close()
 
 // object-oriented streams
 binfile.delete(); binfile.createNewFile() // start from scratch
-class Person implements Serializable { def name, age }
-binfile.withObjectOutputStream{ oos ->
-    oos.writeObject(new Person(name:'Bernie',age:16))
-    oos.writeObject([1:'a', 2:'b'])
+class Person implements Serializable {
+    def name, age
+}
+
+binfile.withObjectOutputStream { oos ->
+    oos.writeObject(new Person(name: 'Bernie', age: 16))
+    oos.writeObject([1: 'a', 2: 'b'])
     oos.writeObject(new Date())
 }
 // now read it back in
-binfile.withObjectInputStream{ ois ->
+binfile.withObjectInputStream { ois ->
     person = ois.readObject()
     println "$person.name is $person.age"
     println ois.readObject()
@@ -1008,7 +1020,7 @@ binfile.withObjectInputStream{ ois ->
 // user.name=me
 // user.password=secret
 props = new Properties()
-propsfile=new File('Pleac/data/plain.properties')
+propsfile = new File('Pleac/data/plain.properties')
 props.load(propsfile.newInputStream())
 props.list(System.out)
 // =>
@@ -1022,7 +1034,7 @@ props.list(System.out)
 
 // (additional example to Perl)
 // You can also read and write xml properties files.
-new File('Pleac/data/props.xml').withOutputStream{ os ->
+new File('Pleac/data/props.xml').withOutputStream { os ->
     props.storeToXML(os, "Database Settings")
 }
 // =>
@@ -1071,19 +1083,23 @@ new File('Pleac/data/props.xml').withOutputStream{ os ->
 // @@PLEAC@@_8.18
 //----------------------------------------------------------------------------------
 // general purpose utility methods
-def getString(buf,size){
+def getString(buf, size) {
     // consider get(buf[]) instead of get(buf) for efficiency
-    b=[]; size.times{b+=buf.get()}; new String(b as byte[]).trim()
+    b = []; size.times { b += buf.get() }; new String(b as byte[]).trim()
 }
-def getInt(buf,size) {
+
+def getInt(buf, size) {
     // normally in Java we would just use methods like getLong()
     // to read a long but wish to ignore platform issues here
     long val = 0
-    for (n in 0..<size) { val += ((int)buf.get() & 0xFF) << (n * 8) }
+    for (n in 0..<size) {
+        val += ((int) buf.get() & 0xFF) << (n * 8)
+    }
     return val
 }
+
 def getDate(buf) {
-    return new Date(getInt(buf,4) * 1000) // Java uses millis
+    return new Date(getInt(buf, 4) * 1000) // Java uses millis
 }
 
 // specific utility method (wtmp file from ubuntu 6.10)
@@ -1096,12 +1112,12 @@ def processWtmpRecords(file, origpos) {
     while ((count = channel.read(buf)) != -1) {
         if (count != recsize) break
         buf.flip()
-        print getInt(buf,4) + ' '         // type
-        print getInt(buf,4) + ' '         // pid
-        print getString(buf,32) + ' '     // line
-        print getString(buf,4) + ' '      // inittab
-        print getString(buf,32) + ' '     // user
-        print getString(buf,256) + ' '    // hostname
+        print getInt(buf, 4) + ' '         // type
+        print getInt(buf, 4) + ' '         // pid
+        print getString(buf, 32) + ' '     // line
+        print getString(buf, 4) + ' '      // inittab
+        print getString(buf, 32) + ' '     // user
+        print getString(buf, 256) + ' '    // hostname
         buf.position(buf.position() + 8)  // skip
         println "${getDate(buf)} "        // time
         buf.clear()
@@ -1114,15 +1130,15 @@ wtmp = new File('Pleac/data/wtmp')
 // wtmpTailingScript:
 sampleInterval = 2000 // 2000 millis = 2 secs
 filePointer = wtmp.size() // begin tailing from the end of the file
-while(true) {
+while (true) {
     // Compare the length of the file to the file pointer
     long fileLength = wtmp.size()
-    if( fileLength > filePointer ) {
+    if (fileLength > filePointer) {
         // There is data to read
         filePointer = processWtmpRecords(wtmp, filePointer)
     }
     // Sleep for the specified interval
-    Thread.sleep( sampleInterval )
+    Thread.sleep(sampleInterval)
 }
 //----------------------------------------------------------------------------------
 
@@ -1139,12 +1155,14 @@ while(true) {
 class MultiStream {
     private targets
     private ignoreErrors
+
     MultiStream(List targets, ignore) {
         this.targets = targets
         ignoreErrors = ignore
     }
+
     def println(String content) {
-        targets.each{
+        targets.each {
             try {
                 it?.write(content.bytes)
             } catch (Exception ex) {
@@ -1154,7 +1172,8 @@ class MultiStream {
             }
         }
     }
-    def close() { targets.each{ it?.close() } }
+
+    def close() { targets.each { it?.close() } }
 }
 
 class TeeTarget {
@@ -1164,17 +1183,18 @@ class TeeTarget {
 
     TeeTarget(String name, append, buffered, ignore) {
         if (name.startsWith('>>')) {
-            createFileStream(name[2..-1],true,buffered,ignore)
+            createFileStream(name[2..-1], true, buffered, ignore)
         } else if (name.startsWith('|')) {
             createProcessReader(name[1..-1])
         } else {
-            createFileStream(name,append,buffered,ignore)
+            createFileStream(name, append, buffered, ignore)
         }
     }
 
     TeeTarget(OutputStream stream) { this.stream = stream }
 
     def write(bytes) { stream?.write(bytes) }
+
     def close() { stream?.close() }
 
     private createFileStream(name, append, buffered, ignore) {
@@ -1188,17 +1208,21 @@ class TeeTarget {
         if (!buffered) stream = fos
         else stream = new BufferedOutputStream(fos)
     }
-    private createWriter(os) {new PrintWriter(new BufferedOutputStream(os))}
-    private createReader(is) {new BufferedReader(new InputStreamReader(is))}
+
+    private createWriter(os) { new PrintWriter(new BufferedOutputStream(os)) }
+
+    private createReader(is) { new BufferedReader(new InputStreamReader(is)) }
+
     private createPiperThread(br, pw) {
-        Thread.start{
+        Thread.start {
             def next
-            while((next = br.readLine())!=null) {
+            while ((next = br.readLine()) != null) {
                 pw.println(next)
             }
             pw.flush(); pw.close()
         }
     }
+
     private createProcessReader(name) {
         def readFromStream = new PipedInputStream()
         def r1 = createReader(readFromStream)
@@ -1214,7 +1238,7 @@ class TeeTarget {
 
 targets = []
 append = false; ignore = false; includeStdout = true; buffer = true
-(0..<args.size()).each{
+(0..<args.size()).each {
     arg = args[it]
     if (arg.startsWith('-')) {
         switch (arg) {
@@ -1228,7 +1252,7 @@ append = false; ignore = false; includeStdout = true; buffer = true
         }
     } else targets += arg
 }
-targets = targets.collect{ new TeeTarget(it, append, buffer, ignore) }
+targets = targets.collect { new TeeTarget(it, append, buffer, ignore) }
 if (includeStdout) targets += new TeeTarget(System.out)
 def tee = new MultiStream(targets, ignore)
 while (line = System.in.readLine()) {
@@ -1250,9 +1274,9 @@ buf = ByteBuffer.allocate(recsize)
 channel.read(buf)
 buf.flip()
 date = getDate(buf)
-line = getString(buf,32)
-host = getString(buf,256)
-println "User with uid $uid last logged on $date from ${host?host:'unknown'} on $line"
+line = getString(buf, 32)
+host = getString(buf, 256)
+println "User with uid $uid last logged on $date from ${host ? host : 'unknown'} on $line"
 // => User with uid 1000 last logged on Sat Jan 13 09:09:35 EST 2007 from unknown on :0
 //----------------------------------------------------------------------------------
 
@@ -1274,7 +1298,7 @@ println "User with uid $uid last logged on $date from ${host?host:'unknown'} on 
 // apply regarding features which may change or be dropped before release.
 
 // path='/usr/bin'; file='vi' // linux/mac os?
-path='C:/windows'; file='explorer.exe' // windows
+path = 'C:/windows'; file = 'explorer.exe' // windows
 entry = new File("$path")
 assert entry.isDirectory()
 entry = new File("$path/$file")
@@ -1315,8 +1339,8 @@ assert entry.canRead()
 
 // Groovy uses File for directories and files
 // displayAllFilesInUsrBin:
-new File('/usr/bin').eachFile{ file ->
-  println "Inside /usr/bin is something called $file.name"
+new File('/usr/bin').eachFile { file ->
+    println "Inside /usr/bin is something called $file.name"
 }
 //----------------------------------------------------------------------------------
 
@@ -1351,8 +1375,8 @@ println new Date(file.lastModified())
 //#!/usr/bin/groovy
 // uvi - vi a file without changing it's last modified time
 if (args.size() != 1) {
-  println "usage: uvi filename"
-  System.exit(1)
+    println "usage: uvi filename"
+    System.exit(1)
 }
 file = args[0]
 origTime = new File(file).lastModified()
@@ -1369,14 +1393,14 @@ new File('/createme') << 'Hi there'
 println new File('/createme').exists()  // => true
 println new File('/createme').delete()  // => true
 
-names = ['file1','file2','file3']
-files = names.collect{ new File(it) }
+names = ['file1', 'file2', 'file3']
+files = names.collect { new File(it) }
 // create 2 of the files
-files[0..1].each{ f -> f << f.name }
+files[0..1].each { f -> f << f.name }
 
 def deleteFiles(files) {
     def problemFileNames = []
-    files.each{ f ->
+    files.each { f ->
         if (!f.delete())
             problemFileNames += f.name
     }
@@ -1427,7 +1451,7 @@ checkSuccessfulCopyAndDelete()
 
 // built-in using AntBuilder
 // for options, see: http://ant.apache.org/manual/CoreTasks/copy.html
-new AntBuilder().copy( file: from.canonicalPath, tofile: to.canonicalPath )
+new AntBuilder().copy(file: from.canonicalPath, tofile: to.canonicalPath)
 checkSuccessfulCopyAndDelete()
 // =>
 //     [copy] Copying 1 file to D:\
@@ -1435,7 +1459,7 @@ checkSuccessfulCopyAndDelete()
 
 // use Apache Jakarta Commons IO (jakarta.apache.org)
 //import org.apache.commons.io.FileUtils
-class FileUtils{}
+class FileUtils {}
 // Copies a file to a new location preserving the lastModified date.
 FileUtils.copyFile(from, to)
 checkSuccessfulCopyAndDelete()
@@ -1465,11 +1489,13 @@ def checkSuccessfulCopyAndDelete() {
     assert to.delete()
     assert !to.exists()
 }
+
 def setUpFromFile() {
     from = new File('/from.txt') // just a name
     from << dummyContent         // now its a real file with content
     from.deleteOnExit()          // that will be deleted on exit
 }
+
 def setUpToFile() {
     to = new File('C:/to.txt')     // target name
     to.delete() // ensure not left from previous aborted run
@@ -1496,6 +1522,7 @@ def setUpToFile() {
 
 // process only unique files
 seen = []
+
 def myProcessing(file) {
     def path = file.canonicalPath
     if (!seen.contains(path)) {
@@ -1506,8 +1533,8 @@ def myProcessing(file) {
 
 // find linked files
 seen = [:]
-filenames = ['/dummyfile1.txt','/test.lnk','/dummyfile2.txt']
-filenames.each{ filename ->
+filenames = ['/dummyfile1.txt', '/test.lnk', '/dummyfile2.txt']
+filenames.each { filename ->
     def file = new File(filename)
     def cpath = file.canonicalPath
     if (!seen.containsKey(cpath)) {
@@ -1517,7 +1544,7 @@ filenames.each{ filename ->
 }
 
 println 'Files with links:'
-println seen.findAll{ k,v -> v.size() > 1 }
+println seen.findAll { k, v -> v.size() > 1 }
 //---------------------------------------------------------------------------------
 
 // @@PLEAC@@_9.5
@@ -1529,11 +1556,11 @@ println seen.findAll{ k,v -> v.size() > 1 }
 basedir = 'Pleac/src'
 
 // process all files printing out full name (. and .. auto excluded)
-new File(basedir).eachFile{ f->
+new File(basedir).eachFile { f ->
     if (f.isFile()) println f.canonicalPath
 }
 // also remove dot files such as '.svn' and '.cvs' etc.
-new File(basedir).eachFileMatch(~'^[^.].*'){ f->
+new File(basedir).eachFileMatch(~'^[^.].*') { f ->
     if (f.isFile()) println f.canonicalPath
 }
 //----------------------------------------------------------------------------------
@@ -1542,14 +1569,15 @@ new File(basedir).eachFileMatch(~'^[^.].*'){ f->
 //----------------------------------------------------------------------------------
 // Globbing via Apache Jakarta ORO
 //import org.apache.oro.io.GlobFilenameFilter
-class GlobFilenameFilter{}
+class GlobFilenameFilter {}
+
 dir = new File(basedir)
 namelist = dir.list(new GlobFilenameFilter('*.c'))
 filelist = dir.listFiles(new GlobFilenameFilter('*.h') as FilenameFilter)
 
 // Built-in matching using regex's
 files = []
-new File(basedir).eachFileMatch(~/\.[ch]$/){ f->
+new File(basedir).eachFileMatch(~/\.[ch]$/) { f ->
     if (f.isFile()) files += f
 }
 
@@ -1557,11 +1585,11 @@ new File(basedir).eachFileMatch(~/\.[ch]$/){ f->
 // For more details about Ant FileSets, see here:
 // http://ant.apache.org/manual/CoreTypes/fileset.html
 scanner = new AntBuilder().fileScanner {
-    fileset(dir:basedir) {
-        include(name:'**/pleac*.groovy')
-        include(name:'Slowcat.*y')
-        exclude(name:'**/pleac??.groovy') // chaps 10 and above
-        exclude(name:'**/*Test*', unless:'testMode')
+    fileset(dir: basedir) {
+        include(name: '**/pleac*.groovy')
+        include(name: 'Slowcat.*y')
+        exclude(name: '**/pleac??.groovy') // chaps 10 and above
+        exclude(name: '**/*Test*', unless: 'testMode')
     }
 }
 for (f in scanner) {
@@ -1581,28 +1609,28 @@ println dirs
 // find all files recursively
 dir = new File(basedir)
 files = []
-dir.eachFileRecurse{ files += it }
+dir.eachFileRecurse { files += it }
 
 // find total size
-sum = files.sum{ it.size() }
+sum = files.sum { it.size() }
 println "$basedir contains $sum bytes"
 // => Pleac/src contains 365676 bytes
 
 // find biggest
-biggest = files.max{ it.size() }
+biggest = files.max { it.size() }
 println "Biggest file is $biggest.name with ${biggest.size()} bytes"
 // => Biggest file is pleac6.groovy with 42415 bytes
 
 // find most recently modified
-youngest = files.max{ it.lastModified() }
+youngest = files.max { it.lastModified() }
 println "Most recently modified is $youngest.name, changed ${new Date(youngest.lastModified())}"
 // => Most recently modified is pleac9.groovy, changed Tue Jan 09 07:35:39 EST 2007
 
 // find all directories
-dir.eachDir{ println 'Found: ' + it.name}
+dir.eachDir { println 'Found: ' + it.name }
 
 // find all directories recursively
-dir.eachFileRecurse{ f -> if (f.isDirectory()) println 'Found: ' + f.canonicalPath}
+dir.eachFileRecurse { f -> if (f.isDirectory()) println 'Found: ' + f.canonicalPath }
 //----------------------------------------------------------------------------------
 
 // @@PLEAC@@_9.8
@@ -1621,7 +1649,7 @@ ant.delete(dir: base)
 // @@PLEAC@@_9.9
 //----------------------------------------------------------------------------------
 names = ['Pleac/src/abc.java', 'Pleac/src/def.groovy']
-names.each{ name -> new File(name).renameTo(new File(name + '.bak')) }
+names.each { name -> new File(name).renameTo(new File(name + '.bak')) }
 
 // The Groovy way of doing rename using an expr would be to use a closure
 // for the expr:
@@ -1632,7 +1660,7 @@ op = args[0]
 println op
 files = args[1..-1]
 shell = new GroovyShell(binding)
-files.each{ f ->
+files.each { f ->
     newname = shell.evaluate("$op('$f')")
     new File(f).renameTo(new File(newname))
 }
@@ -1663,23 +1691,23 @@ lastModified = { new Date(new File(it).lastModified()) }
 // You wouldn't normally type in this from the command-line but it could
 // be part of a script, here is an example (excludes the actual rename part)
 ant = new AntBuilder()
-ant.pathconvert(property:'result',targetos:'windows'){
-    path(){ fileset(dir:'Pleac/src', includes:'pleac?.groovy') }
-    compositemapper{
-        globmapper(from:'*1.groovy', to:'*1.groovy.bak')
-        regexpmapper(from:/^(.*C2)\.(.*)$/, to:/\1_beta.\2/, casesensitive:'no')
-        chainedmapper{
-            packagemapper(from:'*pleac3.groovy', to:'*3.xml')
-            filtermapper(){ replacestring(from:'C:.', to:'') }
+ant.pathconvert(property: 'result', targetos: 'windows') {
+    path() { fileset(dir: 'Pleac/src', includes: 'pleac?.groovy') }
+    compositemapper {
+        globmapper(from: '*1.groovy', to: '*1.groovy.bak')
+        regexpmapper(from: /^(.*C2)\.(.*)$/, to: /\1_beta.\2/, casesensitive: 'no')
+        chainedmapper {
+            packagemapper(from: '*pleac3.groovy', to: '*3.xml')
+            filtermapper() { replacestring(from: 'C:.', to: '') }
         }
-        chainedmapper{
-            regexpmapper(from:/^(.*)4\.(.*)$/, to:/\1_4.\2/)
+        chainedmapper {
+            regexpmapper(from: /^(.*)4\.(.*)$/, to: /\1_4.\2/)
             flattenmapper()
-            filtermapper(){ replacestring(from:'4', to:'four') }
+            filtermapper() { replacestring(from: '4', to: 'four') }
         }
     }
 }
-println ant.antProject.getProperty('result').replaceAll(';','\n')
+println ant.antProject.getProperty('result').replaceAll(';', '\n')
 // =>
 // C:\Projects\GroovyExamples\Pleac\src\pleac1.groovy.bak
 // C:\Projects\GroovyExamples\Pleac\src\pleac2_beta.groovy
@@ -1733,38 +1761,38 @@ SIZE_OPTION = 's'
 HELP_OPTION = 'help'
 
 op = new joptsimple.OptionParser()
-op.accepts( LONG_OPTION, 'long listing' )
-op.accepts( REVERSE_OPTION, 'reverse listing' )
-op.accepts( MODIFY_OPTION, 'sort based on modification time' )
-op.accepts( SIZE_OPTION, 'sort based on size' )
-op.accepts( HELP_OPTION, 'display this message' )
+op.accepts(LONG_OPTION, 'long listing')
+op.accepts(REVERSE_OPTION, 'reverse listing')
+op.accepts(MODIFY_OPTION, 'sort based on modification time')
+op.accepts(SIZE_OPTION, 'sort based on size')
+op.accepts(HELP_OPTION, 'display this message')
 
 options = op.parse(args)
-if (options.wasDetected( HELP_OPTION )) {
-    op.printHelpOn( System.out )
+if (options.wasDetected(HELP_OPTION)) {
+    op.printHelpOn(System.out)
 } else {
     sort = {}
     params = options.nonOptionArguments()
-    longFormat = options.wasDetected( LONG_OPTION )
-    reversed = options.wasDetected( REVERSE_OPTION )
-    if (options.wasDetected( SIZE_OPTION )) {
-        sort = {a,b -> a.size()<=>b.size()}
-    } else if (options.wasDetected( MODIFY_OPTION )) {
-        sort = {a,b -> a.lastModified()<=>b.lastModified()}
+    longFormat = options.wasDetected(LONG_OPTION)
+    reversed = options.wasDetected(REVERSE_OPTION)
+    if (options.wasDetected(SIZE_OPTION)) {
+        sort = { a, b -> a.size() <=> b.size() }
+    } else if (options.wasDetected(MODIFY_OPTION)) {
+        sort = { a, b -> a.lastModified() <=> b.lastModified() }
     }
     displayFiles(params, longFormat, reversed, sort)
 }
 
 def displayFiles(params, longFormat, reversed, sort) {
     files = []
-    params.each{ name -> new File(name).eachFileRecurse{ files += it } }
+    params.each { name -> new File(name).eachFileRecurse { files += it } }
     files.sort(sort)
     if (reversed) files = files.reverse()
     files.each { file ->
         if (longFormat) {
-            print (file.directory ? 'd' : '-' )
-            print (file.canRead() ? 'r' : '-' )
-            print (file.canWrite() ? 'w ' : '- ' )
+            print(file.directory ? 'd' : '-')
+            print(file.canRead() ? 'r' : '-')
+            print(file.canWrite() ? 'w ' : '- ')
             //print (file.canExecute() ? 'x' : '-' ) // Java 6
             print file.size().toString().padLeft(12) + ' '
             print new Date(file.lastModified()).toString().padRight(22)
@@ -1823,6 +1851,7 @@ println greeted
 def hypotenuse(side1, side2) {
     Math.sqrt(side1**2 + side2**2)    // sqrt in Math package
 }
+
 diag = hypotenuse(3, 4)
 assert diag == 5
 
@@ -1836,15 +1865,19 @@ assert hypotenuse(*a) == 13
 // Typically we just return a new object. Especially for immutable objects
 // this style of processing is very common.
 nums = [1.4, 3.5, 6.7]
+
 def toInteger(n) {
     n.collect { v -> v.toInteger() }
 }
+
 assert toInteger(nums) == [1, 3, 6]
 
 orignums = [1.4, 3.5, 6.7]
+
 def truncMe(n) {
-    (0..<n.size()).each{ idx -> n[idx] = n[idx].toInteger() }
+    (0..<n.size()).each { idx -> n[idx] = n[idx].toInteger() }
 }
+
 truncMe(orignums)
 assert orignums == [1, 3, 6]
 //----------------------------------------------------------------------------------
@@ -1869,6 +1902,7 @@ def checkAccess(x) {
     def y = 200
     return x + y + bindingVar // access private, param, global
 }
+
 assert checkAccess(7) == 217
 
 def saveArray(ary) {
@@ -1887,12 +1921,15 @@ assert globalArray == ["internal", "important"]
 // you could use a helper class for this
 class CounterHelper {
     private static counter = 0
+
     def static next() { ++counter }
 }
+
 def greeting(s) {
     def n = CounterHelper.next()
     println "Hello $s  (I have been called $n times)"
 }
+
 greeting('tom')
 greeting('dick')
 greeting('harry')
@@ -1922,12 +1959,15 @@ def myMethod() {
     names = new Exception().stackTrace*.methodName
     println groovyUnwrap(names)
 }
+
 def myMethod2() {
     names = Thread.currentThread().stackTrace*.methodName
     names = names[3..<names.size()] // skip call to dumpThread
     println groovyUnwrap(names)
 }
-def groovyUnwrap(names) { names[names.indexOf('invoke0')-1] }
+
+def groovyUnwrap(names) { names[names.indexOf('invoke0') - 1] }
+
 myMethod()  // => myMethod
 myMethod2() // => myMethod2
 
@@ -1945,10 +1985,11 @@ myMethod2() // => myMethod2
 // pairwise add (altered so it doesn't require equal sizes)
 def pairWiseAdd(a1, a2) {
     s1 = a1.size(); s2 = a2.size()
-    (0..<[s1,s2].max()).collect{
-        it > s1-1 ? a2[it] : (it > s2-1 ? a1[it] : a1[it] + a2[it])
+    (0..<[s1, s2].max()).collect {
+        it > s1 - 1 ? a2[it] : (it > s2 - 1 ? a1[it] : a1[it] + a2[it])
     }
 }
+
 a = [1, 2]
 b = [5, 8]
 assert pairWiseAdd(a, b) == [6, 10]
@@ -1966,8 +2007,8 @@ assert pairWiseAdd(a, b) == [6, 2]
 // here we call it with two maps of strings and get back strings
 // the important thing here was that the arguments were indexed
 // 0..size-1 and that the items supported the '+' operator (as String does)
-a = [0:'Green ', 1:'Grey ']
-b = [0:'Frog', 1:'Elephant', 2:'Dog']
+a = [0: 'Green ', 1: 'Grey ']
+b = [0: 'Frog', 1: 'Elephant', 2: 'Dog']
 assert pairWiseAdd(a, b) == ["Green Frog", "Grey Elephant", "Dog"]
 //----------------------------------------------------------------------------------
 
@@ -1977,10 +2018,11 @@ assert pairWiseAdd(a, b) == ["Green Frog", "Grey Elephant", "Dog"]
 // There is no exact equivalent of return context in Groovy but
 // you can behave differently when called under different circumstances
 def addValueOrSize(a1, a2) {
-     b1 = (a1 instanceof Number) ? a1 : a1.size()
-     b2 = (a2 instanceof Number) ? a2 : a2.size()
-     b1 + b2
+    b1 = (a1 instanceof Number) ? a1 : a1.size()
+    b2 = (a2 instanceof Number) ? a2 : a2.size()
+    b1 + b2
 }
+
 assert (addValueOrSize(10, 'abcd')) == 14
 assert (addValueOrSize(10, [25, 50])) == 12
 assert (addValueOrSize('abc', [25, 50])) == 5
@@ -1990,17 +2032,20 @@ assert (addValueOrSize(25, 50)) == 75
 // method overloading so that responding to dofferent parameters has
 // a formal way of being captured in code with typed methods, e.g.
 class MakeBiggerHelper {
-    def triple(List iList) { iList.collect{ it * 3 } }
+    def triple(List iList) { iList.collect { it * 3 } }
+
     def triple(int i) { i * 3 }
 }
+
 mbh = new MakeBiggerHelper()
 assert mbh.triple([4, 5]) == [12, 15]
 assert mbh.triple(4) == 12
 
 // Of course with duck typing, we can rely on dynamic typing if we want
 def directTriple(arg) {
-    (arg instanceof Number) ? arg * 3 : arg.collect{ it * 3 }
+    (arg instanceof Number) ? arg * 3 : arg.collect { it * 3 }
 }
+
 assert directTriple([4, 5]) == [12, 15]
 assert directTriple(4) == 12
 //----------------------------------------------------------------------------------
@@ -2018,14 +2063,14 @@ def thefunc(Map args) {
 }
 
 // positional arguments with defaults
-def thefunc(start=0, end=30, step=10) {
+def thefunc(start = 0, end = 30, step = 10) {
     ((start..end).step(step))
 }
 
-assert thefunc()                        == [0, 10, 20, 30]
-assert thefunc(15)                      == [15, 25]
-assert thefunc(0,40)                    == [0, 10, 20, 30, 40]
-assert thefunc(start:5, end:20, step:5) == [5, 10, 15, 20]
+assert thefunc() == [0, 10, 20, 30]
+assert thefunc(15) == [15, 25]
+assert thefunc(0, 40) == [0, 10, 20, 30, 40]
+assert thefunc(start: 5, end: 20, step: 5) == [5, 10, 15, 20]
 //----------------------------------------------------------------------------------
 
 // @@PLEAC@@_10.8
@@ -2037,12 +2082,13 @@ def getSystemInfo() {
     def millis = System.currentTimeMillis()
     def freemem = Runtime.runtime.freeMemory()
     def version = System.getProperty('java.vm.version')
-    return [millis:millis, freemem:freemem, version:version]
+    return [millis: millis, freemem: freemem, version: version]
     // if you are likely to want all the information use a list
     //     return [millis, freemem, version]
     // or dedicated holder class
     //     return new SystemInfo(millis, freemem, version)
 }
+
 result = getSystemInfo()
 println result.version
 // => 1.5.0_08-b03
@@ -2055,12 +2101,13 @@ println result.version
 // just use a holder class, array or collection. There are no limitations
 // on returning arbitrary nested values using this technique.
 def getInfo() {
-    def system = [millis:System.currentTimeMillis(),
-                  version:System.getProperty('java.vm.version')]
-    def runtime = [freemem:Runtime.runtime.freeMemory(),
-                   maxmem:Runtime.runtime.maxMemory()]
-    return [system:system, runtime:runtime]
+    def system = [millis : System.currentTimeMillis(),
+                  version: System.getProperty('java.vm.version')]
+    def runtime = [freemem: Runtime.runtime.freeMemory(),
+                   maxmem : Runtime.runtime.maxMemory()]
+    return [system: system, runtime: runtime]
 }
+
 println info.runtime.maxmem // => 66650112 (info automatically calls getInfo() here)
 //----------------------------------------------------------------------------------
 
@@ -2073,10 +2120,12 @@ def sizeMinusOne(thing) {
     if (thing instanceof Number) return
     thing.size() - 1
 }
+
 def check(thing) {
     result = sizeMinusOne(thing)
-    println (result ? "Worked with result: $result" : 'Failed')
+    println(result ? "Worked with result: $result" : 'Failed')
 }
+
 check(4)
 check([1, 2])
 check('abc')
@@ -2100,30 +2149,32 @@ check('abc')
 // operator, varargs style optional params and supports method
 // overloading and ducktyping. Perhaps these other features mean
 // that this scenario is always easy to avoid.
-def sum(a,b,c){ a+b+c*2 }
-def sum(a,b){ a+b }
+def sum(a, b, c) { a + b + c * 2 }
+
+def sum(a, b) { a + b }
 // sum sum 1,2,4,5
 // => compilation error
-sum sum(1,2),4,5
-sum sum(1,2,4),5
+sum sum(1, 2), 4, 5
+sum sum(1, 2, 4), 5
 // these work but if you try to do anything fancy you will run into trouble;
 // your best bet is to actually include all the parentheses:
-println sum(sum(1,2),4,5) // => 17
-println sum(sum(1,2,4),5) // => 16
+println sum(sum(1, 2), 4, 5) // => 17
+println sum(sum(1, 2, 4), 5) // => 16
 
 // Mimicking built-ins scenario: this is a mechanism to turn-off
 // auto flattening, Groovy only does flattening in restricted circumstances.
 // func(array, 1, 2, 3) is never coerced into a single list but varargs
 // and optional args can be used instead
 def push(list, Object[] optionals) {
-    optionals.each{ list.add(it) }
+    optionals.each { list.add(it) }
 }
-items = [1,2]
+
+items = [1, 2]
 newItems = [7, 8, 9]
 push items, 3, 4
 push items, 6
-push (items, *newItems) // brackets currently required, *=flattening
-                        // without *: items = [1, 2, 3, 4, 6, [7, 8, 9]]
+push(items, *newItems) // brackets currently required, *=flattening
+// without *: items = [1, 2, 3, 4, 6, [7, 8, 9]]
 assert items == [1, 2, 3, 4, 6, 7, 8, 9]
 //----------------------------------------------------------------------------------
 
@@ -2140,6 +2191,7 @@ def getSizeMostOfTheTime(s) {
     if (s =~ 'Full Moon') throw new RuntimeException('The world is ending')
     s.size()
 }
+
 try {
     println 'Size is: ' + getSizeMostOfTheTime('The quick brown fox')
     println 'Size is: ' + getSizeMostOfTheTime('Beware the Full Moon')
@@ -2186,8 +2238,14 @@ printAge()       // => 18
 
 // OO approach:
 // The standard trick using OO is to override methods in subclasses
-class Parent { def foo(){ println 'foo' } }
-class Child extends Parent { def foo(){ println 'bar' } }
+class Parent {
+    def foo() { println 'foo' }
+}
+
+class Child extends Parent {
+    def foo() { println 'bar' }
+}
+
 new Parent().foo()   // => foo
 new Child().foo()    // => bar
 
@@ -2201,7 +2259,8 @@ println new Date().toString()
 class DateCategory {
     static toString(Date self) { 'not telling' }
 }
-use (DateCategory) {
+
+use(DateCategory) {
     println new Date().toString()
 }
 // => not telling
@@ -2237,10 +2296,12 @@ class FontHelper {
     def invokeMethod(String name, Object args) {
         buildFont(name, args.join(' and '))
     }
+
     def buildFont(name, info) {
         "<FONT COLOR='$name'>" + info + "</FONT>"
     }
 }
+
 fh = new FontHelper()
 println fh.pink("panther")
 println fh.chartreuse("stuff", "more stuff")
@@ -2257,6 +2318,7 @@ def outer(arg) {
     inner = { x * 19 }
     x + inner()
 }
+
 assert outer(10) == 900
 //----------------------------------------------------------------------------------
 
@@ -2265,7 +2327,7 @@ assert outer(10) == 900
 // Program: Sorting Your Mail
 //#!/usr/bin/groovy
 //import javax.mail.*
-class URLName{}
+class URLName {}
 // solution using mstor package (mstor.sf.net)
 session = Session.getDefaultInstance(new Properties())
 store = session.getStore(new URLName('mstor:/path_to_your_mbox_directory'))
@@ -2278,11 +2340,11 @@ messages = inbox.messages.toList()
 
 // extractor closures
 subject = { m -> m.subject }
-subjectExcludingReplyPrefix = { m -> subject(m).replaceAll(/(?i)Re:\\s*/,'') } // double slash to single outside triple quotes
+subjectExcludingReplyPrefix = { m -> subject(m).replaceAll(/(?i)Re:\\s*/, '') } // double slash to single outside triple quotes
 date = { m -> d = m.sentDate; new Date(d.year, d.month, d.date) } // ignore time fields
 
 // sort by subject excluding 'Re:' prefixs then print subject for first 6
-println messages.sort{subjectExcludingReplyPrefix(it)}[0..5]*.subject.join('\n')
+println messages.sort { subjectExcludingReplyPrefix(it) }[0..5]*.subject.join('\n')
 // =>
 // Additional Resources for JDeveloper 10g (10.1.3)
 // Amazon Web Services Developer Connection Newsletter #18
@@ -2292,12 +2354,12 @@ println messages.sort{subjectExcludingReplyPrefix(it)}[0..5]*.subject.join('\n')
 // BigPond Account Notification
 
 // sort by date then subject (print first 6 entries)
-sorted = messages.sort{ a,b ->
+sorted = messages.sort { a, b ->
     date(a) == date(b) ?
         subjectExcludingReplyPrefix(a) <=> subjectExcludingReplyPrefix(b) :
         date(a) <=> date(b)
 }
-sorted[0..5].each{ m -> println "$m.sentDate: $m.subject" }
+sorted[0..5].each { m -> println "$m.sentDate: $m.subject" }
 // =>
 // Wed Jan 03 08:54:15 EST 2007: ARN Daily | 2007: IT predictions for the year ahead
 // Wed Jan 03 15:33:31 EST 2007: EclipseSource: RCP Adoption, Where Art Thou?
@@ -2307,10 +2369,10 @@ sorted[0..5].each{ m -> println "$m.sentDate: $m.subject" }
 // Fri Jan 05 05:51:36 EST 2007: IBM developerWorks Weekly Edition, 4 January 2007
 
 // group by date then print first 2 entries of first 2 dates
-groups = messages.groupBy{ date(it) }
-groups.keySet().toList()[0..1].each{
+groups = messages.groupBy { date(it) }
+groups.keySet().toList()[0..1].each {
     println it
-    println groups[it][0..1].collect{ '    ' + it.subject }.join('\n')
+    println groups[it][0..1].collect { '    ' + it.subject }.join('\n')
 }
 // =>
 // Wed Jan 03 00:00:00 EST 2007

@@ -38,21 +38,20 @@ import org.apache.tools.ant.util.*;
  * When this task executes, it will recursively scan the sourcedir
  * looking for source files to expand into testcases. This task makes its
  * generation decision based on timestamp.
- *
+ * <p>
  * Based heavily on the Javac implementation in Ant
  */
 public class GenerateTestCases extends MatchingTask {
 
+    protected boolean failOnError = true;
+    protected boolean listFiles = false;
+    protected File[] compileList = new File[0];
     private BatchGenerate batchGenerate = new BatchGenerate();
     private Path src;
     private File destDir;
     private Path compileClasspath;
     private Path compileSourcepath;
     private String encoding;
-
-    protected boolean failOnError = true;
-    protected boolean listFiles = false;
-    protected File[] compileList = new File[0];
 
     public GenerateTestCases() {
     }
@@ -80,21 +79,8 @@ public class GenerateTestCases extends MatchingTask {
     }
 
     /**
-     * Set the source directories to find the source Java files.
-     * @param srcDir the source directories as a path
-     */
-    public void setSrcdir(Path srcDir) {
-        if (src == null) {
-            src = srcDir;
-        }
-        else {
-            src.append(srcDir);
-        }
-        batchGenerate.setSrcdirPath(src.toString());
-    }
-
-    /**
      * Gets the source dirs to find the source java files.
+     *
      * @return the source directorys as a path
      */
     public Path getSrcdir() {
@@ -102,26 +88,33 @@ public class GenerateTestCases extends MatchingTask {
     }
 
     /**
-     * Set the destination directory into which the Java source
-     * files should be compiled.
-     * @param destDir the destination director
+     * Set the source directories to find the source Java files.
+     *
+     * @param srcDir the source directories as a path
      */
-    public void setDestdir(File destDir) {
-        this.destDir = destDir;
+    public void setSrcdir(Path srcDir) {
+        if (src == null) {
+            src = srcDir;
+        } else {
+            src.append(srcDir);
+        }
+        batchGenerate.setSrcdirPath(src.toString());
     }
 
     /**
      * Enable verbose compiling which will display which files
      * are being compiled
+     *
      * @param verbose
      */
     public void setVerbose(boolean verbose) {
-        batchGenerate.setVerbose( verbose );
+        batchGenerate.setVerbose(verbose);
     }
 
     /**
      * Gets the destination directory into which the java source files
      * should be compiled.
+     *
      * @return the destination directory
      */
     public File getDestdir() {
@@ -129,20 +122,18 @@ public class GenerateTestCases extends MatchingTask {
     }
 
     /**
-     * Set the sourcepath to be used for this compilation.
-     * @param sourcepath the source path
+     * Set the destination directory into which the Java source
+     * files should be compiled.
+     *
+     * @param destDir the destination director
      */
-    public void setSourcepath(Path sourcepath) {
-        if (compileSourcepath == null) {
-            compileSourcepath = sourcepath;
-        }
-        else {
-            compileSourcepath.append(sourcepath);
-        }
+    public void setDestdir(File destDir) {
+        this.destDir = destDir;
     }
 
     /**
      * Gets the sourcepath to be used for this compilation.
+     *
      * @return the source path
      */
     public Path getSourcepath() {
@@ -150,7 +141,21 @@ public class GenerateTestCases extends MatchingTask {
     }
 
     /**
+     * Set the sourcepath to be used for this compilation.
+     *
+     * @param sourcepath the source path
+     */
+    public void setSourcepath(Path sourcepath) {
+        if (compileSourcepath == null) {
+            compileSourcepath = sourcepath;
+        } else {
+            compileSourcepath.append(sourcepath);
+        }
+    }
+
+    /**
      * Adds a path to sourcepath.
+     *
      * @return a sourcepath to be configured
      */
     public Path createSourcepath() {
@@ -162,10 +167,20 @@ public class GenerateTestCases extends MatchingTask {
 
     /**
      * Adds a reference to a source path defined elsewhere.
+     *
      * @param r a reference to a source path
      */
     public void setSourcepathRef(Reference r) {
         createSourcepath().setRefid(r);
+    }
+
+    /**
+     * Gets the classpath to be used for this compilation.
+     *
+     * @return the class path
+     */
+    public Path getClasspath() {
+        return compileClasspath;
     }
 
     /**
@@ -176,22 +191,14 @@ public class GenerateTestCases extends MatchingTask {
     public void setClasspath(Path classpath) {
         if (compileClasspath == null) {
             compileClasspath = classpath;
-        }
-        else {
+        } else {
             compileClasspath.append(classpath);
         }
     }
 
     /**
-     * Gets the classpath to be used for this compilation.
-     * @return the class path
-     */
-    public Path getClasspath() {
-        return compileClasspath;
-    }
-
-    /**
      * Adds a path to the classpath.
+     *
      * @return a class path to be configured
      */
     public Path createClasspath() {
@@ -203,6 +210,7 @@ public class GenerateTestCases extends MatchingTask {
 
     /**
      * Adds a reference to a classpath defined elsewhere.
+     *
      * @param r a reference to a classpath
      */
     public void setClasspathRef(Reference r) {
@@ -216,24 +224,17 @@ public class GenerateTestCases extends MatchingTask {
         return encoding;
     }
 
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
-    }
-
     public String getEncoding() {
         return encoding;
     }
 
-    /**
-     * If true, list the source files being handed off to the compiler.
-     * @param list if true list the source files
-     */
-    public void setListfiles(boolean list) {
-        listFiles = list;
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
     /**
      * Get the listfiles flag.
+     *
      * @return the listfiles flag
      */
     public boolean getListfiles() {
@@ -241,12 +242,12 @@ public class GenerateTestCases extends MatchingTask {
     }
 
     /**
-     * Indicates whether the build will continue
-     * even if there are compilation errors; defaults to true.
-     * @param fail if true halt the build on failure
+     * If true, list the source files being handed off to the compiler.
+     *
+     * @param list if true list the source files
      */
-    public void setFailonerror(boolean fail) {
-        failOnError = fail;
+    public void setListfiles(boolean list) {
+        listFiles = list;
     }
 
     /**
@@ -258,6 +259,7 @@ public class GenerateTestCases extends MatchingTask {
 
     /**
      * Gets the failonerror flag.
+     *
      * @return the failonerror flag
      */
     public boolean getFailonerror() {
@@ -265,8 +267,19 @@ public class GenerateTestCases extends MatchingTask {
     }
 
     /**
+     * Indicates whether the build will continue
+     * even if there are compilation errors; defaults to true.
+     *
+     * @param fail if true halt the build on failure
+     */
+    public void setFailonerror(boolean fail) {
+        failOnError = fail;
+    }
+
+    /**
      * Executes the task.
-     * @exception BuildException if an error occurs
+     *
+     * @throws BuildException if an error occurs
      */
     public void execute() throws BuildException {
         checkParameters();
@@ -301,9 +314,9 @@ public class GenerateTestCases extends MatchingTask {
      * Scans the directory looking for source files to be compiled.
      * The results are returned in the class variable compileList
      *
-     * @param srcDir   The source directory
-     * @param destDir  The destination directory
-     * @param files    An array of filenames
+     * @param srcDir  The source directory
+     * @param destDir The destination directory
+     * @param files   An array of filenames
      */
     protected void scanDir(File srcDir, File destDir, String[] files) {
         GlobPatternMapper m = new GlobPatternMapper();
@@ -322,6 +335,7 @@ public class GenerateTestCases extends MatchingTask {
 
     /**
      * Gets the list of files to be compiled.
+     *
      * @return the list of files as an array
      */
     public File[] getFileList() {
@@ -375,10 +389,9 @@ public class GenerateTestCases extends MatchingTask {
                     batchGenerate.setSourceEncoding(encoding);
                 }
 
-                batchGenerate.addSources( compileList );
-                batchGenerate.compile( );
-            }
-            catch (Exception e) {
+                batchGenerate.addSources(compileList);
+                batchGenerate.compile();
+            } catch (Exception e) {
 
                 StringWriter writer = new StringWriter();
                 //@todo --
@@ -388,8 +401,7 @@ public class GenerateTestCases extends MatchingTask {
 
                 if (failOnError) {
                     throw new BuildException(message, e, getLocation());
-                }
-                else {
+                } else {
                     log(message, Project.MSG_ERR);
                 }
 

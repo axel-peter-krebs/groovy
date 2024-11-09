@@ -51,6 +51,6 @@ class Test3831V2 {
     public Test3831V2(cl) {}
 
     public Test3831V2() {
-        this({1})
+        this({ 1 })
     }
 }

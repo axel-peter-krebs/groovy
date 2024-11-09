@@ -91,7 +91,7 @@ public class MarkupTemplateEngine extends TemplateEngine {
         List<CompilationCustomizer> customizers = compilerConfiguration.getCompilationCustomizers();
         customizers.add(new TemplateASTTransformer(templateConfiguration));
         customizers.add(new ASTTransformationCustomizer(
-                Collections.singletonMap("extensions", "groovy.text.markup.MarkupTemplateTypeCheckingExtension"), TypeChecked.class));
+            Collections.singletonMap("extensions", "groovy.text.markup.MarkupTemplateTypeCheckingExtension"), TypeChecked.class));
         if (templateConfiguration.isAutoNewLine()) {
             customizers.add(new CompilationCustomizer(CompilePhase.CONVERSION) {
                 @Override
@@ -124,8 +124,8 @@ public class MarkupTemplateEngine extends TemplateEngine {
                         return new URLClassLoader(buildURLs(templateDirectory), parentLoader);
                     }
                 }),
-                tplConfig,
-                null);
+            tplConfig,
+            null);
     }
 
     @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
@@ -200,53 +200,6 @@ public class MarkupTemplateEngine extends TemplateEngine {
     }
 
     /**
-     * Implements the {@link groovy.text.Template} interface by caching a compiled template script and keeping a
-     * reference to the optional map of types of the model elements.
-     */
-    private class MarkupTemplateMaker implements Template {
-        final Class<BaseTemplate> templateClass;
-        final Map<String, String> modeltypes;
-
-        @SuppressWarnings("unchecked")
-        MarkupTemplateMaker(final Reader reader, String sourceName, Map<String, String> modelTypes) {
-            String name = sourceName != null ? sourceName : "GeneratedMarkupTemplate" + counter.getAndIncrement();
-            templateClass = groovyClassLoader.parseClass(new GroovyCodeSource(reader, name, "x"), modelTypes);
-            this.modeltypes = modelTypes;
-        }
-
-        @SuppressWarnings("unchecked")
-        public MarkupTemplateMaker(final URL resource, Map<String, String> modelTypes) throws IOException {
-            boolean cache = templateConfiguration.isCacheTemplates();
-            GroovyCodeSource codeSource;
-            if (cache) {
-                // we use a map in addition to the internal caching mechanism of Groovy because the latter
-                // will always read from the URL even if it's cached
-                String key = resource.toExternalForm();
-                codeSource = codeSourceCache.get(key);
-                if (codeSource == null) {
-                    codeSource = new GroovyCodeSource(resource);
-                    codeSourceCache.put(key, codeSource);
-                }
-            } else {
-                codeSource = new GroovyCodeSource(resource);
-            }
-            codeSource.setCachable(cache);
-            templateClass = groovyClassLoader.parseClass(codeSource, modelTypes);
-            this.modeltypes = modelTypes;
-        }
-
-        @Override
-        public Writable make() {
-            return make(Collections.emptyMap());
-        }
-
-        @Override
-        public Writable make(final Map binding) {
-            return DefaultGroovyMethods.newInstance(templateClass, new Object[]{MarkupTemplateEngine.this, binding, modeltypes, templateConfiguration});
-        }
-    }
-
-    /**
      * A specialized GroovyClassLoader which will support passing values to the type checking extension thanks to a
      * thread local.
      */
@@ -272,18 +225,18 @@ public class MarkupTemplateEngine extends TemplateEngine {
         private final String locale;
         private final String extension;
 
+        private TemplateResource(final String baseName, final String locale, final String extension) {
+            this.baseName = baseName;
+            this.locale = locale;
+            this.extension = extension;
+        }
+
         public static TemplateResource parse(String fullPath) {
             Matcher matcher = LOCALIZED_RESOURCE_PATTERN.matcher(fullPath);
             if (!matcher.find()) {
                 throw new IllegalArgumentException("Illegal template path: " + fullPath);
             }
             return new TemplateResource(matcher.group(1), matcher.group(2), matcher.group(3));
-        }
-
-        private TemplateResource(final String baseName, final String locale, final String extension) {
-            this.baseName = baseName;
-            this.locale = locale;
-            this.extension = extension;
         }
 
         public TemplateResource withLocale(String locale) {
@@ -348,6 +301,7 @@ public class MarkupTemplateEngine extends TemplateEngine {
          * Creates a new caching template resolver. The cache implementation being used depends on
          * the use of the template engine. If multiple templates can be rendered in parallel, it <b>must</b>
          * be using a thread-safe cache.
+         *
          * @param cache the backing cache
          */
         public CachingTemplateResolver(final Map<String, URL> cache) {
@@ -372,7 +326,7 @@ public class MarkupTemplateEngine extends TemplateEngine {
         public URL resolveTemplate(final String templatePath) throws IOException {
             if (useCache) {
                 URL cachedURL = cache.get(templatePath);
-                if (cachedURL!=null) {
+                if (cachedURL != null) {
                     return cachedURL;
                 }
             }
@@ -381,6 +335,53 @@ public class MarkupTemplateEngine extends TemplateEngine {
                 cache.put(templatePath, url);
             }
             return url;
+        }
+    }
+
+    /**
+     * Implements the {@link groovy.text.Template} interface by caching a compiled template script and keeping a
+     * reference to the optional map of types of the model elements.
+     */
+    private class MarkupTemplateMaker implements Template {
+        final Class<BaseTemplate> templateClass;
+        final Map<String, String> modeltypes;
+
+        @SuppressWarnings("unchecked")
+        MarkupTemplateMaker(final Reader reader, String sourceName, Map<String, String> modelTypes) {
+            String name = sourceName != null ? sourceName : "GeneratedMarkupTemplate" + counter.getAndIncrement();
+            templateClass = groovyClassLoader.parseClass(new GroovyCodeSource(reader, name, "x"), modelTypes);
+            this.modeltypes = modelTypes;
+        }
+
+        @SuppressWarnings("unchecked")
+        public MarkupTemplateMaker(final URL resource, Map<String, String> modelTypes) throws IOException {
+            boolean cache = templateConfiguration.isCacheTemplates();
+            GroovyCodeSource codeSource;
+            if (cache) {
+                // we use a map in addition to the internal caching mechanism of Groovy because the latter
+                // will always read from the URL even if it's cached
+                String key = resource.toExternalForm();
+                codeSource = codeSourceCache.get(key);
+                if (codeSource == null) {
+                    codeSource = new GroovyCodeSource(resource);
+                    codeSourceCache.put(key, codeSource);
+                }
+            } else {
+                codeSource = new GroovyCodeSource(resource);
+            }
+            codeSource.setCachable(cache);
+            templateClass = groovyClassLoader.parseClass(codeSource, modelTypes);
+            this.modeltypes = modelTypes;
+        }
+
+        @Override
+        public Writable make() {
+            return make(Collections.emptyMap());
+        }
+
+        @Override
+        public Writable make(final Map binding) {
+            return DefaultGroovyMethods.newInstance(templateClass, new Object[]{MarkupTemplateEngine.this, binding, modeltypes, templateConfiguration});
         }
     }
 

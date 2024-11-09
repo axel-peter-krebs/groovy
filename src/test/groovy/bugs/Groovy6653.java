@@ -24,6 +24,20 @@ import static groovy.test.GroovyAssert.assertScript;
 
 public final class Groovy6653 {
 
+    @Test
+    public void testCovariantMethodSuperCall() throws Exception {
+        assertScript(
+            "class D extends " + C.class.getName() + " {\n" +
+                "    @Override\n" +
+                "    protected String getText(String s) {\n" +
+                "        super.getText(s) + 'D'\n" +
+                "    }\n" +
+                "}\n" +
+                "String result = new D().getText(null)\n" +
+                "assert result == 'ACD'\n"
+        );
+    }
+
     public static abstract class A<T> {
         protected String getText(T t) {
             return "A";
@@ -35,19 +49,5 @@ public final class Groovy6653 {
         protected String getText(String s) {
             return super.getText(s) + "C";
         }
-    }
-
-    @Test
-    public void testCovariantMethodSuperCall() throws Exception {
-        assertScript(
-            "class D extends " + C.class.getName() + " {\n" +
-            "    @Override\n" +
-            "    protected String getText(String s) {\n" +
-            "        super.getText(s) + 'D'\n" +
-            "    }\n" +
-            "}\n" +
-            "String result = new D().getText(null)\n" +
-            "assert result == 'ACD'\n"
-        );
     }
 }

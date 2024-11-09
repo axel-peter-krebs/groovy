@@ -34,21 +34,13 @@ public class VariableExpression extends Expression implements Variable {
     public static final VariableExpression SUPER_EXPRESSION = new VariableExpression("super", ClassHelper.dynamicType());
 
     private final String variable;
+    private final ClassNode originType;
+    boolean closureShare = false;
+    boolean useRef = false;
     private int modifiers;
     private boolean inStaticContext;
     private boolean isDynamicTyped = false;
     private Variable accessedVariable;
-    boolean closureShare = false;
-    boolean useRef = false;
-    private final ClassNode originType;
-
-    public Variable getAccessedVariable() {
-        return accessedVariable;
-    }
-
-    public void setAccessedVariable(Variable origin) {
-        this.accessedVariable = origin;
-    }
 
     public VariableExpression(final String name, final ClassNode type) {
         variable = name;
@@ -64,6 +56,14 @@ public class VariableExpression extends Expression implements Variable {
         this(variable.getName(), variable.getOriginType());
         setAccessedVariable(variable);
         setModifiers(variable.getModifiers());
+    }
+
+    public Variable getAccessedVariable() {
+        return accessedVariable;
+    }
+
+    public void setAccessedVariable(Variable origin) {
+        this.accessedVariable = origin;
     }
 
     @Override
@@ -111,20 +111,6 @@ public class VariableExpression extends Expression implements Variable {
         this.inStaticContext = inStaticContext;
     }
 
-    /**
-     * Set the type of this variable. If you call this method from an AST transformation and that
-     * the {@link #getAccessedVariable() accessed variable} is ({@link #isClosureSharedVariable() shared},
-     * this operation is unsafe and may lead to a verify error at compile time. Instead, set the type of
-     * the {@link #getAccessedVariable() accessed variable}
-     *
-     * @param cn the type to be set on this variable
-     */
-    @Override
-    public void setType(ClassNode cn) {
-        super.setType(cn);
-        isDynamicTyped |= ClassHelper.isDynamicTyped(cn);
-    }
-
     @Override
     public boolean isDynamicTyped() {
         if (accessedVariable != null && accessedVariable != this) return accessedVariable.isDynamicTyped();
@@ -167,14 +153,8 @@ public class VariableExpression extends Expression implements Variable {
         return modifiers;
     }
 
-    /**
-     * For internal use only. This flag is used by compiler internals and should probably
-     * be converted to a node metadata in the future.
-     *
-     * @param useRef
-     */
-    public void setUseReferenceDirectly(boolean useRef) {
-        this.useRef = useRef;
+    public void setModifiers(int modifiers) {
+        this.modifiers = modifiers;
     }
 
     /**
@@ -185,10 +165,34 @@ public class VariableExpression extends Expression implements Variable {
         return useRef;
     }
 
+    /**
+     * For internal use only. This flag is used by compiler internals and should probably
+     * be converted to a node metadata in the future.
+     *
+     * @param useRef
+     */
+    public void setUseReferenceDirectly(boolean useRef) {
+        this.useRef = useRef;
+    }
+
     @Override
     public ClassNode getType() {
         if (accessedVariable != null && accessedVariable != this) return accessedVariable.getType();
         return super.getType();
+    }
+
+    /**
+     * Set the type of this variable. If you call this method from an AST transformation and that
+     * the {@link #getAccessedVariable() accessed variable} is ({@link #isClosureSharedVariable() shared},
+     * this operation is unsafe and may lead to a verify error at compile time. Instead, set the type of
+     * the {@link #getAccessedVariable() accessed variable}
+     *
+     * @param cn the type to be set on this variable
+     */
+    @Override
+    public void setType(ClassNode cn) {
+        super.setType(cn);
+        isDynamicTyped |= ClassHelper.isDynamicTyped(cn);
     }
 
     /**
@@ -209,9 +213,5 @@ public class VariableExpression extends Expression implements Variable {
 
     public boolean isSuperExpression() {
         return "super".equals(variable);
-    }
-
-    public void setModifiers(int modifiers) {
-        this.modifiers = modifiers;
     }
 }

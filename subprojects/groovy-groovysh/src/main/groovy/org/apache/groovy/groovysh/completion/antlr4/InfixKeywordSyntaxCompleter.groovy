@@ -27,12 +27,12 @@ class InfixKeywordSyntaxCompleter implements IdentifierCompleter {
 
     // INFIX keywords can only occur after identifiers
     private static final String[] INFIX_KEYWORDS = [
-            'in',
-            'instanceof',
-            '!in',
-            '!instanceof',
-            'extends',
-            'implements',
+        'in',
+        'instanceof',
+        '!in',
+        '!instanceof',
+        'extends',
+        'implements',
     ]
 
     @Override

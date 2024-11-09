@@ -30,19 +30,17 @@ import java.util.Iterator;
  */
 public class CharacterRangeTest extends TestCase {
     /**
-     * The range to test.
-     */
-    private ObjectRange range = null;
-
-    /**
      * The first character in the range.
      */
     private final Character FROM = Character.valueOf('a');
-
     /**
      * The last character in the range.
      */
     private final Character TO = Character.valueOf('d');
+    /**
+     * The range to test.
+     */
+    private ObjectRange range = null;
 
     /**
      * {@inheritDoc}
@@ -59,7 +57,7 @@ public class CharacterRangeTest extends TestCase {
         Iterator iter = range.iterator();
         assertEquals(FROM, iter.next());
         for (char expected = (char) (FROM.charValue() + 1); expected <= TO.charValue(); expected++) {
-            assertEquals(expected, ((Character)iter.next()).charValue());
+            assertEquals(expected, ((Character) iter.next()).charValue());
         }
     }
 

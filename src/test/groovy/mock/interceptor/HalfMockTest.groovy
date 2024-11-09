@@ -87,7 +87,7 @@ class HalfMockTest extends GroovyTestCase {
     void testMocksNonExistingProperties() {
         def mock = new MockFor(Baz)
         mock.demand.setNonExistingProperty() {}
-        mock.demand.getNonExistingProperty() {2}
+        mock.demand.getNonExistingProperty() { 2 }
         mock.use {
             def baz = new Baz()
             baz.nonExistingProperty = 1

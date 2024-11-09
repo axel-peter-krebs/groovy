@@ -34,22 +34,30 @@ class BatchGenerate {
     }
 
     void setSrcdirPath(String pathName) {
-        if (spew) {println("srcDir:${pathName}") }
+        if (spew) {
+            println("srcDir:${pathName}")
+        }
         srcDirPath = pathName
     }
 
     void setTargetDirectory(File destDir) {
-        if (spew) { println("destDir:${destDir}") }
+        if (spew) {
+            println("destDir:${destDir}")
+        }
         targetDir = destDir
     }
 
     void setSourceEncoding(String encoding) {
-        if (spew) { println("encoding:${encoding}") }
+        if (spew) {
+            println("encoding:${encoding}")
+        }
         srcEncoding = encoding
     }
 
-    void addSources( File[] compileList ) {
-        if (spew) { println("compileList:${compileList}") }
+    void addSources(File[] compileList) {
+        if (spew) {
+            println("compileList:${compileList}")
+        }
         srcs = compileList
     }
 
@@ -58,25 +66,27 @@ class BatchGenerate {
     }
 
     void compile() {
-        if (spew) { println("compile()") }
+        if (spew) {
+            println("compile()")
+        }
 
 
         for (src in srcs) {
-            println( src )
+            println(src)
             // mung the ${test.src.dir}/gls/ch14/s4 path into ${dest.dir}/gls/ch14/s4
             // first determine the relative path e.g. gls/ch14/s4
             def relativeSrcFilePathAndName = src.getAbsolutePath().substring(srcDirPath.length() + 1)
             def relativeSrcFileNameStartIndex = relativeSrcFilePathAndName.lastIndexOf(File.separator)
             def relativeOutputPath = ""
             if (relativeSrcFileNameStartIndex >= 0) {
-                relativeOutputPath = relativeSrcFilePathAndName.substring(0,relativeSrcFileNameStartIndex)
+                relativeOutputPath = relativeSrcFilePathAndName.substring(0, relativeSrcFileNameStartIndex)
             }
 
             // then determine the absolute output path
             def ghostOutputFile = new File(targetDir, relativeSrcFilePathAndName)
             def ghostOutputFilePath = ghostOutputFile.getAbsolutePath()
             def fileNameStartIndex = ghostOutputFilePath.lastIndexOf(File.separator)
-            def realOutputPath = ghostOutputFilePath.substring(0,fileNameStartIndex)
+            def realOutputPath = ghostOutputFilePath.substring(0, fileNameStartIndex)
 
             // mkdir if does not exist
             File directory = new File(realOutputPath)
@@ -90,7 +100,7 @@ class BatchGenerate {
             def anOutputFile = new File(realOutputPath, targetFileName)
 
             System.out.println("generating " + targetFileName)
-            def someOutputText = generator.generate(relativeOutputPath, targetDir, src.name,src.text)
+            def someOutputText = generator.generate(relativeOutputPath, targetDir, src.name, src.text)
             if (someOutputText != null && someOutputText != "") {
                 anOutputFile.write(someOutputText)
             }

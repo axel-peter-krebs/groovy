@@ -111,7 +111,7 @@ abstract class AbstractMemoizeTestCase extends GroovyTestCase {
     }
 
     def checkParams(Closure mem, callFlag, args, desiredResult) {
-        assertEquals desiredResult, mem( * args )
+        assertEquals desiredResult, mem(*args)
         assert !callFlag.empty
         callFlag.clear()
         assert desiredResult == mem(*args)

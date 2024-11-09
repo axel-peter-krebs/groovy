@@ -35,7 +35,7 @@ class MatteBorderFactory extends SwingBorderFactory {
 
         def matte
         def border
-        if (attributes.containsKey('icon'))  {
+        if (attributes.containsKey('icon')) {
             matte = attributes.remove('icon')
         } else if (attributes.containsKey('color')) {
             matte = attributes.remove('color')

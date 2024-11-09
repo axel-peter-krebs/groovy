@@ -83,14 +83,14 @@ class ParameterMappingTest {
         def positionMapping = transformation.position2VariableMappingFor(myMethod)
 
         assert nameAndTypeMapping == [
-                one: [name: '_one_', type: ClassHelper.int_TYPE],
-                two: [name: '_two_', type: ClassHelper.STRING_TYPE],
-                three: [name: '_three_', type: ClassHelper.CLOSURE_TYPE]
+            one  : [name: '_one_', type: ClassHelper.int_TYPE],
+            two  : [name: '_two_', type: ClassHelper.STRING_TYPE],
+            three: [name: '_three_', type: ClassHelper.CLOSURE_TYPE]
         ]
         assert positionMapping == [
-                0: [name: '_one_', type: ClassHelper.int_TYPE],
-                1: [name: '_two_', type: ClassHelper.STRING_TYPE],
-                2: [name: '_three_', type: ClassHelper.CLOSURE_TYPE]
+            0: [name: '_one_', type: ClassHelper.int_TYPE],
+            1: [name: '_two_', type: ClassHelper.STRING_TYPE],
+            2: [name: '_three_', type: ClassHelper.CLOSURE_TYPE]
         ]
     }
 }

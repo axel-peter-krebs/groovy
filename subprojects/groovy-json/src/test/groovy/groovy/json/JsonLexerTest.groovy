@@ -54,8 +54,8 @@ class JsonLexerTest extends GroovyTestCase {
             def lexer = new JsonLexer(new StringReader(it))
             lexer.nextToken()?.type
         } == [
-                TRUE, TRUE, FALSE, FALSE, NULL, NULL, NUMBER, NUMBER,
-                OPEN_BRACKET, CLOSE_BRACKET, OPEN_CURLY, CLOSE_CURLY, COLON, COMMA
+            TRUE, TRUE, FALSE, FALSE, NULL, NULL, NUMBER, NUMBER,
+            OPEN_BRACKET, CLOSE_BRACKET, OPEN_CURLY, CLOSE_CURLY, COLON, COMMA
         ]
     }
 
@@ -66,25 +66,25 @@ class JsonLexerTest extends GroovyTestCase {
         def output = lexer.collect { it.toString() }
 
         assert output == [
-                "[ (OPEN_BRACKET) [1:2-1:3]",
-                "true (TRUE) [1:4-1:8]",
-                ", (COMMA) [1:8-1:9]",
-                "null (NULL) [1:10-1:14]",
-                ", (COMMA) [1:14-1:15]",
-                "false (FALSE) [1:16-1:21]",
-                ", (COMMA) [1:21-1:22]",
-                "{ (OPEN_CURLY) [1:23-1:24]",
-                '"a" (STRING) [1:25-1:28]',
-                ": (COLON) [1:29-1:30]",
-                "1 (NUMBER) [1:31-1:32]",
-                ", (COMMA) [1:32-1:33]",
-                '"b" (STRING) [1:34-1:37]',
-                ": (COLON) [1:37-1:38]",
-                '"hi" (STRING) [1:39-1:43]',
-                "} (CLOSE_CURLY) [1:43-1:44]",
-                ", (COMMA) [1:44-1:45]",
-                "12.34 (NUMBER) [1:46-1:51]",
-                "] (CLOSE_BRACKET) [1:52-1:53]"
+            "[ (OPEN_BRACKET) [1:2-1:3]",
+            "true (TRUE) [1:4-1:8]",
+            ", (COMMA) [1:8-1:9]",
+            "null (NULL) [1:10-1:14]",
+            ", (COMMA) [1:14-1:15]",
+            "false (FALSE) [1:16-1:21]",
+            ", (COMMA) [1:21-1:22]",
+            "{ (OPEN_CURLY) [1:23-1:24]",
+            '"a" (STRING) [1:25-1:28]',
+            ": (COLON) [1:29-1:30]",
+            "1 (NUMBER) [1:31-1:32]",
+            ", (COMMA) [1:32-1:33]",
+            '"b" (STRING) [1:34-1:37]',
+            ": (COLON) [1:37-1:38]",
+            '"hi" (STRING) [1:39-1:43]',
+            "} (CLOSE_CURLY) [1:43-1:44]",
+            ", (COMMA) [1:44-1:45]",
+            "12.34 (NUMBER) [1:46-1:51]",
+            "] (CLOSE_BRACKET) [1:52-1:53]"
         ]
     }
 

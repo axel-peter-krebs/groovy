@@ -54,13 +54,6 @@ public class MacroGroovyMethods {
 
     public static final String DOLLAR_VALUE = "$v";
 
-    public static class MacroValuePlaceholder {
-        public static Object $v(Closure cl) {
-            // replaced with AST transformations
-            return null;
-        }
-    }
-
     public static <T> T macro(Object self, @DelegatesTo(MacroValuePlaceholder.class) Closure cl) {
         throw new IllegalStateException("MacroGroovyMethods.macro(Closure) should never be called at runtime. Are you sure you are using it correctly?");
     }
@@ -111,15 +104,15 @@ public class MacroGroovyMethods {
         Boolean asIs = (Boolean) asIsConstantExpression.getValue();
 
         return callX(
-                propX(classX(ClassHelper.makeWithoutCaching(MacroBuilder.class, false)), "INSTANCE"),
-                "macro",
-                args(
-                        phaseExpression != null ? phaseExpression : constX(null),
-                        asIsConstantExpression,
-                        constX(source),
-                        buildSubstitutions(macroContext.getSourceUnit(), closureExpression),
-                        classX(ClassHelper.makeWithoutCaching(MacroBuilder.getMacroValue(closureBlock, asIs).getClass(), false))
-                )
+            propX(classX(ClassHelper.makeWithoutCaching(MacroBuilder.class, false)), "INSTANCE"),
+            "macro",
+            args(
+                phaseExpression != null ? phaseExpression : constX(null),
+                asIsConstantExpression,
+                constX(source),
+                buildSubstitutions(macroContext.getSourceUnit(), closureExpression),
+                classX(ClassHelper.makeWithoutCaching(MacroBuilder.getMacroValue(closureBlock, asIs).getClass(), false))
+            )
         );
     }
 
@@ -208,5 +201,12 @@ public class MacroGroovyMethods {
         }
 
         return (ClosureExpression) result;
+    }
+
+    public static class MacroValuePlaceholder {
+        public static Object $v(Closure cl) {
+            // replaced with AST transformations
+            return null;
+        }
     }
 }

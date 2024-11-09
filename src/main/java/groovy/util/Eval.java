@@ -42,6 +42,7 @@ public class Eval {
      * <pre class="groovyTestCase">
      * assert Eval.me(' 2 * 4 + 2') == 10
      * </pre>
+     *
      * @param expression the Groovy expression to evaluate
      * @return the result of the expression
      * @throws CompilationFailedException if expression is not valid Groovy
@@ -56,6 +57,7 @@ public class Eval {
      * <pre class="groovyTestCase">
      * assert Eval.me('x', 2, ' x * 4 + 2') == 10
      * </pre>
+     *
      * @param expression the Groovy expression to evaluate
      * @return the result of the expression
      * @throws CompilationFailedException if expression is not valid Groovy
@@ -74,6 +76,7 @@ public class Eval {
      * <pre class="groovyTestCase">
      * assert Eval.x(2, ' x * 4 + 2') == 10
      * </pre>
+     *
      * @param expression the Groovy expression to evaluate
      * @return the result of the expression
      * @throws CompilationFailedException if expression is not valid Groovy
@@ -89,6 +92,7 @@ public class Eval {
      * <pre class="groovyTestCase">
      * assert Eval.xy(2, 4, ' x * y + 2') == 10
      * </pre>
+     *
      * @param expression the Groovy expression to evaluate
      * @return the result of the expression
      * @throws CompilationFailedException if expression is not valid Groovy
@@ -108,6 +112,7 @@ public class Eval {
      * <pre class="groovyTestCase">
      * assert Eval.xyz(2, 4, 2, ' x * y + z') == 10
      * </pre>
+     *
      * @param expression the Groovy expression to evaluate
      * @return the result of the expression
      * @throws CompilationFailedException if expression is not valid Groovy

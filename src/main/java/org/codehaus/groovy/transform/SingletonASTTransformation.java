@@ -61,6 +61,30 @@ import static org.objectweb.asm.Opcodes.ACC_VOLATILE;
 @GroovyASTTransformation(phase = CompilePhase.CANONICALIZATION)
 public class SingletonASTTransformation extends AbstractASTTransformation {
 
+    private static Statement nonLazyBody(FieldNode fieldNode) {
+        return returnS(varX(fieldNode));
+    }
+
+    private static Statement lazyBody(ClassNode classNode, FieldNode fieldNode) {
+        final Expression instanceExpression = varX(fieldNode);
+        return ifElseS(
+            notNullX(instanceExpression),
+            returnS(instanceExpression),
+            new SynchronizedStatement(
+                classX(classNode),
+                ifElseS(
+                    notNullX(instanceExpression),
+                    returnS(instanceExpression),
+                    returnS(assignX(instanceExpression, ctorX(classNode)))
+                )
+            )
+        );
+    }
+
+    private static String getGetterName(String propertyName) {
+        return "get" + Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1);
+    }
+
     @Override
     public void visit(ASTNode[] nodes, SourceUnit source) {
         init(nodes, source);
@@ -86,30 +110,6 @@ public class SingletonASTTransformation extends AbstractASTTransformation {
         addGeneratedMethod(classNode, getGetterName(propertyName), ACC_STATIC | ACC_PUBLIC, newClass(classNode), Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, body);
     }
 
-    private static Statement nonLazyBody(FieldNode fieldNode) {
-        return returnS(varX(fieldNode));
-    }
-
-    private static Statement lazyBody(ClassNode classNode, FieldNode fieldNode) {
-        final Expression instanceExpression = varX(fieldNode);
-        return ifElseS(
-                notNullX(instanceExpression),
-                returnS(instanceExpression),
-                new SynchronizedStatement(
-                        classX(classNode),
-                        ifElseS(
-                                notNullX(instanceExpression),
-                                returnS(instanceExpression),
-                                returnS(assignX(instanceExpression, ctorX(classNode)))
-                        )
-                )
-        );
-    }
-
-    private static String getGetterName(String propertyName) {
-        return "get" + Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1);
-    }
-
     private void createConstructor(ClassNode classNode, FieldNode field, String propertyName, boolean isStrict) {
         final List<ConstructorNode> cNodes = classNode.getDeclaredConstructors();
         ConstructorNode foundNoArg = null;
@@ -130,10 +130,10 @@ public class SingletonASTTransformation extends AbstractASTTransformation {
         if (foundNoArg == null) {
             final BlockStatement body = new BlockStatement();
             body.addStatement(ifS(
-                    notNullX(varX(field)),
-                    throwS(
-                            ctorX(make(RuntimeException.class),
-                                    args(constX("Can't instantiate singleton " + classNode.getName() + ". Use " + classNode.getName() + "." + propertyName))))
+                notNullX(varX(field)),
+                throwS(
+                    ctorX(make(RuntimeException.class),
+                        args(constX("Can't instantiate singleton " + classNode.getName() + ". Use " + classNode.getName() + "." + propertyName))))
             ));
             addGeneratedConstructor(classNode, new ConstructorNode(ACC_PRIVATE, body));
         }

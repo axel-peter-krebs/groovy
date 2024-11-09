@@ -110,7 +110,7 @@ final class ASTTransformationCustomizerTest {
     @Test
     void testLocalTransformationPropertyExpressionParameter() {
         def shell = GroovyShell.withConfig {
-            ast(TimedInterrupt, value:300, unit:propX(classX(ClassHelper.make(TimeUnit)),'MILLISECONDS'))
+            ast(TimedInterrupt, value: 300, unit: propX(classX(ClassHelper.make(TimeUnit)), 'MILLISECONDS'))
             imports { normal 'java.util.concurrent.TimeoutException' }
         }
         assert shell.evaluate('''
@@ -127,10 +127,11 @@ final class ASTTransformationCustomizerTest {
         ''')
     }
 
-    @Test // GROOVY-10654
+    @Test
+    // GROOVY-10654
     void testLocalTransformationEnumerationConstantParameter() {
         def shell = GroovyShell.withConfig {
-            ast(TimedInterrupt, value:300, unit:TimeUnit.MILLISECONDS)
+            ast(TimedInterrupt, value: 300, unit: TimeUnit.MILLISECONDS)
             imports { normal 'java.util.concurrent.TimeoutException' }
         }
         assert shell.evaluate('''
@@ -173,7 +174,7 @@ final class ASTTransformationCustomizerTest {
         assert transformation.applied
     }
 
-    @GroovyASTTransformation(phase=CompilePhase.CONVERSION)
+    @GroovyASTTransformation(phase = CompilePhase.CONVERSION)
     private static class TestTransformation implements ASTTransformation {
 
         private final applied = new AtomicBoolean()

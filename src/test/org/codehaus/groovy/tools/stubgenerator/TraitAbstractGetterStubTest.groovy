@@ -26,11 +26,11 @@ final class TraitAbstractGetterStubTest extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'Pogo.java': '''
+            'Pogo.java'      : '''
                 public class Pogo {
                 }
             ''',
-            'GetPogo.groovy': '''
+            'GetPogo.groovy' : '''
                 trait GetPogo {
                     abstract Pogo getPogo()
                 }

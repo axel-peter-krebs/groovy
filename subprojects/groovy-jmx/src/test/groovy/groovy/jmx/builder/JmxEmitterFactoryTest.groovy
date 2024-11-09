@@ -48,7 +48,7 @@ public class JmxEmitterFactoryTest extends GroovyTestCase {
         assert emitter
 
         def eventTrap = 0
-        builder.listener(from: "jmx.builder:type=Emitter", call: {event ->
+        builder.listener(from: "jmx.builder:type=Emitter", call: { event ->
             eventTrap = eventTrap + 1
         })
 
@@ -72,15 +72,15 @@ public class JmxEmitterFactoryTest extends GroovyTestCase {
 
         def beans = builder.export {
             bean(target: new MockManagedObject(), name: "jmx.builder:type=Listener",
-                    listeners: [
-                            "emitter": [
-                                    from: "jmx.builder:type=Emitter",
-                                    call: {e ->
-                                        count = count + 1
-                                        data = e.data
-                                    }
-                            ]
-                    ])
+                listeners: [
+                    "emitter": [
+                        from: "jmx.builder:type=Emitter",
+                        call: { e ->
+                            count = count + 1
+                            data = e.data
+                        }
+                    ]
+                ])
         }
         assert beans[0]
 

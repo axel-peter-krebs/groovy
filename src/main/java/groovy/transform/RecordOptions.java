@@ -66,7 +66,7 @@ public @interface RecordOptions {
      * assert y == 200
      * assert c == 'green'
      * </pre>
-     *
+     * <p>
      * If a method {@code getAt(int)} already exists in the class,
      * then this setting is ignored, and no additional method is generated.
      */
@@ -75,14 +75,14 @@ public @interface RecordOptions {
     /**
      * If {@code true}, this adds a method {@code toList()} to the record
      * which returns the record's components as a list.
-     *
+     * <p>
      * Example:
      * <pre class="groovyTestCase">
      * record Point(int x, int y, String color) {}
      * def p = new Point(100, 200, 'green')
      * assert p.toList() == [100, 200, 'green']
      * </pre>
-     *
+     * <p>
      * If a method {@code toList()} already exists in the class,
      * then this setting is ignored, and no additional method is generated.
      */
@@ -90,14 +90,14 @@ public @interface RecordOptions {
 
     /**
      * If {@code true}, this adds a method {@code toMap()} to the record.
-     *
+     * <p>
      * Example:
      * <pre class="groovyTestCase">
      * record Point(int x, int y, String color) {}
      * def p = new Point(100, 200, 'green')
      * assert p.toMap() == [x:100, y:200, color:'green']
      * </pre>
-     *
+     * <p>
      * If a method {@code toMap()} already exists in the class,
      * then this setting is ignored, and no additional method is generated.
      */
@@ -105,14 +105,14 @@ public @interface RecordOptions {
 
     /**
      * If {@code true}, this adds a method {@code size()} to the record which returns the number of components.
-     *
+     * <p>
      * Example:
      * <pre class="groovyTestCase">
      * record Point(int x, int y, String color) {}
      * def p = new Point(100, 200, 'green')
      * assert p.size() == 3
      * </pre>
-     *
+     * <p>
      * If a method {@code size()} already exists in the class,
      * then this setting is ignored, and no additional method is generated.
      */
@@ -137,7 +137,7 @@ public @interface RecordOptions {
      * </pre>
      * Unknown keys in the map are ignored, and if the values would not change
      * the object, then the original object is returned.
-     *
+     * <p>
      * If a method called {@code copyWith} that takes a single parameter already
      * exists in the class, then this setting is ignored, and no method is generated.
      */
@@ -146,7 +146,7 @@ public @interface RecordOptions {
     /**
      * If {@code true}, this adds a method {@code components()} to the record
      * which returns its components as a typed tuple {@code Tuple0}, {@code Tuple1}...
-     *
+     * <p>
      * Example:
      * <pre class="groovyTestCase">
      * import groovy.transform.*
@@ -159,13 +159,13 @@ public @interface RecordOptions {
      * assert y.intdiv(2) == 100
      * assert c.toUpperCase() == 'GREEN'
      * </pre>
-     *
+     * <p>
      * The signature of the components method for this example is:
      * <pre>
      * Tuple3&lt;Integer, Integer, String> components()
      * </pre>
      * This is suitable for destructuring in {@code TypeChecked} scenarios.
-     *
+     * <p>
      * If a method {@code components()} already exists in the class,
      * then this setting is ignored, and no additional method is generated.
      * It is a compile-time error if there are more components in the record

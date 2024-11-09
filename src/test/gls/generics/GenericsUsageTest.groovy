@@ -400,10 +400,10 @@ final class GenericsUsageTest extends CompilableTestSupport {
             class C12 implements I2<String> {} // String not a Number
             class C13 implements I2<C10> {} // C10 is a Number
         ''', [
-                'The type String is not a valid substitute for the bounded parameter <T extends I1>',
-                'The type C2 is not a valid substitute for the bounded parameter <T extends java.lang.Number & I1>',
-                'The type Integer is not a valid substitute for the bounded parameter <T extends java.lang.Number & I1>',
-                'The type String is not a valid substitute for the bounded parameter <T extends java.lang.Number>'
+            'The type String is not a valid substitute for the bounded parameter <T extends I1>',
+            'The type C2 is not a valid substitute for the bounded parameter <T extends java.lang.Number & I1>',
+            'The type Integer is not a valid substitute for the bounded parameter <T extends java.lang.Number & I1>',
+            'The type String is not a valid substitute for the bounded parameter <T extends java.lang.Number>'
         ]
     }
 

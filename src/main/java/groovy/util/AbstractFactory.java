@@ -40,7 +40,7 @@ public abstract class AbstractFactory implements Factory {
 
     @Override
     public boolean onHandleNodeAttributes(FactoryBuilderSupport builder, Object node,
-                                          Map attributes ) {
+                                          Map attributes) {
         return true;
     }
 
@@ -50,17 +50,17 @@ public abstract class AbstractFactory implements Factory {
     }
 
     @Override
-    public void onNodeCompleted(FactoryBuilderSupport builder, Object parent, Object node ) {
+    public void onNodeCompleted(FactoryBuilderSupport builder, Object parent, Object node) {
         // do nothing
     }
 
     @Override
-    public void setParent(FactoryBuilderSupport builder, Object parent, Object child ) {
+    public void setParent(FactoryBuilderSupport builder, Object parent, Object child) {
         // do nothing
     }
 
     @Override
-    public void setChild(FactoryBuilderSupport builder, Object parent, Object child ) {
+    public void setChild(FactoryBuilderSupport builder, Object parent, Object child) {
         // do nothing
     }
 

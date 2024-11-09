@@ -19,6 +19,7 @@
 package core
 
 class a {}
+
 a[] b
 b = new a[0]
 assert 0 == b.length

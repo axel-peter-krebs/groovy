@@ -109,7 +109,7 @@ class StaticCompileMathTest extends AbstractBytecodeTestCase {
     }
 
     void testIntMinusBigDec() {
-        extractionOptions = [method: 'm', print:true]
+        extractionOptions = [method: 'm', print: true]
         assertScript '''
             @groovy.transform.CompileStatic
             double m() {
@@ -120,7 +120,7 @@ class StaticCompileMathTest extends AbstractBytecodeTestCase {
     }
 
     void testIntPlusBigDec() {
-        extractionOptions = [method: 'm', print:true]
+        extractionOptions = [method: 'm', print: true]
         assertScript '''
             @groovy.transform.CompileStatic
             double m() {
@@ -131,7 +131,7 @@ class StaticCompileMathTest extends AbstractBytecodeTestCase {
     }
 
     void testIntMultiplyBigDec() {
-        extractionOptions = [method: 'm', print:true]
+        extractionOptions = [method: 'm', print: true]
         assertScript '''
             @groovy.transform.CompileStatic
             double m() {
@@ -142,7 +142,7 @@ class StaticCompileMathTest extends AbstractBytecodeTestCase {
     }
 
     void testIntDivBigDec() {
-        extractionOptions = [method: 'm', print:true]
+        extractionOptions = [method: 'm', print: true]
         assertScript '''
             @groovy.transform.CompileStatic
             double m() {
@@ -299,11 +299,11 @@ class StaticCompileMathTest extends AbstractBytecodeTestCase {
         assert cmp(1,2) == true
         '''
         assertScript(source)
-        def bytecode = compile(method:'cmp', source)
+        def bytecode = compile(method: 'cmp', source)
         assert bytecode.hasStrictSequence([
-                'ILOAD 1',
-                'ILOAD 2',
-                'IF_ICMPNE'
+            'ILOAD 1',
+            'ILOAD 2',
+            'IF_ICMPNE'
         ])
     }
 
@@ -318,12 +318,12 @@ class StaticCompileMathTest extends AbstractBytecodeTestCase {
         assert cmp(1,2) == true
         '''
         assertScript(source)
-        def bytecode = compile(method:'cmp', source)
+        def bytecode = compile(method: 'cmp', source)
         assert bytecode.hasStrictSequence([
-                'LLOAD 1',
-                'LLOAD 3',
-                'LCMP',
-                'IFNE'
+            'LLOAD 1',
+            'LLOAD 3',
+            'LCMP',
+            'IFNE'
         ])
     }
 }

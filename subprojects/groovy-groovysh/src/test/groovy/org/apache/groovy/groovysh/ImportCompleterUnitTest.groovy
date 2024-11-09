@@ -120,12 +120,12 @@ class ImportCompleterUnitTest extends GroovyTestCase {
 
 
     private void assertCompletionCandidatesMatch(
-            final PackageHelper packageHelper,
-            final String buffer,
-            final boolean staticImport,
-            final List<String> expected) {
+        final PackageHelper packageHelper,
+        final String buffer,
+        final boolean staticImport,
+        final List<String> expected) {
         ImportCompleter compl = new ImportCompleter(packageHelper, null, staticImport)
-        def  candidates = []
+        def candidates = []
 
         assert (buffer.lastIndexOf('.') + 1) == compl.complete(buffer, buffer.length(), candidates)
         assert expected == candidates.sort()
@@ -226,7 +226,7 @@ class ImportCompleterUnitTest extends GroovyTestCase {
             def evaluator = new Evaluator() {
                 @Override
                 def evaluate(Collection<String> buffer) {
-                    assert(buffer == ['java.util.zip.Test'])
+                    assert (buffer == ['java.util.zip.Test'])
                     return Math
                 }
             }
@@ -245,7 +245,7 @@ class ImportCompleterUnitTest extends GroovyTestCase {
             def evaluator = new Evaluator() {
                 @Override
                 def evaluate(Collection<String> buffer) {
-                    assert(buffer == ['java.util.zip.Test'])
+                    assert (buffer == ['java.util.zip.Test'])
                     return Math
                 }
             }

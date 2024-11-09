@@ -49,7 +49,7 @@ class AntBuilderSpecTest extends AntTestCase {
     }
 
     void testCopyFiles() {
-        doInTmpDir {ant, baseDir ->
+        doInTmpDir { ant, baseDir ->
             baseDir.src {
                 test {
                     some {
@@ -79,14 +79,14 @@ class AntBuilderSpecTest extends AntTestCase {
             }
 
             // now let's do some normal Groovy again
-            def file = new File(ant.project.baseDir,"build/AntTest/some/pkg/MyTest.groovy")
+            def file = new File(ant.project.baseDir, "build/AntTest/some/pkg/MyTest.groovy")
             assert file.exists()
             // end::copy_files[]
         }
     }
 
     void testFileScanner() {
-        doInTmpDir {ant, baseDir ->
+        doInTmpDir { ant, baseDir ->
             baseDir.src {
                 test {
                     some {
@@ -101,8 +101,8 @@ class AntBuilderSpecTest extends AntTestCase {
             // tag::filescanner[]
             // let's create a scanner of filesets
             def scanner = ant.fileScanner {
-                fileset(dir:"src/test") {
-                    include(name:"**/My*.groovy")
+                fileset(dir: "src/test") {
+                    include(name: "**/My*.groovy")
                 }
             }
 
@@ -120,7 +120,7 @@ class AntBuilderSpecTest extends AntTestCase {
     }
 
     void testExecuteJUnit() {
-        doInTmpDir {ant, baseDir ->
+        doInTmpDir { ant, baseDir ->
             baseDir.some {
                 pkg {
                     'MyTest.java'('''
@@ -134,28 +134,28 @@ class AntBuilderSpecTest extends AntTestCase {
                     ''')
                 }
             }
-            ant.javac(srcdir:'.', includes:'**/*.java', fork:'true')
+            ant.javac(srcdir: '.', includes: '**/*.java', fork: 'true')
             // tag::run_junit[]
             ant.junit {
                 classpath { pathelement(path: '.') }
-                test(name:'some.pkg.MyTest')
+                test(name: 'some.pkg.MyTest')
             }
             // end::run_junit[]
         }
     }
 
     void testCompileRunJava() {
-        doInTmpDir {ant, baseDir ->
+        doInTmpDir { ant, baseDir ->
             // tag::compile_java[]
-            ant.echo(file:'Temp.java', '''
+            ant.echo(file: 'Temp.java', '''
                 class Temp {
                     public static void main(String[] args) {
                         System.out.println("Hello");
                     }
                 }
             ''')
-            ant.javac(srcdir:'.', includes:'Temp.java', fork:'true')
-            ant.java(classpath:'.', classname:'Temp', fork:'true')
+            ant.javac(srcdir: '.', includes: 'Temp.java', fork: 'true')
+            ant.java(classpath: '.', classname: 'Temp', fork: 'true')
             ant.echo('Done')
             // end::compile_java[]
         }

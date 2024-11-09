@@ -63,6 +63,7 @@ public class JComponentProperties {
                 public void componentResized(ComponentEvent event) {
                     update();
                 }
+
                 @Override
                 public void componentMoved(ComponentEvent event) {
                     update();
@@ -88,6 +89,7 @@ public class JComponentProperties {
                 public void componentHidden(ComponentEvent event) {
                     update();
                 }
+
                 @Override
                 public void componentShown(ComponentEvent event) {
                     update();
@@ -108,7 +110,7 @@ abstract class AbstractJComponentBinding extends AbstractSyntheticBinding implem
 
     @Override
     public synchronized void syntheticBind() {
-        boundComponent = (JComponent) ((PropertyBinding)sourceBinding).getBean();
+        boundComponent = (JComponent) ((PropertyBinding) sourceBinding).getBean();
         boundComponent.addPropertyChangeListener(propertyName, this);
         boundComponent.addComponentListener(this);
     }
@@ -123,16 +125,23 @@ abstract class AbstractJComponentBinding extends AbstractSyntheticBinding implem
     @Override
     public void propertyChange(PropertyChangeEvent event) {
         update();
-        ((JComponent)event.getOldValue()).removeComponentListener(this);
-        ((JComponent)event.getNewValue()).addComponentListener(this);
+        ((JComponent) event.getOldValue()).removeComponentListener(this);
+        ((JComponent) event.getNewValue()).addComponentListener(this);
     }
 
     @Override
-    public void componentHidden(ComponentEvent event) {}
+    public void componentHidden(ComponentEvent event) {
+    }
+
     @Override
-    public void componentShown(ComponentEvent event) {}
+    public void componentShown(ComponentEvent event) {
+    }
+
     @Override
-    public void componentMoved(ComponentEvent event) {}
+    public void componentMoved(ComponentEvent event) {
+    }
+
     @Override
-    public void componentResized(ComponentEvent event) {}
+    public void componentResized(ComponentEvent event) {
+    }
 }

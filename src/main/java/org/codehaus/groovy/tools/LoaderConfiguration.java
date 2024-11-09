@@ -79,21 +79,95 @@ import java.util.regex.Pattern;
 public class LoaderConfiguration {
 
     private static final String MAIN_PREFIX = "main is", LOAD_PREFIX = "load", GRAB_PREFIX = "grab", PROP_PREFIX = "property", CONFIGSCRIPT_PREFIX = "configscript";
-    private final List<URL> classPath = new ArrayList<URL>();
-    private String main;
-    private boolean requireMain;
     private static final char WILDCARD = '*';
     private static final String ALL_WILDCARD = "" + WILDCARD + WILDCARD;
     private static final String MATCH_FILE_NAME = "\\\\E[^/]+?\\\\Q";
     private static final String MATCH_ALL = "\\\\E.+?\\\\Q";
+    private final List<URL> classPath = new ArrayList<URL>();
     private final List<String> grabList = new ArrayList<String>();
     private final List<String> configScripts = new ArrayList<String>();
+    private String main;
+    private boolean requireMain;
 
     /**
      * creates a new loader configuration
      */
     public LoaderConfiguration() {
         this.requireMain = true;
+    }
+
+    /*
+     * Expands the properties inside the given string to their values.
+     */
+    private static String assignProperties(String str) {
+        int propertyIndexStart = 0, propertyIndexEnd = 0;
+        boolean requireProperty;
+        StringBuilder result = new StringBuilder();
+
+        while (propertyIndexStart < str.length()) {
+            {
+                int i1 = str.indexOf("${", propertyIndexStart);
+                int i2 = str.indexOf("!{", propertyIndexStart);
+                if (i1 == -1) {
+                    propertyIndexStart = i2;
+                } else if (i2 == -1) {
+                    propertyIndexStart = i1;
+                } else {
+                    propertyIndexStart = Math.min(i1, i2);
+                }
+                requireProperty = propertyIndexStart == i2;
+            }
+            if (propertyIndexStart == -1) break;
+            result.append(str, propertyIndexEnd, propertyIndexStart);
+
+            propertyIndexEnd = str.indexOf('}', propertyIndexStart);
+            if (propertyIndexEnd == -1) break;
+
+            String propertyKey = str.substring(propertyIndexStart + 2, propertyIndexEnd);
+            String propertyValue = System.getProperty(propertyKey);
+            // assume properties contain paths
+            if (propertyValue == null) {
+                if (requireProperty) {
+                    throw new IllegalArgumentException("Variable " + propertyKey + " in groovy-starter.conf references a non-existent System property! Try passing the property to the VM using -D" + propertyKey + "=myValue in JAVA_OPTS");
+                } else {
+                    return null;
+                }
+            }
+            propertyValue = getSlashyPath(propertyValue);
+            propertyValue = correctDoubleSlash(propertyValue, propertyIndexEnd, str);
+            result.append(propertyValue);
+
+            propertyIndexEnd++;
+            propertyIndexStart = propertyIndexEnd;
+        }
+
+        if (propertyIndexStart == -1 || propertyIndexStart >= str.length()) {
+            result.append(str, propertyIndexEnd, str.length());
+        } else if (propertyIndexEnd == -1) {
+            result.append(str, propertyIndexStart, str.length());
+        }
+
+        return result.toString();
+    }
+
+    private static String correctDoubleSlash(String propertyValue, int propertyIndexEnd, String str) {
+        int index = propertyIndexEnd + 1;
+        if (index < str.length() && str.charAt(index) == '/' &&
+            propertyValue.endsWith("/") &&
+            propertyValue.length() > 0) {
+            propertyValue = propertyValue.substring(0, propertyValue.length() - 1);
+        }
+        return propertyValue;
+    }
+
+    // change path representation to something more system independent.
+    // This solution is based on an absolute path
+    private static String getSlashyPath(final String path) {
+        String changedPath = path;
+        if (File.separatorChar != '/')
+            changedPath = changedPath.replace(File.separatorChar, '/');
+
+        return changedPath;
     }
 
     /**
@@ -146,71 +220,6 @@ public class LoaderConfiguration {
     }
 
     /*
-    * Expands the properties inside the given string to their values.
-    */
-    private static String assignProperties(String str) {
-        int propertyIndexStart = 0, propertyIndexEnd = 0;
-        boolean requireProperty;
-        StringBuilder result = new StringBuilder();
-
-        while (propertyIndexStart < str.length()) {
-            {
-                int i1 = str.indexOf("${", propertyIndexStart);
-                int i2 = str.indexOf("!{", propertyIndexStart);
-                if (i1 == -1) {
-                    propertyIndexStart = i2;
-                } else if (i2 == -1) {
-                    propertyIndexStart = i1;
-                } else {
-                    propertyIndexStart = Math.min(i1, i2);
-                }
-                requireProperty = propertyIndexStart == i2;
-            }
-            if (propertyIndexStart == -1) break;
-            result.append(str, propertyIndexEnd, propertyIndexStart);
-
-            propertyIndexEnd = str.indexOf('}', propertyIndexStart);
-            if (propertyIndexEnd == -1) break;
-
-            String propertyKey = str.substring(propertyIndexStart + 2, propertyIndexEnd);
-            String propertyValue = System.getProperty(propertyKey);
-            // assume properties contain paths
-            if (propertyValue == null) {
-                if (requireProperty) {
-                    throw new IllegalArgumentException("Variable " + propertyKey + " in groovy-starter.conf references a non-existent System property! Try passing the property to the VM using -D" + propertyKey + "=myValue in JAVA_OPTS");
-                } else {
-                    return null;
-                }
-            }
-            propertyValue = getSlashyPath(propertyValue);
-            propertyValue = correctDoubleSlash(propertyValue, propertyIndexEnd, str);
-            result.append(propertyValue);
-
-            propertyIndexEnd++;
-            propertyIndexStart = propertyIndexEnd;
-        }
-
-        if (propertyIndexStart == -1 || propertyIndexStart >= str.length()) {
-            result.append(str, propertyIndexEnd, str.length());
-        } else if (propertyIndexEnd == -1) {
-            result.append(str, propertyIndexStart, str.length());
-        }
-
-        return result.toString();
-    }
-
-
-    private static String correctDoubleSlash(String propertyValue, int propertyIndexEnd, String str) {
-        int index = propertyIndexEnd + 1;
-        if (index < str.length() && str.charAt(index) == '/' &&
-                propertyValue.endsWith("/") &&
-                propertyValue.length() > 0) {
-            propertyValue = propertyValue.substring(0, propertyValue.length() - 1);
-        }
-        return propertyValue;
-    }
-
-    /*
      * Load a possibly filtered path. Filters are defined
      * by using the * wildcard like in any shell.
      */
@@ -255,16 +264,6 @@ public class LoaderConfiguration {
                 }
             }
         }
-    }
-
-    // change path representation to something more system independent.
-    // This solution is based on an absolute path
-    private static String getSlashyPath(final String path) {
-        String changedPath = path;
-        if (File.separatorChar != '/')
-            changedPath = changedPath.replace(File.separatorChar, '/');
-
-        return changedPath;
     }
 
     /**

@@ -20,9 +20,14 @@ import me.champeau.gradle.japicmp.JapicmpTask
 
 plugins {
     id "me.champeau.gradle.japicmp" version "0.4.4"
-    id 'org.apache.groovy-aggregating-project'
+    //id 'org.apache.groovy-aggregating-project'
     id 'org.apache.groovy-common'
 }
+
+// from 'org.apache.groovy-aggregating-project' plugin: in THIS place, we KNOW that the project name IS in the list!
+//if (!(project.name in ['groovy-all', 'groovy-binary', 'groovy-bom', 'binary-compatibility'])) {
+//    thisProject.evaluationDependsOn(project.path)
+//}
 
 def checkBinaryCompatibility = tasks.register("checkBinaryCompatibility") {
     description = "Generates binary compatibility reports"
@@ -37,7 +42,7 @@ def thisProject = project
 rootProject.allprojects {
     pluginManager.withPlugin('org.apache.groovy-base') {
         if (groovyLibrary.checkBinaryCompatibility.get()) {
-            def taskName = "japicmp${project.name.split('-').collect{ it.capitalize() }.join()}"
+            def taskName = "japicmp${project.name.split('-').collect { it.capitalize() }.join()}"
             def baselineCoords = "org.apache.groovy:${project.name}:${sharedConfiguration.binaryCompatibilityBaselineVersion.get()}@jar"
             def baseline = thisProject.configurations.create("${taskName}Baseline") {
                 dependencies.add(thisProject.dependencies.create(baselineCoords))

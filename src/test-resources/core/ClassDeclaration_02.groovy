@@ -16,6 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 class AA {
     {
         println 123
@@ -53,8 +54,20 @@ class DD {
     }
 }
 
-class EE {{}}
-class FF {static {}}
-class GG {static {};{}}
+class EE {
+    {
+    }
+}
+
+class FF {
+    static {
+    }
+}
+
+class GG {
+    static {
+    }; {
+    }
+}
 
 class Iterator implements java.util.Iterator {}

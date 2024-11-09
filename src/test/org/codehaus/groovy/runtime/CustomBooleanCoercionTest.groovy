@@ -86,7 +86,7 @@ class CustomBooleanCoercionTest extends GroovyTestCase {
     }
 
     void testOverrideAsBooleanMethodWithACategory() {
-        use (BoolCategory) {
+        use(BoolCategory) {
             assert !new Predicate(value: true)
             assert new Predicate(value: false)
         }
@@ -121,6 +121,7 @@ class CustomBooleanCoercionTest extends GroovyTestCase {
 /** A Predicate class coercible to a boolean expression */
 class Predicate {
     boolean value
+
     boolean asBoolean() { value }
 }
 

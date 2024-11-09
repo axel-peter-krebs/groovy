@@ -39,7 +39,8 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.varX;
  * Helping to create a few standard AST constructs
  */
 public class AstHelper {
-    private AstHelper() { }
+    private AstHelper() {
+    }
 
     public static ExpressionStatement createVariableDefinition(String variableName, ClassNode variableType, Expression value) {
         return createVariableDefinition(variableName, variableType, value, false);

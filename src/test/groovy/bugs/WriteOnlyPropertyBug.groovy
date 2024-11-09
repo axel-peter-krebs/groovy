@@ -32,9 +32,11 @@ class WriteOnlyPropertyBug extends GroovyTestCase {
 
 class WriteOnlyBean {
     private thing = null
+
     public setWriteOnlyProperty(String s) {
         thing = s
     }
+
     public thingValue() {
         thing
     }

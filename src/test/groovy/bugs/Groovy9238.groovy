@@ -46,7 +46,8 @@ final class Groovy9238 {
     }
 
     @CompileStatic
-    @Immutable(copyWith=true) // this uses AnnotationCollector
+    @Immutable(copyWith = true)
+    // this uses AnnotationCollector
     @AnnotationCollector
     @interface Collector {
     }

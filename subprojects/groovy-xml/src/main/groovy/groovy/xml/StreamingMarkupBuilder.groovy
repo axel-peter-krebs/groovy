@@ -56,13 +56,14 @@ import groovy.xml.streamingmarkupsupport.StreamingMarkupWriter
 class StreamingMarkupBuilder extends AbstractStreamingBuilder {
     boolean useDoubleQuotes = false
     boolean expandEmptyElements = false
+
     def getQt() { useDoubleQuotes ? '"' : "'" }
     def pendingStack = []
 
     /**
      * Invoked by calling <code>mkp.comment</code>
      */
-    def commentClosure = {doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, out ->
+    def commentClosure = { doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, out ->
         out.unescaped() << '<!--'
         out.escaped() << body
         out.unescaped() << '-->'
@@ -71,8 +72,8 @@ class StreamingMarkupBuilder extends AbstractStreamingBuilder {
     /**
      * Invoked by calling <code>mkp.pi</code>
      */
-    def piClosure = {doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, out ->
-        attrs.each {target, instruction ->
+    def piClosure = { doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, out ->
+        attrs.each { target, instruction ->
             out.unescaped() << '<?'
             if (instruction instanceof Map) {
                 out.unescaped() << target
@@ -90,7 +91,7 @@ class StreamingMarkupBuilder extends AbstractStreamingBuilder {
     /**
      * Invoked by calling <code>mkp.xmlDeclaration</code>
      */
-    def declarationClosure = {doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, out ->
+    def declarationClosure = { doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, out ->
         out.unescaped() << '<?xml version=' + qt + '1.0' + qt
         if (out.encodingKnown) out.escaped() << ' encoding=' + qt + out.encoding + qt
         out.unescaped() << '?>\n'
@@ -101,7 +102,7 @@ class StreamingMarkupBuilder extends AbstractStreamingBuilder {
      * output stream.  Any XML reserved characters will be escaped to ensure
      * well-formedness.
      */
-    def noopClosure = {doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, out ->
+    def noopClosure = { doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, out ->
         body.each {
             if (it instanceof Closure) {
                 def body1 = it.clone()
@@ -120,11 +121,11 @@ class StreamingMarkupBuilder extends AbstractStreamingBuilder {
      * literal text or markup to the output stream.  No escaping is done on the
      * output.
      */
-    def unescapedClosure = {doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, out ->
+    def unescapedClosure = { doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, out ->
         out.unescaped() << body
     }
 
-    def tagClosure = {tag, doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, out ->
+    def tagClosure = { tag, doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, body, out ->
         boolean pendingIsDefaultNamespace = pendingNamespaces.containsKey(prefix) && !pendingNamespaces[prefix]
         if (prefix != '') {
             if (!(namespaces.containsKey(prefix) || pendingNamespaces.containsKey(prefix))) {
@@ -135,7 +136,7 @@ class StreamingMarkupBuilder extends AbstractStreamingBuilder {
 
         out = out.unescaped() << "<${tag}"
 
-        attrs.each {key, value ->
+        attrs.each { key, value ->
             if (key.contains('$')) {
                 def parts = key.tokenize('$')
                 String localpart = parts[1].contains('}') ? parts[1].tokenize('}')[1] : parts[1]
@@ -193,7 +194,7 @@ class StreamingMarkupBuilder extends AbstractStreamingBuilder {
             out << "</${tag}>"
         }
 
-        hiddenNamespaces.each {key, value ->
+        hiddenNamespaces.each { key, value ->
             if (value == null) {
                 namespaces.remove key
             } else {

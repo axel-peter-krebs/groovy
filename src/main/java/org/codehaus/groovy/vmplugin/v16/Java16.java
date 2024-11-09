@@ -54,7 +54,7 @@ public class Java16 extends Java10 {
             if (method.isDefault() && Proxy.isProxyClass(receiverClass)) {
                 return new ProxyDefaultMethodHandle((Proxy) receiver, method);
             }
-            var  lookup = newLookup(receiverClass);
+            var lookup = newLookup(receiverClass);
             if (!lookup.hasFullPrivilegeAccess()) {
                 return lookup.unreflect(method).bindTo(receiver);
             }

@@ -69,25 +69,25 @@ public final class ComposedClosure<V> extends Closure<V> {
     }
 
     @Override
+    public Object getDelegate() {
+        return ((Closure) getOwner()).getDelegate();
+    }
+
+    @Override
     public void setDelegate(Object delegate) {
         ((Closure) getOwner()).setDelegate(delegate);
         second.setDelegate(delegate);
     }
 
     @Override
-    public Object getDelegate() {
-        return ((Closure) getOwner()).getDelegate();
+    public int getResolveStrategy() {
+        return ((Closure) getOwner()).getResolveStrategy();
     }
 
     @Override
     public void setResolveStrategy(int resolveStrategy) {
         ((Closure) getOwner()).setResolveStrategy(resolveStrategy);
         second.setResolveStrategy(resolveStrategy);
-    }
-
-    @Override
-    public int getResolveStrategy() {
-        return ((Closure) getOwner()).getResolveStrategy();
     }
 
     @Override

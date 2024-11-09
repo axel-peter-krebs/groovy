@@ -39,16 +39,16 @@ class AnnotationsInfoTest extends AnnotationsTestBase {
                 def methodEC() {}
             }
         """
-        assert !annotations.any{ it.contains('SourceRetention') }
+        assert !annotations.any { it.contains('SourceRetention') }
         annotations.findAll { it.contains('RuntimeRetention') }.with { annos ->
             assert annos.size() == 2
-            assert annos.every{ it.contains('visible=true') }
-            assert annos.every{ it.contains('class B') || it.contains('field B#fieldR') }
+            assert annos.every { it.contains('visible=true') }
+            assert annos.every { it.contains('class B') || it.contains('field B#fieldR') }
         }
         annotations.findAll { it.contains('ClassRetention') }.with { annos ->
             assert annos.size() == 2
-            assert annos.every{ it.contains('visible=false') }
-            assert annos.every{ it.contains('method B#methodDC') || it.contains('method B#methodEC') }
+            assert annos.every { it.contains('visible=false') }
+            assert annos.every { it.contains('method B#methodDC') || it.contains('method B#methodEC') }
         }
     }
 }

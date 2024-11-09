@@ -41,14 +41,15 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 public class VisibilityUtils {
     private static final ClassNode VISIBILITY_OPTIONS_TYPE = makeWithoutCaching(VisibilityOptions.class, false);
 
-    private VisibilityUtils() { }
+    private VisibilityUtils() {
+    }
 
     /**
      * Determine the correct modifiers by looking for a potential @VisibilityOptions annotation.
      *
-     * @param anno The annotation being processed (if any) which may support a 'visibilityId' attribute
-     * @param node The node being processed which may also be annotated with @VisibilityOptions
-     * @param clazz The type of node being constructed
+     * @param anno              The annotation being processed (if any) which may support a 'visibilityId' attribute
+     * @param node              The node being processed which may also be annotated with @VisibilityOptions
+     * @param clazz             The type of node being constructed
      * @param originalModifiers The modifier value to adjust or return if no applicable @VisibilityOptions is found
      * @return the updated modifiers
      */

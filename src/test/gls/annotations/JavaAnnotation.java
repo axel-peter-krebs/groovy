@@ -23,5 +23,5 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JavaAnnotation {
-  int in(); // a keyword should be ok
+    int in(); // a keyword should be ok
 }

@@ -34,10 +34,10 @@ class GrabCommandTest extends CommandTestSupport {
     void setUp() {
         Groovysh groovysh = new Groovysh()
         PackageHelperImpl packageHelper = new PackageHelperImpl()
-        packageHelper.metaClass.reset = { }
+        packageHelper.metaClass.reset = {}
         groovysh.metaClass.packageHelper = packageHelper
         command = new GrabCommand(groovysh)
-        command.metaClass.fail = { String message -> 
+        command.metaClass.fail = { String message ->
             throw new RuntimeException("fail(${message}) called")
         }
         def stubber = new StubFor(Grape.class)
@@ -53,28 +53,28 @@ class GrabCommandTest extends CommandTestSupport {
     }
 
     void testGroup_Module() {
-        grapeStub.demand.grab()  { arg1, arg2 -> }
+        grapeStub.demand.grab() { arg1, arg2 -> }
         grapeStub.use {
             command.execute(['net.sf.json-lib:json-lib'])
         }
     }
 
     void testGroupModuleVersion() {
-        grapeStub.demand.grab()  { arg1, arg2 -> }
+        grapeStub.demand.grab() { arg1, arg2 -> }
         grapeStub.use {
             command.execute(['net.sf.json-lib:json-lib:2.2.3'])
         }
     }
 
     void testGroupModuleVersionWildcard() {
-        grapeStub.demand.grab()  { arg1, arg2 -> }
+        grapeStub.demand.grab() { arg1, arg2 -> }
         grapeStub.use {
             command.execute(['net.sf.json-lib:json-lib:*'])
         }
     }
 
     void testGroupModuleVersionClassifier() {
-        grapeStub.demand.grab()  { arg1, arg2 -> }
+        grapeStub.demand.grab() { arg1, arg2 -> }
         grapeStub.use {
             command.execute(['net.sf.json-lib:json-lib:2.2.3:jdk15'])
         }

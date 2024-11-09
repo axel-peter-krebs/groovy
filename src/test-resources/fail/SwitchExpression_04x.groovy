@@ -18,8 +18,8 @@
  */
 
 def a = 6
-switch(a) {
+switch (a) {
     case 6 -> 'a'
-    case 8 : yield 'b'
+    case 8: yield 'b'
     default -> 'c'
 }

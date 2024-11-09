@@ -19,4 +19,4 @@
 package core
 
 // accessor method would conflict with Object method
-record Bad(int hashCode) { }
+record Bad(int hashCode) {}

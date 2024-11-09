@@ -173,8 +173,8 @@ class ReturnStatementToIterationConverterTest {
     @Test
     void worksWithStaticMethods() {
         ReturnStatement statement = new ReturnStatement(new StaticMethodCallExpression(
-                ClassHelper.make(Math, false), "min",
-                new ArgumentListExpression(new ConstantExpression(1))))
+            ClassHelper.make(Math, false), "min",
+            new ArgumentListExpression(new ConstantExpression(1))))
 
         BlockStatement expected = new AstBuilder().buildFromSpec {
             block {

@@ -55,7 +55,8 @@ final class MethodNodeTest {
         assert result.endsWith('java.lang.String[] foo(int, int[]) from java.lang.Object]')
     }
 
-    @Test // GROOVY-10862
+    @Test
+    // GROOVY-10862
     void testAnnotationDefault() {
         MethodNode mn = ClassHelper.OBJECT_TYPE.getMethod('toString')
 

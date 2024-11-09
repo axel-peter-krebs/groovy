@@ -76,15 +76,89 @@ public class ClosureWriter {
 
     public static final String OUTER_INSTANCE = "_outerInstance";
     public static final String THIS_OBJECT = "_thisObject";
-
-    protected interface UseExistingReference {
-    }
-
     protected final WriterController controller;
     private final Map<Expression, ClassNode> closureClasses = new HashMap<>();
-
     public ClosureWriter(final WriterController controller) {
         this.controller = controller;
+    }
+
+    public static void loadReference(final String name, final WriterController controller) {
+        CompileStack compileStack = controller.getCompileStack();
+        MethodVisitor mv = controller.getMethodVisitor();
+        ClassNode classNode = controller.getClassNode();
+        AsmClassGenerator acg = controller.getAcg();
+
+        // compileStack.containsVariable(name) means to ask if the variable is already declared
+        // compileStack.getScope().isReferencedClassVariable(name) means to ask if the variable is a field
+        // If it is no field and is not yet declared, then it is either a closure shared variable or
+        // an already declared variable.
+        if (!compileStack.containsVariable(name) && compileStack.getScope().isReferencedClassVariable(name)) {
+            acg.visitFieldExpression(new FieldExpression(classNode.getDeclaredField(name)));
+        } else {
+            BytecodeVariable v = compileStack.getVariable(name, !classNodeUsesReferences(controller.getClassNode()));
+            if (v == null) {
+                // variable is not on stack because we are
+                // inside a nested Closure and this variable
+                // was not used before
+                // then load it from the Closure field
+                FieldNode field = classNode.getDeclaredField(name);
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitFieldInsn(GETFIELD, controller.getInternalClassName(), name, BytecodeHelper.getTypeDescription(field.getType()));
+            } else {
+                mv.visitVarInsn(ALOAD, v.getIndex());
+            }
+            controller.getOperandStack().push(ClassHelper.REFERENCE_TYPE);
+        }
+    }
+
+    private static boolean classNodeUsesReferences(final ClassNode classNode) {
+        boolean ret = classNode.getSuperClass().equals(ClassHelper.CLOSURE_TYPE);
+        if (ret) return ret;
+        if (classNode instanceof InnerClassNode) {
+            InnerClassNode inner = (InnerClassNode) classNode;
+            return inner.isAnonymous();
+        }
+        return false;
+    }
+
+    private static boolean isNotObjectOrObjectArray(final ClassNode classNode) {
+        return !ClassHelper.isObjectType(classNode) && !ClassHelper.isObjectType(classNode.getComponentType());
+    }
+
+    private static long hash(String str) {
+        final MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("SHA");
+        } catch (NoSuchAlgorithmException e) {
+            throw new GroovyBugError("Failed to find SHA", e);
+        }
+        final byte[] hashBytes = md.digest(str.getBytes(StandardCharsets.UTF_8));
+        long hash = 0;
+        for (int i = Math.min(hashBytes.length, 7); i >= 0; i--) {
+            hash = (hash << 8) | (hashBytes[i] & 0xFF);
+        }
+        return hash;
+    }
+
+    private static void correctAccessedVariable(final InnerClassNode closureClass, final ClosureExpression ce) {
+        new CorrectAccessedVariableVisitor(closureClass).visitClosureExpression(ce);
+    }
+
+    /*
+     * this method is called for local variables shared between scopes.
+     * These variables must not have init values because these would
+     * then in later steps be used to create multiple versions of the
+     * same method, in this case the constructor. A closure should not
+     * have more than one constructor!
+     */
+    protected static void removeInitialValues(final Parameter[] params) {
+        for (int i = 0; i < params.length; i++) {
+            if (params[i].hasInitialExpression()) {
+                Parameter p = new Parameter(params[i].getType(), params[i].getName());
+                p.setOriginType(p.getOriginType());
+                params[i] = p;
+            }
+        }
     }
 
     public void writeClosure(final ClosureExpression expression) {
@@ -136,35 +210,6 @@ public class ClosureWriter {
         controller.getOperandStack().replace(ClassHelper.CLOSURE_TYPE, localVariableParams.length);
     }
 
-    public static void loadReference(final String name, final WriterController controller) {
-        CompileStack compileStack = controller.getCompileStack();
-        MethodVisitor mv = controller.getMethodVisitor();
-        ClassNode classNode = controller.getClassNode();
-        AsmClassGenerator acg = controller.getAcg();
-
-        // compileStack.containsVariable(name) means to ask if the variable is already declared
-        // compileStack.getScope().isReferencedClassVariable(name) means to ask if the variable is a field
-        // If it is no field and is not yet declared, then it is either a closure shared variable or
-        // an already declared variable.
-        if (!compileStack.containsVariable(name) && compileStack.getScope().isReferencedClassVariable(name)) {
-            acg.visitFieldExpression(new FieldExpression(classNode.getDeclaredField(name)));
-        } else {
-            BytecodeVariable v = compileStack.getVariable(name, !classNodeUsesReferences(controller.getClassNode()));
-            if (v == null) {
-                // variable is not on stack because we are
-                // inside a nested Closure and this variable
-                // was not used before
-                // then load it from the Closure field
-                FieldNode field = classNode.getDeclaredField(name);
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitFieldInsn(GETFIELD, controller.getInternalClassName(), name, BytecodeHelper.getTypeDescription(field.getType()));
-            } else {
-                mv.visitVarInsn(ALOAD, v.getIndex());
-            }
-            controller.getOperandStack().push(ClassHelper.REFERENCE_TYPE);
-        }
-    }
-
     public ClassNode getOrAddClosureClass(final ClosureExpression expression, final int modifiers) {
         ClassNode closureClass = closureClasses.get(expression);
         if (closureClass == null) {
@@ -175,20 +220,6 @@ public class ClosureWriter {
             closureClass.putNodeMetaData(WriterControllerFactory.class, (WriterControllerFactory) x -> controller);
         }
         return closureClass;
-    }
-
-    private static boolean classNodeUsesReferences(final ClassNode classNode) {
-        boolean ret = classNode.getSuperClass().equals(ClassHelper.CLOSURE_TYPE);
-        if (ret) return ret;
-        if (classNode instanceof InnerClassNode) {
-            InnerClassNode inner = (InnerClassNode) classNode;
-            return inner.isAnonymous();
-        }
-        return false;
-    }
-
-    private static boolean isNotObjectOrObjectArray(final ClassNode classNode) {
-        return !ClassHelper.isObjectType(classNode) && !ClassHelper.isObjectType(classNode.getComponentType());
     }
 
     protected ClassNode createClosureClass(final ClosureExpression expression, final int modifiers) {
@@ -238,14 +269,14 @@ public class ClosureWriter {
         }
 
         if (parameters.length > 1 || (parameters.length == 1 && (isNotObjectOrObjectArray(parameters[0].getType())
-                || !parameters[0].getAnnotations().isEmpty() || !parameters[0].getType().getTypeAnnotations().isEmpty()))) { // GROOVY-11311
+            || !parameters[0].getAnnotations().isEmpty() || !parameters[0].getType().getTypeAnnotations().isEmpty()))) { // GROOVY-11311
             MethodNode call = new MethodNode(
-                    "call",
-                    ACC_PUBLIC,
-                    returnType,
-                    parameters,
-                    ClassNode.EMPTY_ARRAY,
-                    returnS(callThisX("doCall", args(parameters))));
+                "call",
+                ACC_PUBLIC,
+                returnType,
+                parameters,
+                ClassNode.EMPTY_ARRAY,
+                returnS(callThisX("doCall", args(parameters))));
             addGeneratedMethod(answer, call, true);
         }
 
@@ -270,21 +301,6 @@ public class ClosureWriter {
         classNode.addFieldFirst("serialVersionUID", ACC_PRIVATE | ACC_STATIC | ACC_FINAL, long_TYPE, constX(serialVersionUID, true));
     }
 
-    private static long hash(String str) {
-        final MessageDigest md;
-        try {
-            md = MessageDigest.getInstance("SHA");
-        } catch (NoSuchAlgorithmException e) {
-            throw new GroovyBugError("Failed to find SHA", e);
-        }
-        final byte[] hashBytes = md.digest(str.getBytes(StandardCharsets.UTF_8));
-        long hash = 0;
-        for (int i = Math.min(hashBytes.length, 7); i >= 0; i--) {
-            hash = (hash << 8) | (hashBytes[i] & 0xFF);
-        }
-        return hash;
-    }
-
     protected ConstructorNode addConstructor(final ClosureExpression expression, final Parameter[] localVariableParams, final InnerClassNode answer, final BlockStatement block) {
         Parameter[] params = new Parameter[2 + localVariableParams.length];
         params[0] = new Parameter(ClassHelper.OBJECT_TYPE, OUTER_INSTANCE);
@@ -299,8 +315,8 @@ public class ClosureWriter {
 
     protected void addFieldsForLocalVariables(final InnerClassNode closureClass, final Parameter[] localVariableParams) {
         for (Parameter param : localVariableParams) {
-            String     paramName = param.getName();
-            ClassNode  paramType = param.getOriginType();
+            String paramName = param.getName();
+            ClassNode paramType = param.getOriginType();
             if (ClassHelper.isPrimitiveType(paramType)) {
                 paramType = ClassHelper.getWrapper(paramType);
             } else {
@@ -333,47 +349,6 @@ public class ClosureWriter {
         return block;
     }
 
-    protected static class CorrectAccessedVariableVisitor extends CodeVisitorSupport {
-        private InnerClassNode icn;
-
-        public CorrectAccessedVariableVisitor(final InnerClassNode icn) {
-            this.icn = icn;
-        }
-
-        @Override
-        public void visitVariableExpression(final VariableExpression expression) {
-            Variable v = expression.getAccessedVariable();
-            if (v == null) return;
-            if (!(v instanceof FieldNode)) return;
-            String name = expression.getName();
-            FieldNode fn = icn.getDeclaredField(name);
-            if (fn != null) { // only overwrite if we find something more specific
-                expression.setAccessedVariable(fn);
-            }
-        }
-    }
-
-    private static void correctAccessedVariable(final InnerClassNode closureClass, final ClosureExpression ce) {
-        new CorrectAccessedVariableVisitor(closureClass).visitClosureExpression(ce);
-    }
-
-    /*
-     * this method is called for local variables shared between scopes.
-     * These variables must not have init values because these would
-     * then in later steps be used to create multiple versions of the
-     * same method, in this case the constructor. A closure should not
-     * have more than one constructor!
-     */
-    protected static void removeInitialValues(final Parameter[] params) {
-        for (int i = 0; i < params.length; i++) {
-            if (params[i].hasInitialExpression()) {
-                Parameter p = new Parameter(params[i].getType(), params[i].getName());
-                p.setOriginType(p.getOriginType());
-                params[i] = p;
-            }
-        }
-    }
-
     public boolean addGeneratedClosureConstructorCall(final ConstructorCallExpression call) {
         ClassNode classNode = controller.getClassNode();
         if (!classNode.declaresInterface(ClassHelper.GENERATED_CLOSURE_Type)) return false;
@@ -404,11 +379,12 @@ public class ClosureWriter {
         TypeChooser typeChooser = controller.getTypeChooser();
         VariableScope variableScope = expression.getVariableScope();
 
-        Parameter[] refs = new Parameter[variableScope.getReferencedLocalVariablesCount()]; int index = 0;
+        Parameter[] refs = new Parameter[variableScope.getReferencedLocalVariablesCount()];
+        int index = 0;
         for (Iterator<Variable> iter = variableScope.getReferencedLocalVariablesIterator(); iter.hasNext(); ) {
             Variable variable = iter.next();
             Expression varExp = variable instanceof VariableExpression
-                                ? (VariableExpression) variable : varX(variable); // GROOVY-11471
+                ? (VariableExpression) variable : varX(variable); // GROOVY-11471
 
             ClassNode inferenceType = typeChooser.resolveType(varExp, classNode); // GROOVY-11068
             Parameter p = new Parameter(inferenceType, variable.getName());
@@ -427,6 +403,29 @@ public class ClosureWriter {
             controller.getOperandStack().push(ClassHelper.OBJECT_TYPE);
         } else {
             controller.getOperandStack().push(controller.getClassNode());
+        }
+    }
+
+    protected interface UseExistingReference {
+    }
+
+    protected static class CorrectAccessedVariableVisitor extends CodeVisitorSupport {
+        private InnerClassNode icn;
+
+        public CorrectAccessedVariableVisitor(final InnerClassNode icn) {
+            this.icn = icn;
+        }
+
+        @Override
+        public void visitVariableExpression(final VariableExpression expression) {
+            Variable v = expression.getAccessedVariable();
+            if (v == null) return;
+            if (!(v instanceof FieldNode)) return;
+            String name = expression.getName();
+            FieldNode fn = icn.getDeclaredField(name);
+            if (fn != null) { // only overwrite if we find something more specific
+                expression.setAccessedVariable(fn);
+            }
         }
     }
 }

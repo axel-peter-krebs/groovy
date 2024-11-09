@@ -63,6 +63,10 @@ public class AnnotationVisitor {
         this.errorCollector = errorCollector;
     }
 
+    private static boolean isValidAnnotationClass(final ClassNode type) {
+        return type.implementsInterface(ClassHelper.Annotation_TYPE);
+    }
+
     public void setReportClass(final ClassNode node) {
         this.reportClass = node;
     }
@@ -118,10 +122,10 @@ public class AnnotationVisitor {
                     try {
                         FieldNode enumField = type.getDeclaredField(name);
                         ok = enumField != null && enumField.getType().equals(type);
-                    } catch(Exception ex) {
+                    } catch (Exception ex) {
                         // ignore
                     }
-                    if(!ok) {
+                    if (!ok) {
                         addError("No enum const " + type.getName() + "." + name, pe);
                         return false;
                     }
@@ -154,10 +158,6 @@ public class AnnotationVisitor {
             return ClassHelper.OBJECT_TYPE;
         }
         return methods.get(0).getReturnType();
-    }
-
-    private static boolean isValidAnnotationClass(final ClassNode type) {
-        return type.implementsInterface(ClassHelper.Annotation_TYPE);
     }
 
     protected void visitExpression(final String attrName, final Expression valueExpr, final ClassNode attrType) {
@@ -227,7 +227,7 @@ public class AnnotationVisitor {
         String base = "Expected '" + exp.getText() + "' to be an inline constant of type " + attrType.getName();
         if (exp instanceof PropertyExpression) {
             addError(base + " not a property expression", exp);
-        } else if (exp instanceof VariableExpression && ((VariableExpression)exp).getAccessedVariable() instanceof FieldNode) {
+        } else if (exp instanceof VariableExpression && ((VariableExpression) exp).getAccessedVariable() instanceof FieldNode) {
             addError(base + " not a field expression", exp);
         } else {
             addError(base, exp);

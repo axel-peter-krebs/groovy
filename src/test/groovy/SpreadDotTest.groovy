@@ -138,17 +138,17 @@ final class SpreadDotTest {
     void testSpreadDotMultiLine() {
         def x = [a: 1, b: 2]
         def y = x
-                *.value
-                *.toString()
+            *.value
+            *.toString()
         assert y == ['1', '2']
         def z = x
-                *.value
-                .sum()
+            *.value
+            .sum()
         assert z == 3
 
         x = [new Singlet(), new Singlet()]
         y = x
-                *.@size
+            *.@size
         assert y == [12, 12]
     }
 
@@ -198,6 +198,7 @@ final class SpreadDotTest {
 
     static class Singlet {
         private size = 12
-        def getSize() {1}
+
+        def getSize() { 1 }
     }
 }

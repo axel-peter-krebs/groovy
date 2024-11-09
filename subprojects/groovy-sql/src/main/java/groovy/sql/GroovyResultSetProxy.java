@@ -41,6 +41,7 @@ import java.sql.ResultSet;
 public final class GroovyResultSetProxy implements InvocationHandler {
 
     private final GroovyResultSetExtension extension;
+    private MetaClass metaClass;
 
     /**
      * Creates a new proxy instance.
@@ -91,19 +92,10 @@ public final class GroovyResultSetProxy implements InvocationHandler {
         return InvokerHelper.invokeMethod(extension, method.getName(), args);
     }
 
-    private MetaClass metaClass;
-
     private MetaClass setMetaClass(MetaClass mc) {
         metaClass = mc;
         return mc;
     }
-
-    /**
-     * This class is introduced as a workaround for GROOVY-6187, which failed
-     * because if you use a metaclass from an interface, methods defined on
-     * Object cannot be called.
-     */
-    private abstract static class DummyResultSet implements GroovyResultSet {}
 
     private MetaClass getMetaClass() {
         if (metaClass == null) {
@@ -119,10 +111,18 @@ public final class GroovyResultSetProxy implements InvocationHandler {
      */
     public GroovyResultSet getImpl() {
         return (GroovyResultSet)
-                Proxy.newProxyInstance(
-                        this.getClass().getClassLoader(),
-                        new Class[]{GroovyResultSet.class},
-                        this
-                );
+            Proxy.newProxyInstance(
+                this.getClass().getClassLoader(),
+                new Class[]{GroovyResultSet.class},
+                this
+            );
+    }
+
+    /**
+     * This class is introduced as a workaround for GROOVY-6187, which failed
+     * because if you use a metaclass from an interface, methods defined on
+     * Object cannot be called.
+     */
+    private abstract static class DummyResultSet implements GroovyResultSet {
     }
 }

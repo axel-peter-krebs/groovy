@@ -102,12 +102,12 @@ public class ContractClosureWriter {
         }
 
         MethodNode call = answer.addMethod(
-                "call",
-                ACC_PUBLIC,
-                ClassHelper.Boolean_TYPE,
-                closureParameters.toArray(Parameter.EMPTY_ARRAY),
-                ClassNode.EMPTY_ARRAY,
-                returnS(callThisX("doCall", arguments))
+            "call",
+            ACC_PUBLIC,
+            ClassHelper.Boolean_TYPE,
+            closureParameters.toArray(Parameter.EMPTY_ARRAY),
+            ClassNode.EMPTY_ARRAY,
+            returnS(callThisX("doCall", arguments))
         );
         call.setSourcePosition(expression);
         call.setSynthetic(true);
@@ -125,8 +125,8 @@ public class ContractClosureWriter {
         block.addStatement(stmt(ctorSuperX(args(outer, thisObject))));
 
         Parameter[] ctorParams = {
-                new Parameter(ClassHelper.OBJECT_TYPE, "_outerInstance"),
-                new Parameter(ClassHelper.OBJECT_TYPE, "_thisObject")
+            new Parameter(ClassHelper.OBJECT_TYPE, "_outerInstance"),
+            new Parameter(ClassHelper.OBJECT_TYPE, "_thisObject")
         };
         var ctor = answer.addConstructor(ACC_PUBLIC, ctorParams, ClassNode.EMPTY_ARRAY, block);
         ctor.setSourcePosition(expression);

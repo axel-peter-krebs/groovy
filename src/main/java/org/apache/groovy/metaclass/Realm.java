@@ -62,18 +62,18 @@ public final class Realm {
     @Override
     public String toString() {
         return "Realm{" +
-                "name='" + name + '\'' +
-                ", parent=" + parent +
-                '}';
+            "name='" + name + '\'' +
+            ", parent=" + parent +
+            '}';
     }
 
     public <T> MetaClass<T> getMetaClass(final Class<T> theClass) {
         Supplier<MetaClassConstant<T>> valueSupplier = () -> (MetaClassConstant<T>) cv.get(theClass);
         Function<MetaClassConstant<T>, SwitchPoint> validationSupplier = MetaClassConstant::getSwitchPoint;
         ReevaluatingReference<MetaClassConstant<T>> ref = new ReevaluatingReference<>(
-                MetaClassConstant.class,
-                valueSupplier,
-                validationSupplier
+            MetaClassConstant.class,
+            valueSupplier,
+            validationSupplier
         );
         return new MetaClass<>(ref);
     }

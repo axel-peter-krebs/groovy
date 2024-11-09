@@ -24,7 +24,7 @@ import org.codehaus.groovy.classgen.asm.sc.StaticCompilationTestSupport
 class Groovy6411Bug extends StaticTypeCheckingTestCase implements StaticCompilationTestSupport {
 
     void testShouldNotThrowInvokerInvocationException() {
-            assertScript '''
+        assertScript '''
     class Client<T> {
       static boolean caughtIOEx = false
       static boolean caughtInvokerEx = false

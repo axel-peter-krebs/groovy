@@ -18,6 +18,7 @@ import groovy.test.GroovyTestCase
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 class SaferScriptingASTTransformsTest extends GroovyTestCase {
     void testThreadInterrupt() {
         assertScript '''import groovy.transform.ThreadInterrupt
@@ -104,7 +105,7 @@ if (t.alive) {
 Thread.sleep(500)
 assert binding.i == -1'''
 // end::threadinterrupt_thrown[]
-   }
+    }
 
     void testTimedInterrupt() {
         assertScript '''import groovy.transform.TimedInterrupt
@@ -283,6 +284,7 @@ assert Quotas.quotas['user'] < 0
 // end::conditionalinterrupt_injected[]
 '''
     }
+
     void testConditionalInterruptThrown() {
         assertScript '''import groovy.transform.ConditionalInterrupt
 import groovy.transform.InheritConstructors

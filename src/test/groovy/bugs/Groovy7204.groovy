@@ -29,7 +29,8 @@ final class Groovy7204 {
         imports { star 'groovy.transform' }
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testTypeChecked1() {
         assertScript shell, '''
             @TypeChecked
@@ -69,7 +70,8 @@ final class Groovy7204 {
         '''
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testTypeChecked2() {
         assertScript shell, '''
             @TypeChecked
@@ -109,7 +111,8 @@ final class Groovy7204 {
         '''
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testTypeChecked3() {
         assertScript shell, '''
             @TypeChecked
@@ -153,7 +156,8 @@ final class Groovy7204 {
         '''
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testTypeChecked4() {
         assertScript shell, '''
             @TypeChecked
@@ -197,7 +201,8 @@ final class Groovy7204 {
         '''
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testTypeChecked5() {
         assertScript shell, '''
             @TypeChecked
@@ -241,7 +246,8 @@ final class Groovy7204 {
         '''
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testTypeChecked6() {
         assertScript shell, '''
             class Repository<T, S extends Serializable> {
@@ -261,7 +267,8 @@ final class Groovy7204 {
 
     //
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testCompileStatic1() {
         assertScript shell, '''
             @CompileStatic
@@ -301,7 +308,8 @@ final class Groovy7204 {
         '''
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testCompileStatic2() {
         assertScript shell, '''
             @CompileStatic
@@ -341,7 +349,8 @@ final class Groovy7204 {
         '''
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testCompileStatic3() {
         assertScript shell, '''
             @CompileStatic
@@ -385,7 +394,8 @@ final class Groovy7204 {
         '''
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testCompileStatic4() {
         assertScript shell, '''
             @CompileStatic
@@ -429,7 +439,8 @@ final class Groovy7204 {
         '''
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testCompileStatic5() {
         assertScript shell, '''
             @CompileStatic
@@ -473,7 +484,8 @@ final class Groovy7204 {
         '''
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testCompileStatic6() {
         assertScript shell, '''
             class Repository<T, S extends Serializable> {
@@ -491,7 +503,9 @@ final class Groovy7204 {
         '''
     }
 
-    @NotYetImplemented @Test // GROOVY-8059
+    @NotYetImplemented
+    @Test
+    // GROOVY-8059
     void testCompileStatic7() {
         assertScript shell, '''
             abstract class A<K extends Serializable, V> {

@@ -28,8 +28,8 @@ import static org.codehaus.groovy.runtime.DefaultGroovyMethodsSupport.createSimi
 class DefaultGroovyMethodsSupportTest extends GroovyTestCase {
     void testCreateSimilarCollectionForSets() {
         def comparator = [
-                compare: { a, b -> b <=> a },
-                equals : { a, b -> a == b },
+            compare: { a, b -> b <=> a },
+            equals : { a, b -> a == b },
         ] as Comparator
 
         Set set1 = new ConcurrentSkipListSet(comparator)
@@ -70,11 +70,11 @@ class DefaultGroovyMethodsSupportTest extends GroovyTestCase {
 
     void testCreateSimilarCollectionForLists() {
         [
-                CopyOnWriteArrayList.class,
-                LinkedList.class,
-                Stack.class,
-                Vector.class,
-                ArrayList.class,
+            CopyOnWriteArrayList.class,
+            LinkedList.class,
+            Stack.class,
+            Vector.class,
+            ArrayList.class,
         ].each { testCase ->
             List list = createSimilarCollection(testCase.newInstance() as Collection)
             list << 1 << 2 << 3
@@ -86,24 +86,24 @@ class DefaultGroovyMethodsSupportTest extends GroovyTestCase {
 
     void testCreateSimilarCollectionForQueues() {
         [
-                LinkedBlockingDeque.class,
-                LinkedList.class,
-                ArrayDeque.class,
-                ArrayBlockingQueue.class,
-                ConcurrentLinkedQueue.class,
-                DelayQueue.class,
-                LinkedBlockingQueue.class,
-                PriorityBlockingQueue.class,
-                PriorityQueue.class,
-                SynchronousQueue.class,
+            LinkedBlockingDeque.class,
+            LinkedList.class,
+            ArrayDeque.class,
+            ArrayBlockingQueue.class,
+            ConcurrentLinkedQueue.class,
+            DelayQueue.class,
+            LinkedBlockingQueue.class,
+            PriorityBlockingQueue.class,
+            PriorityQueue.class,
+            SynchronousQueue.class,
         ].each { testCase ->
             Queue queue
             if (testCase == ArrayBlockingQueue.class) {
                 queue = createSimilarCollection(new ArrayBlockingQueue(11))
             } else if (testCase == PriorityQueue.class) {
                 def comparator = [
-                        compare: { a, b -> b <=> a },
-                        equals : { a, b -> a == b },
+                    compare: { a, b -> b <=> a },
+                    equals : { a, b -> a == b },
                 ] as Comparator
                 queue = createSimilarCollection(new PriorityQueue(13, comparator))
                 assert comparator == ((PriorityQueue) queue).comparator()
@@ -119,8 +119,8 @@ class DefaultGroovyMethodsSupportTest extends GroovyTestCase {
             } else if (queue instanceof DelayQueue) {
                 [1, 2, 3].each { int i ->
                     queue << ([
-                            getDelay : { TimeUnit unit -> i as long },
-                            compareTo: { Delayed o -> i <=> o.getDelay(null) },
+                        getDelay : { TimeUnit unit -> i as long },
+                        compareTo: { Delayed o -> i <=> o.getDelay(null) },
                     ] as Delayed)
                 }
                 assert 1 == (queue.head() as Delayed).getDelay(null)
@@ -137,12 +137,12 @@ class DefaultGroovyMethodsSupportTest extends GroovyTestCase {
 
     void testCreateSimilarMap() {
         def comparator = [
-                compare: { a, b -> b <=> a },
-                equals : { a, b -> a == b },
+            compare: { a, b -> b <=> a },
+            equals : { a, b -> a == b },
         ] as Comparator
         [
-                [ConcurrentSkipListMap.class, new ConcurrentSkipListMap(comparator)],
-                [TreeMap.class, new TreeMap(comparator)],
+            [ConcurrentSkipListMap.class, new ConcurrentSkipListMap(comparator)],
+            [TreeMap.class, new TreeMap(comparator)],
         ].each { testCase ->
             Map map = createSimilarMap(testCase[1] as Map)
             map[1] = 2
@@ -153,13 +153,13 @@ class DefaultGroovyMethodsSupportTest extends GroovyTestCase {
         }
 
         [
-                ConcurrentHashMap.class,
-                Properties.class,
-                Hashtable.class,
-                IdentityHashMap.class,
-                WeakHashMap.class,
-                LinkedHashMap.class,
-                HashMap.class,
+            ConcurrentHashMap.class,
+            Properties.class,
+            Hashtable.class,
+            IdentityHashMap.class,
+            WeakHashMap.class,
+            LinkedHashMap.class,
+            HashMap.class,
         ].each { testCase ->
             Map map = createSimilarMap(testCase.newInstance())
             map[1] = 2

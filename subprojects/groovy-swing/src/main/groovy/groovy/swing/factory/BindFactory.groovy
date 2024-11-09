@@ -116,8 +116,7 @@ class BindFactory extends AbstractFactory {
      * @param value
      * @param attributes
      * @return the newly created instance
-     * @throws InstantiationException
-     * @throws IllegalAccessException
+     * @throws InstantiationException* @throws IllegalAccessException
      */
     Object newInstance(FactoryBuilderSupport builder, Object name, Object value, Map attributes) throws InstantiationException, IllegalAccessException {
         Object source = attributes.remove("source")
@@ -133,7 +132,7 @@ class BindFactory extends AbstractFactory {
             Object targetProperty = attributes.remove("targetProperty") ?: value
             if (!(targetProperty instanceof CharSequence)) {
                 throw new IllegalArgumentException("Invalid value for targetProperty: (or node value)." +
-                        " Value for this attribute must be a String but it is " + (targetProperty != null ? targetProperty.getClass().getName() : null))
+                    " Value for this attribute must be a String but it is " + (targetProperty != null ? targetProperty.getClass().getName() : null))
             }
             tb = new PropertyBinding(target, targetProperty.toString(), update)
             if (source == null) {
@@ -169,13 +168,13 @@ class BindFactory extends AbstractFactory {
             Object property = attributes.remove("sourceProperty") ?: value
             if (!(property instanceof CharSequence)) {
                 throw new IllegalArgumentException("Invalid value for sourceProperty: (or node value). " +
-                        "Value for this attribute must be a String but it is " + (property != null ? property.getClass().getName() : null))
+                    "Value for this attribute must be a String but it is " + (property != null ? property.getClass().getName() : null))
             }
 
             if (source == null) {
                 // if we have a sourceProperty but no source then we're in trouble
                 throw new IllegalArgumentException("Missing value for source: even though sourceProperty: (or node value) " +
-                        "was specified. Please check you didn't write bind(model.someProperty) instead of bind{ model.someProperty }")
+                    "was specified. Please check you didn't write bind(model.someProperty) instead of bind{ model.someProperty }")
             }
 
             PropertyBinding pb = new PropertyBinding(source, property.toString(), update)
@@ -227,7 +226,7 @@ class BindFactory extends AbstractFactory {
 
         Object o = attributes.remove("bind")
         if (((o == null) && !attributes.containsKey('group'))
-                || ((o instanceof Boolean) && ((Boolean) o).booleanValue())) {
+            || ((o instanceof Boolean) && ((Boolean) o).booleanValue())) {
             fb.bind()
         }
 
@@ -369,7 +368,7 @@ class BindFactory extends AbstractFactory {
         }
 
         if ((bindValue == null)
-                || ((bindValue instanceof Boolean) && ((Boolean) bindValue).booleanValue())) {
+            || ((bindValue instanceof Boolean) && ((Boolean) bindValue).booleanValue())) {
             fb.bind()
         }
 

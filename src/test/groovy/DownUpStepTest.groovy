@@ -25,13 +25,13 @@ public class DownUpStepTest extends GroovyTestCase {
     void testDownto() {
         def z = []
         (10.5).downto(5.9) { z << it }
-        assertEquals( [10.5, 9.5, 8.5, 7.5, 6.5], z)
+        assertEquals([10.5, 9.5, 8.5, 7.5, 6.5], z)
     }
 
     void testBigIntegerDowntoBigDecimal() {
         def z = []
         10G.downto(5.9G) { z << it }
-        assertEquals( [10G, 9G, 8G, 7G, 6G], z)
+        assertEquals([10G, 9G, 8G, 7G, 6G], z)
     }
 
     void testUpto() {

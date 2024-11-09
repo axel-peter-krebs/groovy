@@ -39,6 +39,10 @@ import java.util.function.Consumer;
  * Within @TailRecursive it is used to swap ReturnStatements with looping back to RECUR label
  */
 public class StatementReplacer extends CodeVisitorSupport {
+    private Closure<Boolean> when;
+    private Closure<Statement> replaceWith;
+    private int closureLevel = 0;
+
     public StatementReplacer(Closure<Boolean> when, Closure<Statement> replaceWith) {
         this.when = when;
         this.replaceWith = replaceWith;
@@ -135,8 +139,4 @@ public class StatementReplacer extends CodeVisitorSupport {
     public void setClosureLevel(int closureLevel) {
         this.closureLevel = closureLevel;
     }
-
-    private Closure<Boolean> when;
-    private Closure<Statement> replaceWith;
-    private int closureLevel = 0;
 }

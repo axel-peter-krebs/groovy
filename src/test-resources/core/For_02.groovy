@@ -16,28 +16,27 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-for (int i = 0; true; false) {}
+for (int i = 0; true; false) {
+}
 for (int i = 0; true; false) {
 
 }
-for (int i = 0; true; false)
-{
+for (int i = 0; true; false) {
 }
 for (int i = 0;
      true;
-     false)
-{
+     false) {
 }
-for(;;) {
+for (; ;) {
 
 }
-for(int i = 0;;) {
+for (int i = 0; ;) {
 
 }
-for(;true;) {
+for (; true;) {
 
 }
-for(;;false) {
+for (; ; false) {
 
 }
 
@@ -49,6 +48,6 @@ for (i = 0; i < 10; i++) {
 
 }
 
-for(;;) {
+for (; ;) {
     continue;
 }

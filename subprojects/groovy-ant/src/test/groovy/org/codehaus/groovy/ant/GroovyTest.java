@@ -39,8 +39,8 @@ import java.util.regex.Pattern;
  * and the tests here would be meaningless (tested by testClasspath_missing).
  */
 public class GroovyTest extends GroovyTestCase {
-    public static String FLAG = null;
     public static final String CODE_FRAGMENT = "org.codehaus.groovy.ant.GroovyTest.FLAG = \"from Java constant resource\"";
+    public static String FLAG = null;
     private final File antFile = new File("src/test-resources/org/codehaus/groovy/ant/GroovyTest.xml");
     private Project project;
 
@@ -165,8 +165,7 @@ public class GroovyTest extends GroovyTestCase {
         try {
             project.executeTarget("groovyErrorMsg_NonExistingFile");
             fail();
-        }
-        catch (final BuildException e) {
+        } catch (final BuildException e) {
             assertTrue(e.getMessage().contains("Source resource does not exist!"));
         }
     }
@@ -183,8 +182,7 @@ public class GroovyTest extends GroovyTestCase {
         try {
             project.executeTarget(target);
             fail();
-        }
-        catch (final BuildException e) {
+        } catch (final BuildException e) {
             assertEquals(BuildException.class, e.getClass());
             final Throwable cause = e.getCause();
             assertTrue(cause instanceof GroovyRuntimeException);
@@ -195,7 +193,7 @@ public class GroovyTest extends GroovyTestCase {
             final String stackTrace = sw.toString();
             final Pattern pattern = Pattern.compile(fileNamePattern);
             assertTrue("Does >" + stackTrace + "< contain >" + fileNamePattern + "<?",
-                    pattern.matcher(stackTrace).find());
+                pattern.matcher(stackTrace).find());
         }
     }
 }

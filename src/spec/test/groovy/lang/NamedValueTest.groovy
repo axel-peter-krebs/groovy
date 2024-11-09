@@ -61,7 +61,7 @@ class NamedValueTest {
         baos.withObjectOutputStream { oos ->
             oos.writeObject(nv)
         }
-        new ByteArrayInputStream(baos.toByteArray()).withObjectInputStream {ois ->
+        new ByteArrayInputStream(baos.toByteArray()).withObjectInputStream { ois ->
             assert nv == ois.readObject()
         }
     }

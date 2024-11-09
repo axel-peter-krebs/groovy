@@ -30,27 +30,31 @@ class CustomJsonGeneratorTest extends GroovyTestCase {
 
     void testCustomGenerator() {
         def generator = new CustomJsonOptions()
-                            .excludeNulls()
-                            .lowerCaseFieldNames()
-                            .addCustomConverter(new CustomJsonConverter())
-                            .build()
+            .excludeNulls()
+            .lowerCaseFieldNames()
+            .addCustomConverter(new CustomJsonConverter())
+            .build()
 
         assert generator.toJson(['one', null, 'two', null]) == '["one","two"]'
-        assert generator.toJson(['Foo':'test1', 'BAR':'test2']) == '{"foo":"test1","bar":"test2"}'
-        assert generator.toJson(['foo': new CustomFoo(c: { -> "CustomFoo from CustomJsonConverter" })]) == '{"foo":"CustomFoo from CustomJsonConverter"}'
+        assert generator.toJson(['Foo': 'test1', 'BAR': 'test2']) == '{"foo":"test1","bar":"test2"}'
+        assert generator.toJson(['foo': new CustomFoo(c: { ->
+            "CustomFoo from CustomJsonConverter" })]) == '{"foo":"CustomFoo from CustomJsonConverter"}'
         assert generator.toJson(['foo': new CustomFoo(c: { -> JsonOutput.unescaped("{}") })]) == '{"foo":{}}'
     }
 
     static class CustomJsonOptions extends Options {
         boolean lowerCaseFieldNames
+
         CustomJsonOptions lowerCaseFieldNames() {
             lowerCaseFieldNames = true
             return this
         }
+
         CustomJsonOptions addCustomConverter(Converter converter) {
             converters.add(converter)
             return this
         }
+
         @Override
         CustomJsonGenerator build() {
             return new CustomJsonGenerator(this)
@@ -59,10 +63,12 @@ class CustomJsonGeneratorTest extends GroovyTestCase {
 
     static class CustomJsonGenerator extends DefaultJsonGenerator {
         boolean lowerCaseFieldNames
+
         CustomJsonGenerator(CustomJsonOptions opts) {
             super(opts)
             lowerCaseFieldNames = opts.lowerCaseFieldNames
         }
+
         @Override
         protected void writeMapEntry(String key, Object value, CharBuf buffer) {
             String newKey = (lowerCaseFieldNames) ? key.toLowerCase() : key
@@ -78,7 +84,7 @@ class CustomJsonGeneratorTest extends GroovyTestCase {
 
         @Override
         Object convert(Object value, String key) {
-            return ((CustomFoo)value).c.call()
+            return ((CustomFoo) value).c.call()
         }
     }
 

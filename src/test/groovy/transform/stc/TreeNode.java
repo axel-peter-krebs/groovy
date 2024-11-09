@@ -19,5 +19,5 @@
 package groovy.transform.stc;
 
 public abstract class TreeNode<TN extends TreeNode<?>> implements Iterable<TN> {
-  //public java.util.Iterator<TN> iterator() { return null; }
+    //public java.util.Iterator<TN> iterator() { return null; }
 }

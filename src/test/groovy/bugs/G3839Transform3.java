@@ -25,7 +25,7 @@ import org.codehaus.groovy.control.*;
 import org.codehaus.groovy.transform.*;
 
 @GroovyASTTransformation(phase = CompilePhase.CANONICALIZATION)
-public class G3839Transform3 implements ASTTransformation, Opcodes{
+public class G3839Transform3 implements ASTTransformation, Opcodes {
 
     public void visit(ASTNode[] nodes, SourceUnit sourceUnit) {
         ClassNode classNode = (ClassNode) nodes[1];

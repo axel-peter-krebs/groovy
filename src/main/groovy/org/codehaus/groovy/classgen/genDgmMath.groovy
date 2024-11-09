@@ -20,12 +20,12 @@ package org.codehaus.groovy.classgen
 
 def types = ['Integer', 'Long', 'Float', 'Double']
 
-def getMath (a,b) {
+def getMath(a, b) {
     if (a == 'Double' || b == 'Double' || a == 'Float' || b == 'Float')
-      return 'FloatingPointMath'
+        return 'FloatingPointMath'
 
     if (a == 'Long' || b == 'Long')
-      return 'LongMath'
+        return 'LongMath'
 
     'IntegerMath'
 }
@@ -37,24 +37,24 @@ public CallSite createPojoCallSite(CallSite site, MetaClassImpl metaClass, MetaM
 
 types.each {
     a ->
-    print """
-    if (receiver instanceof $a) {"""
-    types.each {
-        b ->
         print """
+    if (receiver instanceof $a) {"""
+        types.each {
+            b ->
+                print """
         if (args[0] instanceof $b)
             return new NumberNumberCallSite (site, metaClass, metaMethod, params, (Number)receiver, (Number)args[0]){
                 public final Object invoke(Object receiver, Object[] args) {
-                    return ${getMath(a,b)}.INSTANCE.addImpl(($a)receiver,($b)args[0]);
+                    return ${getMath(a, b)}.INSTANCE.addImpl(($a)receiver,($b)args[0]);
                 }
 
                 public final Object invokeBinop(Object receiver, Object arg) {
-                    return ${getMath(a,b)}.INSTANCE.addImpl(($a)receiver,($b)arg);
+                    return ${getMath(a, b)}.INSTANCE.addImpl(($a)receiver,($b)arg);
                 }
             };
         """
-    }
-    println '}'
+        }
+        println '}'
 }
 
 println '''

@@ -22,7 +22,7 @@ import org.codehaus.groovy.classgen.asm.AbstractBytecodeTestCase
 
 class StaticCompilePostfixPrefixTest extends AbstractBytecodeTestCase {
     void testPostfixOnInt() {
-        def bytecode = compile([method:'m'], '''@groovy.transform.CompileStatic
+        def bytecode = compile([method: 'm'], '''@groovy.transform.CompileStatic
             void m() {
                 int i = 0
                 i++
@@ -32,7 +32,7 @@ class StaticCompilePostfixPrefixTest extends AbstractBytecodeTestCase {
         ''')
         clazz.newInstance().m()
 
-        bytecode = compile([method:'m'], '''@groovy.transform.CompileStatic
+        bytecode = compile([method: 'm'], '''@groovy.transform.CompileStatic
             void m() {
                 int i = 0
                 i--
@@ -45,7 +45,7 @@ class StaticCompilePostfixPrefixTest extends AbstractBytecodeTestCase {
     }
 
     void testPostfixOnDate() {
-        def bytecode = compile([method:'m'],'''@groovy.transform.CompileStatic
+        def bytecode = compile([method: 'm'], '''@groovy.transform.CompileStatic
             void m() {
                 Date d = new Date()
                 Date tomorrow = d+1
@@ -57,7 +57,7 @@ class StaticCompilePostfixPrefixTest extends AbstractBytecodeTestCase {
         ''')
 
         clazz.newInstance().m()
-        bytecode = compile([method:'m'],'''@groovy.transform.CompileStatic
+        bytecode = compile([method: 'm'], '''@groovy.transform.CompileStatic
             void m() {
                 Date d = new Date()
                 Date yesterday = d - 1
@@ -72,7 +72,7 @@ class StaticCompilePostfixPrefixTest extends AbstractBytecodeTestCase {
     }
 
     void testPrefixOnInt() {
-        def bytecode = compile([method:'m'],'''@groovy.transform.CompileStatic
+        def bytecode = compile([method: 'm'], '''@groovy.transform.CompileStatic
          void m() {
             int i = 0
             ++i
@@ -82,7 +82,7 @@ class StaticCompilePostfixPrefixTest extends AbstractBytecodeTestCase {
         ''')
         clazz.newInstance().m()
 
-        bytecode = compile([method:'m'],'''@groovy.transform.CompileStatic
+        bytecode = compile([method: 'm'], '''@groovy.transform.CompileStatic
             void m() {
                 int i = 0
                 --i
@@ -94,7 +94,7 @@ class StaticCompilePostfixPrefixTest extends AbstractBytecodeTestCase {
     }
 
     void testPrefixOnDate() {
-        def bytecode = compile([method:'m'],'''@groovy.transform.CompileStatic
+        def bytecode = compile([method: 'm'], '''@groovy.transform.CompileStatic
             void m() {
                 Date d = new Date()
                 Date tomorrow = d + 1
@@ -104,7 +104,7 @@ class StaticCompilePostfixPrefixTest extends AbstractBytecodeTestCase {
                 assert ++d == aftertomorrow
             }
         ''')
-        bytecode = compile([method:'m'],'''@groovy.transform.CompileStatic
+        bytecode = compile([method: 'm'], '''@groovy.transform.CompileStatic
             void m() {
                 Date d = new Date()
                 Date yesterday = d - 1

@@ -30,17 +30,17 @@ import org.objectweb.asm.Opcodes;
 
 public class EnumHelper {
     private static final int FS = Opcodes.ACC_FINAL | Opcodes.ACC_STATIC;
-    private static final int PUBLIC_FS = Opcodes.ACC_PUBLIC | FS; 
+    private static final int PUBLIC_FS = Opcodes.ACC_PUBLIC | FS;
 
     public static ClassNode makeEnumNode(String name, int modifiers, ClassNode[] interfaces, ClassNode outerClass) {
         modifiers = modifiers | Opcodes.ACC_FINAL | Opcodes.ACC_ENUM;
         ClassNode enumClass;
-        if (outerClass==null) {
-            enumClass = new ClassNode(name,modifiers,null,interfaces,MixinNode.EMPTY_ARRAY);
+        if (outerClass == null) {
+            enumClass = new ClassNode(name, modifiers, null, interfaces, MixinNode.EMPTY_ARRAY);
         } else {
             name = outerClass.getName() + "$" + name;
             modifiers |= Opcodes.ACC_STATIC;
-            enumClass = new InnerClassNode(outerClass,name,modifiers,null,interfaces,MixinNode.EMPTY_ARRAY);
+            enumClass = new InnerClassNode(outerClass, name, modifiers, null, interfaces, MixinNode.EMPTY_ARRAY);
         }
 
         // set super class and generics info

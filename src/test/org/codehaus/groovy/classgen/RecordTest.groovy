@@ -124,8 +124,8 @@ final class RecordTest {
             cu.addSources(a)
             cu.compile()
 
-            def personClass   = loader.loadClass('Person')
-            def notNullClass  = loader.loadClass('NotNull')
+            def personClass = loader.loadClass('Person')
+            def notNullClass = loader.loadClass('NotNull')
             def notNull2Class = loader.loadClass('NotNull2')
             def notNull3Class = loader.loadClass('NotNull3')
 
@@ -143,9 +143,9 @@ final class RecordTest {
             assert typeAnnotations[0].annotationType() == notNull2Class
             assert typeAnnotations[1].annotationType() == notNull3Class
 
-            assert personComponents[1].name == 'age'       && personComponents[1].type == int
+            assert personComponents[1].name == 'age' && personComponents[1].type == int
             assert personComponents[2].name == 'locations' && personComponents[2].type == List
-            assert personComponents[3].name == 'titles'    && personComponents[3].type == String[]
+            assert personComponents[3].name == 'titles' && personComponents[3].type == String[]
 
             assert personComponents[2].annotations.size() == 1
             assert personComponents[2].annotations[0].annotationType() == notNull2Class
@@ -157,8 +157,8 @@ final class RecordTest {
             assert typeAnnotations[0].annotationType() == notNull2Class
             assert typeAnnotations[1].annotationType() == notNull3Class
 
-            def personClassNode   = ClassHelper.make(personClass)
-            def notNullClassNode  = ClassHelper.make(notNullClass)
+            def personClassNode = ClassHelper.make(personClass)
+            def notNullClassNode = ClassHelper.make(notNullClass)
             def notNull2ClassNode = ClassHelper.make(notNull2Class)
             def notNull3ClassNode = ClassHelper.make(notNull3Class)
 
@@ -167,36 +167,36 @@ final class RecordTest {
                 assert classNode.recordComponents.size() == 4
                 classNode.recordComponents.eachWithIndex { RecordComponentNode rcn, Integer index ->
                     switch (index) {
-                      case 0:
-                        assert rcn.name == 'name'
-                        assert rcn.type == ClassHelper.STRING_TYPE
-                        assert rcn.type !== ClassHelper.STRING_TYPE // GROOVY-10937
-                        assert rcn.annotations.size() == 2
-                        assert rcn.annotations[0].classNode == notNullClassNode
-                        assert rcn.annotations[1].classNode == notNull2ClassNode
-                        assert rcn.type.typeAnnotations.size() == 2
-                        assert rcn.type.typeAnnotations[0].classNode == notNull2ClassNode
-                        assert rcn.type.typeAnnotations[1].classNode == notNull3ClassNode
-                        break
-                      case 1:
-                          assert rcn.name == 'age'
-                          assert rcn.type == ClassHelper.int_TYPE
-                        break
-                      case 2:
-                        assert rcn.name == 'locations'
-                        assert rcn.type == ClassHelper.LIST_TYPE
-                        assert rcn.type !== ClassHelper.LIST_TYPE
-                        assert rcn.type.genericsTypes.size() == 1
-                        assert rcn.type.genericsTypes[0].type == ClassHelper.STRING_TYPE
-                        assert rcn.annotations.size() == 1
-                        assert rcn.annotations[0].classNode == notNull2ClassNode
-                        assert rcn.type.typeAnnotations.size() == 2
-                        assert rcn.type.typeAnnotations[0].classNode == notNull2ClassNode
-                        assert rcn.type.typeAnnotations[1].classNode == notNull3ClassNode
-                        break
-                      case 3:
-                        assert rcn.name == 'titles'
-                        assert rcn.type == ClassHelper.STRING_TYPE.makeArray()
+                        case 0:
+                            assert rcn.name == 'name'
+                            assert rcn.type == ClassHelper.STRING_TYPE
+                            assert rcn.type !== ClassHelper.STRING_TYPE // GROOVY-10937
+                            assert rcn.annotations.size() == 2
+                            assert rcn.annotations[0].classNode == notNullClassNode
+                            assert rcn.annotations[1].classNode == notNull2ClassNode
+                            assert rcn.type.typeAnnotations.size() == 2
+                            assert rcn.type.typeAnnotations[0].classNode == notNull2ClassNode
+                            assert rcn.type.typeAnnotations[1].classNode == notNull3ClassNode
+                            break
+                        case 1:
+                            assert rcn.name == 'age'
+                            assert rcn.type == ClassHelper.int_TYPE
+                            break
+                        case 2:
+                            assert rcn.name == 'locations'
+                            assert rcn.type == ClassHelper.LIST_TYPE
+                            assert rcn.type !== ClassHelper.LIST_TYPE
+                            assert rcn.type.genericsTypes.size() == 1
+                            assert rcn.type.genericsTypes[0].type == ClassHelper.STRING_TYPE
+                            assert rcn.annotations.size() == 1
+                            assert rcn.annotations[0].classNode == notNull2ClassNode
+                            assert rcn.type.typeAnnotations.size() == 2
+                            assert rcn.type.typeAnnotations[0].classNode == notNull2ClassNode
+                            assert rcn.type.typeAnnotations[1].classNode == notNull3ClassNode
+                            break
+                        case 3:
+                            assert rcn.name == 'titles'
+                            assert rcn.type == ClassHelper.STRING_TYPE.makeArray()
                     }
                 }
             }

@@ -29,7 +29,7 @@ class NavigationXmlTest extends GroovyTestCase {
     void testPrePostOrder() {
         def root = createTreeFromXmlParser()
         def combos = [[false, true], ['depthFirst', 'breadthFirst']].combinations()
-        def actual = combos.collect{ preorder, type ->
+        def actual = combos.collect { preorder, type ->
             root."$type"(preorder)*.name()
         }*.toString()
         def expected = [
@@ -38,13 +38,13 @@ class NavigationXmlTest extends GroovyTestCase {
             '[grandchild2, child1a, child1b, child2a, child2b, child2c, parent1, parent2, root]', // bf post
             '[root, parent1, parent2, child1a, child1b, child2a, child2b, child2c, grandchild2]'  // bf pre
         ]
-        (0..3).each{ assert actual[it] == expected[it] }
+        (0..3).each { assert actual[it] == expected[it] }
     }
 
     void testPrePostOrderWithClosure() {
         def root = createTreeFromXmlParser()
         def combos = [[false, true], ['depthFirst', 'breadthFirst']].combinations()
-        def actual = combos.collect{ preorder, type ->
+        def actual = combos.collect { preorder, type ->
             def names = []
             root."$type"(preorder: preorder) { names << it.name() }
             names
@@ -55,7 +55,7 @@ class NavigationXmlTest extends GroovyTestCase {
             '[grandchild2, child1a, child1b, child2a, child2b, child2c, parent1, parent2, root]', // bf post
             '[root, parent1, parent2, child1a, child1b, child2a, child2b, child2c, grandchild2]'  // bf pre
         ]
-        (0..3).each{ assert actual[it] == expected[it] }
+        (0..3).each { assert actual[it] == expected[it] }
     }
 
     void testLevelWithClosure() {

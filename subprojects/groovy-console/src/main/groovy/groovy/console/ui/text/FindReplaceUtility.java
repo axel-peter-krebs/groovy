@@ -88,26 +88,21 @@ public final class FindReplaceUtility {
     private static final JCheckBox MATCH_CASE_CHECKBOX = new JCheckBox("Match Case      ");
     private static final JCheckBox IS_BACKWARDS_CHECKBOX = new JCheckBox("Search Backwards");
     private static final JCheckBox WRAP_SEARCH_CHECKBOX = new JCheckBox("Wrap Search     ");
-
-    private static JTextComponent textComponent;
-    private static AttributeSet attributeSet;
-
-    private static int findReplaceCount;
-    private static String lastAction;
-
     private static final EventListenerList EVENT_LISTENER_LIST = new EventListenerList();
-
     // the document segment
     private static final Segment SEGMENT = new Segment();
-
+    private static JTextComponent textComponent;
+    private static AttributeSet attributeSet;
     private static final FocusAdapter TEXT_FOCUS_LISTENER = new FocusAdapter() {
         @Override
         public void focusGained(FocusEvent fe) {
             textComponent = (JTextComponent) fe.getSource();
             attributeSet =
-                    textComponent.getDocument().getDefaultRootElement().getAttributes();
+                textComponent.getDocument().getDefaultRootElement().getAttributes();
         }
     };
+    private static int findReplaceCount;
+    private static String lastAction;
 
     static {
         FIND_REPLACE_DIALOG.setResizable(false);
@@ -204,10 +199,10 @@ public final class FindReplaceUtility {
 
     private static void fireTextEvent() {
         EventListener[] lstrs =
-                EVENT_LISTENER_LIST.getListeners(TextListener.class);
+            EVENT_LISTENER_LIST.getListeners(TextListener.class);
         if (lstrs != null && lstrs.length > 0) {
             TextEvent te =
-                    new TextEvent(FIND_REPLACE_DIALOG, TextEvent.TEXT_VALUE_CHANGED);
+                new TextEvent(FIND_REPLACE_DIALOG, TextEvent.TEXT_VALUE_CHANGED);
             for (EventListener lstr : lstrs) {
                 ((TextListener) lstr).textValueChanged(te);
             }
@@ -262,19 +257,18 @@ public final class FindReplaceUtility {
             try {
                 Document doc = textComponent.getDocument();
                 doc.getText(0, doc.getLength(), SEGMENT);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 // should NEVER reach here
                 e.printStackTrace();
             }
 
             pos += textComponent.getSelectedText() == null ?
-                    (backwards ? -1 : 1) : 0;
+                (backwards ? -1 : 1) : 0;
 
             char first = backwards ?
-                    pattern.charAt(pattern.length() - 1) : pattern.charAt(0);
+                pattern.charAt(pattern.length() - 1) : pattern.charAt(0);
             char oppFirst = Character.isUpperCase(first) ?
-                    Character.toLowerCase(first) : Character.toUpperCase(first);
+                Character.toLowerCase(first) : Character.toUpperCase(first);
             int start = pos;
             boolean wrapped = WRAP_SEARCH_CHECKBOX.isSelected();
             int end = backwards ? 0 : SEGMENT.getEndIndex();
@@ -297,8 +291,8 @@ public final class FindReplaceUtility {
                         found = SEGMENT.array[pos + i] == c;
                         if (!MATCH_CASE_CHECKBOX.isSelected() && !found) {
                             c = Character.isUpperCase(c) ?
-                                    Character.toLowerCase(c) :
-                                    Character.toUpperCase(c);
+                                Character.toLowerCase(c) :
+                                Character.toUpperCase(c);
                             found = SEGMENT.array[pos + i] == c;
                         }
                     }
@@ -323,7 +317,7 @@ public final class FindReplaceUtility {
     private static void setListStrings() {
         String findObject = (String) FIND_FIELD.getSelectedItem();
         String replaceObject = REPLACE_FIELD.isShowing() ?
-                (String) REPLACE_FIELD.getSelectedItem() : "";
+            (String) REPLACE_FIELD.getSelectedItem() : "";
 
         if (findObject != null && replaceObject != null) {
             boolean found = false;
@@ -376,13 +370,13 @@ public final class FindReplaceUtility {
         CLOSE_BUTTON.setVisible(isReplace);
 
         Action action = isReplace ?
-                REPLACE_ACTION : CLOSE_ACTION;
+            REPLACE_ACTION : CLOSE_ACTION;
         REPLACE_BUTTON.setAction(action);
 
         REPLACE_BUTTON.setPreferredSize(null);
         Dimension d = isReplace ?
-                REPLACE_ALL_BUTTON.getPreferredSize() :
-                REPLACE_BUTTON.getPreferredSize();
+            REPLACE_ALL_BUTTON.getPreferredSize() :
+            REPLACE_BUTTON.getPreferredSize();
         FIND_BUTTON.setPreferredSize(d);
         REPLACE_BUTTON.setPreferredSize(d);
         CLOSE_BUTTON.setPreferredSize(d);
@@ -409,6 +403,10 @@ public final class FindReplaceUtility {
         textComponent.removeFocusListener(TEXT_FOCUS_LISTENER);
     }
 
+    public static void dispose() {
+        FIND_REPLACE_DIALOG.dispose();
+    }
+
     private static class FindAction extends AbstractAction {
 
         FindAction() {
@@ -423,12 +421,12 @@ public final class FindReplaceUtility {
             findReplaceCount = 0;
 
             if (FIND_REPLACE_DIALOG.isVisible() &&
-                    FIND_REPLACE_DIALOG.getTitle().equals(FIND_ACTION_COMMAND)) {
+                FIND_REPLACE_DIALOG.getTitle().equals(FIND_ACTION_COMMAND)) {
             }
 
             int pos = textComponent.getSelectedText() == null ?
-                    textComponent.getCaretPosition() :
-                    textComponent.getSelectionStart();
+                textComponent.getCaretPosition() :
+                textComponent.getSelectionStart();
 
             boolean reverse = (ae.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
             pos = findNext(reverse, pos);
@@ -459,8 +457,8 @@ public final class FindReplaceUtility {
             findReplaceCount = 0;
 
             int pos = textComponent.getSelectedText() == null ?
-                    textComponent.getCaretPosition() :
-                    textComponent.getSelectionStart();
+                textComponent.getCaretPosition() :
+                textComponent.getSelectionStart();
 
             pos = findNext(false, pos - 1);
 
@@ -480,8 +478,7 @@ public final class FindReplaceUtility {
                     } else {
                         textComponent.setCaretPosition(last + replace.length());
                     }
-                }
-                catch (BadLocationException ble) {
+                } catch (BadLocationException ble) {
                     ble.printStackTrace();
                 }
 
@@ -507,8 +504,8 @@ public final class FindReplaceUtility {
             findReplaceCount = 0;
 
             int last = textComponent.getSelectedText() == null ?
-                    textComponent.getCaretPosition() :
-                    textComponent.getSelectionStart();
+                textComponent.getCaretPosition() :
+                textComponent.getSelectionStart();
 
             int pos = findNext(false, last - 1);
 
@@ -523,8 +520,7 @@ public final class FindReplaceUtility {
 
                     last = pos;
                     pos = findNext(false, pos);
-                }
-                catch (BadLocationException ble) {
+                } catch (BadLocationException ble) {
                     ble.printStackTrace();
                 }
 
@@ -555,9 +551,5 @@ public final class FindReplaceUtility {
         public void actionPerformed(ActionEvent ae) {
             FIND_REPLACE_DIALOG.dispose();
         }
-    }
-
-    public static void dispose() {
-        FIND_REPLACE_DIALOG.dispose();
     }
 }

@@ -112,9 +112,12 @@ final class GroovyInterceptableTest extends GroovyTestCase {
 
 class GI implements GroovyInterceptable {
     def foo = 89
+
     int someInt() { 2806 }
+
     @Override
     String toString() { "originalToString" }
+
     @Override
     Object invokeMethod(String name, Object args) {
         if ("toString" == name)
@@ -128,6 +131,7 @@ class GI implements GroovyInterceptable {
 
 class GI2 implements GroovyInterceptable {
     def result = ""
+
     @Override
     def invokeMethod(String name, args) {
         def metaMethod = Foo.metaClass.getMetaMethod(name, args)
@@ -135,6 +139,7 @@ class GI2 implements GroovyInterceptable {
         result += "missing"
         throw new MissingMethodException(name, Foo.class, args)
     }
+
     def method() {
         notAMethod()
     }

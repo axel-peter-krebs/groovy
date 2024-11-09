@@ -61,7 +61,7 @@ public abstract class InnerClassVisitorHelper extends ClassCodeVisitorSupport {
         block.addStatement(stmt(assignX(propX(target, varX(parameters[0])), varX(parameters[1]))));
     }
 
-    protected static void setMethodDispatcherCode    (final BlockStatement block, final Expression target, final Parameter[] parameters) {
+    protected static void setMethodDispatcherCode(final BlockStatement block, final Expression target, final Parameter[] parameters) {
         // if (!(args instanceof Object[])) return target.(name)(args)
         block.addStatement(ifS(
             notX(isInstanceOfX(varX(parameters[1]), OBJECT_ARRAY)),

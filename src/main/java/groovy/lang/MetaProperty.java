@@ -41,6 +41,26 @@ public abstract class MetaProperty implements MetaMember {
     }
 
     /**
+     * Gets the name for the getter for this property
+     *
+     * @return The name of the property. The name is "get" + the capitalized propertyName
+     * or, in the case of boolean values, "is" + the capitalized propertyName
+     */
+    public static String getGetterName(final String propertyName, final Class type) {
+        String prefix = type == Boolean.TYPE ? "is" : "get";
+        return prefix + capitalize(propertyName);
+    }
+
+    /**
+     * Gets the setter for the getter for this property.
+     *
+     * @return The name of the property. The name is "set"+ the capitalized propertyName.
+     */
+    public static String getSetterName(final String propertyName) {
+        return PROPERTY_SET_PREFIX + capitalize(propertyName);
+    }
+
+    /**
      * @return the property of the given object
      * @throws RuntimeException if the property could not be evaluated
      */
@@ -49,7 +69,7 @@ public abstract class MetaProperty implements MetaMember {
     /**
      * Sets the property on the given object to the new value.
      *
-     * @param object on which to set the property
+     * @param object   on which to set the property
      * @param newValue the new value of the property
      * @throws RuntimeException if the property could not be set
      */
@@ -82,25 +102,5 @@ public abstract class MetaProperty implements MetaMember {
     @Override
     public int getModifiers() {
         return Modifier.PUBLIC;
-    }
-
-    /**
-     * Gets the name for the getter for this property
-     *
-     * @return The name of the property. The name is "get" + the capitalized propertyName
-     *         or, in the case of boolean values, "is" + the capitalized propertyName
-     */
-    public static String getGetterName(final String propertyName, final Class type) {
-        String prefix = type == Boolean.TYPE ? "is" : "get";
-        return prefix + capitalize(propertyName);
-    }
-
-    /**
-     * Gets the setter for the getter for this property.
-     *
-     * @return The name of the property. The name is "set"+ the capitalized propertyName.
-     */
-    public static String getSetterName(final String propertyName) {
-        return PROPERTY_SET_PREFIX + capitalize(propertyName);
     }
 }

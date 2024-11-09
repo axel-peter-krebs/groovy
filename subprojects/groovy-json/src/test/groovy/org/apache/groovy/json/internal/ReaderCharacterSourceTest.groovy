@@ -23,18 +23,18 @@ import org.apache.groovy.json.internal.Exceptions.JsonInternalException
 
 class ReaderCharacterSourceTest extends GroovyTestCase {
 
-    public static final int QUOTE_CHAR = (int)'"'.charAt(0)
-    public static final int BACKSLASH_CHAR = (int)'\\'.charAt(0)
+    public static final int QUOTE_CHAR = (int) '"'.charAt(0)
+    public static final int BACKSLASH_CHAR = (int) '\\'.charAt(0)
 
     void testFindNextChar() {
         def testCases = [
-                [ input: '""', expected: '' ],
-                [ input: '"word"', expected: 'word' ],
-                [ input: '"\\u0026value"', expected: '\\u0026value' ],
-                [ input: '"value\\u0026"', expected: 'value\\u0026' ],
-                [ input: '"double\\"quote"', expected: 'double\\"quote' ],
-                [ input: '"\\"\\"\\"\\""', expected: '\\"\\"\\"\\"' ],
-                [ input: '"\\\\\\\\\\\\"', expected: '\\\\\\\\\\\\' ]
+            [input: '""', expected: ''],
+            [input: '"word"', expected: 'word'],
+            [input: '"\\u0026value"', expected: '\\u0026value'],
+            [input: '"value\\u0026"', expected: 'value\\u0026'],
+            [input: '"double\\"quote"', expected: 'double\\"quote'],
+            [input: '"\\"\\"\\"\\""', expected: '\\"\\"\\"\\"'],
+            [input: '"\\\\\\\\\\\\"', expected: '\\\\\\\\\\\\']
         ]
 
         testCases.each {

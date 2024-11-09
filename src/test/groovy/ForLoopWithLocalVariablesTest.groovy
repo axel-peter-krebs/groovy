@@ -28,7 +28,7 @@ class ForLoopWithLocalVariablesTest extends GroovyTestCase {
     void testForLoop() {
         def x = null
 
-        for ( i in 0..9 ) {
+        for (i in 0..9) {
             x = i
         }
 

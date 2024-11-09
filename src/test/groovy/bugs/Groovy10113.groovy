@@ -44,7 +44,8 @@ final class Groovy10113 {
         assert err =~ /Cycle detected: the type T cannot extend.implement itself or one of its own member types/
     }
 
-    @Test // GROOVY-10125
+    @Test
+    // GROOVY-10125
     void testTypeParamNoCycle() {
         assertScript '''
             class C<T, U extends T> {

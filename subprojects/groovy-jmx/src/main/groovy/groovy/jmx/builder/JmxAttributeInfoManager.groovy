@@ -78,12 +78,12 @@ class JmxAttributeInfoManager {
         desc.setField JmxBuilderTools.DESC_KEY_DISPLAY_NAME, map.remove(JmxBuilderTools.DESC_KEY_DISPLAY_NAME)
 
         ModelMBeanAttributeInfo attrib = new ModelMBeanAttributeInfo(
-                (String) desc.getFieldValue(JmxBuilderTools.DESC_KEY_NAME), // name
-                prop.type.getName(),
-                (String) desc.getFieldValue(JmxBuilderTools.DESC_KEY_DISPLAY_NAME),
-                (boolean) desc.getFieldValue(JmxBuilderTools.DESC_KEY_READABLE), // readable
-                (boolean) desc.getFieldValue(JmxBuilderTools.DESC_KEY_WRITABLE), // readOnly
-                (prop.type instanceof Boolean)  // is boolean
+            (String) desc.getFieldValue(JmxBuilderTools.DESC_KEY_NAME), // name
+            prop.type.getName(),
+            (String) desc.getFieldValue(JmxBuilderTools.DESC_KEY_DISPLAY_NAME),
+            (boolean) desc.getFieldValue(JmxBuilderTools.DESC_KEY_READABLE), // readable
+            (boolean) desc.getFieldValue(JmxBuilderTools.DESC_KEY_WRITABLE), // readOnly
+            (prop.type instanceof Boolean)  // is boolean
         )
         attrib.setDescriptor desc
         return attrib

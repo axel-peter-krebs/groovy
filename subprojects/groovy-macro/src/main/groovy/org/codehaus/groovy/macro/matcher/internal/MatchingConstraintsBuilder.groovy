@@ -29,17 +29,17 @@ class MatchingConstraintsBuilder {
     ConstraintPredicate<TreeContext> eventually
 
 
-    MatchingConstraints build(@DelegatesTo(value=MatchingConstraintsBuilder, strategy=Closure.DELEGATE_ONLY) Closure spec) {
+    MatchingConstraints build(@DelegatesTo(value = MatchingConstraintsBuilder, strategy = Closure.DELEGATE_ONLY) Closure spec) {
         def clone = (Closure) spec.clone()
         clone.delegate = this
         clone.resolveStrategy = Closure.DELEGATE_ONLY
         clone()
 
         new MatchingConstraints(
-                placeholders: Collections.unmodifiableSet(placeholders),
-                varargPlaceholders: Collections.unmodifiableSet(varargPlaceholders),
-                tokenPredicate: tokenPredicate,
-                eventually: eventually
+            placeholders: Collections.unmodifiableSet(placeholders),
+            varargPlaceholders: Collections.unmodifiableSet(varargPlaceholders),
+            tokenPredicate: tokenPredicate,
+            eventually: eventually
         )
     }
 
@@ -62,7 +62,7 @@ class MatchingConstraintsBuilder {
         this
     }
 
-    MatchingConstraintsBuilder token(@DelegatesTo(value=Token, strategy = Closure.DELEGATE_FIRST) Closure<Boolean> predicate) {
+    MatchingConstraintsBuilder token(@DelegatesTo(value = Token, strategy = Closure.DELEGATE_FIRST) Closure<Boolean> predicate) {
         def clone = (Closure<Boolean>) predicate.clone()
         clone.resolveStrategy = Closure.DELEGATE_FIRST
         tokenPredicate = new ConstraintPredicate<Token>() {
@@ -75,7 +75,7 @@ class MatchingConstraintsBuilder {
         this
     }
 
-    MatchingConstraintsBuilder eventually(@DelegatesTo(value=TreeContext, strategy = Closure.DELEGATE_FIRST) Closure<Boolean> predicate) {
+    MatchingConstraintsBuilder eventually(@DelegatesTo(value = TreeContext, strategy = Closure.DELEGATE_FIRST) Closure<Boolean> predicate) {
         def clone = (Closure<Boolean>) predicate.clone()
         clone.resolveStrategy = Closure.DELEGATE_FIRST
         eventually = new ConstraintPredicate<TreeContext>() {

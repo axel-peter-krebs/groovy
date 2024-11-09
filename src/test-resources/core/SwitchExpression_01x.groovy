@@ -18,7 +18,7 @@
  */
 
 def a = 6
-def result = switch(a) {
+def result = switch (a) {
     case 8 -> 'b'
     default -> 'z'
 }

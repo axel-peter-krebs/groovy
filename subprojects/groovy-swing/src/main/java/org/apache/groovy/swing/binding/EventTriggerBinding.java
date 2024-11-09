@@ -66,7 +66,7 @@ public class EventTriggerBinding implements TriggerBinding {
                 @Override
                 public Object call(Object... params) {
                     if (sourceBinding instanceof ClosureSourceBinding) {
-                        ((ClosureSourceBinding)sourceBinding).setClosureArguments(params);
+                        ((ClosureSourceBinding) sourceBinding).setClosureArguments(params);
                     }
                     update();
                     return null;

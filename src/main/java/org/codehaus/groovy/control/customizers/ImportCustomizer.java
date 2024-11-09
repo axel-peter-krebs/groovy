@@ -125,6 +125,13 @@ public class ImportCustomizer extends CompilationCustomizer {
 
     // -------------------- Helper classes -------------------------
 
+    private enum ImportType {
+        regular,
+        staticImport,
+        staticStar,
+        star
+    }
+
     /**
      * Represents imports which are possibly aliased.
      */
@@ -158,12 +165,5 @@ public class ImportCustomizer extends CompilationCustomizer {
             this.classNode = null;
             this.field = null;
         }
-    }
-
-    private enum ImportType {
-        regular,
-        staticImport,
-        staticStar,
-        star
     }
 }

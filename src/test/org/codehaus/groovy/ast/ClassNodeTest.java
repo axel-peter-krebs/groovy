@@ -133,7 +133,7 @@ public final class ClassNodeTest {
     public void testPermittedSubclasses() throws Exception {
         assumeTrue(Runtime.version().feature() >= 17);
 
-        Class<?>  c  = Class.forName("java.lang.constant.ConstantDesc");
+        Class<?> c = Class.forName("java.lang.constant.ConstantDesc");
         ClassNode cn = new ClassNode(c);
         assertTrue(!cn.getPermittedSubclasses().isEmpty());
         assertTrue(cn.isSealed());

@@ -36,12 +36,12 @@
     ]
     def pluralize = { name -> name + (name.endsWith("s") ? "es" : "s") }
     %>
-    <meta http-equiv="Content-Type" content="text/html; charset=${props.charset}">
-    <meta name="keywords" CONTENT="${packageDoc.name()} package">
+    <meta content="text/html; charset=${props.charset}" http-equiv="Content-Type">
+    <meta CONTENT="${packageDoc.name()} package" name="keywords">
 
-    <link href="groovy.ico" type="image/x-icon" rel="shortcut icon">
-    <link href="groovy.ico" type="image/x-icon" rel="icon">
-    <link rel="stylesheet" type="text/css" href="${packageDoc.relativeRootPath}stylesheet.css" title="Style">
+    <link href="groovy.ico" rel="shortcut icon" type="image/x-icon">
+    <link href="groovy.ico" rel="icon" type="image/x-icon">
+    <link href="${packageDoc.relativeRootPath}stylesheet.css" rel="stylesheet" title="Style" type="text/css">
 </head>
 
 <body class="left">
@@ -50,7 +50,8 @@
 </div>
 
 <%
-def isVisible = { it.isPublic() || (it.isProtected() && props.protectedScope == 'true') || (!it.isProtected() && !it.isPrivate() && props.packageScope == 'true') || props.privateScope == 'true' }
+def isVisible = { it.isPublic() || (it.isProtected() && props.protectedScope == 'true') || (!it.isProtected() &&
+!it.isPrivate() && props.packageScope == 'true') || props.privateScope == 'true' }
 classTypes.each { k, v ->
 if (packageDoc.allClasses().any{ isVisible(it) && v(it) }) {
 %>
@@ -60,11 +61,14 @@ if (packageDoc.allClasses().any{ isVisible(it) && v(it) }) {
     <ul>
         <%
         for (classDoc in packageDoc.allClasses().findAll{ isVisible(it) && v(it) }) {
-        %><li><a href="${classDoc.name()}.html" title="${k.toLowerCase()} in ${packageDoc.nameWithDots()}" target="classFrame"><%
-        if (classDoc.isInterface() || classDoc.isTrait()) { %><em><% }
-            %>${classDoc.name()}<%
-            if (classDoc.isInterface() || classDoc.isTrait()) { %></em><% }
-        %></a></li><%
+        %>
+        <li><a href="${classDoc.name()}.html" target="classFrame"
+               title="${k.toLowerCase()} in ${packageDoc.nameWithDots()}"><%
+            if (classDoc.isInterface() || classDoc.isTrait()) { %><em><% }
+                %>${classDoc.name()}<%
+                if (classDoc.isInterface() || classDoc.isTrait()) { %></em><% }
+            %></a></li>
+        <%
         }
         %>
     </ul>

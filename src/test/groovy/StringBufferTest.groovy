@@ -28,13 +28,13 @@ class StringBufferTest extends GroovyTestCase {
         assert x.size() == x.length()
     }
 
-    void testPutAt(){
+    void testPutAt() {
         def buf = new StringBuffer('0123')
         buf[1..2] = 'xx'
-        assert '0xx3' == buf.toString()  , 'replace with String'
+        assert '0xx3' == buf.toString(), 'replace with String'
         buf = new StringBuffer('0123')
         buf[1..2] = 99
-        assert '0993' == buf.toString()  , 'replace with obj.toString()'
+        assert '0993' == buf.toString(), 'replace with obj.toString()'
         buf = new StringBuffer('0123')
         buf[0..<0] = 'xx'
         assert 'xx0123' == buf.toString(), 'border case left'

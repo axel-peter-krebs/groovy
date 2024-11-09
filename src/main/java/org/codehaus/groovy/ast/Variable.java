@@ -62,6 +62,7 @@ public interface Variable {
     default boolean isClosureSharedVariable() {
         return false;
     }
+
     default void setClosureSharedVariable(boolean inClosure) {
     }
 

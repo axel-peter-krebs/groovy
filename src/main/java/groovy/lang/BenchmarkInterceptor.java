@@ -52,23 +52,25 @@ public class BenchmarkInterceptor implements Interceptor {
     protected Map calls = new LinkedHashMap(); // keys to list of invocation times and before and after
 
     /**
-    * Returns the raw data associated with the current benchmark run.
-    */
+     * Returns the raw data associated with the current benchmark run.
+     */
     public Map getCalls() {
         return calls;
     }
 
     /**
-    * Resets all the benchmark data on this object.
-    */
+     * Resets all the benchmark data on this object.
+     */
     public void reset() {
         calls = new HashMap();
     }
+
     /**
      * This code is executed before the method is called.
-     * @param object        receiver object for the method call
-     * @param methodName    name of the method to call
-     * @param arguments     arguments to the method call
+     *
+     * @param object     receiver object for the method call
+     * @param methodName name of the method to call
+     * @param arguments  arguments to the method call
      * @return null
      * relays this result.
      */
@@ -79,12 +81,14 @@ public class BenchmarkInterceptor implements Interceptor {
 
         return null;
     }
+
     /**
      * This code is executed after the method is called.
-     * @param object        receiver object for the called method
-     * @param methodName    name of the called method
-     * @param arguments     arguments to the called method
-     * @param result        result of the executed method call or result of beforeInvoke if method was not called
+     *
+     * @param object     receiver object for the called method
+     * @param methodName name of the called method
+     * @param arguments  arguments to the called method
+     * @param result     result of the executed method call or result of beforeInvoke if method was not called
      * @return result
      */
     @Override
@@ -95,6 +99,7 @@ public class BenchmarkInterceptor implements Interceptor {
 
     /**
      * The call should be invoked separately
+     *
      * @return true
      */
     @Override
@@ -106,6 +111,7 @@ public class BenchmarkInterceptor implements Interceptor {
      * Returns benchmark statistics as a List&lt;Object[]&gt;.
      * AccumulateTime is measured in milliseconds and is as accurate as
      * System.currentTimeMillis() allows it to be.
+     *
      * @return a list of lines, each item is [methodname, numberOfCalls, accumulatedTime]
      */
     public List statistic() {

@@ -34,6 +34,7 @@ def elvisAssignment() {
     a = null
     assert (a ?= '2') == '2'
 }
+
 elvisAssignment();
 
 @CompileStatic
@@ -53,4 +54,5 @@ def csElvisAssignment() {
     a = null
     assert (a ?= '2') == '2'
 }
+
 csElvisAssignment();

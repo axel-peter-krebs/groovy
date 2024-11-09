@@ -71,7 +71,7 @@ import static org.objectweb.asm.Opcodes.H_INVOKESTATIC;
 public class InvokeDynamicWriter extends InvocationWriter {
 
     private static final String BSM_DESCRIPTOR = MethodType.methodType(
-            CallSite.class, Lookup.class, String.class, MethodType.class, String.class, int.class
+        CallSite.class, Lookup.class, String.class, MethodType.class, String.class, int.class
     ).toMethodDescriptorString();
 
     private static final Handle BSM = new Handle(H_INVOKESTATIC,
@@ -86,11 +86,20 @@ public class InvokeDynamicWriter extends InvocationWriter {
         super(controller);
     }
 
+    private static int getMethodCallFlags(final MethodCallerMultiAdapter adapter, final boolean safe, final boolean spread) {
+        int flags = 0;
+        if (safe) flags |= SAFE_NAVIGATION;
+        if (spread) flags |= SPREAD_CALL;
+        if (adapter == invokeMethodOnCurrent) flags |= THIS_CALL;
+
+        return flags;
+    }
+
     @Override
     protected boolean makeCachedCall(final Expression origin, final ClassExpression sender,
-            final Expression receiver, final Expression message, final Expression arguments,
-            final MethodCallerMultiAdapter adapter, final boolean safe, final boolean spreadSafe,
-            final boolean implicitThis, final boolean containsSpreadExpression) {
+                                     final Expression receiver, final Expression message, final Expression arguments,
+                                     final MethodCallerMultiAdapter adapter, final boolean safe, final boolean spreadSafe,
+                                     final boolean implicitThis, final boolean containsSpreadExpression) {
         // fixed number of arguments && name is a real String and no GString
         if (!spreadSafe && (adapter == null || adapter == invokeMethod || adapter == invokeMethodOnCurrent || adapter == invokeStaticMethod)) {
             String methodName = getMethodName(message);
@@ -181,15 +190,6 @@ public class InvokeDynamicWriter extends InvocationWriter {
         return exp;
     }
 
-    private static int getMethodCallFlags(final MethodCallerMultiAdapter adapter, final boolean safe, final boolean spread) {
-        int flags = 0;
-        if (safe)                           flags |= SAFE_NAVIGATION;
-        if (spread)                         flags |= SPREAD_CALL;
-        if (adapter==invokeMethodOnCurrent) flags |= THIS_CALL;
-
-        return flags;
-    }
-
     @Override
     public void makeSingleArgumentCall(final Expression receiver, final String message, final Expression arguments, final boolean safe) {
         makeIndyCall(invokeMethod, receiver, false, safe, message, arguments);
@@ -198,7 +198,7 @@ public class InvokeDynamicWriter extends InvocationWriter {
     protected void writeGetProperty(final Expression receiver, final String propertyName, final boolean safe, final boolean implicitThis, final boolean groovyObject) {
         var descriptor = prepareIndyCall(receiver, implicitThis) + ")Ljava/lang/Object;";
         int flags = 0;
-        if (safe)         flags |= SAFE_NAVIGATION;
+        if (safe) flags |= SAFE_NAVIGATION;
         if (groovyObject) flags |= GROOVY_OBJECT;
         if (implicitThis) flags |= IMPLICIT_THIS;
         else if (isThisExpression(receiver)) flags |= THIS_CALL; // GROOVY-6335
@@ -217,7 +217,7 @@ public class InvokeDynamicWriter extends InvocationWriter {
         if (isPrimitiveBoolean(target) || isWrapperBoolean(target)) {
             writeIndyCast(OBJECT_TYPE, target);
         } else {
-            doCast(controller.getMethodVisitor(),wrapper);
+            doCast(controller.getMethodVisitor(), wrapper);
             controller.getOperandStack().replace(wrapper);
             controller.getOperandStack().doGroovyCast(target);
         }

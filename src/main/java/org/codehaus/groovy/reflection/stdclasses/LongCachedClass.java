@@ -48,13 +48,13 @@ public class LongCachedClass extends NumberCachedClass {
     @Override
     public boolean isAssignableFrom(Class classToTransformFrom) {
         return (allowNull && classToTransformFrom == null)
-                || classToTransformFrom == Integer.class
-                || classToTransformFrom == Long.class
-                || classToTransformFrom == Short.class
-                || classToTransformFrom == Byte.class
-                || classToTransformFrom == Integer.TYPE
-                || classToTransformFrom == Long.TYPE
-                || classToTransformFrom == Short.TYPE
-                || classToTransformFrom == Byte.TYPE;
+            || classToTransformFrom == Integer.class
+            || classToTransformFrom == Long.class
+            || classToTransformFrom == Short.class
+            || classToTransformFrom == Byte.class
+            || classToTransformFrom == Integer.TYPE
+            || classToTransformFrom == Long.TYPE
+            || classToTransformFrom == Short.TYPE
+            || classToTransformFrom == Byte.TYPE;
     }
 }

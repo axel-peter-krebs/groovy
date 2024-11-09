@@ -23,8 +23,7 @@ import org.codehaus.groovy.tools.shell.util.Logger
 /**
  * Manages the shells buffers.
  */
-class BufferManager
-{
+class BufferManager {
     protected final Logger log = Logger.create(this.class)
 
     final List<List<String>> buffers = []
@@ -96,8 +95,7 @@ class BufferManager
 
         if (i < 0) {
             select(0)
-        }
-        else {
+        } else {
             select(i)
         }
     }

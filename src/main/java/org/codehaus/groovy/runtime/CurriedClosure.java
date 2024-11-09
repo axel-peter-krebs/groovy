@@ -41,7 +41,7 @@ import static org.codehaus.groovy.runtime.ArrayGroovyMethods.last;
  * assert new CurriedClosure(unitAdder, 45)(15, "minutes") == "60 minutes"
  * assert new CurriedClosure(unitAdder, "six", "ty")("minutes") == "sixty minutes"
  * </pre>
- *
+ * <p>
  * Notes:
  * <ul>
  *     <li>Caters for Groovy's lazy (rcurry) and eager (ncurry) calculation of argument position</li>
@@ -53,13 +53,15 @@ public final class CurriedClosure<V> extends Closure<V> {
     private final Object[] curriedArguments;
     private final int minParamsExpected;
     private int index;
-    /** the last parameter type, if it's an array */
+    /**
+     * the last parameter type, if it's an array
+     */
     private Class<?> varargType;
 
     /**
-     * @param index the position where the parameters should be injected (-ve for lazy)
+     * @param index            the position where the parameters should be injected (-ve for lazy)
      * @param uncurriedClosure the closure to be called after the curried parameters are injected
-     * @param arguments the supplied parameters
+     * @param arguments        the supplied parameters
      */
     public CurriedClosure(final int index, final Closure<V> uncurriedClosure, final Object... arguments) {
         super(uncurriedClosure.clone());
@@ -70,7 +72,7 @@ public final class CurriedClosure<V> extends Closure<V> {
         this.maximumNumberOfParameters = (maxLen - arguments.length);
 
         Class<?>[] parameterTypes = uncurriedClosure.getParameterTypes();
-        if (parameterTypes.length > 0 && last(parameterTypes).isArray()){
+        if (parameterTypes.length > 0 && last(parameterTypes).isArray()) {
             this.varargType = last(parameterTypes);
         }
 
@@ -111,7 +113,7 @@ public final class CurriedClosure<V> extends Closure<V> {
             int normalizedIndex = index < 0 ? index + arguments.length + curriedArguments.length : index;
             if (normalizedIndex < 0 || normalizedIndex > arguments.length) {
                 throw new IllegalArgumentException("When currying expected index range between " +
-                        (-arguments.length - curriedArguments.length) + ".." + (arguments.length + curriedArguments.length) + " but found " + index);
+                    (-arguments.length - curriedArguments.length) + ".." + (arguments.length + curriedArguments.length) + " but found " + index);
             }
             return getArguments(normalizedIndex, arguments);
         }
@@ -134,13 +136,13 @@ public final class CurriedClosure<V> extends Closure<V> {
     }
 
     @Override
-    public void setDelegate(final Object delegate) {
-        getOwner().setDelegate(delegate);
+    public Object getDelegate() {
+        return getOwner().getDelegate();
     }
 
     @Override
-    public Object getDelegate() {
-        return getOwner().getDelegate();
+    public void setDelegate(final Object delegate) {
+        getOwner().setDelegate(delegate);
     }
 
     @Override
@@ -150,13 +152,13 @@ public final class CurriedClosure<V> extends Closure<V> {
     }
 
     @Override
-    public void setResolveStrategy(final int resolveStrategy) {
-        getOwner().setResolveStrategy(resolveStrategy);
+    public int getResolveStrategy() {
+        return getOwner().getResolveStrategy();
     }
 
     @Override
-    public int getResolveStrategy() {
-        return getOwner().getResolveStrategy();
+    public void setResolveStrategy(final int resolveStrategy) {
+        getOwner().setResolveStrategy(resolveStrategy);
     }
 
     @Override
@@ -179,12 +181,14 @@ public final class CurriedClosure<V> extends Closure<V> {
                 // so work out minimal type params and vararg on end will allow for other possibilities
                 if (absIndex > numNonVarargs) gobbledParams = numNonVarargs;
                 int newNumNonVarargs = numNonVarargs - gobbledParams;
-                if (absIndex - curriedArguments.length > newNumNonVarargs) extraParams = absIndex - curriedArguments.length - newNumNonVarargs;
+                if (absIndex - curriedArguments.length > newNumNonVarargs)
+                    extraParams = absIndex - curriedArguments.length - newNumNonVarargs;
                 int keptParams = Math.max(numNonVarargs - absIndex, 0);
                 Class[] newParams = new Class[keptParams + newNumNonVarargs + extraParams + 1];
                 System.arraycopy(oldParams, 0, newParams, 0, keptParams);
                 for (int i = 0; i < newNumNonVarargs; i++) newParams[keptParams + i] = Object.class;
-                for (int i = 0; i < extraParams; i++) newParams[keptParams + newNumNonVarargs + i] = varargType.getComponentType();
+                for (int i = 0; i < extraParams; i++)
+                    newParams[keptParams + newNumNonVarargs + i] = varargType.getComponentType();
                 newParams[newParams.length - 1] = varargType;
                 return newParams;
             }
@@ -193,8 +197,10 @@ public final class CurriedClosure<V> extends Closure<V> {
             if (index > leadingKept) extraParams = index - leadingKept;
             Class[] newParams = new Class[leadingKept + trailingKept + extraParams + 1];
             System.arraycopy(oldParams, 0, newParams, 0, leadingKept);
-            if (trailingKept > 0) System.arraycopy(oldParams, leadingKept + curriedArguments.length, newParams, leadingKept, trailingKept);
-            for (int i = 0; i < extraParams; i++) newParams[leadingKept + trailingKept + i] = varargType.getComponentType();
+            if (trailingKept > 0)
+                System.arraycopy(oldParams, leadingKept + curriedArguments.length, newParams, leadingKept, trailingKept);
+            for (int i = 0; i < extraParams; i++)
+                newParams[leadingKept + trailingKept + i] = varargType.getComponentType();
             newParams[newParams.length - 1] = varargType;
             return newParams;
         }

@@ -39,7 +39,7 @@ final class NotYetImplementedTransformTest {
             junit.textui.TestRunner.run(new junit.framework.TestSuite(MyTests))
         ''')
 
-        assert output.wasSuccessful() : 'failing test method marked with @NotYetImplemented must NOT throw an AssertionError'
+        assert output.wasSuccessful(): 'failing test method marked with @NotYetImplemented must NOT throw an AssertionError'
     }
 
     @Test
@@ -57,7 +57,7 @@ final class NotYetImplementedTransformTest {
             junit.textui.TestRunner.run(new junit.framework.TestSuite(MyTests))
         ''')
 
-        assert output.wasSuccessful() : 'test method throwing exception marked with @NotYetImplemented must NOT throw an AssertionError'
+        assert output.wasSuccessful(): 'test method throwing exception marked with @NotYetImplemented must NOT throw an AssertionError'
     }
 
     @Test
@@ -75,8 +75,8 @@ final class NotYetImplementedTransformTest {
             junit.textui.TestRunner.run(new junit.framework.TestSuite(MyTests))
         ''')
 
-        assert output.failureCount() == 1 : 'succeeding test method marked with @NotYetImplemented must throw an AssertionError'
-        assert output.failures().nextElement().thrownException() instanceof AssertionError : 'succeeding test method marked with @NotYetImplemented must throw an AssertionError'
+        assert output.failureCount() == 1: 'succeeding test method marked with @NotYetImplemented must throw an AssertionError'
+        assert output.failures().nextElement().thrownException() instanceof AssertionError: 'succeeding test method marked with @NotYetImplemented must throw an AssertionError'
     }
 
     @Test
@@ -93,11 +93,11 @@ final class NotYetImplementedTransformTest {
             junit.textui.TestRunner.run(new junit.framework.TestSuite(MyTests))
         ''')
 
-        assert output.wasSuccessful() : 'empty test method must not throw an AssertionError'
+        assert output.wasSuccessful(): 'empty test method must not throw an AssertionError'
     }
 
     @Test
-    void testNotYetImplementedJUnit4Failure()  {
+    void testNotYetImplementedJUnit4Failure() {
         def output = shell.evaluate('''
             import groovy.test.NotYetImplemented
             import org.junit.Assert
@@ -113,11 +113,12 @@ final class NotYetImplementedTransformTest {
             new JUnitCore().run(MyTests)
         ''')
 
-        assert output.wasSuccessful() : 'failing @Test method marked with @NotYetImplemented must NOT throw an AssertionError'
+        assert output.wasSuccessful(): 'failing @Test method marked with @NotYetImplemented must NOT throw an AssertionError'
     }
 
-    @Test // GROOVY-8457
-    void testNotYetImplementedJUnit4Failure_atCompileStatic()  {
+    @Test
+    // GROOVY-8457
+    void testNotYetImplementedJUnit4Failure_atCompileStatic() {
         def output = shell.evaluate('''
             import groovy.transform.CompileStatic
             import groovy.test.NotYetImplemented
@@ -134,7 +135,7 @@ final class NotYetImplementedTransformTest {
             new JUnitCore().run(MyTests)
         ''')
 
-        assert output.wasSuccessful() : 'failing @Test method marked with @CompileStatic and @NotYetImplemented must NOT throw an AssertionError'
+        assert output.wasSuccessful(): 'failing @Test method marked with @CompileStatic and @NotYetImplemented must NOT throw an AssertionError'
     }
 
     @Test
@@ -154,12 +155,13 @@ final class NotYetImplementedTransformTest {
             new JUnitCore().run(MyTests)
         ''')
 
-        assert output.failureCount == 1 : 'succeeding @Test method marked with @NotYetImplemented must throw an AssertionError'
-        assert output.failures.first().exception instanceof AssertionError : 'succeeding @Test method marked with @NotYetImplemented must throw an AssertionError'
+        assert output.failureCount == 1: 'succeeding @Test method marked with @NotYetImplemented must throw an AssertionError'
+        assert output.failures.first().exception instanceof AssertionError: 'succeeding @Test method marked with @NotYetImplemented must throw an AssertionError'
     }
 
-    @Test // GROOVY-8457
-    void testNotYetImplementedJUnit4Success_atCompileStatic()  {
+    @Test
+    // GROOVY-8457
+    void testNotYetImplementedJUnit4Success_atCompileStatic() {
         def output = shell.evaluate('''
             import groovy.transform.CompileStatic
             import groovy.test.NotYetImplemented
@@ -176,7 +178,7 @@ final class NotYetImplementedTransformTest {
             new JUnitCore().run(MyTests)
         ''')
 
-        assert output.failureCount == 1 : 'succeeding @Test method marked with @CompileStatic and @NotYetImplemented must throw an AssertionError'
-        assert output.failures.first().exception instanceof AssertionError : 'succeeding @Test method marked with @CompileStatic and @NotYetImplemented must throw an AssertionError'
+        assert output.failureCount == 1: 'succeeding @Test method marked with @CompileStatic and @NotYetImplemented must throw an AssertionError'
+        assert output.failures.first().exception instanceof AssertionError: 'succeeding @Test method marked with @CompileStatic and @NotYetImplemented must throw an AssertionError'
     }
 }

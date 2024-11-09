@@ -23,6 +23,7 @@ record Fruit(String name, double price) {
     String name() {
         return name
     }
+
     double price() {
         return price
     }

@@ -33,7 +33,7 @@ class BytecodeBug extends GroovyTestCase {
     void doTest(args) {
         def m = [:]
         def i = 1
-        args.each { 
+        args.each {
             talk(it)
             m.put(it, i++)
         }
@@ -44,6 +44,6 @@ class BytecodeBug extends GroovyTestCase {
     }
 
     def talk(a) {
-        println("hello "+a)
+        println("hello " + a)
     }
 }

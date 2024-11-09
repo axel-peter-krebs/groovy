@@ -1,5 +1,4 @@
 import groovy.swing.SwingBuilder
-import org.gradle.api.publish.maven.MavenPublication
 
 plugins {
     id 'maven-publish'
@@ -36,9 +35,9 @@ publishing {
         }
         maven {
             name "Apache"
-            url  findProperty('groovyVersion').contains('SNAPSHOT')
-                    ? 'https://repository.apache.org/content/repositories/snapshots'
-                    : 'https://repository.apache.org/service/local/staging/deploy/maven2'
+            url findProperty('groovyVersion').contains('SNAPSHOT')
+                ? 'https://repository.apache.org/content/repositories/snapshots'
+                : 'https://repository.apache.org/service/local/staging/deploy/maven2'
             credentials {
                 username findProperty('groovyVersion').contains('SNAPSHOT') ? findProperty('asfNexusUsername') : findProperty('apacheUser')
                 password findProperty('groovyVersion').contains('SNAPSHOT') ? findProperty('asfNexusPassword') : findProperty('apachePassword')
@@ -812,7 +811,7 @@ gradle.taskGraph.whenReady { taskGraph ->
         // Use Java 6's console or Swing to read input (not suitable for CI)
         if (!sharedConfiguration.signing.hasAllKeyDetails()) {
             printf "\n\nWe have to sign some things in this build." +
-                    "\n\nPlease enter your signing details.\n\n"
+                "\n\nPlease enter your signing details.\n\n"
             System.out.flush()
 
             if (!sharedConfiguration.signing.keyId.present) {
@@ -842,12 +841,12 @@ def promptUser(String prompt) {
     if (System.console() == null) {
         new SwingBuilder().edt {
             dialog(modal: true, // pause build
-                    title: 'Response required', // dialog title
-                    alwaysOnTop: true,
-                    resizable: false,
-                    locationRelativeTo: null, // centered on screen
-                    pack: true,
-                    show: true
+                title: 'Response required', // dialog title
+                alwaysOnTop: true,
+                resizable: false,
+                locationRelativeTo: null, // centered on screen
+                pack: true,
+                show: true
             ) {
                 vbox {
                     label(text: "$prompt:")

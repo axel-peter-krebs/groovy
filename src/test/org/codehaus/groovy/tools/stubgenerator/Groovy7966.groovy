@@ -26,17 +26,17 @@ final class Groovy7966 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'Before.groovy': '''
+            'Before.groovy'       : '''
               class Before extends AbstractThing {}
             ''',
             'AbstractThing.groovy': '''
               abstract class AbstractThing {}
             ''',
-            'JavaThing.java': '''
+            'JavaThing.java'      : '''
               public class JavaThing {
               }
             ''',
-            'After.groovy': '''
+            'After.groovy'        : '''
               class After extends AbstractThing {}
             ''',
         ]

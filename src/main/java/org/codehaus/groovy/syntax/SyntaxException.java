@@ -27,11 +27,15 @@ import org.codehaus.groovy.ast.ASTNode;
 public class SyntaxException extends GroovyException {
 
     private static final long serialVersionUID = 7447641806794047013L;
-    /** Line upon which the error occurred. */
+    /**
+     * Line upon which the error occurred.
+     */
     private final int startLine;
     private final int endLine;
 
-    /** Column upon which the error occurred. */
+    /**
+     * Column upon which the error occurred.
+     */
     private final int startColumn;
     private final int endColumn;
 
@@ -42,7 +46,7 @@ public class SyntaxException extends GroovyException {
     }
 
     public SyntaxException(String message, int startLine, int startColumn) {
-        this(message, startLine, startColumn, startLine, startColumn+1);
+        this(message, startLine, startColumn, startLine, startColumn + 1);
     }
 
     public SyntaxException(String message, int startLine, int startColumn, int endLine, int endColumn) {
@@ -54,7 +58,7 @@ public class SyntaxException extends GroovyException {
     }
 
     public SyntaxException(String message, Throwable cause, int startLine, int startColumn) {
-        this(message, cause, startLine, startColumn, startLine, startColumn+1);
+        this(message, cause, startLine, startColumn, startLine, startColumn + 1);
     }
 
     public SyntaxException(String message, Throwable cause, int startLine, int startColumn, int endLine, int endColumn) {
@@ -65,19 +69,20 @@ public class SyntaxException extends GroovyException {
         this.endColumn = endColumn;
     }
 
+    public String getSourceLocator() {
+        return this.sourceLocator;
+    }
+
     // Properties
     // ----------------------------------------------------------------------
     public void setSourceLocator(String sourceLocator) {
         this.sourceLocator = sourceLocator;
     }
 
-    public String getSourceLocator() {
-        return this.sourceLocator;
-    }
-
-    /** Retrieve the line upon which the error occurred.
+    /**
+     * Retrieve the line upon which the error occurred.
      *
-     *  @return The line.
+     * @return The line.
      */
     public int getLine() {
         return getStartLine();
@@ -93,7 +98,7 @@ public class SyntaxException extends GroovyException {
     /**
      * Retrieve the column upon which the error occurred.
      *
-     *  @return The column.
+     * @return The column.
      */
     public int getStartColumn() {
         return startColumn;

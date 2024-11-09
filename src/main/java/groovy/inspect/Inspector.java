@@ -43,15 +43,12 @@ import java.util.List;
  * information that can be determined by introspection.
  */
 public class Inspector {
-    protected Object objectUnderInspection;
-
     // Indexes to retrieve Class Property information
     public static final int CLASS_PACKAGE_IDX = 0;
     public static final int CLASS_CLASS_IDX = 1;
     public static final int CLASS_INTERFACE_IDX = 2;
     public static final int CLASS_SUPERCLASS_IDX = 3;
     public static final int CLASS_OTHER_IDX = 4;
-
     // Indexes to retrieve field and method information
     public static final int MEMBER_ORIGIN_IDX = 0;
     public static final int MEMBER_MODIFIER_IDX = 1;
@@ -61,10 +58,10 @@ public class Inspector {
     public static final int MEMBER_PARAMS_IDX = 5;
     public static final int MEMBER_VALUE_IDX = 5;
     public static final int MEMBER_EXCEPTIONS_IDX = 6;
-
     public static final String NOT_APPLICABLE = "n/a";
     public static final String GROOVY = "GROOVY";
     public static final String JAVA = "JAVA";
+    protected Object objectUnderInspection;
 
     /**
      * @param objectUnderInspection must not be null
@@ -74,6 +71,59 @@ public class Inspector {
             throw new IllegalArgumentException("argument must not be null");
         }
         this.objectUnderInspection = objectUnderInspection;
+    }
+
+    public static String shortName(Class clazz) {
+        if (null == clazz) return NOT_APPLICABLE;
+        String className = clazz.getName();
+        if (null == clazz.getPackage()) return className;
+        String packageName = clazz.getPackage().getName();
+        int offset = packageName.length();
+        if (offset > 0) offset++;
+        className = className.substring(offset);
+        return className;
+    }
+
+    private static String makeTypesInfo(Class[] types) {
+        StringBuilder sb = new StringBuilder(32);
+        for (int k = 0; k < types.length; k++) {
+            sb.append(shortName(types[k]));
+            if (k < (types.length - 1)) sb.append(", ");
+        }
+
+        return sb.toString();
+    }
+
+    private static String makeParamsInfo(Class[] params) {
+        return makeTypesInfo(params);
+    }
+
+    private static String makeExceptionInfo(Class[] exceptions) {
+        return makeTypesInfo(exceptions);
+    }
+
+    public static void print(Object[] memberInfo) {
+        print(System.out, memberInfo);
+    }
+
+    static void print(final PrintStream out, Object[] memberInfo) {
+        for (int i = 0; i < memberInfo.length; i++) {
+            String[] metaMethod = (String[]) memberInfo[i];
+            out.print(i + ":\t");
+            for (String s : metaMethod) {
+                out.print(s + " ");
+            }
+            out.println();
+        }
+    }
+
+    public static Collection sort(List<Object> memberInfo) {
+        return sort(memberInfo, new MemberComparator());
+    }
+
+    public static Collection sort(List<Object> memberInfo, Comparator<Object> comparator) {
+        memberInfo.sort(comparator);
+        return memberInfo;
     }
 
     /**
@@ -94,8 +144,8 @@ public class Inspector {
         }
         result[CLASS_SUPERCLASS_IDX] = "extends " + shortName(getClassUnderInspection().getSuperclass());
         result[CLASS_OTHER_IDX] = "is Primitive: " + getClassUnderInspection().isPrimitive()
-                + ", is Array: " + getClassUnderInspection().isArray()
-                + ", is Groovy: " + isGroovy();
+            + ", is Array: " + getClassUnderInspection().isArray()
+            + ", is Groovy: " + isGroovy();
         return result;
     }
 
@@ -266,35 +316,6 @@ public class Inspector {
         return objectUnderInspection.getClass();
     }
 
-    public static String shortName(Class clazz) {
-        if (null == clazz) return NOT_APPLICABLE;
-        String className = clazz.getName();
-        if (null == clazz.getPackage()) return className;
-        String packageName = clazz.getPackage().getName();
-        int offset = packageName.length();
-        if (offset > 0) offset++;
-        className = className.substring(offset);
-        return className;
-    }
-
-    private static String makeTypesInfo(Class[] types) {
-        StringBuilder sb = new StringBuilder(32);
-        for (int k = 0; k < types.length; k++) {
-            sb.append(shortName(types[k]));
-            if (k < (types.length - 1)) sb.append(", ");
-        }
-
-        return sb.toString();
-    }
-
-    private static String makeParamsInfo(Class[] params) {
-        return makeTypesInfo(params);
-    }
-
-    private static String makeExceptionInfo(Class[] exceptions) {
-        return makeTypesInfo(exceptions);
-    }
-
     protected String[] methodInfo(Method method) {
         String[] result = new String[MEMBER_EXCEPTIONS_IDX + 1];
         result[MEMBER_ORIGIN_IDX] = JAVA;
@@ -339,30 +360,6 @@ public class Inspector {
             if (null == s) toNormalize[i] = NOT_APPLICABLE;
         }
         return toNormalize;
-    }
-
-    public static void print(Object[] memberInfo) {
-        print(System.out, memberInfo);
-    }
-
-    static void print(final PrintStream out, Object[] memberInfo) {
-        for (int i = 0; i < memberInfo.length; i++) {
-            String[] metaMethod = (String[]) memberInfo[i];
-            out.print(i + ":\t");
-            for (String s : metaMethod) {
-                out.print(s + " ");
-            }
-            out.println();
-        }
-    }
-
-    public static Collection sort(List<Object> memberInfo) {
-        return sort(memberInfo, new MemberComparator());
-    }
-
-    public static Collection sort(List<Object> memberInfo, Comparator<Object> comparator) {
-        memberInfo.sort(comparator);
-        return memberInfo;
     }
 
     public static class MemberComparator implements Comparator<Object>, Serializable {

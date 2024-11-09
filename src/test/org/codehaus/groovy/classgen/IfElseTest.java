@@ -39,20 +39,20 @@ public class IfElseTest extends TestSupport {
         classNode.addProperty(new PropertyNode("result", ACC_PUBLIC, ClassHelper.STRING_TYPE, classNode, null, null, null));
 
         BooleanExpression expression =
-                new BooleanExpression(
-                        new BinaryExpression(
-                                new FieldExpression(
-                                        new FieldNode("bar", ACC_PRIVATE, ClassHelper.STRING_TYPE, classNode, ConstantExpression.NULL)),
-                                Token.newSymbol("==", 0, 0),
-                                new ConstantExpression("abc")));
+            new BooleanExpression(
+                new BinaryExpression(
+                    new FieldExpression(
+                        new FieldNode("bar", ACC_PRIVATE, ClassHelper.STRING_TYPE, classNode, ConstantExpression.NULL)),
+                    Token.newSymbol("==", 0, 0),
+                    new ConstantExpression("abc")));
 
         Statement trueStatement =
-                new ExpressionStatement(
-                        new BinaryExpression(
-                                new FieldExpression(
-                                        new FieldNode("result", ACC_PRIVATE, ClassHelper.STRING_TYPE, classNode, ConstantExpression.NULL)),
-                                Token.newSymbol("=", 0, 0),
-                                new ConstantExpression("worked")));
+            new ExpressionStatement(
+                new BinaryExpression(
+                    new FieldExpression(
+                        new FieldNode("result", ACC_PRIVATE, ClassHelper.STRING_TYPE, classNode, ConstantExpression.NULL)),
+                    Token.newSymbol("=", 0, 0),
+                    new ConstantExpression("worked")));
 
         Statement falseStatement = createPrintlnStatement(new ConstantExpression("false"));
 

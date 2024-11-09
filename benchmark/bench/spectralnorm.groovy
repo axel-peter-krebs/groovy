@@ -21,35 +21,39 @@ def approximate(n) {
     // v.Bv / (v.v)  eigenvalue of v
     double vBv = vv = 0.0D
     for (i in 0..<n) {
-        vBv += u[i]*v[i]
-        vv  += v[i]*v[i]
+        vBv += u[i] * v[i]
+        vv += v[i] * v[i]
     }
 
     return Math.sqrt(vBv / vv)
 }
 
 /* return element i,j of infinite matrix A */
+
 def A(i, j) {
-    return 1.0D / ((i+j) * (i + j + 1.0D) / 2.0D  + i + 1.0D)
+    return 1.0D / ((i + j) * (i + j + 1.0D) / 2.0D + i + 1.0D)
 }
 
 /* multiply vector v by matrix A */
+
 def MultiplyAv(n, v, Av) {
     for (i in 0..<n) {
         Av[i] = 0.0D
-        for (j in 0..<n) Av[i] += A(i,j) * v[j]
+        for (j in 0..<n) Av[i] += A(i, j) * v[j]
     }
 }
 
 /* multiply vector v by matrix A transposed */
+
 def MultiplyAtv(n, v, Atv) {
     for (i in 0..<n) {
         Atv[i] = 0.0D
-        for (j in 0..<n) Atv[i] += A(j,i) * v[j]
+        for (j in 0..<n) Atv[i] += A(j, i) * v[j]
     }
 }
 
 /* multiply vector v by matrix A and then by matrix A transposed */
+
 def MultiplyAtAv(n, v, AtAv) {
     double[] u = new double[n]
     MultiplyAv(n, v, u)

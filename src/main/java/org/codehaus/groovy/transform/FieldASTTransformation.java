@@ -72,8 +72,8 @@ public class FieldASTTransformation extends ClassCodeExpressionTransformer imple
 
     private static final Class MY_CLASS = Field.class;
     private static final ClassNode MY_TYPE = make(MY_CLASS);
-    private static final ClassNode LAZY_TYPE = make(Lazy.class);
     private static final String MY_TYPE_NAME = "@" + MY_TYPE.getNameWithoutPackage();
+    private static final ClassNode LAZY_TYPE = make(Lazy.class);
     private static final ClassNode ASTTRANSFORMCLASS_TYPE = make(GroovyASTTransformationClass.class);
     private static final ClassNode OPTION_TYPE = make(Option.class);
     private SourceUnit sourceUnit;
@@ -83,6 +83,19 @@ public class FieldASTTransformation extends ClassCodeExpressionTransformer imple
     private FieldNode fieldNode;
     private ClosureExpression currentClosure;
     private ConstructorCallExpression currentAIC;
+
+    private static boolean acceptableTransform(AnnotationNode annotation) {
+        // TODO also check for phase after sourceUnit.getPhase()? but will be ignored anyway?
+        // TODO we should only copy those annotations with FIELD_TARGET but haven't visited annotations
+        // and gathered target info at this phase, so we can't do this:
+        // return annotation.isTargetAllowed(AnnotationNode.FIELD_TARGET);
+        // instead just don't copy ourselves for now
+        return !annotation.getClassNode().equals(MY_TYPE);
+    }
+
+    private static boolean notTransform(ClassNode annotationClassNode) {
+        return annotationClassNode.getAnnotations(ASTTRANSFORMCLASS_TYPE).isEmpty();
+    }
 
     @Override
     public void visit(ASTNode[] nodes, SourceUnit source) {
@@ -122,7 +135,7 @@ public class FieldASTTransformation extends ClassCodeExpressionTransformer imple
             } else {
                 String setterName = getSetterName(variableName);
                 cNode.addMethod(setterName, ACC_PUBLIC | ACC_SYNTHETIC, ClassHelper.VOID_TYPE, params(param(ve.getType(), variableName)), ClassNode.EMPTY_ARRAY, block(
-                        stmt(assignX(propX(varX("this"), variableName), varX(variableName)))
+                    stmt(assignX(propX(varX("this"), variableName), varX(variableName)))
                 ));
             }
 
@@ -143,19 +156,6 @@ public class FieldASTTransformation extends ClassCodeExpressionTransformer imple
             // and understandability of this solution over more complex but efficient alternatives)
             new VariableScopeVisitor(source).visitClass(cNode);
         }
-    }
-
-    private static boolean acceptableTransform(AnnotationNode annotation) {
-        // TODO also check for phase after sourceUnit.getPhase()? but will be ignored anyway?
-        // TODO we should only copy those annotations with FIELD_TARGET but haven't visited annotations
-        // and gathered target info at this phase, so we can't do this:
-        // return annotation.isTargetAllowed(AnnotationNode.FIELD_TARGET);
-        // instead just don't copy ourselves for now
-        return !annotation.getClassNode().equals(MY_TYPE);
-    }
-
-    private static boolean notTransform(ClassNode annotationClassNode) {
-        return annotationClassNode.getAnnotations(ASTTRANSFORMCLASS_TYPE).isEmpty();
     }
 
     @Override

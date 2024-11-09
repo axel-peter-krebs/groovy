@@ -25,7 +25,7 @@ import groovy.test.GroovyTestCase
  */
 class IdentityClosureTest extends GroovyTestCase {
 
-    def foo = [[1,2,3],[4,5,6],[7,8,9]]
+    def foo = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     def bar = " bar "
     def mooky = 1
 
@@ -33,7 +33,7 @@ class IdentityClosureTest extends GroovyTestCase {
     void testIdentity0() {
         assert " bar " == bar
 
-        bar.toUpperCase().trim().identity{
+        bar.toUpperCase().trim().identity {
             assert "BAR" == it
             assert 3 == it.size()
             assert it.indexOf("A") > 0
@@ -42,7 +42,7 @@ class IdentityClosureTest extends GroovyTestCase {
 
     /** check the basics */
     void testIdentity1() {
-        mooky.identity{ spooky->
+        mooky.identity { spooky ->
             assert spooky == mooky
         }
     }
@@ -51,7 +51,7 @@ class IdentityClosureTest extends GroovyTestCase {
     void testIdentity2() {
         assert 6 == foo[1][2]
 
-        foo[1].identity{ myArray->
+        foo[1].identity { myArray ->
             myArray[2] = 12
         }
 
@@ -60,10 +60,10 @@ class IdentityClosureTest extends GroovyTestCase {
 
     /** check nested identity usage */
     void testIdentity3() {
-        mooky.toString().identity{ m->
+        mooky.toString().identity { m ->
             assert "1" == m
             m += "234567890"
-            m.identity{ n->
+            m.identity { n ->
                 assert "1234567890" == n
             }
         }
@@ -71,7 +71,7 @@ class IdentityClosureTest extends GroovyTestCase {
 
     /** Test the closure delegate */
     void testClosureDelegate1() {
-        bar.toUpperCase().trim().identity{
+        bar.toUpperCase().trim().identity {
             assert "BAR" == it
             assert 3 == size()
             assert indexOf("A") > 0
@@ -83,7 +83,7 @@ class IdentityClosureTest extends GroovyTestCase {
         def a = new Expando()
         a.foobar = "foobar"
         a.barfoo = 555
-        a.identity{
+        a.identity {
             assert foobar == "foobar"
             assert barfoo == 555
         }

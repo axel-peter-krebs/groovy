@@ -17,4 +17,8 @@
  *  under the License.
  */
 
-package groovy.tmp.templates;def getTemplate() { return { _p, _s, _b, out -> int _i = 0;try {delegate = new Binding(_b);out<<_s[_i=0];           items.each { ;out<<_s[_i=1];out<<"""${it}""";out<<_s[_i=2];           } ;out<<_s[_i=3];} catch (Throwable e) { _p.error(_i, _s, e);}}.asWritable()}
+package groovy.tmp.templates;
+
+def getTemplate() {
+    return { _p, _s, _b, out -> int _i = 0; try { delegate = new Binding(_b); out << _s[_i = 0]; items.each { ; out << _s[_i = 1]; out << """${it}"""; out << _s[_i = 2]; }; out << _s[_i = 3]; } catch (Throwable e) { _p.error(_i, _s, e); } }.asWritable()
+}

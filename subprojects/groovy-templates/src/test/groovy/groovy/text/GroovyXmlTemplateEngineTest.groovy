@@ -25,7 +25,7 @@ class GroovyXmlTemplateEngineTest {
     @Test
     void testFormat1() {
         String xmlScript =
-'''<?xml version="1.0"?>
+            '''<?xml version="1.0"?>
 <person>
    <name>Daniel</name>
 </person>
@@ -40,7 +40,7 @@ class GroovyXmlTemplateEngineTest {
     @Test
     void testFormat2() {
         String xmlScript =
-'''<person>
+            '''<person>
    <name>
        <firstName>Daniel</firstName>
        <lastName>Sun</lastName>
@@ -50,14 +50,14 @@ class GroovyXmlTemplateEngineTest {
 '''
 
         def expected =
-'<person><name><firstName>Daniel</firstName><lastName>Sun</lastName></name><age>37</age></person>'
+            '<person><name><firstName>Daniel</firstName><lastName>Sun</lastName></name><age>37</age></person>'
         assert expected == new XmlTemplateEngine(configurePrinter: { it.preserveWhitespace = true }).createTemplate(xmlScript).make().toString()
     }
 
     @Test
     void testRoundTrip() {
         String xmlScript =
-'''<person>
+            '''<person>
    <name>
        <firstName>Daniel</firstName>
        <lastName>Sun</lastName>

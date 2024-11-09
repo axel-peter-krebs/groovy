@@ -28,7 +28,7 @@ import static java.lang.annotation.ElementType.*;
  */
 
 @Retention(RUNTIME)
-@Target({ METHOD, FIELD })
+@Target({METHOD, FIELD})
 public @interface OneToMany {
     CascadeType[] cascade() default {};
 }

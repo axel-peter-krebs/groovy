@@ -27,29 +27,29 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
- *  A ReaderSource for source strings.
+ * A ReaderSource for source strings.
  */
 public class StringReaderSource extends AbstractReaderSource {
     private final String string;  // The String from which we produce Readers.
 
-   /**
-    * Creates the ReaderSource from a File descriptor.
-    *
-    * @param string string containing script source
-    * @param configuration configuration for compiling source
-    */
-   public StringReaderSource( String string, CompilerConfiguration configuration ) {
-       super( configuration );
-       this.string = string;
-   }
+    /**
+     * Creates the ReaderSource from a File descriptor.
+     *
+     * @param string        string containing script source
+     * @param configuration configuration for compiling source
+     */
+    public StringReaderSource(String string, CompilerConfiguration configuration) {
+        super(configuration);
+        this.string = string;
+    }
 
-   /**
-    *  Returns a new Reader on the underlying source object.
-    */
-   @Override
-   public Reader getReader() throws IOException {
-       return new StringReader( string );
-   }
+    /**
+     * Returns a new Reader on the underlying source object.
+     */
+    @Override
+    public Reader getReader() throws IOException {
+        return new StringReader(string);
+    }
 
     /**
      * Returns a Data URI (RFC 2397) containing the literal value of this source string.

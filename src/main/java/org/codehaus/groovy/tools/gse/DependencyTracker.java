@@ -38,10 +38,10 @@ import java.util.Map;
 import java.util.Set;
 
 public class DependencyTracker extends ClassCodeVisitorSupport {
-    private Set<String> current;
     private final Map<String, ?> precompiledDependencies;
     private final SourceUnit source;
     private final StringSetMap cache;
+    private Set<String> current;
 
     public DependencyTracker(SourceUnit source, StringSetMap cache) {
         this(source, cache, new HashMap());
@@ -53,12 +53,11 @@ public class DependencyTracker extends ClassCodeVisitorSupport {
         this.precompiledDependencies = precompiledEntries;
     }
 
-    private void addToCache(ClassNode node){
+    private void addToCache(ClassNode node) {
         if (node == null) return;
         String name = node.getName();
-        if (!precompiledDependencies.containsKey(name)  &&
-            !node.isPrimaryClassNode())
-        {
+        if (!precompiledDependencies.containsKey(name) &&
+            !node.isPrimaryClassNode()) {
             return;
         }
         current.add(node.getName());
@@ -66,8 +65,8 @@ public class DependencyTracker extends ClassCodeVisitorSupport {
         addToCache(node.getInterfaces());
     }
 
-    private void addToCache(ClassNode[] nodes){
-        if (nodes==null) return;
+    private void addToCache(ClassNode[] nodes) {
+        if (nodes == null) return;
         for (ClassNode node : nodes) addToCache(node);
     }
 
@@ -77,22 +76,26 @@ public class DependencyTracker extends ClassCodeVisitorSupport {
         current = cache.get(node.getName());
         addToCache(node);
         super.visitClass(node);
-        current =  old;
+        current = old;
     }
+
     @Override
     protected SourceUnit getSourceUnit() {
         return source;
     }
+
     @Override
     public void visitClassExpression(ClassExpression expression) {
         super.visitClassExpression(expression);
         addToCache(expression.getType());
     }
+
     @Override
     public void visitField(FieldNode node) {
         super.visitField(node);
         addToCache(node.getType());
     }
+
     @Override
     public void visitMethod(MethodNode node) {
         for (Parameter p : node.getParameters()) {
@@ -102,26 +105,31 @@ public class DependencyTracker extends ClassCodeVisitorSupport {
         addToCache(node.getExceptions());
         super.visitMethod(node);
     }
+
     @Override
     public void visitArrayExpression(ArrayExpression expression) {
         super.visitArrayExpression(expression);
         addToCache(expression.getType());
     }
+
     @Override
     public void visitCastExpression(CastExpression expression) {
         super.visitCastExpression(expression);
         addToCache(expression.getType());
     }
+
     @Override
     public void visitVariableExpression(VariableExpression expression) {
         super.visitVariableExpression(expression);
         addToCache(expression.getType());
     }
+
     @Override
     public void visitCatchStatement(CatchStatement statement) {
         super.visitCatchStatement(statement);
         addToCache(statement.getVariable().getType());
     }
+
     @Override
     public void visitAnnotations(AnnotatedNode node) {
         super.visitAnnotations(node);
@@ -129,6 +137,7 @@ public class DependencyTracker extends ClassCodeVisitorSupport {
             addToCache(an.getClassNode());
         }
     }
+
     @Override
     public void visitConstructorCallExpression(ConstructorCallExpression call) {
         super.visitConstructorCallExpression(call);

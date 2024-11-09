@@ -44,8 +44,8 @@ class InspectCommand extends CommandSupport {
     @Override
     protected List<Completer> createCompleters() {
         return [
-                new InspectCommandCompleter(binding),
-                null
+            new InspectCommandCompleter(binding),
+            null
         ]
     }
 

@@ -23,15 +23,15 @@
 yieldUnescaped '<!DOCTYPE html>'
 
 def severityMapping = [
-        error  : 'danger',
-        warning: 'warning',
-        info   : 'info',
-        ignore : 'success'
+    error  : 'danger',
+    warning: 'warning',
+    info   : 'info',
+    ignore : 'success'
 ]
 
-def github = { path, line=null ->
-    def localPath = (path - project.rootDir).replaceAll('\\\\','/')
-    def link = """https://github.com/apache/groovy/blob/master$localPath${line?"#L$line":""}"""
+def github = { path, line = null ->
+    def localPath = (path - project.rootDir).replaceAll('\\\\', '/')
+    def link = """https://github.com/apache/groovy/blob/master$localPath${line ? "#L$line" : ""}"""
 
     if (line) {
         "<a href='$link'>$line</a>"
@@ -54,19 +54,19 @@ html {
     }
 
     body {
-        div(class:'navbar navbar-inverse navbar-fixed-top', role:'navigation') {
-            div(class:'container') {
-                div(class:'navbar-header') {
-                    button(type:'button', class:'navbar-toggle', 'data-toggle':'collapse', 'data-target':'navbar-collaspe') {
-                        span(class:'sr-only', 'Toggle navigation')
-                        span(class:'icon-bar'){}
-                        span(class:'icon-bar'){}
-                        span(class:'icon-bar'){}
+        div(class: 'navbar navbar-inverse navbar-fixed-top', role: 'navigation') {
+            div(class: 'container') {
+                div(class: 'navbar-header') {
+                    button(type: 'button', class: 'navbar-toggle', 'data-toggle': 'collapse', 'data-target': 'navbar-collaspe') {
+                        span(class: 'sr-only', 'Toggle navigation')
+                        span(class: 'icon-bar') {}
+                        span(class: 'icon-bar') {}
+                        span(class: 'icon-bar') {}
                     }
-                    a(class:'navbar-brand',href:'#', 'Checkstyle report')
+                    a(class: 'navbar-brand', href: '#', 'Checkstyle report')
                 }
-                div(class:'navbar-collapse collapse') {
-                    ul(class:"nav navbar-nav") {
+                div(class: 'navbar-collapse collapse') {
+                    ul(class: "nav navbar-nav") {
                         li(class: 'dropdown') {
                             a(id: 'severityDropdown', href: '#', class: 'dropdown-toggle', 'data-toggle': 'dropdown', 'Severity <span class="caret"></span>')
                             ul(class: "dropdown-menu dropdown-severity", role: "menu") {
@@ -100,7 +100,7 @@ html {
 
 
         div(class: 'container') {
-            div(class:'page-header') {
+            div(class: 'page-header') {
                 h1("Checkstyle report for project ${project.name}")
             }
             files.each { file ->
@@ -115,7 +115,7 @@ html {
                         table(class: "table table-striped table-bordered") {
                             tbody {
                                 errors.each { err ->
-                                    tr(class:"checkstyle-error severity-${err.severity} rule-${err.source.toLowerCase()}") {
+                                    tr(class: "checkstyle-error severity-${err.severity} rule-${err.source.toLowerCase()}") {
                                         td {
                                             h4 {
                                                 span(class: "label label-${severityMapping[err.severity]}", err.severity.capitalize())

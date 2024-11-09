@@ -48,7 +48,7 @@ public class StringBufferWriter extends Writer {
     /**
      * Write a portion of an array of characters.
      *
-     * @param text Array of characters
+     * @param text   Array of characters
      * @param offset Offset from which to start writing characters
      * @param length Number of characters to write
      */
@@ -56,8 +56,7 @@ public class StringBufferWriter extends Writer {
     public void write(char[] text, int offset, int length) {
         if ((offset < 0) || (offset > text.length) || (length < 0) || ((offset + length) > text.length) || ((offset + length) < 0)) {
             throw new IndexOutOfBoundsException();
-        }
-        else if (length == 0) {
+        } else if (length == 0) {
             return;
         }
         buffer.append(text, offset, length);
@@ -74,7 +73,7 @@ public class StringBufferWriter extends Writer {
     /**
      * Write a portion of a string.
      *
-     * @param text the text to be written
+     * @param text   the text to be written
      * @param offset offset from which to start writing characters
      * @param length Number of characters to write
      */

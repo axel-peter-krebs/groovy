@@ -42,7 +42,7 @@ class CompilerCustomizationBuilderTest extends GroovyTestCase {
         assert cz instanceof ASTTransformationCustomizer
         assert cz.transformation.class == ToStringASTTransformation
 
-        cz = builder.ast(includeNames:true, ToString)
+        cz = builder.ast(includeNames: true, ToString)
         assert cz instanceof ASTTransformationCustomizer
         assert cz.transformation.class == ToStringASTTransformation
         assert cz.annotationNode.getMember('includeNames').text == 'true'
@@ -214,7 +214,7 @@ class CompilerCustomizationBuilderTest extends GroovyTestCase {
         assert cz.extensionValidator.call('gx') == true
         assert cz.extensionValidator.call('foo') == true
 
-        cz = builder.source(extensionValidator: { it in ['gx', 'foo']}) {
+        cz = builder.source(extensionValidator: { it in ['gx', 'foo'] }) {
             ast(ToString)
         }
         assert cz instanceof SourceAwareCustomizer
@@ -275,8 +275,8 @@ class CompilerCustomizationBuilderTest extends GroovyTestCase {
         assert cz.baseNameValidator == null
         assert cz.classValidator == null
         assert cz.sourceUnitValidator != null
-        assert cz.sourceUnitValidator.call(new SourceUnit(name:'gx')) == false
-        assert cz.sourceUnitValidator.call(new SourceUnit(name:'barfoo')) == true
+        assert cz.sourceUnitValidator.call(new SourceUnit(name: 'gx')) == false
+        assert cz.sourceUnitValidator.call(new SourceUnit(name: 'barfoo')) == true
 
         cz = builder.source(classValidator: { ClassNode cn -> cn.getName().contains 'Foo' }) {
             ast(ToString)
@@ -315,7 +315,7 @@ class CompilerCustomizationBuilderTest extends GroovyTestCase {
         def config = new CompilerConfiguration()
         config.addCompilationCustomizers(cz)
         def shell = new GroovyShell(config)
-        shell.evaluate'''void m() { assert true }
+        shell.evaluate '''void m() { assert true }
             m()'''
         assert foo == 1
         assert astNode.methods.find { it.name == 'm' }

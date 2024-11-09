@@ -80,7 +80,8 @@ class SqlHelperTestCase extends GroovyTestCase {
     protected tryDrop(Sql sql, String tableName) {
         try {
             sql.execute("drop table $tableName".toString())
-        } catch (java.sql.SQLException se) {}
+        } catch (java.sql.SQLException se) {
+        }
     }
 
     protected getURI() {
@@ -102,13 +103,13 @@ class SqlHelperTestCase extends GroovyTestCase {
             def username = props."groovy.testdb.username"
             def password = props."groovy.testdb.password"
             // test the map of String/GString version of newInstance
-            if (!username && !password) return Sql.newInstance(url:url, driver:"$driver")
+            if (!username && !password) return Sql.newInstance(url: url, driver: "$driver")
             return Sql.newInstance(url, username, password, driver)
         }
         def ds = DB_DATASOURCE.newInstance(
-                (DB_DS_KEY): uri,
-                user: DB_USER,
-                password: DB_PASSWORD)
+            (DB_DS_KEY): uri,
+            user: DB_USER,
+            password: DB_PASSWORD)
         return new Sql(ds)
     }
 }

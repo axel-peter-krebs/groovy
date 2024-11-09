@@ -41,6 +41,28 @@ import static org.objectweb.asm.Opcodes.POP2;
 
 public class BinaryLongExpressionHelper extends BinaryExpressionWriter {
 
+    private static final MethodCaller
+        longArrayGet = MethodCaller.newStatic(BytecodeInterface8.class, "lArrayGet"),
+        longArraySet = MethodCaller.newStatic(BytecodeInterface8.class, "lArraySet");
+    private static final int[] bitOp = {
+        LOR,            //  BITWISE_OR / PIPE   340
+        LAND,           //  BITWISE_AND         341
+        LXOR,           //  BITWISE_XOR         342
+    };
+    private static final int[] shiftOp = {
+        LSHL,           // LEFT_SHIFT               280
+        LSHR,           // RIGHT_SHIFT              281
+        LUSHR           // RIGHT_SHIFT_UNSIGNED     282
+    };
+    private static final int[] stdOperations = {
+        LADD,           //  PLUS        200
+        LSUB,           //  MINUS       201
+        LMUL,           //  MULTIPLY    202
+        LDIV,           //  DIV         203
+        LDIV,           //  INTDIV      204
+        LREM,           //  MOD         203
+    };
+
     /**
      * @since 2.5.0
      */
@@ -77,16 +99,6 @@ public class BinaryLongExpressionHelper extends BinaryExpressionWriter {
         mv.visitInsn(POP2);
     }
 
-    private static final MethodCaller
-        longArrayGet = MethodCaller.newStatic(BytecodeInterface8.class, "lArrayGet"),
-        longArraySet = MethodCaller.newStatic(BytecodeInterface8.class, "lArraySet");
-
-    private static final int[] bitOp = {
-        LOR,            //  BITWISE_OR / PIPE   340
-        LAND,           //  BITWISE_AND         341
-        LXOR,           //  BITWISE_XOR         342
-    };
-
     @Override
     protected int getBitwiseOperationBytecode(int type) {
         return bitOp[type];
@@ -102,25 +114,10 @@ public class BinaryLongExpressionHelper extends BinaryExpressionWriter {
         return ClassHelper.long_TYPE;
     }
 
-    private static final int[] shiftOp = {
-        LSHL,           // LEFT_SHIFT               280
-        LSHR,           // RIGHT_SHIFT              281
-        LUSHR           // RIGHT_SHIFT_UNSIGNED     282
-    };
-
     @Override
     protected int getShiftOperationBytecode(int type) {
         return shiftOp[type];
     }
-
-    private static final int[] stdOperations = {
-        LADD,           //  PLUS        200
-        LSUB,           //  MINUS       201
-        LMUL,           //  MULTIPLY    202
-        LDIV,           //  DIV         203
-        LDIV,           //  INTDIV      204
-        LREM,           //  MOD         203
-    };
 
     @Override
     protected int getStandardOperationBytecode(int type) {

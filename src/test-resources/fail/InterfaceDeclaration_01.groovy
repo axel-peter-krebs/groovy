@@ -16,6 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 interface Foo {
-    def doit( String param = "Groovy", int o )
+    def doit(String param = "Groovy", int o)
 }

@@ -49,9 +49,9 @@ public class FromExpression extends DataSourceExpression {
     @Override
     public String getText() {
         return "from " + aliasExpr.getText() + " in "
-                + (dataSourceExpr instanceof GinqExpression
-                        ? "(" + dataSourceExpr.getText() + ")"
-                        : dataSourceExpr.getText());
+            + (dataSourceExpr instanceof GinqExpression
+            ? "(" + dataSourceExpr.getText() + ")"
+            : dataSourceExpr.getText());
     }
 
     @Override

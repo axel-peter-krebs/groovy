@@ -44,7 +44,7 @@ public class VariableSlotLoader extends BytecodeExpression {
         operandStack.remove(1);
     }
 
-    public int getIndex(){
+    public int getIndex() {
         return idx;
     }
 }

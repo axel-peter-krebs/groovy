@@ -56,6 +56,27 @@ public class SimpleGroovyDoc implements GroovyDoc/*, GroovyTokenTypes*/ {
         definitionType = CLASS_DEF;
     }
 
+    public static String calculateFirstSentence(String raw) {
+        // remove all the * from beginning of lines
+        String text = raw.replaceAll("(?m)^\\s*\\*", "").trim();
+        // assume a <p> paragraph tag signifies end of sentence
+        text = text.replaceFirst("(?ms)<p>.*", "").trim();
+        // assume completely blank line signifies end of sentence
+        text = text.replaceFirst("(?ms)\\n\\s*\\n.*", "").trim();
+        // assume @tag signifies end of sentence
+        text = text.replaceFirst("(?ms)\\n\\s*@(see|param|throws|return|author|since|exception|version|deprecated|todo)\\s.*", "").trim();
+        // Comment Summary using first sentence (Locale sensitive)
+        BreakIterator boundary = BreakIterator.getSentenceInstance(Locale.getDefault()); // todo - allow locale to be passed in
+        boundary.setText(text);
+        int start = boundary.first();
+        int end = boundary.next();
+        if (start > -1 && end > -1) {
+            // need to abbreviate this comment for the summary
+            text = text.substring(start, end);
+        }
+        return text;
+    }
+
     @Override
     public String name() {
         return name;
@@ -95,10 +116,6 @@ public class SimpleGroovyDoc implements GroovyDoc/*, GroovyTokenTypes*/ {
         calculateTags(rawCommentText);
     }
 
-    public void setScript(boolean script) {
-        isScript = script;
-    }
-
     private void calculateTags(String rawCommentText) {
         String trimmed = RAW_COMMENT_PATTERN.matcher(rawCommentText).replaceFirst("@");
         if (trimmed.equals(rawCommentText)) return;
@@ -127,27 +144,6 @@ public class SimpleGroovyDoc implements GroovyDoc/*, GroovyTokenTypes*/ {
         tags = result.toArray(EMPTY_GROOVYTAG_ARRAY);
     }
 
-    public static String calculateFirstSentence(String raw) {
-        // remove all the * from beginning of lines
-        String text = raw.replaceAll("(?m)^\\s*\\*", "").trim();
-        // assume a <p> paragraph tag signifies end of sentence
-        text = text.replaceFirst("(?ms)<p>.*", "").trim();
-        // assume completely blank line signifies end of sentence
-        text = text.replaceFirst("(?ms)\\n\\s*\\n.*", "").trim();
-        // assume @tag signifies end of sentence
-        text = text.replaceFirst("(?ms)\\n\\s*@(see|param|throws|return|author|since|exception|version|deprecated|todo)\\s.*", "").trim();
-        // Comment Summary using first sentence (Locale sensitive)
-        BreakIterator boundary = BreakIterator.getSentenceInstance(Locale.getDefault()); // todo - allow locale to be passed in
-        boundary.setText(text);
-        int start = boundary.first();
-        int end = boundary.next();
-        if (start > -1 && end > -1) {
-            // need to abbreviate this comment for the summary
-            text = text.substring(start, end);
-        }
-        return text;
-    }
-
     @Override
     public boolean isClass() {
         return definitionType == CLASS_DEF && !isScript;
@@ -155,6 +151,10 @@ public class SimpleGroovyDoc implements GroovyDoc/*, GroovyTokenTypes*/ {
 
     public boolean isScript() {
         return definitionType == CLASS_DEF && isScript;
+    }
+
+    public void setScript(boolean script) {
+        isScript = script;
     }
 
     public boolean isTrait() {
@@ -239,6 +239,10 @@ public class SimpleGroovyDoc implements GroovyDoc/*, GroovyTokenTypes*/ {
         return deprecated;
     }
 
+    public void setDeprecated(boolean deprecated) {
+        this.deprecated = deprecated;
+    }
+
     @Override
     public boolean isError() {/*todo*/
         return false;
@@ -263,21 +267,17 @@ public class SimpleGroovyDoc implements GroovyDoc/*, GroovyTokenTypes*/ {
     public boolean isMethod() {/*todo*/
         return false;
     }
+//    public GroovySourcePosition position() {/*todo*/return null;}
+//    public GroovySeeTag[] seeTags() {/*todo*/return null;}
 
     @Override
     public boolean isOrdinaryClass() {/*todo*/
         return false;
     }
-//    public GroovySourcePosition position() {/*todo*/return null;}
-//    public GroovySeeTag[] seeTags() {/*todo*/return null;}
-
-    public GroovyTag[] tags() {
-        return tags == null ? null : Arrays.copyOf(tags, tags.length);
-    }
 
 //    public GroovyTag[] tags(String arg0) {/*todo*/return null;}
 
-    public void setDeprecated(boolean deprecated) {
-        this.deprecated = deprecated;
+    public GroovyTag[] tags() {
+        return tags == null ? null : Arrays.copyOf(tags, tags.length);
     }
 }

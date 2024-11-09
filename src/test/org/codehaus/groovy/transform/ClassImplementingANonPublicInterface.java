@@ -23,5 +23,7 @@ package org.codehaus.groovy.transform;
  * Fix for GROOVY-3380
  */
 public class ClassImplementingANonPublicInterface implements NonPublicInterface {
-    public String returnConstant() { return CONSTANT; }
+    public String returnConstant() {
+        return CONSTANT;
+    }
 }

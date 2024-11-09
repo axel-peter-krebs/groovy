@@ -48,27 +48,44 @@ public class TokenUtil {
      *
      * @param op token for which to remove assignment
      * @return token without assignment, or the original token
-     *          if it was not an assignment operator
+     * if it was not an assignment operator
      */
     public static int removeAssignment(int op) {
         switch (op) {
-            case Types.PLUS_EQUAL: return Types.PLUS;
-            case Types.MINUS_EQUAL: return Types.MINUS;
-            case Types.MULTIPLY_EQUAL: return Types.MULTIPLY;
-            case Types.LEFT_SHIFT_EQUAL: return Types.LEFT_SHIFT;
-            case Types.RIGHT_SHIFT_EQUAL: return Types.RIGHT_SHIFT;
-            case Types.RIGHT_SHIFT_UNSIGNED_EQUAL: return Types.RIGHT_SHIFT_UNSIGNED;
-            case Types.LOGICAL_OR_EQUAL: return Types.LOGICAL_OR;
-            case Types.LOGICAL_AND_EQUAL: return Types.LOGICAL_AND;
-            case Types.MOD_EQUAL: return Types.MOD;
-            case Types.DIVIDE_EQUAL: return Types.DIVIDE;
-            case Types.INTDIV_EQUAL: return Types.INTDIV;
-            case Types.POWER_EQUAL: return Types.POWER;
-            case Types.BITWISE_OR_EQUAL: return Types.BITWISE_OR;
-            case Types.BITWISE_AND_EQUAL: return Types.BITWISE_AND;
-            case Types.BITWISE_XOR_EQUAL: return Types.BITWISE_XOR;
-            case Types.REMAINDER_EQUAL: return Types.REMAINDER;
-            default: return op;
+            case Types.PLUS_EQUAL:
+                return Types.PLUS;
+            case Types.MINUS_EQUAL:
+                return Types.MINUS;
+            case Types.MULTIPLY_EQUAL:
+                return Types.MULTIPLY;
+            case Types.LEFT_SHIFT_EQUAL:
+                return Types.LEFT_SHIFT;
+            case Types.RIGHT_SHIFT_EQUAL:
+                return Types.RIGHT_SHIFT;
+            case Types.RIGHT_SHIFT_UNSIGNED_EQUAL:
+                return Types.RIGHT_SHIFT_UNSIGNED;
+            case Types.LOGICAL_OR_EQUAL:
+                return Types.LOGICAL_OR;
+            case Types.LOGICAL_AND_EQUAL:
+                return Types.LOGICAL_AND;
+            case Types.MOD_EQUAL:
+                return Types.MOD;
+            case Types.DIVIDE_EQUAL:
+                return Types.DIVIDE;
+            case Types.INTDIV_EQUAL:
+                return Types.INTDIV;
+            case Types.POWER_EQUAL:
+                return Types.POWER;
+            case Types.BITWISE_OR_EQUAL:
+                return Types.BITWISE_OR;
+            case Types.BITWISE_AND_EQUAL:
+                return Types.BITWISE_AND;
+            case Types.BITWISE_XOR_EQUAL:
+                return Types.BITWISE_XOR;
+            case Types.REMAINDER_EQUAL:
+                return Types.REMAINDER;
+            default:
+                return op;
         }
     }
 }

@@ -45,14 +45,15 @@ public class ConvertedClosure extends ConversionHandler implements Serializable 
      * @throws IllegalArgumentException if closure is null
      */
     public ConvertedClosure(final Closure closure, final String methodName) {
-        super(closure); this.methodName = methodName;
+        super(closure);
+        this.methodName = methodName;
     }
 
     @Override
     public Object invokeCustom(final Object proxy, final Method method, final Object[] args) throws Throwable {
         if (methodName != null && !methodName.equals(method.getName())) return null;
-        Object result = ((Closure)getDelegate()).call(args);
-        if (method.getReturnType()==void.class) return null;
+        Object result = ((Closure) getDelegate()).call(args);
+        if (method.getReturnType() == void.class) return null;
         result = castToType(result, method.getReturnType());
         return result;
     }

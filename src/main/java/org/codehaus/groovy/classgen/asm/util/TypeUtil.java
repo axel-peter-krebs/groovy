@@ -52,6 +52,70 @@ import static org.objectweb.asm.Opcodes.LRETURN;
  * @since 2.5.0
  */
 public abstract class TypeUtil {
+    private static final String REF_DESCRIPTION = "L";
+    private static final Map<ClassNode, String> PRIMITIVE_TYPE_TO_DESCRIPTION_MAP = Maps.of(
+        int_TYPE, "I",
+        VOID_TYPE, "V",
+        boolean_TYPE, "Z",
+        byte_TYPE, "B",
+        char_TYPE, "C",
+        short_TYPE, "S",
+        double_TYPE, "D",
+        float_TYPE, "F",
+        long_TYPE, "J"
+    );
+    private static final Map<String, ClassNode> NAME_TO_PRIMITIVE_TYPE_MAP = Maps.of(
+        "int", int_TYPE,
+        "void", VOID_TYPE,
+        "boolean", boolean_TYPE,
+        "byte", byte_TYPE,
+        "char", char_TYPE,
+        "short", short_TYPE,
+        "double", double_TYPE,
+        "float", float_TYPE,
+        "long", long_TYPE
+    );
+    private static final Map<Type, Integer> PRIMITIVE_TYPE_TO_LOAD_INSN_MAP = Maps.of(
+        Type.BOOLEAN_TYPE, ILOAD,
+        Type.BYTE_TYPE, ILOAD,
+        Type.CHAR_TYPE, ILOAD,
+        Type.DOUBLE_TYPE, DLOAD,
+        Type.FLOAT_TYPE, FLOAD,
+        Type.INT_TYPE, ILOAD,
+        Type.LONG_TYPE, LLOAD,
+        Type.SHORT_TYPE, ILOAD
+    );
+    private static final Map<Type, Integer> PRIMITIVE_TYPE_TO_RETURN_INSN_MAP = Maps.of(
+        Type.BOOLEAN_TYPE, IRETURN,
+        Type.BYTE_TYPE, IRETURN,
+        Type.CHAR_TYPE, IRETURN,
+        Type.DOUBLE_TYPE, DRETURN,
+        Type.FLOAT_TYPE, FRETURN,
+        Type.INT_TYPE, IRETURN,
+        Type.LONG_TYPE, LRETURN,
+        Type.SHORT_TYPE, IRETURN
+    );
+    private static final Map<Type, String> PRIMITIVE_TYPE_TO_WRAPPED_CLASS_DESCRIPTOR_MAP = Maps.of(
+        Type.BOOLEAN_TYPE, "java/lang/Boolean",
+        Type.BYTE_TYPE, "java/lang/Byte",
+        Type.CHAR_TYPE, "java/lang/Character",
+        Type.DOUBLE_TYPE, "java/lang/Double",
+        Type.FLOAT_TYPE, "java/lang/Float",
+        Type.INT_TYPE, "java/lang/Integer",
+        Type.LONG_TYPE, "java/lang/Long",
+        Type.SHORT_TYPE, "java/lang/Short"
+    );
+    private static final Map<Class, Class> PRIMITIVE_TYPE_TO_WRAPPED_CLASS_MAP = Maps.of(
+        byte.class, Byte.class,
+        boolean.class, Boolean.class,
+        char.class, Character.class,
+        double.class, Double.class,
+        float.class, Float.class,
+        int.class, Integer.class,
+        long.class, Long.class,
+        short.class, Short.class
+    );
+
     public static Class autoboxType(Class type) {
         final Class res = PRIMITIVE_TYPE_TO_WRAPPED_CLASS_MAP.get(type);
         return res == null ? type : res;
@@ -144,73 +208,4 @@ public abstract class TypeUtil {
 
         return new Tuple2<ClassNode, Integer>(type, dimension);
     }
-
-    private static final String REF_DESCRIPTION = "L";
-    private static final Map<ClassNode, String> PRIMITIVE_TYPE_TO_DESCRIPTION_MAP = Maps.of(
-            int_TYPE, "I",
-            VOID_TYPE,"V",
-            boolean_TYPE, "Z",
-            byte_TYPE, "B",
-            char_TYPE, "C",
-            short_TYPE, "S",
-            double_TYPE, "D",
-            float_TYPE, "F",
-            long_TYPE, "J"
-    );
-
-    private static final Map<String, ClassNode> NAME_TO_PRIMITIVE_TYPE_MAP = Maps.of(
-            "int", int_TYPE,
-            "void", VOID_TYPE,
-            "boolean", boolean_TYPE,
-            "byte", byte_TYPE,
-            "char", char_TYPE,
-            "short", short_TYPE,
-            "double", double_TYPE,
-            "float", float_TYPE,
-            "long", long_TYPE
-    );
-
-    private static final Map<Type, Integer> PRIMITIVE_TYPE_TO_LOAD_INSN_MAP = Maps.of(
-            Type.BOOLEAN_TYPE, ILOAD,
-            Type.BYTE_TYPE, ILOAD,
-            Type.CHAR_TYPE, ILOAD,
-            Type.DOUBLE_TYPE, DLOAD,
-            Type.FLOAT_TYPE, FLOAD,
-            Type.INT_TYPE, ILOAD,
-            Type.LONG_TYPE, LLOAD,
-            Type.SHORT_TYPE, ILOAD
-    );
-
-    private static final Map<Type, Integer> PRIMITIVE_TYPE_TO_RETURN_INSN_MAP = Maps.of(
-            Type.BOOLEAN_TYPE, IRETURN,
-            Type.BYTE_TYPE, IRETURN,
-            Type.CHAR_TYPE, IRETURN,
-            Type.DOUBLE_TYPE, DRETURN,
-            Type.FLOAT_TYPE, FRETURN,
-            Type.INT_TYPE, IRETURN,
-            Type.LONG_TYPE, LRETURN,
-            Type.SHORT_TYPE, IRETURN
-    );
-
-    private static final Map<Type, String> PRIMITIVE_TYPE_TO_WRAPPED_CLASS_DESCRIPTOR_MAP = Maps.of(
-            Type.BOOLEAN_TYPE, "java/lang/Boolean",
-            Type.BYTE_TYPE, "java/lang/Byte",
-            Type.CHAR_TYPE, "java/lang/Character",
-            Type.DOUBLE_TYPE, "java/lang/Double",
-            Type.FLOAT_TYPE, "java/lang/Float",
-            Type.INT_TYPE, "java/lang/Integer",
-            Type.LONG_TYPE, "java/lang/Long",
-            Type.SHORT_TYPE, "java/lang/Short"
-    );
-
-    private static final Map<Class, Class> PRIMITIVE_TYPE_TO_WRAPPED_CLASS_MAP = Maps.of(
-        byte.class, Byte.class,
-        boolean.class, Boolean.class,
-        char.class, Character.class,
-        double.class, Double.class,
-        float.class, Float.class,
-        int.class, Integer.class,
-        long.class, Long.class,
-        short.class, Short.class
-    );
 }

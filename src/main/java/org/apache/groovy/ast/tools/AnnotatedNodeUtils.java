@@ -32,7 +32,8 @@ import java.util.List;
 public class AnnotatedNodeUtils {
     private static final ClassNode GENERATED_TYPE = ClassHelper.make(Generated.class);
 
-    private AnnotatedNodeUtils() { }
+    private AnnotatedNodeUtils() {
+    }
 
     public static <T extends AnnotatedNode> T markAsGenerated(final ClassNode containingClass, final T nodeToMark) {
         return markAsGenerated(containingClass, nodeToMark, false);

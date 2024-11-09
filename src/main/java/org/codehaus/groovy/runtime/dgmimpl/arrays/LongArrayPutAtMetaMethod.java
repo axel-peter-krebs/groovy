@@ -68,7 +68,7 @@ public class LongArrayPutAtMetaMethod extends ArrayPutAtMetaMethod {
         @Override
         public Object call(Object receiver, Object[] args) throws Throwable {
             if ((receiver instanceof long[] && args[0] instanceof Integer && args[1] instanceof Long)
-                    && checkPojoMetaClass()) {
+                && checkPojoMetaClass()) {
                 final long[] objects = (long[]) receiver;
                 objects[normaliseIndex((Integer) args[0], objects.length)] = (Long) args[1];
                 return null;
@@ -83,8 +83,7 @@ public class LongArrayPutAtMetaMethod extends ArrayPutAtMetaMethod {
                     final long[] objects = (long[]) receiver;
                     objects[normaliseIndex((Integer) arg1, objects.length)] = (Long) arg2;
                     return null;
-                }
-                catch (ClassCastException e) {
+                } catch (ClassCastException e) {
                     if ((receiver instanceof long[]) && (arg1 instanceof Integer))
                         throw e;
                 }

@@ -322,26 +322,26 @@ class ListTest extends GroovyTestCase {
     // see also SubscriptTest
     void testGetAtRange() {
         def list = [0, 1, 2, 3]
-        assert list[0..3] == list         , 'full list'
-        assert list[0..0] == [0]          , 'one element range'
-        assert list[0..<0] == []          , 'empty range'
-        assert list[3..0] == [3, 2, 1, 0] , 'reverse range'
-        assert list[3..<0] == [3, 2, 1]   , 'reverse right exclusive range'
-        assert list[3<..0] == [2, 1, 0]   , 'reverse left exclusive range'
-        assert list[3<..<0] == [2, 1]     , 'reverse full exclusive range'
-        assert list[-2..-1] == [2, 3]     , 'negative index range'
-        assert list[-2..<-1] == [2]       , 'negative index range right exclusive'
-        assert list[-2<..-1] == [3]       , 'negative index range left exclusive'
-        assert list[-2<..<-1] == []       , 'negative index range full exclusive'
-        assert list[-1..-2] == [3, 2]     , 'negative index range reversed'
-        assert list[-1..<-2] == [3]       , 'negative index range reversed right exclusive'
-        assert list[-1<..-2] == [2]       , 'negative index range reversed left exclusive'
-        assert list[-1<..<-2] == []       , 'negative index range reversed full exclusive'
-        assert list[0..-1] == list        , 'pos - neg value'
-        assert list[0..<-1] == [0, 1, 2]  , 'pos - neg value right exclusive'
-        assert list[0<..-1] == [1, 2, 3]  , 'pos - neg value left exclusive'
-        assert list[0<..<-1] == [1, 2]    , 'pos - neg value full exclusive'
-        assert list[0..<-2] == [0, 1]     , 'pos - neg value exclusive'
+        assert list[0..3] == list, 'full list'
+        assert list[0..0] == [0], 'one element range'
+        assert list[0..<0] == [], 'empty range'
+        assert list[3..0] == [3, 2, 1, 0], 'reverse range'
+        assert list[3..<0] == [3, 2, 1], 'reverse right exclusive range'
+        assert list[3<..0] == [2, 1, 0], 'reverse left exclusive range'
+        assert list[3<..<0] == [2, 1], 'reverse full exclusive range'
+        assert list[-2..-1] == [2, 3], 'negative index range'
+        assert list[-2..<-1] == [2], 'negative index range right exclusive'
+        assert list[-2<..-1] == [3], 'negative index range left exclusive'
+        assert list[-2<..<-1] == [], 'negative index range full exclusive'
+        assert list[-1..-2] == [3, 2], 'negative index range reversed'
+        assert list[-1..<-2] == [3], 'negative index range reversed right exclusive'
+        assert list[-1<..-2] == [2], 'negative index range reversed left exclusive'
+        assert list[-1<..<-2] == [], 'negative index range reversed full exclusive'
+        assert list[0..-1] == list, 'pos - neg value'
+        assert list[0..<-1] == [0, 1, 2], 'pos - neg value right exclusive'
+        assert list[0<..-1] == [1, 2, 3], 'pos - neg value left exclusive'
+        assert list[0<..<-1] == [1, 2], 'pos - neg value full exclusive'
+        assert list[0..<-2] == [0, 1], 'pos - neg value exclusive'
         shouldFail(NullPointerException) { list[null] }
         shouldFail(IndexOutOfBoundsException) { list[5..6] }
     }
@@ -645,37 +645,37 @@ class ListTest extends GroovyTestCase {
 
     void testLazyListAndCollectionOfIndices() {
         def l1 = [].withDefault { 42 }
-        assert [42, 42, 42] == l1[0,1,2]
+        assert [42, 42, 42] == l1[0, 1, 2]
         assert l1.size() == 3
     }
 
     void testEagerListAndCollectionOfIndices() {
         def l1 = [].withEagerDefault { 42 }
-        assert [42, 42, 42] == l1[0,1,2]
+        assert [42, 42, 42] == l1[0, 1, 2]
         assert l1.size() == 3
     }
 
     void testLazyListAndCollectionOfCollectionIndices() {
         def l1 = [].withDefault { 42 }
-        assert [42, 42, 42] == l1[0,[1,2]]
+        assert [42, 42, 42] == l1[0, [1, 2]]
         assert l1.size() == 3
     }
 
     void testLazyListAndCollectionOfRangeIndices() {
         def l1 = [].withDefault { 42 }
-        assert [42, null, 42] == l1[0,[1..2]]
+        assert [42, null, 42] == l1[0, [1..2]]
         assert l1.size() == 3
     }
 
     void testEagerListAndCollectionOfRangeIndices() {
         def l1 = [].withEagerDefault { 42 }
-        assert [42, 42, 42] == l1[0,[1..2]]
+        assert [42, 42, 42] == l1[0, [1..2]]
         assert l1.size() == 3
     }
 
     void testDefaultAndCollectionOfIndicesReturnsCorrectType() {
         def l1 = [].withDefault { 42 }
-        assert  l1[0,[1..2]] instanceof ListWithDefault
+        assert l1[0, [1..2]] instanceof ListWithDefault
     }
 
     void testLazyListAndUnorderedCollectionIndices() {
@@ -685,23 +685,23 @@ class ListTest extends GroovyTestCase {
     }
 
     void testLazyListAndNegativeReversedRangeAccess() {
-        def a = [1].withDefault {42}
+        def a = [1].withDefault { 42 }
         assert a[2..-1] == [42, null, 1]
     }
 
     void testEagerListAndNegativeReversedRangeAccess() {
-        def a = [1].withEagerDefault {42}
+        def a = [1].withEagerDefault { 42 }
         assert a[2..-1] == [42, 42, 1]
     }
 
     void testEagerListAndNegativeCollectionIndicesAccess() {
-        def a = [1].withEagerDefault {42}
-        assert a[0,-1] == [1, 1]
+        def a = [1].withEagerDefault { 42 }
+        assert a[0, -1] == [1, 1]
     }
 
     void testEagerLazyListInvocation() {
-        def a = [1].withEagerDefault {42}.withEagerDefault {43}
-        assert a[0,2,-1] == [1, 43, 43]
+        def a = [1].withEagerDefault { 42 }.withEagerDefault { 43 }
+        assert a[0, 2, -1] == [1, 43, 43]
     }
 
     void testEagerListWithNegativeIndex() {
@@ -712,17 +712,17 @@ class ListTest extends GroovyTestCase {
     }
 
     void testLazyListCollectionIndicesSubList() {
-        def list = [1].withDefault{42}
+        def list = [1].withDefault { 42 }
         assert list[4] == 42
         assert list == [1, null, null, null, 42]
 
-        def sub = list[0,2,4]
+        def sub = list[0, 2, 4]
         assert sub.size() == 3
         assert sub[3] == 42
     }
 
     void testLazyListRangeIndexSubList() {
-        def list = [1].withDefault{42}
+        def list = [1].withDefault { 42 }
         assert list[4] == 42
         assert list == [1, null, null, null, 42]
 
@@ -731,55 +731,55 @@ class ListTest extends GroovyTestCase {
     }
 
     void testCollectionAccessCreatesListCopy() {
-        def list = [0,1,2,3]
-        def sublist = list[0,1]
+        def list = [0, 1, 2, 3]
+        def sublist = list[0, 1]
 
-        assert sublist == [0,1]
+        assert sublist == [0, 1]
 
         sublist[0] = 42
 
         assert sublist == [42, 1]
-        assert list == [0,1,2,3]
+        assert list == [0, 1, 2, 3]
     }
 
     void testLazyListCollectionAccessCreatesListCopy() {
-        def list = [0,1,2,3].withDefault { 42 }
-        def sublist = list[0,1]
+        def list = [0, 1, 2, 3].withDefault { 42 }
+        def sublist = list[0, 1]
 
-        assert sublist == [0,1]
+        assert sublist == [0, 1]
 
         sublist[0] = 42
 
         assert sublist == [42, 1]
-        assert list == [0,1,2,3]
+        assert list == [0, 1, 2, 3]
     }
 
     void testRangeAccessCreatesListCopy() {
-        def list = [0,1,2,3]
+        def list = [0, 1, 2, 3]
         def sublist = list[0..<2]
 
-        assert sublist == [0,1]
+        assert sublist == [0, 1]
 
         sublist[0] = 42
 
         assert sublist == [42, 1]
-        assert list == [0,1,2,3]
+        assert list == [0, 1, 2, 3]
     }
 
     void testLazyListRangeAccessCreatesListCopy() {
-        def list = [0,1,2,3].withDefault { 42 }
+        def list = [0, 1, 2, 3].withDefault { 42 }
         def sublist = list[0..<2]
 
-        assert sublist == [0,1]
+        assert sublist == [0, 1]
 
         sublist[0] = 42
 
         assert sublist == [42, 1]
-        assert list == [0,1,2,3]
+        assert list == [0, 1, 2, 3]
     }
 
     void testLazyListSubListCreatesListDelegateCopy() {
-        def list = [0,1,2,3].withDefault { 42 }
+        def list = [0, 1, 2, 3].withDefault { 42 }
         def sublist = list[0..1]
 
         assert sublist instanceof ListWithDefault
@@ -787,51 +787,51 @@ class ListTest extends GroovyTestCase {
 
         sublist[0] = 42
 
-        assert list == [0,1,2,3]
+        assert list == [0, 1, 2, 3]
     }
 
     void testReversedRangeAccessCreatesListCopy() {
-        def list = [0,1,2,3]
+        def list = [0, 1, 2, 3]
         def sublist = list[1..0]
 
-        assert sublist == [1,0]
+        assert sublist == [1, 0]
 
         sublist[0] = 42
 
         assert sublist == [42, 0]
-        assert list == [0,1,2,3]
+        assert list == [0, 1, 2, 3]
     }
 
     void testReversedLazyListRangeAccessCreatesListCopy() {
-        def list = [0,1,2,3].withDefault { 42 }
+        def list = [0, 1, 2, 3].withDefault { 42 }
         def sublist = list[1..0]
 
-        assert sublist == [1,0]
+        assert sublist == [1, 0]
 
         sublist[0] = 42
 
         assert sublist == [42, 0]
-        assert list == [0,1,2,3]
+        assert list == [0, 1, 2, 3]
     }
 
     void testRangeAccessOnLinkedListCreatesLinkedListCopy() {
-        def list = new LinkedList([0,1,2,3])
+        def list = new LinkedList([0, 1, 2, 3])
         def sublist = list[0..<2]
 
-        assert sublist == [0,1]
+        assert sublist == [0, 1]
         assert sublist instanceof LinkedList
     }
 
     void testReversedRangeAccessOnLinkedListCreatesLinkedListCopy() {
-        def list = new LinkedList([0,1,2,3])
+        def list = new LinkedList([0, 1, 2, 3])
         def sublist = list[1..0]
 
-        assert sublist == [1,0]
+        assert sublist == [1, 0]
         assert sublist instanceof LinkedList
     }
 
     void testEmptyRangeAccessReturnsLinkedListCopy() {
-        def list = new LinkedList([0,1,2,3])
+        def list = new LinkedList([0, 1, 2, 3])
         assert list[0..<0] instanceof LinkedList
     }
 
@@ -854,7 +854,7 @@ class ListTest extends GroovyTestCase {
 
     // GROOVY-7299
     void testMultipleVeryLongLlists() {
-        def script = "def a = ["+'1000,'*2000+"];def b = ["+'1000,'*2000+"]; def c=(a+b).sum(); assert c==4_000_000";
+        def script = "def a = [" + '1000,' * 2000 + "];def b = [" + '1000,' * 2000 + "]; def c=(a+b).sum(); assert c==4_000_000";
         assertScript script
     }
 }

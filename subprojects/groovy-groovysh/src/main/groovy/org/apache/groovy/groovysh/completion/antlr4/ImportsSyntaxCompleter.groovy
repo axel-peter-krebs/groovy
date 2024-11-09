@@ -53,8 +53,8 @@ class ImportsSyntaxCompleter implements IdentifierCompleter {
 
     boolean findMatchingImportedClassesCached(final String prefix, final String importSpec, final List<String> candidates) {
         candidates.addAll(cachedImports
-                .get(importSpec)
-                .findAll({ String it -> it.startsWith(prefix) }))
+            .get(importSpec)
+            .findAll({ String it -> it.startsWith(prefix) }))
     }
 
     boolean findMatchingPreImportedClasses(final String prefix, final Collection<String> matches) {

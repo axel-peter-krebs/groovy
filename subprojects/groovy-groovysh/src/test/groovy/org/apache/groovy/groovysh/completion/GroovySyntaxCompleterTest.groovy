@@ -60,7 +60,8 @@ final class GroovySyntaxCompleterTest extends CompleterTestSupport {
 
     void testIdentifier() {
         idCompleterMocker.demand.complete(1) { tokens, candidates ->
-            assert(tokens*.text == ['jav']); candidates << 'javup'; candidates << 'java.lang.String' ; true}
+            assert (tokens*.text == ['jav']); candidates << 'javup'; candidates << 'java.lang.String'; true
+        }
 
         int result = runTest('jav')
 
@@ -70,7 +71,8 @@ final class GroovySyntaxCompleterTest extends CompleterTestSupport {
 
     void testIdentifierAfterLCurly() {
         idCompleterMocker.demand.complete(1) { tokens, candidates ->
-            assert(tokens*.text == ['{', 'jav']); candidates << 'javup'; candidates << 'java.lang.String' ; true}
+            assert (tokens*.text == ['{', 'jav']); candidates << 'javup'; candidates << 'java.lang.String'; true
+        }
 
         int result = runTest('{jav')
 
@@ -80,7 +82,8 @@ final class GroovySyntaxCompleterTest extends CompleterTestSupport {
 
     void testMember() {
         reflectionCompleterMocker.demand.complete(1) { tokens, candidates ->
-            assert(tokens*.text == ['Math', '.', 'ma']); candidates << 'max('; 5}
+            assert (tokens*.text == ['Math', '.', 'ma']); candidates << 'max('; 5
+        }
 
         int result = runTest('Math.ma')
 
@@ -90,7 +93,8 @@ final class GroovySyntaxCompleterTest extends CompleterTestSupport {
 
     void testMemberOptionalDot() {
         reflectionCompleterMocker.demand.complete(1) { tokens, candidates ->
-            assert(tokens*.text == ['Math', '?.', 'ma']); candidates << 'max('; 6}
+            assert (tokens*.text == ['Math', '?.', 'ma']); candidates << 'max('; 6
+        }
 
         int result = runTest('Math?.ma')
 
@@ -100,7 +104,8 @@ final class GroovySyntaxCompleterTest extends CompleterTestSupport {
 
     void testMemberSpreadDot() {
         reflectionCompleterMocker.demand.complete(1) { tokens, candidates ->
-            assert(tokens*.text == ['[', '\'foo\'', ']', '*.', 'len']); candidates << 'length()'; 9}
+            assert (tokens*.text == ['[', '\'foo\'', ']', '*.', 'len']); candidates << 'length()'; 9
+        }
 
         int result = runTest('[\'foo\']*.len')
 
@@ -110,7 +115,8 @@ final class GroovySyntaxCompleterTest extends CompleterTestSupport {
 
     void testMemberAfterMethod() {
         reflectionCompleterMocker.demand.complete(1) { tokens, candidates ->
-            assert(tokens*.text == ['Fo', '.', 'ba', '(', ')', '.', 'xyz']); candidates << 'xyzabc'; 0}
+            assert (tokens*.text == ['Fo', '.', 'ba', '(', ')', '.', 'xyz']); candidates << 'xyzabc'; 0
+        }
 
         // xyz cannot be not a var here
         int result = runTest('Fo.ba().xyz')
@@ -121,7 +127,8 @@ final class GroovySyntaxCompleterTest extends CompleterTestSupport {
 
     void testIdentfierAfterDotAfterParens() {
         idCompleterMocker.demand.complete(1) { tokens, candidates ->
-            assert(tokens*.text == ['Foo', '.', 'bar', '(', 'xyz']); candidates << 'xyzabc'; true}
+            assert (tokens*.text == ['Foo', '.', 'bar', '(', 'xyz']); candidates << 'xyzabc'; true
+        }
 
         int result = runTest('Foo.bar(xyz')
 
@@ -131,7 +138,8 @@ final class GroovySyntaxCompleterTest extends CompleterTestSupport {
 
     void testIndentifierAfterParensBeforeDot() {
         idCompleterMocker.demand.complete(1) { tokens, candidates ->
-            assert(tokens*.text == ['Foo', '.', 'bar', '(', 'xyz']); candidates << 'xyzabc'; true}
+            assert (tokens*.text == ['Foo', '.', 'bar', '(', 'xyz']); candidates << 'xyzabc'; true
+        }
 
         int result = runTest('Foo.bar(xyz.', 'Foo.bar(xyz'.length()) // cursor is BEFORE dot
 
@@ -155,7 +163,8 @@ final class GroovySyntaxCompleterTest extends CompleterTestSupport {
 
     void testInstanceof() {
         idCompleterMocker.demand.complete(1) { tokens, candidates ->
-            assert(tokens*.text == ['x', 'instanceof', 'P']); candidates << 'Property'; 13}
+            assert (tokens*.text == ['x', 'instanceof', 'P']); candidates << 'Property'; 13
+        }
 
         int result = runTest('x instanceof P')
 
@@ -166,7 +175,8 @@ final class GroovySyntaxCompleterTest extends CompleterTestSupport {
     void testAfterSemi() {
         // evaluation of all is dangerous, but the reflectionCompleter has to deal with this
         reflectionCompleterMocker.demand.complete(1) { tokens, candidates ->
-            assert(tokens*.text == ['deletehardDisk', '(', ')', ';', 'foo', '.', 'subs']); candidates << 'substring('; 22}
+            assert (tokens*.text == ['deletehardDisk', '(', ')', ';', 'foo', '.', 'subs']); candidates << 'substring('; 22
+        }
 
         int result = runTest('deletehardDisk(); foo.subs')
 
@@ -177,7 +187,8 @@ final class GroovySyntaxCompleterTest extends CompleterTestSupport {
     void testAfterOperator() {
         // evaluation of all is dangerous, but the reflectionCompleter has to deal with this
         reflectionCompleterMocker.demand.complete(1) { tokens, candidates ->
-            assert(tokens*.text == ['a', '=', 'foo', '.', 'subs']); candidates << 'substring('; 9}
+            assert (tokens*.text == ['a', '=', 'foo', '.', 'subs']); candidates << 'substring('; 9
+        }
 
         int result = runTest('a = foo.subs')
 
@@ -225,7 +236,7 @@ final class GroovySyntaxCompleterTest extends CompleterTestSupport {
         String linestart = 'x = \'' // ends with apostrophe
         String pathstart = '/usr/foobar'
 
-        filenameCompleterMocker.demand.complete(1) {bufferline, cursor, candidates ->
+        filenameCompleterMocker.demand.complete(1) { bufferline, cursor, candidates ->
             assert bufferline == pathstart
             assert cursor == pathstart.length()
             candidates << 'foobar'
@@ -241,7 +252,8 @@ final class GroovySyntaxCompleterTest extends CompleterTestSupport {
 
     void testInGString() {
         idCompleterMocker.demand.complete(1) { tokens, candidates ->
-            assert(tokens*.text == ['"$', '{', 'foo']); candidates << 'foobar'; true}
+            assert (tokens*.text == ['"$', '{', 'foo']); candidates << 'foobar'; true
+        }
 
         int result = runTest('"\${foo')
 
@@ -251,7 +263,8 @@ final class GroovySyntaxCompleterTest extends CompleterTestSupport {
 
     void testMultilineComplete() {
         reflectionCompleterMocker.demand.complete(1) { tokens, candidates ->
-            assert(tokens*.text == ['"""xyz\nabc"""', '.', 'subs']); candidates << 'substring('; 7}
+            assert (tokens*.text == ['"""xyz\nabc"""', '.', 'subs']); candidates << 'substring('; 7
+        }
         bufferManager.buffers.add(['"""xyz'])
         bufferManager.setSelected(1)
 

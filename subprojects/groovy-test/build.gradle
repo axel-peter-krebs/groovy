@@ -33,16 +33,16 @@ dependencies {
 
 groovyLibrary {
     withGrooid(
-            "org.apache.groovy:groovy-test-grooid:${sharedConfiguration.groovyVersion.get()}",
-            [] as Set,
-            [:],
-            [
-                    '*': ['META-INF/NOTICE']
-            ],
-            ['META-INF/NOTICE', 'META-INF/INDEX.LIST'],
-            [
-                    (project.relativePath(rootProject.file('notices/NOTICE-GROOIDJARJAR'))): 'META-INF/NOTICE'
-            ]
+        "org.apache.groovy:groovy-test-grooid:${sharedConfiguration.groovyVersion.get()}",
+        [] as Set,
+        [:],
+        [
+            '*': ['META-INF/NOTICE']
+        ],
+        ['META-INF/NOTICE', 'META-INF/INDEX.LIST'],
+        [
+            (project.relativePath(rootProject.file('notices/NOTICE-GROOIDJARJAR'))): 'META-INF/NOTICE'
+        ]
     )
 }
 

@@ -114,13 +114,13 @@ import static org.codehaus.groovy.ast.tools.WideningCategories.isLongCategory;
 
 public class JavaStubGenerator {
 
+    private final static ClassNode PACKAGE_SCOPE_TYPE = makeCached(PackageScope.class);
     private final String encoding;
     private final File outputPath;
     private final boolean requireSuperResolved;
     private final List<ConstructorNode> constructors = new ArrayList<>();
     private final Map<String, MethodNode> propertyMethods = new LinkedHashMap<>();
-    private final static ClassNode PACKAGE_SCOPE_TYPE = makeCached(PackageScope.class);
-
+    private final Set<JavaFileObject> javaStubCompilationUnitSet = new HashSet<>();
     private ModuleNode currentModule;
 
     public JavaStubGenerator(final File outputPath) {
@@ -141,6 +141,187 @@ public class JavaStubGenerator {
         if (index == -1) return;
         File dir = new File(parent, relativeFile.substring(0, index));
         dir.mkdirs();
+    }
+
+    private static Iterable<ClassNode> findTraits(ClassNode classNode) {
+        Set<ClassNode> traits = new LinkedHashSet<>();
+
+        LinkedList<ClassNode> todo = new LinkedList<>();
+        Collections.addAll(todo, classNode.getInterfaces());
+        while (!todo.isEmpty()) {
+            ClassNode next = todo.removeLast();
+            if (Traits.isTrait(next)) traits.add(next);
+            Collections.addAll(todo, next.getInterfaces());
+        }
+
+        return traits;
+    }
+
+    private static void printEnumFields(final PrintWriter out, final List<FieldNode> fields) {
+        if (!fields.isEmpty()) {
+            int i = 0;
+            for (FieldNode field : fields) {
+                if (i++ != 0) {
+                    out.print(", ");
+                }
+                out.print(field.getName());
+            }
+        }
+        out.println(';');
+    }
+
+    private static boolean sameParameterTypes(final MethodNode firstMethod, final MethodNode secondMethod) {
+        return sameParameterTypes(firstMethod.getParameters(), secondMethod.getParameters());
+    }
+
+    private static boolean sameParameterTypes(final Parameter[] firstParams, final Parameter[] secondParams) {
+        return org.codehaus.groovy.ast.tools.ParameterUtils.parametersEqual(firstParams, secondParams);
+    }
+
+    private static Parameter[] selectAccessibleConstructorFromSuper(final ConstructorNode source) {
+        ClassNode superType = source.getDeclaringClass().getUnresolvedSuperClass();
+        Map<String, ClassNode> superTypeGenerics = createGenericsSpec(superType);
+
+        Parameter[] bestMatch = null;
+        for (ConstructorNode target : superType.getDeclaredConstructors()) {
+            // only look at things we can actually call
+            // TODO: package-private and types are peers
+            if (!target.isPublic() && !target.isProtected()) continue;
+
+            Parameter[] parameters = target.getParameters();
+            Parameter[] normalized = Arrays.stream(parameters).map(parameter -> {
+                ClassNode normalizedType = parameter.getOriginType();
+                if (superType.getGenericsTypes() == null // GROOVY-10407
+                    && superType.redirect().getGenericsTypes() != null) {
+                    // GROOVY-5859: remove generic type info for raw type
+                    normalizedType = normalizedType.getPlainNodeReference();
+                } else {
+                    // GROOVY-7306: apply type arguments from declaring type to parameter type
+                    normalizedType = correctToGenericsSpecRecurse(superTypeGenerics, normalizedType);
+                }
+                return new Parameter(normalizedType, parameter.getName());
+            }).toArray(Parameter[]::new);
+
+            if (noExceptionToAvoid(source, target)) return normalized;
+            if (bestMatch == null) bestMatch = normalized;
+        }
+        if (bestMatch != null) return bestMatch;
+
+        // fall back for parameterless constructor
+        if (superType.isPrimaryClassNode()) {
+            return Parameter.EMPTY_ARRAY;
+        }
+
+        return null;
+    }
+
+    private static boolean noExceptionToAvoid(ConstructorNode fromStub, ConstructorNode fromSuper) {
+        ClassNode[] superExceptions = fromSuper.getExceptions();
+        if (superExceptions == null || superExceptions.length == 0) return true;
+
+        ClassNode[] stubExceptions = fromStub.getExceptions();
+        if (stubExceptions == null || stubExceptions.length == 0) return false;
+
+
+        // if all remaining exceptions are used in the stub we are good
+        outer:
+        for (ClassNode superExc : superExceptions) {
+            for (ClassNode stub : stubExceptions) {
+                if (stub.isDerivedFrom(superExc)) continue outer;
+            }
+            // not found
+            return false;
+        }
+
+        return true;
+    }
+
+    private static ClassNode getConstructorArgumentType(final Expression arg, final ConstructorNode ctor) {
+        if (arg instanceof VariableExpression) {
+            Variable variable = ((VariableExpression) arg).getAccessedVariable();
+            if (variable instanceof DynamicVariable) { // GROOVY-10464
+                return CLASS_Type.getPlainNodeReference();
+            }
+            return variable.getType(); // field, property, parameter
+        }
+        if (arg instanceof PropertyExpression) {
+            if ("class".equals(((PropertyExpression) arg).getPropertyAsString())) {
+                return CLASS_Type.getPlainNodeReference();
+            }
+            return null;
+        }
+        if (arg instanceof MethodCallExpression) { // GROOVY-10122
+            MethodCallExpression mce = (MethodCallExpression) arg;
+            if (ExpressionUtils.isThisExpression(mce.getObjectExpression())) {
+                MethodNode mn = ctor.getDeclaringClass().tryFindPossibleMethod(mce.getMethodAsString(), mce.getArguments());
+                if (mn != null) return mn.getReturnType();
+            }
+            return null;
+        }
+        return arg.getType();
+    }
+
+    private static void printGenericsBounds(final PrintWriter out, final GenericsType[] genericsTypes) {
+        if (genericsTypes == null || genericsTypes.length == 0) return;
+        StringJoiner sj = new StringJoiner(", ", "<", ">");
+        for (GenericsType gt : genericsTypes) {
+            sj.add(gt.toString().replace('$', '.'));
+        }
+        out.print(sj.toString());
+    }
+
+    private static void printModifiers(final PrintWriter out, final int modifiers) {
+        if ((modifiers & Opcodes.ACC_PUBLIC) != 0)
+            out.print("public ");
+
+        if ((modifiers & Opcodes.ACC_PROTECTED) != 0)
+            out.print("protected ");
+
+        if ((modifiers & Opcodes.ACC_PRIVATE) != 0)
+            out.print("private ");
+
+        if ((modifiers & Opcodes.ACC_STATIC) != 0)
+            out.print("static ");
+
+        if ((modifiers & Opcodes.ACC_SYNCHRONIZED) != 0)
+            out.print("synchronized ");
+
+        if ((modifiers & Opcodes.ACC_FINAL) != 0)
+            out.print("final ");
+
+        if ((modifiers & Opcodes.ACC_ABSTRACT) != 0)
+            out.print("abstract ");
+    }
+
+    private static String escapeSpecialChars(final String value) {
+        return FormatHelper.escapeBackslashes(value).replace("\"", "\\\"");
+    }
+
+    private static boolean isInterfaceOrTrait(final ClassNode cn) {
+        return cn.isInterface() || Traits.isTrait(cn);
+    }
+
+    private static boolean isAbstract(final MethodNode methodNode) {
+        return methodNode.isAbstract() && !isDefaultTraitImpl(methodNode);
+    }
+
+    private static boolean isDefaultTraitImpl(final MethodNode methodNode) {
+        return Traits.isTrait(methodNode.getDeclaringClass()) && Traits.hasDefaultImplementation(methodNode);
+    }
+
+    private static boolean isConcreteTraitMethod(final ClassNode trait, final MethodNode method) {
+        if (!(trait.redirect() instanceof DecompiledClassNode)) {
+            return !method.isAbstract();
+        }
+        boolean isSynthetic = (method.getModifiers() & Opcodes.ACC_SYNTHETIC) != 0;
+        if (!isSynthetic && !method.getName().contains("$")) {
+            for (MethodNode helperMethod : Traits.findHelper(trait).getMethods(method.getName())) {
+                Parameter[] params = helperMethod.getParameters();
+                params = Arrays.copyOfRange(params, 1, params.length);
+                if (sameParameterTypes(params, method.getParameters())) return true;
+            }
+        }
+        return false;
     }
 
     public void generateClass(final ClassNode classNode) throws FileNotFoundException {
@@ -173,8 +354,8 @@ public class JavaStubGenerator {
         File file = createJavaStubFile(fileName);
 
         Writer writer = new OutputStreamWriter(
-                new FileOutputStream(file),
-                Charset.forName(encoding)
+            new FileOutputStream(file),
+            Charset.forName(encoding)
         );
 
         try (PrintWriter out = new PrintWriter(writer)) {
@@ -207,20 +388,6 @@ public class JavaStubGenerator {
             currentModule = null;
         }
         return writer.toString();
-    }
-
-    private static Iterable<ClassNode> findTraits(ClassNode classNode) {
-        Set<ClassNode> traits = new LinkedHashSet<>();
-
-        LinkedList<ClassNode> todo = new LinkedList<>();
-        Collections.addAll(todo, classNode.getInterfaces());
-        while (!todo.isEmpty()) {
-            ClassNode next = todo.removeLast();
-            if (Traits.isTrait(next)) traits.add(next);
-            Collections.addAll(todo, next.getInterfaces());
-        }
-
-        return traits;
     }
 
     private void printClassContents(PrintWriter out, ClassNode classNode) {
@@ -265,20 +432,28 @@ public class JavaStubGenerator {
                 }
 
                 @Override
-                public void addCovariantMethods(ClassNode cn) {}
+                public void addCovariantMethods(ClassNode cn) {
+                }
+
                 @Override
-                protected void addInitialization(ClassNode cn) {}
+                protected void addInitialization(ClassNode cn) {
+                }
+
                 @Override
-                protected void addInitialization(ClassNode cn, ConstructorNode c) {}
+                protected void addInitialization(ClassNode cn, ConstructorNode c) {
+                }
+
                 @Override
                 protected void addPropertyMethod(MethodNode mn) {
                     markAsGenerated(getClassNode(), mn);
                     doAddMethod(mn);
                 }
-                @Override
-                protected void addReturnIfNeeded(MethodNode mn) {}
 
-                private   MethodNode doAddMethod(MethodNode mn) {
+                @Override
+                protected void addReturnIfNeeded(MethodNode mn) {
+                }
+
+                private MethodNode doAddMethod(MethodNode mn) {
                     propertyMethods.putIfAbsent(mn.getTypeDescriptor(), mn);
                     return mn;
                 }
@@ -343,7 +518,7 @@ public class JavaStubGenerator {
             if (isEnum) flags &= ~Opcodes.ACC_FINAL;
             if (isEnum || isInterface) flags &= ~Opcodes.ACC_ABSTRACT;
             if (classNode.isSyntheticPublic() && hasPackageScopeXform(classNode,
-                        PackageScopeTarget.CLASS)) flags &= ~Opcodes.ACC_PUBLIC;
+                PackageScopeTarget.CLASS)) flags &= ~Opcodes.ACC_PUBLIC;
             printModifiers(out, flags);
 
             if (isInterface) {
@@ -411,7 +586,7 @@ public class JavaStubGenerator {
             List<FieldNode> normalFields = new ArrayList<>();
             for (FieldNode field : fields) {
                 int flags = field.getModifiers();
-                if (hasPackageScopeXform(field, PackageScopeTarget.FIELDS)){
+                if (hasPackageScopeXform(field, PackageScopeTarget.FIELDS)) {
                     flags &= ~(Opcodes.ACC_PRIVATE | Opcodes.ACC_SYNTHETIC);
                     List<AnnotationNode> annotations = field.getAnnotations();
                     field = new FieldNode(field.getName(), flags, field.getType(), field.getOwner(), field.getInitialExpression());
@@ -433,19 +608,6 @@ public class JavaStubGenerator {
         }
     }
 
-    private static void printEnumFields(final PrintWriter out, final List<FieldNode> fields) {
-        if (!fields.isEmpty()) {
-            int i = 0;
-            for (FieldNode field : fields) {
-                if (i++ != 0) {
-                    out.print(", ");
-                }
-                out.print(field.getName());
-            }
-        }
-        out.println(';');
-    }
-
     private void printField(final PrintWriter out, final FieldNode field, final boolean ifaceOrTrait) {
         printAnnotations(out, field);
         if (!ifaceOrTrait) {
@@ -465,9 +627,9 @@ public class JavaStubGenerator {
                         value = Verifier.transformToPrimitiveConstantIfPossible((ConstantExpression) value);
                     }
                     if ((type.equals(value.getType()) // GROOVY-10611: integer/decimal value
-                                || (isLongCategory(type) && isPrimitiveInt(value.getType()))
-                                || (isFloatingCategory(type) && isBigDecimalType(value.getType())))
-                            && (isPrimitiveBoolean(type) || isStaticConstantInitializerType(type))) {
+                        || (isLongCategory(type) && isPrimitiveInt(value.getType()))
+                        || (isFloatingCategory(type) && isBigDecimalType(value.getType())))
+                        && (isPrimitiveBoolean(type) || isStaticConstantInitializerType(type))) {
                         printValue(out, type, value);
                         out.println(';');
                         return;
@@ -510,8 +672,8 @@ public class JavaStubGenerator {
                 Parameter[] params = method.getParameters();
                 if (params.length == 0 && "values".equals(name)) continue;
                 if (params.length == 1
-                        && "valueOf".equals(name)
-                        && isStringType(params[0].getType())) {
+                    && "valueOf".equals(name)
+                    && isStringType(params[0].getType())) {
                     continue;
                 }
             }
@@ -543,14 +705,6 @@ public class JavaStubGenerator {
         }
     }
 
-    private static boolean sameParameterTypes(final MethodNode firstMethod, final MethodNode secondMethod) {
-        return sameParameterTypes(firstMethod.getParameters(), secondMethod.getParameters());
-    }
-
-    private static boolean sameParameterTypes(final Parameter[] firstParams, final Parameter[] secondParams) {
-        return org.codehaus.groovy.ast.tools.ParameterUtils.parametersEqual(firstParams, secondParams);
-    }
-
     private void printConstructors(final PrintWriter out, final ClassNode classNode) {
         List<ConstructorNode> constructors = new ArrayList<>(this.constructors);
         constructors.addAll(classNode.getDeclaredConstructors());
@@ -565,9 +719,10 @@ public class JavaStubGenerator {
         int flags = ctorNode.getModifiers();
         // http://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.8.3
         flags &= ~(Opcodes.ACC_FINAL | Opcodes.ACC_NATIVE | Opcodes.ACC_STATIC |
-                Opcodes.ACC_ABSTRACT | Opcodes.ACC_STRICT | Opcodes.ACC_SYNCHRONIZED);
+            Opcodes.ACC_ABSTRACT | Opcodes.ACC_STRICT | Opcodes.ACC_SYNCHRONIZED);
         if (classNode.isEnum()) flags &= ~(Opcodes.ACC_PUBLIC | Opcodes.ACC_PROTECTED);
-        else if (ctorNode.isSyntheticPublic() && hasPackageScopeXform(ctorNode, PackageScopeTarget.CONSTRUCTORS)) flags &= ~Opcodes.ACC_PUBLIC;
+        else if (ctorNode.isSyntheticPublic() && hasPackageScopeXform(ctorNode, PackageScopeTarget.CONSTRUCTORS))
+            flags &= ~Opcodes.ACC_PUBLIC;
         printModifiers(out, flags);
 
         String className = classNode.getNameWithoutPackage();
@@ -586,64 +741,6 @@ public class JavaStubGenerator {
             printSpecialConstructorArgs(out, ctorNode, ctorCall);
             out.println("}");
         }
-    }
-
-    private static Parameter[] selectAccessibleConstructorFromSuper(final ConstructorNode source) {
-        ClassNode superType = source.getDeclaringClass().getUnresolvedSuperClass();
-        Map<String, ClassNode> superTypeGenerics = createGenericsSpec(superType);
-
-        Parameter[] bestMatch = null;
-        for (ConstructorNode target : superType.getDeclaredConstructors()) {
-            // only look at things we can actually call
-            // TODO: package-private and types are peers
-            if (!target.isPublic() && !target.isProtected()) continue;
-
-            Parameter[] parameters = target.getParameters();
-            Parameter[] normalized = Arrays.stream(parameters).map(parameter -> {
-                ClassNode normalizedType = parameter.getOriginType();
-                if (superType.getGenericsTypes() == null // GROOVY-10407
-                        && superType.redirect().getGenericsTypes() != null) {
-                    // GROOVY-5859: remove generic type info for raw type
-                    normalizedType = normalizedType.getPlainNodeReference();
-                } else {
-                    // GROOVY-7306: apply type arguments from declaring type to parameter type
-                    normalizedType = correctToGenericsSpecRecurse(superTypeGenerics, normalizedType);
-                }
-                return new Parameter(normalizedType, parameter.getName());
-            }).toArray(Parameter[]::new);
-
-            if (noExceptionToAvoid(source, target)) return normalized;
-            if (bestMatch == null) bestMatch = normalized;
-        }
-        if (bestMatch != null) return bestMatch;
-
-        // fall back for parameterless constructor
-        if (superType.isPrimaryClassNode()) {
-            return Parameter.EMPTY_ARRAY;
-        }
-
-        return null;
-    }
-
-    private static boolean noExceptionToAvoid(ConstructorNode fromStub, ConstructorNode fromSuper) {
-        ClassNode[] superExceptions = fromSuper.getExceptions();
-        if (superExceptions==null || superExceptions.length==0) return true;
-
-        ClassNode[] stubExceptions = fromStub.getExceptions();
-        if (stubExceptions==null || stubExceptions.length==0) return false;
-
-
-        // if all remaining exceptions are used in the stub we are good
-        outer:
-        for (ClassNode superExc : superExceptions) {
-            for (ClassNode stub : stubExceptions) {
-                if (stub.isDerivedFrom(superExc)) continue outer;
-            }
-            // not found
-            return false;
-        }
-
-        return true;
     }
 
     private void printSpecialConstructorArgs(final PrintWriter out, final ConstructorNode ctor, final ConstructorCallExpression ctorCall) {
@@ -691,31 +788,6 @@ public class JavaStubGenerator {
         out.println(");");
     }
 
-    private static ClassNode getConstructorArgumentType(final Expression arg, final ConstructorNode ctor) {
-        if (arg instanceof VariableExpression) {
-            Variable variable = ((VariableExpression) arg).getAccessedVariable();
-            if (variable instanceof DynamicVariable) { // GROOVY-10464
-                return CLASS_Type.getPlainNodeReference();
-            }
-            return variable.getType(); // field, property, parameter
-        }
-        if (arg instanceof PropertyExpression) {
-            if ("class".equals(((PropertyExpression) arg).getPropertyAsString())) {
-                return CLASS_Type.getPlainNodeReference();
-            }
-            return null;
-        }
-        if (arg instanceof MethodCallExpression) { // GROOVY-10122
-            MethodCallExpression mce = (MethodCallExpression) arg;
-            if (ExpressionUtils.isThisExpression(mce.getObjectExpression())) {
-                MethodNode mn = ctor.getDeclaringClass().tryFindPossibleMethod(mce.getMethodAsString(), mce.getArguments());
-                if (mn != null) return mn.getReturnType();
-            }
-            return null;
-        }
-        return arg.getType();
-    }
-
     private void printMethod(final PrintWriter out, final ClassNode classNode, final MethodNode methodNode) {
         if (methodNode.isStaticConstructor()) return;
         if (methodNode.isPrivate() || !Utilities.isJavaIdentifier(methodNode.getName())) return;
@@ -726,7 +798,8 @@ public class JavaStubGenerator {
             int modifiers = methodNode.getModifiers();
             if (classNode.isEnum()) modifiers &= ~Opcodes.ACC_ABSTRACT;
             else if (isDefaultTraitImpl(methodNode)) modifiers ^= Opcodes.ACC_ABSTRACT;
-            if (methodNode.isSyntheticPublic() && hasPackageScopeXform(methodNode, PackageScopeTarget.METHODS)) modifiers &= ~Opcodes.ACC_PUBLIC;
+            if (methodNode.isSyntheticPublic() && hasPackageScopeXform(methodNode, PackageScopeTarget.METHODS))
+                modifiers &= ~Opcodes.ACC_PUBLIC;
 
             printModifiers(out, modifiers);
         } else if (methodNode.isDefault()) {
@@ -789,7 +862,8 @@ public class JavaStubGenerator {
                         ListExpression le = (ListExpression) re;
                         boolean first = true;
                         for (Expression e : le.getExpressions()) {
-                            if (first) first = false; else out.print(", ");
+                            if (first) first = false;
+                            else out.print(", ");
                             valuePrinter.accept(e);
                         }
                         out.print(" }");
@@ -931,15 +1005,6 @@ public class JavaStubGenerator {
         out.print(sj.toString());
     }
 
-    private static void printGenericsBounds(final PrintWriter out, final GenericsType[] genericsTypes) {
-        if (genericsTypes == null || genericsTypes.length == 0) return;
-        StringJoiner sj = new StringJoiner(", ", "<", ">");
-        for (GenericsType gt : genericsTypes) {
-            sj.add(gt.toString().replace('$', '.'));
-        }
-        out.print(sj.toString());
-    }
-
     private void printParams(final PrintWriter out, final MethodNode methodNode) {
         out.print("(");
         Parameter[] parameters = methodNode.getParameters();
@@ -1024,29 +1089,6 @@ public class JavaStubGenerator {
         return replaceDollars ? val.replace('$', '.') : val;
     }
 
-    private static void printModifiers(final PrintWriter out, final int modifiers) {
-        if ((modifiers & Opcodes.ACC_PUBLIC) != 0)
-            out.print("public ");
-
-        if ((modifiers & Opcodes.ACC_PROTECTED) != 0)
-            out.print("protected ");
-
-        if ((modifiers & Opcodes.ACC_PRIVATE) != 0)
-            out.print("private ");
-
-        if ((modifiers & Opcodes.ACC_STATIC) != 0)
-            out.print("static ");
-
-        if ((modifiers & Opcodes.ACC_SYNCHRONIZED) != 0)
-            out.print("synchronized ");
-
-        if ((modifiers & Opcodes.ACC_FINAL) != 0)
-            out.print("final ");
-
-        if ((modifiers & Opcodes.ACC_ABSTRACT) != 0)
-            out.print("abstract ");
-    }
-
     private void printImports(final PrintWriter out) {
         Map<String, ImportNode> staticImports = currentModule.getStaticImports();
         Map<String, ImportNode> staticStarImports = currentModule.getStaticStarImports();
@@ -1054,7 +1096,7 @@ public class JavaStubGenerator {
         for (Map.Entry<String, ImportNode> entry : staticImports.entrySet()) {
             String memberName = entry.getKey();
             if (memberName.equals(entry.getValue().getFieldName())
-                    && !Character.isLowerCase(memberName.charAt(0))) // GROOVY-7510
+                && !Character.isLowerCase(memberName.charAt(0))) // GROOVY-7510
                 out.println("import static " + entry.getValue().getType().getName().replace('$', '.') + "." + memberName + ";");
         }
 
@@ -1069,36 +1111,7 @@ public class JavaStubGenerator {
         return new File(outputPath, path + ".java");
     }
 
-    private static String escapeSpecialChars(final String value) {
-        return FormatHelper.escapeBackslashes(value).replace("\"", "\\\"");
-    }
-
-    private static boolean isInterfaceOrTrait(final ClassNode cn) {
-        return cn.isInterface() || Traits.isTrait(cn);
-    }
-
-    private static boolean isAbstract(final MethodNode methodNode) {
-        return methodNode.isAbstract() && !isDefaultTraitImpl(methodNode);
-    }
-
-    private static boolean isDefaultTraitImpl(final MethodNode methodNode) {
-        return Traits.isTrait(methodNode.getDeclaringClass()) && Traits.hasDefaultImplementation(methodNode);
-    }
-
-    private static boolean isConcreteTraitMethod(final ClassNode trait, final MethodNode method) {
-        if (!(trait.redirect() instanceof DecompiledClassNode)) {
-            return !method.isAbstract();
-        }
-        boolean isSynthetic = (method.getModifiers() & Opcodes.ACC_SYNTHETIC) != 0;
-        if (!isSynthetic && !method.getName().contains("$")) {
-            for (MethodNode helperMethod : Traits.findHelper(trait).getMethods(method.getName())) {
-                Parameter[] params = helperMethod.getParameters();
-                params = Arrays.copyOfRange(params, 1, params.length);
-                if (sameParameterTypes(params, method.getParameters())) return true;
-            }
-        }
-        return false;
-    }
+    //--------------------------------------------------------------------------
 
     private boolean hasPackageScopeXform(final AnnotatedNode node, final PackageScopeTarget type) {
         boolean member = (!(node instanceof ClassNode) && type != PackageScopeTarget.CLASS);
@@ -1115,10 +1128,11 @@ public class JavaStubGenerator {
                     @Override
                     public void visitPropertyExpression(final PropertyExpression property) {
                         if ("groovy.transform.PackageScopeTarget".equals(property.getObjectExpression().getText())
-                                && property.getPropertyAsString().equals(type.name())) {
+                            && property.getPropertyAsString().equals(type.name())) {
                             val[0] = true;
                         }
                     }
+
                     @Override
                     public void visitVariableExpression(final VariableExpression variable) {
                         if (variable.getName().equals(type.name())) {
@@ -1140,19 +1154,15 @@ public class JavaStubGenerator {
         return false;
     }
 
-    //--------------------------------------------------------------------------
-
-    private final Set<JavaFileObject> javaStubCompilationUnitSet = new HashSet<>();
-
     public Set<JavaFileObject> getJavaStubCompilationUnitSet() {
         return javaStubCompilationUnitSet;
     }
 
     public void clean() {
         Stream<JavaFileObject> javaFileObjectStream =
-                javaStubCompilationUnitSet.size() < 2
-                        ? javaStubCompilationUnitSet.stream()
-                        : javaStubCompilationUnitSet.parallelStream();
+            javaStubCompilationUnitSet.size() < 2
+                ? javaStubCompilationUnitSet.stream()
+                : javaStubCompilationUnitSet.parallelStream();
 
         javaFileObjectStream.forEach(FileObject::delete);
         javaStubCompilationUnitSet.clear();

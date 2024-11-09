@@ -51,19 +51,9 @@ import static org.codehaus.groovy.runtime.DefaultGroovyMethods.last;
  */
 public class ReturnAdder {
 
-    @FunctionalInterface
-    public interface ReturnStatementListener {
-        /**
-         * Implement this method in order to be notified whenever a return statement is generated.
-         */
-        void returnStatementAdded(ReturnStatement returnStatement);
-    }
-
     private static final ReturnStatementListener DEFAULT_LISTENER = returnStatement -> {
     };
-
     private final ReturnStatementListener listener;
-
     /**
      * If set to 'true', then returns are effectively added. This is useful whenever you just want
      * to check what returns are produced without eventually adding them.
@@ -103,7 +93,7 @@ public class ReturnAdder {
 
     private Statement addReturnsIfNeeded(final Statement statement, final ClassNode rtype, final VariableScope scope) {
         if (statement instanceof ReturnStatement || statement instanceof ThrowStatement
-                || statement instanceof EmptyStatement || statement instanceof BytecodeSequence) {
+            || statement instanceof EmptyStatement || statement instanceof BytecodeSequence) {
             return statement;
         }
 
@@ -147,8 +137,8 @@ public class ReturnAdder {
             for (Iterator<CaseStatement> it = caseStatements.iterator(); it.hasNext(); ) {
                 CaseStatement caseStatement = it.next();
                 Statement code = adjustSwitchCaseCode(caseStatement.getCode(), rtype, scope,
-                        // GROOVY-9896: return if no default and last case lacks break
-                        defaultStatement == EmptyStatement.INSTANCE && !it.hasNext());
+                    // GROOVY-9896: return if no default and last case lacks break
+                    defaultStatement == EmptyStatement.INSTANCE && !it.hasNext());
                 if (doAdd) caseStatement.setCode(code);
             }
             defaultStatement = adjustSwitchCaseCode(defaultStatement, rtype, scope, true);
@@ -160,7 +150,7 @@ public class ReturnAdder {
             TryCatchStatement tryCatchFinally = (TryCatchStatement) statement;
             boolean[] missesReturn = new boolean[1];
             new ReturnAdder(returnStatement -> missesReturn[0] = true)
-                    .addReturnsIfNeeded(tryCatchFinally.getFinallyStatement(), rtype, scope);
+                .addReturnsIfNeeded(tryCatchFinally.getFinallyStatement(), rtype, scope);
             boolean hasFinally = !(tryCatchFinally.getFinallyStatement() instanceof EmptyStatement);
 
             // if there is no missing return in the finally block and the block exists
@@ -186,7 +176,8 @@ public class ReturnAdder {
                 listener.returnStatementAdded(returnStatement);
                 return returnStatement;
             } else {
-                List<Statement> statements = blockStatement.getStatements(); int lastIndex = statements.size() - 1;
+                List<Statement> statements = blockStatement.getStatements();
+                int lastIndex = statements.size() - 1;
                 Statement last = addReturnsIfNeeded(statements.get(lastIndex), rtype, blockStatement.getVariableScope());
                 if (doAdd) statements.set(lastIndex, last);
                 return blockStatement;
@@ -217,7 +208,7 @@ public class ReturnAdder {
                     // GROOVY-9880: some code structures will fall through
                     Statement lastStatement = last(block.getStatements());
                     if (!(lastStatement instanceof ReturnStatement
-                            || lastStatement instanceof ThrowStatement)) {
+                        || lastStatement instanceof ThrowStatement)) {
                         block.addStatement(breakStatement);
                     }
                 } else {
@@ -228,5 +219,13 @@ public class ReturnAdder {
             }
         }
         return statement;
+    }
+
+    @FunctionalInterface
+    public interface ReturnStatementListener {
+        /**
+         * Implement this method in order to be notified whenever a return statement is generated.
+         */
+        void returnStatementAdded(ReturnStatement returnStatement);
     }
 }

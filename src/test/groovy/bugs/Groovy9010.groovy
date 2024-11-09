@@ -28,7 +28,8 @@ import static groovy.test.GroovyAssert.shouldFail
 @CompileStatic
 final class Groovy9010 {
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testASTTestWithArrowInClosure() {
         assertScript '''\
             @groovy.transform.ASTTest(phase=SEMANTIC_ANALYSIS, value={ -> assert true })

@@ -16,13 +16,16 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 interface A {
     default String hello() {
         return 'hello'
     }
+
     default String a() {
         return 'a'
     }
+
     String b();
 }
 

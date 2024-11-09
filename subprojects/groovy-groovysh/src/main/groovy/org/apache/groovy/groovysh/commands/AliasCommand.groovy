@@ -28,19 +28,18 @@ import org.apache.groovy.groovysh.completion.CommandNameCompleter
  * The 'alias' command.
  */
 class AliasCommand
-    extends CommandSupport
-{
+    extends CommandSupport {
     public static final String COMMAND_NAME = ':alias'
 
     AliasCommand(final Groovysh shell) {
-        super(shell, COMMAND_NAME, ':a', )
+        super(shell, COMMAND_NAME, ':a',)
     }
 
     @Override
     protected List<Completer> createCompleters() {
         return [
-                new CommandNameCompleter(registry, true),
-                null
+            new CommandNameCompleter(registry, true),
+            null
         ]
     }
 
@@ -65,8 +64,7 @@ class AliasCommand
                 log.debug("Rebinding alias: $name")
 
                 registry.remove(command)
-            }
-            else {
+            } else {
                 fail("Can not rebind non-user aliased command: ${command.name}") // TODO: i18n
             }
         }
@@ -88,8 +86,7 @@ class AliasCommand
 }
 
 class AliasTargetProxyCommand
-    extends CommandSupport implements Command
-{
+    extends CommandSupport implements Command {
     private static int counter = 0
 
     final List<String> args

@@ -31,84 +31,95 @@ class BugsSTCTest extends StaticTypeCheckingTestCase {
             def foo(Closure cls) {}
             def bar() { foo { it / 2 } }
         ''',
-        'Cannot find matching method java.lang.Object#div(int)'
+            'Cannot find matching method java.lang.Object#div(int)'
     }
+
     void testShouldNotAllowDivByUntypedVariable() {
         shouldFailWithMessages '''
             def foo(Closure cls) {}
             def bar() { foo { 2 / it } }
         ''',
-        'Cannot find matching method java.lang.Integer#div(java.lang.Object)'
+            'Cannot find matching method java.lang.Integer#div(java.lang.Object)'
     }
+
     void testShouldNotAllowModOnUntypedVariable() {
         shouldFailWithMessages '''
             def foo(Closure cls) {}
             def bar() { foo { it.mod(2) } }
         ''',
-        'Cannot find matching method java.lang.Object#mod(int)'
+            'Cannot find matching method java.lang.Object#mod(int)'
     }
+
     void testShouldNotAllowModByUntypedVariable() {
         shouldFailWithMessages '''
             def foo(Closure cls) {}
             def bar() { foo { 2.mod(it) } }
         ''',
-        'Cannot find matching method java.lang.Integer#mod(java.lang.Object)'
+            'Cannot find matching method java.lang.Integer#mod(java.lang.Object)'
     }
+
     void testShouldNotAllowRemainderOnUntypedVariable() {
         shouldFailWithMessages '''
             def foo(Closure cls) {}
             def bar() { foo { it % 2 } }
         ''',
-        'Cannot find matching method java.lang.Object#remainder(int)'
+            'Cannot find matching method java.lang.Object#remainder(int)'
     }
+
     void testShouldNotAllowRemainderByUntypedVariable() {
         shouldFailWithMessages '''
             def foo(Closure cls) {}
             def bar() { foo { 2 % it } }
         ''',
-        'Cannot find matching method java.lang.Integer#remainder(java.lang.Object)'
+            'Cannot find matching method java.lang.Integer#remainder(java.lang.Object)'
     }
+
     void testShouldNotAllowMulOnUntypedVariable() {
         shouldFailWithMessages '''
             def foo(Closure cls) {}
             def bar() { foo { it * 2 } }
         ''',
-        'Cannot find matching method java.lang.Object#multiply(int)'
+            'Cannot find matching method java.lang.Object#multiply(int)'
     }
+
     void testShouldNotAllowMulByUntypedVariable() {
         shouldFailWithMessages '''
             def foo(Closure cls) {}
             def bar() { foo { 2 * it } }
         ''',
-        'Cannot find matching method java.lang.Integer#multiply(java.lang.Object)'
+            'Cannot find matching method java.lang.Integer#multiply(java.lang.Object)'
     }
+
     void testShouldNotAllowPlusOnUntypedVariable() {
         shouldFailWithMessages '''
             def foo(Closure cls) {}
             def bar() { foo { it + 2 } }
         ''',
-        'Cannot find matching method java.lang.Object#plus(int)'
+            'Cannot find matching method java.lang.Object#plus(int)'
     }
+
     void testShouldNotAllowPlusWithUntypedVariable() {
         shouldFailWithMessages '''
             def foo(Closure cls) {}
             def bar() { foo { 2 + it } }
         ''',
-        'Cannot find matching method java.lang.Integer#plus(java.lang.Object)'
+            'Cannot find matching method java.lang.Integer#plus(java.lang.Object)'
     }
+
     void testShouldNotAllowMinusOnUntypedVariable() {
         shouldFailWithMessages '''
             def foo(Closure cls) {}
             def bar() { foo { it - 2 } }
         ''',
-        'Cannot find matching method java.lang.Object#minus(int)'
+            'Cannot find matching method java.lang.Object#minus(int)'
     }
+
     void testShouldNotAllowMinusByUntypedVariable() {
         shouldFailWithMessages '''
             def foo(Closure cls) {}
             def bar() { foo { 2 - it } }
         ''',
-        'Cannot find matching method java.lang.Integer#minus(java.lang.Object)'
+            'Cannot find matching method java.lang.Integer#minus(java.lang.Object)'
     }
 
     // GROOVY-7929
@@ -123,7 +134,7 @@ class BugsSTCTest extends StaticTypeCheckingTestCase {
                 }
             }
         ''',
-        'Cannot find matching method (C & T)#x()'
+            'Cannot find matching method (C & T)#x()'
     }
 
     // GROOVY-10102
@@ -228,7 +239,7 @@ class BugsSTCTest extends StaticTypeCheckingTestCase {
             items.removeIf({a, b -> 1} as Comparator<?>)
             assert items
         ''',
-        'Cannot call L#removeIf(java.util.Comparator<? super java.lang.String>) with arguments [java.util.Comparator<?>]'
+            'Cannot call L#removeIf(java.util.Comparator<? super java.lang.String>) with arguments [java.util.Comparator<?>]'
     }
 
     void testGroovy5482ListsAndFlowTyping() {
@@ -255,7 +266,7 @@ class BugsSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             GroovyObject obj = 'foo'
         ''',
-        'Cannot assign value of type java.lang.String to variable of type groovy.lang.GroovyObject'
+            'Cannot assign value of type java.lang.String to variable of type groovy.lang.GroovyObject'
     }
 
     void testCastToGroovyObject() {
@@ -648,7 +659,7 @@ class BugsSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             Arrays.sort()
         ''',
-        'Reference to method is ambiguous. Cannot choose between '
+            'Reference to method is ambiguous. Cannot choose between '
     }
 
     // GROOVY-7711
@@ -880,7 +891,7 @@ class BugsSTCTest extends StaticTypeCheckingTestCase {
             class C { final foo }
             def set = C.&setFoo
         ''',
-        'Cannot find matching method C#setFoo'
+            'Cannot find matching method C#setFoo'
     }
 
     // GROOVY-9463
@@ -888,7 +899,7 @@ class BugsSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             def ptr = String.&toLowerCaseX
         ''',
-        'Cannot find matching method java.lang.String#toLowerCaseX.'
+            'Cannot find matching method java.lang.String#toLowerCaseX.'
     }
 
     // GROOVY-9938
@@ -1027,7 +1038,7 @@ class BugsSTCTest extends StaticTypeCheckingTestCase {
             String result = new C().m()
             assert result == 'it works'
         ''',
-        'Default method m() requires qualified super'
+            'Default method m() requires qualified super'
     }
 
     // GROOVY-8299, GROOVY-11256
@@ -1044,7 +1055,7 @@ class BugsSTCTest extends StaticTypeCheckingTestCase {
                 }
             }
         ''',
-        'Abstract method m() cannot be called directly'
+            'Abstract method m() cannot be called directly'
     }
 
     // GROOVY-8339, GROOVY-10109, GROOVY-10594
@@ -1088,7 +1099,7 @@ class BugsSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             float x = true // internal compiler error: Boolean cannot be cast to Number
         ''',
-        'Cannot assign value of type boolean to variable of type float'
+            'Cannot assign value of type boolean to variable of type float'
     }
 
     // GROOVY-10424
@@ -1145,7 +1156,7 @@ class BugsSTCTest extends StaticTypeCheckingTestCase {
             Class<String> c = String.class
             def x = c[0]
         ''',
-        'Cannot find matching method java.lang.Class#getAt(int) or static method java.lang.String#getAt(int)'
+            'Cannot find matching method java.lang.Class#getAt(int) or static method java.lang.String#getAt(int)'
     }
 
     // GROOVY-9999

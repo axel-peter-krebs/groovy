@@ -46,7 +46,7 @@ import java.lang.annotation.Target;
  *    }
  * }
  * </pre>
- *
+ * <p>
  * If the field is declared volatile then initialization will be synchronized using
  * the <a href="http://en.wikipedia.org/wiki/Double-checked_locking">double-checked locking</a> pattern as shown here:
  *
@@ -71,9 +71,9 @@ import java.lang.annotation.Target;
  *    }
  * }
  * </pre>
- *
+ * <p>
  * By default a field will be initialized by calling its default constructor.
- *
+ * <p>
  * If the field has an initial value expression then this expression will be used instead of calling the default constructor.
  * In particular, it is possible to use closure <code>{ ... } ()</code> syntax as follows:
  *
@@ -153,5 +153,5 @@ public @interface Lazy {
     /**
      * @return if field should be soft referenced instead of hard referenced
      */
-    boolean soft () default false;
+    boolean soft() default false;
 }

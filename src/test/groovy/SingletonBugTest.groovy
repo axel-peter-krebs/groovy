@@ -29,8 +29,8 @@ class SingletonBugTest extends GroovyTestCase {
         def y = SingletonBugPrivate.getInstance()
         assert x == y
 
-         SingletonBugPrivateSecond.getInstanceSecond() // shouldFail? - super class has single private constructor
-         SingletonBugPrivateSecond.doTestSecond()      // shouldFail? - super class has single private constructor
+        SingletonBugPrivateSecond.getInstanceSecond() // shouldFail? - super class has single private constructor
+        SingletonBugPrivateSecond.doTestSecond()      // shouldFail? - super class has single private constructor
     }
 
     public void testProtected() {

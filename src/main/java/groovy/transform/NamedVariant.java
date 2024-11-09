@@ -31,17 +31,17 @@ import java.lang.annotation.Target;
  * {@code Map} and may have more arguments. As such, it can be called
  * using Groovy's named-arg syntax. The original method/constructor is retained
  * and is called by the generated method/constructor.
- *
+ * <p>
  * One benefit of this approach is the potential for improved type checking.
  * The annotated "tuple" method/constructor can be type rich and will be checked
  * as such during normal compilation. The generated method/constructor using
  * the map argument will be named-argument friendly but the map also hides
  * type information. The generated method however contains no business logic
  * so the chance of errors is minimal.
- *
+ * <p>
  * Any arguments identified as named arguments will be supplied as part of the map.
  * Any additional arguments are supplied in the normal tuple style.
- *
+ * <p>
  * Named parameters are identified in one of three ways:
  * <ol>
  *     <li>Use one or more {@code @NamedParam} annotations to explicitly identify such parameters</li>
@@ -55,13 +55,13 @@ import java.lang.annotation.Target;
  *     </li>
  * </ol>
  * You can also mix and match the {@code @NamedParam} and {@code @NamedDelegate} annotations.
- *
+ * <p>
  * Named arguments will be supplied via the map with their property name (configurable via
  * annotation attributes within {@code @NamedParam}) being the key and value being the argument value.
  * For named delegates, any properties of the delegate can become map keys.
  * Duplicate keys across delegate properties or named parameters are not allowed.
  * The type of delegate parameters must be compatible with Groovy's {@code as} cast operation from a {@code Map}.
- *
+ * <p>
  * Here is an example using implicit named parameters.
  * <pre class="groovyTestCase">
  * import groovy.transform.*
@@ -91,7 +91,7 @@ import java.lang.annotation.Target;
  * assert result.toString() == 'Color(r:12, g:12, b:42)'
  * </pre>
  * You could also explicitly annotate the {@code shade} argument with the {@code @NamedDelegate} annotation if you wanted.
- *
+ * <p>
  * The generated method will be something like this:
  * <pre>
  * String foo(Map args) {

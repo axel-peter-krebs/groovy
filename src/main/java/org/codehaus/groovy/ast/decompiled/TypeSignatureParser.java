@@ -33,6 +33,8 @@ import static org.codehaus.groovy.control.CompilerConfiguration.ASM_API_VERSION;
 abstract class TypeSignatureParser extends SignatureVisitor {
 
     private final AsmReferenceResolver resolver;
+    private final List<GenericsType> arguments = new ArrayList<>();
+    private String baseName;
 
     public TypeSignatureParser(final AsmReferenceResolver resolver) {
         super(ASM_API_VERSION);
@@ -49,10 +51,23 @@ abstract class TypeSignatureParser extends SignatureVisitor {
         return genericType;
     }
 
-    abstract void finished(ClassNode result);
+    private static GenericsType createWildcard(final ClassNode[] upper, final ClassNode lower) {
+        ClassNode base = ClassHelper.makeWithoutCaching("?");
+        base.setRedirect(ClassHelper.OBJECT_TYPE);
+        GenericsType t = new GenericsType(base, upper, lower);
+        t.setWildcard(true);
+        return t;
+    }
 
-    private String baseName;
-    private final List<GenericsType> arguments = new ArrayList<>();
+    private static boolean isNotParameterized(final ClassNode cn) {
+        // DecompiledClassNode may not have generics initialized
+        if (cn instanceof DecompiledClassNode) {
+            return !((DecompiledClassNode) cn).isParameterized();
+        }
+        return (cn.getGenericsTypes() == null);
+    }
+
+    abstract void finished(ClassNode result);
 
     @Override
     public void visitTypeVariable(final String name) {
@@ -102,6 +117,8 @@ abstract class TypeSignatureParser extends SignatureVisitor {
         };
     }
 
+    //--------------------------------------------------------------------------
+
     @Override
     public void visitInnerClassType(final String name) {
         baseName += "$" + name;
@@ -120,7 +137,8 @@ abstract class TypeSignatureParser extends SignatureVisitor {
             } else {
                 try {
                     // GROOVY-10153, GROOVY-10651, GROOVY-10671: "?" or "? super T" (see ResolveVisitor#resolveWildcardBounding)
-                    for (int i = 0, n = arguments.size(); i < n; i += 1) { GenericsType argument = arguments.get(i);
+                    for (int i = 0, n = arguments.size(); i < n; i += 1) {
+                        GenericsType argument = arguments.get(i);
                         if (!argument.isWildcard() || argument.getUpperBounds() != null) continue; //
                         ClassNode[] implicitBounds = baseType.getGenericsTypes()[i].getUpperBounds();
                         if (implicitBounds != null && !ClassHelper.isObjectType(implicitBounds[0])) {
@@ -134,23 +152,5 @@ abstract class TypeSignatureParser extends SignatureVisitor {
             }
             finished(parameterizedType);
         }
-    }
-
-    //--------------------------------------------------------------------------
-
-    private static GenericsType createWildcard(final ClassNode[] upper, final ClassNode lower) {
-        ClassNode base = ClassHelper.makeWithoutCaching("?");
-        base.setRedirect(ClassHelper.OBJECT_TYPE);
-        GenericsType t = new GenericsType(base, upper, lower);
-        t.setWildcard(true);
-        return t;
-    }
-
-    private static boolean isNotParameterized(final ClassNode cn) {
-        // DecompiledClassNode may not have generics initialized
-        if (cn instanceof DecompiledClassNode) {
-            return !((DecompiledClassNode) cn).isParameterized();
-        }
-        return (cn.getGenericsTypes() == null);
     }
 }

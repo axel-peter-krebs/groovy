@@ -18,8 +18,6 @@
  */
 
 
-
-
 package org.codehaus.groovy.transform.traitx
 
 import groovy.test.GroovyTestCase

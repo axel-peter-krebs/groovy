@@ -36,78 +36,6 @@ public class NumberMathModificationInfo {
         Collections.addAll(NAMES, "plus", "minus", "multiply", "div", "compareTo", "or", "and", "xor", "intdiv", "mod", "remainder", "leftShift", "rightShift", "rightShiftUnsigned");
     }
 
-    private NumberMathModificationInfo() { }
-
-    public void checkIfStdMethod(MetaMethod method) {
-        if (method.getClass() != NewInstanceMetaMethod.class) {
-            String name = method.getName();
-
-            if (method.getParameterTypes().length != 1)
-                return;
-
-            if (!method.getParameterTypes()[0].isNumber && method.getParameterTypes()[0].getTheClass() != Object.class)
-                return;
-
-            if (!NAMES.contains(name))
-                return;
-
-            checkNumberOps(name, method.getDeclaringClass().getTheClass());
-        }
-    }
-
-    private void checkNumberOps(String name, Class klazz) {
-        if ("plus".equals(name)) {
-            doCheckNumberOps(klazz, e -> byte_plus = true, e -> short_plus = true, e -> int_plus = true, e -> long_plus = true, e -> float_plus = true, e -> double_plus = true);
-        } else if ("minus".equals(name)) {
-            doCheckNumberOps(klazz, e -> byte_minus = true, e -> short_minus = true, e -> int_minus = true, e -> long_minus = true, e -> float_minus = true, e -> double_minus = true);
-        } else if ("multiply".equals(name)) {
-            doCheckNumberOps(klazz, e -> byte_multiply = true, e -> short_multiply = true, e -> int_multiply = true, e -> long_multiply = true, e -> float_multiply = true, e -> double_multiply = true);
-        } else if ("div".equals(name)) {
-            doCheckNumberOps(klazz, e -> byte_div = true, e -> short_div = true, e -> int_div = true, e -> long_div = true, e -> float_div = true, e -> double_div = true);
-        } else if ("or".equals(name)) {
-            doCheckNumberOps(klazz, e -> byte_or = true, e -> short_or = true, e -> int_or = true, e -> long_or = true, e -> float_or = true, e -> double_or = true);
-        } else if ("and".equals(name)) {
-            doCheckNumberOps(klazz, e -> byte_and = true, e -> short_and = true, e -> int_and = true, e -> long_and = true, e -> float_and = true, e -> double_and = true);
-        } else if ("xor".equals(name)) {
-            doCheckNumberOps(klazz, e -> byte_xor = true, e -> short_xor = true, e -> int_xor = true, e -> long_xor = true, e -> float_xor = true, e -> double_xor = true);
-        } else if ("intdiv".equals(name)) {
-            doCheckNumberOps(klazz, e -> byte_intdiv = true, e -> short_intdiv = true, e -> int_intdiv = true, e -> long_intdiv = true, e -> float_intdiv = true, e -> double_intdiv = true);
-        } else if ("remainder".equals(name)) {
-            doCheckNumberOps(klazz, e -> byte_remainder = true, e -> short_remainder = true, e -> int_remainder = true, e -> long_remainder = true, e -> float_remainder = true, e -> double_remainder = true);
-        } else if ("mod".equals(name)) {
-            doCheckNumberOps(klazz, e -> byte_mod = true, e -> short_mod = true, e -> int_mod = true, e -> long_mod = true, e -> float_mod = true, e -> double_mod = true);
-        } else if ("leftShift".equals(name)) {
-            doCheckNumberOps(klazz, e -> byte_leftShift = true, e -> short_leftShift = true, e -> int_leftShift = true, e -> long_leftShift = true, e -> float_leftShift = true, e -> double_leftShift = true);
-        } else if ("rightShift".equals(name)) {
-            doCheckNumberOps(klazz, e -> byte_rightShift = true, e -> short_rightShift = true, e -> int_rightShift = true, e -> long_rightShift = true, e -> float_rightShift = true, e -> double_rightShift = true);
-        } else if ("rightShiftUnsigned".equals(name)) {
-            doCheckNumberOps(klazz, e -> byte_rightShiftUnsigned = true, e -> short_rightShiftUnsigned = true, e -> int_rightShiftUnsigned = true, e -> long_rightShiftUnsigned = true, e -> float_rightShiftUnsigned = true, e -> double_rightShiftUnsigned = true);
-        }
-    }
-
-    private void doCheckNumberOps(Class klazz, Consumer<Class> byteConsumer, Consumer<Class> shortConsumer, Consumer<Class> intConsumer, Consumer<Class> longConsumer, Consumer<Class> floatConsumer, Consumer<Class> doubleConsumer) {
-        if (klazz == Byte.class) {
-            byteConsumer.accept(klazz);
-        } else if (klazz == Short.class) {
-            shortConsumer.accept(klazz);
-        } else if (klazz == Integer.class) {
-            intConsumer.accept(klazz);
-        } else if (klazz == Long.class) {
-            longConsumer.accept(klazz);
-        } else if (klazz == Float.class) {
-            floatConsumer.accept(klazz);
-        } else if (klazz == Double.class) {
-            doubleConsumer.accept(klazz);
-        } else if (klazz == Object.class) {
-            byteConsumer.accept(klazz);
-            shortConsumer.accept(klazz);
-            intConsumer.accept(klazz);
-            longConsumer.accept(klazz);
-            floatConsumer.accept(klazz);
-            doubleConsumer.accept(klazz);
-        }
-    }
-
     public boolean byte_plus;
     public boolean short_plus;
     public boolean int_plus;
@@ -186,6 +114,8 @@ public class NumberMathModificationInfo {
     public boolean long_rightShiftUnsigned;
     public boolean float_rightShiftUnsigned;
     public boolean double_rightShiftUnsigned;
+    private NumberMathModificationInfo() {
+    }
 
     public static int plus(byte op1, byte op2) {
         if (instance.byte_plus) {
@@ -3641,5 +3571,75 @@ public class NumberMathModificationInfo {
 
     private static long rightShiftUnsignedSlow(long op1, long op2) {
         return ((Number) InvokerHelper.invokeMethod(op1, "rightShiftUnsigned", op2)).longValue();
+    }
+
+    public void checkIfStdMethod(MetaMethod method) {
+        if (method.getClass() != NewInstanceMetaMethod.class) {
+            String name = method.getName();
+
+            if (method.getParameterTypes().length != 1)
+                return;
+
+            if (!method.getParameterTypes()[0].isNumber && method.getParameterTypes()[0].getTheClass() != Object.class)
+                return;
+
+            if (!NAMES.contains(name))
+                return;
+
+            checkNumberOps(name, method.getDeclaringClass().getTheClass());
+        }
+    }
+
+    private void checkNumberOps(String name, Class klazz) {
+        if ("plus".equals(name)) {
+            doCheckNumberOps(klazz, e -> byte_plus = true, e -> short_plus = true, e -> int_plus = true, e -> long_plus = true, e -> float_plus = true, e -> double_plus = true);
+        } else if ("minus".equals(name)) {
+            doCheckNumberOps(klazz, e -> byte_minus = true, e -> short_minus = true, e -> int_minus = true, e -> long_minus = true, e -> float_minus = true, e -> double_minus = true);
+        } else if ("multiply".equals(name)) {
+            doCheckNumberOps(klazz, e -> byte_multiply = true, e -> short_multiply = true, e -> int_multiply = true, e -> long_multiply = true, e -> float_multiply = true, e -> double_multiply = true);
+        } else if ("div".equals(name)) {
+            doCheckNumberOps(klazz, e -> byte_div = true, e -> short_div = true, e -> int_div = true, e -> long_div = true, e -> float_div = true, e -> double_div = true);
+        } else if ("or".equals(name)) {
+            doCheckNumberOps(klazz, e -> byte_or = true, e -> short_or = true, e -> int_or = true, e -> long_or = true, e -> float_or = true, e -> double_or = true);
+        } else if ("and".equals(name)) {
+            doCheckNumberOps(klazz, e -> byte_and = true, e -> short_and = true, e -> int_and = true, e -> long_and = true, e -> float_and = true, e -> double_and = true);
+        } else if ("xor".equals(name)) {
+            doCheckNumberOps(klazz, e -> byte_xor = true, e -> short_xor = true, e -> int_xor = true, e -> long_xor = true, e -> float_xor = true, e -> double_xor = true);
+        } else if ("intdiv".equals(name)) {
+            doCheckNumberOps(klazz, e -> byte_intdiv = true, e -> short_intdiv = true, e -> int_intdiv = true, e -> long_intdiv = true, e -> float_intdiv = true, e -> double_intdiv = true);
+        } else if ("remainder".equals(name)) {
+            doCheckNumberOps(klazz, e -> byte_remainder = true, e -> short_remainder = true, e -> int_remainder = true, e -> long_remainder = true, e -> float_remainder = true, e -> double_remainder = true);
+        } else if ("mod".equals(name)) {
+            doCheckNumberOps(klazz, e -> byte_mod = true, e -> short_mod = true, e -> int_mod = true, e -> long_mod = true, e -> float_mod = true, e -> double_mod = true);
+        } else if ("leftShift".equals(name)) {
+            doCheckNumberOps(klazz, e -> byte_leftShift = true, e -> short_leftShift = true, e -> int_leftShift = true, e -> long_leftShift = true, e -> float_leftShift = true, e -> double_leftShift = true);
+        } else if ("rightShift".equals(name)) {
+            doCheckNumberOps(klazz, e -> byte_rightShift = true, e -> short_rightShift = true, e -> int_rightShift = true, e -> long_rightShift = true, e -> float_rightShift = true, e -> double_rightShift = true);
+        } else if ("rightShiftUnsigned".equals(name)) {
+            doCheckNumberOps(klazz, e -> byte_rightShiftUnsigned = true, e -> short_rightShiftUnsigned = true, e -> int_rightShiftUnsigned = true, e -> long_rightShiftUnsigned = true, e -> float_rightShiftUnsigned = true, e -> double_rightShiftUnsigned = true);
+        }
+    }
+
+    private void doCheckNumberOps(Class klazz, Consumer<Class> byteConsumer, Consumer<Class> shortConsumer, Consumer<Class> intConsumer, Consumer<Class> longConsumer, Consumer<Class> floatConsumer, Consumer<Class> doubleConsumer) {
+        if (klazz == Byte.class) {
+            byteConsumer.accept(klazz);
+        } else if (klazz == Short.class) {
+            shortConsumer.accept(klazz);
+        } else if (klazz == Integer.class) {
+            intConsumer.accept(klazz);
+        } else if (klazz == Long.class) {
+            longConsumer.accept(klazz);
+        } else if (klazz == Float.class) {
+            floatConsumer.accept(klazz);
+        } else if (klazz == Double.class) {
+            doubleConsumer.accept(klazz);
+        } else if (klazz == Object.class) {
+            byteConsumer.accept(klazz);
+            shortConsumer.accept(klazz);
+            intConsumer.accept(klazz);
+            longConsumer.accept(klazz);
+            floatConsumer.accept(klazz);
+            doubleConsumer.accept(klazz);
+        }
     }
 }

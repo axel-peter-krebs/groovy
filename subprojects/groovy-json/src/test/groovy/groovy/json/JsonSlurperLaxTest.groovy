@@ -44,13 +44,13 @@ class JsonSlurperLaxTest extends JsonSlurperTest {
         shouldFail { parser.parseText('{"a"}') }
         parser.parseText('{"a":true')
         parser.parseText('{"a":}')
-        shouldFail {parser.parseText('{"a":"b":"c"}') }
+        shouldFail { parser.parseText('{"a":"b":"c"}') }
         parser.parseText('{:true}')
     }
 
     void testArrayOfArrayWithSimpleValues() {
         assert parser.parseText('[1, 2, 3, ["a", "b", "c", [true, false], "d"], 4]') ==
-                [1, 2, 3, ["a", "b", "c", [true, false], "d"], 4]
+            [1, 2, 3, ["a", "b", "c", [true, false], "d"], 4]
 
         shouldFail(JsonException) { parser.parseText('[') }
         parser.parseText('[,]')

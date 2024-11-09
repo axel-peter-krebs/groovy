@@ -95,9 +95,8 @@ public class AnnotationClosureVisitor extends BaseVisitor implements ASTNodeMeta
 
     private static final String POSTCONDITION_TYPE_NAME = Postcondition.class.getName();
     private static final ClassNode FIELD_VALUES = ClassHelper.makeCached(FieldValues.class);
-
-    private ClassNode classNode;
     private final ContractClosureWriter contractClosureWriter = new ContractClosureWriter();
+    private ClassNode classNode;
 
     public AnnotationClosureVisitor(final SourceUnit sourceUnit, final ReaderSource source) {
         super(sourceUnit, source);
@@ -107,7 +106,8 @@ public class AnnotationClosureVisitor extends BaseVisitor implements ASTNodeMeta
 
     @Override
     public void visitClass(ClassNode classNode) {
-        if (classNode == null || !(CandidateChecks.isContractsCandidate(classNode) || CandidateChecks.isInterfaceContractsCandidate(classNode))) return;
+        if (classNode == null || !(CandidateChecks.isContractsCandidate(classNode) || CandidateChecks.isInterfaceContractsCandidate(classNode)))
+            return;
 
         this.classNode = classNode;
 
@@ -125,9 +125,9 @@ public class AnnotationClosureVisitor extends BaseVisitor implements ASTNodeMeta
                 if (booleanExpressions == null || booleanExpressions.isEmpty()) continue;
 
                 BlockStatement newClosureBlockStatement = TryCatchBlockGenerator.generateTryCatchBlock(
-                        ClassHelper.makeWithoutCaching(ClassInvariantViolation.class),
-                        "<" + annotationNode.getClassNode().getName() + "> " + classNode.getName() + " \n\n",
-                        AssertStatementCreationUtility.getAssertionStatements(booleanExpressions)
+                    ClassHelper.makeWithoutCaching(ClassInvariantViolation.class),
+                    "<" + annotationNode.getClassNode().getName() + "> " + classNode.getName() + " \n\n",
+                    AssertStatementCreationUtility.getAssertionStatements(booleanExpressions)
                 );
                 newClosureBlockStatement.setSourcePosition(closureExpression.getCode());
 
@@ -141,9 +141,9 @@ public class AnnotationClosureVisitor extends BaseVisitor implements ASTNodeMeta
                 classNode.getModule().addClass(closureClassNode);
 
                 BlockStatement block = TryCatchBlockGenerator.generateTryCatchBlockForInlineMode(
-                        ClassHelper.makeWithoutCaching(ClassInvariantViolation.class),
-                        "<" + annotationNode.getClassNode().getName() + "> " + classNode.getName() + " \n\n",
-                        AssertStatementCreationUtility.getAssertionStatements(booleanExpressions)
+                    ClassHelper.makeWithoutCaching(ClassInvariantViolation.class),
+                    "<" + annotationNode.getClassNode().getName() + "> " + classNode.getName() + " \n\n",
+                    AssertStatementCreationUtility.getAssertionStatements(booleanExpressions)
                 );
                 block.setNodeMetaData(META_DATA_USE_EXECUTION_TRACKER, validator.isMethodCalls());
 
@@ -168,7 +168,8 @@ public class AnnotationClosureVisitor extends BaseVisitor implements ASTNodeMeta
 
     @Override
     public void visitConstructorOrMethod(MethodNode methodNode, boolean isConstructor) {
-        if (methodNode.getNodeMetaData(PROCESSED) != null || !(CandidateChecks.couldBeContractElementMethodNode(classNode, methodNode) || CandidateChecks.isPreconditionCandidate(classNode, methodNode))) return;
+        if (methodNode.getNodeMetaData(PROCESSED) != null || !(CandidateChecks.couldBeContractElementMethodNode(classNode, methodNode) || CandidateChecks.isPreconditionCandidate(classNode, methodNode)))
+            return;
 
         List<AnnotationNode> annotationNodes = AnnotationUtils.hasMetaAnnotations(methodNode, ContractElement.class.getName());
         for (AnnotationNode annotationNode : annotationNodes) {
@@ -205,9 +206,9 @@ public class AnnotationClosureVisitor extends BaseVisitor implements ASTNodeMeta
         boolean isPostcondition = AnnotationUtils.hasAnnotationOfType(annotationNode.getClassNode(), POSTCONDITION_TYPE_NAME);
 
         BlockStatement newClosureBlockStatement = TryCatchBlockGenerator.generateTryCatchBlock(
-                isPostcondition ? ClassHelper.makeWithoutCaching(PostconditionViolation.class) : ClassHelper.makeWithoutCaching(PreconditionViolation.class),
-                "<" + annotationNode.getClassNode().getName() + "> " + classNode.getName() + "." + methodNode.getTypeDescriptor() + " \n\n",
-                AssertStatementCreationUtility.getAssertionStatements(booleanExpressions)
+            isPostcondition ? ClassHelper.makeWithoutCaching(PostconditionViolation.class) : ClassHelper.makeWithoutCaching(PreconditionViolation.class),
+            "<" + annotationNode.getClassNode().getName() + "> " + classNode.getName() + "." + methodNode.getTypeDescriptor() + " \n\n",
+            AssertStatementCreationUtility.getAssertionStatements(booleanExpressions)
         );
         newClosureBlockStatement.setSourcePosition(closureExpression.getCode());
 
@@ -221,9 +222,9 @@ public class AnnotationClosureVisitor extends BaseVisitor implements ASTNodeMeta
         classNode.getModule().addClass(closureClassNode);
 
         BlockStatement block = TryCatchBlockGenerator.generateTryCatchBlockForInlineMode(
-                isPostcondition ? ClassHelper.makeWithoutCaching(PostconditionViolation.class) : ClassHelper.makeWithoutCaching(PreconditionViolation.class),
-                "<" + annotationNode.getClassNode().getName() + "> " + classNode.getName() + "." + methodNode.getTypeDescriptor() + " \n\n",
-                AssertStatementCreationUtility.getAssertionStatements(booleanExpressions)
+            isPostcondition ? ClassHelper.makeWithoutCaching(PostconditionViolation.class) : ClassHelper.makeWithoutCaching(PreconditionViolation.class),
+            "<" + annotationNode.getClassNode().getName() + "> " + classNode.getName() + "." + methodNode.getTypeDescriptor() + " \n\n",
+            AssertStatementCreationUtility.getAssertionStatements(booleanExpressions)
         );
         block.setNodeMetaData(META_DATA_USE_EXECUTION_TRACKER, validator.isMethodCalls());
 
@@ -307,7 +308,7 @@ public class AnnotationClosureVisitor extends BaseVisitor implements ASTNodeMeta
             }
 
             if (expression.getCode() instanceof BlockStatement &&
-                    ((BlockStatement) expression.getCode()).getStatements().isEmpty()) {
+                ((BlockStatement) expression.getCode()).getStatements().isEmpty()) {
                 addError("[groovy-contracts] Annotation does not contain any expressions (e.g. use '@Requires({ argument1 })').", expression);
             }
 

@@ -16,15 +16,15 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-for (i in someList) {}
+for (i in someList) {
+}
 
 
 for (i in someList) {
     break;
 }
 
-for (i in someList)
-{
+for (i in someList) {
     break;
 }
 
@@ -45,14 +45,14 @@ for (@Test2 String i in someList) {
 }
 
 
-for (int i : someList) {}
+for (int i : someList) {
+}
 
 for (int i : someList) {
     break;
 }
 
-for (int i : someList)
-{
+for (int i : someList) {
     break;
 }
 

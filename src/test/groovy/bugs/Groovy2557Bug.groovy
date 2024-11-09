@@ -20,7 +20,7 @@ package groovy.bugs
 
 import groovy.test.GroovyTestCase
 
-class Groovy2557Bug extends GroovyTestCase{
+class Groovy2557Bug extends GroovyTestCase {
     void testArray2ListCoercion() {
         String[] args = ['a', 'b']
         List list = args as List

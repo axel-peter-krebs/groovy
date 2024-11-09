@@ -35,7 +35,7 @@ public class BoxFactory extends ComponentFactory {
         if (attributes.containsKey("axis")) {
             Object o = attributes.remove("axis");
             if (o instanceof Number) {
-                axis = ((Number)o).intValue();
+                axis = ((Number) o).intValue();
             }
         }
         return new Box(axis);

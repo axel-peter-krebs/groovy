@@ -42,12 +42,12 @@ public class ScriptCompilationExecuter {
         Set<File> sources = new HashSet<>();
         for (File sourceDirectory : sourceDirectories) {
             Files.walk(sourceDirectory.toPath())
-                    .filter(path -> {
-                        File file = path.toFile();
-                        return file.isFile()
-                                && file.getName().endsWith(".groovy");
-                    })
-                    .forEach(path -> sources.add(path.toFile()));
+                .filter(path -> {
+                    File file = path.toFile();
+                    return file.isFile()
+                        && file.getName().endsWith(".groovy");
+                })
+                .forEach(path -> sources.add(path.toFile()));
         }
         this.sources = sources.toArray(new File[sources.size()]);
         System.out.println("sources = " + sources.size());

@@ -61,7 +61,7 @@ class OptionAccessor {
     }
 
     private <T> T[] getTypedValuesFromName(String optionName, Class<T> compType) {
-        CliOption option = commandLine.options.find{ it.longOpt == optionName }
+        CliOption option = commandLine.options.find { it.longOpt == optionName }
         T[] result = null
         if (option) {
             int count = 0
@@ -124,7 +124,7 @@ class OptionAccessor {
 
     def getProperty(String name) {
         if (!savedTypeOptions.containsKey(name)) {
-            def alt = savedTypeOptions.find{ it.value.opt == name }
+            def alt = savedTypeOptions.find { it.value.opt == name }
             if (alt) name = alt.key
         }
         def methodname = 'getOptionValue'
@@ -145,7 +145,7 @@ class OptionAccessor {
         def result = InvokerHelper.getMetaClass(commandLine).invokeMethod(commandLine, methodname, name)
         if (result != null) {
             if (result instanceof String[]) {
-                result = result.collect{ type ? getTypedValue(type.isArray() ? type.componentType : type, name, it) : it }
+                result = result.collect { type ? getTypedValue(type.isArray() ? type.componentType : type, name, it) : it }
             } else {
                 if (type) result = getTypedValue(type, name, result)
             }

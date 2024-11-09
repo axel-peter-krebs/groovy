@@ -45,14 +45,14 @@ public final class DateTimeStaticExtensions {
 
     /**
      * Parse text into a {@link java.time.LocalDate} using the provided pattern.
-     *
+     * <p>
      * Note: the order of parameters differs from versions of this method for the legacy Date class.
      *
      * @param type    placeholder variable used by Groovy categories; ignored for default static methods
      * @param text    String to be parsed to create the date instance
      * @param pattern pattern used to parse the text
      * @return a LocalDate representing the parsed text
-     * @throws java.lang.IllegalArgumentException if the pattern is invalid
+     * @throws java.lang.IllegalArgumentException      if the pattern is invalid
      * @throws java.time.format.DateTimeParseException if the text cannot be parsed
      * @see java.time.format.DateTimeFormatter
      * @see java.time.LocalDate#parse(java.lang.CharSequence, java.time.format.DateTimeFormatter)
@@ -64,14 +64,14 @@ public final class DateTimeStaticExtensions {
 
     /**
      * Parse text into a {@link java.time.LocalDateTime} using the provided pattern.
-     *
+     * <p>
      * Note: the order of parameters differs from versions of this method for the legacy Date class.
      *
      * @param type    placeholder variable used by Groovy categories; ignored for default static methods
      * @param text    String to be parsed to create the date instance
      * @param pattern pattern used to parse the text
      * @return a LocalDateTime representing the parsed text
-     * @throws java.lang.IllegalArgumentException if the pattern is invalid
+     * @throws java.lang.IllegalArgumentException      if the pattern is invalid
      * @throws java.time.format.DateTimeParseException if the text cannot be parsed
      * @see java.time.format.DateTimeFormatter
      * @see java.time.LocalDateTime#parse(java.lang.CharSequence, java.time.format.DateTimeFormatter)
@@ -88,7 +88,7 @@ public final class DateTimeStaticExtensions {
      * @param text    String to be parsed to create the date instance
      * @param pattern pattern used to parse the text
      * @return a LocalTime representing the parsed text
-     * @throws java.lang.IllegalArgumentException if the pattern is invalid
+     * @throws java.lang.IllegalArgumentException      if the pattern is invalid
      * @throws java.time.format.DateTimeParseException if the text cannot be parsed
      * @see java.time.format.DateTimeFormatter
      * @see java.time.LocalTime#parse(java.lang.CharSequence, java.time.format.DateTimeFormatter)
@@ -105,7 +105,7 @@ public final class DateTimeStaticExtensions {
      * @param text    String to be parsed to create the date instance
      * @param pattern pattern used to parse the text
      * @return a MonthDay representing the parsed text
-     * @throws java.lang.IllegalArgumentException if the pattern is invalid
+     * @throws java.lang.IllegalArgumentException      if the pattern is invalid
      * @throws java.time.format.DateTimeParseException if the text cannot be parsed
      * @see java.time.format.DateTimeFormatter
      * @see java.time.MonthDay#parse(java.lang.CharSequence, java.time.format.DateTimeFormatter)
@@ -122,7 +122,7 @@ public final class DateTimeStaticExtensions {
      * @param text    String to be parsed to create the date instance
      * @param pattern pattern used to parse the text
      * @return an OffsetDateTime representing the parsed text
-     * @throws java.lang.IllegalArgumentException if the pattern is invalid
+     * @throws java.lang.IllegalArgumentException      if the pattern is invalid
      * @throws java.time.format.DateTimeParseException if the text cannot be parsed
      * @see java.time.format.DateTimeFormatter
      * @see java.time.OffsetDateTime#parse(java.lang.CharSequence, java.time.format.DateTimeFormatter)
@@ -139,7 +139,7 @@ public final class DateTimeStaticExtensions {
      * @param text    String to be parsed to create the date instance
      * @param pattern pattern used to parse the text
      * @return an OffsetTime representing the parsed text
-     * @throws java.lang.IllegalArgumentException if the pattern is invalid
+     * @throws java.lang.IllegalArgumentException      if the pattern is invalid
      * @throws java.time.format.DateTimeParseException if the text cannot be parsed
      * @see java.time.format.DateTimeFormatter
      * @see java.time.OffsetTime#parse(java.lang.CharSequence, java.time.format.DateTimeFormatter)
@@ -156,7 +156,7 @@ public final class DateTimeStaticExtensions {
      * @param text    String to be parsed to create the date instance
      * @param pattern pattern used to parse the text
      * @return a Year representing the parsed text
-     * @throws java.lang.IllegalArgumentException if the pattern is invalid
+     * @throws java.lang.IllegalArgumentException      if the pattern is invalid
      * @throws java.time.format.DateTimeParseException if the text cannot be parsed
      * @see java.time.format.DateTimeFormatter
      * @see java.time.Year#parse(java.lang.CharSequence, java.time.format.DateTimeFormatter)
@@ -173,7 +173,7 @@ public final class DateTimeStaticExtensions {
      * @param text    String to be parsed to create the date instance
      * @param pattern pattern used to parse the text
      * @return a YearMonth representing the parsed text
-     * @throws java.lang.IllegalArgumentException if the pattern is invalid
+     * @throws java.lang.IllegalArgumentException      if the pattern is invalid
      * @throws java.time.format.DateTimeParseException if the text cannot be parsed
      * @see java.time.format.DateTimeFormatter
      * @see java.time.YearMonth#parse(java.lang.CharSequence, java.time.format.DateTimeFormatter)
@@ -190,7 +190,7 @@ public final class DateTimeStaticExtensions {
      * @param text    String to be parsed to create the date instance
      * @param pattern pattern used to parse the text
      * @return a ZonedDateTime representing the parsed text
-     * @throws java.lang.IllegalArgumentException if the pattern is invalid
+     * @throws java.lang.IllegalArgumentException      if the pattern is invalid
      * @throws java.time.format.DateTimeParseException if the text cannot be parsed
      * @see java.time.format.DateTimeFormatter
      * @see java.time.ZonedDateTime#parse(java.lang.CharSequence, java.time.format.DateTimeFormatter)
@@ -228,8 +228,8 @@ public final class DateTimeStaticExtensions {
         return Period.between(
                 DateTimeExtensions.leftShift(startInclusive, now),
                 DateTimeExtensions.leftShift(endExclusive, now))
-                .withDays(0)
-                .withMonths(0);
+            .withDays(0)
+            .withMonths(0);
     }
 
     /**
@@ -248,7 +248,7 @@ public final class DateTimeStaticExtensions {
         return Period.between(
                 DateTimeExtensions.leftShift(startInclusive, dayOfMonth),
                 DateTimeExtensions.leftShift(endExclusive, dayOfMonth))
-                .withDays(0);
+            .withDays(0);
     }
 
 }

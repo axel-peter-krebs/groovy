@@ -24,19 +24,9 @@ import org.codehaus.groovy.runtime.callsite.CallSite;
 import org.codehaus.groovy.runtime.typehandling.NumberMath;
 
 public final class NumberNumberDiv extends NumberNumberMetaMethod {
-    @Override
-    public String getName() {
-        return "div";
-    }
-
-    @Override
-    public Object invoke(Object object, Object[] arguments) {
-        return NumberMath.divide((Number) object, (Number) arguments[0]);
-    }
-
     /**
      * Divide two Numbers.
-     *
+     * <p>
      * Note: Method name different from 'divide' to avoid collision with BigInteger method that has
      * different semantics.  We want a BigDecimal result rather than a BigInteger.
      *
@@ -48,6 +38,15 @@ public final class NumberNumberDiv extends NumberNumberMetaMethod {
         return NumberMath.divide(left, right);
     }
 
+    @Override
+    public String getName() {
+        return "div";
+    }
+
+    @Override
+    public Object invoke(Object object, Object[] arguments) {
+        return NumberMath.divide((Number) object, (Number) arguments[0]);
+    }
 
     @Override
     public CallSite createIntegerInteger(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args) {
@@ -145,8 +144,7 @@ public final class NumberNumberDiv extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Integer) receiver).doubleValue() / ((Float) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -163,8 +161,7 @@ public final class NumberNumberDiv extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Integer) receiver / (Double) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -181,8 +178,7 @@ public final class NumberNumberDiv extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Long) receiver).doubleValue() / ((Float) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -199,8 +195,7 @@ public final class NumberNumberDiv extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Long) receiver).doubleValue() / (Double) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -217,8 +212,7 @@ public final class NumberNumberDiv extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Float) receiver).doubleValue() / ((Integer) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -235,8 +229,7 @@ public final class NumberNumberDiv extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Float) receiver).doubleValue() / ((Long) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -253,8 +246,7 @@ public final class NumberNumberDiv extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Float) receiver).doubleValue() / ((Float) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -280,8 +272,7 @@ public final class NumberNumberDiv extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Float) receiver).doubleValue() / (Double) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -298,8 +289,7 @@ public final class NumberNumberDiv extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Double) receiver / ((Integer) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -325,8 +315,7 @@ public final class NumberNumberDiv extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Double) receiver / ((Long) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -343,8 +332,7 @@ public final class NumberNumberDiv extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Double) receiver / ((Float) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -361,8 +349,7 @@ public final class NumberNumberDiv extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Double) receiver / (Double) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -375,11 +362,11 @@ public final class NumberNumberDiv extends NumberNumberMetaMethod {
 
         @Override
         public final Object invoke(Object receiver, Object[] args) {
-            return math.divideImpl((Number)receiver,(Number)args[0]);
+            return math.divideImpl((Number) receiver, (Number) args[0]);
         }
 
         public final Object invoke(Object receiver, Object arg) {
-            return math.divideImpl((Number)receiver,(Number)arg);
+            return math.divideImpl((Number) receiver, (Number) arg);
         }
     }
 }

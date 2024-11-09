@@ -71,56 +71,10 @@ public class MemoizedASTTransformation extends AbstractASTTransformation {
     private static final String CLOSURE_LABEL = "Closure";
     private static final String METHOD_LABEL = "Priv";
     private static final ClassNode OVERRIDE_CLASSNODE = ClassHelper.OVERRIDE_TYPE;
-
-    @Override
-    public void visit(ASTNode[] nodes, final SourceUnit source) {
-        init(nodes, source);
-        AnnotationNode annotationNode = (AnnotationNode) nodes[0];
-        AnnotatedNode annotatedNode = (AnnotatedNode) nodes[1];
-        if (MY_TYPE.equals(annotationNode.getClassNode()) && annotatedNode instanceof MethodNode) {
-            MethodNode methodNode = (MethodNode) annotatedNode;
-            if (methodNode.isAbstract()) {
-                addError("Annotation " + MY_TYPE_NAME + " cannot be used for abstract methods.", methodNode);
-                return;
-            }
-            if (methodNode.isVoidMethod()) {
-                addError("Annotation " + MY_TYPE_NAME + " cannot be used for void methods.", methodNode);
-                return;
-            }
-
-            ClassNode ownerClass = methodNode.getDeclaringClass();
-            MethodNode delegatingMethod = buildDelegatingMethod(methodNode, ownerClass);
-            addGeneratedMethod(ownerClass, delegatingMethod);
-
-            int modifiers = ACC_PRIVATE | ACC_FINAL;
-            if (methodNode.isStatic()) {
-                modifiers = modifiers | ACC_STATIC;
-            }
-
-            int protectedCacheSize = getMemberIntValue(annotationNode, PROTECTED_CACHE_SIZE_NAME);
-            int maxCacheSize = getMemberIntValue(annotationNode, MAX_CACHE_SIZE_NAME);
-            MethodCallExpression memoizeClosureCallExpression =
-                    buildMemoizeClosureCallExpression(delegatingMethod, protectedCacheSize, maxCacheSize);
-
-            String memoizedClosureFieldName = buildUniqueName(ownerClass, CLOSURE_LABEL, methodNode);
-            FieldNode memoizedClosureField = new FieldNode(memoizedClosureFieldName, modifiers,
-                    newClass(ClassHelper.CLOSURE_TYPE), null, memoizeClosureCallExpression);
-            ownerClass.addField(memoizedClosureField);
-
-            BlockStatement newCode = new BlockStatement();
-            MethodCallExpression closureCallExpression = callX(
-                    fieldX(memoizedClosureField), CLOSURE_CALL_METHOD_NAME, args(methodNode.getParameters()));
-            closureCallExpression.setImplicitThis(false);
-            newCode.addStatement(returnS(closureCallExpression));
-            methodNode.setCode(newCode);
-
-            var visitor = new VariableScopeVisitor(source, ownerClass.getOuterClass() != null);
-            while (ownerClass.getOuterClass() != null) {
-                ownerClass = ownerClass.getOuterClass();
-            }
-            visitor.visitClass(ownerClass);
-        }
-    }
+    private static final String MEMOIZE_METHOD_NAME = "memoize";
+    private static final String MEMOIZE_AT_MOST_METHOD_NAME = "memoizeAtMost";
+    private static final String MEMOIZE_AT_LEAST_METHOD_NAME = "memoizeAtLeast";
+    private static final String MEMOIZE_BETWEEN_METHOD_NAME = "memoizeBetween";
 
     private static MethodNode buildDelegatingMethod(final MethodNode annotatedMethod, final ClassNode ownerClassNode) {
         Statement code = annotatedMethod.getCode();
@@ -129,12 +83,12 @@ public class MemoizedASTTransformation extends AbstractASTTransformation {
             access = ACC_PRIVATE | ACC_STATIC;
         }
         MethodNode method = new MethodNode(
-                buildUniqueName(ownerClassNode, METHOD_LABEL, annotatedMethod),
-                access,
-                annotatedMethod.getReturnType(),
-                cloneParams(annotatedMethod.getParameters()),
-                annotatedMethod.getExceptions(),
-                code
+            buildUniqueName(ownerClassNode, METHOD_LABEL, annotatedMethod),
+            access,
+            annotatedMethod.getReturnType(),
+            cloneParams(annotatedMethod.getParameters()),
+            annotatedMethod.getExceptions(),
+            code
         );
         method.addAnnotations(filterAnnotations(annotatedMethod.getAnnotations()));
         return method;
@@ -150,13 +104,8 @@ public class MemoizedASTTransformation extends AbstractASTTransformation {
         return result;
     }
 
-    private static final String MEMOIZE_METHOD_NAME = "memoize";
-    private static final String MEMOIZE_AT_MOST_METHOD_NAME = "memoizeAtMost";
-    private static final String MEMOIZE_AT_LEAST_METHOD_NAME = "memoizeAtLeast";
-    private static final String MEMOIZE_BETWEEN_METHOD_NAME = "memoizeBetween";
-
     private static MethodCallExpression buildMemoizeClosureCallExpression(MethodNode privateMethod,
-                                                                   int protectedCacheSize, int maxCacheSize) {
+                                                                          int protectedCacheSize, int maxCacheSize) {
         Parameter[] srcParams = privateMethod.getParameters();
         Parameter[] newParams = cloneParams(srcParams);
         List<Expression> argList = new ArrayList<Expression>(newParams.length);
@@ -165,8 +114,8 @@ public class MemoizedASTTransformation extends AbstractASTTransformation {
         }
 
         ClosureExpression expression = new ClosureExpression(
-                newParams,
-                stmt(callThisX(privateMethod.getName(), args(argList)))
+            newParams,
+            stmt(callThisX(privateMethod.getName(), args(argList)))
         );
         MethodCallExpression mce;
         if (protectedCacheSize == 0 && maxCacheSize == 0) {
@@ -201,6 +150,56 @@ public class MemoizedASTTransformation extends AbstractASTTransformation {
             return String.format("%sArray", buildTypeName(type.getComponentType()));
         }
         return type.getNameWithoutPackage();
+    }
+
+    @Override
+    public void visit(ASTNode[] nodes, final SourceUnit source) {
+        init(nodes, source);
+        AnnotationNode annotationNode = (AnnotationNode) nodes[0];
+        AnnotatedNode annotatedNode = (AnnotatedNode) nodes[1];
+        if (MY_TYPE.equals(annotationNode.getClassNode()) && annotatedNode instanceof MethodNode) {
+            MethodNode methodNode = (MethodNode) annotatedNode;
+            if (methodNode.isAbstract()) {
+                addError("Annotation " + MY_TYPE_NAME + " cannot be used for abstract methods.", methodNode);
+                return;
+            }
+            if (methodNode.isVoidMethod()) {
+                addError("Annotation " + MY_TYPE_NAME + " cannot be used for void methods.", methodNode);
+                return;
+            }
+
+            ClassNode ownerClass = methodNode.getDeclaringClass();
+            MethodNode delegatingMethod = buildDelegatingMethod(methodNode, ownerClass);
+            addGeneratedMethod(ownerClass, delegatingMethod);
+
+            int modifiers = ACC_PRIVATE | ACC_FINAL;
+            if (methodNode.isStatic()) {
+                modifiers = modifiers | ACC_STATIC;
+            }
+
+            int protectedCacheSize = getMemberIntValue(annotationNode, PROTECTED_CACHE_SIZE_NAME);
+            int maxCacheSize = getMemberIntValue(annotationNode, MAX_CACHE_SIZE_NAME);
+            MethodCallExpression memoizeClosureCallExpression =
+                buildMemoizeClosureCallExpression(delegatingMethod, protectedCacheSize, maxCacheSize);
+
+            String memoizedClosureFieldName = buildUniqueName(ownerClass, CLOSURE_LABEL, methodNode);
+            FieldNode memoizedClosureField = new FieldNode(memoizedClosureFieldName, modifiers,
+                newClass(ClassHelper.CLOSURE_TYPE), null, memoizeClosureCallExpression);
+            ownerClass.addField(memoizedClosureField);
+
+            BlockStatement newCode = new BlockStatement();
+            MethodCallExpression closureCallExpression = callX(
+                fieldX(memoizedClosureField), CLOSURE_CALL_METHOD_NAME, args(methodNode.getParameters()));
+            closureCallExpression.setImplicitThis(false);
+            newCode.addStatement(returnS(closureCallExpression));
+            methodNode.setCode(newCode);
+
+            var visitor = new VariableScopeVisitor(source, ownerClass.getOuterClass() != null);
+            while (ownerClass.getOuterClass() != null) {
+                ownerClass = ownerClass.getOuterClass();
+            }
+            visitor.visitClass(ownerClass);
+        }
     }
 
 }

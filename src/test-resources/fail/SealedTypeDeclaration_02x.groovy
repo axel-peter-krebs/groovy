@@ -17,4 +17,6 @@
  *  under the License.
  */
 
-sealed enum ShapeI permits Circle, Rectangle { }
+sealed enum ShapeI
+
+permits Circle, Rectangle {}

@@ -85,7 +85,7 @@ public class TimeCategory {
     public static Duration getDaylightSavingsOffset(Date self) {
         TimeZone timeZone = getTimeZone(self);
         int millis = (timeZone.useDaylightTime() && timeZone.inDaylightTime(self))
-                ? timeZone.getDSTSavings() : 0;
+            ? timeZone.getDSTSavings() : 0;
         return new TimeDuration(0, 0, 0, millis);
     }
 
@@ -130,8 +130,8 @@ public class TimeCategory {
     }
 
     /*
-    * Methods on Integer to implement 1.month, 4.years etc.
-    */
+     * Methods on Integer to implement 1.month, 4.years etc.
+     */
 
     public static DatumDependentDuration getMonths(final Integer self) {
         return new DatumDependentDuration(0, self, 0, 0, 0, 0, 0);
@@ -150,8 +150,8 @@ public class TimeCategory {
     }
 
     /*
-    * Methods on Integer to implement 1.week, 4.days etc.
-    */
+     * Methods on Integer to implement 1.week, 4.days etc.
+     */
 
     public static Duration getWeeks(final Integer self) {
         return new Duration(self * 7, 0, 0, 0, 0);

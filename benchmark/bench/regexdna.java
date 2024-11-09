@@ -1,4 +1,3 @@
-
 /* The Computer Language Shootout
    http://shootout.alioth.debian.org/
    contributed by Josh Goldfoot
@@ -31,9 +30,9 @@ public class regexdna {
         sequence = Pattern.compile(">.*\n|\n").matcher(sequence).replaceAll("");
         int codeLength = sequence.length();
 
-        String[] variants = { "agggtaaa|tttaccct" ,"[cgt]gggtaaa|tttaccc[acg]", "a[act]ggtaaa|tttacc[agt]t",
-                 "ag[act]gtaaa|tttac[agt]ct", "agg[act]taaa|ttta[agt]cct", "aggg[acg]aaa|ttt[cgt]ccct",
-                 "agggt[cgt]aa|tt[acg]accct", "agggta[cgt]a|t[acg]taccct", "agggtaa[cgt]|[acg]ttaccct" };
+        String[] variants = {"agggtaaa|tttaccct", "[cgt]gggtaaa|tttaccc[acg]", "a[act]ggtaaa|tttacc[agt]t",
+            "ag[act]gtaaa|tttac[agt]ct", "agg[act]taaa|ttta[agt]cct", "aggg[acg]aaa|ttt[cgt]ccct",
+            "agggt[cgt]aa|tt[acg]accct", "agggta[cgt]a|t[acg]taccct", "agggtaa[cgt]|[acg]ttaccct"};
         for (int i = 0; i < variants.length; i++) {
             int count = 0;
             Matcher m = Pattern.compile(variants[i]).matcher(sequence);

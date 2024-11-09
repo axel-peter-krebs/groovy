@@ -35,7 +35,7 @@ public class TableLayoutFactory extends AbstractFactory {
 
     public void setParent(FactoryBuilderSupport builder, Object parent, Object child) {
         if (builder.getParentFactory()) {
-            builder.getParentFactory().setChild (builder, parent, child);
+            builder.getParentFactory().setChild(builder, parent, child);
         }
     }
 }

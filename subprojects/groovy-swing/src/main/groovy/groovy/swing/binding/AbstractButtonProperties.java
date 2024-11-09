@@ -52,23 +52,23 @@ class AbstractButtonSelectedBinding extends AbstractSyntheticBinding implements 
 
     @Override
     public synchronized void syntheticBind() {
-            boundButton = (AbstractButton) ((PropertyBinding) sourceBinding).getBean();
-                boundButton.addPropertyChangeListener("model", this);
-                boundButton.getModel().addItemListener(this);
+        boundButton = (AbstractButton) ((PropertyBinding) sourceBinding).getBean();
+        boundButton.addPropertyChangeListener("model", this);
+        boundButton.getModel().addItemListener(this);
     }
 
     @Override
     public synchronized void syntheticUnbind() {
-            boundButton.removePropertyChangeListener("model", this);
-            boundButton.getModel().removeItemListener(this);
-            boundButton = null;
+        boundButton.removePropertyChangeListener("model", this);
+        boundButton.getModel().removeItemListener(this);
+        boundButton = null;
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent event) {
         update();
-        ((ButtonModel)event.getOldValue()).removeItemListener(this);
-        ((ButtonModel)event.getNewValue()).addItemListener(this);
+        ((ButtonModel) event.getOldValue()).removeItemListener(this);
+        ((ButtonModel) event.getNewValue()).addItemListener(this);
     }
 
     @Override

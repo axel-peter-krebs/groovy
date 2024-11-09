@@ -84,13 +84,63 @@ public class ExtendedVerifier extends ClassCodeVisitorSupport {
 
     @Deprecated(forRemoval = true, since = "5.0.0")
     public static final String JVM_ERROR_MESSAGE = "Please make sure you are running on a JVM >= 1.5";
-
-    private ClassNode currentClass;
     private final SourceUnit source;
     private final Map<String, Boolean> repeatableCache = new HashMap<>();
+    private ClassNode currentClass;
 
     public ExtendedVerifier(final SourceUnit sourceUnit) {
         this.source = sourceUnit;
+    }
+
+    private static void visitDeprecation(final AnnotatedNode node, final AnnotationNode visited) {
+        if (visited.getClassNode().isResolved() && visited.getClassNode().equals(DEPRECATED_TYPE)) {
+            if (node instanceof MethodNode) {
+                MethodNode mn = (MethodNode) node;
+                mn.setModifiers(mn.getModifiers() | Opcodes.ACC_DEPRECATED);
+            } else if (node instanceof FieldNode) {
+                FieldNode fn = (FieldNode) node;
+                fn.setModifiers(fn.getModifiers() | Opcodes.ACC_DEPRECATED);
+            } else if (node instanceof ClassNode) {
+                ClassNode cn = (ClassNode) node;
+                cn.setModifiers(cn.getModifiers() | Opcodes.ACC_DEPRECATED);
+            }
+        }
+    }
+
+    private static boolean isOverrideMethod(final MethodNode method) {
+        ClassNode declaringClass = method.getDeclaringClass();
+        ClassNode next = declaringClass;
+        outer:
+        while (next != null) {
+            Map<String, ClassNode> nextSpec = createGenericsSpec(next);
+            MethodNode mn = correctToGenericsSpec(nextSpec, method);
+            if (next != declaringClass) {
+                if (getDeclaredMethodCorrected(nextSpec, mn, next) != null) break;
+            }
+
+            for (ClassNode face : getInterfacesAndSuperInterfaces(next)) {
+                Map<String, ClassNode> faceSpec = createGenericsSpec(face, nextSpec);
+                if (getDeclaredMethodCorrected(faceSpec, mn, face) != null) break outer;
+            }
+
+            ClassNode superClass = next.getUnresolvedSuperClass();
+            if (superClass != null) {
+                next = correctToGenericsSpecRecurse(nextSpec, superClass);
+            } else {
+                next = null;
+            }
+        }
+        return next != null;
+    }
+
+    private static MethodNode getDeclaredMethodCorrected(final Map<String, ClassNode> genericsSpec, final MethodNode mn, final ClassNode cn) {
+        for (MethodNode declared : cn.getDeclaredMethods(mn.getName())) {
+            MethodNode corrected = correctToGenericsSpec(genericsSpec, declared);
+            if (parametersEqual(corrected.getParameters(), mn.getParameters())) {
+                return corrected;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -165,6 +215,8 @@ public class ExtendedVerifier extends ClassCodeVisitorSupport {
         super.visitConstructorCallExpression(expression);
     }
 
+    //--------------------------------------------------------------------------
+
     private void visitConstructorOrMethod(final MethodNode node) {
         visitGenericsTypeAnnotations(node);
         for (Parameter parameter : node.getParameters()) {
@@ -220,8 +272,6 @@ public class ExtendedVerifier extends ClassCodeVisitorSupport {
         visitConstructorOrMethod(node);
         extractTypeUseAnnotations(node.getAnnotations(), node.getReturnType(), METHOD_TARGET);
     }
-
-    //--------------------------------------------------------------------------
 
     private void visitTypeAnnotations(final ClassNode node) {
         if ((node.isRedirectNode() || node.isPrimaryClassNode()) && !Boolean.TRUE.equals(node.putNodeMetaData("EXTENDED_VERIFIER_SEEN", Boolean.TRUE))) {
@@ -324,11 +374,11 @@ public class ExtendedVerifier extends ClassCodeVisitorSupport {
 
     private boolean shouldSkip(final AnnotatedNode node, final AnnotationNode visited) {
         return (node instanceof ClassNode && !visited.isTargetAllowed(TYPE_TARGET) && !visited.isTargetAllowed(TYPE_USE_TARGET) && visited.isTargetAllowed(CONSTRUCTOR_TARGET))
-                || (node instanceof ConstructorNode && !visited.isTargetAllowed(CONSTRUCTOR_TARGET) && visited.isTargetAllowed(TYPE_TARGET))
-                || (node instanceof FieldNode && !visited.isTargetAllowed(FIELD_TARGET) && !visited.isTargetAllowed(TYPE_USE_TARGET))
-                || (node instanceof Parameter && !visited.isTargetAllowed(PARAMETER_TARGET) && !visited.isTargetAllowed(TYPE_USE_TARGET))
-                || (node instanceof MethodNode && !(node instanceof ConstructorNode) && !visited.isTargetAllowed(METHOD_TARGET) && !visited.isTargetAllowed(TYPE_USE_TARGET))
-                || (node instanceof RecordComponentNode && !visited.isTargetAllowed(RECORD_COMPONENT_TARGET) && !visited.isTargetAllowed(TYPE_USE_TARGET));
+            || (node instanceof ConstructorNode && !visited.isTargetAllowed(CONSTRUCTOR_TARGET) && visited.isTargetAllowed(TYPE_TARGET))
+            || (node instanceof FieldNode && !visited.isTargetAllowed(FIELD_TARGET) && !visited.isTargetAllowed(TYPE_USE_TARGET))
+            || (node instanceof Parameter && !visited.isTargetAllowed(PARAMETER_TARGET) && !visited.isTargetAllowed(TYPE_USE_TARGET))
+            || (node instanceof MethodNode && !(node instanceof ConstructorNode) && !visited.isTargetAllowed(METHOD_TARGET) && !visited.isTargetAllowed(TYPE_USE_TARGET))
+            || (node instanceof RecordComponentNode && !visited.isTargetAllowed(RECORD_COMPONENT_TARGET) && !visited.isTargetAllowed(TYPE_USE_TARGET));
     }
 
     private boolean isRepeatable(final AnnotationNode annoNode) {
@@ -400,21 +450,6 @@ public class ExtendedVerifier extends ClassCodeVisitorSupport {
         }
     }
 
-    private static void visitDeprecation(final AnnotatedNode node, final AnnotationNode visited) {
-        if (visited.getClassNode().isResolved() && visited.getClassNode().equals(DEPRECATED_TYPE)) {
-            if (node instanceof MethodNode) {
-                MethodNode mn = (MethodNode) node;
-                mn.setModifiers(mn.getModifiers() | Opcodes.ACC_DEPRECATED);
-            } else if (node instanceof FieldNode) {
-                FieldNode fn = (FieldNode) node;
-                fn.setModifiers(fn.getModifiers() | Opcodes.ACC_DEPRECATED);
-            } else if (node instanceof ClassNode) {
-                ClassNode cn = (ClassNode) node;
-                cn.setModifiers(cn.getModifiers() | Opcodes.ACC_DEPRECATED);
-            }
-        }
-    }
-
     // TODO GROOVY-5011 handle case of @Override on a property
     private void visitOverride(final AnnotatedNode node, final AnnotationNode visited) {
         ClassNode annotationType = visited.getClassNode();
@@ -437,45 +472,9 @@ public class ExtendedVerifier extends ClassCodeVisitorSupport {
 
                 if (!override) {
                     addError("Method '" + origMethod.getName() + "' from class '" + cNode.getName() + "' does not override " +
-                            "method from its superclass or interfaces but is annotated with @Override.", visited);
+                        "method from its superclass or interfaces but is annotated with @Override.", visited);
                 }
             }
         }
-    }
-
-    private static boolean isOverrideMethod(final MethodNode method) {
-        ClassNode declaringClass = method.getDeclaringClass();
-        ClassNode next = declaringClass;
-        outer:
-        while (next != null) {
-            Map<String, ClassNode> nextSpec = createGenericsSpec(next);
-            MethodNode mn = correctToGenericsSpec(nextSpec, method);
-            if (next != declaringClass) {
-                if (getDeclaredMethodCorrected(nextSpec, mn, next) != null) break;
-            }
-
-            for (ClassNode face : getInterfacesAndSuperInterfaces(next)) {
-                Map<String, ClassNode> faceSpec = createGenericsSpec(face, nextSpec);
-                if (getDeclaredMethodCorrected(faceSpec, mn, face) != null) break outer;
-            }
-
-            ClassNode superClass = next.getUnresolvedSuperClass();
-            if (superClass != null) {
-                next = correctToGenericsSpecRecurse(nextSpec, superClass);
-            } else {
-                next = null;
-            }
-        }
-        return next != null;
-    }
-
-    private static MethodNode getDeclaredMethodCorrected(final Map<String, ClassNode> genericsSpec, final MethodNode mn, final ClassNode cn) {
-        for (MethodNode declared : cn.getDeclaredMethods(mn.getName())) {
-            MethodNode corrected = correctToGenericsSpec(genericsSpec, declared);
-            if (parametersEqual(corrected.getParameters(), mn.getParameters())) {
-                return corrected;
-            }
-        }
-        return null;
     }
 }

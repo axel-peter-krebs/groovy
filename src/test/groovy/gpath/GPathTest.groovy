@@ -35,10 +35,10 @@ class GPathTest extends GroovyTestCase {
 
     protected def createTree() {
         return [
-                'people': [
-                        ['name': 'James', 'location': 'London', 'projects': ['geronimo', 'groovy']],
-                        ['name': 'Bob', 'location': 'Atlanta', 'projects': ['drools', 'groovy']]
-                ]
+            'people': [
+                ['name': 'James', 'location': 'London', 'projects': ['geronimo', 'groovy']],
+                ['name': 'Bob', 'location': 'Atlanta', 'projects': ['drools', 'groovy']]
+            ]
         ]
     }
 }

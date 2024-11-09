@@ -19,6 +19,7 @@
 package typing;
 
 // tag::precompiled_java_extension[]
+
 import org.codehaus.groovy.ast.ClassHelper;
 import org.codehaus.groovy.ast.expr.VariableExpression;
 import org.codehaus.groovy.transform.stc.AbstractTypeCheckingExtension;

@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit
 
 class ThreadMethodsTest extends GroovyTestCase {
     final CyclicBarrier barrier = new CyclicBarrier(2)
+
     void testThreadNaming() {
         def t = Thread.start("MyNamedThread") {
             barrier.await(4L, TimeUnit.SECONDS) // Signal Thread Start

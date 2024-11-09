@@ -101,6 +101,51 @@ class BooleanExpressionTransformer {
             this.type = type.redirect();
         }
 
+        /**
+         * Inline an "expr != null" check instead of boolean conversion iff:
+         * (1) the class doesn't define an {@code asBoolean()} method
+         * (2) no subclass defines an {@code asBoolean()} method
+         * For (2), check that we are in one of these cases:
+         * (a) a final class
+         * (b) an effectively-final inner class
+         */
+        private static boolean replaceAsBooleanWithCompareToNull(final ClassNode type, final ClassLoader dgmProvider) {
+            if (type.getMethod("asBoolean", Parameter.EMPTY_ARRAY) != null) {
+                // GROOVY-10711
+            } else if (Modifier.isFinal(type.getModifiers()) || isEffectivelyFinal(type)) {
+                List<MethodNode> asBoolean = findDGMMethodsByNameAndArguments(dgmProvider, type, "asBoolean", ClassNode.EMPTY_ARRAY);
+                if (asBoolean.size() == 1) {
+                    MethodNode theAsBoolean = asBoolean.get(0);
+                    if (theAsBoolean instanceof ExtensionMethodNode) {
+                        ClassNode selfType = (((ExtensionMethodNode) theAsBoolean).getExtensionMethodNode()).getParameters()[0].getType();
+                        if (ClassHelper.isObjectType(selfType)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        private static boolean isEffectivelyFinal(final ClassNode type) {
+            if (!Modifier.isPrivate(type.getModifiers())) return false;
+
+            List<ClassNode> outers = type.getOuterClasses();
+            ClassNode outer = outers.get(outers.size() - 1);
+            return !isExtended(type, outer.getInnerClasses());
+        }
+
+        private static boolean isExtended(final ClassNode type, final Iterator<? extends ClassNode> inners) {
+            while (inners.hasNext()) {
+                ClassNode next = inners.next();
+                if (next != type && next.isDerivedFrom(type))
+                    return true;
+                if (isExtended(type, next.getInnerClasses()))
+                    return true;
+            }
+            return false;
+        }
+
         @Override
         public Expression transformExpression(final ExpressionTransformer transformer) {
             Expression opt = new OptimizingBooleanExpression(transformer.transform(getExpression()), type);
@@ -167,50 +212,6 @@ class BooleanExpressionTransformer {
             }
 
             super.visit(visitor);
-        }
-
-        /**
-         * Inline an "expr != null" check instead of boolean conversion iff:
-         * (1) the class doesn't define an {@code asBoolean()} method
-         * (2) no subclass defines an {@code asBoolean()} method
-         * For (2), check that we are in one of these cases:
-         *   (a) a final class
-         *   (b) an effectively-final inner class
-         */
-        private static boolean replaceAsBooleanWithCompareToNull(final ClassNode type, final ClassLoader dgmProvider) {
-            if (type.getMethod("asBoolean", Parameter.EMPTY_ARRAY) != null) {
-                // GROOVY-10711
-            } else if (Modifier.isFinal(type.getModifiers()) || isEffectivelyFinal(type)) {
-                List<MethodNode> asBoolean = findDGMMethodsByNameAndArguments(dgmProvider, type, "asBoolean", ClassNode.EMPTY_ARRAY);
-                if (asBoolean.size() == 1) {
-                    MethodNode theAsBoolean = asBoolean.get(0);
-                    if (theAsBoolean instanceof ExtensionMethodNode) {
-                        ClassNode selfType = (((ExtensionMethodNode) theAsBoolean).getExtensionMethodNode()).getParameters()[0].getType();
-                        if (ClassHelper.isObjectType(selfType)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-
-        private static boolean isEffectivelyFinal(final ClassNode type) {
-            if (!Modifier.isPrivate(type.getModifiers())) return false;
-
-            List<ClassNode> outers = type.getOuterClasses();
-            ClassNode outer = outers.get(outers.size() - 1);
-            return !isExtended(type, outer.getInnerClasses());
-        }
-
-        private static boolean isExtended(final ClassNode type, final Iterator<? extends ClassNode> inners) {
-            while (inners.hasNext()) { ClassNode next = inners.next();
-                if (next != type && next.isDerivedFrom(type))
-                    return true;
-                if (isExtended(type, next.getInnerClasses()))
-                    return true;
-            }
-            return false;
         }
     }
 }

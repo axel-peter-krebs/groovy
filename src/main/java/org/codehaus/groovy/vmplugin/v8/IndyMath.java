@@ -45,30 +45,21 @@ import static org.codehaus.groovy.vmplugin.v8.TypeHelper.replaceWithMoreSpecific
 public class IndyMath {
 
     private static final MethodType
-            IV = MethodType.methodType(Void.TYPE, int.class),
-            II = MethodType.methodType(int.class, int.class),
-            IIV = MethodType.methodType(Void.TYPE, int.class, int.class),
-            III = MethodType.methodType(int.class, int.class, int.class),
-            LV = MethodType.methodType(Void.TYPE, long.class),
-            LL = MethodType.methodType(long.class, long.class),
-            LLV = MethodType.methodType(Void.TYPE, long.class, long.class),
-            LLL = MethodType.methodType(long.class, long.class, long.class),
-            DV = MethodType.methodType(Void.TYPE, double.class),
-            DD = MethodType.methodType(double.class, double.class),
-            DDV = MethodType.methodType(Void.TYPE, double.class, double.class),
-            DDD = MethodType.methodType(double.class, double.class, double.class),
-            GV = MethodType.methodType(Void.TYPE, BigDecimal.class),
-            GGV = MethodType.methodType(Void.TYPE, BigDecimal.class, BigDecimal.class),
-            OOV = MethodType.methodType(Void.TYPE, Object.class, Object.class);
-
-    private static void makeMapEntry(String method, MethodType[] keys, MethodType[] values) throws NoSuchMethodException, IllegalAccessException {
-        Map<MethodType, MethodHandle> xMap = new HashMap<>();
-        METHODS.put(method, xMap);
-        for (int i = 0; i < keys.length; i++) {
-            xMap.put(keys[i], LOOKUP.findStatic(IndyMath.class, method, values[i]));
-        }
-    }
-
+        IV = MethodType.methodType(Void.TYPE, int.class),
+        II = MethodType.methodType(int.class, int.class),
+        IIV = MethodType.methodType(Void.TYPE, int.class, int.class),
+        III = MethodType.methodType(int.class, int.class, int.class),
+        LV = MethodType.methodType(Void.TYPE, long.class),
+        LL = MethodType.methodType(long.class, long.class),
+        LLV = MethodType.methodType(Void.TYPE, long.class, long.class),
+        LLL = MethodType.methodType(long.class, long.class, long.class),
+        DV = MethodType.methodType(Void.TYPE, double.class),
+        DD = MethodType.methodType(double.class, double.class),
+        DDV = MethodType.methodType(Void.TYPE, double.class, double.class),
+        DDD = MethodType.methodType(double.class, double.class, double.class),
+        GV = MethodType.methodType(Void.TYPE, BigDecimal.class),
+        GGV = MethodType.methodType(Void.TYPE, BigDecimal.class, BigDecimal.class),
+        OOV = MethodType.methodType(Void.TYPE, Object.class, Object.class);
     private static final Map<String, Map<MethodType, MethodHandle>> METHODS = new HashMap<>();
 
     static {
@@ -101,6 +92,14 @@ public class IndyMath {
 
         } catch (Exception e) {
             throw new GroovyBugError(e);
+        }
+    }
+
+    private static void makeMapEntry(String method, MethodType[] keys, MethodType[] values) throws NoSuchMethodException, IllegalAccessException {
+        Map<MethodType, MethodHandle> xMap = new HashMap<>();
+        METHODS.put(method, xMap);
+        for (int i = 0; i < keys.length; i++) {
+            xMap.put(keys[i], LOOKUP.findStatic(IndyMath.class, method, values[i]));
         }
     }
 

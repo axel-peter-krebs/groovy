@@ -112,7 +112,7 @@ class CommandArgumentParser {
             throw new IllegalArgumentException('Missing closing " in ' + line + ' -- ' + tokens)
         }
         if (index == line.length() && singleHyphenOpen) {
-            throw new IllegalArgumentException('Missing closing \' in ' + line  + ' -- ' + tokens)
+            throw new IllegalArgumentException('Missing closing \' in ' + line + ' -- ' + tokens)
         }
         if (currentToken.size() > 0) {
             tokens.add(currentToken)

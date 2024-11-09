@@ -37,26 +37,16 @@ import static groovy.json.JsonTokenType.startingWith;
  */
 public class JsonLexer implements Iterator<JsonToken> {
 
-    private static final char SPACE    = ' ';
-    private static final char DOT      = '.';
-    private static final char MINUS    = '-';
-    private static final char PLUS     = '+';
-    private static final char LOWER_E  = 'e';
-    private static final char UPPER_E  = 'E';
-    private static final char ZERO     = '0';
-    private static final char NINE     = '9';
+    private static final char SPACE = ' ';
+    private static final char DOT = '.';
+    private static final char MINUS = '-';
+    private static final char PLUS = '+';
+    private static final char LOWER_E = 'e';
+    private static final char UPPER_E = 'E';
+    private static final char ZERO = '0';
+    private static final char NINE = '9';
 
     private final LineColumnReader reader;
-
-    /**
-     * Underlying reader from which to read the JSON tokens.
-     * This reader is an instance of <code>LineColumnReader</code>,
-     * to keep track of line and column positions.
-     */
-    public LineColumnReader getReader() {
-        return reader;
-    }
-
     private JsonToken currentToken = null;
 
     /**
@@ -68,6 +58,25 @@ public class JsonLexer implements Iterator<JsonToken> {
      */
     public JsonLexer(Reader reader) {
         this.reader = reader instanceof LineColumnReader ? (LineColumnReader) reader : new LineColumnReader(reader);
+    }
+
+    /**
+     * Replace unicode escape and other control characters with real characters
+     *
+     * @param input text
+     * @return input text without the escaping
+     */
+    public static String unescape(String input) {
+        return StringEscapeUtils.unescapeJavaScript(input);
+    }
+
+    /**
+     * Underlying reader from which to read the JSON tokens.
+     * This reader is an instance of <code>LineColumnReader</code>,
+     * to keep track of line and column positions.
+     */
+    public LineColumnReader getReader() {
+        return reader;
     }
 
     /**
@@ -83,9 +92,9 @@ public class JsonLexer implements Iterator<JsonToken> {
 
             if (possibleTokenType == null) {
                 throw new JsonException(
-                        "Lexing failed on line: " + reader.getLine() + ", column: " + reader.getColumn() +
-                                ", while reading '" + firstChar + "', " +
-                                "no possible valid JSON value or punctuation could be recognized."
+                    "Lexing failed on line: " + reader.getLine() + ", column: " + reader.getColumn() +
+                        ", while reading '" + firstChar + "', " +
+                        "no possible valid JSON value or punctuation could be recognized."
                 );
             }
 
@@ -108,7 +117,7 @@ public class JsonLexer implements Iterator<JsonToken> {
                 // consume the first double quote starting the string
                 reader.read();
                 boolean isEscaped = false;
-                for (;;) {
+                for (; ; ) {
                     int read = reader.read();
                     if (read == -1) return null;
 
@@ -118,7 +127,7 @@ public class JsonLexer implements Iterator<JsonToken> {
                     currentContent.append(charRead);
 
                     if (charRead == '"' && !isEscaped &&
-                            possibleTokenType.matching(currentContent.toString())) {
+                        possibleTokenType.matching(currentContent.toString())) {
                         token.setEndLine(reader.getLine());
                         token.setEndColumn(reader.getColumn());
                         token.setText(unescape(currentContent.toString()));
@@ -127,7 +136,7 @@ public class JsonLexer implements Iterator<JsonToken> {
                 }
             } else if (possibleTokenType == NUMBER) {
                 StringBuilder currentContent = new StringBuilder();
-                for (;;) {
+                for (; ; ) {
                     reader.mark(1);
                     int read = reader.read();
                     if (read == -1) {
@@ -137,8 +146,8 @@ public class JsonLexer implements Iterator<JsonToken> {
                     char lastCharRead = (char) read;
 
                     if (lastCharRead >= ZERO && lastCharRead <= NINE ||
-                            lastCharRead == DOT || lastCharRead == MINUS || lastCharRead == PLUS ||
-                            lastCharRead == LOWER_E || lastCharRead == UPPER_E) {
+                        lastCharRead == DOT || lastCharRead == MINUS || lastCharRead == PLUS ||
+                        lastCharRead == LOWER_E || lastCharRead == UPPER_E) {
                         currentContent.append(lastCharRead);
                     } else {
                         reader.reset();
@@ -165,7 +174,7 @@ public class JsonLexer implements Iterator<JsonToken> {
 
     private void throwJsonException(String content, JsonTokenType type) {
         throw new JsonException(
-                "Lexing failed on line: " +
+            "Lexing failed on line: " +
                 reader.getLine() + ", column: " + reader.getColumn() +
                 ", while reading '" + content + "', " +
                 "was trying to match " + type.getLabel()
@@ -173,20 +182,10 @@ public class JsonLexer implements Iterator<JsonToken> {
     }
 
     /**
-     * Replace unicode escape and other control characters with real characters
-     *
-     * @param input text
-     * @return input text without the escaping
-     */
-    public static String unescape(String input) {
-        return StringEscapeUtils.unescapeJavaScript(input);
-    }
-
-    /**
      * When a constant token type is expected, check that the expected constant is read,
      * and update the content of the token accordingly.
      *
-     * @param type the token type
+     * @param type  the token type
      * @param token the token
      * @return the token updated with end column and text updated
      */

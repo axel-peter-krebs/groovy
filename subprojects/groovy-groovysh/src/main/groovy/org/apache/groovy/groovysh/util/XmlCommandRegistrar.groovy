@@ -27,26 +27,26 @@ import org.codehaus.groovy.tools.shell.util.Logger
  *
  * <pre>{@literal
  <commands>
-   <!-- default commands -->
-   <command>org.codehaus.groovy.tools.shell.commands.HelpCommand</command>
-   <command>org.codehaus.groovy.tools.shell.commands.ExitCommand</command>
-   <command>org.codehaus.groovy.tools.shell.commands.ImportCommand</command>
-   <command>org.codehaus.groovy.tools.shell.commands.DisplayCommand</command>
-   <command>org.codehaus.groovy.tools.shell.commands.ClearCommand</command>
-   <command>org.codehaus.groovy.tools.shell.commands.ShowCommand</command>
-   <command>org.codehaus.groovy.tools.shell.commands.InspectCommand</command>
-   <command>org.codehaus.groovy.tools.shell.commands.PurgeCommand</command>
-   <command>org.codehaus.groovy.tools.shell.commands.EditCommand</command>
-   <command>org.codehaus.groovy.tools.shell.commands.LoadCommand</command>
-   <command>org.codehaus.groovy.tools.shell.commands.SaveCommand</command>
-   <command>org.codehaus.groovy.tools.shell.commands.RecordCommand</command>
-   <command>org.codehaus.groovy.tools.shell.commands.HistoryCommand</command>
-   <command>org.codehaus.groovy.tools.shell.commands.AliasCommand</command>
-   <command>org.codehaus.groovy.tools.shell.commands.SetCommand</command>
-   <command>org.codehaus.groovy.tools.shell.commands.ShadowCommand</command>
-   <command>org.codehaus.groovy.tools.shell.commands.RegisterCommand</command>
-   <command>org.codehaus.groovy.tools.shell.commands.DocCommand</command>
-   <!-- custom commands -->
+ <!-- default commands -->
+ <command>org.codehaus.groovy.tools.shell.commands.HelpCommand</command>
+ <command>org.codehaus.groovy.tools.shell.commands.ExitCommand</command>
+ <command>org.codehaus.groovy.tools.shell.commands.ImportCommand</command>
+ <command>org.codehaus.groovy.tools.shell.commands.DisplayCommand</command>
+ <command>org.codehaus.groovy.tools.shell.commands.ClearCommand</command>
+ <command>org.codehaus.groovy.tools.shell.commands.ShowCommand</command>
+ <command>org.codehaus.groovy.tools.shell.commands.InspectCommand</command>
+ <command>org.codehaus.groovy.tools.shell.commands.PurgeCommand</command>
+ <command>org.codehaus.groovy.tools.shell.commands.EditCommand</command>
+ <command>org.codehaus.groovy.tools.shell.commands.LoadCommand</command>
+ <command>org.codehaus.groovy.tools.shell.commands.SaveCommand</command>
+ <command>org.codehaus.groovy.tools.shell.commands.RecordCommand</command>
+ <command>org.codehaus.groovy.tools.shell.commands.HistoryCommand</command>
+ <command>org.codehaus.groovy.tools.shell.commands.AliasCommand</command>
+ <command>org.codehaus.groovy.tools.shell.commands.SetCommand</command>
+ <command>org.codehaus.groovy.tools.shell.commands.ShadowCommand</command>
+ <command>org.codehaus.groovy.tools.shell.commands.RegisterCommand</command>
+ <command>org.codehaus.groovy.tools.shell.commands.DocCommand</command>
+ <!-- custom commands -->
  </commands>
  *}
  * <pre>

@@ -45,16 +45,6 @@ public class DelegatingController extends WriterController {
     }
 
     @Override
-    public void setMethodNode(final MethodNode mn) {
-        delegationController.setMethodNode(mn);
-    }
-
-    @Override
-    public void setConstructorNode(final ConstructorNode cn) {
-        delegationController.setConstructorNode(cn);
-    }
-
-    @Override
     public boolean isFastPath() {
         return delegationController.isFastPath();
     }
@@ -140,6 +130,11 @@ public class DelegatingController extends WriterController {
     }
 
     @Override
+    public void setConstructorNode(final ConstructorNode cn) {
+        delegationController.setConstructorNode(cn);
+    }
+
+    @Override
     public GeneratorContext getContext() {
         return delegationController.getContext();
     }
@@ -153,6 +148,11 @@ public class DelegatingController extends WriterController {
     @Override
     public InterfaceHelperClassNode getInterfaceClassLoadingClass() {
         return delegationController.getInterfaceClassLoadingClass();
+    }
+
+    @Override
+    public void setInterfaceClassLoadingClass(InterfaceHelperClassNode ihc) {
+        delegationController.setInterfaceClassLoadingClass(ihc);
     }
 
     @Override
@@ -176,8 +176,18 @@ public class DelegatingController extends WriterController {
     }
 
     @Override
+    public void setMethodNode(final MethodNode mn) {
+        delegationController.setMethodNode(mn);
+    }
+
+    @Override
     public MethodVisitor getMethodVisitor() {
         return delegationController.getMethodVisitor();
+    }
+
+    @Override
+    public void setMethodVisitor(MethodVisitor methodVisitor) {
+        delegationController.setMethodVisitor(methodVisitor);
     }
 
     @Override
@@ -241,16 +251,6 @@ public class DelegatingController extends WriterController {
     }
 
     @Override
-    public void setInterfaceClassLoadingClass(InterfaceHelperClassNode ihc) {
-        delegationController.setInterfaceClassLoadingClass(ihc);
-    }
-
-    @Override
-    public void setMethodVisitor(MethodVisitor methodVisitor) {
-        delegationController.setMethodVisitor(methodVisitor);
-    }
-
-    @Override
     public boolean shouldOptimizeForInt() {
         return delegationController.shouldOptimizeForInt();
     }
@@ -271,13 +271,13 @@ public class DelegatingController extends WriterController {
     }
 
     @Override
-    public void setLineNumber(int n) {
-        delegationController.setLineNumber(n);
+    public int getLineNumber() {
+        return delegationController.getLineNumber();
     }
 
     @Override
-    public int getLineNumber() {
-        return delegationController.getLineNumber();
+    public void setLineNumber(int n) {
+        delegationController.setLineNumber(n);
     }
 
     @Override

@@ -18,6 +18,7 @@ import groovy.test.GroovyTestCase
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 class SwingASTTransformsTest extends GroovyTestCase {
     void testBindable() {
         assertScript '''// tag::bindable_on_class[]

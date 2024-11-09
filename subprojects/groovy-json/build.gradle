@@ -45,7 +45,7 @@ plugins.withId('eclipse') {
 
 tasks.named('rat') {
     excludes += [
-            // test file
-            'src/test/resources/groovy9802.json'
+        // test file
+        'src/test/resources/groovy9802.json'
     ]
 }

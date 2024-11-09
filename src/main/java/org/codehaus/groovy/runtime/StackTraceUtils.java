@@ -37,11 +37,23 @@ import java.util.logging.Logger;
  * @since 1.5
  */
 public class StackTraceUtils {
-    private StackTraceUtils() {}
-
     public static final String STACK_LOG_NAME = "StackTrace";
     private static final Logger STACK_LOG;
+    private static final String[] GROOVY_PACKAGES =
+        System.getProperty("groovy.sanitized.stacktraces",
+            "groovy.," +
+                "org.codehaus.groovy.," +
+                "java.," +
+                "javax.," +
+                "sun.," +
+                "gjdk.groovy.," +
+                "groovyjarjar," +
+                "com.sun.," +
+                "org.apache.groovy.," +
+                "jdk.internal."
+        ).split("[\\s,]+");
     // set log to consume traces by default, end user can override later
+    private static final List<Closure> tests = new ArrayList<>();
 
     static {
         outer:
@@ -58,21 +70,8 @@ public class StackTraceUtils {
         } while (false);
     }
 
-    private static final String[] GROOVY_PACKAGES =
-            System.getProperty("groovy.sanitized.stacktraces",
-                    "groovy.," +
-                            "org.codehaus.groovy.," +
-                            "java.," +
-                            "javax.," +
-                            "sun.," +
-                            "gjdk.groovy.," +
-                            "groovyjarjar," +
-                            "com.sun.," +
-                            "org.apache.groovy.," +
-                            "jdk.internal."
-            ).split("[\\s,]+");
-
-    private static final List<Closure> tests = new ArrayList<>();
+    private StackTraceUtils() {
+    }
 
     /**
      * Adds a groovy.lang.Closure to test whether the stack trace
@@ -130,8 +129,8 @@ public class StackTraceUtils {
         StackTraceElement[] trace = t.getStackTrace();
         for (StackTraceElement stackTraceElement : trace) {
             p.println("at " + stackTraceElement.getClassName()
-                    + "(" + stackTraceElement.getMethodName()
-                    + ":" + stackTraceElement.getLineNumber() + ")");
+                + "(" + stackTraceElement.getMethodName()
+                + ":" + stackTraceElement.getLineNumber() + ")");
         }
     }
 

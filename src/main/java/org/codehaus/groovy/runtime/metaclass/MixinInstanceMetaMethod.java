@@ -25,7 +25,7 @@ import org.codehaus.groovy.reflection.MixinInMetaClass;
 /**
  * MetaMethod for mixed in classes
  */
-public class MixinInstanceMetaMethod extends MetaMethod{
+public class MixinInstanceMetaMethod extends MetaMethod {
     private final MetaMethod method;
     private final MixinInMetaClass mixinInMetaClass;
 

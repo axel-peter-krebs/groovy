@@ -66,7 +66,8 @@ class OptionAccessor {
 
     private <T> T getTypedValue(Class<T> type, String optionName, String optionValue) {
         if (savedTypeOptions[optionName]?.cliOption?.arity?.min == 0) { // TODO is this not a bug?
-            return (T) parseResult.hasMatchedOption(optionName) // TODO should defaultValue not simply convert the type regardless of the matched value?
+            return (T) parseResult.hasMatchedOption(optionName)
+            // TODO should defaultValue not simply convert the type regardless of the matched value?
         }
         def convert = savedTypeOptions[optionName]?.convert
         return getValue(type, optionValue, convert)
@@ -97,19 +98,27 @@ class OptionAccessor {
 
     def invokeMethod(String name, Object args) {
         // TODO we could just declare normal methods to map commons-cli CommandLine methods to picocli ParseResult methods
-        if (name == 'hasOption')      { name = 'hasMatchedOption';   args = [args[0]      ].toArray() }
-        if (name == 'getOptionValue') { name = 'matchedOptionValue'; args = [args[0], null].toArray() }
+        if (name == 'hasOption') {
+            name = 'hasMatchedOption'; args = [args[0]].toArray()
+        }
+        if (name == 'getOptionValue') {
+            name = 'matchedOptionValue'; args = [args[0], null].toArray()
+        }
         return InvokerHelper.getMetaClass(parseResult).invokeMethod(parseResult, name, args)
     }
 
     def getProperty(String name) {
-        if (name == 'parseResult') { return parseResult }
+        if (name == 'parseResult') {
+            return parseResult
+        }
         if (parseResult.hasMatchedOption(name)) {
             def result = parseResult.matchedOptionValue(name, null)
 
             // if user specified an array type, return the full array (regardless of 's' suffix on name)
             Class userSpecifiedType = savedTypeOptions[name]?.type
-            if (userSpecifiedType?.isArray()) { return result }
+            if (userSpecifiedType?.isArray()) {
+                return result
+            }
 
             // otherwise, if the result is multi-value, return the first value
             Class derivedType = parseResult.matchedOption(name).type()
@@ -131,7 +140,9 @@ class OptionAccessor {
             def longOpt = option.longestName()
             longOpt = longOpt?.startsWith("--") ? longOpt.substring(2) : longOpt
             Class userSpecifiedType = savedTypeOptions[longOpt]?.type
-            if (userSpecifiedType && Boolean != userSpecifiedType) { return result }
+            if (userSpecifiedType && Boolean != userSpecifiedType) {
+                return result
+            }
 
             return result ? result : false
         }

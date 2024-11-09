@@ -18,13 +18,13 @@
  */
 
 def a = 6
-def result = switch(a) {
+def result = switch (a) {
     case 6 -> 'a'
 }
 assert 'a' == result
 
 a = 9
-result = switch(a) {
+result = switch (a) {
     case 6 -> 'a'
 }
 assert null == result

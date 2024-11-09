@@ -26,10 +26,10 @@ class PropertyWithCustomSetterHavingReturnTypeStubTest extends StringSourcesStub
 
     Map<String, String> provideSources() {
         [
-                'Dummy.java': '''
+            'Dummy.java'                     : '''
                     public class Dummy {}
                 ''',
-                'foo/SetterWithReturn4646.groovy': '''
+            'foo/SetterWithReturn4646.groovy': '''
                     package foo;
 
                     class SetterWithReturn4646 {

@@ -39,8 +39,8 @@ public class Antlr4ParserPlugin implements ParserPlugin {
         if (!sourceUnit.getSource().canReopenSource()) {
             try {
                 sourceUnit.setSource(new StringReaderSource(
-                        IOGroovyMethods.getText(reader),
-                        sourceUnit.getConfiguration()
+                    IOGroovyMethods.getText(reader),
+                    sourceUnit.getConfiguration()
                 ));
             } catch (IOException e) {
                 throw new GroovyBugError("Failed to create StringReaderSource", e);
@@ -52,8 +52,8 @@ public class Antlr4ParserPlugin implements ParserPlugin {
     @Override
     public ModuleNode buildAST(final SourceUnit sourceUnit, final ClassLoader classLoader, final Reduction cst) {
         AstBuilder builder = new AstBuilder(sourceUnit,
-                sourceUnit.getConfiguration().isGroovydocEnabled(),
-                sourceUnit.getConfiguration().isRuntimeGroovydocEnabled()
+            sourceUnit.getConfiguration().isGroovydocEnabled(),
+            sourceUnit.getConfiguration().isRuntimeGroovydocEnabled()
         );
         return builder.buildAST();
     }

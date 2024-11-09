@@ -26,7 +26,7 @@ import org.codehaus.groovy.control.SourceUnit
 
 class TestTransform implements ASTTransformation, CompilationUnitAware {
     static List<ASTNode[]> visitedNodes = []
-    static Map<String, List<CompilePhase>> phases = [:].withDefault{ [] }
+    static Map<String, List<CompilePhase>> phases = [:].withDefault { [] }
     CompilationUnit unit = null
 
     void visit(ASTNode[] nodes, SourceUnit source) {
@@ -41,8 +41,8 @@ class TestTransform implements ASTTransformation, CompilationUnitAware {
     }
 }
 
-@GroovyASTTransformation(phase=CompilePhase.CONVERSION)
-class TestTransformConversion extends TestTransform { }
+@GroovyASTTransformation(phase = CompilePhase.CONVERSION)
+class TestTransformConversion extends TestTransform {}
 
-@GroovyASTTransformation(phase=CompilePhase.CLASS_GENERATION)
-class TestTransformClassGeneration extends TestTransform { }
+@GroovyASTTransformation(phase = CompilePhase.CLASS_GENERATION)
+class TestTransformClassGeneration extends TestTransform {}

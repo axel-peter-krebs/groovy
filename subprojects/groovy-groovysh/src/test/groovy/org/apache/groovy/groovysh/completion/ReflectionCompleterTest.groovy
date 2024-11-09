@@ -93,7 +93,7 @@ class ReflectionCompleterTest extends GroovyTestCase {
         Collection<String> result = ReflectionCompleter.getPublicFieldsAndMethods('foo', '')*.value
         assert 'charAt(' in result
         assert 'contains(' in result
-        assert ! ('format(' in result)
+        assert !('format(' in result)
         result = ReflectionCompleter.getMetaclassMethods('foo', '', true)
         assert 'normalize()' in result
         int foo = 3
@@ -108,9 +108,9 @@ class ReflectionCompleterTest extends GroovyTestCase {
     void testGetFieldsAndMethodsPrimitive() {
         Collection<String> result = ReflectionCompleter.getPublicFieldsAndMethods(3, '')*.value
         assert 'byteValue()' in result
-        assert ! ('MAX_VALUE' in result)
-        assert ! ('valueOf(' in result)
-        assert ! ('bitCount(' in result)
+        assert !('MAX_VALUE' in result)
+        assert !('valueOf(' in result)
+        assert !('bitCount(' in result)
         result = ReflectionCompleter.getMetaclassMethods(3, '', true)
         assert 'abs()' in result
         result = ReflectionCompleter.getMetaclassMethods(3, 'una', true)
@@ -125,6 +125,7 @@ class ReflectionCompleterTest extends GroovyTestCase {
 
     interface ForTestInterface extends Comparable<Object> {
         static final int FOR_TEST_FIELD = 1
+
         void forTestMethod()
     }
 
@@ -134,35 +135,37 @@ class ReflectionCompleterTest extends GroovyTestCase {
             void forTestMethod() {}
 
             @Override
-            int compareTo(Object o) {return 0}
+            int compareTo(Object o) { return 0 }
         }, '')*.value
-        assert ! ('FOR_TEST_FIELD' in result)
+        assert !('FOR_TEST_FIELD' in result)
         assert 'forTestMethod()' in result
         assert 'compareTo(' in result
 //        GroovyLexer
         result = ReflectionCompleter.getPublicFieldsAndMethods(Set, 'toA')
-        assert []== result
+        assert [] == result
     }
 
     enum ForTestEnum {
         VAL1, VAL2
         static final ForTestEnum VAL_3
-        int enumMethod() {return 0}
-        static int staticMethod() {return 1}
+
+        int enumMethod() { return 0 }
+
+        static int staticMethod() { return 1 }
     }
 
     void testEnum() {
         Collection<String> result = ReflectionCompleter.getPublicFieldsAndMethods(ForTestEnum, '')
         result = result*.value
         assert 'VAL1' in result
-        assert ! ( 'enumMethod()' in result)
+        assert !('enumMethod()' in result)
         assert 'staticMethod()' in result
         result = ReflectionCompleter.getPublicFieldsAndMethods(ForTestEnum.VAL1, '')
         result = result*.value
         // User will probably not want this
-        assert ! ( 'VAL1' in result)
+        assert !('VAL1' in result)
         assert 'enumMethod()' in result
-        assert ! ('staticMethod()' in result)
+        assert !('staticMethod()' in result)
     }
 
     void testGetAbstractClassFields() {
@@ -212,8 +215,8 @@ class ReflectionCompleterTest extends GroovyTestCase {
         assert 'asBoolean()' in result
         result = ReflectionCompleter.getMetaclassMethods('foo', '', false)
         result = result*.value
-        assert ! ('getMetaClass()' in result)
-        assert ! ('asBoolean()' in result)
+        assert !('getMetaClass()' in result)
+        assert !('asBoolean()' in result)
     }
 
     void testGetFieldsAndMethodsCustomClass() {

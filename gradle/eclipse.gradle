@@ -21,8 +21,10 @@ if (gradle.startParameter.taskNames.any { it =~ /(?i)eclipse/ }) {
         apply plugin: 'eclipse'
 
         eclipse.classpath.file.whenMerged {
-            entries.removeAll { entry -> entry.path =~ '/build/' } // affects: cli-commons, cli-picocli, console, groovydoc, macro, servlet, swing, templates, xml
-            entries.unique(true) { entry -> entry.path } // affects: console, groovydoc, macro, servlet, swing, templates, xml
+            entries.removeAll { entry -> entry.path =~ '/build/' }
+            // affects: cli-commons, cli-picocli, console, groovydoc, macro, servlet, swing, templates, xml
+            entries.unique(true) { entry -> entry.path }
+            // affects: console, groovydoc, macro, servlet, swing, templates, xml
             entries.sort(true) { entry ->
                 if (entry.class.simpleName != 'SourceFolder') {
                     "${entry.kind}:${entry.path.split('/')[-1].toLowerCase()}"

@@ -47,7 +47,7 @@ class JmxClientConnectorFactoryTest extends GroovyTestCase {
         server.start()
 
         RMIConnector client = builder.clientConnector(
-                port: rmi.port
+            port: rmi.port
         )
 
         assert client
@@ -68,7 +68,7 @@ class JmxClientConnectorFactoryTest extends GroovyTestCase {
     void testJmxClientConnectorFailure() {
         shouldFail {
             RMIConnector client = builder.clientConnector(
-                    port: 1099
+                port: 1099
             )
             assert client
             client.connect()
@@ -84,9 +84,9 @@ class JmxClientConnectorFactoryTest extends GroovyTestCase {
                 while (addresses.hasMoreElements()) {
                     InetAddress ip = (InetAddress) addresses.nextElement()
                     if (ip != null
-                            && ip instanceof Inet4Address
-                            && !ip.isLoopbackAddress()
-                            && ip.getHostAddress().indexOf(":") == -1) {
+                        && ip instanceof Inet4Address
+                        && !ip.isLoopbackAddress()
+                        && ip.getHostAddress().indexOf(":") == -1) {
                         return ip.getHostAddress()
                     }
                 }

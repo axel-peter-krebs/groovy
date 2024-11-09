@@ -46,20 +46,40 @@ public class SimpleGroovyExecutableMemberDoc extends SimpleGroovyMemberDoc imple
 
 
     @Override
-    public String flatSignature() {/*todo*/return null;}
+    public String flatSignature() {/*todo*/
+        return null;
+    }
+
     @Override
-    public boolean isNative() {/*todo*/return false;}
+    public boolean isNative() {/*todo*/
+        return false;
+    }
+
     @Override
-    public boolean isSynchronized() {/*todo*/return false;}
+    public boolean isSynchronized() {/*todo*/
+        return false;
+    }
+
     @Override
-    public boolean isVarArgs() {/*todo*/return false;}
-//    public GroovyParamTag[] paramTags() {/*todo*/return null;}
+    public boolean isVarArgs() {/*todo*/
+        return false;
+    }
+
+    //    public GroovyParamTag[] paramTags() {/*todo*/return null;}
     @Override
-    public String signature() {/*todo*/return null;}
+    public String signature() {/*todo*/
+        return null;
+    }
+
     @Override
-    public GroovyClassDoc[] thrownExceptions() {/*todo*/return null;}
+    public GroovyClassDoc[] thrownExceptions() {/*todo*/
+        return null;
+    }
+
     @Override
-    public GroovyType[] thrownExceptionTypes() {/*todo*/return null;}
+    public GroovyType[] thrownExceptionTypes() {/*todo*/
+        return null;
+    }
 //    public GroovyThrowsTag[] throwsTags() {/*todo*/return null;}
 //    public GroovyTypeVariable[] typeParameters() {/*todo*/return null;}
 //    public GroovyParamTag[] typeParamTags() {/*todo*/return null;}

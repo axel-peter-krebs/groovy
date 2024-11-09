@@ -27,7 +27,7 @@ class TemplateEnginesTest extends CompilableTestSupport {
         // tag::simple_template_engine1[]
         def text = 'Dear "$firstname $lastname",\nSo nice to meet you in <% print city %>.\nSee you in ${month},\n${signed}'
 
-        def binding = ["firstname":"Sam", "lastname":"Pullara", "city":"San Francisco", "month":"December", "signed":"Groovy-Dev"]
+        def binding = ["firstname": "Sam", "lastname": "Pullara", "city": "San Francisco", "month": "December", "signed": "Groovy-Dev"]
 
         def engine = new groovy.text.SimpleTemplateEngine()
         def template = engine.createTemplate(text).make(binding)
@@ -107,9 +107,9 @@ class TemplateEnginesTest extends CompilableTestSupport {
         assert result.readLines()[1].trim() == '\\'
     }
 
-        void testStreamingTemplateEngine() {
+    void testStreamingTemplateEngine() {
 // tag::streaming_template_engine[]
-def text = '''\
+        def text = '''\
 Dear <% out.print firstname %> ${lastname},
 
 We <% if (accepted) out.print 'are pleased' else out.print 'regret' %> \
@@ -118,18 +118,18 @@ to inform you that your paper entitled
 
 The conference committee.'''
 
-def template = new groovy.text.StreamingTemplateEngine().createTemplate(text)
+        def template = new groovy.text.StreamingTemplateEngine().createTemplate(text)
 
-def binding = [
-    firstname : "Grace",
-    lastname  : "Hopper",
-    accepted  : true,
-    title     : 'Groovy for COBOL programmers'
-]
+        def binding = [
+            firstname: "Grace",
+            lastname : "Hopper",
+            accepted : true,
+            title    : 'Groovy for COBOL programmers'
+        ]
 
-String response = template.make(binding)
+        String response = template.make(binding)
 
-assert response == '''Dear Grace Hopper,
+        assert response == '''Dear Grace Hopper,
 
 We are pleased to inform you that your paper entitled
 'Groovy for COBOL programmers' was accepted.
@@ -206,7 +206,7 @@ The conference committee.'''
 </ul>
 ''')
 
-        def result = template.make([items : [1,2,3,4]]).toString()
+        def result = template.make([items: [1, 2, 3, 4]]).toString()
         assert result == '''
 <ul>
 

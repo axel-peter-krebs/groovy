@@ -25,7 +25,7 @@ class EscapingOfStringAnnotationValuesTest extends StringSourcesStubTestCase {
 
     Map<String, String> provideSources() {
         [
-                'StringAnn.java': '''
+            'StringAnn.java'        : '''
                     import java.lang.annotation.*;
                     @Retention(RetentionPolicy.RUNTIME)
                     public @interface StringAnn {
@@ -33,7 +33,7 @@ class EscapingOfStringAnnotationValuesTest extends StringSourcesStubTestCase {
                     }
                 ''',
 
-                'StringAnnUsage1.groovy': '''
+            'StringAnnUsage1.groovy': '''
                     |@StringAnn(str = """Now that's what
                     |I
                     |\tcall an
@@ -42,12 +42,12 @@ class EscapingOfStringAnnotationValuesTest extends StringSourcesStubTestCase {
                     |class StringAnnUsage1 {}
                 '''.stripMargin('|'),
 
-                'StringAnnUsage2.groovy': '''
+            'StringAnnUsage2.groovy': '''
                     @StringAnn(str = 'single quote string with "double quote string"')
                     class StringAnnUsage2 {}
                 ''',
 
-                'StringAnnUsage3.groovy': '''
+            'StringAnnUsage3.groovy': '''
                     @StringAnn(str = '{id:[^.]\\\\.[^.]}')
                     class StringAnnUsage3 {}
                 '''

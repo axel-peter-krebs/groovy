@@ -38,7 +38,8 @@ final class GroovyRowResultTest {
         return row
     }
 
-    @CompileStatic @Test
+    @CompileStatic
+    @Test
     void testMapType() {
         Map<String, Object> row = createRow() // GROOVY-9784
     }
@@ -101,7 +102,8 @@ final class GroovyRowResultTest {
         }
     }
 
-    @Test // GROOVY-1296
+    @Test
+    // GROOVY-1296
     void testNullProperties() {
         def row = createRow()
 

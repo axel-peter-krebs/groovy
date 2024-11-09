@@ -27,16 +27,16 @@ class MarkupWithWriterTest extends TestXmlSupport {
         def writer = new java.io.StringWriter()
         def b = new MarkupBuilder(writer)
 
-        b.root1(a:5, b:7) {
+        b.root1(a: 5, b: 7) {
             elem1('hello1')
             elem2('hello2')
-            elem3(x:7)
+            elem3(x: 7)
         }
         assertEquals "<root1 a='5' b='7'>\n" +
-                "  <elem1>hello1</elem1>\n" +
-                "  <elem2>hello2</elem2>\n" +
-                "  <elem3 x='7' />\n" +
-                "</root1>", writer.toString()
+            "  <elem1>hello1</elem1>\n" +
+            "  <elem2>hello2</elem2>\n" +
+            "  <elem3 x='7' />\n" +
+            "</root1>", writer.toString()
     }
 
     void testWriterUseInScriptFile() {

@@ -84,13 +84,13 @@ class JmxBeanInfoManager {
         desc.setField JmxBuilderTools.DESC_KEY_NAME, map.name
 
         new ModelMBeanInfoSupport(
-                (String) object.getClass().name,
-                (String) desc.getFieldValue(JmxBuilderTools.DESC_KEY_DISPLAY_NAME),
-                attribs,
-                ctors,
-                ops,
-                notes,
-                desc
+            (String) object.getClass().name,
+            (String) desc.getFieldValue(JmxBuilderTools.DESC_KEY_DISPLAY_NAME),
+            attribs,
+            ctors,
+            ops,
+            notes,
+            desc
         )
     }
 }

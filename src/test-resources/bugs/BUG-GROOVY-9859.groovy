@@ -17,13 +17,13 @@
  *  under the License.
  */
 
-public synchronized ImmutableMap<String,Pair<String,Double>>
+public synchronized ImmutableMap<String, Pair<String, Double>>
 a(
-        List<String> params,
-        List<String> columnMapping)
-{
+    List<String> params,
+    List<String> columnMapping) {
     return null;
 }
 
 public class Pair<T, U> {}
+
 public class ImmutableMap<T, U> {}

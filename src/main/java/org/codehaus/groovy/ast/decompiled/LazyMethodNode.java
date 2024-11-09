@@ -44,10 +44,8 @@ import java.util.function.Supplier;
  */
 class LazyMethodNode extends MethodNode implements LazyInitializable {
     private final Supplier<MethodNode> methodNodeSupplier;
-    private MethodNode delegate;
-
     private final String name;
-
+    private MethodNode delegate;
     private volatile boolean initialized;
 
     public LazyMethodNode(Supplier<MethodNode> methodNodeSupplier, String name) {
@@ -62,10 +60,12 @@ class LazyMethodNode extends MethodNode implements LazyInitializable {
         ClassNode declaringClass = super.getDeclaringClass();
         if (null != declaringClass) delegate.setDeclaringClass(declaringClass);
     }
+
     @Override
     public boolean isInitialized() {
         return initialized;
     }
+
     @Override
     public void setInitialized(boolean initialized) {
         this.initialized = initialized;

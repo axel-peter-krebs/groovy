@@ -19,7 +19,7 @@
 package org.codehaus.groovy.tools.stubgenerator
 
 /**
- * GROOVY-4400 - call to super class Exception constructor should be rendered as 
+ * GROOVY-4400 - call to super class Exception constructor should be rendered as
  * "super ((java.lang.Throwable)null);" and not as "super (null);"
  */
 class UnAmbigousSuperConstructorCallStubsTest extends StringSourcesStubTestCase {
@@ -40,7 +40,7 @@ class UnAmbigousSuperConstructorCallStubsTest extends StringSourcesStubTestCase 
 
                 }
             ''',
-            'Dummy.java': 'interface Dummy{}'
+            'Dummy.java'              : 'interface Dummy{}'
         ]
     }
 

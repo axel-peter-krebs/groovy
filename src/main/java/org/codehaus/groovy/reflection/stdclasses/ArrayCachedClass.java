@@ -44,7 +44,7 @@ public class ArrayCachedClass extends CachedClass {
                 ret[i] = strings[i].toString();
             }
             argument = ret;
-        } else if (paramComponent==Object.class && argumentComponent.isPrimitive()){
+        } else if (paramComponent == Object.class && argumentComponent.isPrimitive()) {
             argument = DefaultTypeTransformation.primitiveArrayBox(argument);
         }
         return argument;

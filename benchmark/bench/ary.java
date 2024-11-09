@@ -18,10 +18,10 @@ public class ary {
 
         for (i = 0; i < n; i++)
             x[i] = i + 1;
-        for (k = 0; k < 1000; k++ )
-            for (j = n-1; j >= 0; j--)
+        for (k = 0; k < 1000; k++)
+            for (j = n - 1; j >= 0; j--)
                 y[j] += x[j];
 
-        System.out.println(y[0] + " " + y[n-1]);
+        System.out.println(y[0] + " " + y[n - 1]);
     }
 }

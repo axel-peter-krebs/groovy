@@ -83,7 +83,7 @@ public class ManagedConcurrentLinkedQueueStressTest {
         // Remove some refs so GC will work in order to test multiple iterating threads
         // removing collected references
         int i = 0;
-        for (Iterator<Object> itr = elements.iterator(); itr.hasNext();) {
+        for (Iterator<Object> itr = elements.iterator(); itr.hasNext(); ) {
             itr.next();
             if (i++ % 8 == 0) {
                 itr.remove();

@@ -31,7 +31,7 @@ class MultilineStringStubTest extends StringSourcesStubTestCase {
                 }
             ''',
 
-            'Main.java': '''
+            'Main.java'     : '''
                 public class Main {
                    public void main() {
                       System.out.println(new MyClass().FOO);

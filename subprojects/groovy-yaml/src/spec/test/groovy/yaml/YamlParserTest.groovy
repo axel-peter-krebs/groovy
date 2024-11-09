@@ -46,7 +46,7 @@ before_script:
         assert 'groovy' == yaml.language
         assert 'required' == yaml.sudo
         assert 'trusty' == yaml.dist
-        assert ['openjdk10', 'oraclejdk9', 'oraclejdk8'] ==  yaml.matrix.include.jdk
+        assert ['openjdk10', 'oraclejdk9', 'oraclejdk8'] == yaml.matrix.include.jdk
         assert ['unset _JAVA_OPTIONS'] == yaml.before_script*.trim()
         // end::parse_text[]
     }
@@ -81,7 +81,7 @@ before_script:
 
 
     void testParsePath() {
-        def file = File.createTempFile('test','yml')
+        def file = File.createTempFile('test', 'yml')
         file.deleteOnExit()
         file.text = '''
 language: groovy
@@ -102,7 +102,7 @@ matrix:
         assert 'groovy' == yaml.language
         assert 'required' == yaml.sudo
         assert 'trusty' == yaml.dist
-        assert ['openjdk10', 'oraclejdk9', 'oraclejdk8'] ==  yaml.matrix.include.jdk
+        assert ['openjdk10', 'oraclejdk9', 'oraclejdk8'] == yaml.matrix.include.jdk
 
     }
 

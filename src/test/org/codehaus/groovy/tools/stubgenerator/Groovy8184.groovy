@@ -27,13 +27,13 @@ final class Groovy8184 extends StringSourcesStubTestCase {
                 class C8184 {
                 }
             ''',
-            'G.groovy': '''
+            'G.groovy'  : '''
                 @Category(C8184)
                 class G {
                     def m() { this }
                 }
             ''',
-            'J.java': '''
+            'J.java'    : '''
                 public class J {
                     Object m() throws Exception {
                         return G.class.getDeclaredMethod("m", C8184.class);

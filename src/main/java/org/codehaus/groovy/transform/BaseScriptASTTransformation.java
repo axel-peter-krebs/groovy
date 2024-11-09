@@ -51,6 +51,12 @@ public class BaseScriptASTTransformation extends AbstractASTTransformation {
     public static final ClassNode MY_TYPE = ClassHelper.make(MY_CLASS);
     private static final String MY_TYPE_NAME = "@" + MY_TYPE.getNameWithoutPackage();
 
+    private static boolean isCustomScriptBodyMethod(final MethodNode mn) {
+        return mn != null && !("run".equals(mn.getName())
+            && mn.getParameters().length == 0
+            && mn.getDeclaringClass().equals(ClassHelper.SCRIPT_TYPE));
+    }
+
     @Override
     public void visit(ASTNode[] nodes, SourceUnit source) {
         init(nodes, source);
@@ -140,8 +146,8 @@ public class BaseScriptASTTransformation extends AbstractASTTransformation {
             if (defaultMethod != null) {
                 cNode.removeMethod(defaultMethod);
                 MethodNode methodNode = new MethodNode(runScriptMethod.getName(), runScriptMethod.getModifiers() & ~ACC_ABSTRACT
-                        , runScriptMethod.getReturnType(), runScriptMethod.getParameters(), runScriptMethod.getExceptions()
-                        , defaultMethod.getCode());
+                    , runScriptMethod.getReturnType(), runScriptMethod.getParameters(), runScriptMethod.getExceptions()
+                    , defaultMethod.getCode());
                 // The AST node metadata has the flag that indicates that this method is a script body.
                 // It may also be carrying data for other AST transforms.
                 methodNode.copyNodeMetaData(defaultMethod);
@@ -156,11 +162,5 @@ public class BaseScriptASTTransformation extends AbstractASTTransformation {
         if (cNode.getSuperClass().getDeclaredConstructor(contextualSignature) == null) {
             cNode.removeConstructor(cNode.getDeclaredConstructor(contextualSignature));
         }
-    }
-
-    private static boolean isCustomScriptBodyMethod(final MethodNode mn) {
-        return mn != null && !("run".equals(mn.getName())
-                            && mn.getParameters().length == 0
-                            && mn.getDeclaringClass().equals(ClassHelper.SCRIPT_TYPE));
     }
 }

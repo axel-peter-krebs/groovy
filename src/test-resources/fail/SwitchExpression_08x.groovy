@@ -19,8 +19,8 @@
 
 def a = 7
 while (a-- > 0) {
-    def r = switch(a) {
-        case 6 : continue
-        default : return 'c'
+    def r = switch (a) {
+        case 6: continue
+        default: return 'c'
     }
 }

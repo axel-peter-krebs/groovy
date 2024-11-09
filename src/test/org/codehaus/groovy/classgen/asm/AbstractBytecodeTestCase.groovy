@@ -100,7 +100,9 @@ abstract class AbstractBytecodeTestCase extends GroovyTestCase {
         for (gc in cu.classes) {
             try {
                 Class c = cu.classLoader.defineClass(gc.name, gc.bytes)
-                if (Script.isAssignableFrom(c)) { clazz = c }
+                if (Script.isAssignableFrom(c)) {
+                    clazz = c
+                }
                 c.isInterface() // trigger verification
             } catch (VerifyError e) {
                 throw e
@@ -128,6 +130,7 @@ abstract class AbstractBytecodeTestCase extends GroovyTestCase {
                     }
                 }
             }
+
             @Override
             FieldVisitor visitField(final int access, final String name, final String desc, final String signature, final Object value) {
                 if (options.field == name) {

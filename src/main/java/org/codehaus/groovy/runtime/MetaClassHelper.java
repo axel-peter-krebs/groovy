@@ -50,20 +50,65 @@ import static org.codehaus.groovy.reflection.stdclasses.CachedSAMClass.getSAMMet
 public class MetaClassHelper {
 
     public static final Object[] EMPTY_ARRAY = {};
-    public static final Class [] EMPTY_TYPE_ARRAY = {};
-    public static final Class [] EMPTY_CLASS_ARRAY = EMPTY_TYPE_ARRAY;
+    public static final Class[] EMPTY_TYPE_ARRAY = {};
+    public static final Class[] EMPTY_CLASS_ARRAY = EMPTY_TYPE_ARRAY;
     public static final Object[] ARRAY_WITH_NULL = {null}; // mutable!
 
     private static final int MAX_ARG_LEN = 12;
     private static final int
-            OBJECT_SHIFT = 23, INTERFACE_SHIFT = 0,
-            PRIMITIVE_SHIFT = 21, VARGS_SHIFT = 44;
+        OBJECT_SHIFT = 23, INTERFACE_SHIFT = 0,
+        PRIMITIVE_SHIFT = 21, VARGS_SHIFT = 44;
     /* dist binary layout:
-    * 0-20: interface
-    * 21-22: primitive dist
-    * 23-43: object dist
-    * 44-48: vargs penalty
-    */
+     * 0-20: interface
+     * 21-22: primitive dist
+     * 23-43: object dist
+     * 44-48: vargs penalty
+     */
+    private static final Class[] PRIMITIVES = {
+        boolean.class,
+        Boolean.class,
+        byte.class,
+        Byte.class,
+        short.class,
+        Short.class,
+        char.class,
+        Character.class,
+        int.class,
+        Integer.class,
+        long.class,
+        Long.class,
+        BigInteger.class,
+        float.class,
+        Float.class,
+        double.class,
+        Double.class,
+        BigDecimal.class,
+        Number.class,
+        Object.class
+    };
+    private static final int[][] PRIMITIVE_DISTANCE_TABLE = {
+        //                    0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19
+        /*boolean[0]*/      {0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 2,},
+        /*Boolean[1]*/      {1, 0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 2,},
+        /*byte[2]*/         {18, 19, 0, 1, 2, 3, 16, 17, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,},
+        /*Byte[3]*/         {18, 19, 1, 0, 2, 3, 16, 17, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,},
+        /*short[4]*/        {18, 19, 14, 15, 0, 1, 16, 17, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,},
+        /*Short[5]*/        {18, 19, 14, 15, 1, 0, 16, 17, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,},
+        /*char[6]*/         {18, 19, 16, 17, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,},
+        /*Character[7]*/    {18, 19, 16, 17, 14, 15, 1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,},
+        /*int[8]*/          {18, 19, 14, 15, 12, 13, 16, 17, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,},
+        /*Integer[9]*/      {18, 19, 14, 15, 12, 13, 16, 17, 1, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,},
+        /*long[10]*/        {18, 19, 14, 15, 12, 13, 16, 17, 10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,},
+        /*Long[11]*/        {18, 19, 14, 15, 12, 13, 16, 17, 10, 11, 1, 0, 2, 3, 4, 5, 6, 7, 8, 9,},
+        /*BigInteger[12]*/  {18, 19, 9, 10, 7, 8, 16, 17, 5, 6, 3, 4, 0, 14, 15, 12, 13, 11, 1, 2,},
+        /*float[13]*/       {18, 19, 14, 15, 12, 13, 16, 17, 10, 11, 8, 9, 7, 0, 1, 2, 3, 4, 5, 6,},
+        /*Float[14]*/       {18, 19, 14, 15, 12, 13, 16, 17, 10, 11, 8, 9, 7, 1, 0, 2, 3, 4, 5, 6,},
+        /*double[15]*/      {18, 19, 14, 15, 12, 13, 16, 17, 10, 11, 8, 9, 7, 5, 6, 0, 1, 2, 3, 4,},
+        /*Double[16]*/      {18, 19, 14, 15, 12, 13, 16, 17, 10, 11, 8, 9, 7, 5, 6, 1, 0, 2, 3, 4,},
+        /*BigDecimal[17]*/  {18, 19, 14, 15, 12, 13, 16, 17, 10, 11, 8, 9, 7, 5, 6, 3, 4, 0, 1, 2,},
+        /*Number[18]*/      {18, 19, 14, 15, 12, 13, 16, 17, 10, 11, 8, 9, 7, 5, 6, 3, 4, 2, 0, 1,},
+        /*Object[19]*/      {18, 19, 14, 15, 12, 13, 16, 17, 10, 11, 8, 9, 7, 5, 6, 3, 4, 2, 1, 0,},
+    };
 
     public static boolean accessibleToConstructor(final Class at, final Constructor constructor) {
         boolean accessible = false;
@@ -206,53 +251,6 @@ public class MetaClassHelper {
         return objArray;
     }
 
-    private static final Class[] PRIMITIVES = {
-            boolean.class,
-            Boolean.class,
-            byte.class,
-            Byte.class,
-            short.class,
-            Short.class,
-            char.class,
-            Character.class,
-            int.class,
-            Integer.class,
-            long.class,
-            Long.class,
-            BigInteger.class,
-            float.class,
-            Float.class,
-            double.class,
-            Double.class,
-            BigDecimal.class,
-            Number.class,
-            Object.class
-    };
-
-    private static final int[][] PRIMITIVE_DISTANCE_TABLE = {
-            //                    0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19
-            /*boolean[0]*/      { 0,  1,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,  2,},
-            /*Boolean[1]*/      { 1,  0,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,  2,},
-            /*byte[2]*/         {18, 19,  0,  1,  2,  3, 16, 17,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,},
-            /*Byte[3]*/         {18, 19,  1,  0,  2,  3, 16, 17,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,},
-            /*short[4]*/        {18, 19, 14, 15,  0,  1, 16, 17,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13,},
-            /*Short[5]*/        {18, 19, 14, 15,  1,  0, 16, 17,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13,},
-            /*char[6]*/         {18, 19, 16, 17, 14, 15,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13,},
-            /*Character[7]*/    {18, 19, 16, 17, 14, 15,  1,  0,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13,},
-            /*int[8]*/          {18, 19, 14, 15, 12, 13, 16, 17,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11,},
-            /*Integer[9]*/      {18, 19, 14, 15, 12, 13, 16, 17,  1,  0,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11,},
-            /*long[10]*/        {18, 19, 14, 15, 12, 13, 16, 17, 10, 11,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9,},
-            /*Long[11]*/        {18, 19, 14, 15, 12, 13, 16, 17, 10, 11,  1,  0,  2,  3,  4,  5,  6,  7,  8,  9,},
-            /*BigInteger[12]*/  {18, 19,  9, 10,  7,  8, 16, 17,  5,  6,  3,  4,  0, 14, 15, 12, 13, 11,  1,  2,},
-            /*float[13]*/       {18, 19, 14, 15, 12, 13, 16, 17, 10, 11,  8,  9,  7,  0,  1,  2,  3,  4,  5,  6,},
-            /*Float[14]*/       {18, 19, 14, 15, 12, 13, 16, 17, 10, 11,  8,  9,  7,  1,  0,  2,  3,  4,  5,  6,},
-            /*double[15]*/      {18, 19, 14, 15, 12, 13, 16, 17, 10, 11,  8,  9,  7,  5,  6,  0,  1,  2,  3,  4,},
-            /*Double[16]*/      {18, 19, 14, 15, 12, 13, 16, 17, 10, 11,  8,  9,  7,  5,  6,  1,  0,  2,  3,  4,},
-            /*BigDecimal[17]*/  {18, 19, 14, 15, 12, 13, 16, 17, 10, 11,  8,  9,  7,  5,  6,  3,  4,  0,  1,  2,},
-            /*Number[18]*/      {18, 19, 14, 15, 12, 13, 16, 17, 10, 11,  8,  9,  7,  5,  6,  3,  4,  2,  0,  1,},
-            /*Object[19]*/      {18, 19, 14, 15, 12, 13, 16, 17, 10, 11,  8,  9,  7,  5,  6,  3,  4,  2,  1,  0,},
-    };
-
     private static int getPrimitiveIndex(Class c) {
         for (byte i = 0; i < PRIMITIVES.length; i++) {
             if (PRIMITIVES[i] == c) return i;
@@ -346,7 +344,7 @@ public class MetaClassHelper {
 
             Method sam;
             for (Class<?> c = TypeUtil.autoboxType(argument); c != null && c != parameterClass; c = c.getSuperclass()) {
-                if (c == Closure.class && parameterClass.isInterface() && (sam= getSAMMethod(parameterClass)) != null) {
+                if (c == Closure.class && parameterClass.isInterface() && (sam = getSAMMethod(parameterClass)) != null) {
                     // in case of multiple overloads, give preference to same parameter count
                     // with fuzzy matching of count for implicit-parameter closures / lambdas
                     int argParamCount = getParameterCount(argument);
@@ -519,7 +517,7 @@ public class MetaClassHelper {
     /**
      * @param methods the methods to choose from
      * @return the method with 1 parameter which takes the most general type of
-     *         object (e.g. Object)
+     * object (e.g. Object)
      */
     public static Object chooseEmptyMethodParams(FastArray methods) {
         Object vargsMethod = null;
@@ -542,9 +540,10 @@ public class MetaClassHelper {
     /**
      * Warning: this method does not choose properly if multiple methods with
      * the same distance are encountered
+     *
      * @param methods the methods to choose from
      * @return the method with 1 parameter which takes the most general type of
-     *         object (e.g. Object) ignoring primitive types
+     * object (e.g. Object) ignoring primitive types
      * @deprecated
      */
     @Deprecated
@@ -614,7 +613,7 @@ public class MetaClassHelper {
      * @param list   a list of MetaMethods
      * @param method the MetaMethod of interest
      * @return true if a method of the same matching prototype was found in the
-     *         list
+     * list
      */
     public static boolean containsMatchingMethod(List list, MetaMethod method) {
         for (Object aList : list) {
@@ -713,15 +712,15 @@ public class MetaClassHelper {
 
     public static GroovyRuntimeException createExceptionText(String init, MetaMethod method, Object object, Object[] args, Throwable reason, boolean setReason) {
         return new GroovyRuntimeException(
-                init
-                        + method
-                        + " on: "
-                        + object
-                        + " with arguments: "
-                        + FormatHelper.toString(args)
-                        + " reason: "
-                        + reason,
-                setReason ? reason : null);
+            init
+                + method
+                + " on: "
+                + object
+                + " with arguments: "
+                + FormatHelper.toString(args)
+                + " reason: "
+                + reason,
+            setReason ? reason : null);
     }
 
     protected static String getClassName(Object object) {
@@ -744,8 +743,8 @@ public class MetaClassHelper {
 
     public static boolean isAssignableFrom(Class classToTransformTo, Class classToTransformFrom) {
         if (classToTransformTo == classToTransformFrom
-                || classToTransformFrom == null
-                || classToTransformTo == Object.class) {
+            || classToTransformFrom == null
+            || classToTransformTo == Object.class) {
             return true;
         }
 
@@ -756,34 +755,34 @@ public class MetaClassHelper {
         // note: there is no coercion for boolean and char. Range matters, precision doesn't
         if (classToTransformTo == Integer.class) {
             if (classToTransformFrom == Short.class
-                    || classToTransformFrom == Byte.class
-                    || classToTransformFrom == BigInteger.class)
+                || classToTransformFrom == Byte.class
+                || classToTransformFrom == BigInteger.class)
                 return true;
         } else if (classToTransformTo == Double.class) {
             if (classToTransformFrom == Integer.class
-                    || classToTransformFrom == Long.class
-                    || classToTransformFrom == Short.class
-                    || classToTransformFrom == Byte.class
-                    || classToTransformFrom == Float.class
-                    || classToTransformFrom == BigDecimal.class
-                    || classToTransformFrom == BigInteger.class)
+                || classToTransformFrom == Long.class
+                || classToTransformFrom == Short.class
+                || classToTransformFrom == Byte.class
+                || classToTransformFrom == Float.class
+                || classToTransformFrom == BigDecimal.class
+                || classToTransformFrom == BigInteger.class)
                 return true;
         } else if (classToTransformTo == BigDecimal.class) {
             if (classToTransformFrom == Double.class
-                    || classToTransformFrom == Integer.class
-                    || classToTransformFrom == Long.class
-                    || classToTransformFrom == Short.class
-                    || classToTransformFrom == Byte.class
-                    || classToTransformFrom == Float.class
-                    || classToTransformFrom == BigInteger.class)
+                || classToTransformFrom == Integer.class
+                || classToTransformFrom == Long.class
+                || classToTransformFrom == Short.class
+                || classToTransformFrom == Byte.class
+                || classToTransformFrom == Float.class
+                || classToTransformFrom == BigInteger.class)
                 return true;
         } else if (classToTransformTo == BigInteger.class) {
             if (isIntegerLongShortByte(classToTransformFrom))
                 return true;
         } else if (classToTransformTo == Long.class) {
             if (classToTransformFrom == Integer.class
-                    || classToTransformFrom == Short.class
-                    || classToTransformFrom == Byte.class)
+                || classToTransformFrom == Short.class
+                || classToTransformFrom == Byte.class)
                 return true;
         } else if (classToTransformTo == Float.class) {
             if (isIntegerLongShortByte(classToTransformFrom))
@@ -802,14 +801,14 @@ public class MetaClassHelper {
 
     private static boolean isIntegerLongShortByte(Class classToTransformFrom) {
         return classToTransformFrom == Integer.class
-                || classToTransformFrom == Long.class
-                || classToTransformFrom == Short.class
-                || classToTransformFrom == Byte.class;
+            || classToTransformFrom == Long.class
+            || classToTransformFrom == Short.class
+            || classToTransformFrom == Byte.class;
     }
 
     public static boolean isGenericSetMethod(MetaMethod method) {
         return ("set".equals(method.getName()))
-                && method.getParameterTypes().length == 2;
+            && method.getParameterTypes().length == 2;
     }
 
     protected static boolean isSuperclass(Class clazz, Class superclass) {
@@ -837,7 +836,7 @@ public class MetaClassHelper {
         StringBuilder msg = new StringBuilder(methodName);
         msg.append("(");
         if (arguments != null) {
-            for (int i = 0; i < arguments.length;) {
+            for (int i = 0; i < arguments.length; ) {
                 msg.append(normalizedValue(arguments[i]));
                 if (++i < arguments.length) {
                     msg.append(",");
@@ -1017,16 +1016,16 @@ public class MetaClassHelper {
      * Sets the metaclass for an object, by delegating to the appropriate
      * {@link DefaultGroovyMethods} helper method. This method was introduced as
      * a breaking change in 2.0 to solve rare cases of stack overflow. See GROOVY-5285.
-     *
+     * <p>
      * The method is named doSetMetaClass in order to prevent misuses. Do not use
      * this method directly unless you know what you do.
      *
      * @param self the object for which to set the metaclass
-     * @param mc the metaclass
+     * @param mc   the metaclass
      */
     public static void doSetMetaClass(Object self, MetaClass mc) {
         if (self instanceof GroovyObject) {
-            DefaultGroovyMethods.setMetaClass((GroovyObject)self, mc);
+            DefaultGroovyMethods.setMetaClass((GroovyObject) self, mc);
         } else {
             DefaultGroovyMethods.setMetaClass(self, mc);
         }

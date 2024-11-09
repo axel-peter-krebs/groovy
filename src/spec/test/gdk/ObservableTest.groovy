@@ -29,7 +29,7 @@ class ObservableTest extends GroovyTestCase {
 
         def event                                       // <1>
         def listener = {
-            if (it instanceof ObservableList.ElementEvent)  {  // <2>
+            if (it instanceof ObservableList.ElementEvent) {  // <2>
                 event = it
             }
         } as PropertyChangeListener
@@ -54,7 +54,7 @@ class ObservableTest extends GroovyTestCase {
         // tag::observable_list_clear[]
         def event
         def listener = {
-            if (it instanceof ObservableList.ElementEvent)  {
+            if (it instanceof ObservableList.ElementEvent) {
                 event = it
             }
         } as PropertyChangeListener

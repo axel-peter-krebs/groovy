@@ -32,19 +32,20 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
- *  A ReaderSource for source files.
+ * A ReaderSource for source files.
  */
 public class FileReaderSource extends AbstractReaderSource {
     private final File file;  // The File from which we produce Readers.
     private final Charset UTF8 = StandardCharsets.UTF_8;
 
-   /**
-    *  Creates the ReaderSource from a File descriptor.
-    * @param file script source file
-    * @param configuration configuration for compiling source
-    */
-    public FileReaderSource( File file, CompilerConfiguration configuration ) {
-       super( configuration );
+    /**
+     * Creates the ReaderSource from a File descriptor.
+     *
+     * @param file          script source file
+     * @param configuration configuration for compiling source
+     */
+    public FileReaderSource(File file, CompilerConfiguration configuration) {
+        super(configuration);
         this.file = file;
     }
 
@@ -53,30 +54,30 @@ public class FileReaderSource extends AbstractReaderSource {
     }
 
     /**
-    *  Returns a new Reader on the underlying source object.
-    */
+     * Returns a new Reader on the underlying source object.
+     */
     @Override
     public Reader getReader() throws IOException {
-       // we want to remove the BOM windows adds from a file if the encoding is UTF-8
-       // in other cases we depend on the charsets
-       Charset cs = Charset.forName(configuration.getSourceEncoding());
-       InputStream in = new BufferedInputStream(new FileInputStream(file));
-       if (UTF8.name().equalsIgnoreCase(cs.name())) {
-           in.mark(3);
-           boolean hasBOM = true;
-           try {
-               int i = in.read();
-               hasBOM &= i == 0xEF;
-               i = in.read();
-               hasBOM &= i == 0xBB;
-               i = in.read();
-               hasBOM &= i == 0xFF;
-           } catch (IOException ioe) {
-               hasBOM= false;
-           }
-           if (!hasBOM) in.reset();
-       }
-       return new InputStreamReader( in, cs );
+        // we want to remove the BOM windows adds from a file if the encoding is UTF-8
+        // in other cases we depend on the charsets
+        Charset cs = Charset.forName(configuration.getSourceEncoding());
+        InputStream in = new BufferedInputStream(new FileInputStream(file));
+        if (UTF8.name().equalsIgnoreCase(cs.name())) {
+            in.mark(3);
+            boolean hasBOM = true;
+            try {
+                int i = in.read();
+                hasBOM &= i == 0xEF;
+                i = in.read();
+                hasBOM &= i == 0xBB;
+                i = in.read();
+                hasBOM &= i == 0xFF;
+            } catch (IOException ioe) {
+                hasBOM = false;
+            }
+            if (!hasBOM) in.reset();
+        }
+        return new InputStreamReader(in, cs);
     }
 
     /**

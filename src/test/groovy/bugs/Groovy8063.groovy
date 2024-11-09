@@ -44,7 +44,8 @@ final class Groovy8063 {
         '''
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     void testTypeAnnotationWithUnqualifiedInnerClassReference() {
         def err = shouldFail '''
             @interface Anno {

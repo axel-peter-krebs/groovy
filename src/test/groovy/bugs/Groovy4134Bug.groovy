@@ -22,7 +22,7 @@ import groovy.test.GroovyTestCase
 
 class Groovy4134Bug extends GroovyTestCase {
     void testClosureParamsWithDefaultValues() {
-        def c = {Integer maxRows = Integer.MAX_VALUE -> maxRows}
+        def c = { Integer maxRows = Integer.MAX_VALUE -> maxRows }
         assert c() == Integer.MAX_VALUE
         assert c(10) == 10
     }

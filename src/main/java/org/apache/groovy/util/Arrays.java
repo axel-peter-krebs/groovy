@@ -28,11 +28,14 @@ import java.util.Objects;
  */
 public class Arrays {
 
+    private Arrays() {
+    }
+
     /**
      * Concatenate arrays and ignore null array
      *
      * @param arrays arrays to merge
-     * @param <T> array component type
+     * @param <T>    array component type
      * @return the concatenated array
      */
     @SuppressWarnings("unchecked")
@@ -40,10 +43,10 @@ public class Arrays {
         if (null == arrays || 0 == arrays.length) return null;
 
         int resultLength =
-                java.util.Arrays.stream(arrays)
-                        .filter(Objects::nonNull)
-                        .map(e -> e.length)
-                        .reduce(0, Integer::sum);
+            java.util.Arrays.stream(arrays)
+                .filter(Objects::nonNull)
+                .map(e -> e.length)
+                .reduce(0, Integer::sum);
         T[] resultArray = (T[]) Array.newInstance(arrays[0].getClass().getComponentType(), resultLength);
 
         for (int i = 0, n = arrays.length, curr = 0; i < n; i++) {
@@ -58,6 +61,4 @@ public class Arrays {
 
         return resultArray;
     }
-
-    private Arrays() {}
 }

@@ -35,8 +35,8 @@ public abstract class ConsoleSupport {
     Style promptStyle;
     Style commandStyle;
     Style outputStyle;
-    private GroovyShell shell;
     int counter;
+    private GroovyShell shell;
 
     protected void addStylesToDocument(JTextPane outputArea) {
         StyledDocument doc = outputArea.getStyledDocument();

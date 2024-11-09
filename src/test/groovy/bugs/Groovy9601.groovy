@@ -25,7 +25,8 @@ import static groovy.test.GroovyAssert.assertScript
 
 @CompileStatic
 final class Groovy9601 {
-    @Test // regression test
+    @Test
+    // regression test
     void testAccessVariableSpecifiedByAbstractGetter() {
         assertScript '''
             abstract class Base {

@@ -57,89 +57,6 @@ public class Exceptions {
         throw new JsonInternalException(message, e);
     }
 
-    public static class JsonInternalException extends JsonException {
-
-        public JsonInternalException(String message) {
-            super(message);
-        }
-
-        public JsonInternalException(String message, Throwable cause) {
-            super(message, cause);
-        }
-
-        public JsonInternalException(Throwable cause) {
-            super("Wrapped Exception", cause);
-        }
-
-        @Override
-        public void printStackTrace(PrintStream s) {
-            s.println(this.getMessage());
-            if (getCause() != null) {
-                s.println("This Exception was wrapped, the original exception\n" +
-                        "stack trace is:\n");
-                getCause().printStackTrace(s);
-            } else {
-                super.printStackTrace(s);
-            }
-        }
-
-        @Override
-        public String getMessage() {
-            return super.getMessage() + (getCause() == null ? "" :
-                    getCauseMessage());
-        }
-
-        private String getCauseMessage() {
-            return "\n CAUSE " + getCause().getClass().getName() + " :: " +
-                    getCause().getMessage();
-        }
-
-        @Override
-        public String getLocalizedMessage() {
-            return this.getMessage();
-        }
-
-        @Override
-        public StackTraceElement[] getStackTrace() {
-            if (getCause() != null) {
-                return getCause().getStackTrace();
-            } else {
-                return super.getStackTrace();
-            }
-        }
-
-        @Override
-        public Throwable getCause() {
-            return super.getCause();
-        }
-
-        @Override
-        public void printStackTrace(PrintWriter s) {
-            s.println(this.getMessage());
-
-            if (getCause() != null) {
-                s.println("This Exception was wrapped, the original exception\n" +
-                        "stack trace is:\n");
-                getCause().printStackTrace(s);
-            } else {
-                super.printStackTrace(s);
-            }
-        }
-
-        @Override
-        public void printStackTrace() {
-            System.err.println(this.getMessage());
-
-            if (getCause() != null) {
-                System.err.println("This Exception was wrapped, the original exception\n" +
-                        "stack trace is:\n");
-                getCause().printStackTrace();
-            } else {
-                super.printStackTrace();
-            }
-        }
-    }
-
     public static String toString(Exception ex) {
         CharBuf buffer = CharBuf.create(255);
         buffer.addLine(ex.getLocalizedMessage());
@@ -148,7 +65,7 @@ public class Exceptions {
         for (StackTraceElement element : stackTrace) {
             buffer.add(element.getClassName());
             sputs(buffer, "class", element.getClassName(),
-                    "method", element.getMethodName(), "line", element.getLineNumber());
+                "method", element.getMethodName(), "line", element.getLineNumber());
         }
 
         return buffer.toString();
@@ -178,5 +95,88 @@ public class Exceptions {
     public static String sputs(Object... messages) {
         CharBuf buf = CharBuf.create(100);
         return sputs(buf, messages);
+    }
+
+    public static class JsonInternalException extends JsonException {
+
+        public JsonInternalException(String message) {
+            super(message);
+        }
+
+        public JsonInternalException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public JsonInternalException(Throwable cause) {
+            super("Wrapped Exception", cause);
+        }
+
+        @Override
+        public void printStackTrace(PrintStream s) {
+            s.println(this.getMessage());
+            if (getCause() != null) {
+                s.println("This Exception was wrapped, the original exception\n" +
+                    "stack trace is:\n");
+                getCause().printStackTrace(s);
+            } else {
+                super.printStackTrace(s);
+            }
+        }
+
+        @Override
+        public String getMessage() {
+            return super.getMessage() + (getCause() == null ? "" :
+                getCauseMessage());
+        }
+
+        private String getCauseMessage() {
+            return "\n CAUSE " + getCause().getClass().getName() + " :: " +
+                getCause().getMessage();
+        }
+
+        @Override
+        public String getLocalizedMessage() {
+            return this.getMessage();
+        }
+
+        @Override
+        public StackTraceElement[] getStackTrace() {
+            if (getCause() != null) {
+                return getCause().getStackTrace();
+            } else {
+                return super.getStackTrace();
+            }
+        }
+
+        @Override
+        public Throwable getCause() {
+            return super.getCause();
+        }
+
+        @Override
+        public void printStackTrace(PrintWriter s) {
+            s.println(this.getMessage());
+
+            if (getCause() != null) {
+                s.println("This Exception was wrapped, the original exception\n" +
+                    "stack trace is:\n");
+                getCause().printStackTrace(s);
+            } else {
+                super.printStackTrace(s);
+            }
+        }
+
+        @Override
+        public void printStackTrace() {
+            System.err.println(this.getMessage());
+
+            if (getCause() != null) {
+                System.err.println("This Exception was wrapped, the original exception\n" +
+                    "stack trace is:\n");
+                getCause().printStackTrace();
+            } else {
+                super.printStackTrace();
+            }
+        }
     }
 }

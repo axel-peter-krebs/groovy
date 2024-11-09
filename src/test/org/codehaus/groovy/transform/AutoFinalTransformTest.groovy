@@ -113,7 +113,8 @@ final class AutoFinalTransformTest {
         '''
     }
 
-    @Test // GROOVY-10585
+    @Test
+    // GROOVY-10585
     void testAutoFinalOnClassWithAnInnerInterface() {
         assertScript shell, '''
             @AutoFinal
@@ -125,7 +126,8 @@ final class AutoFinalTransformTest {
         '''
     }
 
-    @Test // GROOVY-10585
+    @Test
+    // GROOVY-10585
     void testAutoFinalOnMethodButDisabledViaConfig() {
         shell.@config.addCompilationCustomizers(new ASTTransformationCustomizer(groovy.transform.AutoFinal, enabled: false))
         def err = shouldFail shell, '''

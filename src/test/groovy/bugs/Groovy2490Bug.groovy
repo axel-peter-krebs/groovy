@@ -21,7 +21,7 @@ package groovy.bugs
 import groovy.test.GroovyTestCase
 
 class Groovy2490Bug extends GroovyTestCase {
-    void test () {
+    void test() {
         assertEquals One.foo, "hello"
         assertEquals Two.foo, "goodbye"
     }
@@ -32,7 +32,7 @@ class One {
     static String foo = "hello";
 }
 
-class Two extends One{
+class Two extends One {
 
     static String foo = "goodbye";
 }

@@ -26,8 +26,7 @@ import org.codehaus.groovy.tools.shell.util.Preferences
  * The 'edit' command. Opens Editor to write into the current Buffer.
  */
 class EditCommand
-    extends CommandSupport
-{
+    extends CommandSupport {
     public static final String COMMAND_NAME = ':edit'
 
     EditCommand(final Groovysh shell) {

@@ -46,5 +46,5 @@ class Groovy3948Bug extends GroovyTestCase {
         assert results == ['woof', 'woofwoof', 'woofwoofwoof']
     }
 
-    private static class Foo { }
+    private static class Foo {}
 }

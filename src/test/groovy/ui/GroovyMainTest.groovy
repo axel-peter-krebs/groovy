@@ -32,7 +32,7 @@ final class GroovyMainTest {
         GroovyMain.processArgs(args, ps)
         def out = baos.toString()
         assert out.contains('Usage: groovy')
-        ['-a', '-c', '-d', '-e', '-h', '-i', '-l', '-n', '-p', '-v'].each{
+        ['-a', '-c', '-d', '-e', '-h', '-i', '-l', '-n', '-p', '-v'].each {
             assert out.contains(it)
         }
     }
@@ -166,7 +166,8 @@ assert new MyConcreteClass() != null"""
         }
     }
 
-    @Test @Ignore('current xstream causes illegal access errors on JDK9+ - skip on those JDK versions, get coverage on older versions')
+    @Test
+    @Ignore('current xstream causes illegal access errors on JDK9+ - skip on those JDK versions, get coverage on older versions')
     void testGroovyASTDump() {
         def temporaryDirectory = new File("build/tmp/testGroovyXMLAstGeneration/")
         temporaryDirectory.mkdirs()

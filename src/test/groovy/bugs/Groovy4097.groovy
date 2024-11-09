@@ -49,7 +49,8 @@ final class Groovy4097 {
         '''
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testMethodSelection2() {
         assertScript '''
             abstract class A {}

@@ -33,6 +33,6 @@ class MockManagedGroovyObject {
     }
 
     static descriptor = [
-            name: "jmx.builder:type=EmbeddedObject"
+        name: "jmx.builder:type=EmbeddedObject"
     ]
 }

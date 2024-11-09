@@ -151,7 +151,7 @@ class JsonBuilderTest extends GroovyTestCase {
     }
 
     void testIterableAndClosure() {
-        Iterable authorIterable = [iterator:{->
+        Iterable authorIterable = [iterator: { ->
             [new Author(name: "Guillaume"), new Author(name: "Jochen"), new Author(name: "Paul")].iterator()
         }] as Iterable
         def json = new JsonBuilder()
@@ -163,7 +163,7 @@ class JsonBuilderTest extends GroovyTestCase {
     }
 
     void testMethodWithIterableAndClosure() {
-        Iterable authorIterable = [iterator:{->
+        Iterable authorIterable = [iterator: { ->
             [new Author(name: "Guillaume"), new Author(name: "Jochen"), new Author(name: "Paul")].iterator()
         }] as Iterable
 
@@ -176,7 +176,7 @@ class JsonBuilderTest extends GroovyTestCase {
     }
 
     void testNestedMethodWithIterableAndClosure() {
-        Iterable authorIterable = [iterator:{->
+        Iterable authorIterable = [iterator: { ->
             [new Author(name: "Guillaume"), new Author(name: "Jochen"), new Author(name: "Paul")].iterator()
         }] as Iterable
 
@@ -248,27 +248,27 @@ class JsonBuilderTest extends GroovyTestCase {
             pages 242
             orderBy "newest"
             results([
-                id: "world/video/2011/jan/19/tunisia-demonstrators-democracy-video",
-                sectionId: "world",
-                sectionName: "World news",
+                id                : "world/video/2011/jan/19/tunisia-demonstrators-democracy-video",
+                sectionId         : "world",
+                sectionName       : "World news",
                 webPublicationDate: "2011-01-19T15:12:46Z",
-                webTitle: "Tunisian demonstrators demand new democracy - video",
-                webUrl: "http://www.guardian.co.uk/world/video/2011/jan/19/tunisia-demonstrators-democracy-video",
-                apiUrl: "http://content.guardianapis.com/world/video/2011/jan/19/tunisia-demonstrators-democracy-video"
+                webTitle          : "Tunisian demonstrators demand new democracy - video",
+                webUrl            : "http://www.guardian.co.uk/world/video/2011/jan/19/tunisia-demonstrators-democracy-video",
+                apiUrl            : "http://content.guardianapis.com/world/video/2011/jan/19/tunisia-demonstrators-democracy-video"
             ],
-            [
-                id: "world/gallery/2011/jan/19/tunisia-protests-pictures",
-                sectionId: "world",
-                sectionName: "World news",
-                webPublicationDate: "2011-01-19T15:01:09Z",
-                webTitle: "Tunisia protests continue in pictures ",
-                webUrl: "http://www.guardian.co.uk/world/gallery/2011/jan/19/tunisia-protests-pictures",
-                apiUrl: "http://content.guardianapis.com/world/gallery/2011/jan/19/tunisia-protests-pictures"
-            ])
+                [
+                    id                : "world/gallery/2011/jan/19/tunisia-protests-pictures",
+                    sectionId         : "world",
+                    sectionName       : "World news",
+                    webPublicationDate: "2011-01-19T15:01:09Z",
+                    webTitle          : "Tunisia protests continue in pictures ",
+                    webUrl            : "http://www.guardian.co.uk/world/gallery/2011/jan/19/tunisia-protests-pictures",
+                    apiUrl            : "http://content.guardianapis.com/world/gallery/2011/jan/19/tunisia-protests-pictures"
+                ])
         }
 
         assert json.toString() ==
-                '''{"response":{"status":"ok","userTier":"free","total":2413,"startIndex":1,"pageSize":10,"currentPage":1,"pages":242,"orderBy":"newest","results":[{"id":"world/video/2011/jan/19/tunisia-demonstrators-democracy-video","sectionId":"world","sectionName":"World news","webPublicationDate":"2011-01-19T15:12:46Z","webTitle":"Tunisian demonstrators demand new democracy - video","webUrl":"http://www.guardian.co.uk/world/video/2011/jan/19/tunisia-demonstrators-democracy-video","apiUrl":"http://content.guardianapis.com/world/video/2011/jan/19/tunisia-demonstrators-democracy-video"},{"id":"world/gallery/2011/jan/19/tunisia-protests-pictures","sectionId":"world","sectionName":"World news","webPublicationDate":"2011-01-19T15:01:09Z","webTitle":"Tunisia protests continue in pictures ","webUrl":"http://www.guardian.co.uk/world/gallery/2011/jan/19/tunisia-protests-pictures","apiUrl":"http://content.guardianapis.com/world/gallery/2011/jan/19/tunisia-protests-pictures"}]}}'''
+            '''{"response":{"status":"ok","userTier":"free","total":2413,"startIndex":1,"pageSize":10,"currentPage":1,"pages":242,"orderBy":"newest","results":[{"id":"world/video/2011/jan/19/tunisia-demonstrators-democracy-video","sectionId":"world","sectionName":"World news","webPublicationDate":"2011-01-19T15:12:46Z","webTitle":"Tunisian demonstrators demand new democracy - video","webUrl":"http://www.guardian.co.uk/world/video/2011/jan/19/tunisia-demonstrators-democracy-video","apiUrl":"http://content.guardianapis.com/world/video/2011/jan/19/tunisia-demonstrators-democracy-video"},{"id":"world/gallery/2011/jan/19/tunisia-protests-pictures","sectionId":"world","sectionName":"World news","webPublicationDate":"2011-01-19T15:01:09Z","webTitle":"Tunisia protests continue in pictures ","webUrl":"http://www.guardian.co.uk/world/gallery/2011/jan/19/tunisia-protests-pictures","apiUrl":"http://content.guardianapis.com/world/gallery/2011/jan/19/tunisia-protests-pictures"}]}}'''
     }
 
     void testNestedListMap() {
@@ -289,21 +289,21 @@ class JsonBuilderTest extends GroovyTestCase {
     void testTrendsFromTwitter() {
         def json = new JsonBuilder()
         json.trends {
-            "2010-06-22 17:20" ([
-                    name: "Groovy rules",
-                    query: "Groovy rules"
+            "2010-06-22 17:20"([
+                name : "Groovy rules",
+                query: "Groovy rules"
             ], {
-                    name "#worldcup"
-                    query "#worldcup"
+                name "#worldcup"
+                query "#worldcup"
             }, [
-                    name: "Uruguai",
-                    query: "Uruguai"
+                name : "Uruguai",
+                query: "Uruguai"
             ])
-            "2010-06-22 06:20" ({
+            "2010-06-22 06:20"({
                 name "#groovy"
                 query "#groovy"
             }, [
-                name: "#java",
+                name : "#java",
                 query: "#java"
             ])
         }
@@ -330,9 +330,9 @@ class JsonBuilderTest extends GroovyTestCase {
                 lastName 'Laforge'
                 // Maps are valid values for objects too
                 address(
-                        city: 'Paris',
-                        country: 'France',
-                        zip: 12345,
+                    city: 'Paris',
+                    country: 'France',
+                    zip: 12345,
                 )
                 married true
                 conferences 'JavaOne', 'Gr8conf'
@@ -391,25 +391,25 @@ class JsonBuilderTest extends GroovyTestCase {
     }
 
     void testSpecialCharEscape() {
-        assert new JsonBuilder({'"' 0}).toString() == '{"\\"":0}'
-        assert new JsonBuilder({'\b' 0}).toString() == '{"\\b":0}'
-        assert new JsonBuilder({'\f' 0}).toString() == '{"\\f":0}'
-        assert new JsonBuilder({'\n' 0}).toString() == '{"\\n":0}'
-        assert new JsonBuilder({'\r' 0}).toString() == '{"\\r":0}'
-        assert new JsonBuilder({'\t' 0}).toString() == '{"\\t":0}'
-        assert new JsonBuilder({'\\' 0}).toString() == '{"\\\\":0}'
-        assert new JsonBuilder({'\1' 0}).toString() == '{"\\u0001":0}'
-        assert new JsonBuilder({'\u0002' 0}).toString() == '{"\\u0002":0}'
+        assert new JsonBuilder({ '"' 0 }).toString() == '{"\\"":0}'
+        assert new JsonBuilder({ '\b' 0 }).toString() == '{"\\b":0}'
+        assert new JsonBuilder({ '\f' 0 }).toString() == '{"\\f":0}'
+        assert new JsonBuilder({ '\n' 0 }).toString() == '{"\\n":0}'
+        assert new JsonBuilder({ '\r' 0 }).toString() == '{"\\r":0}'
+        assert new JsonBuilder({ '\t' 0 }).toString() == '{"\\t":0}'
+        assert new JsonBuilder({ '\\' 0 }).toString() == '{"\\\\":0}'
+        assert new JsonBuilder({ '\1' 0 }).toString() == '{"\\u0001":0}'
+        assert new JsonBuilder({ '\u0002' 0 }).toString() == '{"\\u0002":0}'
     }
 
     void testWithGenerator() {
         def generator = new JsonGenerator.Options()
-                .excludeNulls()
-                .dateFormat('yyyyMM')
-                .excludeFieldsByName('secretKey', 'creditCardNumber')
-                .excludeFieldsByType(URL)
-                .addConverter(java.util.concurrent.atomic.AtomicBoolean) { ab -> ab.get() }
-                .build()
+            .excludeNulls()
+            .dateFormat('yyyyMM')
+            .excludeFieldsByName('secretKey', 'creditCardNumber')
+            .excludeFieldsByType(URL)
+            .addConverter(java.util.concurrent.atomic.AtomicBoolean) { ab -> ab.get() }
+            .build()
 
         def json = new JsonBuilder(generator)
 

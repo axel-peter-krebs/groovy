@@ -27,7 +27,8 @@ final class Groovy11196 {
     }
 
     static class C extends A {
-        @Override m(String s) {
+        @Override
+        m(String s) {
             return 'successful'
         }
     }

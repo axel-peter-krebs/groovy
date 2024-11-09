@@ -53,6 +53,10 @@ import static org.codehaus.groovy.transform.stc.StaticTypeCheckingVisitor.inferL
 
 public final class ExpressionUtils {
 
+    private ExpressionUtils() {
+        assert false;
+    }
+
     public static boolean isNullConstant(final Expression expression) {
         return expression instanceof ConstantExpression && ((ConstantExpression) expression).isNullExpression();
     }
@@ -73,8 +77,8 @@ public final class ExpressionUtils {
      * Determines if a type matches another type (or array thereof).
      *
      * @param targetType the candidate type
-     * @param type the type we are checking against
-     * @param recurse true if we can have multi-dimension arrays; should be false for annotation member types
+     * @param type       the type we are checking against
+     * @param recurse    true if we can have multi-dimension arrays; should be false for annotation member types
      * @return true if the type equals the targetType or array thereof
      */
     public static boolean isTypeOrArrayOfType(final ClassNode targetType, final ClassNode type, final boolean recurse) {
@@ -83,11 +87,13 @@ public final class ExpressionUtils {
         return (targetType.isArray() && recurse ? isTypeOrArrayOfType(targetType.getComponentType(), type, recurse) : type.equals(targetType.getComponentType()));
     }
 
+    //--------------------------------------------------------------------------
+
     /**
      * Determines if a type is derived from Number (or array thereof).
      *
      * @param targetType the candidate type
-     * @param recurse true if we can have multi-dimension arrays; should be false for annotation member types
+     * @param recurse    true if we can have multi-dimension arrays; should be false for annotation member types
      * @return true if the type equals the targetType or array thereof
      */
     public static boolean isNumberOrArrayOfNumber(final ClassNode targetType, final boolean recurse) {
@@ -96,13 +102,11 @@ public final class ExpressionUtils {
         return (targetType.isArray() && recurse ? isNumberOrArrayOfNumber(targetType.getComponentType(), recurse) : targetType.isArray() && targetType.getComponentType().isDerivedFrom(ClassHelper.Number_TYPE));
     }
 
-    //--------------------------------------------------------------------------
-
     /**
      * Converts expressions like ConstantExpression(40) + ConstantExpression(2)
      * into the simplified ConstantExpression(42) at compile time.
      *
-     * @param be the binary expression
+     * @param be         the binary expression
      * @param targetType the type of the result
      * @return the transformed expression or the original if no transformation was performed
      */
@@ -117,7 +121,7 @@ public final class ExpressionUtils {
                     Object leftV = ((ConstantExpression) left).getValue();
                     if (leftV == null) leftV = "null";
                     if (leftV instanceof String) {
-                        return configure(be, new ConstantExpression(((String)leftV) + ((ConstantExpression) right).getValue()));
+                        return configure(be, new ConstantExpression(((String) leftV) + ((ConstantExpression) right).getValue()));
                     }
                 }
             }
@@ -137,44 +141,44 @@ public final class ExpressionUtils {
                     rightX = transformInlineConstants(rightX, isShift ? ClassHelper.int_TYPE : targetType);
                 }
                 if (leftX instanceof ConstantExpression && rightX instanceof ConstantExpression) {
-                    Number left  = safeNumber((ConstantExpression) leftX);
+                    Number left = safeNumber((ConstantExpression) leftX);
                     Number right = safeNumber((ConstantExpression) rightX);
                     if (left == null || right == null) return null;
                     Number result = null;
                     switch (opType) {
-                      case PLUS:
-                        result = NumberMath.add(left, right);
-                        break;
-                      case MINUS:
-                        result = NumberMath.subtract(left, right);
-                        break;
-                      case MULTIPLY:
-                        result = NumberMath.multiply(left, right);
-                        break;
-                      case DIVIDE:
-                        result = NumberMath.divide(left, right);
-                        break;
-                      case LEFT_SHIFT:
-                        result = NumberMath.leftShift(left, right);
-                        break;
-                      case RIGHT_SHIFT:
-                        result = NumberMath.rightShift(left, right);
-                        break;
-                      case RIGHT_SHIFT_UNSIGNED:
-                        result = NumberMath.rightShiftUnsigned(left, right);
-                        break;
-                      case BITWISE_AND:
-                        result = NumberMath.and(left, right);
-                        break;
-                      case BITWISE_OR:
-                        result = NumberMath.or(left, right);
-                        break;
-                      case BITWISE_XOR:
-                        result = NumberMath.xor(left, right);
-                        break;
-                      case POWER:
-                        result = DefaultGroovyMethods.power(left, right);
-                        break;
+                        case PLUS:
+                            result = NumberMath.add(left, right);
+                            break;
+                        case MINUS:
+                            result = NumberMath.subtract(left, right);
+                            break;
+                        case MULTIPLY:
+                            result = NumberMath.multiply(left, right);
+                            break;
+                        case DIVIDE:
+                            result = NumberMath.divide(left, right);
+                            break;
+                        case LEFT_SHIFT:
+                            result = NumberMath.leftShift(left, right);
+                            break;
+                        case RIGHT_SHIFT:
+                            result = NumberMath.rightShift(left, right);
+                            break;
+                        case RIGHT_SHIFT_UNSIGNED:
+                            result = NumberMath.rightShiftUnsigned(left, right);
+                            break;
+                        case BITWISE_AND:
+                            result = NumberMath.and(left, right);
+                            break;
+                        case BITWISE_OR:
+                            result = NumberMath.or(left, right);
+                            break;
+                        case BITWISE_XOR:
+                            result = NumberMath.xor(left, right);
+                            break;
+                        case POWER:
+                            result = DefaultGroovyMethods.power(left, right);
+                            break;
                     }
                     if (result != null) {
                         ConstantExpression constantExpression = transformNumberConstantExpression(be, wrapperType, result);
@@ -230,8 +234,8 @@ public final class ExpressionUtils {
             Expression lhs = transformInlineConstants(be.getLeftExpression());
             Expression rhs = transformInlineConstants(be.getRightExpression());
             if (be.getOperation().getType() == PLUS // GROOVY-9855: inline string concat
-                    && lhs instanceof ConstantExpression && rhs instanceof ConstantExpression
-                    && ClassHelper.isStringType(lhs.getType()) && ClassHelper.isStringType(rhs.getType())) {
+                && lhs instanceof ConstantExpression && rhs instanceof ConstantExpression
+                && ClassHelper.isStringType(lhs.getType()) && ClassHelper.isStringType(rhs.getType())) {
                 return configure(exp, new ConstantExpression(lhs.getText() + rhs.getText()));
             }
             be.setLeftExpression(lhs);
@@ -239,7 +243,7 @@ public final class ExpressionUtils {
 
         } else if (exp instanceof ListExpression) {
             List<Expression> list = ((ListExpression) exp).getExpressions();
-            for (ListIterator<Expression> it = list.listIterator(); it.hasNext();) {
+            for (ListIterator<Expression> it = list.listIterator(); it.hasNext(); ) {
                 Expression e = transformInlineConstants(it.next());
                 it.set(e);
             }
@@ -258,7 +262,8 @@ public final class ExpressionUtils {
      *     <li>Binary expressions - string concatenation and numeric +, -, /, *</li>
      *     <li>List expressions - list of constants</li>
      * </ul>
-     * @param exp the original expression
+     *
+     * @param exp      the original expression
      * @param attrType the type that the final constant should be
      * @return the transformed type or the original if no transformation was possible
      */
@@ -361,6 +366,8 @@ public final class ExpressionUtils {
         return null;
     }
 
+    //--------------------------------------------------------------------------
+
     /**
      * Given a list of constants, transform each item in the list.
      *
@@ -388,8 +395,6 @@ public final class ExpressionUtils {
         return origList;
     }
 
-    //--------------------------------------------------------------------------
-
     private static ConstantExpression configure(final Expression origX, final ConstantExpression newX) {
         newX.setSourcePosition(origX);
         return newX;
@@ -398,9 +403,5 @@ public final class ExpressionUtils {
     private static Number safeNumber(final ConstantExpression constX) {
         Object value = constX.getValue();
         return value instanceof Number ? (Number) value : null;
-    }
-
-    private ExpressionUtils() {
-        assert false;
     }
 }

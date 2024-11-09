@@ -63,7 +63,8 @@ public class ConstructorNodeUtils {
     private static final ClassNode STRINGBUILDER_TYPE = make(StringBuilder.class);
     private static final ClassNode INVOKER_TYPE = make(InvokerHelper.class);
 
-    private ConstructorNodeUtils() { }
+    private ConstructorNodeUtils() {
+    }
 
     /**
      * Return the first statement from the constructor code if it is a call to super or this, otherwise null.
@@ -108,10 +109,10 @@ public class ConstructorNodeUtils {
         Expression sb = localVarX("sb");
         Expression toString = pojo ? toStringX(sb) : callX(INVOKER_TYPE, "toString", sb);
         Statement errorBlock = block(
-                declS(sb, ctorX(STRINGBUILDER_TYPE)),
-                appendS(sb, constX("Unknown named argument: ")),
-                appendS(sb, varX(name)),
-                throwS(ctorX(EXCEPTION, toString))
+            declS(sb, ctorX(STRINGBUILDER_TYPE)),
+            appendS(sb, constX("Unknown named argument: ")),
+            appendS(sb, varX(name)),
+            throwS(ctorX(EXCEPTION, toString))
         );
 
         return block(

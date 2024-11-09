@@ -122,7 +122,7 @@ class AstDumper {
         try (StringWriter out = new StringWriter()) {
             AstNodeToScriptVisitor visitor = new AstNodeToScriptVisitor(out, true, true)
 
-            new LinkedList<ClassNode>(this.ast?.classes ?: Collections.<ClassNode>emptyList()).sort { c1, c2 -> c1.name <=> c2.name }?.each {
+            new LinkedList<ClassNode>(this.ast?.classes ?: Collections.<ClassNode> emptyList()).sort { c1, c2 -> c1.name <=> c2.name }?.each {
                 visitor.call(new SourceUnit((String) null, (ReaderSource) null, null, null, null) {
                     @Override
                     ModuleNode getAST() {
@@ -144,7 +144,8 @@ class AstDumper {
  *
  * An adapter from ASTNode tree to source code.
  */
-@AutoFinal @CompileStatic
+@AutoFinal
+@CompileStatic
 class AstNodeToScriptVisitor implements CompilationUnit.IPrimaryClassNodeOperation, GroovyClassVisitor, GroovyCodeVisitor {
 
     private final Writer _out
@@ -465,9 +466,9 @@ class AstNodeToScriptVisitor implements CompilationUnit.IPrimaryClassNodeOperati
         if (exp instanceof ConstantExpression) exp = Verifier.transformToPrimitiveConstantIfPossible(exp)
         ClassNode type = exp?.type
         if (Modifier.isStatic(node.modifiers) && Modifier.isFinal(node.getModifiers())
-                && exp instanceof ConstantExpression
-                && type == node.type
-                && ClassHelper.isStaticConstantInitializerType(type)) {
+            && exp instanceof ConstantExpression
+            && type == node.type
+            && ClassHelper.isStaticConstantInitializerType(type)) {
             // GROOVY-5150: final constants may be initialized directly
             print ' = '
             if (ClassHelper.STRING_TYPE == type) {
@@ -660,7 +661,7 @@ class AstNodeToScriptVisitor implements CompilationUnit.IPrimaryClassNodeOperati
     @Override
     void visitStaticMethodCallExpression(StaticMethodCallExpression expression) {
         boolean parens = expression?.arguments instanceof MethodCallExpression
-                || expression?.arguments instanceof VariableExpression
+            || expression?.arguments instanceof VariableExpression
         print expression?.ownerType?.name + '.' + expression?.method
         if (parens) print '('
         expression?.arguments?.visit this
@@ -853,7 +854,7 @@ class AstNodeToScriptVisitor implements CompilationUnit.IPrimaryClassNodeOperati
         print opText
         if (expression?.expression instanceof VariableExpression) {
             visitVariableExpression((VariableExpression) expression?.expression, false)
-        } else if (expression?.expression instanceof PropertyExpression)  {
+        } else if (expression?.expression instanceof PropertyExpression) {
             expression?.expression?.visit this
         } else {
             print '('
@@ -882,7 +883,7 @@ class AstNodeToScriptVisitor implements CompilationUnit.IPrimaryClassNodeOperati
         print '('
         if (expression?.coerce) {
             boolean isVariableExpressionOrPropertyExpression =
-                    expression?.expression instanceof VariableExpression || expression?.expression instanceof PropertyExpression
+                expression?.expression instanceof VariableExpression || expression?.expression instanceof PropertyExpression
             if (!isVariableExpressionOrPropertyExpression) {
                 print '('
             }

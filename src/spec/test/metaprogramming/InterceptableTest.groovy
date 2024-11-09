@@ -35,7 +35,7 @@ class InterceptableTest extends GroovyTestCase {
 // tag::groovy_interceptable_object_example[]
 class Interception implements GroovyInterceptable {
 
-    def definedMethod() { }
+    def definedMethod() {}
 
     def invokeMethod(String name, Object args) {
         'invokedMethod'

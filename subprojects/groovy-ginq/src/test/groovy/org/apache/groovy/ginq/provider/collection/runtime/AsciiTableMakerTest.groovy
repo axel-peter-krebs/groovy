@@ -31,7 +31,7 @@ class AsciiTableMakerTest {
                 [name: 'Candy', age: 36, location: 'Shanghai'],
                 [name: '中文，English, 123, ａｂｃ，ひらがな，カタカナ', age: 1, location: '未知']
             ]
-            select  r.name, r.age, r.location
+            select r.name, r.age, r.location
         }
         def tableStr = AsciiTableMaker.makeAsciiTable(result)
         assert tableStr == '\n' +

@@ -25,11 +25,11 @@ public class MissingMethodExceptionNoStack extends MissingMethodException {
     private static final long serialVersionUID = -4567395518573062216L;
 
     public MissingMethodExceptionNoStack(String method, Class type, Object[] arguments) {
-        this(method,type,arguments,false);
+        this(method, type, arguments, false);
     }
 
     public MissingMethodExceptionNoStack(String method, Class type, Object[] arguments, boolean isStatic) {
-        super (method, type, arguments, isStatic);
+        super(method, type, arguments, isStatic);
     }
 
     @Override

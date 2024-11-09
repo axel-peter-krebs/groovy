@@ -30,7 +30,7 @@ import org.codehaus.groovy.runtime.typehandling.NumberMath;
 import java.lang.reflect.Modifier;
 
 public abstract class NumberNumberMetaMethod extends CallSiteAwareMetaMethod {
-    private static final CachedClass   NUMBER_CLASS = ReflectionCache.getCachedClass(Number.class);
+    private static final CachedClass NUMBER_CLASS = ReflectionCache.getCachedClass(Number.class);
     private static final CachedClass[] NUMBER_CLASS_ARR = {NUMBER_CLASS};
 
     protected NumberNumberMetaMethod() {
@@ -50,16 +50,6 @@ public abstract class NumberNumberMetaMethod extends CallSiteAwareMetaMethod {
     @Override
     public final CachedClass getDeclaringClass() {
         return NUMBER_CLASS;
-    }
-
-    public abstract static class NumberNumberCallSite extends PojoMetaMethodSite {
-
-        final NumberMath math;
-
-        public NumberNumberCallSite(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Number receiver, Number arg) {
-            super(site, metaClass, metaMethod, params);
-            math = NumberMath.getMath(receiver,arg);
-        }
     }
 
     @Override
@@ -126,20 +116,46 @@ public abstract class NumberNumberMetaMethod extends CallSiteAwareMetaMethod {
     }
 
     public abstract CallSite createIntegerInteger(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args);
+
     public abstract CallSite createIntegerLong(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args);
+
     public abstract CallSite createIntegerFloat(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args);
+
     public abstract CallSite createIntegerDouble(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args);
+
     public abstract CallSite createLongInteger(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args);
+
     public abstract CallSite createLongLong(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args);
+
     public abstract CallSite createLongFloat(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args);
+
     public abstract CallSite createLongDouble(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args);
+
     public abstract CallSite createFloatInteger(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args);
+
     public abstract CallSite createFloatLong(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args);
+
     public abstract CallSite createFloatFloat(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args);
+
     public abstract CallSite createFloatDouble(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args);
+
     public abstract CallSite createDoubleInteger(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args);
+
     public abstract CallSite createDoubleLong(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args);
+
     public abstract CallSite createDoubleFloat(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args);
+
     public abstract CallSite createDoubleDouble(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args);
+
     public abstract CallSite createNumberNumber(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args);
+
+    public abstract static class NumberNumberCallSite extends PojoMetaMethodSite {
+
+        final NumberMath math;
+
+        public NumberNumberCallSite(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Number receiver, Number arg) {
+            super(site, metaClass, metaMethod, params);
+            math = NumberMath.getMath(receiver, arg);
+        }
+    }
 }

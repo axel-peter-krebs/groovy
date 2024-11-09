@@ -17,5 +17,5 @@
  *  under the License.
  */
 
-sealed interface ShapeI { }
+sealed interface ShapeI {}
 

@@ -24,8 +24,8 @@ public class wc {
 
             while ((length = System.in.read(buff)) != -1) {
                 nc += length;
-                for(int i = 0; i < length; i++) {
-                    c = (char)buff[i];
+                for (int i = 0; i < length; i++) {
+                    c = (char) buff[i];
                     if (c == '\n')
                         ++nl;
                     if (Character.isWhitespace(c))
@@ -41,7 +41,7 @@ public class wc {
             return;
         }
         System.out.println(Integer.toString(nl) + " " +
-                           Integer.toString(nw) + " " +
-                           Integer.toString(nc));
+            Integer.toString(nw) + " " +
+            Integer.toString(nc));
     }
 }

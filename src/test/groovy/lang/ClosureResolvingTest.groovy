@@ -69,7 +69,7 @@ final class ClosureResolvingTest {
         }
 
         def metaClass = c.class.metaClass
-        metaClass.getFoo = {-> 'hello!' }
+        metaClass.getFoo = { -> 'hello!' }
 
         c.metaClass = metaClass
 
@@ -81,7 +81,7 @@ final class ClosureResolvingTest {
             c.call()
         }
         metaClass = c.class.metaClass
-        metaClass.doStuff = {-> 'hello' }
+        metaClass.doStuff = { -> 'hello' }
         c.metaClass = metaClass
 
         assert c.call() == 'hello'
@@ -108,7 +108,8 @@ final class ClosureResolvingTest {
         assert c.call() == 'foo'
     }
 
-    @Test // GROOVY-7701
+    @Test
+    // GROOVY-7701
     void testResolveDelegateFirst2() {
         assertScript '''
             class Foo {
@@ -238,7 +239,8 @@ final class ClosureResolvingTest {
         '''
     }
 
-    @Test // GROOVY-7232
+    @Test
+    // GROOVY-7232
     void testOwnerDelegateChain2() {
         assertScript '''
             def outer = { ->
@@ -257,7 +259,8 @@ final class ClosureResolvingTest {
         '''
     }
 
-    @Test // GROOVY-7232
+    @Test
+    // GROOVY-7232
     void testOwnerDelegateChain3() {
         assertScript '''
             def outer = { ->
@@ -280,7 +283,9 @@ final class ClosureResolvingTest {
         '''
     }
 
-    @Ignore @Test // GROOVY-7232
+    @Ignore
+    @Test
+    // GROOVY-7232
     void testOwnerDelegateChain4() {
         assertScript '''
             @GrabResolver(name='grails', root='https://repo.grails.org/grails/core')
@@ -303,7 +308,8 @@ final class ClosureResolvingTest {
         '''
     }
 
-    @Test // GROOVY-2686
+    @Test
+    // GROOVY-2686
     void testDelegateClosureProperty() {
         assertScript '''
             def c = { -> p() }

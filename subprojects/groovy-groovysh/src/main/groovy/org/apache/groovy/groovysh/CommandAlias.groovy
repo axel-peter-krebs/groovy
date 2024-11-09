@@ -24,8 +24,7 @@ import jline.console.completer.Completer
  * Provides simple command aliasing.
  */
 class CommandAlias
-    extends CommandSupport
-{
+    extends CommandSupport {
     final String targetName
 
     CommandAlias(final Groovysh shell, final String name, final String shortcut, final String target) {

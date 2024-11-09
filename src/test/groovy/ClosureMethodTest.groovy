@@ -294,18 +294,18 @@ class ClosureMethodTest extends GroovyTestCase {
         def checkEqual = { int a, b -> assert a == b; a }
         def sum = DGM.&sum
         def addThreeWays = [
-                items.sum(),
-                items.inject(0, sum),
-                items.inject(sum)
+            items.sum(),
+            items.inject(0, sum),
+            items.inject(sum)
         ]
         assert addThreeWays == [1234] * 3
         addThreeWays.inject(checkEqual)
 
         def addTwiceFourWays = [
-                items.inject(0) { int acc, next -> acc + twice(next) },
-                items.collect(twice).sum(),
-                items.collect(twice).inject(0, sum),
-                items.collect(twice).inject(sum)
+            items.inject(0) { int acc, next -> acc + twice(next) },
+            items.collect(twice).sum(),
+            items.collect(twice).inject(0, sum),
+            items.collect(twice).inject(sum)
         ]
         assert addTwiceFourWays == [2468] * 4
         addTwiceFourWays.inject(checkEqual)

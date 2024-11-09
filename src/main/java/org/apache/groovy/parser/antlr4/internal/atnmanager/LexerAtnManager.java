@@ -25,12 +25,15 @@ import org.apache.groovy.util.SystemUtil;
  * Manage ATN for lexer to avoid memory leak
  */
 public class LexerAtnManager extends AtnManager {
+    public static final LexerAtnManager INSTANCE = new LexerAtnManager();
     private static final String GROOVY_CLEAR_LEXER_DFA_CACHE = "groovy.antlr4.clear.lexer.dfa.cache";
     private static final boolean TO_CLEAR_LEXER_DFA_CACHE;
-    public static final LexerAtnManager INSTANCE = new LexerAtnManager();
 
     static {
         TO_CLEAR_LEXER_DFA_CACHE = SystemUtil.getBooleanSafe(GROOVY_CLEAR_LEXER_DFA_CACHE);
+    }
+
+    private LexerAtnManager() {
     }
 
     @Override
@@ -42,6 +45,4 @@ public class LexerAtnManager extends AtnManager {
     protected boolean shouldClearDfaCache() {
         return TO_CLEAR_LEXER_DFA_CACHE;
     }
-
-    private LexerAtnManager() {}
 }

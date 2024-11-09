@@ -42,37 +42,18 @@ import java.util.stream.Collectors;
 
 public class CachedSAMClass extends CachedClass {
 
-    private final Method method;
+    private static final Method[] EMPTY_METHOD_ARRAY = new Method[0];
+    private static final int PUBLIC_OR_PROTECTED = Modifier.PUBLIC | Modifier.PROTECTED;
+    private static final int ABSTRACT_STATIC_PRIVATE = Modifier.ABSTRACT | Modifier.STATIC | Modifier.PRIVATE;
+    private static final Set<String> OBJECT_METHOD_NAMES = Arrays.stream(Object.class.getMethods()).map(Method::getName).collect(Collectors.toUnmodifiableSet());
 
+    //--------------------------------------------------------------------------
+    private final Method method;
     public CachedSAMClass(Class clazz, ClassInfo classInfo) {
         super(clazz, classInfo);
         method = getSAMMethod(clazz);
         if (method == null) throw new GroovyBugError("assigned method should not have been null!");
     }
-
-    @Override
-    public boolean isAssignableFrom(Class argument) {
-        return argument == null
-            || Closure.class.isAssignableFrom(argument)
-            || getTheClass().isAssignableFrom(argument);
-    }
-
-    @Override
-    public Object coerceArgument(Object argument) {
-        if (argument instanceof Closure) {
-            Class<?> clazz = getTheClass();
-            return coerceToSAM((Closure<?>) argument, method, clazz);
-        } else {
-            return argument;
-        }
-    }
-
-    //--------------------------------------------------------------------------
-
-    private static final Method[] EMPTY_METHOD_ARRAY = new Method[0];
-    private static final int PUBLIC_OR_PROTECTED = Modifier.PUBLIC | Modifier.PROTECTED;
-    private static final int ABSTRACT_STATIC_PRIVATE = Modifier.ABSTRACT | Modifier.STATIC | Modifier.PRIVATE;
-    private static final Set<String> OBJECT_METHOD_NAMES = Arrays.stream(Object.class.getMethods()).map(Method::getName).collect(Collectors.toUnmodifiableSet());
 
     public static Object coerceToSAM(Closure argument, Method method, Class clazz) {
         return coerceToSAM(argument, method, clazz, clazz.isInterface());
@@ -198,6 +179,23 @@ public class CachedSAMClass extends CachedClass {
             }
         } catch (NoClassDefFoundError ignore) {
             return null;
+        }
+    }
+
+    @Override
+    public boolean isAssignableFrom(Class argument) {
+        return argument == null
+            || Closure.class.isAssignableFrom(argument)
+            || getTheClass().isAssignableFrom(argument);
+    }
+
+    @Override
+    public Object coerceArgument(Object argument) {
+        if (argument instanceof Closure) {
+            Class<?> clazz = getTheClass();
+            return coerceToSAM((Closure<?>) argument, method, clazz);
+        } else {
+            return argument;
         }
     }
 }

@@ -124,7 +124,7 @@ class MockFor {
         this.clazz = clazz
         proxy = MockProxyMetaClass.make(clazz, interceptConstruction)
         demand = new Demand()
-        ignore = new Ignore(parent:this)
+        ignore = new Ignore(parent: this)
         expect = new StrictExpectation(demand)
         proxy.interceptor = new MockInterceptor(expectation: expect)
     }
@@ -238,7 +238,7 @@ class MockFor {
      * Normally for mocks, <code>verify()</code> is call automatically at the end of the "use" Closure,
      * but with this style, no "use" Closure is present, so <code>verify()</code> must be called manually.
      */
-    GroovyObject proxyInstance(args=null) {
+    GroovyObject proxyInstance(args = null) {
         makeProxyInstance(args, false)
     }
 
@@ -252,7 +252,7 @@ class MockFor {
      * will be instantiated for the class of the instance (i.e. may be on the
      * generated class not the original class).
      */
-    GroovyObject proxyDelegateInstance(args=null) {
+    GroovyObject proxyDelegateInstance(args = null) {
         makeProxyInstance(args, true)
     }
 

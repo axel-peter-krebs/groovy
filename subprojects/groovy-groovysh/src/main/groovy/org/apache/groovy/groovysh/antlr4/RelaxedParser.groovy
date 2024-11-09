@@ -54,9 +54,9 @@ final class RelaxedParser implements Parsing {
             return new ParseStatus(ParseCode.COMPLETE)
         } catch (GroovySyntaxError e) {
             if ((e.message.contains('Unexpected input: ') || e.message.contains('Unexpected character: ')) && !(
-                    e.message.contains("Unexpected input: '}'")
-                            || e.message.contains("Unexpected input: ')'")
-                            || e.message.contains("Unexpected input: ']'")))
+                e.message.contains("Unexpected input: '}'")
+                    || e.message.contains("Unexpected input: ')'")
+                    || e.message.contains("Unexpected input: ']'")))
                 return new ParseStatus(ParseCode.INCOMPLETE)
         } catch (Exception e) {
             log.debug("Parse error: $e (${e.getClass().name})")

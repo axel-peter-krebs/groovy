@@ -126,9 +126,9 @@ public enum MacroBuilder {
     }
 
     public static ASTNode getMacroValue(BlockStatement closureBlock, boolean asIs) {
-        if(!asIs && closureBlock.getStatements().size() == 1) {
+        if (!asIs && closureBlock.getStatements().size() == 1) {
             Statement result = closureBlock.getStatements().get(0);
-            if(result instanceof ExpressionStatement) {
+            if (result instanceof ExpressionStatement) {
                 return ((ExpressionStatement) result).getExpression();
             } else {
                 return result;

@@ -89,18 +89,84 @@ import static org.codehaus.groovy.transform.stc.StaticTypesMarker.SWITCH_CONDITI
  */
 public class CompilationUnit extends ProcessingUnit {
 
-    /** The overall AST for this CompilationUnit. */
-    protected CompileUnit ast; // TODO: Switch to private and access through getAST().
+    private final IPrimaryClassNodeOperation verification = new IPrimaryClassNodeOperation() {
+        @Override
+        public void call(final SourceUnit source, final GeneratorContext context, final ClassNode classNode) throws CompilationFailedException {
+            new OptimizerVisitor(CompilationUnit.this).visitClass(classNode, source); // GROOVY-4272: repositioned from static import visitor
 
-    /** The source units from which this unit is built. */
+            GroovyClassVisitor visitor = new Verifier();
+            try {
+                visitor.visitClass(classNode);
+            } catch (RuntimeParserException rpe) {
+                getErrorCollector().addError(new SyntaxException(rpe.getMessage(), rpe.getNode()), source);
+            }
+
+            visitor = new LabelVerifier(source);
+            visitor.visitClass(classNode);
+
+            visitor = new InstanceOfVerifier() {
+                @Override
+                protected SourceUnit getSourceUnit() {
+                    return source;
+                }
+            };
+            visitor.visitClass(classNode);
+
+            visitor = new ClassCompletionVerifier(source);
+            visitor.visitClass(classNode);
+
+            visitor = new ExtendedVerifier(source);
+            visitor.visitClass(classNode);
+
+            // because the class may be generated even if an error was found
+            // and that class may have an invalid format we fail here if needed
+            getErrorCollector().failIfErrors();
+        }
+
+        @Override
+        public boolean needSortedInput() {
+            return true;
+        }
+    };
+    /**
+     * The overall AST for this CompilationUnit.
+     */
+    protected CompileUnit ast; // TODO: Switch to private and access through getAST().
+    /**
+     * The source units from which this unit is built.
+     */
     protected Map<String, SourceUnit> sources = new LinkedHashMap<>();
     protected Queue<SourceUnit> queuedSources = new LinkedList<>();
-
-    /** The classes generated during classgen. */
+    /**
+     * If set, outputs a little more information during compilation when errors occur.
+     */
+    protected boolean debug;
+    /**
+     * True after the first {@link #configure(CompilerConfiguration)} operation.
+     */
+    protected boolean configured;
+    /**
+     * A callback called during the {@code classgen} phase of compilation
+     */
+    protected ClassgenCallback classgenCallback;
+    /**
+     * A callback for use during {@link #compile()}
+     */
+    protected ProgressCallback progressCallback;
+    protected ClassNodeResolver classNodeResolver = new ClassNodeResolver();
+    protected ResolveVisitor resolveVisitor = new ResolveVisitor(this);
+    /**
+     * The AST transformations state data.
+     */
+    protected ASTTransformationsContext astTransformationsContext;
+    /**
+     * The classes generated during classgen.
+     */
     private List<GroovyClass> generatedClasses = new ArrayList<>();
-
     private Deque<PhaseOperation>[] phaseOperations;
     private Deque<PhaseOperation>[] newPhaseOperations;
+    private Set<javax.tools.JavaFileObject> javaCompilationUnitSet = new HashSet<>();
+
     {
         final int n = Phases.ALL + 1;
         phaseOperations = new Deque[n];
@@ -110,24 +176,6 @@ public class CompilationUnit extends ProcessingUnit {
             newPhaseOperations[i] = new LinkedList<>();
         }
     }
-
-    /** If set, outputs a little more information during compilation when errors occur. */
-    protected boolean debug;
-    /** True after the first {@link #configure(CompilerConfiguration)} operation. */
-    protected boolean configured;
-
-    /** A callback called during the {@code classgen} phase of compilation */
-    protected ClassgenCallback classgenCallback;
-    /** A callback for use during {@link #compile()} */
-    protected ProgressCallback progressCallback;
-
-    protected ClassNodeResolver classNodeResolver = new ClassNodeResolver();
-    protected ResolveVisitor resolveVisitor = new ResolveVisitor(this);
-
-    /** The AST transformations state data. */
-    protected ASTTransformationsContext astTransformationsContext;
-
-    private Set<javax.tools.JavaFileObject> javaCompilationUnitSet = new HashSet<>();
 
     /**
      * Initializes the CompilationUnit with defaults.
@@ -181,6 +229,29 @@ public class CompilationUnit extends ProcessingUnit {
 
         addPhaseOperations();
         applyCompilationCustomizers();
+    }
+
+    private static void validatePhase(final int phase) {
+        if (phase < 1 || phase > Phases.ALL) {
+            throw new IllegalArgumentException("phase " + phase + " is unknown");
+        }
+    }
+
+    private static int getSuperClassCount(ClassNode classNode) {
+        int count = 0;
+        while (classNode != null) {
+            count += 1;
+            classNode = classNode.getSuperClass();
+        }
+        return count;
+    }
+
+    private static int getInterfacesCount(final ClassNode classNode) {
+        int count = 1;
+        for (ClassNode face : classNode.getInterfaces()) {
+            count = Math.max(count, getInterfacesCount(face) + 1);
+        }
+        return count;
     }
 
     private void addPhaseOperations() {
@@ -259,10 +330,10 @@ public class CompilationUnit extends ProcessingUnit {
                 for (Iterator<String> it = cu.getClassesToCompile().keySet().iterator(); it.hasNext(); ) {
                     String name = it.next();
                     StringBuilder message = new StringBuilder("Compilation incomplete: expected to find the class ")
-                            .append(name)
-                            .append(" in ")
-                            .append(source.getName())
-                            .append(", but the file ");
+                        .append(name)
+                        .append(" in ")
+                        .append(source.getName())
+                        .append(", but the file ");
                     if (classes.isEmpty()) {
                         message.append("seems not to contain any classes");
                     } else {
@@ -292,12 +363,15 @@ public class CompilationUnit extends ProcessingUnit {
                     boolean cs = false, pojo = false, trait = false;
                     for (AnnotationNode an : cn.getAnnotations()) {
                         switch (an.getClassNode().getName()) {
-                        case "groovy.transform.CompileStatic":
-                            cs = true; break;
-                        case "groovy.transform.stc.POJO":
-                            pojo = true; break;
-                        case "groovy.transform.Trait":
-                            trait = true; break;
+                            case "groovy.transform.CompileStatic":
+                                cs = true;
+                                break;
+                            case "groovy.transform.stc.POJO":
+                                pojo = true;
+                                break;
+                            case "groovy.transform.Trait":
+                                trait = true;
+                                break;
                         }
                     }
                     if (!(cs && pojo) && !trait)
@@ -413,12 +487,6 @@ public class CompilationUnit extends ProcessingUnit {
         newPhaseOperations[phase].add(op);
     }
 
-    private static void validatePhase(final int phase) {
-        if (phase < 1 || phase > Phases.ALL) {
-            throw new IllegalArgumentException("phase " + phase + " is unknown");
-        }
-    }
-
     /**
      * Configures its debugging mode and classloader classpath from a given compiler configuration.
      * This cannot be done more than once due to limitations in {@link java.net.URLClassLoader URLClassLoader}.
@@ -485,6 +553,9 @@ public class CompilationUnit extends ProcessingUnit {
         this.classNodeResolver = classNodeResolver;
     }
 
+    //---------------------------------------------------------------------------
+    // SOURCE CREATION
+
     public Set<javax.tools.JavaFileObject> getJavaCompilationUnitSet() {
         return javaCompilationUnitSet;
     }
@@ -499,9 +570,6 @@ public class CompilationUnit extends ProcessingUnit {
     public GroovyClassLoader getTransformLoader() {
         return Optional.ofNullable(getASTTransformationsContext().getTransformLoader()).orElseGet(this::getClassLoader);
     }
-
-    //---------------------------------------------------------------------------
-    // SOURCE CREATION
 
     /**
      * Adds a set of file paths to the unit.
@@ -547,6 +615,9 @@ public class CompilationUnit extends ProcessingUnit {
         return addSource(new SourceUnit(name, scriptText, getConfiguration(), getClassLoader(), getErrorCollector()));
     }
 
+    //---------------------------------------------------------------------------
+    // EXTERNAL CALLBACKS
+
     /**
      * Adds a SourceUnit to the unit.
      */
@@ -566,15 +637,18 @@ public class CompilationUnit extends ProcessingUnit {
     public Iterator<SourceUnit> iterator() {
         return new Iterator<SourceUnit>() {
             private Iterator<String> nameIterator = sources.keySet().iterator();
+
             @Override
             public boolean hasNext() {
                 return nameIterator.hasNext();
             }
+
             @Override
             public SourceUnit next() {
                 String name = nameIterator.next();
                 return sources.get(name);
             }
+
             @Override
             public void remove() {
                 throw new UnsupportedOperationException();
@@ -594,20 +668,6 @@ public class CompilationUnit extends ProcessingUnit {
         module.addClass(node);
     }
 
-    //---------------------------------------------------------------------------
-    // EXTERNAL CALLBACKS
-
-    /**
-     * A callback interface you can use during the {@code classgen}
-     * phase of compilation as the compiler traverses the ClassNode tree.
-     * You will be called-back for each primary and inner class.
-     * Use setClassgenCallback() before running compile() to set your callback.
-     */
-    @FunctionalInterface
-    public interface ClassgenCallback {
-        void call(ClassVisitor writer, ClassNode node) throws CompilationFailedException;
-    }
-
     public ClassgenCallback getClassgenCallback() {
         return classgenCallback;
     }
@@ -620,20 +680,12 @@ public class CompilationUnit extends ProcessingUnit {
         this.classgenCallback = visitor;
     }
 
-    /**
-     * A callback interface you can use to get a callback after every
-     * unit of the compile process.  You will be called-back with a
-     * ProcessingUnit and a phase indicator.  Use setProgressCallback()
-     * before running compile() to set your callback.
-     */
-    @FunctionalInterface
-    public interface ProgressCallback {
-        void call(ProcessingUnit context, int phase) throws CompilationFailedException;
-    }
-
     public ProgressCallback getProgressCallback() {
         return progressCallback;
     }
+
+    //---------------------------------------------------------------------------
+    // ACTIONS
 
     /**
      * Sets a ProgressCallback.  You can have only one, and setting
@@ -642,9 +694,6 @@ public class CompilationUnit extends ProcessingUnit {
     public void setProgressCallback(final ProgressCallback callback) {
         this.progressCallback = callback;
     }
-
-    //---------------------------------------------------------------------------
-    // ACTIONS
 
     /**
      * Synonym for {@code compile(Phases.ALL)}.
@@ -665,7 +714,7 @@ public class CompilationUnit extends ProcessingUnit {
         while (throughPhase >= phase && phase <= Phases.ALL) {
             if (phase == Phases.CONVERSION) {
                 (sources.size() > 1 && Boolean.TRUE.equals(configuration.getOptimizationOptions().get(CompilerConfiguration.PARALLEL_PARSE))
-                        ? sources.values().parallelStream() : sources.values().stream()
+                    ? sources.values().parallelStream() : sources.values().stream()
                 ).forEach(SourceUnit::buildAST);
             }
             try {
@@ -735,7 +784,8 @@ public class CompilationUnit extends ProcessingUnit {
      * @throws CompilationFailedException
      */
     protected boolean dequeued() throws CompilationFailedException {
-        if (!queuedSources.isEmpty()) { SourceUnit unit;
+        if (!queuedSources.isEmpty()) {
+            SourceUnit unit;
             while ((unit = queuedSources.poll()) != null) {
                 sources.put(unit.getName(), unit);
             }
@@ -745,47 +795,40 @@ public class CompilationUnit extends ProcessingUnit {
         return false;
     }
 
-    private final IPrimaryClassNodeOperation verification = new IPrimaryClassNodeOperation() {
-        @Override
-        public void call(final SourceUnit source, final GeneratorContext context, final ClassNode classNode) throws CompilationFailedException {
-            new OptimizerVisitor(CompilationUnit.this).visitClass(classNode, source); // GROOVY-4272: repositioned from static import visitor
-
-            GroovyClassVisitor visitor = new Verifier();
-            try {
-                visitor.visitClass(classNode);
-            } catch (RuntimeParserException rpe) {
-                getErrorCollector().addError(new SyntaxException(rpe.getMessage(), rpe.getNode()), source);
+    protected ClassVisitor createClassVisitor() {
+        return new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
+            private ClassNode getClassNode(String name) {
+                // try classes under compilation
+                CompileUnit cu = getAST();
+                ClassNode cn = cu.getClass(name);
+                if (cn != null) return cn;
+                // try inner classes
+                cn = cu.getGeneratedInnerClass(name);
+                if (cn != null) return cn;
+                ClassNodeResolver.LookupResult lookupResult = getClassNodeResolver().resolveName(name, CompilationUnit.this);
+                return lookupResult == null ? null : lookupResult.getClassNode();
             }
 
-            visitor = new LabelVerifier(source);
-            visitor.visitClass(classNode);
+            private ClassNode getCommonSuperClassNode(ClassNode c, ClassNode d) {
+                // adapted from ClassWriter code
+                if (c.isDerivedFrom(d)) return d;
+                if (d.isDerivedFrom(c)) return c;
+                if (c.isInterface() || d.isInterface()) return ClassHelper.OBJECT_TYPE;
+                do {
+                    c = c.getSuperClass();
+                } while (c != null && !d.isDerivedFrom(c));
+                if (c == null) return ClassHelper.OBJECT_TYPE;
+                return c;
+            }
 
-            visitor = new InstanceOfVerifier() {
-                @Override
-                protected SourceUnit getSourceUnit() {
-                    return source;
-                }
-            };
-            visitor.visitClass(classNode);
-
-            visitor = new ClassCompletionVerifier(source);
-            visitor.visitClass(classNode);
-
-            visitor = new ExtendedVerifier(source);
-            visitor.visitClass(classNode);
-
-            // because the class may be generated even if an error was found
-            // and that class may have an invalid format we fail here if needed
-            getErrorCollector().failIfErrors();
-        }
-
-        @Override
-        public boolean needSortedInput() {
-            return true;
-        }
-    };
-
-    /**
+            @Override
+            protected String getCommonSuperClass(String arg1, String arg2) {
+                ClassNode a = getClassNode(arg1.replace('/', '.'));
+                ClassNode b = getClassNode(arg2.replace('/', '.'));
+                return getCommonSuperClassNode(a, b).getName().replace('.', '/');
+            }
+        };
+    }    /**
      * Generates bytecode for a single {@code ClassNode}.
      */
     private final IPrimaryClassNodeOperation classgen = new IPrimaryClassNodeOperation() {
@@ -836,42 +879,6 @@ public class CompilationUnit extends ProcessingUnit {
         }
     };
 
-    protected ClassVisitor createClassVisitor() {
-        return new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
-            private ClassNode getClassNode(String name) {
-                // try classes under compilation
-                CompileUnit cu = getAST();
-                ClassNode cn = cu.getClass(name);
-                if (cn != null) return cn;
-                // try inner classes
-                cn = cu.getGeneratedInnerClass(name);
-                if (cn != null) return cn;
-                ClassNodeResolver.LookupResult lookupResult = getClassNodeResolver().resolveName(name, CompilationUnit.this);
-                return lookupResult == null ? null : lookupResult.getClassNode();
-            }
-            private ClassNode getCommonSuperClassNode(ClassNode c, ClassNode d) {
-                // adapted from ClassWriter code
-                if (c.isDerivedFrom(d)) return d;
-                if (d.isDerivedFrom(c)) return c;
-                if (c.isInterface() || d.isInterface()) return ClassHelper.OBJECT_TYPE;
-                do {
-                    c = c.getSuperClass();
-                } while (c != null && !d.isDerivedFrom(c));
-                if (c == null) return ClassHelper.OBJECT_TYPE;
-                return c;
-            }
-            @Override
-            protected String getCommonSuperClass(String arg1, String arg2) {
-                ClassNode a = getClassNode(arg1.replace('/', '.'));
-                ClassNode b = getClassNode(arg2.replace('/', '.'));
-                return getCommonSuperClassNode(a,b).getName().replace('.','/');
-            }
-        };
-    }
-
-    //---------------------------------------------------------------------------
-    // PHASE HANDLING
-
     /**
      * Updates the phase marker on all sources.
      */
@@ -888,7 +895,97 @@ public class CompilationUnit extends ProcessingUnit {
     }
 
     //---------------------------------------------------------------------------
+    // PHASE HANDLING
+
+    private List<ClassNode> getPrimaryClassNodes(final boolean sort) {
+        List<ClassNode> classes = getAST().getClasses();
+
+        if (sort && classes.size() > 1) {
+            classes.sort(Comparator.comparingInt(cn -> {
+                int count;
+                if (cn.isInterface()) {
+                    count = getInterfacesCount(cn);
+                } else {
+                    count = getSuperClassCount(cn) + 1000;
+                }
+                if (cn.getOuterClass() == null && cn.getInnerClasses().hasNext()) {
+                    count += 2000; // GROOVY-10687: nest host must follow members (with closures)
+                }
+                return count;
+            }));
+        }
+
+        return classes;
+    }
+
+    //---------------------------------------------------------------------------
     // LOOP SIMPLIFICATION FOR SourceUnit OPERATIONS
+
+    private void changeBugText(final GroovyBugError e, final SourceUnit context) {
+        e.setBugText("exception in phase '" + getPhaseDescription() + "' in source unit '" + (context != null ? context.getName() : "?") + "' " + e.getBugText());
+    }
+
+    @Deprecated
+    public void addPhaseOperation(final GroovyClassOperation op) {
+        addPhaseOperation((IGroovyClassOperation) op);
+    }
+
+    //---------------------------------------------------------------------------
+    // LOOP SIMPLIFICATION FOR PRIMARY ClassNode OPERATIONS
+
+    @Deprecated
+    public void addPhaseOperation(final SourceUnitOperation op, final int phase) {
+        addPhaseOperation((ISourceUnitOperation) op, phase);
+    }
+
+    @Deprecated
+    public void addPhaseOperation(final PrimaryClassNodeOperation op, final int phase) {
+        addPhaseOperation((IPrimaryClassNodeOperation) op, phase);
+    }
+
+    @Deprecated
+    public void addFirstPhaseOperation(final PrimaryClassNodeOperation op, final int phase) {
+        addFirstPhaseOperation((IPrimaryClassNodeOperation) op, phase);
+    }
+
+    @Deprecated
+    public void addNewPhaseOperation(final SourceUnitOperation op, final int phase) {
+        addNewPhaseOperation((ISourceUnitOperation) op, phase);
+    }
+
+    @Deprecated
+    public void applyToSourceUnits(final SourceUnitOperation op) throws CompilationFailedException {
+        op.doPhaseOperation(this);
+    }
+
+    @Deprecated
+    public void applyToPrimaryClassNodes(final PrimaryClassNodeOperation op) throws CompilationFailedException {
+        op.doPhaseOperation(this);
+    }
+
+    //--------------------------------------------------------------------------
+
+    /**
+     * A callback interface you can use during the {@code classgen}
+     * phase of compilation as the compiler traverses the ClassNode tree.
+     * You will be called-back for each primary and inner class.
+     * Use setClassgenCallback() before running compile() to set your callback.
+     */
+    @FunctionalInterface
+    public interface ClassgenCallback {
+        void call(ClassVisitor writer, ClassNode node) throws CompilationFailedException;
+    }
+
+    /**
+     * A callback interface you can use to get a callback after every
+     * unit of the compile process.  You will be called-back with a
+     * ProcessingUnit and a phase indicator.  Use setProgressCallback()
+     * before running compile() to set your callback.
+     */
+    @FunctionalInterface
+    public interface ProgressCallback {
+        void call(ProcessingUnit context, int phase) throws CompilationFailedException;
+    }
 
     private interface PhaseOperation {
         void doPhaseOperation(CompilationUnit unit);
@@ -924,9 +1021,6 @@ public class CompilationUnit extends ProcessingUnit {
             unit.getErrorCollector().failIfErrors();
         }
     }
-
-    //---------------------------------------------------------------------------
-    // LOOP SIMPLIFICATION FOR PRIMARY ClassNode OPERATIONS
 
     @FunctionalInterface
     public interface IPrimaryClassNodeOperation extends PhaseOperation {
@@ -1027,85 +1121,6 @@ public class CompilationUnit extends ProcessingUnit {
         }
     }
 
-    private static int getSuperClassCount(ClassNode classNode) {
-        int count = 0;
-        while (classNode != null) {
-            count += 1;
-            classNode = classNode.getSuperClass();
-        }
-        return count;
-    }
-
-    private static int getInterfacesCount(final ClassNode classNode) {
-        int count = 1;
-        for (ClassNode face : classNode.getInterfaces()) {
-            count = Math.max(count, getInterfacesCount(face) + 1);
-        }
-        return count;
-    }
-
-    private List<ClassNode> getPrimaryClassNodes(final boolean sort) {
-        List<ClassNode> classes = getAST().getClasses();
-
-        if (sort && classes.size() > 1) {
-            classes.sort(Comparator.comparingInt(cn -> {
-                int count;
-                if (cn.isInterface()) {
-                    count = getInterfacesCount(cn);
-                } else {
-                    count = getSuperClassCount(cn) + 1000;
-                }
-                if (cn.getOuterClass() == null && cn.getInnerClasses().hasNext()) {
-                    count += 2000; // GROOVY-10687: nest host must follow members (with closures)
-                }
-                return count;
-            }));
-        }
-
-        return classes;
-    }
-
-    private void changeBugText(final GroovyBugError e, final SourceUnit context) {
-        e.setBugText("exception in phase '" + getPhaseDescription() + "' in source unit '" + (context != null ? context.getName() : "?") + "' " + e.getBugText());
-    }
-
-    //--------------------------------------------------------------------------
-
-    @Deprecated
-    public void addPhaseOperation(final GroovyClassOperation op) {
-        addPhaseOperation((IGroovyClassOperation) op);
-    }
-
-    @Deprecated
-    public void addPhaseOperation(final SourceUnitOperation op, final int phase) {
-        addPhaseOperation((ISourceUnitOperation) op, phase);
-    }
-
-    @Deprecated
-    public void addPhaseOperation(final PrimaryClassNodeOperation op, final int phase) {
-        addPhaseOperation((IPrimaryClassNodeOperation) op, phase);
-    }
-
-    @Deprecated
-    public void addFirstPhaseOperation(final PrimaryClassNodeOperation op, final int phase) {
-        addFirstPhaseOperation((IPrimaryClassNodeOperation) op, phase);
-    }
-
-    @Deprecated
-    public void addNewPhaseOperation(final SourceUnitOperation op, final int phase) {
-        addNewPhaseOperation((ISourceUnitOperation) op, phase);
-    }
-
-    @Deprecated
-    public void applyToSourceUnits(final SourceUnitOperation op) throws CompilationFailedException {
-        op.doPhaseOperation(this);
-    }
-
-    @Deprecated
-    public void applyToPrimaryClassNodes(final PrimaryClassNodeOperation op) throws CompilationFailedException {
-        op.doPhaseOperation(this);
-    }
-
     @Deprecated
     public abstract static class SourceUnitOperation implements ISourceUnitOperation {
     }
@@ -1117,4 +1132,6 @@ public class CompilationUnit extends ProcessingUnit {
     @Deprecated
     public abstract static class PrimaryClassNodeOperation implements IPrimaryClassNodeOperation {
     }
+
+
 }

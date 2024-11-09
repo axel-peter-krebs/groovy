@@ -45,7 +45,8 @@ final class Groovy8964 {
         '''
     }
 
-    @Test // GROOVY-9737
+    @Test
+    // GROOVY-9737
     void testInstanceMethodNotMaskedByStaticMethodWithSameNumberOfArgs1() {
         assertScript '''
             abstract class A {
@@ -64,7 +65,8 @@ final class Groovy8964 {
         '''
     }
 
-    @Test // GROOVY-9737
+    @Test
+    // GROOVY-9737
     void testInstanceMethodNotMaskedByStaticMethodWithSameNumberOfArgs2() {
         assertScript '''
             import groovy.bugs.Groovy8964.A
@@ -79,7 +81,8 @@ final class Groovy8964 {
         '''
     }
 
-    @Test // GROOVY-10379
+    @Test
+    // GROOVY-10379
     void testInstanceMethodNotMaskedByStaticMethodWithSameNumberOfArgs3() {
         def config = new CompilerConfiguration(
             targetDirectory: File.createTempDir(),
@@ -130,6 +133,7 @@ final class Groovy8964 {
 
     static abstract class A {
         static void m(Integer i) {}
+
         protected void m(String s) {}
     }
 }

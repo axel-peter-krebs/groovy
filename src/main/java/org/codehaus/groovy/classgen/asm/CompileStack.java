@@ -80,27 +80,73 @@ import static org.objectweb.asm.Opcodes.SWAP;
 public class CompileStack {
     // TODO: remove optimization of this.foo -> this.@foo
 
-    /** state flag */
-    private boolean clear = true;
-    /** current scope */
-    private VariableScope scope;
-    /** current label for continue */
-    private Label continueLabel;
-    /** current label for break */
-    private Label breakLabel;
-    /** available variables on stack */
-    private Map<String, BytecodeVariable> stackVariables = new HashMap<>();
-    /** index of the last variable on stack */
-    private int currentVariableIndex = 1;
-    /** index for the next variable on stack */
-    private int nextVariableIndex = 1;
-    /** currently temporary variables in use */
+    /**
+     * currently temporary variables in use
+     */
     private final Deque<BytecodeVariable> temporaryVariables = new LinkedList<>();
-    /** overall used variables for a method/constructor */
+    /**
+     * overall used variables for a method/constructor
+     */
     private final Deque<BytecodeVariable> usedVariables = new LinkedList<>();
-    /** map containing named labels of parenting blocks */
+    private final List<BlockRecorder> visitedBlocks = new LinkedList<>();
+    /**
+     * helper to handle different stack based variables
+     */
+    private final Deque<StateStackElement> stateStack = new LinkedList<>();
+    /**
+     * handle different states for the implicit "this"
+     */
+    private final Deque<Boolean> implicitThisStack = new LinkedList<>();
+    /**
+     * handle different states for being on the left hand side
+     */
+    private final Deque<Boolean> lhsStack = new LinkedList<>();
+    /**
+     * goals for a "break foo" call in a loop where foo is a label.
+     */
+    private final Map<String, Label> namedLoopBreakLabel = new HashMap<>();
+    /**
+     * goals for a "continue foo" call in a loop where foo is a label.
+     */
+    private final Map<String, Label> namedLoopContinueLabel = new HashMap<>();
+    private final Deque<ExceptionTableEntry> typedExceptions = new LinkedList<>();
+    private final Deque<ExceptionTableEntry> untypedExceptions = new LinkedList<>();
+    private final WriterController controller;
+    /**
+     * state flag
+     */
+    private boolean clear = true;
+    /**
+     * current scope
+     */
+    private VariableScope scope;
+    /**
+     * current label for continue
+     */
+    private Label continueLabel;
+    /**
+     * current label for break
+     */
+    private Label breakLabel;
+    /**
+     * available variables on stack
+     */
+    private Map<String, BytecodeVariable> stackVariables = new HashMap<>();
+    /**
+     * index of the last variable on stack
+     */
+    private int currentVariableIndex = 1;
+    /**
+     * index for the next variable on stack
+     */
+    private int nextVariableIndex = 1;
+    /**
+     * map containing named labels of parenting blocks
+     */
     private Map<String, Label> superBlockNamedLabels = new HashMap<>();
-    /** map containing named labels of current block */
+    /**
+     * map containing named labels of current block
+     */
     private Map<String, Label> currentBlockNamedLabels = new HashMap<>();
     /**
      * list containing finally blocks
@@ -109,97 +155,44 @@ public class CompileStack {
      * must be called for break/continue/return
      */
     private LinkedList<BlockRecorder> finallyBlocks = new LinkedList<>();
-    private final List<BlockRecorder> visitedBlocks = new LinkedList<>();
+    private String className;
+    /**
+     * first variable index usable after all parameters of a method
+     */
+    private int localVariableOffset;
+    private Label thisStartLabel, thisEndLabel;
+    /**
+     * stores if on left-hand-side during compilation
+     */
+    private boolean lhs;
+    /**
+     * stores if implicit or explicit this is used.
+     */
+    private boolean implicitThis;
+    private boolean inSpecialConstructorCall;
 
-    /** helper to handle different stack based variables */
-    private final Deque<StateStackElement> stateStack = new LinkedList<>();
-
-    /** handle different states for the implicit "this" */
-    private final Deque<Boolean> implicitThisStack = new LinkedList<>();
-    /** handle different states for being on the left hand side */
-    private final Deque<Boolean> lhsStack = new LinkedList<>();
     {
         implicitThisStack.add(Boolean.FALSE);
         lhsStack.add(Boolean.FALSE);
     }
 
-    private String className;
-    /** first variable index usable after all parameters of a method */
-    private int localVariableOffset;
-
-    private Label thisStartLabel, thisEndLabel;
-    /** goals for a "break foo" call in a loop where foo is a label. */
-    private final Map<String, Label> namedLoopBreakLabel = new HashMap<>();
-    /** goals for a "continue foo" call in a loop where foo is a label. */
-    private final Map<String, Label> namedLoopContinueLabel = new HashMap<>();
-    private final Deque<ExceptionTableEntry> typedExceptions = new LinkedList<>();
-    private final Deque<ExceptionTableEntry> untypedExceptions = new LinkedList<>();
-    /** stores if on left-hand-side during compilation */
-    private boolean lhs;
-    /** stores if implicit or explicit this is used. */
-    private boolean implicitThis;
-    private boolean inSpecialConstructorCall;
-
-    private final WriterController controller;
-
-    protected static class LabelRange {
-        public Label start;
-        public Label end;
-    }
-
-    public static class BlockRecorder {
-        private boolean isEmpty = true;
-        public Runnable excludedStatement;
-        public final LinkedList<LabelRange> ranges = new LinkedList<>();
-
-        public BlockRecorder() {
-        }
-
-        public BlockRecorder(final Runnable excludedStatement) {
-            this.excludedStatement = excludedStatement;
-        }
-
-        public void startRange(final Label start) {
-            LabelRange range = new LabelRange();
-            range.start = start;
-            ranges.add(range);
-            isEmpty = false;
-        }
-
-        public void closeRange(final Label end) {
-            ranges.getLast().end = end;
-        }
-    }
-
-    private static class ExceptionTableEntry {
-        Label start, end, goal;
-        String sig;
-    }
-
-    private class StateStackElement {
-        final VariableScope scope;
-        final Label continueLabel;
-        final Label breakLabel;
-        final Map<String, BytecodeVariable> stackVariables;
-        final Map<String, Label> currentBlockNamedLabels;
-        final LinkedList<BlockRecorder> finallyBlocks;
-        final boolean inSpecialConstructorCall;
-
-        StateStackElement() {
-            scope = CompileStack.this.scope;
-            continueLabel = CompileStack.this.continueLabel;
-            breakLabel = CompileStack.this.breakLabel;
-            stackVariables = CompileStack.this.stackVariables;
-            currentBlockNamedLabels = CompileStack.this.currentBlockNamedLabels;
-            finallyBlocks = CompileStack.this.finallyBlocks;
-            inSpecialConstructorCall = CompileStack.this.inSpecialConstructorCall;
-        }
-    }
-
-    //--------------------------------------------------------------------------
-
     public CompileStack(final WriterController controller) {
         this.controller = controller;
+    }
+
+    private static void pushInitValue(final ClassNode type, final MethodVisitor mv) {
+        /*  */
+        if (ClassHelper.isPrimitiveDouble(type)) {
+            mv.visitInsn(DCONST_0);
+        } else if (ClassHelper.isPrimitiveFloat(type)) {
+            mv.visitInsn(FCONST_0);
+        } else if (ClassHelper.isPrimitiveLong(type)) {
+            mv.visitInsn(LCONST_0);
+        } else if (ClassHelper.isPrimitiveType(type)) {
+            mv.visitInsn(ICONST_0);
+        } else {
+            mv.visitInsn(ACONST_NULL);
+        }
     }
 
     public Label getBreakLabel() {
@@ -209,6 +202,8 @@ public class CompileStack {
     public Label getContinueLabel() {
         return continueLabel;
     }
+
+    //--------------------------------------------------------------------------
 
     public VariableScope getScope() {
         return scope;
@@ -245,7 +240,7 @@ public class CompileStack {
                 methodNode = controller.getConstructorNode();
             }
             throw new GroovyBugError(
-                    "In method "+ (methodNode!=null?methodNode.getText():"<unknown>") + ", " +
+                "In method " + (methodNode != null ? methodNode.getText() : "<unknown>") + ", " +
                     "CompileStack#removeVar: tried to remove a temporary " +
                     "variable with index " + variableIndex + " in wrong order. " +
                     "Current temporary variables=" + temporaryVariables);
@@ -269,7 +264,7 @@ public class CompileStack {
     /**
      * Creates a temporary variable.
      *
-     * @param var specifies name and type
+     * @param var   specifies name and type
      * @param store defines if the toplevel argument of the stack should be stored
      * @return the index used for this temporary variable
      */
@@ -308,7 +303,7 @@ public class CompileStack {
     /**
      * creates a temporary variable.
      *
-     * @param name defines type and name
+     * @param name  defines type and name
      * @param store defines if the top-level argument of the stack should be stored
      * @return the index used for this temporary variable
      */
@@ -319,8 +314,8 @@ public class CompileStack {
     /**
      * creates a temporary variable.
      *
-     * @param name defines the name
-     * @param node defines the node
+     * @param name  defines the name
+     * @param node  defines the node
      * @param store defines if the top-level argument of the stack should be stored
      * @return the index used for this temporary variable
      */
@@ -425,7 +420,6 @@ public class CompileStack {
      * automatically define variables for the method parameters
      * and will create references if needed.  The created variables
      * can be accessed by calling getVariable().
-     *
      */
     public void init(final VariableScope scope, final Parameter[] parameters) {
         if (!clear) throw new GroovyBugError("CompileStack#init called without calling clear before");
@@ -586,11 +580,11 @@ public class CompileStack {
     }
 
     private void defineMethodVariables(final Parameter[] params, final boolean isInStaticContext) {
-        Label startLabel  = new Label();
+        Label startLabel = new Label();
         thisStartLabel = startLabel;
         controller.getMethodVisitor().visitLabel(startLabel);
 
-        makeLocalVariablesOffset(params,isInStaticContext);
+        makeLocalVariablesOffset(params, isInStaticContext);
 
         for (Parameter param : params) {
             String name = param.getName();
@@ -638,22 +632,9 @@ public class CompileStack {
         mv.visitVarInsn(ASTORE, reference.getIndex());
     }
 
-    private static void pushInitValue(final ClassNode type, final MethodVisitor mv) {
-        /*  */ if (ClassHelper.isPrimitiveDouble(type)) {
-            mv.visitInsn(DCONST_0);
-        } else if (ClassHelper.isPrimitiveFloat(type)) {
-            mv.visitInsn(FCONST_0);
-        } else if (ClassHelper.isPrimitiveLong(type)) {
-            mv.visitInsn(LCONST_0);
-        } else if (ClassHelper.isPrimitiveType(type)) {
-            mv.visitInsn(ICONST_0);
-        } else {
-            mv.visitInsn(ACONST_NULL);
-        }
-    }
-
     /**
      * Defines a new Variable using an AST variable.
+     *
      * @param initFromStack if true the last element of the
      *                      stack will be used to initialize
      *                      the new variable. If false null
@@ -858,5 +839,59 @@ public class CompileStack {
     public void pushInSpecialConstructorCall() {
         pushState();
         inSpecialConstructorCall = true;
+    }
+
+    protected static class LabelRange {
+        public Label start;
+        public Label end;
+    }
+
+    public static class BlockRecorder {
+        public final LinkedList<LabelRange> ranges = new LinkedList<>();
+        public Runnable excludedStatement;
+        private boolean isEmpty = true;
+
+        public BlockRecorder() {
+        }
+
+        public BlockRecorder(final Runnable excludedStatement) {
+            this.excludedStatement = excludedStatement;
+        }
+
+        public void startRange(final Label start) {
+            LabelRange range = new LabelRange();
+            range.start = start;
+            ranges.add(range);
+            isEmpty = false;
+        }
+
+        public void closeRange(final Label end) {
+            ranges.getLast().end = end;
+        }
+    }
+
+    private static class ExceptionTableEntry {
+        Label start, end, goal;
+        String sig;
+    }
+
+    private class StateStackElement {
+        final VariableScope scope;
+        final Label continueLabel;
+        final Label breakLabel;
+        final Map<String, BytecodeVariable> stackVariables;
+        final Map<String, Label> currentBlockNamedLabels;
+        final LinkedList<BlockRecorder> finallyBlocks;
+        final boolean inSpecialConstructorCall;
+
+        StateStackElement() {
+            scope = CompileStack.this.scope;
+            continueLabel = CompileStack.this.continueLabel;
+            breakLabel = CompileStack.this.breakLabel;
+            stackVariables = CompileStack.this.stackVariables;
+            currentBlockNamedLabels = CompileStack.this.currentBlockNamedLabels;
+            finallyBlocks = CompileStack.this.finallyBlocks;
+            inSpecialConstructorCall = CompileStack.this.inSpecialConstructorCall;
+        }
     }
 }

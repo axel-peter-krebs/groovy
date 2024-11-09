@@ -31,7 +31,9 @@ import java.lang.reflect.Method;
  */
 public class TestNgRunner implements GroovyRunner {
 
-    /** Path to the desired test-output directory, else null */
+    /**
+     * Path to the desired test-output directory, else null
+     */
     private static final String OUTPUT_DIRECTORY = getTestOutputDirectory();
 
     private static String getTestOutputDirectory() {
@@ -47,7 +49,7 @@ public class TestNgRunner implements GroovyRunner {
      * test, i.e. checks whether it appears to be using the relevant TestNG annotations.
      *
      * @param scriptClass the class we want to check
-     * @param loader the GroovyClassLoader to use to find classes
+     * @param loader      the GroovyClassLoader to use to find classes
      * @return true if the class appears to be a test
      */
     @Override
@@ -55,7 +57,7 @@ public class TestNgRunner implements GroovyRunner {
         try {
             @SuppressWarnings("unchecked")
             Class<? extends Annotation> testAnnotationClass =
-                    (Class<? extends Annotation>) loader.loadClass("org.testng.annotations.Test");
+                (Class<? extends Annotation>) loader.loadClass("org.testng.annotations.Test");
             if (scriptClass.isAnnotationPresent(testAnnotationClass)) {
                 return true;
             } else {
@@ -76,7 +78,7 @@ public class TestNgRunner implements GroovyRunner {
      * Utility method to run a TestNG test.
      *
      * @param scriptClass the class we want to run as a test
-     * @param loader the class loader to use
+     * @param loader      the class loader to use
      * @return the result of running the test
      */
     @Override

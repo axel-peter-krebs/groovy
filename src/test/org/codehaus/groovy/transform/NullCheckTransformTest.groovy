@@ -27,7 +27,8 @@ import static groovy.test.GroovyAssert.assertScript
  */
 final class NullCheckTransformTest {
 
-    @Test // GROOVY-9406
+    @Test
+    // GROOVY-9406
     void testNullCheckDoesNotConflictWithGeneratedConstructors() {
         assertScript '''
             import groovy.transform.*
@@ -186,7 +187,8 @@ final class NullCheckTransformTest {
         '''
     }
 
-    @Test // GROOVY-10178
+    @Test
+    // GROOVY-10178
     void testNullCheckWithCompileStatic2() {
         assertScript '''
             import groovy.transform.*

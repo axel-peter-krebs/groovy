@@ -70,7 +70,7 @@ public @interface ImmutableBase {
      * </pre>
      * Unknown keys in the map are ignored, and if the values would not change
      * the object, then the original object is returned.
-     *
+     * <p>
      * If a method called {@code copyWith} that takes a single parameter already
      * exists in the class, then this setting is ignored, and no method is generated.
      */

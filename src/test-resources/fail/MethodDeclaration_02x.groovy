@@ -17,5 +17,5 @@
  *  under the License.
  */
 
-def c = {a, a -> println a}
+def c = { a, a -> println a }
 c(1, 2)

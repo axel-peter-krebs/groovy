@@ -32,7 +32,7 @@ import static groovy.sql.SqlTestConstants.DB_URL_PREFIX
 import static groovy.sql.SqlTestConstants.DB_USER
 
 /**
- * Unit test of Sql cache feature 
+ * Unit test of Sql cache feature
  */
 class SqlCacheTest extends GroovyTestCase {
     Sql sql
@@ -47,21 +47,21 @@ class SqlCacheTest extends GroovyTestCase {
     @Override
     void setUp() {
         ds = DB_DATASOURCE.newInstance(
-                (DB_DS_KEY): DB_URL_PREFIX + getMethodName(),
-                user: DB_USER,
-                password: DB_PASSWORD)
+            (DB_DS_KEY): DB_URL_PREFIX + getMethodName(),
+            user: DB_USER,
+            password: DB_PASSWORD)
         con = ds.connection
         def methodOverride = [
-                createStatement: {Object[] args ->
-                    createStatementCallCounter++
-                    assert !createStatementExpectedCall || createStatementCallCounter <= createStatementExpectedCall
-                    InvokerHelper.invokeMethod(con, 'createStatement', args)
-                },
-                prepareStatement: {Object[] args ->
-                    prepareStatementCallCounter++
-                    assert !prepareStatementExpectedCall || prepareStatementCallCounter <= prepareStatementExpectedCall
-                    InvokerHelper.invokeMethod(con, 'prepareStatement', args)
-                }
+            createStatement : { Object[] args ->
+                createStatementCallCounter++
+                assert !createStatementExpectedCall || createStatementCallCounter <= createStatementExpectedCall
+                InvokerHelper.invokeMethod(con, 'createStatement', args)
+            },
+            prepareStatement: { Object[] args ->
+                prepareStatementCallCounter++
+                assert !prepareStatementExpectedCall || prepareStatementCallCounter <= prepareStatementExpectedCall
+                InvokerHelper.invokeMethod(con, 'prepareStatement', args)
+            }
         ]
         wrappedCon = ProxyGenerator.INSTANCE.instantiateDelegate(methodOverride, [Connection], con)
         sql = new Sql(wrappedCon)
@@ -211,7 +211,7 @@ class SqlCacheTest extends GroovyTestCase {
      */
     void testManuallyControlledCachingWithDataSource() {
         def connectionCallNumber = 0
-        def methodOverride = [getConnection:{connectionCallNumber++; ds.getConnection()}]
+        def methodOverride = [getConnection: { connectionCallNumber++; ds.getConnection() }]
         DataSource wrappedDs = ProxyGenerator.INSTANCE.instantiateDelegate(methodOverride, [DataSource], ds)
         sql = new Sql(wrappedDs)
         sql.cacheStatements = true

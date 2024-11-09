@@ -45,7 +45,7 @@ import static org.codehaus.groovy.runtime.dgmimpl.NumberNumberPlus.plus;
 
 /**
  * Represents an immutable list of Numbers from a value to a value with a particular step size.
- *
+ * <p>
  * In general, it isn't recommended using a NumberRange as a key to a map. The range
  * 0..3 is deemed to be equal to 0.0..3.0 but they have different hashCode values,
  * so storing a value using one of these ranges couldn't be retrieved using the other.
@@ -69,31 +69,26 @@ public class NumberRange extends AbstractList<Comparable> implements Range<Compa
      * The step size in the range.
      */
     private final Number stepSize;
-
-    /**
-     * The cached size, or -1 if not yet computed
-     */
-    private int size = -1;
-
-    /**
-     * The cached hashCode (once calculated)
-     */
-    private Integer hashCodeCache = null;
-
     /**
      * <code>true</code> if the range counts backwards from <code>to</code> to <code>from</code>.
      */
     private final boolean reverse;
-
     /**
      * <code>true</code> if the range includes the lower bound.
      */
     private final boolean inclusiveLeft;
-
     /**
      * <code>true</code> if the range includes the upper bound.
      */
     private final boolean inclusiveRight;
+    /**
+     * The cached size, or -1 if not yet computed
+     */
+    private int size = -1;
+    /**
+     * The cached hashCode (once calculated)
+     */
+    private Integer hashCodeCache = null;
 
     /**
      * Creates an inclusive {@link NumberRange} with step size 1.
@@ -111,8 +106,8 @@ public class NumberRange extends AbstractList<Comparable> implements Range<Compa
      * Creates a new {@link NumberRange} with step size 1.
      * Creates a reversed range if <code>from</code> &lt; <code>to</code>.
      *
-     * @param from start of the range
-     * @param to   end of the range
+     * @param from      start of the range
+     * @param to        end of the range
      * @param inclusive whether the range is inclusive
      */
     public <T extends Number & Comparable, U extends Number & Comparable>
@@ -124,12 +119,12 @@ public class NumberRange extends AbstractList<Comparable> implements Range<Compa
      * Creates an inclusive {@link NumberRange}.
      * Creates a reversed range if <code>from</code> &lt; <code>to</code>.
      *
-     * @param from start of the range
-     * @param to   end of the range
+     * @param from     start of the range
+     * @param to       end of the range
      * @param stepSize the gap between discrete elements in the range
      */
     public <T extends Number & Comparable, U extends Number & Comparable, V extends
-            Number & Comparable<? super Number>>
+        Number & Comparable<? super Number>>
     NumberRange(T from, U to, V stepSize) {
         this(from, to, stepSize, true, true);
     }
@@ -138,13 +133,13 @@ public class NumberRange extends AbstractList<Comparable> implements Range<Compa
      * Creates a {@link NumberRange}.
      * Creates a reversed range if <code>from</code> &lt; <code>to</code>.
      *
-     * @param from start of the range
-     * @param to   end of the range
-     * @param stepSize the gap between discrete elements in the range
+     * @param from      start of the range
+     * @param to        end of the range
+     * @param stepSize  the gap between discrete elements in the range
      * @param inclusive whether the range is inclusive (upper bound)
      */
     public <T extends Number & Comparable, U extends Number & Comparable, V extends
-            Number & Comparable>
+        Number & Comparable>
     NumberRange(T from, U to, V stepSize, boolean inclusive) {
         this(from, to, stepSize, true, inclusive);
     }
@@ -153,13 +148,13 @@ public class NumberRange extends AbstractList<Comparable> implements Range<Compa
      * Creates a {@link NumberRange}.
      * Creates a reversed range if <code>from</code> &lt; <code>to</code>.
      *
-     * @param from start of the range
-     * @param to   end of the range
-     * @param inclusiveLeft whether the range is includes the lower bound
+     * @param from           start of the range
+     * @param to             end of the range
+     * @param inclusiveLeft  whether the range is includes the lower bound
      * @param inclusiveRight whether the range is includes the upper bound
      */
     public <T extends Number & Comparable, U extends Number & Comparable, V extends
-            Number & Comparable>
+        Number & Comparable>
     NumberRange(T from, U to, boolean inclusiveLeft, boolean inclusiveRight) {
         this(from, to, null, inclusiveLeft, inclusiveRight);
     }
@@ -168,14 +163,14 @@ public class NumberRange extends AbstractList<Comparable> implements Range<Compa
      * Creates a {@link NumberRange}.
      * Creates a reversed range if <code>from</code> &lt; <code>to</code>.
      *
-     * @param from start of the range
-     * @param to   end of the range
-     * @param stepSize the gap between discrete elements in the range
-     * @param inclusiveLeft whether the range is includes the lower bound
+     * @param from           start of the range
+     * @param to             end of the range
+     * @param stepSize       the gap between discrete elements in the range
+     * @param inclusiveLeft  whether the range is includes the lower bound
      * @param inclusiveRight whether the range is includes the upper bound
      */
     public <T extends Number & Comparable, U extends Number & Comparable, V extends
-            Number & Comparable>
+        Number & Comparable>
     NumberRange(T from, U to, V stepSize, boolean inclusiveLeft, boolean inclusiveRight) {
         if (from == null) {
             throw new IllegalArgumentException("Must specify a non-null value for the 'from' index in a Range");
@@ -217,6 +212,24 @@ public class NumberRange extends AbstractList<Comparable> implements Range<Compa
         this.inclusiveRight = inclusiveRight;
     }
 
+    @SuppressWarnings("unchecked")
+    /* package private */ static <T extends Number & Comparable> T comparableNumber(Comparable c) {
+        return (T) c;
+    }
+
+    @SuppressWarnings("unchecked")
+    /* package private */ static <T extends Number & Comparable> T comparableNumber(Number n) {
+        return (T) n;
+    }
+
+    private static boolean areReversed(Number from, Number to) {
+        try {
+            return compareGreaterThan(from, to);
+        } catch (ClassCastException cce) {
+            throw new IllegalArgumentException("Unable to create range due to incompatible types: " + from.getClass().getSimpleName() + ".." + to.getClass().getSimpleName() + " (possible missing brackets around range?)", cce);
+        }
+    }
+
     /**
      * A method for determining from and to information when using this IntRange to index an aggregate object of the specified size.
      * Normally only used internally within Groovy but useful if adding range indexing support for your own aggregates.
@@ -244,24 +257,6 @@ public class NumberRange extends AbstractList<Comparable> implements Range<Compa
             throw new IllegalStateException("by only allowed on ranges with original stepSize = 1 but found " + this.stepSize);
         }
         return new NumberRange(comparableNumber(from), comparableNumber(to), stepSize, inclusiveLeft, inclusiveRight);
-    }
-
-    @SuppressWarnings("unchecked")
-    /* package private */ static <T extends Number & Comparable> T comparableNumber(Comparable c) {
-        return (T) c;
-    }
-
-    @SuppressWarnings("unchecked")
-    /* package private */ static <T extends Number & Comparable> T comparableNumber(Number n) {
-        return (T) n;
-    }
-
-    private static boolean areReversed(Number from, Number to) {
-        try {
-            return compareGreaterThan(from, to);
-        } catch (ClassCastException cce) {
-            throw new IllegalArgumentException("Unable to create range due to incompatible types: " + from.getClass().getSimpleName() + ".." + to.getClass().getSimpleName() + " (possible missing brackets around range?)", cce);
-        }
     }
 
     /**
@@ -345,12 +340,12 @@ public class NumberRange extends AbstractList<Comparable> implements Range<Compa
      */
     public boolean fastEquals(NumberRange that) {
         return that != null
-                && reverse == that.reverse
-                && inclusiveLeft == that.inclusiveLeft
-                && inclusiveRight == that.inclusiveRight
-                && compareEqual(from, that.from)
-                && compareEqual(to, that.to)
-                && compareEqual(stepSize, that.stepSize);
+            && reverse == that.reverse
+            && inclusiveLeft == that.inclusiveLeft
+            && inclusiveRight == that.inclusiveRight
+            && compareEqual(from, that.from)
+            && compareEqual(to, that.to)
+            && compareEqual(stepSize, that.stepSize);
     }
 
     /*
@@ -460,7 +455,7 @@ public class NumberRange extends AbstractList<Comparable> implements Range<Compa
         boolean shortcut = false;
         if (isIntegral(stepSize)) {
             if ((from instanceof Integer || from instanceof Long)
-                    && (to instanceof Integer || to instanceof Long)) {
+                && (to instanceof Integer || to instanceof Long)) {
                 // let's fast calculate the size
                 final BigInteger fromTemp = new BigInteger(from.toString());
                 final BigInteger fromNum = inclusiveLeft ? fromTemp : fromTemp.add(BigInteger.ONE);
@@ -470,7 +465,7 @@ public class NumberRange extends AbstractList<Comparable> implements Range<Compa
                 tempsize = sizeNum.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) < 0 ? sizeNum.intValue() : Integer.MAX_VALUE;
                 shortcut = true;
             } else if (((from instanceof BigDecimal || from instanceof BigInteger) && to instanceof Number) ||
-                    ((to instanceof BigDecimal || to instanceof BigInteger) && from instanceof Number)) {
+                ((to instanceof BigDecimal || to instanceof BigInteger) && from instanceof Number)) {
                 // let's fast calculate the size
                 final BigDecimal fromTemp = NumberMath.toBigDecimal((Number) from);
                 final BigDecimal fromNum = inclusiveLeft ? fromTemp : fromTemp.add(BigDecimal.ONE);
@@ -598,6 +593,37 @@ public class NumberRange extends AbstractList<Comparable> implements Range<Compa
         return new StepIterator(this, stepSize);
     }
 
+    @Override
+    public List<Comparable> step(int numSteps) {
+        final IteratorClosureAdapter<Comparable> adapter = new IteratorClosureAdapter<Comparable>(this);
+        step(numSteps, adapter);
+        return adapter.asList();
+    }
+
+    /**
+     * Increments by given step
+     *
+     * @param value the value to increment
+     * @param step  the amount to increment
+     * @return the incremented value
+     */
+    @SuppressWarnings("unchecked")
+    private Comparable increment(Object value, Number step) {
+        return (Comparable) plus((Number) value, step);
+    }
+
+    /**
+     * Decrements by given step
+     *
+     * @param value the value to decrement
+     * @param step  the amount to decrement
+     * @return the decremented value
+     */
+    @SuppressWarnings("unchecked")
+    private Comparable decrement(Object value, Number step) {
+        return (Comparable) minus((Number) value, step);
+    }
+
     /**
      * convenience class to serve in other methods.
      * It's not thread-safe, and lazily produces the next element only on calls of hasNext() or next()
@@ -633,12 +659,12 @@ public class NumberRange extends AbstractList<Comparable> implements Range<Compa
             }
             if (isAscending) {
                 return range.inclusiveRight
-                        ? compareLessThanEqual(next, range.getTo())
-                        : compareLessThan(next, range.getTo());
+                    ? compareLessThanEqual(next, range.getTo())
+                    : compareLessThan(next, range.getTo());
             }
             return range.inclusiveRight
-                    ? compareGreaterThanEqual(next, range.getFrom())
-                    : compareGreaterThan(next, range.getFrom());
+                ? compareGreaterThanEqual(next, range.getFrom())
+                : compareGreaterThan(next, range.getFrom());
 
         }
 
@@ -673,36 +699,5 @@ public class NumberRange extends AbstractList<Comparable> implements Range<Compa
         public void remove() {
             throw new UnsupportedOperationException();
         }
-    }
-
-    @Override
-    public List<Comparable> step(int numSteps) {
-        final IteratorClosureAdapter<Comparable> adapter = new IteratorClosureAdapter<Comparable>(this);
-        step(numSteps, adapter);
-        return adapter.asList();
-    }
-
-    /**
-     * Increments by given step
-     *
-     * @param value the value to increment
-     * @param step the amount to increment
-     * @return the incremented value
-     */
-    @SuppressWarnings("unchecked")
-    private Comparable increment(Object value, Number step) {
-        return (Comparable) plus((Number) value, step);
-    }
-
-    /**
-     * Decrements by given step
-     *
-     * @param value the value to decrement
-     * @param step the amount to decrement
-     * @return the decremented value
-     */
-    @SuppressWarnings("unchecked")
-    private Comparable decrement(Object value, Number step) {
-        return (Comparable) minus((Number) value, step);
     }
 }

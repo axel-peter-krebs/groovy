@@ -124,6 +124,6 @@ class NamespaceNodeTest extends TestXmlSupport {
     }
 
     private static String pretty(String s) {
-        s.normalize().replaceAll("[\n]", "").replaceAll('[ ]+',' ').replaceAll('> <','><')
+        s.normalize().replaceAll("[\n]", "").replaceAll('[ ]+', ' ').replaceAll('> <', '><')
     }
 }

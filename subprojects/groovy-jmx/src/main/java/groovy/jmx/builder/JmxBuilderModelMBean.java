@@ -91,7 +91,7 @@ public class JmxBuilderModelMBean extends RequiredModelMBean implements Notifica
                 if ("attributeChangeListener".equals(listenerType)) {
                     try {
                         this.addAttributeChangeNotificationListener(
-                                AttributeChangedListener.getListener(), (String) listener.get("attribute"), listener
+                            AttributeChangedListener.getListener(), (String) listener.get("attribute"), listener
                         );
                     } catch (MBeanException e) {
                         throw new JmxBuilderException(e);
@@ -153,10 +153,10 @@ public class JmxBuilderModelMBean extends RequiredModelMBean implements Notifica
 
     private Notification buildCallListenerNotification(String target) {
         return new Notification(
-                "jmx.operation.call." + target,
-                this,
-                NumberSequencer.getNextSequence(),
-                System.currentTimeMillis()
+            "jmx.operation.call." + target,
+            this,
+            NumberSequencer.getNextSequence(),
+            System.currentTimeMillis()
         );
     }
 
@@ -178,6 +178,9 @@ public class JmxBuilderModelMBean extends RequiredModelMBean implements Notifica
     private static final class AttributeChangedListener implements NotificationListener {
         private static AttributeChangedListener listener;
 
+        private AttributeChangedListener() {
+        }
+
         /**
          * Returns an instance of the AttributeChangedListener.
          *
@@ -190,7 +193,15 @@ public class JmxBuilderModelMBean extends RequiredModelMBean implements Notifica
             return listener;
         }
 
-        private AttributeChangedListener() {
+        private static Map buildAttributeNotificationPacket(AttributeChangeNotification note) {
+            Map<String, Object> result = new HashMap<String, Object>();
+            result.put("oldValue", note.getOldValue());
+            result.put("newValue", note.getNewValue());
+            result.put("attribute", note.getAttributeName());
+            result.put("attributeType", note.getAttributeType());
+            result.put("sequenceNumber", note.getSequenceNumber());
+            result.put("timeStamp", note.getTimeStamp());
+            return result;
         }
 
         @Override
@@ -208,17 +219,6 @@ public class JmxBuilderModelMBean extends RequiredModelMBean implements Notifica
                     else closure.call();
                 }
             }
-        }
-
-        private static Map buildAttributeNotificationPacket(AttributeChangeNotification note) {
-            Map<String, Object> result = new HashMap<String, Object>();
-            result.put("oldValue", note.getOldValue());
-            result.put("newValue", note.getNewValue());
-            result.put("attribute", note.getAttributeName());
-            result.put("attributeType", note.getAttributeType());
-            result.put("sequenceNumber", note.getSequenceNumber());
-            result.put("timeStamp", note.getTimeStamp());
-            return result;
         }
     }
 }

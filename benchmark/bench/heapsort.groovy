@@ -5,8 +5,8 @@
  * contributed by Jochen Hinrichsen
  */
 public static final long IM = 139968
-public static final long IA =   3877
-public static final long IC =  29573
+public static final long IA = 3877
+public static final long IC = 29573
 
 public static long last = 42
 
@@ -34,7 +34,7 @@ def heapsort(int n, double[] ra) {
         i = l
         j = l << 1
         while (j <= ir) {
-            if (j < ir && ra[j] < ra[j+1]) {
+            if (j < ir && ra[j] < ra[j + 1]) {
                 ++j
             }
             if (rra < ra[j]) {
@@ -53,7 +53,7 @@ def nf = java.text.NumberFormat.getInstance()
 nf.setMaximumFractionDigits(10)
 nf.setMinimumFractionDigits(10)
 nf.setGroupingUsed(false)
-double []ary = (double[]) java.lang.reflect.Array.newInstance(double.class, N+1)
+double[] ary = (double[]) java.lang.reflect.Array.newInstance(double.class, N + 1)
 for (i in 0..<N) {
     ary[i] = gen_random(1)
 }

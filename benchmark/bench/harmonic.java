@@ -16,7 +16,7 @@ public class harmonic {
         if (args.length > 0) n = Integer.parseInt(args[0]);
 
         double partialSum = 0.0;
-        for (int i=1; i<=n; i++) partialSum += 1.0/i;
+        for (int i = 1; i <= n; i++) partialSum += 1.0 / i;
 
         System.out.println(formatter.format(partialSum));
     }

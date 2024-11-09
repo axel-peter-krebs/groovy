@@ -21,6 +21,6 @@ package org.codehaus.groovy.vmplugin.v8
 import org.codehaus.groovy.classgen.asm.sc.StaticCompilationTestSupport
 
 class PluginDefaultGroovyMethodsSCTest
-        extends PluginDefaultGroovyMethodsTest
-        implements StaticCompilationTestSupport {
+    extends PluginDefaultGroovyMethodsTest
+    implements StaticCompilationTestSupport {
 }

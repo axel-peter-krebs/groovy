@@ -27,15 +27,15 @@ import java.util.Objects;
  * Represents groovydoc
  */
 public class Groovydoc {
-    private final String content;
-    private List<GroovydocTag> tagList = Collections.emptyList();
-    private GroovydocHolder holder;
     public static final Groovydoc EMPTY_GROOVYDOC = new Groovydoc("") {
         @Override
         public List<GroovydocTag> getTagList() {
             return Collections.emptyList();
         }
     };
+    private final String content;
+    private List<GroovydocTag> tagList = Collections.emptyList();
+    private GroovydocHolder holder;
 
     private Groovydoc(String content) {
         this.content = content;
@@ -63,6 +63,7 @@ public class Groovydoc {
 
     /**
      * Tests if groovydoc is present
+     *
      * @return {@code true} if groovydoc is present
      */
     public boolean isPresent() {
@@ -71,6 +72,7 @@ public class Groovydoc {
 
     /**
      * Get the content of groovydoc
+     *
      * @return the text content
      */
     public String getContent() {
@@ -79,6 +81,7 @@ public class Groovydoc {
 
     /**
      * TODO Get list of groovydoc tags
+     *
      * @return a list of tags
      */
     public List<GroovydocTag> getTagList() {
@@ -88,6 +91,7 @@ public class Groovydoc {
 
     /**
      * Get the holder of the groovydoc
+     *
      * @return the groovydoc holder
      */
     public GroovydocHolder getHolder() {
@@ -100,7 +104,7 @@ public class Groovydoc {
         if (o == null || getClass() != o.getClass()) return false;
         Groovydoc groovydoc = (Groovydoc) o;
         return Objects.equals(content, groovydoc.content) &&
-                Objects.equals(holder, groovydoc.holder);
+            Objects.equals(holder, groovydoc.holder);
     }
 
     @Override

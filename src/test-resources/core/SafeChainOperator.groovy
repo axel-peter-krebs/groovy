@@ -18,6 +18,7 @@ import groovy.transform.CompileStatic
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 def testSCO() {
     assert 3 == 1??.plus(2)
     assert 6 == 1??.plus(2).plus(3)
@@ -37,6 +38,7 @@ def testSCO() {
     String str = null
     assert null == str??.substring(0, 1)[0]
 }
+
 testSCO()
 
 @CompileStatic
@@ -59,4 +61,5 @@ def testCsSCO() {
     String str = null
     assert null == str??.substring(0, 1)[0]
 }
+
 testCsSCO()

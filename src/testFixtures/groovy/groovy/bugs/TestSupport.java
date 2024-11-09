@@ -30,10 +30,6 @@ import java.util.Iterator;
 @Ignore("base class for tests")
 public abstract class TestSupport extends GroovyTestCase {
 
-    public String[] getMockArguments() {
-        return new String[]{"a", "b", "c"};
-    }
-
     public static String mockStaticMethod() {
         return "cheese";
     }
@@ -44,6 +40,10 @@ public abstract class TestSupport extends GroovyTestCase {
 
     public static int[] getIntArray() {
         return new int[]{1, 2, 3, 4, 5};
+    }
+
+    public String[] getMockArguments() {
+        return new String[]{"a", "b", "c"};
     }
 
     public Iterator iterator() {

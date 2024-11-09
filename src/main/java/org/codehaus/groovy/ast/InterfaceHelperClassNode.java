@@ -29,21 +29,21 @@ public class InterfaceHelperClassNode extends InnerClassNode {
     private List<String> callSites;
 
     /**
-     * @param name is the full name of the class
-     * @param modifiers the modifiers, @see org.objectweb.asm.Opcodes
+     * @param name       is the full name of the class
+     * @param modifiers  the modifiers, @see org.objectweb.asm.Opcodes
      * @param superClass the base class name - use "java.lang.Object" if no direct base class
-     * @param callSites list of callsites used in the interface
+     * @param callSites  list of callsites used in the interface
      */
     public InterfaceHelperClassNode(ClassNode outerClass, String name, int modifiers, ClassNode superClass, List<String> callSites) {
         super(null, name, modifiers, superClass, ClassNode.EMPTY_ARRAY, MixinNode.EMPTY_ARRAY);
         setCallSites(callSites);
     }
 
-    public void setCallSites(List<String> cs) {
-        callSites = (cs != null ? cs : new ArrayList<>());
-    }
-
     public List<String> getCallSites() {
         return callSites;
+    }
+
+    public void setCallSites(List<String> cs) {
+        callSites = (cs != null ? cs : new ArrayList<>());
     }
 }

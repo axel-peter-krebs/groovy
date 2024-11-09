@@ -68,7 +68,7 @@ public abstract class MethodInvocationTrap extends CodeVisitorSupport {
      */
     protected void addError(String msg, ASTNode expr) {
         sourceUnit.getErrorCollector().addErrorAndContinue(
-                new SyntaxErrorMessage(new SyntaxException(msg + '\n', expr.getLineNumber(), expr.getColumnNumber(), expr.getLastLineNumber(), expr.getLastColumnNumber()), sourceUnit)
+            new SyntaxErrorMessage(new SyntaxException(msg + '\n', expr.getLineNumber(), expr.getColumnNumber(), expr.getLastLineNumber(), expr.getLastColumnNumber()), sourceUnit)
         );
     }
 

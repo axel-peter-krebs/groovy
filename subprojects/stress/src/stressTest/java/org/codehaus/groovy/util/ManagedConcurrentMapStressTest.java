@@ -58,7 +58,7 @@ public class ManagedConcurrentMapStressTest {
         for (Object o : map.values()) {
             if (o instanceof AbstractConcurrentMapBase.Entry<?>) {
                 @SuppressWarnings("unchecked")
-                AbstractConcurrentMapBase.Entry<String> e = (AbstractConcurrentMapBase.Entry)o;
+                AbstractConcurrentMapBase.Entry<String> e = (AbstractConcurrentMapBase.Entry) o;
                 if ("value77".equals(e.getValue()) || "value1337".equals(e.getValue())) {
                     fail("Entries not removed from map");
                 }

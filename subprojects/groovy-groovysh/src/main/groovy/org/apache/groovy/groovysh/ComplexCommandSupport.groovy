@@ -25,8 +25,7 @@ import org.apache.groovy.groovysh.util.SimpleCompleter
  * Support for more complex commands.
  */
 abstract class ComplexCommandSupport
-    extends CommandSupport
-{
+    extends CommandSupport {
 
     protected final List<String> functions
 
@@ -41,7 +40,7 @@ abstract class ComplexCommandSupport
         super(shell, name, shortcut)
         this.functions = comFunctions
         this.defaultFunction = defaultFunction
-        assert(defaultFunction  == null || defaultFunction in functions)
+        assert (defaultFunction == null || defaultFunction in functions)
     }
 
     @Override
@@ -50,7 +49,7 @@ abstract class ComplexCommandSupport
         c.setWithBlank(false)
         functions.each { String it -> c.add(it) }
 
-        return [ c, null ]
+        return [c, null]
     }
 
     @Override
@@ -59,7 +58,7 @@ abstract class ComplexCommandSupport
 
         if (args.size() == 0) {
             if (defaultFunction) {
-                args = [ defaultFunction ]
+                args = [defaultFunction]
             } else {
                 fail("Command '$name' requires at least one argument of ${functions}")
             }
@@ -94,7 +93,7 @@ abstract class ComplexCommandSupport
     }
 
     def do_all = {
-        functions.findAll {it != 'all'}.collect {executeFunction(it, [])}
+        functions.findAll { it != 'all' }.collect { executeFunction(it, []) }
     }
 }
 

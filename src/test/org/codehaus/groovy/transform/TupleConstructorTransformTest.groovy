@@ -300,7 +300,7 @@ final class TupleConstructorTransformTest {
     // GROOVY-10789
     @Test
     void testMultipleUsage2() {
-        for (entry in [DUPLICATE:3, PREFER_COLLECTOR:1, PREFER_EXPLICIT:3, PREFER_EXPLICIT_MERGED:3]) {
+        for (entry in [DUPLICATE: 3, PREFER_COLLECTOR: 1, PREFER_EXPLICIT: 3, PREFER_EXPLICIT_MERGED: 3]) {
             assertScript shell, """import static groovy.transform.AnnotationCollectorMode.*
                 @TupleConstructor(defaults=false)
                 @AnnotationCollector(mode=$entry.key)

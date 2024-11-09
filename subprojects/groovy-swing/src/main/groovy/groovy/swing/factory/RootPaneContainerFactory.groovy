@@ -52,7 +52,7 @@ abstract class RootPaneContainerFactory extends AbstractFactory {
         builder.context[DELEGATE_PROPERTY_DEFAULT_BUTTON] = attributes.remove("defaultButtonProperty") ?: DEFAULT_DELEGATE_PROPERTY_DEFAULT_BUTTON
 
         builder.context.defaultButtonDelegate =
-            builder.addAttributeDelegate {myBuilder, node, myAttributes ->
+            builder.addAttributeDelegate { myBuilder, node, myAttributes ->
                 if ((node instanceof JButton) && (builder.containingWindows[-1] == container)) {
                     // in Java 6 use descending iterator
                     ListIterator li = builder.contexts.listIterator()

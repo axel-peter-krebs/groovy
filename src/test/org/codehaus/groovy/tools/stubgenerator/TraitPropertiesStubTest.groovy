@@ -34,11 +34,11 @@ final class TraitPropertiesStubTest extends StringSourcesStubTestCase {
                 }
             ''',
 
-            'GroovyXImpl.groovy': '''
+            'GroovyXImpl.groovy' : '''
                 class GroovyXImpl implements GroovyXTrait { }
             ''',
 
-            'Main.java': '''
+            'Main.java'          : '''
                 public class Main {
                     public static void main(String[] args) {
                         new GroovyXImpl();

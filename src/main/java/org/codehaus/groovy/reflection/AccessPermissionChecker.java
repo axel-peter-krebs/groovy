@@ -38,8 +38,8 @@ final class AccessPermissionChecker {
         SecurityManager securityManager;
         if (accessible && (securityManager = System.getSecurityManager()) != null) {
             if (((modifiers & Modifier.PRIVATE) != 0
-                        || ((modifiers & (Modifier.PUBLIC | Modifier.PROTECTED)) == 0 && declaringClass.getName().startsWith("java.")))
-                    && !GroovyObject.class.isAssignableFrom(declaringClass)) {
+                || ((modifiers & (Modifier.PUBLIC | Modifier.PROTECTED)) == 0 && declaringClass.getName().startsWith("java.")))
+                && !GroovyObject.class.isAssignableFrom(declaringClass)) {
                 securityManager.checkPermission(REFLECT_PERMISSION);
             } else if ((modifiers & (Modifier.PROTECTED)) != 0 && declaringClass.equals(ClassLoader.class)) {
                 securityManager.checkCreateClassLoader();
@@ -65,16 +65,16 @@ final class AccessPermissionChecker {
 
     private static CacheAccessControlException createCacheAccessControlExceptionOf(Method method, java.security.AccessControlException e) {
         return new CacheAccessControlException(
-                "Groovy object can not access method " + method.getName()
-                        + " cacheAccessControlExceptionOf class " + method.getDeclaringClass().getName()
-                        + " with modifiers \"" + Modifier.toString(method.getModifiers()) + "\"", e);
+            "Groovy object can not access method " + method.getName()
+                + " cacheAccessControlExceptionOf class " + method.getDeclaringClass().getName()
+                + " with modifiers \"" + Modifier.toString(method.getModifiers()) + "\"", e);
     }
 
     private static CacheAccessControlException createCacheAccessControlExceptionOf(Constructor constructor, java.security.AccessControlException e) {
         return new CacheAccessControlException(
-                "Groovy object can not access constructor " + constructor.getName()
-                        + " cacheAccessControlExceptionOf class " + constructor.getDeclaringClass().getName()
-                        + " with modifiers \"" + Modifier.toString(constructor.getModifiers()) + "\"", e);
+            "Groovy object can not access constructor " + constructor.getName()
+                + " cacheAccessControlExceptionOf class " + constructor.getDeclaringClass().getName()
+                + " with modifiers \"" + Modifier.toString(constructor.getModifiers()) + "\"", e);
     }
 
     static void checkAccessPermission(Field field) {
@@ -87,9 +87,9 @@ final class AccessPermissionChecker {
 
     private static CacheAccessControlException createCacheAccessControlExceptionOf(Field field, java.security.AccessControlException e) {
         return new CacheAccessControlException(
-                "Groovy object can not access field " + field.getName()
-                        + " cacheAccessControlExceptionOf class " + field.getDeclaringClass().getName()
-                        + " with modifiers \"" + Modifier.toString(field.getModifiers()) + "\"", e);
+            "Groovy object can not access field " + field.getName()
+                + " cacheAccessControlExceptionOf class " + field.getDeclaringClass().getName()
+                + " with modifiers \"" + Modifier.toString(field.getModifiers()) + "\"", e);
     }
 
 }

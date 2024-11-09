@@ -33,6 +33,7 @@ public class MetaArrayLengthProperty extends MetaProperty {
 
     /**
      * Get this property from the given object.
+     *
      * @param object an array
      * @return the length of the array object
      * @throws IllegalArgumentException if object is not an array

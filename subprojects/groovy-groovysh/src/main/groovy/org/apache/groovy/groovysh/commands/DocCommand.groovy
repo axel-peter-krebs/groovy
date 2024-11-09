@@ -51,8 +51,8 @@ class DocCommand extends CommandSupport {
             desktop = desktopClass.desktopSupported ? desktopClass.desktop : null
 
             hasAWTDesktopPlatformSupport =
-                    desktop != null &&
-                            desktop.isSupported(desktopClass.declaredClasses.find { it.simpleName == 'Action' }.BROWSE)
+                desktop != null &&
+                    desktop.isSupported(desktopClass.declaredClasses.find { it.simpleName == 'Action' }.BROWSE)
 
         } catch (Exception e) {
             hasAWTDesktopPlatformSupport = false
@@ -112,8 +112,8 @@ class DocCommand extends CommandSupport {
             browseWithAWT(urls)
         } else {
             fail 'Browser could not be opened due to missing platform support for "java.awt.Desktop". Please set ' +
-                    "a $ENV_BROWSER_GROOVYSH or $ENV_BROWSER environment variable referring to the browser binary to " +
-                    'solve this issue.'
+                "a $ENV_BROWSER_GROOVYSH or $ENV_BROWSER environment variable referring to the browser binary to " +
+                'solve this issue.'
         }
     }
 
@@ -126,7 +126,7 @@ class DocCommand extends CommandSupport {
             urls.each { url -> desktop.browse(url.toURI()) }
         } catch (Exception e) {
             fail "Browser could not be opened, an unexpected error occured (${e}). You can add a " +
-                    "$ENV_BROWSER_GROOVYSH or $ENV_BROWSER environment variable to explicitly specify a browser binary."
+                "$ENV_BROWSER_GROOVYSH or $ENV_BROWSER environment variable to explicitly specify a browser binary."
         }
     }
 
@@ -136,7 +136,7 @@ class DocCommand extends CommandSupport {
         } catch (Exception e) {
             // we could be here caused by a IOException, SecurityException or NP Exception
             fail "Browser could not be opened (${e}). Please check the $ENV_BROWSER_GROOVYSH or $ENV_BROWSER " +
-                    "environment variable."
+                "environment variable."
         }
     }
 
@@ -164,7 +164,7 @@ class DocCommand extends CommandSupport {
             }
         }
         // make accessing enhancements for e.g. int[] or double[][] easier
-        if (PRIMITIVES.any{path.startsWith(it) }) {
+        if (PRIMITIVES.any { path.startsWith(it) }) {
             path = "primitives-and-primitive-arrays/$path"
         }
 
@@ -219,7 +219,7 @@ class DocCommand extends CommandSupport {
 
             // if not found, redirects to search page, which we don't count as successful
             // if no path given (legacy calls from third parties), treat all redirects as suspicious
-            String  connectionURL = conn.getURL().toString()
+            String connectionURL = conn.getURL().toString()
             boolean successfulRedirect = path ? connectionURL.endsWith(path) : connectionURL.equals(url.toString())
 
             return (conn.getResponseCode() == HttpURLConnection.HTTP_OK) && (conn.getContentLength() > 0) && successfulRedirect

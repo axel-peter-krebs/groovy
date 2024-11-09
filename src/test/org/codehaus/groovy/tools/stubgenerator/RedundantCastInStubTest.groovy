@@ -26,11 +26,11 @@ class RedundantCastInStubTest extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-                'Dummy.java': '''
+            'Dummy.java'                           : '''
                     public class Dummy {}
                 ''',
 
-                'some/ClassWithPrimitiveBoolean.groovy': '''
+            'some/ClassWithPrimitiveBoolean.groovy': '''
                     package some
 
                     class ClassWithPrimitiveBoolean {

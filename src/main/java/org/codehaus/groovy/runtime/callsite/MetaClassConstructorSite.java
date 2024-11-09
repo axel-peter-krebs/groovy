@@ -25,9 +25,9 @@ import org.codehaus.groovy.runtime.ScriptBytecodeAdapter;
 
 /**
  * Call site for constructor
- *   metaclass - cached
- *   method - not cached
-*/
+ * metaclass - cached
+ * method - not cached
+ */
 public class MetaClassConstructorSite extends MetaClassSite {
 
     private final ClassInfo classInfo;
@@ -46,7 +46,7 @@ public class MetaClassConstructorSite extends MetaClassSite {
                 && version == classInfo.getVersion()) // metaClass still be valid
                 return metaClass.invokeConstructor(args);
             else
-              return CallSiteArray.defaultCallConstructor(this, receiver, args);
+                return CallSiteArray.defaultCallConstructor(this, receiver, args);
         } catch (GroovyRuntimeException gre) {
             throw ScriptBytecodeAdapter.unwrap(gre);
         }

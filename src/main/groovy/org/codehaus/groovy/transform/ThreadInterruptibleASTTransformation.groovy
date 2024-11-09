@@ -37,10 +37,11 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.classX
  * checks on loops (for, while, do) and first statement of closures. By default, also adds an interrupt check
  * statement on the beginning of method calls.
  *
- * @see groovy.transform.ThreadInterrupt
- * @since 1.8.0
+ * @see groovy.transform.ThreadInterrupt* @since 1.8.0
  */
-@AutoFinal @CompileStatic @GroovyASTTransformation
+@AutoFinal
+@CompileStatic
+@GroovyASTTransformation
 class ThreadInterruptibleASTTransformation extends AbstractInterruptibleASTTransformation {
 
     private static final ClassNode TYPE = ClassHelper.make(ThreadInterrupt)
@@ -81,7 +82,7 @@ class ThreadInterruptibleASTTransformation extends AbstractInterruptibleASTTrans
     @Override
     void visitMethod(MethodNode method) {
         if (checkOnMethodStart && !method.isAbstract() && !method.isSynthetic()
-                && !(method.getDeclaringClass().isRecord() && isGenerated(method))) {
+            && !(method.getDeclaringClass().isRecord() && isGenerated(method))) {
             Statement code = method.code
             method.code = wrapBlock(code)
         }

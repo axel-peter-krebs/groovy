@@ -48,8 +48,8 @@ class MarkupTemplateEngineSpecTest extends GroovyTestCase {
     private void assertRendered() {
         engine = new MarkupTemplateEngine(this.class.classLoader, config)
         def template = modelTypes ?
-                engine.createTypeCheckedModelTemplate(templateContents, modelTypes) :
-                engine.createTemplate(templateContents);
+            engine.createTypeCheckedModelTemplate(templateContents, modelTypes) :
+            engine.createTemplate(templateContents);
         def ready = template.make(model)
         def sw = new StringWriter()
         ready.writeTo(sw)
@@ -438,7 +438,7 @@ html {
         // do NOT change the Java-style of the code below! Used in documentation!
         // tag::autoescape_setup[]
         config.setAutoEscape(false);
-        model = new HashMap<String,Object>();
+        model = new HashMap<String, Object>();
         model.put("unsafeContents", "I am an <html> hacker.");
         // end::autoescape_setup[]
 
@@ -592,7 +592,7 @@ if (hasModule('foo')) {
         p.setBody("Page body");
         List<Page> pages = new LinkedList<>();
         pages.add(p);
-        model = new HashMap<String,Object>();
+        model = new HashMap<String, Object>();
         model.put("pages", pages);
         // end::typechecked_setup_no_stc[]
 
@@ -632,7 +632,7 @@ pages.each { page ->                    // <1>
         p.setBody("Page body");
         List<Page> pages = new LinkedList<>();
         pages.add(p);
-        model = new HashMap<String,Object>();
+        model = new HashMap<String, Object>();
         model.put("pages", pages);
         // end::typechecked_inlined_setup[]
 
@@ -658,7 +658,7 @@ pages.each { page ->
     }
 
     void testFragment() {
-        model = new HashMap<String,Object>();
+        model = new HashMap<String, Object>();
         model.put("pages", Arrays.asList("Page 1", "Page 2"));
         templateContents = '''
 // tag::fragment_template[]
@@ -695,8 +695,8 @@ layout 'layout-main.tpl',                                   // <1>
 
     void testLayoutWithInheritedModel() {
         // tag::layout_template_inherit_model[]
-        model = new HashMap<String,Object>();
-        model.put('title','Title from main model');
+        model = new HashMap<String, Object>();
+        model.put('title', 'Title from main model');
         // end::layout_template_inherit_model[]
 
         templateContents = '''

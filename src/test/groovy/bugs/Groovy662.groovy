@@ -34,7 +34,8 @@ final class Groovy662 {
         assert object.myProperty == 'Hello'
     }
 
-    @Test @CompileStatic
+    @Test
+    @CompileStatic
     void testJavaClassCS() {
         def object = new Groovy662_JavaClass()
         assert object.getMyProperty() == 'Hello'
@@ -62,7 +63,8 @@ final class Groovy662 {
         assert object.myProperty == 'Hello'
     }
 
-    @Test @CompileStatic
+    @Test
+    @CompileStatic
     void testGroovyClassCS() {
         def object = new Groovy662_GroovyClass()
         assert object.getMyProperty() == 'Hello'
@@ -82,7 +84,8 @@ final class Groovy662 {
 }
 
 class Groovy662_GroovyClass extends HashMap {
-    @PackageScope String myProperty = 'Hello'
+    @PackageScope
+    String myProperty = 'Hello'
 
     String getMyProperty() {
         return myProperty

@@ -23,7 +23,7 @@ final class Groovy10464 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'C.groovy': '''
+            'C.groovy' : '''
                 public abstract class A<B> {
                     A(Class<B> class_of_b) {
                     }

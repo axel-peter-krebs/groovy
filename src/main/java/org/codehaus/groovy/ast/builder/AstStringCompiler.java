@@ -36,13 +36,15 @@ import static org.codehaus.groovy.runtime.DefaultGroovyMethodsSupport.closeQuiet
  */
 public class AstStringCompiler {
 
+    private static String makeScriptClassName() {
+        return "Script" + System.nanoTime();
+    }
+
     /**
      * Compiles the specified source code and returns its statement block and
      * any declared types.
      *
-     * @param script
-     *      a Groovy script in String form
-     *
+     * @param script a Groovy script in String form
      * @since 3.0.0
      */
     public List<ASTNode> compile(final String script) {
@@ -53,13 +55,9 @@ public class AstStringCompiler {
      * Compiles the specified source code and returns its statement block, the
      * script class (if desired) and any declared types.
      *
-     * @param script
-     *      a Groovy script in String form
-     * @param compilePhase
-     *      the last compilation phase to complete
-     * @param statementsOnly
-     *      if {@code true}, exclude the script class from the result
-     *
+     * @param script         a Groovy script in String form
+     * @param compilePhase   the last compilation phase to complete
+     * @param statementsOnly if {@code true}, exclude the script class from the result
      * @since 1.7.0
      */
     public List<ASTNode> compile(final String script, final CompilePhase compilePhase, final boolean statementsOnly) {
@@ -86,9 +84,5 @@ public class AstStringCompiler {
             }
         }
         return nodes;
-    }
-
-    private static String makeScriptClassName() {
-        return "Script" + System.nanoTime();
     }
 }

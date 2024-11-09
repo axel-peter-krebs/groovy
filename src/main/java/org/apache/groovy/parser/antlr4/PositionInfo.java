@@ -51,7 +51,7 @@ public class PositionInfo {
         if (o == null || getClass() != o.getClass()) return false;
         PositionInfo that = (PositionInfo) o;
         return line == that.line &&
-                column == that.column;
+            column == that.column;
     }
 
     @Override

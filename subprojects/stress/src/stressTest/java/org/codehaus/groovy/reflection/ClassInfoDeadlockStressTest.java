@@ -27,11 +27,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.groovy.stress.util.GCUtils;
 import org.apache.groovy.stress.util.ThreadUtils;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
  * Tests for deadlocks in the ClassInfo caching.
- *
  */
 public class ClassInfoDeadlockStressTest {
 

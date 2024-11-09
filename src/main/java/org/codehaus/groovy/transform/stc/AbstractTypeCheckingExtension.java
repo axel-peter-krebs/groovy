@@ -62,10 +62,16 @@ import java.util.concurrent.Callable;
 public class AbstractTypeCheckingExtension extends TypeCheckingExtension {
 
     protected final TypeCheckingContext context;
-    /** @see {@link #log(String)} */ protected boolean debug;
-    /** @see {@link #setHandled(boolean)} */ protected boolean handled;
     private final Set<MethodNode> generatedMethods = new LinkedHashSet<>();
     private final LinkedList<TypeCheckingScope> scopeData = new LinkedList<>();
+    /**
+     * @see {@link #log(String)}
+     */
+    protected boolean debug;
+    /**
+     * @see {@link #setHandled(boolean)}
+     */
+    protected boolean handled;
 
     public AbstractTypeCheckingExtension(final StaticTypeCheckingVisitor typeCheckingVisitor) {
         super(typeCheckingVisitor);
@@ -73,6 +79,18 @@ public class AbstractTypeCheckingExtension extends TypeCheckingExtension {
     }
 
     //--------------------------------------------------------------------------
+
+    private static boolean matchWithOrWithoutBoxing(final ClassNode argType, final Class aClass) {
+        final boolean match;
+        ClassNode type = ClassHelper.make(aClass);
+        if (ClassHelper.isPrimitiveType(type) && !ClassHelper.isPrimitiveType(argType)) {
+            type = ClassHelper.getWrapper(type);
+        } else if (ClassHelper.isPrimitiveType(argType) && !ClassHelper.isPrimitiveType(type)) {
+            type = ClassHelper.getUnwrapper(type);
+        }
+        match = argType.equals(type);
+        return match;
+    }
 
     public void setHandled(final boolean handled) {
         this.handled = handled;
@@ -120,11 +138,11 @@ public class AbstractTypeCheckingExtension extends TypeCheckingExtension {
 
     public MethodNode newMethod(final String name, final ClassNode returnType) {
         MethodNode node = new MethodNode(name,
-                Opcodes.ACC_PUBLIC,
-                returnType,
-                Parameter.EMPTY_ARRAY,
-                ClassNode.EMPTY_ARRAY,
-                EmptyStatement.INSTANCE);
+            Opcodes.ACC_PUBLIC,
+            returnType,
+            Parameter.EMPTY_ARRAY,
+            ClassNode.EMPTY_ARRAY,
+            EmptyStatement.INSTANCE);
         generatedMethods.add(node);
         return node;
     }
@@ -132,11 +150,11 @@ public class AbstractTypeCheckingExtension extends TypeCheckingExtension {
     public MethodNode newMethod(final String name,
                                 final Callable<ClassNode> returnType) {
         MethodNode node = new MethodNode(name,
-                Opcodes.ACC_PUBLIC,
-                ClassHelper.OBJECT_TYPE,
-                Parameter.EMPTY_ARRAY,
-                ClassNode.EMPTY_ARRAY,
-                EmptyStatement.INSTANCE) {
+            Opcodes.ACC_PUBLIC,
+            ClassHelper.OBJECT_TYPE,
+            Parameter.EMPTY_ARRAY,
+            ClassNode.EMPTY_ARRAY,
+            EmptyStatement.INSTANCE) {
             @Override
             public ClassNode getReturnType() {
                 try {
@@ -167,7 +185,7 @@ public class AbstractTypeCheckingExtension extends TypeCheckingExtension {
     }
 
     public boolean isAnnotatedBy(ASTNode node, ClassNode annotation) {
-        return node instanceof AnnotatedNode && !((AnnotatedNode)node).getAnnotations(annotation).isEmpty();
+        return node instanceof AnnotatedNode && !((AnnotatedNode) node).getAnnotations(annotation).isEmpty();
     }
 
     public boolean isDynamic(VariableExpression var) {
@@ -205,18 +223,6 @@ public class AbstractTypeCheckingExtension extends TypeCheckingExtension {
         return match;
     }
 
-    private static boolean matchWithOrWithoutBoxing(final ClassNode argType, final Class aClass) {
-        final boolean match;
-        ClassNode type = ClassHelper.make(aClass);
-        if (ClassHelper.isPrimitiveType(type) && !ClassHelper.isPrimitiveType(argType)) {
-            type = ClassHelper.getWrapper(type);
-        } else if (ClassHelper.isPrimitiveType(argType) && !ClassHelper.isPrimitiveType(type)) {
-            type = ClassHelper.getUnwrapper(type);
-        }
-        match = argType.equals(type);
-        return match;
-    }
-
     public boolean argTypesMatches(MethodCall call, Class... classes) {
         ArgumentListExpression argumentListExpression = InvocationWriter.makeArgumentList(call.getArguments());
         ClassNode[] argumentTypes = typeCheckingVisitor.getArgumentTypes(argumentListExpression);
@@ -225,7 +231,7 @@ public class AbstractTypeCheckingExtension extends TypeCheckingExtension {
 
     public boolean firstArgTypesMatches(ClassNode[] argTypes, Class... classes) {
         if (classes == null) return argTypes == null || argTypes.length == 0;
-        if (argTypes.length<classes.length) return false;
+        if (argTypes.length < classes.length) return false;
         boolean match = true;
         for (int i = 0; i < classes.length && match; i++) {
             match = matchWithOrWithoutBoxing(argTypes[i], classes[i]);
@@ -251,7 +257,7 @@ public class AbstractTypeCheckingExtension extends TypeCheckingExtension {
     }
 
     public <R> R withTypeChecker(@DelegatesTo(value = StaticTypeCheckingVisitor.class, strategy = Closure.DELEGATE_FIRST)
-            @ClosureParams(value = SimpleType.class, options = "org.codehaus.groovy.transform.stc.StaticTypeCheckingVisitor") final Closure<R> code) {
+                                 @ClosureParams(value = SimpleType.class, options = "org.codehaus.groovy.transform.stc.StaticTypeCheckingVisitor") final Closure<R> code) {
         return DefaultGroovyMethods.with(typeCheckingVisitor, code);
     }
 
@@ -259,6 +265,7 @@ public class AbstractTypeCheckingExtension extends TypeCheckingExtension {
      * Used to instruct the type checker that the call is a dynamic method call.
      * Calling this method automatically sets the handled flag to true. The expected
      * return type of the dynamic method call is Object.
+     *
      * @param call the method call which is a dynamic method call
      * @return a virtual method node with the same name as the expected call
      */
@@ -269,15 +276,16 @@ public class AbstractTypeCheckingExtension extends TypeCheckingExtension {
     /**
      * Used to instruct the type checker that the call is a dynamic method call.
      * Calling this method automatically sets the handled flag to true.
-     * @param call the method call which is a dynamic method call
+     *
+     * @param call       the method call which is a dynamic method call
      * @param returnType the expected return type of the dynamic call
      * @return a virtual method node with the same name as the expected call
      */
     public MethodNode makeDynamic(MethodCall call, ClassNode returnType) {
         TypeCheckingContext.EnclosingClosure enclosingClosure = context.getEnclosingClosure();
         MethodNode enclosingMethod = context.getEnclosingMethod();
-        ((ASTNode)call).putNodeMetaData(StaticTypesMarker.DYNAMIC_RESOLUTION, returnType);
-        if (enclosingClosure!=null) {
+        ((ASTNode) call).putNodeMetaData(StaticTypesMarker.DYNAMIC_RESOLUTION, returnType);
+        if (enclosingClosure != null) {
             enclosingClosure.getClosureExpression().putNodeMetaData(StaticTypesMarker.DYNAMIC_RESOLUTION, Boolean.TRUE);
         } else {
             enclosingMethod.putNodeMetaData(StaticTypesMarker.DYNAMIC_RESOLUTION, Boolean.TRUE);
@@ -292,6 +300,7 @@ public class AbstractTypeCheckingExtension extends TypeCheckingExtension {
     /**
      * Instructs the type checker that a property access is dynamic, returning an instance of an Object.
      * Calling this method automatically sets the handled flag to true.
+     *
      * @param pexp the property or attribute expression
      */
     public void makeDynamic(PropertyExpression pexp) {
@@ -301,7 +310,8 @@ public class AbstractTypeCheckingExtension extends TypeCheckingExtension {
     /**
      * Instructs the type checker that a property access is dynamic.
      * Calling this method automatically sets the handled flag to true.
-     * @param pexp the property or attribute expression
+     *
+     * @param pexp       the property or attribute expression
      * @param returnType the type of the property
      */
     public void makeDynamic(PropertyExpression pexp, ClassNode returnType) {
@@ -317,6 +327,7 @@ public class AbstractTypeCheckingExtension extends TypeCheckingExtension {
     /**
      * Instructs the type checker that an unresolved variable is a dynamic variable of type Object.
      * Calling this method automatically sets the handled flag to true.
+     *
      * @param vexp the dynamic variable
      */
     public void makeDynamic(VariableExpression vexp) {
@@ -325,9 +336,10 @@ public class AbstractTypeCheckingExtension extends TypeCheckingExtension {
 
     /**
      * Instructs the type checker that an unresolved variable is a dynamic variable.
+     *
      * @param returnType the type of the dynamic variable
-     * Calling this method automatically sets the handled flag to true.
-     * @param vexp the dynamic variable
+     *                   Calling this method automatically sets the handled flag to true.
+     * @param vexp       the dynamic variable
      */
     public void makeDynamic(VariableExpression vexp, ClassNode returnType) {
         context.getEnclosingMethod().putNodeMetaData(StaticTypesMarker.DYNAMIC_RESOLUTION, Boolean.TRUE);

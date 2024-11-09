@@ -17,12 +17,12 @@
  *  under the License.
  */
 def map = [
-        private: 1, public: 2, protected: 3, static: 4,
-        transient: 5, final: 6, abstract: 7, native: 8,
-        threadsafe: 9, synchronized: 10, volatile: 11, strictfp: 12
+    private   : 1, public: 2, protected: 3, static: 4,
+    transient : 5, final: 6, abstract: 7, native: 8,
+    threadsafe: 9, synchronized: 10, volatile: 11, strictfp: 12
 ]
 assert 1..12 == [
-        map.private, map.public, map.protected, map.static,
-        map.transient, map.final, map.abstract, map.native,
-        map.threadsafe, map.synchronized, map.volatile, map.strictfp
+    map.private, map.public, map.protected, map.static,
+    map.transient, map.final, map.abstract, map.native,
+    map.threadsafe, map.synchronized, map.volatile, map.strictfp
 ]

@@ -394,17 +394,23 @@ public class JsonParserLax extends JsonParserCharArray {
             } else if (isDecimalChar(currentChar)) {
                 switch (currentChar) {
                     case DECIMAL_POINT:
-                        if (foundDot || foundExp) { return decodeStringLax(); }
+                        if (foundDot || foundExp) {
+                            return decodeStringLax();
+                        }
                         foundDot = true;
                         break;
                     case LETTER_E:
                     case LETTER_BIG_E:
-                        if (foundExp) { return decodeStringLax(); }
+                        if (foundExp) {
+                            return decodeStringLax();
+                        }
                         foundExp = true;
                         break;
                     case MINUS:
                     case PLUS:
-                        if (foundSign || !foundExp) { return decodeStringLax(); }
+                        if (foundSign || !foundExp) {
+                            return decodeStringLax();
+                        }
                         if (foundExp && array[index - 1] != LETTER_E && array[index - 1] != LETTER_BIG_E) {
                             return decodeStringLax();
                         }
@@ -438,9 +444,9 @@ public class JsonParserLax extends JsonParserCharArray {
     private boolean isNull() {
         if (__index + NULL.length <= charArray.length) {
             if (charArray[__index] == 'n' &&
-                    charArray[__index + 1] == 'u' &&
-                    charArray[__index + 2] == 'l' &&
-                    charArray[__index + 3] == 'l') {
+                charArray[__index + 1] == 'u' &&
+                charArray[__index + 2] == 'l' &&
+                charArray[__index + 3] == 'l') {
                 return true;
             }
         }
@@ -450,9 +456,9 @@ public class JsonParserLax extends JsonParserCharArray {
     private boolean isTrue() {
         if (__index + TRUE.length <= charArray.length) {
             if (charArray[__index] == 't' &&
-                    charArray[__index + 1] == 'r' &&
-                    charArray[__index + 2] == 'u' &&
-                    charArray[__index + 3] == 'e') {
+                charArray[__index + 1] == 'r' &&
+                charArray[__index + 2] == 'u' &&
+                charArray[__index + 3] == 'e') {
                 return true;
 
             }
@@ -463,10 +469,10 @@ public class JsonParserLax extends JsonParserCharArray {
     private boolean isFalse() {
         if (__index + FALSE.length <= charArray.length) {
             if (charArray[__index] == 'f' &&
-                    charArray[__index + 1] == 'a' &&
-                    charArray[__index + 2] == 'l' &&
-                    charArray[__index + 3] == 's' &&
-                    charArray[__index + 4] == 'e') {
+                charArray[__index + 1] == 'a' &&
+                charArray[__index + 2] == 'l' &&
+                charArray[__index + 3] == 's' &&
+                charArray[__index + 4] == 'e') {
                 return true;
             }
         }
@@ -643,9 +649,9 @@ public class JsonParserLax extends JsonParserCharArray {
                         String charString = charDescription(__currentChar);
 
                         complain(
-                                String.format("expecting a ',' or a ']', " +
-                                        " but got \nthe current character of  %s " +
-                                        " on array index of %s \n", charString, list.size())
+                            String.format("expecting a ',' or a ']', " +
+                                " but got \nthe current character of  %s " +
+                                " on array index of %s \n", charString, list.size())
                         );
                 }
             } while (this.hasMore());

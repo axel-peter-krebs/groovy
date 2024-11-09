@@ -16,6 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 class MyClass {
     def foo() {
         void bar = null

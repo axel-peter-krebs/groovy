@@ -29,14 +29,16 @@ public interface TemplateResolver {
     /**
      * This method is called once the template engine is initialized, providing the resolver with the
      * template engine configuration and its template class loader.
+     *
      * @param templateClassLoader the classloader where templates will be searched for
-     * @param configuration the configuration of the template engine
+     * @param configuration       the configuration of the template engine
      */
     void configure(ClassLoader templateClassLoader, TemplateConfiguration configuration);
 
     /**
      * Resolvers must implement this method in order to resolve a template, given a template path. They
      * must return a valid URL or an IOException.
+     *
      * @param templatePath path to the template
      * @return the template URL, that will be used to load the template
      * @throws IOException

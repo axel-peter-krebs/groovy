@@ -20,7 +20,7 @@ package groovy.ant
 
 class Groovy7812Bug extends AntTestCase {
     void test() {
-        doInTmpDir {ant, baseDir ->
+        doInTmpDir { ant, baseDir ->
             baseDir.src {
                 'Outer.groovy'('''
                     class Outer {

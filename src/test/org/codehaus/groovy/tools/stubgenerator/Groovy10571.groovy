@@ -23,16 +23,16 @@ final class Groovy10571 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'A.groovy': '''
+            'A.groovy' : '''
                 public @interface A {
                     Class[] value()
                 }
             ''',
-            'B.java': '''
+            'B.java'   : '''
                 public class B {
                 }
             ''',
-            'C.groovy': '''
+            'C.groovy' : '''
                 import groovy.transform.*
                 import java.lang.annotation.*
 
@@ -44,7 +44,7 @@ final class Groovy10571 extends StringSourcesStubTestCase {
                 public @interface C {
                 }
             ''',
-            'D.groovy': '''
+            'D.groovy' : '''
                 @C class D {
                 }
             ''',

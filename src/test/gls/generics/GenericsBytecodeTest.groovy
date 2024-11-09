@@ -32,7 +32,7 @@ class GenericsBytecodeTest extends GenericsTestBase {
             abstract class B<T> implements Runnable,List<T> {}
         """
         assert signatures == [
-                "class": "<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/lang/Runnable;Ljava/util/List<TT;>;Lgroovy/lang/GroovyObject;"
+            "class": "<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/lang/Runnable;Ljava/util/List<TT;>;Lgroovy/lang/GroovyObject;"
         ]
     }
 
@@ -41,7 +41,7 @@ class GenericsBytecodeTest extends GenericsTestBase {
             abstract class B<T> implements List<T> {}
         """
         assert signatures == [
-                "class": "<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/List<TT;>;Lgroovy/lang/GroovyObject;"
+            "class": "<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/List<TT;>;Lgroovy/lang/GroovyObject;"
         ]
     }
 
@@ -57,7 +57,7 @@ class GenericsBytecodeTest extends GenericsTestBase {
             class B<T> extends HashMap<T,List<T>> {}
         """
         assert signatures == [
-                "class": "<T:Ljava/lang/Object;>Ljava/util/HashMap<TT;Ljava/util/List<TT;>;>;Lgroovy/lang/GroovyObject;"
+            "class": "<T:Ljava/lang/Object;>Ljava/util/HashMap<TT;Ljava/util/List<TT;>;>;Lgroovy/lang/GroovyObject;"
         ]
     }
 
@@ -73,7 +73,7 @@ class GenericsBytecodeTest extends GenericsTestBase {
             class B<Y,T extends Map<String,Map<Y,Integer>>> {}
         """
         assert signatures == [
-                "class": "<Y:Ljava/lang/Object;T::Ljava/util/Map<Ljava/lang/String;Ljava/util/Map<TY;Ljava/lang/Integer;>;>;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;"
+            "class": "<Y:Ljava/lang/Object;T::Ljava/util/Map<Ljava/lang/String;Ljava/util/Map<TY;Ljava/lang/Integer;>;>;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;"
         ]
     }
 
@@ -88,7 +88,7 @@ class GenericsBytecodeTest extends GenericsTestBase {
         createClassInfo """
             class B<T> { public Collection<T> collection }
         """
-        assert signatures == ["class" : "<T:Ljava/lang/Object;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;",
+        assert signatures == ["class"   : "<T:Ljava/lang/Object;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;",
                               collection: "Ljava/util/Collection<TT;>;"]
     }
 
@@ -117,8 +117,8 @@ class GenericsBytecodeTest extends GenericsTestBase {
             }
         """
         assert signatures == [
-                "class"                   : "<T:Ljava/lang/Object;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;",
-                "foo(Ljava/lang/Object;)V": "(TT;)V"
+            "class"                   : "<T:Ljava/lang/Object;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;",
+            "foo(Ljava/lang/Object;)V": "(TT;)V"
         ]
     }
 
@@ -129,8 +129,8 @@ class GenericsBytecodeTest extends GenericsTestBase {
             }
         """
         assert signatures == [
-                "class"                 : "<T:Ljava/lang/Object;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;",
-                "foo(Ljava/util/List;)V": "(Ljava/util/List<TT;>;)V"
+            "class"                 : "<T:Ljava/lang/Object;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;",
+            "foo(Ljava/util/List;)V": "(Ljava/util/List<TT;>;)V"
         ]
     }
 
@@ -141,8 +141,8 @@ class GenericsBytecodeTest extends GenericsTestBase {
             }
         """
         assert signatures == [
-                "class"                                     : "<T:Ljava/lang/Object;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;",
-                "foo(Ljava/util/List;)Ljava/lang/Cloneable;": "(Ljava/util/List<TT;>;)Ljava/lang/Cloneable;"
+            "class"                                     : "<T:Ljava/lang/Object;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;",
+            "foo(Ljava/util/List;)Ljava/lang/Cloneable;": "(Ljava/util/List<TT;>;)Ljava/lang/Cloneable;"
         ]
     }
 
@@ -153,8 +153,8 @@ class GenericsBytecodeTest extends GenericsTestBase {
             }
         """
         assert signatures == [
-                "class"                                      : "<T:Ljava/lang/Object;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;",
-                "get([Ljava/lang/Object;)[Ljava/lang/Object;": "([TT;)[TT;"
+            "class"                                      : "<T:Ljava/lang/Object;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;",
+            "get([Ljava/lang/Object;)[Ljava/lang/Object;": "([TT;)[TT;"
         ]
     }
 
@@ -168,9 +168,9 @@ class GenericsBytecodeTest extends GenericsTestBase {
             }
         """
         assert signatures == [
-                "class"                      : "<A::Ljava/lang/Comparable<TA;>;:Ljava/lang/Cloneable;B::Ljava/lang/Cloneable;:Ljava/lang/Comparable<TB;>;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;",
-                "foo()Ljava/lang/Comparable;": "()TA;",
-                "bar()Ljava/lang/Cloneable;" : "()TB;"
+            "class"                      : "<A::Ljava/lang/Comparable<TA;>;:Ljava/lang/Cloneable;B::Ljava/lang/Cloneable;:Ljava/lang/Comparable<TB;>;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;",
+            "foo()Ljava/lang/Comparable;": "()TA;",
+            "bar()Ljava/lang/Cloneable;" : "()TB;"
         ]
     }
 
@@ -238,9 +238,9 @@ class GenericsBytecodeTest extends GenericsTestBase {
             }
         """
         assert signatures == [
-                "class"                           : "<T:Ljava/lang/Object;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;",
-                "owner"                           : "TT;",
-                "getOwnerClass()Ljava/lang/Class;": "()Ljava/lang/Class<TT;>;"
+            "class"                           : "<T:Ljava/lang/Object;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;",
+            "owner"                           : "TT;",
+            "getOwnerClass()Ljava/lang/Class;": "()Ljava/lang/Class<TT;>;"
         ]
     }
 
@@ -259,7 +259,7 @@ class GenericsBytecodeTest extends GenericsTestBase {
             }
         """
         assert signatures == [
-                "foo(Ljava/lang/Object;)V": "<V:TA;>(TV;)V", "class": "<A:Ljava/lang/Object;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;"
+            "foo(Ljava/lang/Object;)V": "<V:TA;>(TV;)V", "class": "<A:Ljava/lang/Object;>Ljava/lang/Object;Lgroovy/lang/GroovyObject;"
         ]
     }
 

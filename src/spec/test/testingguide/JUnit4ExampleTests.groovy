@@ -26,7 +26,7 @@ class JUnit4ExampleTests {
 
     @Test
     void indexOutOfBoundsAccess() {
-        def numbers = [1,2,3,4]
+        def numbers = [1, 2, 3, 4]
         shouldFail {
             numbers.get(4)
         }
@@ -39,7 +39,7 @@ class JUnit4ExampleTests {
     void shouldFailReturn() {
         def e = shouldFail {
             throw new RuntimeException('foo',
-                                       new RuntimeException('bar'))
+                new RuntimeException('bar'))
         }
         assert e instanceof RuntimeException
         assert e.message == 'foo'

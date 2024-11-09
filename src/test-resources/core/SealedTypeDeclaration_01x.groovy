@@ -19,10 +19,13 @@ import groovy.transform.Sealed
  *  under the License.
  */
 
-sealed interface ShapeI permits Circle, Rectangle { }
-final class Circle implements ShapeI { }
-non-sealed class Rectangle implements ShapeI { }
-final class Square extends Rectangle { }
+sealed interface ShapeI permits Circle, Rectangle {}
+
+final class Circle implements ShapeI {}
+
+non-sealed class Rectangle implements ShapeI {}
+
+final class Square extends Rectangle {}
 
 def c = new Circle()
 def r = new Rectangle()

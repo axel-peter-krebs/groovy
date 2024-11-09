@@ -27,7 +27,8 @@ class Groovy3949Bug extends GroovyTestCase {
 }
 
 class Class3949 {
-    static call(arg) {"wrong call"}
+    static call(arg) { "wrong call" }
+
     static m(Closure closure) {
         closure("1234")
     }

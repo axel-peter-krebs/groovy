@@ -158,6 +158,74 @@ public class RecordTypeASTTransformation extends AbstractASTTransformation imple
 
     private CompilationUnit compilationUnit;
 
+    /**
+     * Indicates that the given classnode is a native JVM record class.
+     * For classes being compiled, this will only be valid after the
+     * {@code RecordTypeASTTransformation} transform has been invoked.
+     */
+    @Incubating
+    public static boolean recordNative(final ClassNode node) {
+        return node.getUnresolvedSuperClass() != null && RECORD_CLASS_NAME.equals(node.getUnresolvedSuperClass().getName());
+    }
+
+    private static RecordTypeMode getMode(AnnotationNode node, String name) {
+        if (node != null) {
+            final Expression member = node.getMember(name);
+            if (member instanceof PropertyExpression) {
+                PropertyExpression prop = (PropertyExpression) member;
+                Expression oe = prop.getObjectExpression();
+                if (oe instanceof ClassExpression) {
+                    ClassExpression ce = (ClassExpression) oe;
+                    if ("groovy.transform.RecordTypeMode".equals(ce.getType().getName())) {
+                        return RecordTypeMode.valueOf(prop.getPropertyAsString());
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private static void makeInnerRecordStatic(ClassNode cNode) {
+        if (cNode instanceof InnerClassNode) {
+            cNode.setModifiers(cNode.getModifiers() | ACC_STATIC);
+        }
+    }
+
+    private static void makeClassFinal(AbstractASTTransformation xform, ClassNode cNode) {
+        int modifiers = cNode.getModifiers();
+        if ((modifiers & ACC_FINAL) == 0) {
+            if ((modifiers & (ACC_ABSTRACT | ACC_SYNTHETIC)) == (ACC_ABSTRACT | ACC_SYNTHETIC)) {
+                xform.addError("Error during " + MY_TYPE_NAME + " processing: annotation found on inappropriate class " + cNode.getName(), cNode);
+                return;
+            }
+            cNode.setModifiers(modifiers | ACC_FINAL);
+        }
+    }
+
+    private static void ensureNotPublic(AbstractASTTransformation xform, String cNode, FieldNode fNode) {
+        String fName = fNode.getName();
+        if (fNode.isPublic() && !fName.contains("$") && !(fNode.isStatic() && fNode.isFinal())) {
+            xform.addError("Public field '" + fName + "' not allowed for " + MY_TYPE_NAME + " class '" + cNode + "'.", fNode);
+        }
+    }
+
+    //--------------------------------------------------------------------------
+
+    // guarantee shallow immutability but property handler may do defensive copying
+    private static void adjustPropertyForShallowImmutability(ClassNode cNode, PropertyNode pNode, PropertyHandler handler) {
+        final FieldNode fNode = pNode.getField();
+        fNode.setModifiers((pNode.getModifiers() & (~ACC_PUBLIC)) | ACC_FINAL | ACC_PRIVATE);
+        boolean isGetterDefined = cNode.getDeclaredMethods(pNode.getName()).stream()
+            .anyMatch(MethodNodeUtils::isGetterCandidate);
+        pNode.setGetterName(pNode.getName());
+        if (!isGetterDefined) {
+            Statement getter = handler.createPropGetter(pNode);
+            if (getter != null) {
+                pNode.setGetterBlock(getter);
+            }
+        }
+    }
+
     @Override
     public String getAnnotationName() {
         return MY_TYPE_NAME;
@@ -172,16 +240,6 @@ public class RecordTypeASTTransformation extends AbstractASTTransformation imple
         return compilationUnit != null ? compilationUnit.getTransformLoader() : sourceUnit.getClassLoader();
     }
 
-    /**
-     * Indicates that the given classnode is a native JVM record class.
-     * For classes being compiled, this will only be valid after the
-     * {@code RecordTypeASTTransformation} transform has been invoked.
-     */
-    @Incubating
-    public static boolean recordNative(final ClassNode node) {
-        return node.getUnresolvedSuperClass() != null && RECORD_CLASS_NAME.equals(node.getUnresolvedSuperClass().getName());
-    }
-
     @Override
     public void visit(final ASTNode[] nodes, final SourceUnit source) {
         init(nodes, source);
@@ -194,8 +252,6 @@ public class RecordTypeASTTransformation extends AbstractASTTransformation imple
             }
         }
     }
-
-    //--------------------------------------------------------------------------
 
     private void doProcessRecordType(final ClassNode cNode, final PropertyHandler handler) {
         if (cNode.getNodeMetaData("_RECORD_HEADER") != null) {
@@ -265,9 +321,9 @@ public class RecordTypeASTTransformation extends AbstractASTTransformation imple
                 createRecordToString(cNode);
             } else {
                 ToStringASTTransformation.createToString(cNode, false, false, null,
-                        null, true, false, false, false,
-                        false, false, false, false, true,
-                        new String[]{"[", "]", "=", ", "}, false);
+                    null, true, false, false, false,
+                    false, false, false, false, true,
+                    new String[]{"[", "]", "=", ", "}, false);
             }
         }
 
@@ -424,12 +480,12 @@ public class RecordTypeASTTransformation extends AbstractASTTransformation imple
     private void createRecordToString(ClassNode cNode) {
         String desc = BytecodeHelper.getMethodDescriptor(STRING_TYPE, new ClassNode[]{cNode});
         Statement body = stmt(bytecodeX(STRING_TYPE, mv -> {
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitInvokeDynamicInsn("toString", desc, createBootstrapMethod(), createBootstrapMethodArguments(cNode));
-                    mv.visitInsn(ARETURN);
-                    mv.visitMaxs(0, 0);
-                    mv.visitEnd();
-                })
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitInvokeDynamicInsn("toString", desc, createBootstrapMethod(), createBootstrapMethodArguments(cNode));
+                mv.visitInsn(ARETURN);
+                mv.visitMaxs(0, 0);
+                mv.visitEnd();
+            })
         );
         addGeneratedMethod(cNode, "toString", ACC_PUBLIC | ACC_FINAL, STRING_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, body);
     }
@@ -437,13 +493,13 @@ public class RecordTypeASTTransformation extends AbstractASTTransformation imple
     private void createRecordEquals(ClassNode cNode) {
         String desc = BytecodeHelper.getMethodDescriptor(boolean_TYPE, new ClassNode[]{cNode, OBJECT_TYPE});
         Statement body = stmt(bytecodeX(boolean_TYPE, mv -> {
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitVarInsn(ALOAD, 1);
-                    mv.visitInvokeDynamicInsn("equals", desc, createBootstrapMethod(), createBootstrapMethodArguments(cNode));
-                    mv.visitInsn(IRETURN);
-                    mv.visitMaxs(0, 0);
-                    mv.visitEnd();
-                })
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitVarInsn(ALOAD, 1);
+                mv.visitInvokeDynamicInsn("equals", desc, createBootstrapMethod(), createBootstrapMethodArguments(cNode));
+                mv.visitInsn(IRETURN);
+                mv.visitMaxs(0, 0);
+                mv.visitEnd();
+            })
         );
         addGeneratedMethod(cNode, "equals", ACC_PUBLIC | ACC_FINAL, boolean_TYPE, params(param(OBJECT_TYPE, "other")), ClassNode.EMPTY_ARRAY, body);
     }
@@ -451,12 +507,12 @@ public class RecordTypeASTTransformation extends AbstractASTTransformation imple
     private void createRecordHashCode(ClassNode cNode) {
         String desc = BytecodeHelper.getMethodDescriptor(int_TYPE, new ClassNode[]{cNode});
         Statement body = stmt(bytecodeX(int_TYPE, mv -> {
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitInvokeDynamicInsn("hashCode", desc, createBootstrapMethod(), createBootstrapMethodArguments(cNode));
-                    mv.visitInsn(IRETURN);
-                    mv.visitMaxs(0, 0);
-                    mv.visitEnd();
-                })
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitInvokeDynamicInsn("hashCode", desc, createBootstrapMethod(), createBootstrapMethodArguments(cNode));
+                mv.visitInsn(IRETURN);
+                mv.visitMaxs(0, 0);
+                mv.visitEnd();
+            })
         );
         addGeneratedMethod(cNode, "hashCode", ACC_PUBLIC | ACC_FINAL, int_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, body);
     }
@@ -464,8 +520,8 @@ public class RecordTypeASTTransformation extends AbstractASTTransformation imple
     private Object[] createBootstrapMethodArguments(ClassNode cNode) {
         String internalName = cNode.getName().replace('.', '/');
         String names = cNode.getRecordComponents().stream()
-                                                    .map(RecordComponentNode::getName)
-                                                    .collect(Collectors.joining(";"));
+            .map(RecordComponentNode::getName)
+            .collect(Collectors.joining(";"));
         List<Object> args = new LinkedList<>();
         args.add(Type.getType(BytecodeHelper.getTypeDescription(cNode)));
         args.add(names);
@@ -475,87 +531,31 @@ public class RecordTypeASTTransformation extends AbstractASTTransformation imple
 
     private Object createFieldHandle(RecordComponentNode rcn, String cName) {
         return new Handle(
-                Opcodes.H_GETFIELD,
-                cName,
-                rcn.getName(),
-                BytecodeHelper.getTypeDescription(rcn.getType()),
-                false
+            Opcodes.H_GETFIELD,
+            cName,
+            rcn.getName(),
+            BytecodeHelper.getTypeDescription(rcn.getType()),
+            false
         );
     }
 
     private Handle createBootstrapMethod() {
         return new Handle(
-                Opcodes.H_INVOKESTATIC,
-                "java/lang/runtime/ObjectMethods",
-                "bootstrap",
-                "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/TypeDescriptor;Ljava/lang/Class;Ljava/lang/String;[Ljava/lang/invoke/MethodHandle;)Ljava/lang/Object;",
-                false
+            Opcodes.H_INVOKESTATIC,
+            "java/lang/runtime/ObjectMethods",
+            "bootstrap",
+            "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/TypeDescriptor;Ljava/lang/Class;Ljava/lang/String;[Ljava/lang/invoke/MethodHandle;)Ljava/lang/Object;",
+            false
         );
-    }
-
-    private static RecordTypeMode getMode(AnnotationNode node, String name) {
-        if (node != null) {
-            final Expression member = node.getMember(name);
-            if (member instanceof PropertyExpression) {
-                PropertyExpression prop = (PropertyExpression) member;
-                Expression oe = prop.getObjectExpression();
-                if (oe instanceof ClassExpression) {
-                    ClassExpression ce = (ClassExpression) oe;
-                    if ("groovy.transform.RecordTypeMode".equals(ce.getType().getName())) {
-                        return RecordTypeMode.valueOf(prop.getPropertyAsString());
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     private boolean unsupportedTupleAttribute(AnnotationNode anno, String memberName) {
         if (getMemberValue(anno, memberName) != null) {
             String tname = TupleConstructorASTTransformation.MY_TYPE_NAME;
             addError("Error during " + MY_TYPE_NAME + " processing: Annotation attribute '" + memberName +
-                    "' not supported for " + tname + " when used with " + MY_TYPE_NAME, anno);
+                "' not supported for " + tname + " when used with " + MY_TYPE_NAME, anno);
             return true;
         }
         return false;
-    }
-
-    private static void makeInnerRecordStatic(ClassNode cNode) {
-        if (cNode instanceof InnerClassNode) {
-            cNode.setModifiers(cNode.getModifiers() | ACC_STATIC);
-        }
-    }
-
-    private static void makeClassFinal(AbstractASTTransformation xform, ClassNode cNode) {
-        int modifiers = cNode.getModifiers();
-        if ((modifiers & ACC_FINAL) == 0) {
-            if ((modifiers & (ACC_ABSTRACT | ACC_SYNTHETIC)) == (ACC_ABSTRACT | ACC_SYNTHETIC)) {
-                xform.addError("Error during " + MY_TYPE_NAME + " processing: annotation found on inappropriate class " + cNode.getName(), cNode);
-                return;
-            }
-            cNode.setModifiers(modifiers | ACC_FINAL);
-        }
-    }
-
-    private static void ensureNotPublic(AbstractASTTransformation xform, String cNode, FieldNode fNode) {
-        String fName = fNode.getName();
-        if (fNode.isPublic() && !fName.contains("$") && !(fNode.isStatic() && fNode.isFinal())) {
-            xform.addError("Public field '" + fName + "' not allowed for " + MY_TYPE_NAME + " class '" + cNode + "'.", fNode);
-        }
-    }
-
-    // guarantee shallow immutability but property handler may do defensive copying
-    private static void adjustPropertyForShallowImmutability(ClassNode cNode, PropertyNode pNode, PropertyHandler handler) {
-        final FieldNode fNode = pNode.getField();
-        fNode.setModifiers((pNode.getModifiers() & (~ACC_PUBLIC)) | ACC_FINAL | ACC_PRIVATE);
-        boolean isGetterDefined = cNode.getDeclaredMethods(pNode.getName()).stream()
-                .anyMatch(MethodNodeUtils::isGetterCandidate);
-        pNode.setGetterName(pNode.getName());
-        if (!isGetterDefined) {
-            Statement getter = handler.createPropGetter(pNode);
-            if (getter != null) {
-                pNode.setGetterBlock(getter);
-            }
-        }
     }
 }

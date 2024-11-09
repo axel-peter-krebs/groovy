@@ -23,7 +23,7 @@ package org.codehaus.groovy.runtime.memoize;
  * Doesn't protect any resources.
  * Used when the user doesn't mind to eventually have the whole memoize cache emptied by gc.
  */
-public final class NullProtectionStorage implements ProtectionStorage{
+public final class NullProtectionStorage implements ProtectionStorage {
 
     /**
      * Does nothing
@@ -32,5 +32,6 @@ public final class NullProtectionStorage implements ProtectionStorage{
      * @param value A value to newly associate with the key
      */
     @Override
-    public void touch(final Object key, final Object value) { }
+    public void touch(final Object key, final Object value) {
+    }
 }

@@ -26,6 +26,6 @@ class HashCodeHelperTest {
     @Test
     void testUpdateHash() {
         assert 158 == HashCodeHelper.updateHash(1, new Character('c' as char))
-        assert 59  == HashCodeHelper.updateHash(1, (Character) null)
+        assert 59 == HashCodeHelper.updateHash(1, (Character) null)
     }
 }

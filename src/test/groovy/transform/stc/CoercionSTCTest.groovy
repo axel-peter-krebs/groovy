@@ -56,7 +56,7 @@ class CoercionSTCTest extends StaticTypeCheckingTestCase {
             String s = 'Hello'
             ((Set) s)
         ''',
-        'Inconvertible types: cannot cast java.lang.String to java.util.Set'
+            'Inconvertible types: cannot cast java.lang.String to java.util.Set'
     }
 
     void testCastIncompatibleTypeWithFlowType() {
@@ -65,7 +65,7 @@ class CoercionSTCTest extends StaticTypeCheckingTestCase {
             s = 1
             ((Set) s)
         ''',
-        'Inconvertible types: cannot cast java.lang.Integer to java.util.Set'
+            'Inconvertible types: cannot cast java.lang.Integer to java.util.Set'
     }
 
     void testCastStringToChar() {
@@ -95,7 +95,7 @@ class CoercionSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             def c = (char) 'aa'
         ''',
-        'Inconvertible types: cannot cast java.lang.String to char'
+            'Inconvertible types: cannot cast java.lang.String to char'
     }
 
     // GROOVY-6577
@@ -108,11 +108,11 @@ class CoercionSTCTest extends StaticTypeCheckingTestCase {
 
     void testCastNullToPrimitive() {
         // boolean tested above and void cannot appear in cast expression
-        for (type in ['byte','char','double','float','int','long','short']) {
+        for (type in ['byte', 'char', 'double', 'float', 'int', 'long', 'short']) {
             shouldFailWithMessages """
                 def v = ($type) null
             """,
-            "Inconvertible types: cannot cast java.lang.Object to $type"
+                "Inconvertible types: cannot cast java.lang.Object to $type"
         }
     }
 
@@ -135,7 +135,7 @@ class CoercionSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             def c = (Character) 'aa'
         ''',
-        'Inconvertible types: cannot cast java.lang.String to java.lang.Character'
+            'Inconvertible types: cannot cast java.lang.String to java.lang.Character'
     }
 
     void testCastArray1() {
@@ -170,37 +170,37 @@ class CoercionSTCTest extends StaticTypeCheckingTestCase {
             String[] src = ['a','b','c']
             (Set[]) src
         ''',
-        'Inconvertible types: cannot cast java.lang.String[] to java.util.Set[]'
+            'Inconvertible types: cannot cast java.lang.String[] to java.util.Set[]'
     }
 
     void testCastArrayIncompatible2() {
         shouldFailWithMessages '''
             (Set[]) ['a','b','c'].toArray(new String[3])
         ''',
-        'Inconvertible types: cannot cast java.lang.String[] to java.util.Set[]'
+            'Inconvertible types: cannot cast java.lang.String[] to java.util.Set[]'
     }
 
     void testCastArrayIncompatible3() {
         shouldFailWithMessages '''
             (Set[]) ['a','b','c'].toArray(String[]::new)
         ''',
-        'Inconvertible types: cannot cast java.lang.String[] to java.util.Set[]'
+            'Inconvertible types: cannot cast java.lang.String[] to java.util.Set[]'
     }
 
     void testCastArrayIncompatible4() {
         shouldFailWithMessages '''
             (String[]) new String[0][]
         ''',
-        'Inconvertible types: cannot cast java.lang.String[][] to java.lang.String[]'
+            'Inconvertible types: cannot cast java.lang.String[][] to java.lang.String[]'
     }
 
     // GROOVY-11371
     void testCastArrayIncompatible5() {
-        for (type in ['byte','char','double','float','int','long','short']) {
+        for (type in ['byte', 'char', 'double', 'float', 'int', 'long', 'short']) {
             shouldFailWithMessages """
                 ($type[]) new Integer[1] // null values unsafe
             """,
-            "Inconvertible types: cannot cast java.lang.Integer[] to $type[]"
+                "Inconvertible types: cannot cast java.lang.Integer[] to $type[]"
         }
     }
 
@@ -237,7 +237,7 @@ class CoercionSTCTest extends StaticTypeCheckingTestCase {
                 C c = (C) b
             }
         ''',
-        'Inconvertible types: cannot cast B to C'
+            'Inconvertible types: cannot cast B to C'
     }
 
     //--------------------------------------------------------------------------
@@ -323,12 +323,12 @@ class CoercionSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             Class c = []
         ''',
-        'Cannot find matching constructor java.lang.Class()'
+            'Cannot find matching constructor java.lang.Class()'
 
         shouldFailWithMessages '''
             Class c = [:]
         ''',
-        'Cannot find matching constructor java.lang.Class(', 'Map', ')'
+            'Cannot find matching constructor java.lang.Class(', 'Map', ')'
     }
 
     // GROOVY-6803
@@ -441,23 +441,23 @@ class CoercionSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             def s = (Supplier<Number>) { -> false }
         ''',
-        'Cannot return value of type boolean for closure expecting java.lang.Number'
+            'Cannot return value of type boolean for closure expecting java.lang.Number'
 
         shouldFailWithMessages '''
             def s = { -> false } as Supplier<Number>
         ''',
-        'Cannot return value of type boolean for closure expecting java.lang.Number'
+            'Cannot return value of type boolean for closure expecting java.lang.Number'
 
         shouldFailWithMessages '''
             def foo(Supplier<Number> s) { s.get() }
             def n = foo { -> false }
         ''',
-        'Cannot return value of type boolean for closure expecting java.lang.Number'
+            'Cannot return value of type boolean for closure expecting java.lang.Number'
 
         shouldFailWithMessages '''
             def s = (() -> [""]) as Supplier<Number>
         ''',
-        'Cannot return value of type java.util.ArrayList<java.lang.String> for lambda expecting java.lang.Number'
+            'Cannot return value of type java.util.ArrayList<java.lang.String> for lambda expecting java.lang.Number'
     }
 
     void testCoerceToFunctionalInterface4() {
@@ -489,7 +489,7 @@ class CoercionSTCTest extends StaticTypeCheckingTestCase {
             }
             I i = { p -> "" }
         ''',
-        'Cannot assign'
+            'Cannot assign'
 
         shouldFailWithMessages '''
             interface I {
@@ -499,7 +499,7 @@ class CoercionSTCTest extends StaticTypeCheckingTestCase {
 
             A a = { "" } // implicit parameter
         ''',
-        'Cannot assign'
+            'Cannot assign'
 
         assertScript '''
             interface I { // non-functional, but every instance extends Object
@@ -520,7 +520,7 @@ class CoercionSTCTest extends StaticTypeCheckingTestCase {
             }
             A a = { 2 }
         ''',
-        'Cannot assign'
+            'Cannot assign'
     }
 
     // GROOVY-7927
@@ -602,7 +602,7 @@ class CoercionSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages sam + '''
             Operation operation = { return 1.0; }
         ''',
-        'Cannot return value of type java.math.BigDecimal for closure expecting double'
+            'Cannot return value of type java.math.BigDecimal for closure expecting double'
     }
 
     // GROOVY-8427
@@ -731,12 +731,12 @@ class CoercionSTCTest extends StaticTypeCheckingTestCase {
                 foo = { n = d -> }
             }
         ''',
-        'Cannot assign value of type java.util.Date to variable of type java.lang.Number'
+            'Cannot assign value of type java.util.Date to variable of type java.lang.Number'
     }
 
     // GROOVY-11085
     void testCoerceToFunctionalInterface19() {
-        for (type in ['','long','Long']) {
+        for (type in ['', 'long', 'Long']) {
             assertScript """
                 void setFoo(Predicate<Long> p) {
                     assert p.test(1L)
@@ -748,13 +748,13 @@ class CoercionSTCTest extends StaticTypeCheckingTestCase {
 
     // GROOVY-11092
     void testCoerceToFunctionalInterface20() {
-        for (spec in ['one, two','String one, String two','CharSequence one, Object two']) {
+        for (spec in ['one, two', 'String one, String two', 'CharSequence one, Object two']) {
             assertScript """
                 Function<List<String>,String> f = { $spec -> one + two }
                 assert f.apply(['foo','bar']) == 'foobar'
             """
         }
-        for (spec in ['s, n','String s, Integer n','String s, Number n']) {
+        for (spec in ['s, n', 'String s, Integer n', 'String s, Number n']) {
             assertScript """
                 ToIntFunction<Tuple2<String,Integer>> f = { $spec -> n.intValue() }
                 assert f.applyAsInt(Tuple.tuple("", 42)) == 42
@@ -764,17 +764,17 @@ class CoercionSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             Consumer<List<String>> c = { Number not_list_or_string -> }
         ''',
-        'Expected type java.lang.String for closure parameter'
+            'Expected type java.lang.String for closure parameter'
 
         shouldFailWithMessages '''
             Consumer<List<String>> c = (Number xxx) -> { }
         ''',
-        'Expected type java.lang.String for lambda parameter'
+            'Expected type java.lang.String for lambda parameter'
 
         shouldFailWithMessages '''
             Consumer<Tuple2> c = { -> }
         ''',
-        'Wrong number of parameters for method target'
+            'Wrong number of parameters for method target'
     }
 
     // GROOVY-11092, GROOVY-8499

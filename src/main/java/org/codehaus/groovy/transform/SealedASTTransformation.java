@@ -52,6 +52,46 @@ public class SealedASTTransformation extends AbstractASTTransformation {
     @Deprecated
     public static final String SEALED_ALWAYS_ANNOTATE = SEALED_ALWAYS_ANNOTATE_KEY;
 
+    /**
+     * Reports true if native sealed class information should be written into the bytecode.
+     * Will only ever return true after the SealedASTTransformation visit method has completed.
+     *
+     * @return true for a native sealed class
+     */
+    @Incubating
+    public static boolean sealedNative(AnnotatedNode node) {
+        return node.getNodeMetaData(SealedMode.class) == SealedMode.NATIVE;
+    }
+
+    /**
+     * Reports true if the {@code Sealed} annotation should not be
+     * included in the bytecode for a sealed or emulated-sealed class.
+     * Will only ever return true after the {@code SealedASTTransformation} transform has been invoked.
+     *
+     * @return true if a {@code Sealed} annotation is not required for this node
+     */
+    @Incubating
+    public static boolean sealedSkipAnnotation(AnnotatedNode node) {
+        return Boolean.FALSE.equals(node.getNodeMetaData(SEALED_ALWAYS_ANNOTATE_KEY));
+    }
+
+    private static SealedMode getMode(AnnotationNode node, String name) {
+        if (node != null) {
+            final Expression member = node.getMember(name);
+            if (member instanceof PropertyExpression) {
+                PropertyExpression prop = (PropertyExpression) member;
+                Expression oe = prop.getObjectExpression();
+                if (oe instanceof ClassExpression) {
+                    ClassExpression ce = (ClassExpression) oe;
+                    if ("groovy.transform.SealedMode".equals(ce.getType().getName())) {
+                        return SealedMode.valueOf(prop.getPropertyAsString());
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public void visit(ASTNode[] nodes, SourceUnit source) {
         init(nodes, source);
@@ -102,45 +142,5 @@ public class SealedASTTransformation extends AbstractASTTransformation {
                 cNode.getPermittedSubclasses().addAll(newSubclasses);
             }
         }
-    }
-
-    /**
-     * Reports true if native sealed class information should be written into the bytecode.
-     * Will only ever return true after the SealedASTTransformation visit method has completed.
-     *
-     * @return true for a native sealed class
-     */
-    @Incubating
-    public static boolean sealedNative(AnnotatedNode node) {
-        return node.getNodeMetaData(SealedMode.class) == SealedMode.NATIVE;
-    }
-
-    /**
-     * Reports true if the {@code Sealed} annotation should not be
-     * included in the bytecode for a sealed or emulated-sealed class.
-     * Will only ever return true after the {@code SealedASTTransformation} transform has been invoked.
-     *
-     * @return true if a {@code Sealed} annotation is not required for this node
-     */
-    @Incubating
-    public static boolean sealedSkipAnnotation(AnnotatedNode node) {
-        return Boolean.FALSE.equals(node.getNodeMetaData(SEALED_ALWAYS_ANNOTATE_KEY));
-    }
-
-    private static SealedMode getMode(AnnotationNode node, String name) {
-        if (node != null) {
-            final Expression member = node.getMember(name);
-            if (member instanceof PropertyExpression) {
-                PropertyExpression prop = (PropertyExpression) member;
-                Expression oe = prop.getObjectExpression();
-                if (oe instanceof ClassExpression) {
-                    ClassExpression ce = (ClassExpression) oe;
-                    if ("groovy.transform.SealedMode".equals(ce.getType().getName())) {
-                        return SealedMode.valueOf(prop.getPropertyAsString());
-                    }
-                }
-            }
-        }
-        return null;
     }
 }

@@ -45,11 +45,6 @@ public final class LifecycleImplementationLoader<S> implements Iterable<S> {
     private final Map<String, S> providers = new LinkedHashMap<>();
     private LazyIterator lookupIterator;
 
-    public void reload() {
-        providers.clear();
-        lookupIterator = new LazyIterator(service, loader);
-    }
-
     private LifecycleImplementationLoader(Class<S> svc, ClassLoader cl) {
         service = svc;
         loader = cl;
@@ -66,6 +61,19 @@ public final class LifecycleImplementationLoader<S> implements Iterable<S> {
 
     private static void fail(Class service, URL u, int line, String msg) throws ServiceConfigurationError {
         fail(service, u + ":" + line + ": " + msg);
+    }
+
+    /**
+     * Creates a new {@link org.apache.groovy.contracts.common.spi.Lifecycle} for the given type and class
+     * loader.
+     */
+    public static <S> LifecycleImplementationLoader<S> load(Class<S> service, ClassLoader loader) {
+        return new LifecycleImplementationLoader<>(service, loader);
+    }
+
+    public void reload() {
+        providers.clear();
+        lookupIterator = new LazyIterator(service, loader);
     }
 
     private int parseLine(Class service, URL u, BufferedReader r, int lc, List<String> names) throws IOException, ServiceConfigurationError {
@@ -114,6 +122,34 @@ public final class LifecycleImplementationLoader<S> implements Iterable<S> {
             }
         }
         return names.iterator();
+    }
+
+    @Override
+    public Iterator<S> iterator() {
+        return new Iterator<S>() {
+
+            final Iterator<Map.Entry<String, S>> knownProviders = providers.entrySet().iterator();
+
+            @Override
+            public boolean hasNext() {
+                if (knownProviders.hasNext())
+                    return true;
+                return lookupIterator.hasNext();
+            }
+
+            @Override
+            public S next() {
+                if (knownProviders.hasNext())
+                    return knownProviders.next().getValue();
+                return lookupIterator.next();
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+
+        };
     }
 
     private final class LazyIterator implements Iterator<S> {
@@ -179,41 +215,5 @@ public final class LifecycleImplementationLoader<S> implements Iterable<S> {
             throw new UnsupportedOperationException();
         }
 
-    }
-
-    @Override
-    public Iterator<S> iterator() {
-        return new Iterator<S>() {
-
-            final Iterator<Map.Entry<String, S>> knownProviders = providers.entrySet().iterator();
-
-            @Override
-            public boolean hasNext() {
-                if (knownProviders.hasNext())
-                    return true;
-                return lookupIterator.hasNext();
-            }
-
-            @Override
-            public S next() {
-                if (knownProviders.hasNext())
-                    return knownProviders.next().getValue();
-                return lookupIterator.next();
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-
-        };
-    }
-
-    /**
-     * Creates a new {@link org.apache.groovy.contracts.common.spi.Lifecycle} for the given type and class
-     * loader.
-     */
-    public static <S> LifecycleImplementationLoader<S> load(Class<S> service, ClassLoader loader) {
-        return new LifecycleImplementationLoader<>(service, loader);
     }
 }

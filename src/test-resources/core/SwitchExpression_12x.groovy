@@ -18,14 +18,14 @@
  */
 
 def a = 6
-def result = switch(a) {
+def result = switch (a) {
     case 6 -> 'a'
-    default-> yield 'b'
+    default -> yield 'b'
 }
 assert 'a' == result
 
 a = 6
-result = switch(a) {
+result = switch (a) {
     case 6 -> 'a'
     default -> yield 'b'
 }

@@ -95,7 +95,7 @@ class ComplexCommandSupportTest extends CommandTestSupport {
     void testExecute() {
         ComplexCommandSupport com = new ComplexCommandSupport(shell, 'fcom', 'f', ['foo']) {
             def invoked = []
-            def do_foo = {arg1 -> invoked.addAll(arg1)}
+            def do_foo = { arg1 -> invoked.addAll(arg1) }
         }
         try {
             com.execute([])
@@ -120,7 +120,7 @@ class ComplexCommandSupportTest extends CommandTestSupport {
     void testExecuteDefault() {
         ComplexCommandSupport com = new ComplexCommandSupport(shell, 'fcom', 'f', ['foo'], 'foo') {
             def invoked = []
-            def do_foo = {arg1 -> invoked.addAll(arg1)}
+            def do_foo = { arg1 -> invoked.addAll(arg1) }
         }
         // assert no fail
         com.execute([])
@@ -129,11 +129,11 @@ class ComplexCommandSupportTest extends CommandTestSupport {
     void testExecuteFunction() {
         ComplexCommandSupport com = new ComplexCommandSupport(shell, 'fcom', 'f', ['foo']) {
             def invoked = []
-            def do_foo = {arg1 -> invoked.addAll(arg1)}
+            def do_foo = { arg1 -> invoked.addAll(arg1) }
         }
         try {
             com.executeFunction('bar', ['baz'])
-        }  catch (CommandException e) {
+        } catch (CommandException e) {
             // pass
         }
         assert [] == com.invoked
@@ -144,7 +144,7 @@ class ComplexCommandSupportTest extends CommandTestSupport {
     }
 
     void testLoadFunction() {
-        Closure fun = { x -> x+1}
+        Closure fun = { x -> x + 1 }
         ComplexCommandSupport com = new ComplexCommandSupport(shell, 'fcom', 'f', ['foo'], 'foo') {
             def invoked = []
             def do_foo = fun
@@ -153,7 +153,7 @@ class ComplexCommandSupportTest extends CommandTestSupport {
         try {
             com.loadFunction('bar')
             fail('expected CommandException')
-        } catch(CommandException e) {
+        } catch (CommandException e) {
             // pass
         }
     }

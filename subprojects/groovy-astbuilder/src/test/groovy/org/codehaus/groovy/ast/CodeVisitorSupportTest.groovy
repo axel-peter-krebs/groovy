@@ -53,7 +53,9 @@ final class CodeVisitorSupportTest {
     @Test
     void testEmptyStatementsOnIfElse() {
         def ast = new AstBuilder().buildFromCode(CompilePhase.SEMANTIC_ANALYSIS, true, {
-            if (true) { 1 }
+            if (true) {
+                1
+            }
         })
         def visitor = new RecordingCodeVisitorSupport()
         visitor.visitBlockStatement(ast[0]) // first element is always BlockStatement
@@ -115,7 +117,9 @@ final class CodeVisitorSupportTest {
  * This would be better implemented using invokeMethod but it is called from Java so it
  * won't dispatch correctly.
  */
-@AutoFinal @CompileStatic @PackageScope
+@AutoFinal
+@CompileStatic
+@PackageScope
 class RecordingCodeVisitorSupport extends CodeVisitorSupport implements GroovyInterceptable {
 
     List history = []

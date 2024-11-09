@@ -29,6 +29,18 @@ public class Numbers {
     //---------------------------------------------------------------------------
     // LEXING SUPPORT
 
+    private static final BigInteger MAX_LONG = BigInteger.valueOf(Long.MAX_VALUE);
+    private static final BigInteger MIN_LONG = BigInteger.valueOf(Long.MIN_VALUE);
+    private static final BigInteger MAX_INTEGER = BigInteger.valueOf(Integer.MAX_VALUE);
+    private static final BigInteger MIN_INTEGER = BigInteger.valueOf(Integer.MIN_VALUE);
+
+    //---------------------------------------------------------------------------
+    // PARSING SUPPORT
+    private static final BigDecimal MAX_DOUBLE = new BigDecimal(String.valueOf(Double.MAX_VALUE));
+    private static final BigDecimal MIN_DOUBLE = MAX_DOUBLE.negate();
+    private static final BigDecimal MAX_FLOAT = new BigDecimal(String.valueOf(Float.MAX_VALUE));
+    private static final BigDecimal MIN_FLOAT = MAX_FLOAT.negate();
+
     /**
      * Returns true if the specified character is a base-10 digit.
      */
@@ -79,21 +91,6 @@ public class Numbers {
 
         return false;
     }
-
-    //---------------------------------------------------------------------------
-    // PARSING SUPPORT
-
-    private static final BigInteger MAX_LONG = BigInteger.valueOf(Long.MAX_VALUE);
-    private static final BigInteger MIN_LONG = BigInteger.valueOf(Long.MIN_VALUE);
-
-    private static final BigInteger MAX_INTEGER = BigInteger.valueOf(Integer.MAX_VALUE);
-    private static final BigInteger MIN_INTEGER = BigInteger.valueOf(Integer.MIN_VALUE);
-
-    private static final BigDecimal MAX_DOUBLE = new BigDecimal(String.valueOf(Double.MAX_VALUE));
-    private static final BigDecimal MIN_DOUBLE = MAX_DOUBLE.negate();
-
-    private static final BigDecimal MAX_FLOAT = new BigDecimal(String.valueOf(Float.MAX_VALUE));
-    private static final BigDecimal MIN_FLOAT = MAX_FLOAT.negate();
 
     /**
      * Builds a Number from the given integer descriptor.  Creates the narrowest

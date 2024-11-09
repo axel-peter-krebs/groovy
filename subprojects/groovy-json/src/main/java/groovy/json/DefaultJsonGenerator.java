@@ -243,7 +243,7 @@ public class DefaultJsonGenerator implements JsonGenerator {
 
         for (MetaProperty mp : metaProperties) {
             if (!isPublic(mp.getModifiers())) continue; // GROOVY-5169
-            if ( isStatic(mp.getModifiers())) continue; // GROOVY-7682
+            if (isStatic(mp.getModifiers())) continue; // GROOVY-7682
 
             // skip write-only property: see File
             if (mp instanceof MetaBeanProperty) {
@@ -429,7 +429,7 @@ public class DefaultJsonGenerator implements JsonGenerator {
      *
      * @param type that this converter can handle
      * @return first converter that can handle the given type; else {@code null}
-     *         if no compatible converters are found for the given type.
+     * if no compatible converters are found for the given type.
      */
     protected Converter findConverter(Class<?> type) {
         for (Converter c : converters) {
@@ -499,7 +499,7 @@ public class DefaultJsonGenerator implements JsonGenerator {
          *
          * @param type the type of the object to convert
          * @return true if this converter can successfully convert values of
-         *      the given type
+         * the given type
          */
         @Override
         public boolean handles(Class<?> type) {
@@ -510,14 +510,14 @@ public class DefaultJsonGenerator implements JsonGenerator {
          * Converts a given value.
          *
          * @param value the object to convert
-         * @param key the key name for the value, may be {@code null}
+         * @param key   the key name for the value, may be {@code null}
          * @return the converted object
          */
         @Override
         public Object convert(Object value, String key) {
             return (paramCount == 1) ?
-                    closure.call(value) :
-                    closure.call(value, key);
+                closure.call(value) :
+                closure.call(value, key);
         }
 
         /**
@@ -537,7 +537,7 @@ public class DefaultJsonGenerator implements JsonGenerator {
             if (!(o instanceof ClosureConverter)) {
                 return false;
             }
-            return this.type == ((ClosureConverter)o).type;
+            return this.type == ((ClosureConverter) o).type;
         }
 
         @Override

@@ -30,19 +30,6 @@ import static org.codehaus.groovy.reflection.ReflectionCache.OBJECT_ARRAY_CLASS;
 
 public class ObjectArrayPutAtMetaMethod extends ArrayPutAtMetaMethod {
 
-    @Override
-    public final CachedClass getDeclaringClass() {
-        return OBJECT_ARRAY_CLASS;
-    }
-
-    @Override
-    public Object invoke(final Object object, final Object[] arguments) {
-        var array = (Object[]) object;
-        int index = normaliseIndex((Integer) arguments[0], array.length);
-        array[index] = adjustNewValue(array, arguments[1]);
-        return null;
-    }
-
     private static Object adjustNewValue(final Object[] objects, final Object newValue) {
         Class<?> arrayComponentClass = objects.getClass().getComponentType();
         Object adjustedNewVal = newValue;
@@ -66,6 +53,19 @@ public class ObjectArrayPutAtMetaMethod extends ArrayPutAtMetaMethod {
     }
 
     @Override
+    public final CachedClass getDeclaringClass() {
+        return OBJECT_ARRAY_CLASS;
+    }
+
+    @Override
+    public Object invoke(final Object object, final Object[] arguments) {
+        var array = (Object[]) object;
+        int index = normaliseIndex((Integer) arguments[0], array.length);
+        array[index] = adjustNewValue(array, arguments[1]);
+        return null;
+    }
+
+    @Override
     public CallSite createPojoCallSite(final CallSite site, final MetaClassImpl metaClass, final MetaMethod metaMethod, final Class[] params, final Object receiver, final Object[] args) {
         if (!(args[0] instanceof Integer)) {
             return PojoMetaMethodSite.createNonAwareCallSite(site, metaClass, metaMethod, params, args);
@@ -78,8 +78,7 @@ public class ObjectArrayPutAtMetaMethod extends ArrayPutAtMetaMethod {
                             Object[] array = (Object[]) receiver;
                             array[normaliseIndex((Integer) index, array.length)] = adjustNewValue(array, value);
                             return null;
-                        }
-                        catch (ClassCastException e) {
+                        } catch (ClassCastException e) {
                             if ((receiver instanceof Object[]) && (index instanceof Integer)) {
                                 throw e;
                             }

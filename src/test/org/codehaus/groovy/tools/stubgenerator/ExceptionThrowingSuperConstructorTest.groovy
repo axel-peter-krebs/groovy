@@ -24,14 +24,14 @@ package org.codehaus.groovy.tools.stubgenerator
 class ExceptionThrowingSuperConstructorTest extends StringSourcesStubTestCase {
 
     Map<String, String> provideSources() {
-        [   'Dummy.java': '''
+        ['Dummy.java'        : '''
                 import java.io.*;
                  class Dummy{
                     public Dummy(String s) {}
                     public Dummy(InputStream i) throws IOException {}
                  }
                  ''',
-            'Derived6282.groovy': '''
+         'Derived6282.groovy': '''
                 class Derived6282A extends org.codehaus.groovy.tools.stubgenerator.ExceptionThrowingTestHelper {
                   Derived6282A(foo) {
                     super((String) foo)
@@ -58,5 +58,6 @@ class ExceptionThrowingSuperConstructorTest extends StringSourcesStubTestCase {
 
 class ExceptionThrowingTestHelper {
     ExceptionThrowingTestHelper(InputStream io) throws IOException {}
+
     ExceptionThrowingTestHelper(String s) {}
 }

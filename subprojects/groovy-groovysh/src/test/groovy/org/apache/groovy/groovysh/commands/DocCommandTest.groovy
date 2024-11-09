@@ -28,7 +28,7 @@ import org.apache.groovy.groovysh.Groovysh
 final class DocCommandTest extends CommandTestSupport {
 
     private DocCommand newDocCommand_sendHEADRequest(
-            @ClosureParams(value=SimpleType, options='java.net.URL') Closure<Boolean> requestStrategy) {
+        @ClosureParams(value = SimpleType, options = 'java.net.URL') Closure<Boolean> requestStrategy) {
         new DocCommand(new Groovysh()) {
             @Override
             boolean sendHEADRequest(URL url, String path) {
@@ -48,7 +48,7 @@ final class DocCommandTest extends CommandTestSupport {
     //--------------------------------------------------------------------------
 
     void testUrlsForJavaClass1() {
-        def command = newDocCommand_sendHEADRequest{ return !it.host.contains('docs.groovy-lang.org') }
+        def command = newDocCommand_sendHEADRequest { return !it.host.contains('docs.groovy-lang.org') }
 
         // no module specified
         def urls = command.urlsFor('org.ietf.jgss.GSSContext')*.toString()
@@ -62,7 +62,7 @@ final class DocCommandTest extends CommandTestSupport {
     }
 
     void testUrlsForJavaClass2() {
-        def command = newDocCommand_sendHEADRequest{ return true }
+        def command = newDocCommand_sendHEADRequest { return true }
 
         def urls = command.urlsFor('java.util.List')*.toString()
 
@@ -72,7 +72,7 @@ final class DocCommandTest extends CommandTestSupport {
     }
 
     void testUrlsForGroovyClass() {
-        def command = newDocCommand_sendHEADRequest{ return it.host.contains('docs.groovy-lang.org') }
+        def command = newDocCommand_sendHEADRequest { return it.host.contains('docs.groovy-lang.org') }
 
         def urls = command.urlsFor('groovy.console.TextNode')*.toString()
 
@@ -82,7 +82,7 @@ final class DocCommandTest extends CommandTestSupport {
     }
 
     void testUrlsForUnknownClass() {
-        def command = newDocCommand_sendHEADRequest{ return false }
+        def command = newDocCommand_sendHEADRequest { return false }
 
         def urls = command.urlsFor('com.dummy.List')*.toString()
 
@@ -94,7 +94,7 @@ final class DocCommandTest extends CommandTestSupport {
     void testInitializeAWTDesktopPlatformSupportFlag() {
         def desktopClass = Class.forName('java.awt.Desktop')
         boolean hasSupport = desktopClass.desktopSupported
-                && desktopClass.desktop.isSupported(desktopClass.declaredClasses.find{ it.simpleName == 'Action' }.BROWSE)
+            && desktopClass.desktop.isSupported(desktopClass.declaredClasses.find { it.simpleName == 'Action' }.BROWSE)
 
         assert DocCommand.hasAWTDesktopPlatformSupport == hasSupport
     }

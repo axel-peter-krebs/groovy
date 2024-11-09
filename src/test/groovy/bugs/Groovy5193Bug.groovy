@@ -23,7 +23,7 @@ import org.codehaus.groovy.control.MultipleCompilationErrorsException
 
 class Groovy5193Bug extends GroovyTestCase {
     void testMixingMethodsWithPrivatePublicAccessInSameClassV1() {
-        try{
+        try {
             assertScript """
                 class Repository5193V1 {
                   def find(String id) {}
@@ -31,13 +31,13 @@ class Groovy5193Bug extends GroovyTestCase {
                 }
             """
             fail("compilation should have failed saying that mixing private and public/protected methods of the same name causes multimethods to be disabled and is forbidden.")
-        } catch(MultipleCompilationErrorsException ex) {
+        } catch (MultipleCompilationErrorsException ex) {
             assertTrue ex.message.contains("Mixing private and public/protected methods of the same name causes multimethods to be disabled and is forbidden")
         }
     }
 
     void testMixingMethodsWithPrivatePublicAccessInSameClassV2() {
-        try{
+        try {
             assertScript """
                 class Repository5193V2 {
                   def find(String id) {}
@@ -45,7 +45,7 @@ class Groovy5193Bug extends GroovyTestCase {
                 }
             """
             fail("compilation should have failed saying that mixing private and public/protected methods of the same name causes multimethods to be disabled and is forbidden.")
-        } catch(MultipleCompilationErrorsException ex) {
+        } catch (MultipleCompilationErrorsException ex) {
             assertTrue ex.message.contains("Mixing private and public/protected methods of the same name causes multimethods to be disabled and is forbidden")
         }
     }

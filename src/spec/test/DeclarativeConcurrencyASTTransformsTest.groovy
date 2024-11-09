@@ -18,6 +18,7 @@ import groovy.test.GroovyTestCase
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 class DeclarativeConcurrencyASTTransformsTest extends GroovyTestCase {
     void testSynchronizedASTTransform() {
         assertScript '''

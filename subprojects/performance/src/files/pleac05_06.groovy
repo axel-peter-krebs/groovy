@@ -30,16 +30,16 @@ import groovy.ant.AntBuilder
 // @@PLEAC@@_5.0
 //----------------------------------------------------------------------------------
 // quotes are optional around the key
-age = [ Nat:24, Jules:25, Josh:17 ]
+age = [Nat: 24, Jules: 25, Josh: 17]
 
-assert age['Nat']  == 24
+assert age['Nat'] == 24
 // alternate syntax
 assert age."Jules" == 25
 
 foodColor = [
-    Apple:  'red',
+    Apple : 'red',
     Banana: 'yellow',
-    Lemon:  'yellow',
+    Lemon : 'yellow',
     Carrot: 'orange'
 ]
 assert foodColor.size() == 4
@@ -56,13 +56,13 @@ assert foodColor.size() == 5
 
 // @@PLEAC@@_5.2
 //----------------------------------------------------------------------------------
-assert ['Banana', 'Martini'].collect{ foodColor.containsKey(it)?'food':'drink' } == [ 'food', 'drink' ]
+assert ['Banana', 'Martini'].collect { foodColor.containsKey(it) ? 'food' : 'drink' } == ['food', 'drink']
 
-age = [Toddler:3, Unborn:0, Phantasm:null]
-['Toddler', 'Unborn', 'Phantasm', 'Relic'].each{ key ->
+age = [Toddler: 3, Unborn: 0, Phantasm: null]
+['Toddler', 'Unborn', 'Phantasm', 'Relic'].each { key ->
     print "$key: "
     if (age.containsKey(key)) print 'has key '
-    if (age.containsKey(key) && age[key]!=null) print 'non-null '
+    if (age.containsKey(key) && age[key] != null) print 'non-null '
     if (age.containsKey(key) && age[key]) print 'true '
     println ''
 }
@@ -121,7 +121,7 @@ From: someone@somewhere.com
 '''
 
 from = [:]
-fakedInput.split('\n').each{
+fakedInput.split('\n').each {
     matcher = (it =~ /^From:\s+([^\s>]*)/)
     if (matcher.matches()) {
         sender = matcher[0][1]
@@ -131,7 +131,7 @@ fakedInput.split('\n').each{
 }
 
 // More useful to sort by number of received mail by person
-from.entrySet().sort { a,b -> b.value<=>a.value}.each { e->
+from.entrySet().sort { a, b -> b.value <=> a.value }.each { e ->
     println "${e.key}: ${e.value}"
 }
 // =>
@@ -141,13 +141,13 @@ from.entrySet().sort { a,b -> b.value<=>a.value}.each { e->
 
 // @@PLEAC@@_5.5
 //----------------------------------------------------------------------------------
-hash = [a:1, b:2, c:3]
+hash = [a: 1, b: 2, c: 3]
 // Map#toString already produce a pretty decent output:
 println hash
 // => ["b":2, "a":1, "c":3]
 
 // Or do it by longhand for customised formatting
-hash.each { k,v -> println "$k => $v" }
+hash.each { k, v -> println "$k => $v" }
 // =>
 // b => 2
 // a => 1
@@ -164,7 +164,7 @@ foodColor['Banana'] = 'Yellow'
 foodColor['Apple'] = 'Green'
 foodColor['Lemon'] = 'Yellow'
 
-foodColor.keySet().each{ key -> println key }
+foodColor.keySet().each { key -> println key }
 // =>
 // Banana
 // Apple
@@ -173,30 +173,30 @@ foodColor.keySet().each{ key -> println key }
 
 // @@PLEAC@@_5.7
 //----------------------------------------------------------------------------------
-foodsOfColor = [ Yellow:['Banana', 'Lemon'], Green:['Apple'] ]
+foodsOfColor = [Yellow: ['Banana', 'Lemon'], Green: ['Apple']]
 foodsOfColor['Green'] += 'Melon'
-assert foodsOfColor == ["Green":["Apple", "Melon"], "Yellow":["Banana", "Lemon"]]
+assert foodsOfColor == ["Green": ["Apple", "Melon"], "Yellow": ["Banana", "Lemon"]]
 //----------------------------------------------------------------------------------
 
 // @@PLEAC@@_5.8
 //----------------------------------------------------------------------------------
 surname = [Mickey: 'Mantle', Babe: 'Ruth']
-assert surname.findAll{ it.value == 'Mantle' }.collect{ it.key } == ["Mickey"]
+assert surname.findAll { it.value == 'Mantle' }.collect { it.key } == ["Mickey"]
 
 firstname = [:]
-surname.each{ entry -> firstname[entry.value] = entry.key }
-assert firstname == ["Ruth":"Babe", "Mantle":"Mickey"]
+surname.each { entry -> firstname[entry.value] = entry.key }
+assert firstname == ["Ruth": "Babe", "Mantle": "Mickey"]
 
 // foodfindScript:
 //#!/usr/bin/groovy
 // usage: foodfind food_or_color"
-color = [Apple:'red', Banana:'yellow', Lemon:'yellow', Carrot:'orange']
+color = [Apple: 'red', Banana: 'yellow', Lemon: 'yellow', Carrot: 'orange']
 given = args[0]
 if (color.containsKey(given))
     println "$given is a food with color ${color[given]}."
 if (color.containsValue(given)) {
     // could use commify() here - see 4.2
-    foods = color.findAll{it.value == given}.collect{it.key}
+    foods = color.findAll { it.value == given }.collect { it.key }
     join = foods.size() == 1 ? 'is a food' : 'are foods'
     println "${foods.join(', ')} $join with color ${given}."
 }
@@ -210,20 +210,20 @@ if (color.containsValue(given)) {
 
 // @@PLEAC@@_5.9
 //----------------------------------------------------------------------------------
-foodColor = [Apple:'red', Carrot:'orange', Banana:'yellow', Cherry:'black']
+foodColor = [Apple: 'red', Carrot: 'orange', Banana: 'yellow', Cherry: 'black']
 
 // Sorted by keys
 assert foodColor.keySet().sort() == ["Apple", "Banana", "Carrot", "Cherry"]
 // you could now iterate through the hash with the sorted keys
 assert foodColor.values().sort() == ["black", "orange", "red", "yellow"]
-assert foodColor.values().sort{it.size()} == ["red", "black", "orange", "yellow"]
+assert foodColor.values().sort { it.size() } == ["red", "black", "orange", "yellow"]
 //----------------------------------------------------------------------------------
 
 // @@PLEAC@@_5.10
 //----------------------------------------------------------------------------------
 //merged = a.clone.update(b)        # because Hash#update changes object in place
 
-drinkColor = [Galliano:'yellow', 'Mai Tai':'blue']
+drinkColor = [Galliano: 'yellow', 'Mai Tai': 'blue']
 ingestedColor = [:]
 ingestedColor.putAll(drinkColor)
 // overrides any common keys
@@ -235,8 +235,8 @@ assert totalColors == ["black", "blue", "orange", "red", "yellow"]
 
 // @@PLEAC@@_5.11
 //----------------------------------------------------------------------------------
-foodColor['Lemon']='yellow'
-citrusColor = [Lemon:'yellow', Orange:'orange', Lime:'green']
+foodColor['Lemon'] = 'yellow'
+citrusColor = [Lemon: 'yellow', Orange: 'orange', Lime: 'green']
 println foodColor
 println citrusColor
 common = foodColor.keySet().intersect(citrusColor.keySet())
@@ -260,7 +260,7 @@ hash = [:]                              // Groovy shorthand gets defaults
 hash = new HashMap()                    // default capacity and load factor
 println hash.capacity()
 // => 16
-('A'..'Z').each{ hash[it] = it }
+('A'..'Z').each { hash[it] = it }
 println hash.capacity()
 // => 64
 hash = new HashMap(100)                 // initial capacity of 100 and default load factor
@@ -271,26 +271,26 @@ hash = new HashMap(100, 0.8f)    // initial capacity of 100 and 0.8 load factor
 //----------------------------------------------------------------------------------
 count = [:]
 letters = []
-foodColor.values().each{ letters.addAll((it as String[]).toList()) }
-letters.each{ if (count.containsKey(it)) count[it] += 1 else count[it] = 1 }
-assert count == ["o":3, "d":1, "k":1, "w":2, "r":2, "c":1, "l":5, "g":1, "b":1, "a":2, "y":2, "n":1, "e":4]
+foodColor.values().each { letters.addAll((it as String[]).toList()) }
+letters.each { if (count.containsKey(it)) count[it] += 1 else count[it] = 1 }
+assert count == ["o": 3, "d": 1, "k": 1, "w": 2, "r": 2, "c": 1, "l": 5, "g": 1, "b": 1, "a": 2, "y": 2, "n": 1, "e": 4]
 //----------------------------------------------------------------------------------
 
 // @@PLEAC@@_5.15
 //----------------------------------------------------------------------------------
 father = [
-    Cain:'Adam',
-    Abel:'Adam',
-    Seth:'Adam',
-    Enoch:'Cain',
-    Irad:'Enoch',
-    Mehujael:'Irad',
-    Methusael:'Mehujael',
-    Lamech:'Methusael',
-    Jabal:'Lamech',
-    Jubal:'Lamech',
-    Tubalcain:'Lamech',
-    Enos:'Seth'
+    Cain     : 'Adam',
+    Abel     : 'Adam',
+    Seth     : 'Adam',
+    Enoch    : 'Cain',
+    Irad     : 'Enoch',
+    Mehujael : 'Irad',
+    Methusael: 'Mehujael',
+    Lamech   : 'Methusael',
+    Jabal    : 'Lamech',
+    Jubal    : 'Lamech',
+    Tubalcain: 'Lamech',
+    Enos     : 'Seth'
 ]
 
 def upline(person) {
@@ -305,13 +305,15 @@ upline('Irad')
 // => Irad Enoch Cain Adam
 
 children = [:]
-father.each { k,v ->
+father.each { k, v ->
     if (!children.containsKey(v)) children[v] = []
     children[v] += k
 }
+
 def downline(person) {
-    println "$person begat ${children.containsKey(person)?children[person].join(', '):'Nobody'}.\n"
+    println "$person begat ${children.containsKey(person) ? children[person].join(', ') : 'Nobody'}.\n"
 }
+
 downline('Tubalcain')
 // => Tubalcain begat Nobody.
 downline('Adam')
@@ -321,9 +323,9 @@ downline('Adam')
 // scriptToFindIncludeFilesWhichContainNoIncludesScript:
 dir = '<path_to_usr/include>'
 includes = [:]
-new File(dir).eachFile{ file ->
+new File(dir).eachFile { file ->
     if (file.directory) return
-    file.eachLine{ line ->
+    file.eachLine { line ->
         matcher = (line =~ '^\\s*#\\s*include\\s*<([^>]+)>')
         if (matcher.matches()) {
             if (!includes.containsKey(file.name)) includes[file.name] = []
@@ -369,7 +371,7 @@ class DuNode {
 
     // returns substring before last "/", otherwise null
     def getParent() {
-        def p = name.replaceAll(/\/[^\/]+$/,'')
+        def p = name.replaceAll(/\/[^\/]+$/, '')
         return (p == name) ? null : p
     }
 }
@@ -387,7 +389,7 @@ class DuTree {
     // get a node by name, create it if it does not exist yet
     def getOrCreateNode(name) {
         if (!nodes.containsKey(name))
-            nodes[name] = new DuNode(name:name)
+            nodes[name] = new DuNode(name: name)
         return nodes[name]
     }
 
@@ -397,7 +399,7 @@ class DuTree {
     def getDots(node) {
         def cursize = node.size
         for (kid in node.kids) {
-            cursize -=  kid.size
+            cursize -= kid.size
             getDots(kid)
         }
         if (node.size != cursize) {
@@ -409,7 +411,7 @@ class DuTree {
 
     def processInput() {
         def name = ''
-        input.split('\n').findAll{it.trim()}.each{ line ->
+        input.split('\n').findAll { it.trim() }.each { line ->
             def tokens = line.tokenize()
             def size = tokens[0]
             name = tokens[1]
@@ -426,21 +428,21 @@ class DuTree {
     // recursively output everything
     // passing padding and number width as well
     // on recursive calls
-    def output(node, prefix='', width=0) {
+    def output(node, prefix = '', width = 0) {
         def line = node.size.toString().padRight(width) + ' ' + node.basename
-        println (prefix + line)
+        println(prefix + line)
         prefix += line.replaceAll(/\d /, '| ')
         prefix = prefix.replaceAll(/[^|]/, ' ')
         if (node.kids.size() > 0) {    // not a bachelor node
             kids = node.kids
-            kids.sort{ a,b -> b.compareTo(a) }
+            kids.sort { a, b -> b.compareTo(a) }
             width = kids[0].size.toString().size()
             for (kid in kids) output(kid, prefix, width)
         }
     }
 }
 
-tree = new DuTree(input:duProcessFakedInput)
+tree = new DuTree(input: duProcessFakedInput)
 tree.processInput()
 tree.getDots(tree.topdir)
 tree.output(tree.topdir)
@@ -518,23 +520,23 @@ digits = "123456789"
 nonlap = digits =~ /\d\d\d/
 assert nonlap.count == 3
 print 'Non-overlapping:  '
-(0..<nonlap.count).each{ print nonlap[it] + ' ' }; print '\n'
+(0..<nonlap.count).each { print nonlap[it] + ' ' }; print '\n'
 print 'Overlapping:      '
 yeslap = (digits =~ /(?=(\d\d\d))/)
 assert yeslap.count == 7
-(0..<yeslap.count).each{ print yeslap[it][1] + ' ' }; print '\n'
+(0..<yeslap.count).each { print yeslap[it][1] + ' ' }; print '\n'
 // Non-overlapping:  123 456 789
 // Overlapping:      123 234 345 456 567 678 789
 
 string = 'And little lambs eat ivy'
 // Greedy version
 parts = string =~ /(.*)(l[^s]*s)(.*)/
-(1..parts.groupCount()).each{ print "(${parts[0][it]}) " }; print '\n'
+(1..parts.groupCount()).each { print "(${parts[0][it]}) " }; print '\n'
 // (And little ) (lambs) ( eat ivy)
 
 // Reluctant version
 parts = string =~ /(.*?)(l[^s]*s)(.*)/
-(1..parts.groupCount()).each{ print "(${parts[0][it]}) " }; print '\n'
+(1..parts.groupCount()).each { print "(${parts[0][it]}) " }; print '\n'
 // (And ) (little lambs) ( eat ivy)
 //----------------------------------------------------------------------------------
 
@@ -555,7 +557,7 @@ assert dst == 'file.ext'
 // in the sun regex library but other Java regex libraries may support this. Instead:
 src = 'make all words title-cased'
 dst = src
-('a'..'z').each{ dst = dst.replaceAll(/([^a-zA-Z])/+it+/|\A/+it, /$1/+it.toUpperCase()) }
+('a'..'z').each { dst = dst.replaceAll(/([^a-zA-Z])/ + it + /|\A/ + it, /$1/ + it.toUpperCase()) }
 assert dst == 'Make All Words Title-Cased'
 
 // rename list of dirs
@@ -588,10 +590,10 @@ results = ''
 greekAlpha = '\u0391'
 special = '���������?' + greekAlpha
 // flag as either Y (alphabetic) or N (not)
-words.split('\n').findAll{it.trim()}.each{ results += it ==~ /^[\w/+special+/]+$/ ?'Y':'N' }
+words.split('\n').findAll { it.trim() }.each { results += it ==~ /^[\w/ + special + /]+$/ ? 'Y' : 'N' }
 assert results == 'YYYYYYYYYN'
 results = ''
-words.split('\n').findAll{it.trim()}.each{ results += it ==~ /^[^\p{Punct}]+$/ ?'Y':'N' }
+words.split('\n').findAll { it.trim() }.each { results += it ==~ /^[^\p{Punct}]+$/ ? 'Y' : 'N' }
 assert results == 'YYYYYYYYYN'
 //----------------------------------------------------------------------------------
 
@@ -631,7 +633,7 @@ re = '''(?x)          # to enable whitespace and comments
 
 finder = str =~ re
 out = str
-(0..<finder.count).each{
+(0..<finder.count).each {
     adr = finder[it][0]
     out = out.replaceAll(adr, "$adr [${InetAddress.getByName(adr).hostAddress}]")
 }
@@ -667,7 +669,7 @@ out = "The third fish is a ${finder[2][1]} one."
 assert out == expected
 
 evens = []
-(0..<finder.count).findAll{it%2!=0}.each{ evens += finder[it][1] }
+(0..<finder.count).findAll { it % 2 != 0 }.each { evens += finder[it][1] }
 println "Even numbered fish are ${evens.join(' ')}."
 // => Even numbered fish are two blue.
 
@@ -675,14 +677,14 @@ println "Even numbered fish are ${evens.join(' ')}."
 pond = fish + ' in the pond'
 fishInPond = (/(\w+)(\s+fish\b\s*)/) * 4 + /(.*)/
 found = (pond =~ fishInPond)[0]
-println ((found[1..6] + 'sushi' + found[8..9]).join())
+println((found[1..6] + 'sushi' + found[8..9]).join())
 // => One fish two fish red fish sushi fish in the pond
 
 // find last fish
 expected = 'Last fish is blue'
 pond = 'One fish two fish red fish blue fish swim here.'
 finder = (pond =~ anyFish)
-assert expected == "Last fish is ${finder[finder.count-1][1]}"
+assert expected == "Last fish is ${finder[finder.count - 1][1]}"
 // => Last fish is blue
 
 // greedy match version of above
@@ -715,7 +717,7 @@ Chapter 1: Some Heading
 A paragraph.
 '''.trim()
 
-stripped = fakedFile.replaceAll(/(?m)<.*?>/,'').trim()
+stripped = fakedFile.replaceAll(/(?m)<.*?>/, '').trim()
 assert stripExpectations == stripped
 
 pattern = '''(?x)
@@ -763,7 +765,7 @@ END
 chunkyPattern = /(?ms)^START(.*?)^END/
 finder = fakeFileInput =~ chunkyPattern
 (0..<finder.count).each {
-    println "Chunk #$it contains ${new StringTokenizer(finder[it][1],'\n').countTokens()} lines."
+    println "Chunk #$it contains ${new StringTokenizer(finder[it][1], '\n').countTokens()} lines."
 }
 // =>
 // Chunk #0 contains 2 lines.
@@ -824,7 +826,7 @@ Done.
 examplePattern = /(?ms)<XMP>(.*?)<\/XMP>/
 finder = htmlContent =~ examplePattern
 (0..<finder.count).each {
-    println "Example ${it+1}:"
+    println "Example ${it + 1}:"
     println finder[it][1]
 }
 // =>
@@ -836,7 +838,7 @@ finder = htmlContent =~ examplePattern
 // line CCC
 //
 
-htmlContent.split('\n').eachWithIndex{ line, count ->
+htmlContent.split('\n').eachWithIndex { line, count ->
     if (count in 4..5) println line
 }
 // =>
@@ -856,10 +858,10 @@ Date: Sun, 31 Dec 2006 02:14:58 +1100
 From: someone@somewhere.com
 To: <pleac-discuss@lists.sourceforge.net>
 Date: Sun, 31 Dec 2006 02:14:59 +1100
-'''.trim()+'\n'
+'''.trim() + '\n'
 
 seen = [:]
-fakedMailInput.split('\n').each{ line ->
+fakedMailInput.split('\n').each { line ->
     m = (line =~ /^From:?\s(.*)/)
     if (m) {
         addr = m[0][1] =~ /([^<>(),;\s]+\@[^<>(),;\s]+)/
@@ -867,7 +869,7 @@ fakedMailInput.split('\n').each{ line ->
         if (seen.containsKey(x)) seen[x] += 1 else seen[x] = 1
     }
 }
-seen.each{ k,v -> println "Address $k seen $v time${v==1?'':'s'}." }
+seen.each { k, v -> println "Address $k seen $v time${v == 1 ? '' : 's'}." }
 // =>
 // Address noone@nowhere.com seen 1 time.
 // Address someone@somewhere.com seen 2 times.
@@ -884,12 +886,12 @@ myPicture.jpg
 '''
 
 def glob2pat(globstr) {
-    def patmap = [ '*':'.*', '?':'.', '[':'[', ']':']' ]
+    def patmap = ['*': '.*', '?': '.', '[': '[', ']': ']']
     def result = '(?m)^'
     '^' + globstr.replaceAll(/(.)/) { all, c ->
         result += (patmap.containsKey(c) ? patmap[c] : Pattern.quote(c))
     }
-     result + '$'
+    result + '$'
 }
 
 def checkNumMatches(pat, count) {
@@ -909,8 +911,8 @@ checkNumMatches('*Rabbit*.*', 0)
 states = 'CO ON MI WI MN'.split(' ').toList()
 
 def popgrep1(file) {
-    file.eachLine{ line ->
-        if (states.any{ line =~ /\b$it\b/ }) println line
+    file.eachLine { line ->
+        if (states.any { line =~ /\b$it\b/ }) println line
     }
 }
 // popgrep1(new File('path_to_file'))
@@ -918,54 +920,57 @@ def popgrep1(file) {
 // version 2: eval strings; fast but hard to quote (SLOW)
 def popgrep2(file) {
     def code = 'def found = false\n'
-    states.each{
+    states.each {
         code += "if (!found && line =~ /\\b$it\\b/) found = true\n"
     }
     code += "if (found) println line\n"
-    file.eachLine{ line = it; evaluate(code) }
+    file.eachLine { line = it; evaluate(code) }
 }
 // popgrep2(new File('path_to_file'))
 
 // version 2b: eval using switch/case (not in Perl cookbook) (SLOW)
 def popgrep2b(file) {
     def code = 'switch(line) {\n'
-    states.each{
+    states.each {
         code += "case ~/.*\\b$it\\b.*/:\nprintln line;break\n"
     }
     code += "default:break\n}\n"
-    file.eachLine{ line = it; evaluate(code) }
+    file.eachLine { line = it; evaluate(code) }
 }
 // popgrep2b(new File('path_to_file'))
 
 // version3: build a match_any function as a GString
 def popgrep3(file) {
-    def code = states.collect{ "line =~ /\\b$it\\b/" }.join('||')
-    file.eachLine{ line = it; if (evaluate(code)) println line }
+    def code = states.collect { "line =~ /\\b$it\\b/" }.join('||')
+    file.eachLine { line = it; if (evaluate(code)) println line }
 }
 // popgrep3(new File('path_to_file'))
 
 // version4: pretty fast, but simple: compile all re's first:
-patterns = states.collect{ ~/\b$it\b/ }
+patterns = states.collect { ~/\b$it\b/ }
+
 def popgrep4(file) {
-    file.eachLine{ line ->
-        if (patterns.any{ it.matcher(line)}) println line
+    file.eachLine { line ->
+        if (patterns.any { it.matcher(line) }) println line
     }
 }
 // popgrep4(new File('path_to_file'))
 
 // version5: faster
-str = states.collect{ /\b$it\b/ }.join('|')
+str = states.collect { /\b$it\b/ }.join('|')
+
 def popgrep5(file) {
-    file.eachLine{ line ->
+    file.eachLine { line ->
         if (line =~ str) println line
     }
 }
 // popgrep5(new File('path_to_file'))
 
 // version5b: faster (like 5 but compiled outside loop)
-pattern = ~states.collect{ /\b$it\b/ }.join('|')
+pattern = ~states.collect { /\b$it\b/ }.join('|')
+
 def popgrep5b(file) {
-    file.eachLine{ line ->
+    file.eachLine { line ->
         if (pattern.matcher(line)) println line
     }
 }
@@ -989,15 +994,16 @@ both cat and dog
 neither
 just a cat
 just a dog
-'''.split('\n').findAll{it.trim()}
+'''.split('\n').findAll { it.trim() }
 
-def matchAny(line, patterns) { patterns.any{ line =~ it } }
-def matchAll(line, patterns) { patterns.every{ line =~ it } }
+def matchAny(line, patterns) { patterns.any { line =~ it } }
 
-assert input.findAll{ matchAny(it, ['cat','dog']) }.size() == 3
-assert input.findAll{ matchAny(it, ['cat$','^n.*']) }.size() == 2
-assert input.findAll{ matchAll(it, ['cat','dog']) }.size() == 1
-assert input.findAll{ matchAll(it, ['cat$','^n.*']) }.size() == 0
+def matchAll(line, patterns) { patterns.every { line =~ it } }
+
+assert input.findAll { matchAny(it, ['cat', 'dog']) }.size() == 3
+assert input.findAll { matchAny(it, ['cat$', '^n.*']) }.size() == 2
+assert input.findAll { matchAll(it, ['cat', 'dog']) }.size() == 1
+assert input.findAll { matchAll(it, ['cat$', '^n.*']) }.size() == 0
 //----------------------------------------------------------------------------------
 
 // @@PLEAC@@_6.11
@@ -1005,7 +1011,7 @@ assert input.findAll{ matchAll(it, ['cat$','^n.*']) }.size() == 0
 // patternCheckingScript:
 prompt = '\n> '
 print 'Enter patterns to check:' + prompt
-new BufferedReader(new InputStreamReader(System.in)).eachLine{ line ->
+new BufferedReader(new InputStreamReader(System.in)).eachLine { line ->
     try {
         Pattern.compile(line)
         print 'Valid' + prompt
@@ -1030,12 +1036,12 @@ new BufferedReader(new InputStreamReader(System.in)).eachLine{ line ->
 src = 'dierk k�nig'
 // simplistic with locale issue
 dst = src
-('a'..'z').each{ dst = dst.replaceAll(/(?<=[^a-zA-Z])/+it+/|\A/+it, it.toUpperCase()) }
+('a'..'z').each { dst = dst.replaceAll(/(?<=[^a-zA-Z])/ + it + /|\A/ + it, it.toUpperCase()) }
 println dst
 // => Dierk K�Nig
 // locale avoidance
 dst = src
-('a'..'z').each{ dst = dst.replaceAll(/(?<=\A|\b)/+it, it.toUpperCase()) }
+('a'..'z').each { dst = dst.replaceAll(/(?<=\A|\b)/ + it, it.toUpperCase()) }
 println dst
 // => Dierk K�nig
 //----------------------------------------------------------------------------------
@@ -1046,10 +1052,13 @@ println dst
 // http://secondstring.sourceforge.net/
 // http://sourceforge.net/projects/simmetrics/
 // both support numerous algorithms. Using the second as an example:
-class Levenshtein{}
-class MongeElkan{}
-class JaroWinkler{}
-class Soundex{}
+class Levenshtein {}
+
+class MongeElkan {}
+
+class JaroWinkler {}
+
+class Soundex {}
 //import uk.ac.shef.wit.simmetrics.similaritymetrics.*
 target = 'balast'
 candidates = '''
@@ -1071,14 +1080,17 @@ blaster
 blasters
 blasting
 blasts
-'''.split('\n').findAll{it.trim()}
+'''.split('\n').findAll { it.trim() }
 metrics = [new Levenshtein(), new MongeElkan(), new JaroWinkler(), new Soundex()]
+
 def out(name, results) {
-    print name.padLeft(14) + '  '; results.each{print(it.padRight(16))}; println()
+    print name.padLeft(14) + '  '; results.each { print(it.padRight(16)) }; println()
 }
-def outr(name, results){out(name, results.collect{''+((int)(it*100))/100})}
-out ('Word/Metric', metrics.collect{it.shortDescriptionString} )
-candidates.each{ w -> outr(w, metrics.collect{ m -> m.getSimilarity(target, w)} )}
+
+def outr(name, results) { out(name, results.collect { '' + ((int) (it * 100)) / 100 }) }
+
+out('Word/Metric', metrics.collect { it.shortDescriptionString })
+candidates.each { w -> outr(w, metrics.collect { m -> m.getSimilarity(target, w) }) }
 // =>
 //   Word/Metric  Levenshtein     MongeElkan      JaroWinkler     Soundex
 //         quick  0               0.11            0               0.66
@@ -1106,12 +1118,12 @@ candidates.each{ w -> outr(w, metrics.collect{ m -> m.getSimilarity(target, w)} 
 // @@PLEAC@@_6.14
 //----------------------------------------------------------------------------------
 n = "   49 here"
-println n.replaceAll(/\G /,'0')
+println n.replaceAll(/\G /, '0')
 // => 00049 here
 
 str = "3,4,5,9,120"
 print 'Found numbers:'
-str.eachMatch(/\G,?(\d+)/){ print ' ' + it[1] }
+str.eachMatch(/\G,?(\d+)/) { print ' ' + it[1] }
 println()
 // => Found numbers: 3 4 5 9 120
 
@@ -1124,10 +1136,12 @@ p = ~/(?<=\D)(\d+)/
 m = p.matcher(text)
 while (m.find()) {
     println 'Found ' + m.group() + ' starting at pos ' + m.start() +
-            ' and ending at pos ' + m.end()
+        ' and ending at pos ' + m.end()
 }
 // now reset pos back to between 1st and 2nd numbers
-if (m.find(16)) { println 'Found ' + m.group() }
+if (m.find(16)) {
+    println 'Found ' + m.group()
+}
 // =>
 // Found 1752 starting at pos 9 and ending at pos 13
 // Found 10 starting at pos 19 and ending at pos 21
@@ -1138,8 +1152,12 @@ if (m.find(16)) { println 'Found ' + m.group() }
 p1 = ~/(?<=\D)(\d+)/
 p2 = ~/\S+/
 s = new Scanner(text)
-while ((f = s.findInLine(p1))) { println 'Found: ' + f }
-if ((f = s.findInLine(p2))) { println "Found $f after the last number." }
+while ((f = s.findInLine(p1))) {
+    println 'Found: ' + f
+}
+if ((f = s.findInLine(p2))) {
+    println "Found $f after the last number."
+}
 // =>
 // Found: 1752
 // Found: 10
@@ -1199,7 +1217,7 @@ cap = 'o' * 180
 while (m = (cap =~ /^(oo+?)\1+$/)) {
     p1 = m[0][1]
     print p1.size() + ' '
-    cap = cap.replaceAll(p1,'o')
+    cap = cap.replaceAll(p1, 'o')
 }
 println cap.size()
 // => 2 2 3 3 5
@@ -1207,7 +1225,7 @@ println cap.size()
 // diophantine
 // solve for 12x + 15y + 16z = 281, maximizing x
 if ((m = ('o' * 281) =~ /^(o*)\1{11}(o*)\2{14}(o*)\3{15}$/)) {
-    x=m[0][1].size(); y=m[0][2].size(); z=m[0][3].size()
+    x = m[0][1].size(); y = m[0][2].size(); z = m[0][3].size()
     println "One solution is: x=$x; y=$y; z=$z"
 } else println "No solution."
 // => One solution is: x=17; y=3; z=2
@@ -1319,8 +1337,9 @@ gnat     ttyS4    coprolith         2:01pm 13:36m  0.30s  0.30s  -tcsh
 '''.trim() + '\n'
 
 def miniGrepMethod(input) {
-    input.split('\n').findAll{it =~ '^(?!.*ttyp).*tchrist'}
+    input.split('\n').findAll { it =~ '^(?!.*ttyp).*tchrist' }
 }
+
 assert miniGrepMethod(fakedInput).size() == 2
 
 findUserRegex = '''(?xm)
@@ -1350,12 +1369,13 @@ def checkUnicode(s) {
     println 'Exactly matches /./   ' + (s ==~ /./)
     println 'Exactly matches /../  ' + (s ==~ /../)
     println 'Exactly matches /a/   ' + (s ==~ /a/)
-    println 'Exactly matches /\\u00E0/       '  + (s ==~ /\u00E0/)
+    println 'Exactly matches /\\u00E0/       ' + (s ==~ /\u00E0/)
     println 'Exactly matches /\\u0061\\u0300/ ' + (s ==~ /\u0061\u0300/)
-    println 'Exactly matches /\\pL/          '  + (s ==~ /\pL/)
+    println 'Exactly matches /\\pL/          ' + (s ==~ /\pL/)
     println 'Exactly matches /\\pL\\pM*/      ' + (s ==~ /\pL\pM*/)
     println 'Exactly matches /\\PM\\pM*/      ' + (s ==~ /\PM\pM*/)
 }
+
 checkUnicode('�')
 checkUnicode('\u0061\u0300')
 checkUnicode('\u00E0')
@@ -1408,11 +1428,11 @@ lenient = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/
 
 // a little more checking
 strict = /^[_a-zA-Z0-9- <]+(\.[_a-zA-Z0-9- <]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\./ +
-         /(([0-9]{1,3})|([a-zA-Z]{2,3})|(aero|coop|info|museum|name))>?$/
+    /(([0-9]{1,3})|([a-zA-Z]{2,3})|(aero|coop|info|museum|name))>?$/
 
 addresses = ['someuser@somehost.com',
              'Book Publishing <marketing@books.com>']
-addresses.each{
+addresses.each {
     assert it =~ lenient
     assert it =~ strict
     assert it =~ modern
@@ -1424,12 +1444,13 @@ addresses.each{
 //----------------------------------------------------------------------------------
 def findAction(ans) {
     def re = '(?i)^' + Pattern.quote(ans)
-    if      ("SEND"  =~ re) println "Action is send"
-    else if ("STOP"  =~ re) println "Action is stop"
+    if ("SEND" =~ re) println "Action is send"
+    else if ("STOP" =~ re) println "Action is stop"
     else if ("ABORT" =~ re) println "Action is abort"
-    else if ("EDIT"  =~ re) println "Action is edit"
+    else if ("EDIT" =~ re) println "Action is edit"
     else println 'No Match'
 }
+
 findAction('edit something')
 // => No Match
 findAction('edit')
@@ -1441,15 +1462,16 @@ findAction('e')
 
 def buildAbbrev(words) {
     def table = new TreeMap()
-    words.each{ w ->
+    words.each { w ->
         (0..<w.size()).each { n ->
-            if (!(words - w).any{
-                it.size() >= n+1 && it[0..n] == w[0..n]
+            if (!(words - w).any {
+                it.size() >= n + 1 && it[0..n] == w[0..n]
             }) table[w[0..n]] = w
         }
     }
     table
 }
+
 println buildAbbrev('send stop abort edit'.split(' ').toList())
 // => ["a":"abort", "ab":"abort", "abo":"abort", "abor":"abort", "abort":"abort",
 //     "e":"edit", "ed":"edit", "edi":"edit", "edit":"edit", "se":"send", "sen":"send",
@@ -1458,19 +1480,21 @@ println buildAbbrev('send stop abort edit'.split(' ').toList())
 // miniShellScript:
 // dummy methods
 def invokeEditor() { println "invoking editor" }
+
 def deliverMessage() { println "delivering message at " + new Date() }
+
 actions = [
-    edit:    this.&invokeEditor,
-    send:    this.&deliverMessage,
-    list:    { println Runtime.runtime.freeMemory() },
-    abort:   { System.exit(0) },
-    unknown: { println "Unknown Command"}
+    edit   : this.&invokeEditor,
+    send   : this.&deliverMessage,
+    list   : { println Runtime.runtime.freeMemory() },
+    abort  : { System.exit(0) },
+    unknown: { println "Unknown Command" }
 ]
 
 table = buildAbbrev(actions.keySet().toList())
 prompt = '\n> '
 print 'Enter Commands: edit send list abort' + prompt
-new BufferedReader(new InputStreamReader(System.in)).eachLine{ line ->
+new BufferedReader(new InputStreamReader(System.in)).eachLine { line ->
     def idx = (table.containsKey(line)) ? table[line] : 'unknown'
     actions[idx]()
     print prompt
@@ -1487,7 +1511,7 @@ ltrs = /\w/
 gunk = /\#\/~:.?+=&%@!\-/
 punc = /.:?\-/
 doll = /$/
-all  = /$ltrs$gunk$punc/
+all = /$ltrs$gunk$punc/
 
 findUrls = """(?ix)
         \\b                   # start at word boundary
@@ -1510,7 +1534,7 @@ If you find a typo on http://groovy.codehaus.org please
 send an email to mail:spelling.pedant@codehaus.org
 '''
 
-println input.replaceAll(findUrls,'<a href="$1">$1</a>')
+println input.replaceAll(findUrls, '<a href="$1">$1</a>')
 // =>
 // If you find a typo on <a href="http://groovy.codehaus.org">http://groovy.codehaus.org</a> please
 // send an email to <a href="mail:spelling.pedant@codehaus.org">mail:spelling.pedant@codehaus.org</a>
@@ -1519,9 +1543,9 @@ println input.replaceAll(findUrls,'<a href="$1">$1</a>')
 //#!/usr/bin/groovy
 // urlify - wrap HTML links around URL-like constructs
 // definitions from above
-args.each{ file ->
-    new File(file).eachLine{ line ->
-        println line.replaceAll(findUrls,'<a href="$1">$1</a>')
+args.each { file ->
+    new File(file).eachLine { line ->
+        println line.replaceAll(findUrls, '<a href="$1">$1</a>')
     }
 }
 
@@ -1560,10 +1584,10 @@ assert '04/05/2006 10:26:59' =~ datetime
 
 orig = '/usr/bin/vi'
 expected = '/usr/local/bin/vi'
-orig.replaceAll('/usr/bin','/usr/local/bin') == expected
+orig.replaceAll('/usr/bin', '/usr/local/bin') == expected
 
 escapeSequenceRegex = /%([0-9A-Fa-f][0-9A-Fa-f])/
-convertEscapeToChar = { Object[] chr -> new Character((char)Integer.parseInt(chr[1],16)) }
+convertEscapeToChar = { Object[] chr -> new Character((char) Integer.parseInt(chr[1], 16)) }
 assert 'abc%3cdef'.replaceAll(escapeSequenceRegex, convertEscapeToChar) == 'abc<def'
 
 commentStripper = '''(?xms)
@@ -1585,13 +1609,13 @@ a line
 another line
 '''
 
-assert input.replaceAll(commentStripper,'') == expected
+assert input.replaceAll(commentStripper, '') == expected
 
 // emulate s.trim()
 assert '  x  y  '.replaceAll(/^\s+/, '').replaceAll(/\s+$/, '') == 'x  y'
 
 // convert \\n into \n
-assert (/a\nb/.replaceAll(/\\n/,"\n") == 'a\nb')
+assert (/a\nb/.replaceAll(/\\n/, "\n") == 'a\nb')
 
 // remove package symbol (Groovy/Java doesn't use this as package symbol)
 assert 'A::B'.replaceAll(/^.*::/, '') == 'B'
@@ -1627,18 +1651,18 @@ assert multi.replaceAll(/(?m)\n\s+/, ' ') == 'This is a test'
 // nums in string
 string = 'The 5th test was won today by 10 wickets after 10.5 overs'
 nums = string =~ /(\d+\.?\d*|\.\d+)/
-assert (0..<nums.count).collect{ nums[it][1] }.join(' ') == '5 10 10.5'
+assert (0..<nums.count).collect { nums[it][1] }.join(' ') == '5 10 10.5'
 
 // capitalize words
 words = 'the Capital words ARE hiding'
 capwords = words =~ /(\b\p{Upper}+\b)/
-assert (0..<capwords.count).collect{ capwords[it][1] }.join(' ') == 'ARE'
+assert (0..<capwords.count).collect { capwords[it][1] }.join(' ') == 'ARE'
 
 lowords = words =~ /(\b\p{Lower}+\b)/
-assert (0..<lowords.count).collect{ lowords[it][1] }.join(' ') == 'the words hiding'
+assert (0..<lowords.count).collect { lowords[it][1] }.join(' ') == 'the words hiding'
 
 capWords = words =~ /(\b\p{Upper}\p{Lower}*\b)/
-assert (0..<capWords.count).collect{ capWords[it][1] }.join(' ') == 'Capital'
+assert (0..<capWords.count).collect { capWords[it][1] }.join(' ') == 'Capital'
 
 input = '''
 If you find a typo on <a href="http://groovy.codehaus.org">http://groovy.codehaus.org</a> please
@@ -1647,7 +1671,7 @@ send an email to <a href="mail:spelling.pedant@codehaus.org">mail:spelling.pedan
 
 linkRegex = /(?im)<A[^>]+?HREF\s*=\s*["']?([^'" >]+?)[ '"]?>/          //'
 links = input =~ linkRegex
-(0..<links.count).each{ println links[it][1] }
+(0..<links.count).each { println links[it][1] }
 // =>
 // http://groovy.codehaus.org
 // mail:spelling.pedant@codehaus.org
@@ -1668,9 +1692,9 @@ Yes!  And so
 is this.  And the fourth.
 '''
 sentences = []
-strip = input.replaceAll(/(\p{Punct})\n/, '$1  ').replaceAll(/\n/, ' ').replaceAll(/ {3,}/,'  ')
+strip = input.replaceAll(/(\p{Punct})\n/, '$1  ').replaceAll(/\n/, ' ').replaceAll(/ {3,}/, '  ')
 m = strip =~ /(\S.*?\p{Punct})(?=  |\Z)/
-(0..<m.count).each{ sentences += m[it][1] }
+(0..<m.count).each { sentences += m[it][1] }
 assert sentences == ["Is this a sentence?", "Yes!", "And so is this.", "And the fourth."]
 
 // YYYY-MM-DD
@@ -1685,7 +1709,7 @@ numbers = '''
 425 555 0123
 1-425-555-0123
 '''.trim().split('\n').toList()
-assert numbers.every{ it ==~ usPhoneRegex }
+assert numbers.every { it ==~ usPhoneRegex }
 
 exclaimRegex = /(?i)\boh\s+my\s+gh?o(d(dess(es)?|s?)|odness|sh)\b/
 assert 'Oh my Goodness!' =~ exclaimRegex
@@ -1706,59 +1730,59 @@ assert m.count == 4
 // uses jopt-simple (jopt-simple.sf.net)
 
 op = new joptsimple.OptionParser()
-NOCASE  = 'i';  op.accepts( NOCASE,  "case insensitive" )
-WITHN   = 'n';  op.accepts( WITHN,   "display line/para with line/para number" )
-WITHF   = 'H';  op.accepts( WITHF,   "display line/para with filename" )
-NONAME  = 'h';  op.accepts( NONAME,  "hide filenames" )
-COUNT   = 'c';  op.accepts( COUNT,   "give count of lines/paras matching" )
-TCOUNT  = 'C';  op.accepts( TCOUNT,  "give count of total matches (multiple per line/para)" )
-WORD    = 'w';  op.accepts( WORD,    "word boundaries only" )
-EXACT   = 'x';  op.accepts( EXACT,   "exact matches only" )
-INVERT  = 'v';  op.accepts( INVERT,  "invert search sense (lines that DON'T match)" )
-EXCLUDE = 'X';  op.accepts( EXCLUDE, "exclude files matching pattern [default is '**/*.bak']" ).
-                    withRequiredArg().describedAs('path_pattern')
-MATCH   = 'l';  op.accepts( MATCH,   "list names of files with matches" )
-NOMATCH = 'L';  op.accepts( NOMATCH, "list names of files with no match" )
-PARA    = 'p';  op.accepts( PARA,    "para mode (.* matches newlines)" ).
-                    withOptionalArg().describedAs('para_pattern')
-EXPR    = 'e';  op.accepts( EXPR,    "expression (when pattern begins with '-')" ).
-                    withRequiredArg().describedAs('pattern')
-FILE    = 'f';  op.accepts( FILE,    "file containing pattern" ).
-                    withRequiredArg().describedAs('filename')
-HELP = 'help';  op.accepts( HELP,    "display this message" )
+NOCASE = 'i'; op.accepts(NOCASE, "case insensitive")
+WITHN = 'n'; op.accepts(WITHN, "display line/para with line/para number")
+WITHF = 'H'; op.accepts(WITHF, "display line/para with filename")
+NONAME = 'h'; op.accepts(NONAME, "hide filenames")
+COUNT = 'c'; op.accepts(COUNT, "give count of lines/paras matching")
+TCOUNT = 'C'; op.accepts(TCOUNT, "give count of total matches (multiple per line/para)")
+WORD = 'w'; op.accepts(WORD, "word boundaries only")
+EXACT = 'x'; op.accepts(EXACT, "exact matches only")
+INVERT = 'v'; op.accepts(INVERT, "invert search sense (lines that DON'T match)")
+EXCLUDE = 'X'; op.accepts(EXCLUDE, "exclude files matching pattern [default is '**/*.bak']").
+    withRequiredArg().describedAs('path_pattern')
+MATCH = 'l'; op.accepts(MATCH, "list names of files with matches")
+NOMATCH = 'L'; op.accepts(NOMATCH, "list names of files with no match")
+PARA = 'p'; op.accepts(PARA, "para mode (.* matches newlines)").
+    withOptionalArg().describedAs('para_pattern')
+EXPR = 'e'; op.accepts(EXPR, "expression (when pattern begins with '-')").
+    withRequiredArg().describedAs('pattern')
+FILE = 'f'; op.accepts(FILE, "file containing pattern").
+    withRequiredArg().describedAs('filename')
+HELP = 'help'; op.accepts(HELP, "display this message")
 
 options = op.parse(args)
 params = options.nonOptionArguments()
-if (options.wasDetected( HELP )) {
-    op.printHelpOn( System.out )
+if (options.wasDetected(HELP)) {
+    op.printHelpOn(System.out)
 } else if (params.size() == 0) {
     println "Usage: grep [OPTION]... PATTERN [FILE]...\nTry 'grep --$HELP' for more information."
 } else {
     modifiers = []
     paraPattern = ''
-    o_withn   = options.wasDetected( WITHN )
-    o_withf   = options.wasDetected( WITHF )
-    o_noname  = options.wasDetected( NONAME )
-    o_count   = options.wasDetected( COUNT )
-    o_tcount  = options.wasDetected( TCOUNT )
-    o_invert  = options.wasDetected( INVERT )
-    o_match   = options.wasDetected( MATCH )
-    o_nomatch = options.wasDetected( NOMATCH )
-    if (options.wasDetected( EXPR )) {
-        pattern = options.valueOf( EXPR )
-    } else if (options.wasDetected( FILE )) {
-        pattern = new File(options.valueOf( FILE )).text.trim()
+    o_withn = options.wasDetected(WITHN)
+    o_withf = options.wasDetected(WITHF)
+    o_noname = options.wasDetected(NONAME)
+    o_count = options.wasDetected(COUNT)
+    o_tcount = options.wasDetected(TCOUNT)
+    o_invert = options.wasDetected(INVERT)
+    o_match = options.wasDetected(MATCH)
+    o_nomatch = options.wasDetected(NOMATCH)
+    if (options.wasDetected(EXPR)) {
+        pattern = options.valueOf(EXPR)
+    } else if (options.wasDetected(FILE)) {
+        pattern = new File(options.valueOf(FILE)).text.trim()
     } else {
         pattern = params[0]
         params = params[1..-1]
     }
-    if (options.wasDetected( EXCLUDE )) excludes = options.valueOf( EXCLUDE )
+    if (options.wasDetected(EXCLUDE)) excludes = options.valueOf(EXCLUDE)
     else excludes = ['**/*.bak']
-    if (options.wasDetected( EXACT )) pattern = '^' + pattern + '$'
-    else if (options.wasDetected( WORD )) pattern = /\b$pattern\b/
-    if (options.wasDetected( NOCASE )) modifiers += 'i'
-    if (options.wasDetected( PARA )) {
-        if (options.hasArgument( PARA )) paraPattern = options.valueOf( PARA )
+    if (options.wasDetected(EXACT)) pattern = '^' + pattern + '$'
+    else if (options.wasDetected(WORD)) pattern = /\b$pattern\b/
+    if (options.wasDetected(NOCASE)) modifiers += 'i'
+    if (options.wasDetected(PARA)) {
+        if (options.hasArgument(PARA)) paraPattern = options.valueOf(PARA)
         else paraPattern = '^$'
         paraPattern = '(?sm)' + paraPattern
         modifiers += 'sm'
@@ -1768,7 +1792,7 @@ if (options.wasDetected( HELP )) {
     if (params.size() == 0) grepStream(System.in, '<stdin>')
     else {
         scanner = new AntBuilder().fileScanner {
-            fileset(dir:'.', includes:params.join(','), excludes:excludes)
+            fileset(dir: '.', includes: params.join(','), excludes: excludes)
         }
         for (f in scanner) {
             grepStream(new FileInputStream(f), f)
@@ -1783,7 +1807,7 @@ def grepStream(s, name) {
     if (paraPattern) pieces = s.text.split(paraPattern)
     else pieces = s.readLines()
     def fileMode = o_match || o_nomatch || o_count || o_tcount
-    pieces.eachWithIndex{line, index ->
+    pieces.eachWithIndex { line, index ->
         def m = line =~ pattern
         boolean found = m.count
         if (found != o_invert) {

@@ -36,10 +36,12 @@ new A(1, '2') {
 class OuterAA {
     public void method() {
         new InnerBB() {}
-        new InnerCC() {{
-            new InnerDD() {}
-            new InnerEE() {}
-        }}
+        new InnerCC() {
+            {
+                new InnerDD() {}
+                new InnerEE() {}
+            }
+        }
         new InnerFF() {}
     }
 }

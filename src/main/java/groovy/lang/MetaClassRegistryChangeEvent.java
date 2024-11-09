@@ -31,11 +31,11 @@ public class MetaClassRegistryChangeEvent extends EventObject {
     private final MetaClass oldMetaClass;
 
     /**
-     *Constructs a new MetaClassRegistryChangeEvent Object
+     * Constructs a new MetaClassRegistryChangeEvent Object
      *
-     * @param source The object the event originates at.
-     * @param instance Object instance  the MetaClass change is on.
-     * @param clazz  The class that is affected by the registry change
+     * @param source       The object the event originates at.
+     * @param instance     Object instance  the MetaClass change is on.
+     * @param clazz        The class that is affected by the registry change
      * @param oldMetaClass The old MetaClass
      * @param newMetaClass The new MetaClass
      */
@@ -50,7 +50,7 @@ public class MetaClassRegistryChangeEvent extends EventObject {
     /**
      * Get the class that is updated.
      *
-     *@return The updated class
+     * @return The updated class
      */
     public Class getClassToUpdate() {
         return clazz;
@@ -80,7 +80,7 @@ public class MetaClassRegistryChangeEvent extends EventObject {
      * @return whether this event is for a single instance
      */
     public boolean isPerInstanceMetaClassChange() {
-        return instance!=null;
+        return instance != null;
     }
 
     /**

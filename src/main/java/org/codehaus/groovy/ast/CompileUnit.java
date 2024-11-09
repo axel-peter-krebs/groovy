@@ -44,13 +44,12 @@ public class CompileUnit implements NodeMetaDataHandler {
     private final CompilerConfiguration config;
     private final GroovyClassLoader loader;
     private final CodeSource codeSource;
-    private Map<?, ?> metaDataMap;
-
     private final List<ModuleNode> modules = new ArrayList<>();
     private final Map<String, ClassNode> classes = new LinkedHashMap<>();
     private final Map<String, ClassNode> classesToCompile = new LinkedHashMap<>();
     private final Map<String, SourceUnit> classNameToSource = new LinkedHashMap<>();
     private final Map<String, InnerClassNode> generatedInnerClasses = new LinkedHashMap<>();
+    private Map<?, ?> metaDataMap;
 
     public CompileUnit(final GroovyClassLoader classLoader, final CompilerConfiguration config) {
         this(classLoader, null, config);
@@ -101,8 +100,8 @@ public class CompileUnit implements NodeMetaDataHandler {
 
     /**
      * @return the ClassNode for the given qualified name or returns null if
-     *         the name does not exist in the current compilation unit
-     *         (ignoring the .class files on the classpath)
+     * the name does not exist in the current compilation unit
+     * (ignoring the .class files on the classpath)
      */
     public ClassNode getClass(final String name) {
         ClassNode cn = classes.get(name);
@@ -179,7 +178,7 @@ public class CompileUnit implements NodeMetaDataHandler {
                 txt += "The source " + nodeSource.getName() + " contains at least two definitions of the class " + node.getName() + ".\n";
                 if (node.isScriptBody() || stored.isScriptBody()) {
                     txt += "One of the classes is an explicit generated class using the class statement, the other is a class generated from" +
-                            " the script body based on the file name. Solutions are to change the file name or to change the class name.\n";
+                        " the script body based on the file name. Solutions are to change the file name or to change the class name.\n";
                 }
             } else {
                 txt += "The sources " + nodeSource.getName() + " and " + storedSource.getName() + " each contain a class with the name " + node.getName() + ".\n";

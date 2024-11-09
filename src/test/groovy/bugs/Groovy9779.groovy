@@ -58,7 +58,8 @@ final class Groovy9779 {
         '''
     }
 
-    @Test // don't chain call properties together
+    @Test
+    // don't chain call properties together
     void testCallOperatorOnDynamicProperties3() {
         def err = shouldFail '''
             class A {
@@ -76,7 +77,8 @@ final class Groovy9779 {
         assert err.message.contains('No signature of method: B.call() is applicable')
     }
 
-    @Test // don't chain call properties together
+    @Test
+    // don't chain call properties together
     void testCallOperatorOnDynamicProperties4() {
         def err = shouldFail '''
             class A {

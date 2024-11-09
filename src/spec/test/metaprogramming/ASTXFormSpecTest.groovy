@@ -248,7 +248,7 @@ gep.WithLoggingASTTransformation
             def conf = new CompilerConfiguration()
             conf.setTargetDirectory(dir)
             def cu = new CompilationUnit(conf)
-            cu.addSource('WithLoggingASTTransformation.groovy','''package gep
+            cu.addSource('WithLoggingASTTransformation.groovy', '''package gep
 
             import groovy.transform.CompileStatic
 import org.codehaus.groovy.ast.ASTNode
@@ -300,7 +300,7 @@ import org.codehaus.groovy.transform.GroovyASTTransformation
             cu.compile(CompilePhase.FINALIZATION.phaseNumber)
 
             def gcl2 = new GroovyClassLoader(new URLClassLoader(
-                    [dir.toURI().toURL()] as URL[]))
+                [dir.toURI().toURL()] as URL[]))
             def shell = new GroovyShell(gcl2)
             shell.evaluate '''
             // tag::withlogging_example_global[]

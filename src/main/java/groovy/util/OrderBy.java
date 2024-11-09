@@ -35,8 +35,8 @@ public class OrderBy<T> implements Comparator<T>, Serializable {
 
     private static final long serialVersionUID = 8385130064804116654L;
     private final List<Closure> closures;
-    private boolean equalityCheck;
     private final NumberAwareComparator<Object> numberAwareComparator = new NumberAwareComparator<Object>();
+    private boolean equalityCheck;
 
     public OrderBy() {
         this(new ArrayList<Closure>(), false);

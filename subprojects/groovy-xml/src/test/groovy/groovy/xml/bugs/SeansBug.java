@@ -31,16 +31,16 @@ public class SeansBug extends TestSupport {
 
     public void testMarkupBug() throws Exception {
         String[] lines =
-                {
-                        "package groovy.xml",
-                        "",
-                        "b = new MarkupBuilder()",
-                        "",
-                        "b.root1(a:5, b:7) { ",
-                        "    elem1('hello1') ",
-                        "    elem2('hello2') ",
-                        "    elem3(x:7) ",
-                        "}"};
+            {
+                "package groovy.xml",
+                "",
+                "b = new MarkupBuilder()",
+                "",
+                "b.root1(a:5, b:7) { ",
+                "    elem1('hello1') ",
+                "    elem2('hello2') ",
+                "    elem3(x:7) ",
+                "}"};
         String code = asCode(lines);
         GroovyShell shell = new GroovyShell();
         shell.evaluate(code);

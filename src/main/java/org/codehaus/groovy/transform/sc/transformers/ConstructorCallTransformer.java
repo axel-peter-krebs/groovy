@@ -64,8 +64,8 @@ public class ConstructorCallTransformer {
         if (node == null) return expr;
         Parameter[] params = node.getParameters();
         if ((params.length == 1 || params.length == 2) // 2 is for inner class case
-                && StaticTypeCheckingSupport.implementsInterfaceOrIsSubclassOf(params[params.length - 1].getType(), ClassHelper.MAP_TYPE)
-                && node.getCode() == StaticTypeCheckingVisitor.GENERATED_EMPTY_STATEMENT) {
+            && StaticTypeCheckingSupport.implementsInterfaceOrIsSubclassOf(params[params.length - 1].getType(), ClassHelper.MAP_TYPE)
+            && node.getCode() == StaticTypeCheckingVisitor.GENERATED_EMPTY_STATEMENT) {
             Expression arguments = expr.getArguments();
             if (arguments instanceof TupleExpression) {
                 TupleExpression tupleExpression = (TupleExpression) arguments;
@@ -113,8 +113,8 @@ public class ConstructorCallTransformer {
         @Override
         public Expression transformExpression(final ExpressionTransformer transformer) {
             Expression result = new MapStyleConstructorCall(getType(),
-                    (MapExpression) map.transformExpression(transformer),
-                    (ConstructorCallExpression) originalCall.transformExpression(transformer)
+                (MapExpression) map.transformExpression(transformer),
+                (ConstructorCallExpression) originalCall.transformExpression(transformer)
             );
             result.copyNodeMetaData(this);
             return result;
@@ -156,14 +156,14 @@ public class ConstructorCallTransformer {
                 Expression keyExpression = entryExpression.getKeyExpression();
                 Expression valExpression = entryExpression.getValueExpression();
                 Expression varExpression = propX(
-                        bytecodeX(ctorType, v -> v.visitVarInsn(ALOAD, tmpObj)),
-                        keyExpression
+                    bytecodeX(ctorType, v -> v.visitVarInsn(ALOAD, tmpObj)),
+                    keyExpression
                 );
                 varExpression.putNodeMetaData(DIRECT_METHOD_CALL_TARGET,
-                        keyExpression.getNodeMetaData(DIRECT_METHOD_CALL_TARGET));
+                    keyExpression.getNodeMetaData(DIRECT_METHOD_CALL_TARGET));
 
                 Expression setExpression = staticCompilationTransformer.transform(
-                        assignX(varExpression, valExpression) // tmp.key = value
+                    assignX(varExpression, valExpression) // tmp.key = value
                 );
                 setExpression.setSourcePosition(entryExpression);
                 setExpression.visit(acg);

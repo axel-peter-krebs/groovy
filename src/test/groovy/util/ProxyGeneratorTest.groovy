@@ -25,7 +25,7 @@ class ProxyGeneratorTest extends GroovyTestCase {
     ProxyGenerator generator = ProxyGenerator.INSTANCE
 
     void testAggregateFromBaseClass() {
-        Map map = [myMethodB: {"the new B"}, myMethodX: {"the injected X"}]
+        Map map = [myMethodB: { "the new B" }, myMethodX: { "the injected X" }]
         def testClass = generator.instantiateAggregateFromBaseClass(map, TestClass)
         assert testClass instanceof TestClass
         assert testClass.myMethodA() == "the original A"
@@ -34,7 +34,7 @@ class ProxyGeneratorTest extends GroovyTestCase {
     }
 
     void testAggregateFromAbstractBaseClass() {
-        Map map = [myMethodG: {"the concrete G"}, myMethodX: {"the injected X"}]
+        Map map = [myMethodG: { "the concrete G" }, myMethodX: { "the injected X" }]
         def testClass = generator.instantiateAggregateFromBaseClass(map, AbstractClass)
         assert testClass instanceof AbstractClass
         assert testClass.myMethodA() == "the original A"
@@ -43,7 +43,7 @@ class ProxyGeneratorTest extends GroovyTestCase {
     }
 
     void testAggregateFromInterface() {
-        Map map = [myMethodC: {"the injected C"}]
+        Map map = [myMethodC: { "the injected C" }]
         def testClass = generator.instantiateAggregateFromInterface(map, TestInterface)
         assert testClass instanceof TestInterface
         assert testClass instanceof GroovyObject
@@ -51,7 +51,7 @@ class ProxyGeneratorTest extends GroovyTestCase {
     }
 
     void testAggregate() {
-        Map map = [myMethodE: {"the injected E"}, myMethodB: {"the new B"}, myMethodX: {"the injected X"}]
+        Map map = [myMethodE: { "the injected E" }, myMethodB: { "the new B" }, myMethodX: { "the injected X" }]
         def testClass = generator.instantiateAggregate(map, [TestInterface, TestOtherInterface], TestClass)
         assert testClass instanceof TestInterface
         assert testClass instanceof TestOtherInterface
@@ -64,7 +64,7 @@ class ProxyGeneratorTest extends GroovyTestCase {
 
     void testDelegate() {
         def delegate = new TestClass()
-        Map map = [myMethodE: {"the injected E"}, myMethodB: {"the new B"}, myMethodX: {"the injected X"}]
+        Map map = [myMethodE: { "the injected E" }, myMethodB: { "the new B" }, myMethodX: { "the injected X" }]
         def testClass = generator.instantiateDelegate(map, [TestInterface, TestOtherInterface], delegate)
         assert testClass instanceof TestInterface
         assert testClass instanceof TestOtherInterface
@@ -76,7 +76,7 @@ class ProxyGeneratorTest extends GroovyTestCase {
 
     void testDelegateWithBaseClass() {
         def delegate = new TestClass()
-        Map map = [myMethodE: {"the injected E"}, myMethodB: {"the new B"}, myMethodX: {"the injected X"}]
+        Map map = [myMethodE: { "the injected E" }, myMethodB: { "the new B" }, myMethodX: { "the injected X" }]
         TestClass testClass = generator.instantiateDelegateWithBaseClass(map, [TestInterface, TestOtherInterface], delegate)
         assert testClass instanceof TestInterface
         assert testClass instanceof TestOtherInterface
@@ -90,7 +90,7 @@ class ProxyGeneratorTest extends GroovyTestCase {
         def delegate = [1, 2, 3, 4, 5]
         def testClass = generator.instantiateDelegate([List], delegate)
         assert testClass instanceof List
-        assert 5 == testClass.size() 
+        assert 5 == testClass.size()
         assert [1, 2, 3, 4, 5] == testClass.iterator().collect { it }
         assert 3 == testClass[2]
         testClass[3] = 99
@@ -101,7 +101,7 @@ class ProxyGeneratorTest extends GroovyTestCase {
     }
 
     void testUnknownMethodThrowsUnsupportedOperationException() {
-        def map = [ myMethodA: { 'some string' } ]
+        def map = [myMethodA: { 'some string' }]
         def proxy = ProxyGenerator.instantiateAggregateFromInterface(map, TestInterface)
         assert proxy instanceof TestInterface
         assertEquals 'some string', proxy.myMethodA()
@@ -111,7 +111,7 @@ class ProxyGeneratorTest extends GroovyTestCase {
     }
 
     void testUnknownMethodWithBlankBody() {
-        def map = [ myMethodA: { 'some string' } ]
+        def map = [myMethodA: { 'some string' }]
         def gen = new ProxyGenerator()
         gen.emptyMethods = true
         def proxy = gen.instantiateAggregate(map, [TestInterface])
@@ -121,14 +121,14 @@ class ProxyGeneratorTest extends GroovyTestCase {
     }
 
     void testProxyWithToString() {
-        def map = [ toString: {'hello'} ]
+        def map = [toString: { 'hello' }]
         def gen = new ProxyGenerator()
         def proxy = gen.instantiateAggregateFromBaseClass(map, Object)
         assert proxy.toString() == 'hello'
     }
 
     void testProxyWithClosureChangedAfterCreation() {
-        def map = [ toString: { 'hello'} ]
+        def map = [toString: { 'hello' }]
         def gen = new ProxyGenerator()
         def proxy = gen.instantiateAggregateFromBaseClass(map, Object)
         assert proxy.toString() == 'hello'
@@ -137,21 +137,21 @@ class ProxyGeneratorTest extends GroovyTestCase {
     }
 
     void testProxyMethodUsingLongAsParameter() {
-        def map = [ foo: { a,b -> a*b }]
+        def map = [foo: { a, b -> a * b }]
         def gen = new ProxyGenerator()
         def proxy = gen.instantiateAggregateFromBaseClass(map, TestInterfaceWithLong)
-        assert proxy.foo(3,3) == 9
+        assert proxy.foo(3, 3) == 9
     }
 
     void testProxyMethodUsingDoubleAsParameter() {
-        def map = [ foo: { a,b -> a*b }]
+        def map = [foo: { a, b -> a * b }]
         def gen = new ProxyGenerator()
         def proxy = gen.instantiateAggregateFromBaseClass(map, TestInterfaceWithDouble)
-        assert proxy.foo(3d,3d) == 9d
+        assert proxy.foo(3d, 3d) == 9d
     }
 
     void testProxyMethodUsingVariousTypesAsParameters() {
-        def map = [ foo: { a,b,c,d -> a*b+c-d }]
+        def map = [foo: { a, b, c, d -> a * b + c - d }]
         def gen = new ProxyGenerator()
         def proxy = gen.instantiateAggregateFromBaseClass(map, TestInterfaceWithVariousTypes)
         assert proxy.foo(3, 3d, 4, 1f) == 12d
@@ -160,18 +160,23 @@ class ProxyGeneratorTest extends GroovyTestCase {
 
 class TestClass {
     def myMethodA() { return "the original A" }
+
     def myMethodB() { return "the original B" }
 }
 
 interface TestInterface {
     def myMethodA()
+
     def myMethodC()
+
     def myMethodD()
 }
 
 interface TestOtherInterface {
     def myMethodB()
+
     def myMethodE()
+
     def myMethodF()
 }
 
@@ -189,5 +194,6 @@ interface TestInterfaceWithVariousTypes {
 
 abstract class AbstractClass {
     def myMethodA() { return "the original A" }
+
     abstract myMethodG()
 }

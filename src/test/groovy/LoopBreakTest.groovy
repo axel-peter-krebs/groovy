@@ -30,31 +30,31 @@ class LoopBreakTest extends GroovyTestCase {
             }
             ++x
 
-            assert x < 10 , "Should never get here"
+            assert x < 10, "Should never get here"
         }
     }
 
     /**
 
-      We currently do not support do ... while in the JSR syntax
+     We currently do not support do ... while in the JSR syntax
 
-    void testDoWhileWithBreak() {
-        def x = 0
-        do {
-            //println "in do-while loop and x = ${x}"
+     void testDoWhileWithBreak() {
+     def x = 0
+     do {
+     //println "in do-while loop and x = ${x}"
 
-            if (x == 5) {
-                break
-            }
-            ++x
+     if (x == 5) {
+     break
+     }
+     ++x
 
-            assert x < 10 , "Should never get here"
-        }
-        while (true)
+     assert x < 10 , "Should never get here"
+     }
+     while (true)
 
-        println "worked: do-while completed with value ${x}"
-    }
-    */
+     println "worked: do-while completed with value ${x}"
+     }
+     */
 
     void testForWithBreak() {
         def returnValue
@@ -63,7 +63,7 @@ class LoopBreakTest extends GroovyTestCase {
                 returnValue = x
                 break
             }
-            assert x < 10 , "Should never get here"
+            assert x < 10, "Should never get here"
         }
     }
- }
+}

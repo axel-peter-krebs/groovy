@@ -33,49 +33,20 @@ import java.util.concurrent.ConcurrentHashMap;
  * This MetaBeanProperty will create a pseudo property whose value is bound to an object
  * using weak references. The values will go out of scope and be garbage collected when
  * the object is collected
- *
+ * <p>
  * In fact, this class should be called ExpandoProperty.
  *
  * @since 1.5
  */
 public class ThreadManagedMetaBeanProperty extends MetaBeanProperty {
-    private static final ConcurrentHashMap<String,ManagedIdentityConcurrentMap> PROPNAME_TO_MAP = new ConcurrentHashMap<String, ManagedIdentityConcurrentMap>();
-
+    private static final ConcurrentHashMap<String, ManagedIdentityConcurrentMap> PROPNAME_TO_MAP = new ConcurrentHashMap<String, ManagedIdentityConcurrentMap>();
+    private static final ReferenceBundle SOFT_BUNDLE = ReferenceBundle.getSoftBundle();
     private final ManagedIdentityConcurrentMap instance2Prop;
-
     private final Class declaringClass;
     private final ThreadBoundGetter getter;
     private final ThreadBoundSetter setter;
     private Object initialValue;
     private Closure initialValueCreator;
-
-    private static final ReferenceBundle SOFT_BUNDLE = ReferenceBundle.getSoftBundle();
-
-    /**
-     * Retrieves the initial value of the ThreadBound property
-     *
-     * @return The initial value
-     */
-    public synchronized Object getInitialValue() {
-        return getInitialValue(null);
-    }
-
-    public synchronized Object getInitialValue(Object object) {
-        if (initialValueCreator != null) {
-            return initialValueCreator.call(object);
-        }
-        return initialValue;
-
-    }
-
-    /**
-     * Closure responsible for creating the initial value of thread-managed bean properties
-     *
-     * @param callable The closure responsible for creating the initial value
-     */
-    public void setInitialValueCreator(Closure callable) {
-        this.initialValueCreator = callable;
-    }
 
     /**
      * Constructs a new ThreadManagedBeanProperty for the given arguments
@@ -123,22 +94,48 @@ public class ThreadManagedMetaBeanProperty extends MetaBeanProperty {
             res = new ManagedIdentityConcurrentMap(ManagedIdentityConcurrentMap.ReferenceType.SOFT);
             ManagedIdentityConcurrentMap ores = PROPNAME_TO_MAP.putIfAbsent(name, res);
             if (ores != null)
-              return ores;
+                return ores;
         }
         return res;
     }
 
+    /**
+     * Retrieves the initial value of the ThreadBound property
+     *
+     * @return The initial value
+     */
+    public synchronized Object getInitialValue() {
+        return getInitialValue(null);
+    }
+
+    public synchronized Object getInitialValue(Object object) {
+        if (initialValueCreator != null) {
+            return initialValueCreator.call(object);
+        }
+        return initialValue;
+
+    }
+
+    /**
+     * Closure responsible for creating the initial value of thread-managed bean properties
+     *
+     * @param callable The closure responsible for creating the initial value
+     */
+    public void setInitialValueCreator(Closure callable) {
+        this.initialValueCreator = callable;
+    }
+
     /* (non-Javadoc)
-      * @see groovy.lang.MetaBeanProperty#getGetter()
-      */
+     * @see groovy.lang.MetaBeanProperty#getGetter()
+     */
     @Override
     public MetaMethod getGetter() {
         return this.getter;
     }
 
     /* (non-Javadoc)
-      * @see groovy.lang.MetaBeanProperty#getSetter()
-      */
+     * @see groovy.lang.MetaBeanProperty#getSetter()
+     */
     @Override
     public MetaMethod getSetter() {
         return this.setter;
@@ -179,8 +176,8 @@ public class ThreadManagedMetaBeanProperty extends MetaBeanProperty {
         }
 
         /* (non-Javadoc)
-           * @see groovy.lang.MetaMethod#invoke(java.lang.Object, java.lang.Object[])
-           */
+         * @see groovy.lang.MetaMethod#invoke(java.lang.Object, java.lang.Object[])
+         */
         @Override
         public Object invoke(Object object, Object[] arguments) {
             return instance2Prop.getOrPut(object, getInitialValue());
@@ -194,7 +191,7 @@ public class ThreadManagedMetaBeanProperty extends MetaBeanProperty {
         private final String name;
 
         public ThreadBoundSetter(String name) {
-            setParametersTypes (new CachedClass [] {ReflectionCache.getCachedClass(type)} );
+            setParametersTypes(new CachedClass[]{ReflectionCache.getCachedClass(type)});
             this.name = getSetterName(name);
         }
 
@@ -224,8 +221,8 @@ public class ThreadManagedMetaBeanProperty extends MetaBeanProperty {
         }
 
         /* (non-Javadoc)
-           * @see groovy.lang.MetaMethod#invoke(java.lang.Object, java.lang.Object[])
-           */
+         * @see groovy.lang.MetaMethod#invoke(java.lang.Object, java.lang.Object[])
+         */
         @Override
         public Object invoke(Object object, Object[] arguments) {
             instance2Prop.put(object, arguments[0]);

@@ -46,7 +46,8 @@ final class Groovy6097 {
         '''
     }
 
-    @Test // GROOVY-9382, GROOVY-10133
+    @Test
+    // GROOVY-9382, GROOVY-10133
     void testSuperIsser2() {
         def err = shouldFail '''
             class A {

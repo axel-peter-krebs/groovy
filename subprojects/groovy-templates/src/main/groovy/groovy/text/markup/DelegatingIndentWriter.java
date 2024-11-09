@@ -100,7 +100,7 @@ public class DelegatingIndentWriter extends Writer {
     }
 
     public void writeIndent() throws IOException {
-        for (int i=0;i<level;i++) {
+        for (int i = 0; i < level; i++) {
             delegate.write(indentString);
         }
     }

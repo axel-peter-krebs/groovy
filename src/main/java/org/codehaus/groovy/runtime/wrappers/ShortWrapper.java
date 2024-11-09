@@ -19,8 +19,8 @@
 package org.codehaus.groovy.runtime.wrappers;
 
 public class ShortWrapper extends PojoWrapper {
-  public ShortWrapper(final short wrapped) {
-    super(wrapped, short.class);
-  }
+    public ShortWrapper(final short wrapped) {
+        super(wrapped, short.class);
+    }
 
 }

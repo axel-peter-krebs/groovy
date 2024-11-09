@@ -35,9 +35,10 @@ class WindowDefinitionImpl<T, U extends Comparable<? super U>> implements Window
     private final List<Queryable.Order<? super T, ? extends U>> orderBy;
     private final RowBound rows;
     private final ValueBound<? extends U> range;
+    private Object id;
 
     WindowDefinitionImpl(Function<? super T, ?> partitionBy, List<Queryable.Order<? super T, ? extends U>> orderBy,
-                                RowBound rows, ValueBound<? extends U> range) {
+                         RowBound rows, ValueBound<? extends U> range) {
         this.partitionBy = partitionBy;
         this.orderBy = orderBy;
         this.rows = rows;
@@ -121,6 +122,4 @@ class WindowDefinitionImpl<T, U extends Comparable<? super U>> implements Window
     public int hashCode() {
         return Objects.hash(id);
     }
-
-    private Object id;
 }

@@ -24,52 +24,52 @@ import java.awt.*
 
 class CellEditorFactory extends AbstractFactory {
 
-   Object newInstance(FactoryBuilderSupport builder, Object name, Object value, Map attributes) {
-       FactoryBuilderSupport.checkValueIsNull value, name
-       return new ClosureCellEditor(null, attributes)
-   }
+    Object newInstance(FactoryBuilderSupport builder, Object name, Object value, Map attributes) {
+        FactoryBuilderSupport.checkValueIsNull value, name
+        return new ClosureCellEditor(null, attributes)
+    }
 
-   void setChild(FactoryBuilderSupport builder, Object parent, Object child) {
-       if (child instanceof Component) {
-           parent.children += child
-       }
-   }
+    void setChild(FactoryBuilderSupport builder, Object parent, Object child) {
+        if (child instanceof Component) {
+            parent.children += child
+        }
+    }
 
-   void onNodeCompleted(FactoryBuilderSupport builder, Object parent, Object node) {
-       node.editorValue = builder.context.editorValueClosure
-       node.prepareEditor = builder.context.prepareEditorClosure
-       parent.cellEditor = node
-   }
+    void onNodeCompleted(FactoryBuilderSupport builder, Object parent, Object node) {
+        node.editorValue = builder.context.editorValueClosure
+        node.prepareEditor = builder.context.prepareEditorClosure
+        parent.cellEditor = node
+    }
 }
 
 class CellEditorGetValueFactory extends AbstractFactory {
 
-   Object newInstance(FactoryBuilderSupport builder, Object name, Object value, Map attributes) {
-       return Collections.emptyMap()
-   }
+    Object newInstance(FactoryBuilderSupport builder, Object name, Object value, Map attributes) {
+        return Collections.emptyMap()
+    }
 
-   boolean isHandlesNodeChildren() {
-       return true
-   }
+    boolean isHandlesNodeChildren() {
+        return true
+    }
 
-   boolean onNodeChildren(FactoryBuilderSupport builder, Object node, Closure childContent) {
-       builder.parentContext.editorValueClosure = childContent
-       return false
-   }
+    boolean onNodeChildren(FactoryBuilderSupport builder, Object node, Closure childContent) {
+        builder.parentContext.editorValueClosure = childContent
+        return false
+    }
 }
 
 class CellEditorPrepareFactory extends AbstractFactory {
 
-   Object newInstance(FactoryBuilderSupport builder, Object name, Object value, Map attributes) {
-       return Collections.emptyMap()
-   }
+    Object newInstance(FactoryBuilderSupport builder, Object name, Object value, Map attributes) {
+        return Collections.emptyMap()
+    }
 
-   boolean isHandlesNodeChildren() {
-       return true
-   }
+    boolean isHandlesNodeChildren() {
+        return true
+    }
 
-   boolean onNodeChildren(FactoryBuilderSupport builder, Object node, Closure childContent) {
-       builder.parentContext.prepareEditorClosure = childContent
-       return false
-   }
+    boolean onNodeChildren(FactoryBuilderSupport builder, Object node, Closure childContent) {
+        builder.parentContext.prepareEditorClosure = childContent
+        return false
+    }
 }

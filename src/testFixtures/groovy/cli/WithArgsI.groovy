@@ -23,9 +23,16 @@ import groovy.cli.Unparsed
 
 // tag::withArgumentInterfaceSpec[]
 interface WithArgsI {
-    @Option boolean a()
-    @Option String b()
-    @Option(optionalArg=true) String[] c()
-    @Unparsed List remaining()
+    @Option
+    boolean a()
+
+    @Option
+    String b()
+
+    @Option(optionalArg = true)
+    String[] c()
+
+    @Unparsed
+    List remaining()
 }
 // end::withArgumentInterfaceSpec[]

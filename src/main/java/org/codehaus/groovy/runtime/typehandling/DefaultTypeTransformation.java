@@ -290,7 +290,7 @@ public class DefaultTypeTransformation {
         if (object instanceof BaseStream   // GROOVY-10028
             || object instanceof Optional  // GROOVY-10223
             || (object instanceof Iterable // GROOVY-11378
-                && !(object instanceof Collection))) { // GROOVY-7867
+            && !(object instanceof Collection))) { // GROOVY-7867
             Collection answer = newCollection.get();
             answer.addAll(asCollection(object));
             return answer;
@@ -579,171 +579,6 @@ public class DefaultTypeTransformation {
         return new ArrayToUnmodifiableListAdapter(array);
     }
 
-    static class ArrayToUnmodifiableListAdapter implements List {
-        private Object delegate;
-
-        public ArrayToUnmodifiableListAdapter(Object delegate) {
-            Objects.requireNonNull(delegate);
-            this.delegate = delegate;
-        }
-
-        @Override
-        public int size() {
-            return Array.getLength(delegate);
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return size() == 0;
-        }
-
-        @Override
-        public boolean contains(Object o) {
-            for (Object next : this) {
-                if (next.equals(o)) return true;
-            }
-            return false;
-        }
-
-        private class Itr implements Iterator {
-            private int idx = 0;
-
-            @Override
-            public boolean hasNext() {
-                return idx < size();
-            }
-
-            @Override
-            public Object next() {
-                return get(idx++);
-            }
-        }
-
-        @Override
-        public Iterator iterator() {
-            return new Itr();
-        }
-
-        @Override
-        public Object get(int index) {
-            Object item = Array.get(delegate, index);
-            if (item != null && item.getClass().isArray() && item.getClass().getComponentType().isPrimitive()) {
-                item = primitiveArrayToUnmodifiableList(item);
-            }
-            return item;
-        }
-
-        @Override
-        public int indexOf(Object o) {
-            int idx = 0;
-            boolean found = false;
-            while (!found && idx < size()) {
-                found = get(idx).equals(o);
-                if (!found) idx++;
-            }
-            return found ? idx : -1;
-        }
-
-        @Override
-        public int lastIndexOf(Object o) {
-            int idx = size() - 1;
-            boolean found = false;
-            while (!found && idx >= 0) {
-                found = get(idx).equals(o);
-                if (!found) idx--;
-            }
-            return found ? idx : -1;
-        }
-
-        @Override
-        public boolean containsAll(Collection coll) {
-            for (Object next : coll) {
-                if (!contains(next)) return false;
-            }
-            return true;
-        }
-
-        @Override
-        public ListIterator listIterator() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public ListIterator listIterator(int index) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public List subList(int fromIndex, int toIndex) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object[] toArray() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object[] toArray(Object[] a) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object set(int index, Object element) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void add(int index, Object element) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object remove(int index) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean addAll(int index, Collection c) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean add(Object o) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean remove(Object o) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean addAll(Collection coll) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean removeAll(Collection coll) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean retainAll(Collection coll) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void clear() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean removeIf(Predicate filter) {
-            throw new UnsupportedOperationException();
-        }
-    }
-
     public static Object[] primitiveArrayBox(Object array) {
         int size = Array.getLength(array);
         Object[] ret = (Object[]) Array.newInstance(TypeUtil.autoboxType(array.getClass().getComponentType()), size);
@@ -794,14 +629,14 @@ public class DefaultTypeTransformation {
                 if (isValidCharacterString(left)) {
                     return DefaultGroovyMethods.compareTo(ShortTypeHandling.castToChar(left), (Number) right);
                 }
-            } else if (left instanceof  String && (right instanceof String || right instanceof GString || right instanceof Character)) {
+            } else if (left instanceof String && (right instanceof String || right instanceof GString || right instanceof Character)) {
                 return ((String) left).compareTo(right.toString());
             } else if (left instanceof GString && (right instanceof String || right instanceof GString || right instanceof Character)) {
                 return left.toString().compareTo(right.toString());
             }
             if (!equalityCheckOnly || left.getClass().isAssignableFrom(right.getClass())
-                    || (right.getClass() != Object.class && right.getClass().isAssignableFrom(left.getClass()) // GROOVY-4046
-                        || right instanceof Comparable) // GROOVY-7954
+                || (right.getClass() != Object.class && right.getClass().isAssignableFrom(left.getClass()) // GROOVY-4046
+                || right instanceof Comparable) // GROOVY-7954
             ) {
                 // GROOVY-7876: when comparing for equality we try to only call compareTo when an assignable
                 // relationship holds but with a container/holder class and because of erasure, we might still end
@@ -820,7 +655,7 @@ public class DefaultTypeTransformation {
         }
 
         String message = MessageFormat.format("Cannot compare {0} with value ''{1}'' and {2} with value ''{3}''",
-                left.getClass().getName(), left, right.getClass().getName(), right);
+            left.getClass().getName(), left, right.getClass().getName(), right);
         if (cause != null) {
             throw new IllegalArgumentException(message, cause);
         } else {
@@ -1101,5 +936,170 @@ public class DefaultTypeTransformation {
             Array.set(newArray, i, convertedValue);
         }
         return newArray;
+    }
+
+    static class ArrayToUnmodifiableListAdapter implements List {
+        private Object delegate;
+
+        public ArrayToUnmodifiableListAdapter(Object delegate) {
+            Objects.requireNonNull(delegate);
+            this.delegate = delegate;
+        }
+
+        @Override
+        public int size() {
+            return Array.getLength(delegate);
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return size() == 0;
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            for (Object next : this) {
+                if (next.equals(o)) return true;
+            }
+            return false;
+        }
+
+        @Override
+        public Iterator iterator() {
+            return new Itr();
+        }
+
+        @Override
+        public Object get(int index) {
+            Object item = Array.get(delegate, index);
+            if (item != null && item.getClass().isArray() && item.getClass().getComponentType().isPrimitive()) {
+                item = primitiveArrayToUnmodifiableList(item);
+            }
+            return item;
+        }
+
+        @Override
+        public int indexOf(Object o) {
+            int idx = 0;
+            boolean found = false;
+            while (!found && idx < size()) {
+                found = get(idx).equals(o);
+                if (!found) idx++;
+            }
+            return found ? idx : -1;
+        }
+
+        @Override
+        public int lastIndexOf(Object o) {
+            int idx = size() - 1;
+            boolean found = false;
+            while (!found && idx >= 0) {
+                found = get(idx).equals(o);
+                if (!found) idx--;
+            }
+            return found ? idx : -1;
+        }
+
+        @Override
+        public boolean containsAll(Collection coll) {
+            for (Object next : coll) {
+                if (!contains(next)) return false;
+            }
+            return true;
+        }
+
+        @Override
+        public ListIterator listIterator() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public ListIterator listIterator(int index) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public List subList(int fromIndex, int toIndex) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Object[] toArray() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Object[] toArray(Object[] a) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Object set(int index, Object element) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void add(int index, Object element) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Object remove(int index) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean addAll(int index, Collection c) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean add(Object o) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean addAll(Collection coll) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean removeAll(Collection coll) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean retainAll(Collection coll) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void clear() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean removeIf(Predicate filter) {
+            throw new UnsupportedOperationException();
+        }
+
+        private class Itr implements Iterator {
+            private int idx = 0;
+
+            @Override
+            public boolean hasNext() {
+                return idx < size();
+            }
+
+            @Override
+            public Object next() {
+                return get(idx++);
+            }
+        }
     }
 }

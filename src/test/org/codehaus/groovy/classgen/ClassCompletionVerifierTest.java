@@ -106,9 +106,9 @@ public final class ClassCompletionVerifierTest {
     @Test
     public void shouldDetectFinalMethodsInInterface() {
         var node = new ClassNode("zzz", ACC_ABSTRACT | ACC_INTERFACE, ClassHelper.OBJECT_TYPE);
-        node.addMethod("xxx", ACC_FINAL | ACC_PUBLIC             , ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
+        node.addMethod("xxx", ACC_FINAL | ACC_PUBLIC, ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
         node.addMethod("yyy", ACC_FINAL | ACC_PUBLIC | ACC_STATIC, ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
-        node.addMethod("zzz", ACC_FINAL | ACC_PRIVATE            , ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
+        node.addMethod("zzz", ACC_FINAL | ACC_PRIVATE, ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
         addStaticConstructor(node);
 
         verifier.visitClass(node);
@@ -122,10 +122,10 @@ public final class ClassCompletionVerifierTest {
     @Test
     public void shouldDetectIncorrectMethodModifiersInInterface() {
         var node = new ClassNode("zzz", ACC_ABSTRACT | ACC_INTERFACE, ClassHelper.OBJECT_TYPE);
-        node.addMethod("na", ACC_PUBLIC | ACC_NATIVE               , ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
-        node.addMethod("st", ACC_PUBLIC | ACC_STRICT               , ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
-        node.addMethod("sy", ACC_PUBLIC | ACC_SYNCHRONIZED         , ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
-        node.addMethod("tr", ACC_PUBLIC | ACC_TRANSIENT            , ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
+        node.addMethod("na", ACC_PUBLIC | ACC_NATIVE, ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
+        node.addMethod("st", ACC_PUBLIC | ACC_STRICT, ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
+        node.addMethod("sy", ACC_PUBLIC | ACC_SYNCHRONIZED, ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
+        node.addMethod("tr", ACC_PUBLIC | ACC_TRANSIENT, ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
         node.addMethod("xx", ACC_PUBLIC | ACC_STATIC | ACC_ABSTRACT, ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
         // can't check volatile here as it doubles up with bridge
         addStaticConstructor(node);
@@ -144,13 +144,13 @@ public final class ClassCompletionVerifierTest {
     public void shouldDetectIncorrectMemberVisibilityInInterface() {
         var node = new ClassNode("zzz", ACC_ABSTRACT | ACC_INTERFACE, ClassHelper.OBJECT_TYPE);
         node.addMethod("pro1", ACC_ABSTRACT | ACC_PROTECTED, ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
-        node.addMethod("pro2", ACC_STATIC   | ACC_PROTECTED, ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
-        node.addMethod("pro3",                ACC_PROTECTED, ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, block());
-        node.addMethod("pp_1", ACC_ABSTRACT                , ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
-        node.addMethod("pp_2", ACC_STATIC                  , ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
+        node.addMethod("pro2", ACC_STATIC | ACC_PROTECTED, ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
+        node.addMethod("pro3", ACC_PROTECTED, ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, block());
+        node.addMethod("pp_1", ACC_ABSTRACT, ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
+        node.addMethod("pp_2", ACC_STATIC, ClassHelper.OBJECT_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
         node.addField("prof", ACC_PROTECTED, ClassHelper.OBJECT_TYPE, null);
-        node.addField("prif", ACC_PRIVATE  , ClassHelper.OBJECT_TYPE, null);
-        node.addField("pp_f", 0            , ClassHelper.OBJECT_TYPE, null);
+        node.addField("prif", ACC_PRIVATE, ClassHelper.OBJECT_TYPE, null);
+        node.addField("pp_f", 0, ClassHelper.OBJECT_TYPE, null);
         addStaticConstructor(node);
 
         verifier.visitClass(node);
@@ -183,10 +183,10 @@ public final class ClassCompletionVerifierTest {
     @Test
     public void shouldDetectIncorrectMethodModifiersInClass() {
         var node = new ClassNode("zzz", ACC_ABSTRACT | ACC_PUBLIC, ClassHelper.OBJECT_TYPE);
-        node.addMethod("tr", ACC_TRANSIENT            , ClassHelper.VOID_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
-        node.addMethod("xx", ACC_ABSTRACT | ACC_FINAL , ClassHelper.VOID_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
+        node.addMethod("tr", ACC_TRANSIENT, ClassHelper.VOID_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
+        node.addMethod("xx", ACC_ABSTRACT | ACC_FINAL, ClassHelper.VOID_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
         node.addMethod("yy", ACC_ABSTRACT | ACC_STATIC, ClassHelper.VOID_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
-        node.addMethod("zz", ACC_FINAL    | ACC_STATIC, ClassHelper.VOID_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
+        node.addMethod("zz", ACC_FINAL | ACC_STATIC, ClassHelper.VOID_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, null);
         // can't check volatile here as it doubles up with bridge
         addStaticConstructor(node);
 
@@ -196,7 +196,7 @@ public final class ClassCompletionVerifierTest {
         checkErrorMessage("The method 'void tr()' has invalid modifier transient.");
         checkErrorMessage("The method 'void xx()' can only be one of abstract, static, final.");
         checkErrorMessage("The method 'void yy()' can only be one of abstract, static, final.");
-      //checkErrorMessage("The method 'void zz()' can only be one of abstract, static, final.");
+        //checkErrorMessage("The method 'void zz()' can only be one of abstract, static, final.");
     }
 
     @Test

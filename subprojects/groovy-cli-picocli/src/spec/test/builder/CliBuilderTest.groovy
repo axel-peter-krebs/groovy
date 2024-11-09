@@ -27,6 +27,7 @@ import groovy.transform.TypeChecked
 import java.util.concurrent.TimeUnit
 import static java.util.concurrent.TimeUnit.DAYS
 import static java.util.concurrent.TimeUnit.HOURS
+
 // end::mapOptionImports[]
 
 // Core functionality we expect to remain the same for all implementations is tested in the base test case
@@ -131,25 +132,25 @@ Footer 2
     void testMapOption() {
         // tag::mapOption[]
         def cli = new CliBuilder()
-        cli.D(args: 2,   valueSeparator: '=', 'the old way')                          // <1>
+        cli.D(args: 2, valueSeparator: '=', 'the old way')                          // <1>
         cli.X(type: Map, 'the new way')                                               // <2>
         cli.Z(type: Map, auxiliaryTypes: [TimeUnit, Integer].toArray(), 'typed map')  // <3>
 
         def options = cli.parse('-Da=b -Dc=d -Xx=y -Xi=j -ZDAYS=2 -ZHOURS=23'.split())// <4>
         assert options.Ds == ['a', 'b', 'c', 'd']                                     // <5>
-        assert options.Xs == [ 'x':'y', 'i':'j' ]                                     // <6>
-        assert options.Zs == [ (DAYS as TimeUnit):2, (HOURS as TimeUnit):23 ]         // <7>
+        assert options.Xs == ['x': 'y', 'i': 'j']                                     // <6>
+        assert options.Zs == [(DAYS as TimeUnit): 2, (HOURS as TimeUnit): 23]         // <7>
         // end::mapOption[]
     }
 
     void testGroovyDocAntExample() {
-        def cli = new CliBuilder(usage:'ant [options] [targets]',
-                header:'Options:')
+        def cli = new CliBuilder(usage: 'ant [options] [targets]',
+            header: 'Options:')
         cli.help('print this message')
-        cli.logfile(type:File, argName:'file', 'use given file for log')
-        cli.D(type:Map, argName:'property=value', 'use value for given property')
-        cli.lib(argName:'path', valueSeparator:',', args: '3',
-                'comma-separated list of 3 paths to search for jars and classes')
+        cli.logfile(type: File, argName: 'file', 'use given file for log')
+        cli.D(type: Map, argName: 'property=value', 'use value for given property')
+        cli.lib(argName: 'path', valueSeparator: ',', args: '3',
+            'comma-separated list of 3 paths to search for jars and classes')
 
         // suppress ANSI escape codes to make this test pass on all environments
         System.setProperty("picocli.ansi", "false")
@@ -177,12 +178,12 @@ Options:
         ByteArrayOutputStream baos = new ByteArrayOutputStream()
         System.setOut(new PrintStream(baos, true))
 
-        def cli = new CliBuilder(name:'curl')
-        cli._(longOpt:'basic', 'Use HTTP Basic Authentication')
-        cli.d(longOpt:'data', args:1, argName:'data', 'HTTP POST data')
-        cli.G(longOpt:'get', 'Send the -d data with a HTTP GET')
+        def cli = new CliBuilder(name: 'curl')
+        cli._(longOpt: 'basic', 'Use HTTP Basic Authentication')
+        cli.d(longOpt: 'data', args: 1, argName: 'data', 'HTTP POST data')
+        cli.G(longOpt: 'get', 'Send the -d data with a HTTP GET')
         cli.q('If used as the first parameter disables .curlrc')
-        cli._(longOpt:'url', type:URL, argName:'URL', 'Set URL to work with')
+        cli._(longOpt: 'url', type: URL, argName: 'URL', 'Set URL to work with')
 
         cli.usageMessage.sortOptions(false)
         cli.usage()

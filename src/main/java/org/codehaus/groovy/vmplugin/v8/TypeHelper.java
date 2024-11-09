@@ -86,13 +86,13 @@ public class TypeHelper {
 
     protected static boolean isIntCategory(Class<?> x) {
         return x == Integer.class || x == int.class ||
-                x == Byte.class || x == byte.class ||
-                x == Short.class || x == short.class;
+            x == Byte.class || x == byte.class ||
+            x == Short.class || x == short.class;
     }
 
     protected static boolean isLongCategory(Class<?> x) {
         return x == Long.class || x == long.class ||
-                isIntCategory(x);
+            isIntCategory(x);
     }
 
     private static boolean isBigIntCategory(Class<?> x) {
@@ -105,7 +105,7 @@ public class TypeHelper {
 
     protected static boolean isDoubleCategory(Class<?> x) {
         return x == Float.class || x == float.class ||
-                x == Double.class || x == double.class ||
-                isBigDecCategory(x);
+            x == Double.class || x == double.class ||
+            isBigDecCategory(x);
     }
 }

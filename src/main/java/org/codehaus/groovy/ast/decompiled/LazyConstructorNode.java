@@ -59,10 +59,12 @@ class LazyConstructorNode extends ConstructorNode implements LazyInitializable {
         ClassNode declaringClass = super.getDeclaringClass();
         if (null != declaringClass) delegate.setDeclaringClass(declaringClass);
     }
+
     @Override
     public boolean isInitialized() {
         return initialized;
     }
+
     @Override
     public void setInitialized(boolean initialized) {
         this.initialized = initialized;

@@ -117,7 +117,7 @@ import java.lang.annotation.Target;
  * def t1 = new IntTriple(1, 2, 3)
  * assert p1 != t1 {@code &&} p2 != t1 {@code &&} t1 != p3
  * </pre>
- *
+ * <p>
  * The alternative supported style regards any kind of inheritance as creation of
  * a new type and is illustrated in the following example:
  * <pre>

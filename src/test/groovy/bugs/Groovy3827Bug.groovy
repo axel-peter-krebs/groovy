@@ -32,7 +32,7 @@ class Groovy3827Bug extends GroovyTestCase {
         """
         try {
             cl.parseClass(scriptStr)
-        } catch(MultipleCompilationErrorsException mcee) {
+        } catch (MultipleCompilationErrorsException mcee) {
             assert mcee.errorCollector.errors.size() == 1
         }
     }

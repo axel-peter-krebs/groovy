@@ -32,10 +32,10 @@ import java.util.Properties;
  * Write GroovyDoc resources to destination.
  */
 public class GroovyDocWriter {
+    private static final String FS = "/";
     private final Logger log = Logger.create(GroovyDocWriter.class);
     private final OutputTool output;
     private final GroovyDocTemplateEngine templateEngine;
-    private static final String FS = "/";
     private final Properties properties;
 
     @Deprecated
@@ -49,6 +49,10 @@ public class GroovyDocWriter {
         this.properties = properties;
     }
 
+    private static boolean hasBinaryExtension(String template) {
+        return template.endsWith(".gif") || template.endsWith(".ico");
+    }
+
     public void writeClasses(GroovyRootDoc rootDoc, String destdir) throws Exception {
         for (GroovyClassDoc classDoc : rootDoc.classes()) {
             writeClassToOutput(classDoc, destdir);
@@ -57,7 +61,7 @@ public class GroovyDocWriter {
 
     public void writeClassToOutput(GroovyClassDoc classDoc, String destdir) throws Exception {
         if (classDoc.isPublic() || classDoc.isProtected() && "true".equals(properties.getProperty("protectedScope")) ||
-                classDoc.isPackagePrivate() && "true".equals(properties.getProperty("packageScope")) || "true".equals(properties.getProperty("privateScope"))) {
+            classDoc.isPackagePrivate() && "true".equals(properties.getProperty("packageScope")) || "true".equals(properties.getProperty("privateScope"))) {
             String destFileName = destdir + FS + classDoc.getFullPathName() + ".html";
             log.debug("Generating " + destFileName);
             String renderedSrc = templateEngine.applyClassTemplates(classDoc);
@@ -110,10 +114,6 @@ public class GroovyDocWriter {
                 output.writeToOutput(destFileName, renderedSrc, properties.getProperty("fileEncoding"));
             }
         }
-    }
-
-    private static boolean hasBinaryExtension(String template) {
-        return template.endsWith(".gif") || template.endsWith(".ico");
     }
 
 }

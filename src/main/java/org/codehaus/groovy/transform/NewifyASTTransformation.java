@@ -69,56 +69,49 @@ public class NewifyASTTransformation extends ClassCodeExpressionTransformer impl
     private static final ClassNode MY_TYPE = make(Newify.class);
     private static final String MY_NAME = MY_TYPE.getNameWithoutPackage();
     private static final String BASE_BAD_PARAM_ERROR = "Error during @" + MY_NAME +
-            " processing. Annotation parameter must be a class or list of classes but found ";
-    private SourceUnit source;
-    private ListExpression classesToNewify;
-    private DeclarationExpression candidate;
-    private boolean auto;
-    private Pattern classNamePattern;
-
-    private static Map<String, ClassNode> nameToGlobalClassesNodesMap;
-    private Map<String, NewifyClassData> nameToInnerClassesNodesMap;
-
+        " processing. Annotation parameter must be a class or list of classes but found ";
     // ClassHelper.classes minus interfaces, abstract classes, and classes with private ctors
     private static final Class[] globalClasses = new Class[]{
-            Object.class,
-            Boolean.TYPE,
-            Character.TYPE,
-            Byte.TYPE,
-            Short.TYPE,
-            Integer.TYPE,
-            Long.TYPE,
-            Double.TYPE,
-            Float.TYPE,
-            // Void.TYPE,
-            // Closure.class,
-            // GString.class,
-            // List.class,
-            // Map.class,
-            // Range.class,
-            //Pattern.class,
-            // Script.class,
-            String.class,
-            Boolean.class,  // Shall we allow this ? Using Boolean ctors is usually not what user wants...
-            Character.class,
-            Byte.class,
-            Short.class,
-            Integer.class,
-            Long.class,
-            Double.class,
-            Float.class,
-            BigDecimal.class,
-            BigInteger.class,
-            //Number.class,
-            //Void.class,
-            Reference.class,
-            //Class.class,
-            //MetaClass.class,
-            //Iterator.class,
-            //GeneratedClosure.class,
-            //GeneratedLambda.class,
-            //GroovyObjectSupport.class
+        Object.class,
+        Boolean.TYPE,
+        Character.TYPE,
+        Byte.TYPE,
+        Short.TYPE,
+        Integer.TYPE,
+        Long.TYPE,
+        Double.TYPE,
+        Float.TYPE,
+        // Void.TYPE,
+        // Closure.class,
+        // GString.class,
+        // List.class,
+        // Map.class,
+        // Range.class,
+        //Pattern.class,
+        // Script.class,
+        String.class,
+        Boolean.class,  // Shall we allow this ? Using Boolean ctors is usually not what user wants...
+        Character.class,
+        Byte.class,
+        Short.class,
+        Integer.class,
+        Long.class,
+        Double.class,
+        Float.class,
+        BigDecimal.class,
+        BigInteger.class,
+        //Number.class,
+        //Void.class,
+        Reference.class,
+        //Class.class,
+        //MetaClass.class,
+        //Iterator.class,
+        //GeneratedClosure.class,
+        //GeneratedLambda.class,
+        //GroovyObjectSupport.class
     };
+    private static final Pattern extractNamePattern = Pattern.compile("^(?:.*\\$|)(.*)$");
+    private static Map<String, ClassNode> nameToGlobalClassesNodesMap;
 
     static {
         nameToGlobalClassesNodesMap = new ConcurrentHashMap<String, ClassNode>(16, 0.9f, 1);
@@ -127,11 +120,30 @@ public class NewifyASTTransformation extends ClassCodeExpressionTransformer impl
         }
     }
 
-
-    private static final Pattern extractNamePattern = Pattern.compile("^(?:.*\\$|)(.*)$");
+    private SourceUnit source;
+    private ListExpression classesToNewify;
+    private DeclarationExpression candidate;
+    private boolean auto;
+    private Pattern classNamePattern;
+    private Map<String, NewifyClassData> nameToInnerClassesNodesMap;
 
     public static String extractName(final String s) {
         return extractNamePattern.matcher(s).replaceFirst("$1");
+    }
+
+    private static boolean determineAutoFlag(Expression autoExpr) {
+        return !(autoExpr instanceof ConstantExpression && ((ConstantExpression) autoExpr).getValue().equals(false));
+    }
+
+    private static boolean isNewMethodStyle(MethodCallExpression mce) {
+        final Expression obj = mce.getObjectExpression();
+        final Expression meth = mce.getMethod();
+        return (obj instanceof ClassExpression && meth instanceof ConstantExpression
+            && "new".equals(((ConstantExpression) meth).getValue()));
+    }
+
+    private static void internalError(String message) {
+        throw new GroovyBugError("Internal error: " + message);
     }
 
     @Override
@@ -160,12 +172,11 @@ public class NewifyASTTransformation extends ClassCodeExpressionTransformer impl
         }
     }
 
-
     private void newifyClass(ClassNode cNode, boolean autoFlag, ListExpression list, final Pattern cnPattern) {
         String cName = cNode.getName();
         if (cNode.isInterface()) {
             addError("Error processing interface '" + cName + "'. @"
-                    + MY_NAME + " not allowed for interfaces.", cNode);
+                + MY_NAME + " not allowed for interfaces.", cNode);
         }
 
         final ListExpression oldClassesToNewify = classesToNewify;
@@ -207,7 +218,6 @@ public class NewifyASTTransformation extends ClassCodeExpressionTransformer impl
         classNamePattern = oldCnPattern;
     }
 
-
     private void newifyDeclaration(DeclarationExpression de, boolean autoFlag, ListExpression list, final Pattern cnPattern) {
         ClassNode cNode = de.getDeclaringClass();
         candidate = de;
@@ -226,15 +236,15 @@ public class NewifyASTTransformation extends ClassCodeExpressionTransformer impl
         classNamePattern = oldCnPattern;
     }
 
-    private static boolean determineAutoFlag(Expression autoExpr) {
-        return !(autoExpr instanceof ConstantExpression && ((ConstantExpression) autoExpr).getValue().equals(false));
-    }
-
     private Pattern determineClassNamePattern(Expression expr) {
-        if (!(expr instanceof ConstantExpression)) { return null; }
+        if (!(expr instanceof ConstantExpression)) {
+            return null;
+        }
         final ConstantExpression constExpr = (ConstantExpression) expr;
         final String text = constExpr.getText();
-        if (constExpr.getValue() == null || text.isEmpty()) { return null; }
+        if (constExpr.getValue() == null || text.isEmpty()) {
+            return null;
+        }
         try {
             final Pattern pattern = Pattern.compile(text);
             return pattern;
@@ -344,7 +354,6 @@ public class NewifyASTTransformation extends ClassCodeExpressionTransformer impl
         return (classesToNewify != null && !classesToNewify.getExpressions().isEmpty()) || (classNamePattern != null);
     }
 
-
     private void checkDuplicateNameClashes(ListExpression list) {
         final Set<String> seen = new HashSet<String>();
         @SuppressWarnings("unchecked")
@@ -361,7 +370,7 @@ public class NewifyASTTransformation extends ClassCodeExpressionTransformer impl
     private void checkAutoClash(boolean autoFlag, AnnotatedNode parent) {
         if (auto && !autoFlag) {
             addError("Error during @" + MY_NAME + " processing. The 'auto' flag can't be false at " +
-                    "method/constructor/field level if it is true at the class level.", parent);
+                "method/constructor/field level if it is true at the class level.", parent);
         }
     }
 
@@ -372,22 +381,15 @@ public class NewifyASTTransformation extends ClassCodeExpressionTransformer impl
             final String name = ce.getType().getNameWithoutPackage();
             if (findClassWithMatchingBasename(name)) {
                 addError("Error during @" + MY_NAME + " processing. Class '" + name + "' can't appear at " +
-                        "method/constructor/field level if it already appears at the class level.", ce);
+                    "method/constructor/field level if it already appears at the class level.", ce);
             }
         }
     }
 
     private boolean isNewifyCandidate(MethodCallExpression mce) {
         return (auto && isNewMethodStyle(mce)) || (mce.isImplicitThis()
-                && mce.getObjectExpression() instanceof VariableExpression
-                && ((VariableExpression) mce.getObjectExpression()).isThisExpression());
-    }
-
-    private static boolean isNewMethodStyle(MethodCallExpression mce) {
-        final Expression obj = mce.getObjectExpression();
-        final Expression meth = mce.getMethod();
-        return (obj instanceof ClassExpression && meth instanceof ConstantExpression
-                && "new".equals(((ConstantExpression) meth).getValue()));
+            && mce.getObjectExpression() instanceof VariableExpression
+            && ((VariableExpression) mce.getObjectExpression()).isThisExpression());
     }
 
     private Expression transformMethodCall(MethodCallExpression mce, Expression argsExp) {
@@ -423,7 +425,6 @@ public class NewifyASTTransformation extends ClassCodeExpressionTransformer impl
         mce.setArguments(argsExp);
         return mce;
     }
-
 
     private boolean findClassWithMatchingBasename(String nameWithoutPackage) {
         // For performance reasons test against classNamePattern first
@@ -500,10 +501,6 @@ public class NewifyASTTransformation extends ClassCodeExpressionTransformer impl
         }
 
         return null;
-    }
-
-    private static void internalError(String message) {
-        throw new GroovyBugError("Internal error: " + message);
     }
 
     @Override

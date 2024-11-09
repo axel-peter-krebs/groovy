@@ -165,7 +165,7 @@ public class Chr {
             arraycopy(input, 0, array, startIndex, input.length);
         } catch (Exception ex) {
             Exceptions.handle(String.format("array size %d, startIndex %d, input length %d",
-                    array.length, startIndex, input.length), ex);
+                array.length, startIndex, input.length), ex);
         }
     }
 
@@ -178,7 +178,7 @@ public class Chr {
             arraycopy(input, 0, array, startIndex, inputLength);
         } catch (Exception ex) {
             Exceptions.handle(String.format("array size %d, startIndex %d, input length %d",
-                    array.length, startIndex, input.length), ex);
+                array.length, startIndex, input.length), ex);
         }
     }
 

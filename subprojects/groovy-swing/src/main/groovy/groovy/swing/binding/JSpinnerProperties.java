@@ -52,7 +52,7 @@ class JSpinnerValueBinding extends AbstractSyntheticBinding implements PropertyC
 
     @Override
     public synchronized void syntheticBind() {
-        boundSlider = (JSpinner) ((PropertyBinding)sourceBinding).getBean();
+        boundSlider = (JSpinner) ((PropertyBinding) sourceBinding).getBean();
         boundSlider.addPropertyChangeListener("model", this);
         boundSlider.getModel().addChangeListener(this);
     }

@@ -32,14 +32,14 @@ class GroovyLogTestCaseTest extends GroovyLogTestCase {
         LOG.finer 'some log entry'
     }
 
-    void testStringLog(){
+    void testStringLog() {
         def result = stringLog(Level.FINER, 'groovy.test.GroovyLogTestCaseTest') {
             loggedMethod()
         }
         assertTrue result, result.contains('some log entry')
     }
 
-    void testCombinedUsageForMetaClass(){
+    void testCombinedUsageForMetaClass() {
 /*
         def result = withLevel(Level.FINER, 'groovy.lang.MetaClass') {
             stringLog(Level.FINER, 'methodCalls'){

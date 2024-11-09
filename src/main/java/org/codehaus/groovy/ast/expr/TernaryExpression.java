@@ -32,7 +32,7 @@ public class TernaryExpression extends Expression {
     private final Expression falseExpression;
 
     public TernaryExpression(final BooleanExpression booleanExpression,
-            final Expression truthExpression, final Expression falseExpression) {
+                             final Expression truthExpression, final Expression falseExpression) {
         this.booleanExpression = booleanExpression;
         this.truthExpression = truthExpression;
         this.falseExpression = falseExpression;
@@ -71,9 +71,9 @@ public class TernaryExpression extends Expression {
     @Override
     public Expression transformExpression(final ExpressionTransformer transformer) {
         Expression ret = new TernaryExpression(
-                (BooleanExpression) transformer.transform(getBooleanExpression()),
-                                    transformer.transform(getTrueExpression()),
-                                    transformer.transform(getFalseExpression())
+            (BooleanExpression) transformer.transform(getBooleanExpression()),
+            transformer.transform(getTrueExpression()),
+            transformer.transform(getFalseExpression())
         );
         ret.setSourcePosition(this);
         ret.copyNodeMetaData(this);

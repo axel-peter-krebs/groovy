@@ -26,12 +26,12 @@ import java.util.Map;
 
 public abstract class CustomBaseTemplate extends BaseTemplate {
 
+    private String version;
+
     public CustomBaseTemplate(final MarkupTemplateEngine templateEngine,
-            final Map model, final Map<String, String> modelTypes, final TemplateConfiguration configuration) {
+                              final Map model, final Map<String, String> modelTypes, final TemplateConfiguration configuration) {
         super(templateEngine, model, modelTypes, configuration);
     }
-
-    private String version;
 
     public String getVersion() {
         return version;

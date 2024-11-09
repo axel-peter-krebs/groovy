@@ -18,21 +18,21 @@
  */
 
 def a = 9
-def result = switch(a) {
+def result = switch (a) {
     case 6, 8 -> 1.plus 2
     default -> 1.plus 5
 }
 assert 6 == result
 
 a = 6
-result = switch(a) {
+result = switch (a) {
     case 6, 8 -> 1.plus 2
     default -> 1.plus 5
 }
 assert 3 == result
 
 a = 8
-result = switch(a) {
+result = switch (a) {
     case 6, 8 -> 1.plus 2
     default -> 1.plus 5
 }

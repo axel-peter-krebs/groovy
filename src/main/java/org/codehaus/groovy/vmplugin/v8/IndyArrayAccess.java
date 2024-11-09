@@ -34,6 +34,7 @@ import java.util.HashMap;
 public class IndyArrayAccess {
 
     private static final MethodHandle notNegative, normalizeIndex;
+    private static final HashMap<Class<?>, MethodHandle> getterMap, setterMap;
 
     static {
         try {
@@ -44,14 +45,12 @@ public class IndyArrayAccess {
         }
     }
 
-    private static final HashMap<Class<?>, MethodHandle> getterMap, setterMap;
-
     static {
         getterMap = new HashMap<>();
         Class<?>[] classes = new Class<?>[]{
-                int[].class, byte[].class, short[].class, long[].class,
-                double[].class, float[].class,
-                boolean[].class, char[].class, Object[].class};
+            int[].class, byte[].class, short[].class, long[].class,
+            double[].class, float[].class,
+            boolean[].class, char[].class, Object[].class};
         for (Class<?> arrayClass : classes) {
             MethodHandle handle = buildGetter(arrayClass);
             getterMap.put(arrayClass, handle);
@@ -69,8 +68,8 @@ public class IndyArrayAccess {
 
         fallback = MethodHandles.dropArguments(fallback, 2, int.class);
         MethodType reorderType = fallback.type().
-                insertParameterTypes(0, int.class).
-                dropParameterTypes(2, 3);
+            insertParameterTypes(0, int.class).
+            dropParameterTypes(2, 3);
         fallback = MethodHandles.permuteArguments(fallback, reorderType, 1, 0, 0);
 
         fallback = MethodHandles.foldArguments(fallback, normalizeIndex);
@@ -87,8 +86,8 @@ public class IndyArrayAccess {
 
         fallback = MethodHandles.dropArguments(fallback, 3, int.class);
         MethodType reorderType = fallback.type().
-                insertParameterTypes(0, int.class).
-                dropParameterTypes(4, 5);
+            insertParameterTypes(0, int.class).
+            dropParameterTypes(4, 5);
         fallback = MethodHandles.permuteArguments(fallback, reorderType, 1, 0, 3, 0);
 
         fallback = MethodHandles.foldArguments(fallback, normalizeIndex);

@@ -29,6 +29,6 @@ class DollarEscapingTest extends GroovyTestCase {
 
         def c = foo.count('$')
 
-        assert c == 1 , foo
+        assert c == 1, foo
     }
 }

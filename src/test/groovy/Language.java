@@ -18,5 +18,7 @@
  */
 package groovy;
 
-/** Java Enum for testing purposes */
+/**
+ * Java Enum for testing purposes
+ */
 public enum Language {English, French, Spanish}

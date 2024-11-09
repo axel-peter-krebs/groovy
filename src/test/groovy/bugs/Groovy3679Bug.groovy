@@ -35,16 +35,18 @@ class Groovy3679Bug extends GroovyTestCase {
         // following is to verify that setting of private fields with .@"$x" syntax is not
         // broken by the fix introduced
         def x = new X3679()
-        x.setSomething("foo",2)
-        assert x.getAFoo() == 2    
+        x.setSomething("foo", 2)
+        assert x.getAFoo() == 2
     }
 }
 
 class X3679 extends HashMap {
     private foo
-    def setSomething(String x,y) {
+
+    def setSomething(String x, y) {
         this.@"$x" = y
     }
+
     def getAFoo() {
         return foo
     }

@@ -16,26 +16,46 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-
+// Memento: this build script applies to the home-grown plugins ONLY!
+// Note: plugin imports here should not be applied to THIS project.. Here, only the version number is stated.
 plugins {
     id 'groovy-gradle-plugin'
+    id "me.champeau.gradle.japicmp" version "0.4.5" apply false
+    id 'com.github.ben-manes.versions' version '0.51.0'
 }
 
 repositories {
     gradlePluginPortal()
     mavenCentral()
+    maven {
+        url = uri("	https://oss.sonatype.org/content/repositories/releases/")
+    }
 }
 
-dependencies {
+dependencies { // for plugins.. Exception is Java constructs used in plugins, e.g. 'Inject'
     implementation 'org.asciidoctor:asciidoctor-gradle-jvm:4.0.2'
     implementation 'org.asciidoctor:asciidoctor-gradle-jvm-pdf:4.0.2'
     implementation 'org.jfrog.buildinfo:build-info-extractor-gradle:5.2.5'
     implementation 'org.nosphere.apache:creadur-rat-gradle:0.8.1'
     implementation 'com.github.spotbugs.snom:spotbugs-gradle-plugin:6.0.7'
     implementation 'me.champeau.jmh:jmh-gradle-plugin:0.7.2'
+    implementation 'me.champeau.gradle.japicmp:me.champeau.gradle.japicmp.gradle.plugin:0.4.3'
+    implementation "com.github.ben-manes:gradle-versions-plugin:0.51.0"
     implementation 'org.cyclonedx:cyclonedx-gradle-plugin:1.8.2'
+    implementation 'jakarta.inject:jakarta.inject-api:2.0.1'
+
 }
 
 tasks.withType(Jar).configureEach {
     duplicatesStrategy = DuplicatesStrategy.WARN
 }
+
+// buildScan stops execution for user input '[yes|no]' - automatically answer here
+if (hasProperty('buildScan')) {
+    println("Found buildScan closure: answering with 'yes'.")
+    buildScan {
+        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+        termsOfServiceAgree = 'yes'
+    }
+}
+

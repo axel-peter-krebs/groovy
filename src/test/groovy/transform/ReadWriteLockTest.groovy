@@ -185,7 +185,8 @@ final class ReadWriteLockTest {
         assert err =~ /lock field with name 'myLock' should not be static/
     }
 
-    @Test // GROOVY-8758
+    @Test
+    // GROOVY-8758
     void testShouldBeAllowedInInnerClassWithCompileStatic() {
         assertScript shell, '''
             @CompileStatic
@@ -223,14 +224,17 @@ final class ReadWriteLockTest {
         void readerMethod1() {
             readerMethod1Called = true
         }
+
         @WithReadLock
         void readerMethod2() {
             readerMethod2Called = true
         }
+
         @WithWriteLock
         void writerMethod1() {
             writerMethod1Called = true
         }
+
         @WithWriteLock
         void writerMethod2() {
             writerMethod2Called = true
@@ -240,14 +244,17 @@ final class ReadWriteLockTest {
         void namedReaderMethod1() {
             throw new Exception()
         }
+
         @WithReadLock('myLock')
         void namedReaderMethod2() {
             throw new Exception()
         }
+
         @WithWriteLock('myLock')
         void namedWriterMethod1() {
             throw new Exception()
         }
+
         @WithWriteLock('myLock')
         void namedWriterMethod2() {
             throw new Exception()
@@ -257,14 +264,17 @@ final class ReadWriteLockTest {
         void staticReaderMethod1() {
             staticReaderMethod1Called = true
         }
+
         @WithReadLock
         void staticReaderMethod2() {
             staticReaderMethod2Called = true
         }
+
         @WithWriteLock
         void staticWriterMethod1() {
             staticWriterMethod1Called = true
         }
+
         @WithWriteLock
         void staticWriterMethod2() {
             staticWriterMethod2Called = true

@@ -33,6 +33,27 @@ public final class StructuredSyntaxResources {
     // ==================================================
 
     public static final Clipboard SYSTEM_CLIPBOARD = getSystemOrAppLevelClipboard();
+    public static final Font LARGE_FONT = Font.decode("Arial-24");
+    public static final Font MEDIUM_FONT = Font.decode("Arial-18");
+
+    // =====================================================
+    // STANDARD FONTS
+    // =====================================================
+    public static final Font SMALL_FONT = Font.decode("Arial-12");
+    public static final Font EDITOR_FONT = Font.decode("Monospaced-12");
+    public static final String UNDO = "Undo";
+    public static final String REDO = "Redo";
+
+    // =====================================================
+    // UNDO/REDO NAMES
+    // =====================================================
+    public static final String PRINT = "Print";
+    public static final String FIND = "Find";
+    public static final String FIND_NEXT = "Find Next";
+    public static final String REPLACE = "Replace";
+    // singleton
+    private StructuredSyntaxResources() {
+    }
 
     private static Clipboard getSystemOrAppLevelClipboard() {
         Clipboard systemClipboard = getSystemClipboard();
@@ -51,35 +72,9 @@ public final class StructuredSyntaxResources {
                 mgr.checkPermission(new AWTPermission("accessClipboard"));
             }
             return Toolkit.getDefaultToolkit().getSystemClipboard();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // means we can't get to system clipboard
             return null;
         }
-    }
-
-    // =====================================================
-    // STANDARD FONTS
-    // =====================================================
-
-    public static final Font LARGE_FONT = Font.decode("Arial-24");
-    public static final Font MEDIUM_FONT = Font.decode("Arial-18");
-    public static final Font SMALL_FONT = Font.decode("Arial-12");
-
-    public static final Font EDITOR_FONT = Font.decode("Monospaced-12");
-
-    // =====================================================
-    // UNDO/REDO NAMES
-    // =====================================================
-
-    public static final String UNDO = "Undo";
-    public static final String REDO = "Redo";
-    public static final String PRINT = "Print";
-    public static final String FIND = "Find";
-    public static final String FIND_NEXT = "Find Next";
-    public static final String REPLACE = "Replace";
-
-    // singleton
-    private StructuredSyntaxResources() {
     }
 }

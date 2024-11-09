@@ -159,7 +159,8 @@ final class Groovy8327 {
         '''
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testTapExpressionAsSpecialConstructorArgument2() {
         assertScript '''
             @groovy.transform.ToString
@@ -200,7 +201,8 @@ final class Groovy8327 {
         '''
     }
 
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testWithExpressionAsSpecialConstructorArgument2() {
         assertScript '''
             @groovy.transform.ToString

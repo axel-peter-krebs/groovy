@@ -22,7 +22,7 @@ class EnsureClassAnnotationPresentInStubTest extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-                'Foo.java': '''
+            'Foo.java'      : '''
                     package foo;
 
                     import java.lang.annotation.ElementType;
@@ -35,7 +35,7 @@ class EnsureClassAnnotationPresentInStubTest extends StringSourcesStubTestCase {
                     public @interface Foo {}
                 ''',
 
-                'bar/Bar.groovy': '''
+            'bar/Bar.groovy': '''
                     package bar
 
                     import foo.Foo

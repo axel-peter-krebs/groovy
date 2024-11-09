@@ -44,6 +44,7 @@ public final class UnlimitedConcurrentCache<K, V> implements EvictableCache<K, V
 
     /**
      * Constructs a cache with unlimited size and set its initial capacity
+     *
      * @param initialCapacity the initial capacity
      */
     public UnlimitedConcurrentCache(int initialCapacity) {
@@ -52,6 +53,7 @@ public final class UnlimitedConcurrentCache<K, V> implements EvictableCache<K, V
 
     /**
      * Constructs a cache and initialize the cache with the specified map
+     *
      * @param m the map to initialize the cache
      */
     public UnlimitedConcurrentCache(Map<? extends K, ? extends V> m) {

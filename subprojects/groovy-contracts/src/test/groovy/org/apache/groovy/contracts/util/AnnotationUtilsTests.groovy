@@ -53,7 +53,8 @@ final class AnnotationUtilsTests extends BaseTestClass {
         assert annotationNodes.size() == 1
     }
 
-    @Test // GROOVY-10857
+    @Test
+    // GROOVY-10857
     void hasMetaAnnotations2() {
         def astNodes = new AstBuilder().buildFromString(CompilePhase.SEMANTIC_ANALYSIS, false, '''
             import java.lang.annotation.*

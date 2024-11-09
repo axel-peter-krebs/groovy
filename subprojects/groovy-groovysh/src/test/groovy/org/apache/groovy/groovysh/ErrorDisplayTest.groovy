@@ -23,11 +23,11 @@ import jline.console.completer.CandidateListCompletionHandler
 class ErrorDisplayTest extends ShellRunnerTestSupport {
 
     void testInput() {
-        readerStubber.demand.readLine {'foo'}
-        readerStubber.demand.getCompletionHandler {new CandidateListCompletionHandler()}
+        readerStubber.demand.readLine { 'foo' }
+        readerStubber.demand.getCompletionHandler { new CandidateListCompletionHandler() }
         readerStubber.use {
             shellMocker.use {
-                def shellRunner = new InteractiveShellRunner(new Groovysh(), {'>'})
+                def shellRunner = new InteractiveShellRunner(new Groovysh(), { '>' })
                 shellRunner.run()
                 // no exception
             }
@@ -35,11 +35,11 @@ class ErrorDisplayTest extends ShellRunnerTestSupport {
     }
 
     void testError() {
-        readerStubber.demand.readLine {throw new StringIndexOutOfBoundsException()}
-        readerStubber.demand.getCompletionHandler {new CandidateListCompletionHandler()}
+        readerStubber.demand.readLine { throw new StringIndexOutOfBoundsException() }
+        readerStubber.demand.getCompletionHandler { new CandidateListCompletionHandler() }
         readerStubber.use {
             shellMocker.use {
-                def shellRunner = new InteractiveShellRunner(new Groovysh(), {'>'})
+                def shellRunner = new InteractiveShellRunner(new Groovysh(), { '>' })
                 shellRunner.run()
                 // no exception
             }
@@ -47,11 +47,11 @@ class ErrorDisplayTest extends ShellRunnerTestSupport {
     }
 
     void testError2() {
-        readerStubber.demand.readLine {throw new Throwable('MockException')}
-        readerStubber.demand.getCompletionHandler {new CandidateListCompletionHandler()}
+        readerStubber.demand.readLine { throw new Throwable('MockException') }
+        readerStubber.demand.getCompletionHandler { new CandidateListCompletionHandler() }
         readerStubber.use {
             shellMocker.use {
-                def shellRunner = new InteractiveShellRunner(new Groovysh(), {'>'})
+                def shellRunner = new InteractiveShellRunner(new Groovysh(), { '>' })
                 shellRunner.run()
                 // no exception
             }

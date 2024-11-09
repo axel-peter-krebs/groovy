@@ -25,7 +25,8 @@ public final class FloatingPointMath extends NumberMath {
 
     public static final FloatingPointMath INSTANCE = new FloatingPointMath();
 
-    private FloatingPointMath() {}
+    private FloatingPointMath() {
+    }
 
     @Override
     public Number absImpl(Number number) {

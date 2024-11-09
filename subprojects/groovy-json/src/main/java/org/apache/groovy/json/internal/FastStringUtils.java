@@ -29,28 +29,6 @@ import java.util.ServiceLoader;
  */
 public class FastStringUtils {
 
-    private static class ServiceHolder {
-        static final FastStringService INSTANCE = loadService();
-
-        private static FastStringService loadService() {
-// left classloading very simple in light of potential changes needed for jdk9
-// that means you might need @GrabConfig(systemClassLoader=true) if getting json via grab
-//            ClassLoader rootLoader = DefaultGroovyMethods.getRootLoader(loader);
-            ServiceLoader<FastStringServiceFactory> serviceLoader = ServiceLoader.load(FastStringServiceFactory.class);
-            FastStringService found = null;
-            for (FastStringServiceFactory factory : serviceLoader) {
-                FastStringService service = factory.getService();
-                if (service != null) {
-                    found = service;
-                    if (!(service instanceof DefaultFastStringService)) {
-                        break;
-                    }
-                }
-            }
-            return found;
-        }
-    }
-
     private static FastStringService getService() {
         if (ServiceHolder.INSTANCE == null) {
             throw new RuntimeException("Unable to load FastStringService");
@@ -80,5 +58,27 @@ public class FastStringUtils {
      */
     public static String noCopyStringFromChars(final char[] chars) {
         return getService().noCopyStringFromChars(chars);
+    }
+
+    private static class ServiceHolder {
+        static final FastStringService INSTANCE = loadService();
+
+        private static FastStringService loadService() {
+// left classloading very simple in light of potential changes needed for jdk9
+// that means you might need @GrabConfig(systemClassLoader=true) if getting json via grab
+//            ClassLoader rootLoader = DefaultGroovyMethods.getRootLoader(loader);
+            ServiceLoader<FastStringServiceFactory> serviceLoader = ServiceLoader.load(FastStringServiceFactory.class);
+            FastStringService found = null;
+            for (FastStringServiceFactory factory : serviceLoader) {
+                FastStringService service = factory.getService();
+                if (service != null) {
+                    found = service;
+                    if (!(service instanceof DefaultFastStringService)) {
+                        break;
+                    }
+                }
+            }
+            return found;
+        }
     }
 }

@@ -20,7 +20,7 @@
 beforeVisitClass { ClassNode classNode ->
     def name = classNode.nameWithoutPackage
     if (!(name[0] in 'A'..'Z')) {
-        addStaticTypeError("Class '${name}' doesn't start with an uppercase letter",classNode)
+        addStaticTypeError("Class '${name}' doesn't start with an uppercase letter", classNode)
     }
 }
 // end::event[]

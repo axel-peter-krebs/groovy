@@ -36,7 +36,7 @@ class MarkupAndMethodBug extends GroovyTestCase {
         def builder = NodeBuilder.newInstance()
 
         def root = builder.people() {
-            person(name:getTestName())
+            person(name: getTestName())
         }
 
         assert root != null

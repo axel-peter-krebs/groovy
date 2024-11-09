@@ -26,12 +26,12 @@ import groovy.test.GroovyTestCase
 class ListIteratingTest extends GroovyTestCase {
 
     void testIteratingWithSequences() {
-        def s = [1, 2, 3, 4 ]
+        def s = [1, 2, 3, 4]
         assertSequence(s)
     }
 
     void testIteratingWithSequencesAsParameter() {
-        assertSequence([1, 2, 3, 4 ])
+        assertSequence([1, 2, 3, 4])
     }
 
     void testIteratingWithList() {
@@ -45,18 +45,18 @@ class ListIteratingTest extends GroovyTestCase {
 
     protected void assertSequence(s) {
         def result = 0
-        for ( i in s ) {
+        for (i in s) {
             result = result + i
         }
 
-        assert(result == 10)
-        assert(s.size() == 4)
+        assert (result == 10)
+        assert (s.size() == 4)
 
-        assert(s[2] == 3)
+        assert (s[2] == 3)
         result = 0
-        for ( i in s[1,2] ) {    // or s[1..2]
+        for (i in s[1, 2]) {    // or s[1..2]
             result += i
         }
-        assert(result == 2+3)
+        assert (result == 2 + 3)
     }
 }

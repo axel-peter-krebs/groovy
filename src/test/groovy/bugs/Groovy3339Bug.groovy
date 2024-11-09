@@ -31,11 +31,11 @@ class Groovy3339Bug extends GroovyTestCase {
             println myVal
         }
 
-        while (evaluate2({10})) {
+        while (evaluate2({ 10 })) {
             // do nothing
         }
 
-        synchronized (evaluate({10})) {
+        synchronized (evaluate({ 10 })) {
             // do nothing
         }
     }

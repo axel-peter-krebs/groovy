@@ -46,7 +46,7 @@ class LoopsSTCTest extends StaticTypeCheckingTestCase {
                 x = foo(x)
             }
         ''',
-        'Cannot find matching method'
+            'Cannot find matching method'
     }
 
     // GROOVY-5258
@@ -60,7 +60,7 @@ class LoopsSTCTest extends StaticTypeCheckingTestCase {
                 x = foo(x)
             }
         ''',
-        'Cannot find matching method'
+            'Cannot find matching method'
     }
 
     // GROOVY-5258
@@ -75,7 +75,7 @@ class LoopsSTCTest extends StaticTypeCheckingTestCase {
                 x = foo(x)
             }
         ''',
-        'Cannot find matching method'
+            'Cannot find matching method'
     }
 
     // GROOVY-5258
@@ -91,7 +91,7 @@ class LoopsSTCTest extends StaticTypeCheckingTestCase {
                 x = y
             }
         ''',
-        'Cannot find matching method'
+            'Cannot find matching method'
     }
 
     // GROOVY-5258
@@ -107,7 +107,7 @@ class LoopsSTCTest extends StaticTypeCheckingTestCase {
                 x = y
             }
         ''',
-        'Cannot find matching method'
+            'Cannot find matching method'
     }
 
     // GROOVY-5587

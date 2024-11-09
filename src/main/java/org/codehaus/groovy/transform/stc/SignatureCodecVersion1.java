@@ -193,7 +193,7 @@ public class SignatureCodecVersion1 implements SignatureCodec {
                         }
                     }
                     GenericsType gt = new GenericsType(
-                            type, ups, lb
+                        type, ups, lb
                     );
                     gt.setPlaceholder(placeholder);
                     gt.setWildcard(wildcard);
@@ -204,15 +204,33 @@ public class SignatureCodecVersion1 implements SignatureCodec {
         } else {
             // primitive type
             switch (typeCode) {
-                case 'I': result = int_TYPE; break;
-                case 'Z': result = boolean_TYPE; break;
-                case 'B': result = byte_TYPE; break;
-                case 'C': result = char_TYPE; break;
-                case 'S': result = short_TYPE; break;
-                case 'D': result = double_TYPE; break;
-                case 'F': result = float_TYPE; break;
-                case 'J': result = long_TYPE; break;
-                case 'V': result = VOID_TYPE; break;
+                case 'I':
+                    result = int_TYPE;
+                    break;
+                case 'Z':
+                    result = boolean_TYPE;
+                    break;
+                case 'B':
+                    result = byte_TYPE;
+                    break;
+                case 'C':
+                    result = char_TYPE;
+                    break;
+                case 'S':
+                    result = short_TYPE;
+                    break;
+                case 'D':
+                    result = double_TYPE;
+                    break;
+                case 'F':
+                    result = float_TYPE;
+                    break;
+                case 'J':
+                    result = long_TYPE;
+                    break;
+                case 'V':
+                    result = VOID_TYPE;
+                    break;
             }
         }
         return result;
@@ -221,7 +239,7 @@ public class SignatureCodecVersion1 implements SignatureCodec {
     @Override
     public ClassNode decode(final String signature) {
         DataInputStream dis = new DataInputStream(
-                new ByteArrayInputStream(EncodingGroovyMethods.decodeBase64(signature)));
+            new ByteArrayInputStream(EncodingGroovyMethods.decodeBase64(signature)));
         try {
             return doDecode(dis);
         } catch (IOException e) {

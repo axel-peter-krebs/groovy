@@ -60,7 +60,7 @@ class MyTestCase extends GroovyTestCase {
 
     // tag::should_fail_without_class[]
     void testInvalidIndexAccess1() {
-        def numbers = [1,2,3,4]
+        def numbers = [1, 2, 3, 4]
         shouldFail {
             numbers.get(4)
         }
@@ -69,7 +69,7 @@ class MyTestCase extends GroovyTestCase {
 
     // tag::should_fail_with_class[]
     void testInvalidIndexAccess2() {
-        def numbers = [1,2,3,4]
+        def numbers = [1, 2, 3, 4]
         shouldFail IndexOutOfBoundsException, {
             numbers.get(4)
         }
@@ -78,7 +78,7 @@ class MyTestCase extends GroovyTestCase {
 
     // tag::should_fail_with_msg[]
     void testInvalidIndexAccess3() {
-        def numbers = [1,2,3,4]
+        def numbers = [1, 2, 3, 4]
         def msg = shouldFail IndexOutOfBoundsException, {
             numbers.get(4)
         }

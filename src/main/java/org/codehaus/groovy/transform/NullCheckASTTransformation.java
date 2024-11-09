@@ -62,6 +62,37 @@ public class NullCheckASTTransformation extends AbstractASTTransformation {
     private static final ConstructorNode EXCEPTION_STRING_CTOR = EXCEPTION.getDeclaredConstructor(params(param(ClassHelper.STRING_TYPE, "s")));
     private static final String NULL_CHECK_IS_PROCESSED = "NullCheck.isProcessed";
 
+    public static boolean hasIncludeGenerated(ClassNode cNode) {
+        List<AnnotationNode> annotations = cNode.getAnnotations(NULL_CHECK_TYPE);
+        if (annotations.isEmpty()) return false;
+        return hasIncludeGenerated(annotations.get(0));
+    }
+
+    private static boolean hasIncludeGenerated(AnnotationNode node) {
+        final Expression member = node.getMember("includeGenerated");
+        return member instanceof ConstantExpression && ((ConstantExpression) member).getValue().equals(true);
+    }
+
+    public static ThrowStatement makeThrowStmt(final String variableName) {
+        ConstructorCallExpression newException = ctorX(EXCEPTION, constX(variableName + " cannot be null"));
+        newException.putNodeMetaData(DIRECT_METHOD_CALL_TARGET, EXCEPTION_STRING_CTOR); // GROOVY-10178
+        return throwS(newException);
+    }
+
+    /**
+     * Mark a method as already processed.
+     *
+     * @param mn the method node to be considered already processed
+     */
+    public static void markAsProcessed(MethodNode mn) {
+        mn.setNodeMetaData(NULL_CHECK_IS_PROCESSED, Boolean.TRUE);
+    }
+
+    private static boolean isMarkedAsProcessed(MethodNode mn) {
+        Boolean r = mn.getNodeMetaData(NULL_CHECK_IS_PROCESSED);
+        return null != r && r;
+    }
+
     @Override
     public void visit(ASTNode[] nodes, SourceUnit source) {
         init(nodes, source);
@@ -89,17 +120,6 @@ public class NullCheckASTTransformation extends AbstractASTTransformation {
         return memberHasValue(anno, "includeGenerated", true);
     }
 
-    public static boolean hasIncludeGenerated(ClassNode cNode) {
-        List<AnnotationNode> annotations = cNode.getAnnotations(NULL_CHECK_TYPE);
-        if (annotations.isEmpty()) return false;
-        return hasIncludeGenerated(annotations.get(0));
-    }
-
-    private static boolean hasIncludeGenerated(AnnotationNode node) {
-        final Expression member = node.getMember("includeGenerated");
-        return member instanceof ConstantExpression && ((ConstantExpression) member).getValue().equals(true);
-    }
-
     private void adjustMethod(MethodNode mn, boolean includeGenerated) {
         BlockStatement newCode = getCodeAsBlock(mn);
         if (mn.getParameters().length == 0) return;
@@ -125,25 +145,5 @@ public class NullCheckASTTransformation extends AbstractASTTransformation {
             newCode.getStatements().add(startingIndex, ifS(isNullX(varX(p)), makeThrowStmt(p.getName())));
         }
         mn.setCode(newCode);
-    }
-
-    public static ThrowStatement makeThrowStmt(final String variableName) {
-        ConstructorCallExpression newException = ctorX(EXCEPTION, constX(variableName + " cannot be null"));
-        newException.putNodeMetaData(DIRECT_METHOD_CALL_TARGET, EXCEPTION_STRING_CTOR); // GROOVY-10178
-        return throwS(newException);
-    }
-
-    /**
-     * Mark a method as already processed.
-     *
-     * @param mn the method node to be considered already processed
-     */
-    public static void markAsProcessed(MethodNode mn) {
-        mn.setNodeMetaData(NULL_CHECK_IS_PROCESSED, Boolean.TRUE);
-    }
-
-    private static boolean isMarkedAsProcessed(MethodNode mn) {
-        Boolean r = mn.getNodeMetaData(NULL_CHECK_IS_PROCESSED);
-        return null != r && r;
     }
 }

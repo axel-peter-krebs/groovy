@@ -60,15 +60,15 @@ final class StaticCompileClosureGeneratedAnnotationTest {
                 }
             }
         '''
-        Class<?> generatedClosureClass = findGeneratedClosureClasses('MyClass',compileScript(scriptText))[0]
+        Class<?> generatedClosureClass = findGeneratedClosureClasses('MyClass', compileScript(scriptText))[0]
         Collection<Method> callMethods = generatedClosureClass.declaredMethods.findAll { it.name == 'call' }
 
         assert callMethods.size() == 2
         callMethods.each { Method method ->
             assert method.getAnnotation(Generated)
         }
-        assert callMethods.find { it.getParameterTypes() == new Class[] {} }
-        assert callMethods.find { it.getParameterTypes() == new Class[] {Object} }
+        assert callMethods.find { it.getParameterTypes() == new Class[]{} }
+        assert callMethods.find { it.getParameterTypes() == new Class[]{Object} }
     }
 
     /**
@@ -86,12 +86,12 @@ final class StaticCompileClosureGeneratedAnnotationTest {
                 }
             }
         '''
-        Class<?> generatedClosureClass = findGeneratedClosureClasses('MyClass',compileScript(scriptText))[0]
+        Class<?> generatedClosureClass = findGeneratedClosureClasses('MyClass', compileScript(scriptText))[0]
         Collection<Method> callMethods = generatedClosureClass.declaredMethods.findAll { it.name == 'call' }
 
         assert callMethods.size() == 1
         assert callMethods[0].getAnnotation(Generated)
-        assert callMethods[0].getParameterTypes() == new Class[] {IntRange}
+        assert callMethods[0].getParameterTypes() == new Class[]{IntRange}
     }
 
     /**
@@ -109,11 +109,11 @@ final class StaticCompileClosureGeneratedAnnotationTest {
                 }
             }
         '''
-        Class<?> generatedClosureClass = findGeneratedClosureClasses('MyClass',compileScript(scriptText))[0]
+        Class<?> generatedClosureClass = findGeneratedClosureClasses('MyClass', compileScript(scriptText))[0]
         Collection<Method> callMethods = generatedClosureClass.declaredMethods.findAll { it.name == 'call' }
 
         assert callMethods.size() == 1
         assert callMethods[0].getAnnotation(Generated)
-        assert callMethods[0].getParameterTypes() == new Class[] {IntRange, Integer}
+        assert callMethods[0].getParameterTypes() == new Class[]{IntRange, Integer}
     }
 }

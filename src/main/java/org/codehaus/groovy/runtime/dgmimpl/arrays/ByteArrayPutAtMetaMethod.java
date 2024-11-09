@@ -61,7 +61,7 @@ public class ByteArrayPutAtMetaMethod extends ArrayPutAtMetaMethod {
         @Override
         public Object call(Object receiver, Object[] args) throws Throwable {
             if ((receiver instanceof byte[] && args[0] instanceof Integer && args[1] instanceof Byte)
-                    && checkPojoMetaClass()) {
+                && checkPojoMetaClass()) {
                 final byte[] objects = (byte[]) receiver;
                 objects[normaliseIndex((Integer) args[0], objects.length)] = (Byte) args[1];
                 return null;
@@ -76,8 +76,7 @@ public class ByteArrayPutAtMetaMethod extends ArrayPutAtMetaMethod {
                     final byte[] objects = (byte[]) receiver;
                     objects[normaliseIndex((Integer) arg1, objects.length)] = (Byte) arg2;
                     return null;
-                }
-                catch (ClassCastException e) {
+                } catch (ClassCastException e) {
                     if ((receiver instanceof byte[]) && (arg1 instanceof Integer))
                         throw e;
                 }

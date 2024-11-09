@@ -39,6 +39,7 @@ import static org.codehaus.groovy.classgen.asm.BytecodeHelper.getMethodDescripto
 
 /**
  * Represents functional interface writer which contains some common methods to complete generating bytecode
+ *
  * @since 3.0.0
  */
 public interface AbstractFunctionalInterfaceWriter {
@@ -49,44 +50,44 @@ public interface AbstractFunctionalInterfaceWriter {
 
     default Handle createBootstrapMethod(final boolean isInterface, final boolean serializable) {
         return new Handle(
-                Opcodes.H_INVOKESTATIC,
-                "java/lang/invoke/LambdaMetafactory",
-                serializable ? "altMetafactory" : "metafactory",
-                serializable ? "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite;"
-                             : "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
-                false // GROOVY-8299, GROOVY-8989, GROOVY-11265
+            Opcodes.H_INVOKESTATIC,
+            "java/lang/invoke/LambdaMetafactory",
+            serializable ? "altMetafactory" : "metafactory",
+            serializable ? "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;[Ljava/lang/Object;)Ljava/lang/invoke/CallSite;"
+                : "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;",
+            false // GROOVY-8299, GROOVY-8989, GROOVY-11265
         );
     }
 
     default Object[] createBootstrapMethodArguments(final String abstractMethodDesc, final int insn, final ClassNode methodOwner, final MethodNode methodNode, final Parameter[] parameters, final boolean serializable) {
         ClassNode returnType = methodNode.getReturnType();
         switch (Type.getReturnType(abstractMethodDesc).getSort()) {
-          case Type.BOOLEAN:
-            if (returnType.isGenericsPlaceHolder()) returnType = ClassHelper.Boolean_TYPE; // GROOVY-10975
-            break;
-          case Type.BYTE:
-            if (returnType.isGenericsPlaceHolder()) returnType = ClassHelper.Byte_TYPE;
-            break;
-          case Type.CHAR:
-            if (returnType.isGenericsPlaceHolder()) returnType = ClassHelper.Character_TYPE;
-            break;
-          case Type.DOUBLE:
-            if (returnType.isGenericsPlaceHolder()) returnType = ClassHelper.Double_TYPE;
-            break;
-          case Type.FLOAT:
-            if (returnType.isGenericsPlaceHolder()) returnType = ClassHelper.Float_TYPE;
-            break;
-          case Type.INT:
-            if (returnType.isGenericsPlaceHolder()) returnType = ClassHelper.Integer_TYPE;
-            break;
-          case Type.LONG:
-            if (returnType.isGenericsPlaceHolder()) returnType = ClassHelper.Long_TYPE;
-            break;
-          case Type.SHORT:
-            if (returnType.isGenericsPlaceHolder()) returnType = ClassHelper.Short_TYPE;
-            break;
-          case Type.VOID:
-            returnType = ClassHelper.VOID_TYPE; // GROOVY-10933
+            case Type.BOOLEAN:
+                if (returnType.isGenericsPlaceHolder()) returnType = ClassHelper.Boolean_TYPE; // GROOVY-10975
+                break;
+            case Type.BYTE:
+                if (returnType.isGenericsPlaceHolder()) returnType = ClassHelper.Byte_TYPE;
+                break;
+            case Type.CHAR:
+                if (returnType.isGenericsPlaceHolder()) returnType = ClassHelper.Character_TYPE;
+                break;
+            case Type.DOUBLE:
+                if (returnType.isGenericsPlaceHolder()) returnType = ClassHelper.Double_TYPE;
+                break;
+            case Type.FLOAT:
+                if (returnType.isGenericsPlaceHolder()) returnType = ClassHelper.Float_TYPE;
+                break;
+            case Type.INT:
+                if (returnType.isGenericsPlaceHolder()) returnType = ClassHelper.Integer_TYPE;
+                break;
+            case Type.LONG:
+                if (returnType.isGenericsPlaceHolder()) returnType = ClassHelper.Long_TYPE;
+                break;
+            case Type.SHORT:
+                if (returnType.isGenericsPlaceHolder()) returnType = ClassHelper.Short_TYPE;
+                break;
+            case Type.VOID:
+                returnType = ClassHelper.VOID_TYPE; // GROOVY-10933
         }
 
         Object[] arguments = !serializable ? new Object[3] : new Object[]{null, null, null, 5, 0};
@@ -94,11 +95,11 @@ public interface AbstractFunctionalInterfaceWriter {
         arguments[0] = Type.getMethodType(abstractMethodDesc);
 
         arguments[1] = new Handle(
-                insn, // H_INVOKESTATIC or H_INVOKEVIRTUAL or H_INVOKEINTERFACE (GROOVY-9853)
-                getClassInternalName(methodOwner.getName()),
-                methodNode.getName(),
-                getMethodDescriptor(methodNode),
-                methodOwner.isInterface());
+            insn, // H_INVOKESTATIC or H_INVOKEVIRTUAL or H_INVOKEINTERFACE (GROOVY-9853)
+            getClassInternalName(methodOwner.getName()),
+            methodNode.getName(),
+            getMethodDescriptor(methodNode),
+            methodOwner.isInterface());
 
         arguments[2] = Type.getMethodType(getMethodDescriptor(returnType, parameters));
 
@@ -128,7 +129,7 @@ public interface AbstractFunctionalInterfaceWriter {
             // (1) java.lang.invoke.LambdaConversionException: Type mismatch for instantiated parameter 0: class java.lang.Integer is not a subtype of int
             // (2) java.lang.BootstrapMethodError: bootstrap method initialization exception
             if (!(isDynamicTyped(parameterType) && isPrimitiveType(targetType)) // (1)
-                    && (parameterType.equals(getUnwrapper(parameterType)) || inferredType.equals(getWrapper(inferredType)))) { // (2)
+                && (parameterType.equals(getUnwrapper(parameterType)) || inferredType.equals(getWrapper(inferredType)))) { // (2)
                 // The non-primitive type and primitive type are not allowed to mix since Java 9+
                 // java.lang.invoke.LambdaConversionException: Type mismatch for instantiated parameter 0: int is not a subtype of class java.lang.Object
                 type = getWrapper(inferredType).getPlainNodeReference();

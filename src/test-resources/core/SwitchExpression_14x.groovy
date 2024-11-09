@@ -45,6 +45,7 @@ def test() {
     }
     assert 'cbaz' == r
 }
+
 test()
 
 @groovy.transform.CompileStatic
@@ -76,4 +77,5 @@ def testCS() {
     }
     assert 'cbaz' == r
 }
+
 testCS()

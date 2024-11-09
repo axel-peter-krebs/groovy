@@ -16,7 +16,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 #
-
 # DO NOT REMOVE BELOW!
 # IT IS A WORKAROUND FOR 2 DESCRIPTORS ON CLASSPATH!
 moduleName=Test module

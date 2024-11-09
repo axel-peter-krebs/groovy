@@ -33,15 +33,15 @@ import java.security.PrivilegedAction;
  * Sets the RootLoader as reference.
  * Re-execution of this task will set a new instance of RootLoader for
  * the reference.
- *
+ * <p>
  * arguments:
  * <ul>
  * <li>ref</li>
  * <li>classpath</li>
  * </ul>
- *
+ * <p>
  * all arguments are required.
- *
+ * <p>
  * As ant requires an AntClassLoader as reference, this will create a RootLoader
  * and set an AntClassLoader as child and stored in the reference. The AntClassLoader
  * instance will not have a classpath nor will it have access to the classpath somehow,
@@ -49,7 +49,7 @@ import java.security.PrivilegedAction;
  * multiple times and using them at the same time, this task will filter out the ant jars
  * and the commons-logging jars. This only works if the ant jars are starting with "ant-" and
  * the logging jar starts with "commons-logging-".
- *
+ * <p>
  * This was needed because if ant wants to access a task argument that uses for example a Path
  * it looks for a matching method which includes a matching class. But two classes of the same name
  * with different class loaders are different, so ant would not be able to find the method.
@@ -90,7 +90,7 @@ public class RootLoaderRef extends MatchingTask {
 
         @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
         AntClassLoader loader = java.security.AccessController.doPrivileged((PrivilegedAction<AntClassLoader>) () ->
-                new AntClassLoader(new RootLoader(lc), true));
+            new AntClassLoader(new RootLoader(lc), true));
 
         project.addReference(name, loader);
     }

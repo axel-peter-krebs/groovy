@@ -436,7 +436,7 @@ public class XmlUtil {
      *
      * @param orig the original String
      * @return A new string in which all characters that require escaping
-     *         have been replaced with the corresponding XML entities.
+     * have been replaced with the corresponding XML entities.
      * @see #escapeControlCharacters(String)
      */
     public static String escapeXml(String orig) {
@@ -470,14 +470,14 @@ public class XmlUtil {
      *
      * @param orig the original String
      * @return A new string in which all characters that require escaping
-     *         have been replaced with the corresponding XML entities.
+     * have been replaced with the corresponding XML entities.
      * @see #escapeXml(String)
      */
     public static String escapeControlCharacters(String orig) {
         return StringGroovyMethods.collectReplacements(orig, new Closure<String>(null) {
             public String doCall(Character arg) {
                 if (arg < 0x20) {
-                        return "&#" + (int) arg + ";";
+                    return "&#" + (int) arg + ";";
                 }
                 return null;
             }
@@ -548,8 +548,7 @@ public class XmlUtil {
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
             transformer.setOutputProperty(OutputKeys.MEDIA_TYPE, "text/xml");
             transformer.transform(source, target);
-        }
-        catch (TransformerException e) {
+        } catch (TransformerException e) {
             throw new GroovyRuntimeException(e.getMessage());
         }
     }
@@ -566,8 +565,7 @@ public class XmlUtil {
     public static void setFeatureQuietly(TransformerFactory factory, String feature, boolean value) {
         try {
             factory.setFeature(feature, value);
-        }
-        catch (TransformerConfigurationException ignored) {
+        } catch (TransformerConfigurationException ignored) {
             // feature is not supported, ignore
         }
     }
@@ -575,8 +573,7 @@ public class XmlUtil {
     public static void setFeatureQuietly(DocumentBuilderFactory factory, String feature, boolean value) {
         try {
             factory.setFeature(feature, value);
-        }
-        catch (ParserConfigurationException ignored) {
+        } catch (ParserConfigurationException ignored) {
             // feature is not supported, ignore
         }
     }
@@ -584,8 +581,7 @@ public class XmlUtil {
     public static void setFeatureQuietly(SAXParserFactory factory, String feature, boolean value) {
         try {
             factory.setFeature(feature, value);
-        }
-        catch (ParserConfigurationException | SAXNotSupportedException | SAXNotRecognizedException ignored) {
+        } catch (ParserConfigurationException | SAXNotSupportedException | SAXNotRecognizedException ignored) {
             // feature is not supported, ignore
         }
     }

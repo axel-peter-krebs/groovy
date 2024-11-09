@@ -105,16 +105,16 @@ class QueryableCollection<T> implements Queryable<T>, Serializable {
     @Override
     public <U> Queryable<Tuple2<T, U>> innerJoin(Queryable<? extends U> queryable, BiPredicate<? super T, ? super U> joiner) {
         Stream<Tuple2<T, U>> stream =
-                this.stream()
-                        .flatMap(p -> {
-                            if (queryable instanceof QueryableCollection) {
-                                ((QueryableCollection) queryable).makeReusable();
-                            }
+            this.stream()
+                .flatMap(p -> {
+                    if (queryable instanceof QueryableCollection) {
+                        ((QueryableCollection) queryable).makeReusable();
+                    }
 
-                            return queryable.stream()
-                                    .filter(c -> joiner.test(p, c))
-                                    .map(c -> tuple(p, c));
-                        });
+                    return queryable.stream()
+                        .filter(c -> joiner.test(p, c))
+                        .map(c -> tuple(p, c));
+                });
 
         return from(stream);
     }
@@ -122,7 +122,8 @@ class QueryableCollection<T> implements Queryable<T>, Serializable {
     @Override
     public <U> Queryable<Tuple2<T, U>> innerHashJoin(Queryable<? extends U> queryable, Function<? super T, ?> fieldsExtractor1, Function<? super U, ?> fieldsExtractor2) {
         final ConcurrentObjectHolder<Map<Integer, List<Candidate<U>>>> hashTableHolder = new ConcurrentObjectHolder<>(createHashTableSupplier(queryable, fieldsExtractor2));
-        if (isParallel()) hashTableHolder.getObject(); // avoid nested parallel querying, which results in deadlock sometimes
+        if (isParallel())
+            hashTableHolder.getObject(); // avoid nested parallel querying, which results in deadlock sometimes
         Stream<Tuple2<T, U>> stream = this.stream().flatMap(p -> {
             // build hash table
             Map<Integer, List<Candidate<U>>> hashTable = hashTableHolder.getObject();
@@ -136,9 +137,11 @@ class QueryableCollection<T> implements Queryable<T>, Serializable {
 
     private static final class Bucket<E> extends ArrayList<E> {
         private static final long serialVersionUID = 2813676753531316403L;
+
         Bucket(int initialCapacity) {
             super(initialCapacity);
         }
+
         static <E> Bucket<E> singletonBucket(E o) {
             Bucket<E> bucket = new Bucket<>(1);
             bucket.add(o);
@@ -165,12 +168,12 @@ class QueryableCollection<T> implements Queryable<T>, Serializable {
                 return oldBucket;
             };
             Collector<Candidate<U>, ?, ? extends Map<Integer, List<Candidate<U>>>> candidateMapCollector =
-                    isParallel() ? Collectors.toConcurrentMap(keyMapper, valueMapper, mergeFunction)
-                                 : Collectors.toMap(keyMapper, valueMapper, mergeFunction);
+                isParallel() ? Collectors.toConcurrentMap(keyMapper, valueMapper, mergeFunction)
+                    : Collectors.toMap(keyMapper, valueMapper, mergeFunction);
 
             return queryable.stream()
-                    .map(e -> new Candidate<U>(e, fieldsExtractor2.apply(e)))
-                    .collect(candidateMapCollector);
+                .map(e -> new Candidate<U>(e, fieldsExtractor2.apply(e)))
+                .collect(candidateMapCollector);
         };
     }
 
@@ -225,15 +228,15 @@ class QueryableCollection<T> implements Queryable<T>, Serializable {
     @Override
     public <U> Queryable<Tuple2<T, U>> crossJoin(Queryable<? extends U> queryable) {
         Stream<Tuple2<T, U>> stream =
-                this.stream()
-                        .flatMap(p -> {
-                            if (queryable instanceof QueryableCollection) {
-                                ((QueryableCollection) queryable).makeReusable();
-                            }
+            this.stream()
+                .flatMap(p -> {
+                    if (queryable instanceof QueryableCollection) {
+                        ((QueryableCollection) queryable).makeReusable();
+                    }
 
-                            return queryable.stream()
-                                    .map(c -> tuple(p, c));
-                        });
+                    return queryable.stream()
+                        .map(c -> tuple(p, c));
+                });
 
         return from(stream);
     }
@@ -248,15 +251,15 @@ class QueryableCollection<T> implements Queryable<T>, Serializable {
     @Override
     public Queryable<Tuple2<?, Queryable<T>>> groupBy(Function<? super T, ?> classifier, Predicate<? super Tuple2<?, Queryable<? extends T>>> having) {
         Collector<T, ?, ? extends Map<?, List<T>>> groupingBy =
-                isParallel() ? Collectors.groupingByConcurrent(classifier, Collectors.toList())
-                             : Collectors.groupingBy(classifier, Collectors.toList());
+            isParallel() ? Collectors.groupingByConcurrent(classifier, Collectors.toList())
+                : Collectors.groupingBy(classifier, Collectors.toList());
 
         Stream<Tuple2<?, Queryable<T>>> stream =
-                this.stream()
-                        .collect(groupingBy)
-                        .entrySet().stream()
-                        .filter(m -> null == having || having.test(tuple(m.getKey(), from(m.getValue()))))
-                        .map(m -> tuple(m.getKey(), from(m.getValue())));
+            this.stream()
+                .collect(groupingBy)
+                .entrySet().stream()
+                .filter(m -> null == having || having.test(tuple(m.getKey(), from(m.getValue()))))
+                .map(m -> tuple(m.getKey(), from(m.getValue())));
 
         return Group.of(stream);
     }
@@ -285,9 +288,9 @@ class QueryableCollection<T> implements Queryable<T>, Serializable {
             Comparator<U> ascOrDesc = order.isAsc() ? naturalOrder() : reverseOrder();
             Comparator<U> nullsLastOrFirst = order.isNullsLast() ? nullsLast(ascOrDesc) : nullsFirst(ascOrDesc);
             comparator =
-                    0 == i
-                            ? Comparator.comparing(order.getKeyExtractor(), nullsLastOrFirst)
-                            : comparator.thenComparing(order.getKeyExtractor(), nullsLastOrFirst);
+                0 == i
+                    ? Comparator.comparing(order.getKeyExtractor(), nullsLastOrFirst)
+                    : comparator.thenComparing(order.getKeyExtractor(), nullsLastOrFirst);
         }
         return comparator;
     }
@@ -389,33 +392,33 @@ class QueryableCollection<T> implements Queryable<T>, Serializable {
     @Override
     public <U> Long count(Function<? super T, ? extends U> mapper) {
         return agg(q -> q.stream()
-                .map(mapper)
-                .filter(Objects::nonNull)
-                .count());
+            .map(mapper)
+            .filter(Objects::nonNull)
+            .count());
     }
 
     @Override
     public BigDecimal sum(Function<? super T, ? extends Number> mapper) {
         return agg(q -> this.stream()
-                .map(e -> {
-                    Number n = mapper.apply(e);
-                    if (null == n) return BigDecimal.ZERO;
+            .map(e -> {
+                Number n = mapper.apply(e);
+                if (null == n) return BigDecimal.ZERO;
 
-                    return toBigDecimal(n);
-                }).reduce(BigDecimal.ZERO, BigDecimal::add));
+                return toBigDecimal(n);
+            }).reduce(BigDecimal.ZERO, BigDecimal::add));
     }
 
     @Override
     public BigDecimal avg(Function<? super T, ? extends Number> mapper) {
         Object[] result = agg(q -> q.stream()
-                .map(mapper)
-                .filter(Objects::nonNull)
-                .map(NumberMath::toBigDecimal)
-                .reduce(new Object[] {0L, BigDecimal.ZERO}, (r, e) -> {
-                    r[0] = (Long) r[0] + 1;
-                    r[1] = ((BigDecimal) r[1]).add(e);
-                    return r;
-                }, (o1, o2) -> o1)
+            .map(mapper)
+            .filter(Objects::nonNull)
+            .map(NumberMath::toBigDecimal)
+            .reduce(new Object[]{0L, BigDecimal.ZERO}, (r, e) -> {
+                r[0] = (Long) r[0] + 1;
+                r[1] = ((BigDecimal) r[1]).add(e);
+                return r;
+            }, (o1, o2) -> o1)
         );
 
         return ((BigDecimal) result[1]).divide(toBigDecimal((Long) result[0]), 16, RoundingMode.HALF_UP);
@@ -424,19 +427,19 @@ class QueryableCollection<T> implements Queryable<T>, Serializable {
     @Override
     public <U extends Comparable<? super U>> U min(Function<? super T, ? extends U> mapper) {
         return agg(q -> q.stream()
-                .map(mapper)
-                .filter(Objects::nonNull)
-                .min(Comparator.comparing(Function.identity()))
-                .orElse(null));
+            .map(mapper)
+            .filter(Objects::nonNull)
+            .min(Comparator.comparing(Function.identity()))
+            .orElse(null));
     }
 
     @Override
     public <U extends Comparable<? super U>> U max(Function<? super T, ? extends U> mapper) {
         return agg(q -> q.stream()
-                .map(mapper)
-                .filter(Objects::nonNull)
-                .max(Comparator.comparing(Function.identity()))
-                .orElse(null));
+            .map(mapper)
+            .filter(Objects::nonNull)
+            .max(Comparator.comparing(Function.identity()))
+            .orElse(null));
     }
 
     @Override
@@ -450,11 +453,11 @@ class QueryableCollection<T> implements Queryable<T>, Serializable {
     @Override
     public BigDecimal median(Function<? super T, ? extends Number> mapper) {
         List<BigDecimal> sortedNumList = agg(q -> q.stream()
-                .map(mapper)
-                .filter(Objects::nonNull)
-                .map(NumberMath::toBigDecimal)
-                .sorted()
-                .collect(Collectors.toList())
+            .map(mapper)
+            .filter(Objects::nonNull)
+            .map(NumberMath::toBigDecimal)
+            .sorted()
+            .collect(Collectors.toList())
         );
 
         int size = sortedNumList.size();
@@ -495,14 +498,14 @@ class QueryableCollection<T> implements Queryable<T>, Serializable {
     private BigDecimal vr(Function<? super T, ? extends Number> mapper, int diff) {
         BigDecimal avg = this.avg(mapper);
         Object[] result = agg(q -> q.stream()
-                .map(mapper)
-                .filter(Objects::nonNull)
-                .map(e -> toBigDecimal(NumberNumberMinus.minus(e, avg)).pow(2))
-                .reduce(new Object[]{0L, BigDecimal.ZERO}, (r, e) -> {
-                    r[0] = (Long) r[0] + 1;
-                    r[1] = ((BigDecimal) r[1]).add(e);
-                    return r;
-                }, (o1, o2) -> o1));
+            .map(mapper)
+            .filter(Objects::nonNull)
+            .map(e -> toBigDecimal(NumberNumberMinus.minus(e, avg)).pow(2))
+            .reduce(new Object[]{0L, BigDecimal.ZERO}, (r, e) -> {
+                r[0] = (Long) r[0] + 1;
+                r[1] = ((BigDecimal) r[1]).add(e);
+                return r;
+            }, (o1, o2) -> o1));
 
         return ((BigDecimal) result[1]).divide(toBigDecimal((Long) result[0] - diff), 16, RoundingMode.HALF_UP);
     }
@@ -520,34 +523,35 @@ class QueryableCollection<T> implements Queryable<T>, Serializable {
 
     private static <T, U> Queryable<Tuple2<T, U>> outerJoin(Queryable<? extends T> queryable1, Queryable<? extends U> queryable2, BiPredicate<? super T, ? super U> joiner) {
         Stream<Tuple2<T, U>> stream =
-                queryable1.stream()
-                        .flatMap(p -> {
-                            if (queryable2 instanceof QueryableCollection) {
-                                ((QueryableCollection) queryable2).makeReusable();
-                            }
+            queryable1.stream()
+                .flatMap(p -> {
+                    if (queryable2 instanceof QueryableCollection) {
+                        ((QueryableCollection) queryable2).makeReusable();
+                    }
 
-                            List<Tuple2<T, U>> joinResultList =
-                                    queryable2.stream()
-                                            .filter(c -> joiner.test(p, c))
-                                            .map(c -> tuple((T) p, (U) c))
-                                            .collect(Collectors.toList());
+                    List<Tuple2<T, U>> joinResultList =
+                        queryable2.stream()
+                            .filter(c -> joiner.test(p, c))
+                            .map(c -> tuple((T) p, (U) c))
+                            .collect(Collectors.toList());
 
-                            return joinResultList.isEmpty() ? Stream.of(tuple(p, null)) : joinResultList.stream();
-                        });
+                    return joinResultList.isEmpty() ? Stream.of(tuple(p, null)) : joinResultList.stream();
+                });
 
         return from(stream);
     }
 
     private static <T, U> Queryable<Tuple2<T, U>> outerHashJoin(Queryable<? extends T> queryable1, Queryable<? extends U> queryable2, Function<? super T, ?> fieldsExtractor1, Function<? super U, ?> fieldsExtractor2) {
         final ConcurrentObjectHolder<Map<Integer, List<Candidate<U>>>> hashTableHolder = new ConcurrentObjectHolder<>(createHashTableSupplier(queryable2, fieldsExtractor2));
-        if (isParallel()) hashTableHolder.getObject(); // avoid nested parallel querying, which results in deadlock sometimes
+        if (isParallel())
+            hashTableHolder.getObject(); // avoid nested parallel querying, which results in deadlock sometimes
         Stream<Tuple2<T, U>> stream = queryable1.stream().flatMap(p -> {
             // build hash table
             Map<Integer, List<Candidate<U>>> hashTable = hashTableHolder.getObject();
 
             // probe the hash table
             List<Tuple2<T, U>> joinResultList =
-                    probeHashTable(hashTable, (T) p, fieldsExtractor1).collect(Collectors.toList());
+                probeHashTable(hashTable, (T) p, fieldsExtractor1).collect(Collectors.toList());
 
             return joinResultList.isEmpty() ? Stream.of(tuple(p, null)) : joinResultList.stream();
         });
@@ -566,7 +570,7 @@ class QueryableCollection<T> implements Queryable<T>, Serializable {
         if (isParallel()) stream = stream.parallel();
 
         return stream.filter(c -> Objects.equals(otherFields, c.extracted))
-                     .map(c -> tuple(p, c.original));
+            .map(c -> tuple(p, c.original));
     }
 
     @Override
@@ -615,35 +619,35 @@ class QueryableCollection<T> implements Queryable<T>, Serializable {
         final String partitionId = idTuple.getV1();
 
         Partition<Tuple2<T, Long>> partition = partitionCache.computeIfAbsent(
-                new PartitionCacheKey(windowDefinition.partitionBy().apply(currentRecord.getV1()), partitionId),
-                partitionCacheKey -> from(Collections.singletonList(currentRecord)).innerHashJoin(
-                        allPartitionCache.computeIfAbsent(partitionId, pid -> {
-                            long[] rn = new long[]{0L};
-                            List<Tuple2<T, Long>> listWithIndex =
-                                    this.toList().stream()
-                                            .map(e -> Tuple.tuple(e, rn[0]++))
-                                            .collect(Collectors.toList());
+            new PartitionCacheKey(windowDefinition.partitionBy().apply(currentRecord.getV1()), partitionId),
+            partitionCacheKey -> from(Collections.singletonList(currentRecord)).innerHashJoin(
+                    allPartitionCache.computeIfAbsent(partitionId, pid -> {
+                        long[] rn = new long[]{0L};
+                        List<Tuple2<T, Long>> listWithIndex =
+                            this.toList().stream()
+                                .map(e -> Tuple.tuple(e, rn[0]++))
+                                .collect(Collectors.toList());
 
-                            final Queryable<Tuple2<?, Partition<Tuple2<T, Long>>>> q =
-                                    from(listWithIndex)
-                                            .groupBy(windowDefinition.partitionBy().compose(Tuple2::getV1))
-                                            .select((e, x) -> Tuple.tuple(e.getV1(), Partition.of(e.getV2().toList())));
-                            if (q instanceof QueryableCollection) {
-                                ((QueryableCollection) q).makeReusable();
-                            }
-                            return q;
-                        }), a -> partitionCacheKey.partitionKey, Tuple2::getV1
+                        final Queryable<Tuple2<?, Partition<Tuple2<T, Long>>>> q =
+                            from(listWithIndex)
+                                .groupBy(windowDefinition.partitionBy().compose(Tuple2::getV1))
+                                .select((e, x) -> Tuple.tuple(e.getV1(), Partition.of(e.getV2().toList())));
+                        if (q instanceof QueryableCollection) {
+                            ((QueryableCollection) q).makeReusable();
+                        }
+                        return q;
+                    }), a -> partitionCacheKey.partitionKey, Tuple2::getV1
                 ).select((e, q) -> e.getV2().getV2())
-                        .stream()
-                        .findFirst()
-                        .orElse(Partition.emptyPartition())
+                .stream()
+                .findFirst()
+                .orElse(Partition.emptyPartition())
         );
 
         final String orderId = idTuple.getV2();
         final SortedPartitionCacheKey<T> sortedPartitionCacheKey = new SortedPartitionCacheKey<>(partition, orderId);
         Partition<Tuple2<T, Long>> sortedPartition = sortedPartitionCache.computeIfAbsent(
-                sortedPartitionCacheKey,
-                sortedPartitionId -> Partition.of(partition.orderBy(composeOrders(windowDefinition)).toList())
+            sortedPartitionCacheKey,
+            sortedPartitionId -> Partition.of(partition.orderBy(composeOrders(windowDefinition)).toList())
         );
 
         return Window.of(currentRecord, sortedPartition, windowDefinition);

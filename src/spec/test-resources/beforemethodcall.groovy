@@ -19,8 +19,8 @@
 // tag::event[]
 beforeMethodCall { call ->
     if (isMethodCallExpression(call)
-            && call.methodAsString=='toUpperCase') {
-        addStaticTypeError('Not allowed',call)
+        && call.methodAsString == 'toUpperCase') {
+        addStaticTypeError('Not allowed', call)
         handled = true
     }
 }

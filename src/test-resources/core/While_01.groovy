@@ -16,54 +16,57 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-while(true) assert true
+while (true) assert true
 
-while(
-        true
+while (
+    true
 ) assert true
 
-while(true)
+while (true)
     assert true
 
-while(true) {
+while (true) {
     break;
 }
 
 out:
-while(true) {
+while (true) {
     break out;
 }
 
 out1:
-while(true) {
+while (true) {
     break out1;
-    out2: while (true) {
+    out2:
+    while (true) {
         break out2;
     }
 }
 
 
-while(true) {
+while (true) {
     continue
 }
 
 out:
-while(true) {
+while (true) {
     continue out;
 }
 
 out1:
-while(true) {
+while (true) {
     continue out1;
-    out2: while (true) {
+    out2:
+    while (true) {
         continue out2;
     }
 }
 
 out1:
-while(true) {
+while (true) {
     continue out1;
-    out2: while (true) {
+    out2:
+    while (true) {
         break out2;
     }
 }
@@ -72,5 +75,5 @@ while(true) {
 while (false)
     int number = 1
 
-while(true);
+while (true);
 

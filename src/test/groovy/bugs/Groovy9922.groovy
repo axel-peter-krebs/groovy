@@ -32,7 +32,7 @@ final class Groovy9922 {
     private static String executeJpsSafe() {
         try {
             "jps".execute().text
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             // some environments, e.g. CI server may not have JPS
             null
         }

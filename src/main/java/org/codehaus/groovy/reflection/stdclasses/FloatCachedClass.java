@@ -55,17 +55,17 @@ public class FloatCachedClass extends NumberCachedClass {
     @Override
     public boolean isAssignableFrom(Class classToTransformFrom) {
         return (allowNull && classToTransformFrom == null)
-                || classToTransformFrom == Float.class
-                || classToTransformFrom == Integer.class
-                || classToTransformFrom == Long.class
-                || classToTransformFrom == Short.class
-                || classToTransformFrom == Byte.class
-                || classToTransformFrom == Float.TYPE
-                || classToTransformFrom == Integer.TYPE
-                || classToTransformFrom == Long.TYPE
-                || classToTransformFrom == Short.TYPE
-                || classToTransformFrom == Byte.TYPE
-                || classToTransformFrom == BigDecimal.class
-                || classToTransformFrom == BigInteger.class;
+            || classToTransformFrom == Float.class
+            || classToTransformFrom == Integer.class
+            || classToTransformFrom == Long.class
+            || classToTransformFrom == Short.class
+            || classToTransformFrom == Byte.class
+            || classToTransformFrom == Float.TYPE
+            || classToTransformFrom == Integer.TYPE
+            || classToTransformFrom == Long.TYPE
+            || classToTransformFrom == Short.TYPE
+            || classToTransformFrom == Byte.TYPE
+            || classToTransformFrom == BigDecimal.class
+            || classToTransformFrom == BigInteger.class;
     }
 }

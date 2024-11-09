@@ -17,6 +17,6 @@
  *  under the License.
  */
 a = 1
-[1].each { 
-    a = it 
+[1].each {
+    a = it
 }

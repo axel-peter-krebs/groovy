@@ -23,7 +23,10 @@ package groovy.swing.model;
  */
 public interface ValueModel {
     Object getValue();
+
     void setValue(Object value);
+
     Class getType();
+
     boolean isEditable();
 }

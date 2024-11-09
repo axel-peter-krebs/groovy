@@ -44,9 +44,9 @@ import static groovy.test.GroovyAssert.isAtLeastJdk;
  * matter as the tests remove all class files that should not pre-exist from this directory at each step.
  */
 public class GroovycTest extends GroovyTestCase {
+    private static boolean warned = false;
     private final File antFile = new File("src/test-resources/org/codehaus/groovy/ant/GroovycTest.xml");
     private Project project;
-    private static boolean warned = false;
 
     protected void setUp() {
         project = new Project();

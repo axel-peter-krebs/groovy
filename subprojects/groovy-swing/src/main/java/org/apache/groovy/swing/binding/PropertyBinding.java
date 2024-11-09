@@ -66,6 +66,28 @@ public class PropertyBinding implements SourceBinding, TargetBinding, TriggerBin
         }
     }
 
+    private final Object[] lock = EMPTY_OBJECT_ARRAY;
+    Object bean;
+    String propertyName;
+    boolean nonChangeCheck;
+    UpdateStrategy updateStrategy;
+    private PropertyAccessor propertyAccessor;
+    public PropertyBinding(Object bean, String propertyName) {
+        this(bean, propertyName, (UpdateStrategy) null);
+    }
+    public PropertyBinding(Object bean, String propertyName, String updateStrategy) {
+        this(bean, propertyName, UpdateStrategy.of(updateStrategy));
+    }
+    public PropertyBinding(Object bean, String propertyName, UpdateStrategy updateStrategy) {
+        this.bean = bean;
+        this.propertyName = propertyName;
+        this.updateStrategy = pickUpdateStrategy(bean, updateStrategy);
+        if (LOG.isLoggable(Level.FINER)) {
+            LOG.finer("Updating with " + this.updateStrategy + " property '" + propertyName + "' of bean " + bean);
+        }
+        setupPropertyReaderAndWriter();
+    }
+
     private static void registerPropertyAccessors(List<String> lines) {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         for (String line : lines) {
@@ -107,29 +129,13 @@ public class PropertyBinding implements SourceBinding, TargetBinding, TriggerBin
         }
     }
 
-    Object bean;
-    String propertyName;
-    boolean nonChangeCheck;
-    UpdateStrategy updateStrategy;
-    private final Object[] lock = EMPTY_OBJECT_ARRAY;
-    private PropertyAccessor propertyAccessor;
-
-    public PropertyBinding(Object bean, String propertyName) {
-        this(bean, propertyName, (UpdateStrategy) null);
-    }
-
-    public PropertyBinding(Object bean, String propertyName, String updateStrategy) {
-        this(bean, propertyName, UpdateStrategy.of(updateStrategy));
-    }
-
-    public PropertyBinding(Object bean, String propertyName, UpdateStrategy updateStrategy) {
-        this.bean = bean;
-        this.propertyName = propertyName;
-        this.updateStrategy = pickUpdateStrategy(bean, updateStrategy);
-        if (LOG.isLoggable(Level.FINER)) {
-            LOG.finer("Updating with " + this.updateStrategy + " property '" + propertyName + "' of bean " + bean);
+    private static UpdateStrategy pickUpdateStrategy(Object bean, UpdateStrategy updateStrategy) {
+        if (bean instanceof Component) {
+            return UpdateStrategy.MIXED;
+        } else if (updateStrategy != null) {
+            return updateStrategy;
         }
-        setupPropertyReaderAndWriter();
+        return UpdateStrategy.SAME;
     }
 
     private void setupPropertyReaderAndWriter() {
@@ -162,22 +168,14 @@ public class PropertyBinding implements SourceBinding, TargetBinding, TriggerBin
 
         try {
             return accessorClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                 InvocationTargetException e) {
             return DefaultPropertyAccessor.INSTANCE;
         }
     }
 
     public UpdateStrategy getUpdateStrategy() {
         return updateStrategy;
-    }
-
-    private static UpdateStrategy pickUpdateStrategy(Object bean, UpdateStrategy updateStrategy) {
-        if (bean instanceof Component) {
-            return UpdateStrategy.MIXED;
-        } else if (updateStrategy != null) {
-            return updateStrategy;
-        }
-        return UpdateStrategy.SAME;
     }
 
     @Override
@@ -188,7 +186,7 @@ public class PropertyBinding implements SourceBinding, TargetBinding, TriggerBin
                 Object sourceValue = getSourceValue();
                 // if (isNonChangeCheck()) {
                 if ((sourceValue == null && newValue == null) ||
-                        DefaultTypeTransformation.compareEqual(sourceValue, newValue)) {
+                    DefaultTypeTransformation.compareEqual(sourceValue, newValue)) {
                     // not a change, don't fire it
                     return;
                 }
@@ -272,6 +270,44 @@ public class PropertyBinding implements SourceBinding, TargetBinding, TriggerBin
         return new PropertyFullBinding(source, target);
     }
 
+    public Object getBean() {
+        return bean;
+    }
+
+    public void setBean(Object bean) {
+        this.bean = bean;
+        setupPropertyReaderAndWriter();
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+
+    public enum UpdateStrategy {
+        MIXED, ASYNC, SYNC, SAME, OUTSIDE, DEFER;
+
+        public static UpdateStrategy of(String str) {
+            if ("mixed".equalsIgnoreCase(str)) {
+                return MIXED;
+            } else if ("async".equalsIgnoreCase(str)) {
+                return ASYNC;
+            } else if ("sync".equalsIgnoreCase(str)) {
+                return SYNC;
+            } else if ("same".equalsIgnoreCase(str)) {
+                return SAME;
+            } else if ("outside".equalsIgnoreCase(str)) {
+                return OUTSIDE;
+            } else if ("defer".equalsIgnoreCase(str)) {
+                return DEFER;
+            }
+            return null;
+        }
+    }
+
     class PropertyFullBinding extends AbstractFullBinding implements PropertyChangeListener {
 
         Object boundBean;
@@ -339,44 +375,6 @@ public class PropertyBinding implements SourceBinding, TargetBinding, TriggerBin
                 unbind();
                 bind();
             }
-        }
-    }
-
-    public Object getBean() {
-        return bean;
-    }
-
-    public void setBean(Object bean) {
-        this.bean = bean;
-        setupPropertyReaderAndWriter();
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
-    }
-
-    public enum UpdateStrategy {
-        MIXED, ASYNC, SYNC, SAME, OUTSIDE, DEFER;
-
-        public static UpdateStrategy of(String str) {
-            if ("mixed".equalsIgnoreCase(str)) {
-                return MIXED;
-            } else if ("async".equalsIgnoreCase(str)) {
-                return ASYNC;
-            } else if ("sync".equalsIgnoreCase(str)) {
-                return SYNC;
-            } else if ("same".equalsIgnoreCase(str)) {
-                return SAME;
-            } else if ("outside".equalsIgnoreCase(str)) {
-                return OUTSIDE;
-            } else if ("defer".equalsIgnoreCase(str)) {
-                return DEFER;
-            }
-            return null;
         }
     }
 }

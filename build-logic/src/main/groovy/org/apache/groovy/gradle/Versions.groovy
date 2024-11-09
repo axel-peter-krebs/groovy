@@ -33,14 +33,14 @@ class Versions {
     @Inject
     Versions(SharedConfiguration sharedConfiguration, ProviderFactory providers, ProjectLayout layout) {
         versions = providers.fileContents(layout.projectDirectory.file("versions.properties"))
-                .asText
-                .map({
-                    Properties props = new Properties()
-                    props.put("groovy", sharedConfiguration.groovyVersion.get())
-                    props.put("groovyBundle", sharedConfiguration.groovyBundleVersion.get())
-                    props.load(new StringReader((String) it))
-                    props
-                }.memoize())
+            .asText
+            .map({
+                Properties props = new Properties()
+                props.put("groovy", sharedConfiguration.groovyVersion.get())
+                props.put("groovyBundle", sharedConfiguration.groovyBundleVersion.get())
+                props.load(new StringReader((String) it))
+                props
+            }.memoize())
     }
 
     String getVersion(String key) {

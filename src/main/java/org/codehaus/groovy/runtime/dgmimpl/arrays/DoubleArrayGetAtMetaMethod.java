@@ -60,7 +60,7 @@ public class DoubleArrayGetAtMetaMethod extends ArrayGetAtMetaMethod {
         @Override
         public Object call(Object receiver, Object arg) throws Throwable {
             if ((receiver instanceof double[] && arg instanceof Integer)
-                    && checkPojoMetaClass()) {
+                && checkPojoMetaClass()) {
                 final double[] objects = (double[]) receiver;
                 return objects[normaliseIndex((Integer) arg, objects.length)];
             } else

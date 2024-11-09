@@ -43,7 +43,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
             def c = { -> }
             c("")
         ''',
-        'Cannot call closure that accepts [] with [java.lang.String]'
+            'Cannot call closure that accepts [] with [java.lang.String]'
     }
 
     void testCallClosure4() {
@@ -58,7 +58,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
             def c = { int a, int b -> a + b }
             c('5', '7')
         ''',
-        'Cannot call closure that accepts [int, int] with [java.lang.String, java.lang.String]'
+            'Cannot call closure that accepts [int, int] with [java.lang.String, java.lang.String]'
     }
 
     void testCallClosure6() {
@@ -72,7 +72,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             { int a, int b -> a + b }('5', 7)
         ''',
-        'Cannot call closure that accepts [int, int] with [java.lang.String, int]'
+            'Cannot call closure that accepts [int, int] with [java.lang.String, int]'
     }
 
     // GROOVY-6365
@@ -115,7 +115,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             def c = { Number n, Number total = new Date() -> total += n }
         ''',
-        'Cannot assign value of type java.util.Date to variable of type java.lang.Number'
+            'Cannot assign value of type java.util.Date to variable of type java.lang.Number'
     }
 
     // GROOVY-10636
@@ -136,7 +136,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
             }
             f({->1},{->'x'})
         ''',
-        'Cannot return value of type java.lang.String for closure expecting java.lang.Number'
+            'Cannot return value of type java.lang.String for closure expecting java.lang.Number'
     }
 
     // GROOVY-11023
@@ -176,7 +176,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
             c = { p, q -> '' + p + q }
             c('foo')
         ''',
-        'Cannot call closure that accepts [java.lang.Object, java.lang.Object] with [java.lang.String]'
+            'Cannot call closure that accepts [java.lang.Object, java.lang.Object] with [java.lang.String]'
     }
 
     // GROOVY-11448
@@ -209,7 +209,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
                 }
             }
         ''',
-        'Cannot find matching method java.lang.Class#c() or static method Foo#c()'
+            'Cannot find matching method java.lang.Class#c() or static method Foo#c()'
     }
 
     // GROOVY-11366
@@ -278,7 +278,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
             }
             byte res = c(0)
         ''',
-        'Possible loss of precision from long to byte'
+            'Possible loss of precision from long to byte'
     }
 
     // GROOVY-9907
@@ -324,7 +324,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             Closure<String> c = { -> 42 }
         ''',
-        'Cannot return value of type int for closure expecting java.lang.String'
+            'Cannot return value of type int for closure expecting java.lang.String'
     }
 
     // GROOVY-10091, GROOVY-10277
@@ -340,7 +340,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
             c = { -> return new X() }
             c = { -> return new Y<String>() }
         ''',
-        'Cannot return value of type X for closure expecting A<java.lang.Number>'
+            'Cannot return value of type X for closure expecting A<java.lang.Number>'
     }
 
     // GROOVY-10792
@@ -355,7 +355,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
                 list
             }
         ''',
-        'Cannot return value of type java.util.ArrayList<java.lang.Object> for closure expecting java.lang.Boolean'
+            'Cannot return value of type java.util.ArrayList<java.lang.Object> for closure expecting java.lang.Boolean'
     }
 
     // GROOVY-7713, GROOVY-8202
@@ -531,7 +531,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
             { -> x = 123 }
             x.charAt(0) // not available in (Serializable & ...)
         ''',
-        'Cannot find matching method (java.io.Serializable & ','#charAt(int)'
+            'Cannot find matching method (java.io.Serializable & ', '#charAt(int)'
     }
 
     // GROOVY-5874
@@ -541,7 +541,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
             def cl1 = { sum = sum + 1 }
             def cl2 = { sum = new Date() }
         ''',
-        'The closure shared variable "sum" has been assigned with various types'
+            'The closure shared variable "sum" has been assigned with various types'
     }
 
     // GROOVY-9516
@@ -558,7 +558,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
               c.m()
             }
         ''',
-        'Cannot find matching method A#m()'
+            'Cannot find matching method A#m()'
     }
 
     // GROOVY-10356
@@ -658,7 +658,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
             Closure fib
             fib = { int n -> n<2?n:fib(n-1)+fib(n-2) }
         ''',
-        'Cannot find matching method java.lang.Object#plus(java.lang.Object)'
+            'Cannot find matching method java.lang.Object#plus(java.lang.Object)'
     }
 
     void testClosureRecursionWithDef() {
@@ -666,9 +666,9 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
             def fib
             fib = { int n -> n<2?n:fib(n-1)+fib(n-2) }
         ''',
-        'Cannot find matching method java.lang.Object#plus(java.lang.Object)',
-        'Cannot find matching method java.lang.Object#call(int)',
-        'Cannot find matching method java.lang.Object#call(int)'
+            'Cannot find matching method java.lang.Object#plus(java.lang.Object)',
+            'Cannot find matching method java.lang.Object#call(int)',
+            'Cannot find matching method java.lang.Object#call(int)'
     }
 
     void testClosureRecursionWithClosureTypeArgument() {
@@ -767,7 +767,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
                 printMessage { int x, int y -> x+y }
             }
         ''',
-        'Cannot return value of type int for closure expecting java.lang.String'
+            'Cannot return value of type int for closure expecting java.lang.String'
     }
 
     void testSAMsInMethodSelection1() {
@@ -834,11 +834,11 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
                 print 'bar'
             }
         ''',
-        'Reference to method is ambiguous. Cannot choose between'
+            'Reference to method is ambiguous. Cannot choose between'
     }
 
     void testSAMsInMethodSelection5() {
-        for (spec in ['','x,y ->']) {
+        for (spec in ['', 'x,y ->']) {
             shouldFailWithMessages """
                 import java.util.function.Function
                 import java.util.function.Supplier
@@ -848,12 +848,12 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
                     'bar'
                 }
             """,
-            'Reference to method is ambiguous. Cannot choose between'
+                'Reference to method is ambiguous. Cannot choose between'
         }
     }
 
     void testSAMsInMethodSelection6() {
-        for (spec in ['->','x ->']) {
+        for (spec in ['->', 'x ->']) {
             assertScript """
                 import java.util.function.Function
                 import java.util.function.Supplier
@@ -971,7 +971,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
 
                 assert errorCollector.hasWarnings()
                 assert errorCollector.warnings[0].message.startsWith(
-                        'The field: value of class: C is hidden by a dynamic property.')
+                    'The field: value of class: C is hidden by a dynamic property.')
             }
             loader.addClasspath(config.targetDirectory.absolutePath)
             loader.loadClass('E', true).main()
@@ -1086,8 +1086,8 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
                 print getBaz()
             }
         ''',
-        'The variable [baz] is undeclared', // TODO: instance method error
-        'Non-static method Foo#getBaz cannot be called from static context'
+            'The variable [baz] is undeclared', // TODO: instance method error
+            'Non-static method Foo#getBaz cannot be called from static context'
     }
 
     // GROOVY-5470, GROOVY-6091, GROOVY-9604, GROOVY-11399
@@ -1249,7 +1249,7 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
                 int i = Integer
             })
         ''',
-        'Cannot assign value of type java.lang.Class<java.lang.Integer> to variable of type int'
+            'Cannot assign value of type java.lang.Class<java.lang.Integer> to variable of type int'
 
         shouldFailWithMessages '''
             import groovy.transform.NamedParam
@@ -1263,8 +1263,8 @@ class ClosuresSTCTest extends StaticTypeCheckingTestCase {
                 int i = Integer
             })
         ''',
-        'Cannot assign value of type java.lang.Class<java.lang.Integer> to variable of type int',
-        "named param 'bar' has type 'java.lang.Class<java.lang.Number>' but expected 'java.lang.Number'"
+            'Cannot assign value of type java.lang.Class<java.lang.Integer> to variable of type int',
+            "named param 'bar' has type 'java.lang.Class<java.lang.Number>' but expected 'java.lang.Number'"
     }
 
     // GROOVY-10602

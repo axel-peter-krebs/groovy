@@ -59,12 +59,12 @@ import java.util.Collection;
  */
 public class CharsetToolkit {
     private static final Charset[] EMPTY_CHARSET_ARRAY = new Charset[0];
+    private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
     private final byte[] buffer;
+    private final File file;
     private Charset defaultCharset;
     private Charset charset;
     private boolean enforce8Bit = true;
-    private final File file;
-    private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
     /**
      * Constructor of the <code>CharsetToolkit</code> utility class.
@@ -91,23 +91,98 @@ public class CharsetToolkit {
     }
 
     /**
-     * Defines the default <code>Charset</code> used in case the buffer represents
-     * an 8-bit <code>Charset</code>.
+     * If the byte has the form 10xxxxx, then it's a continuation byte of a multiple byte character;
      *
-     * @param defaultCharset the default <code>Charset</code> to be returned
-     * if an 8-bit <code>Charset</code> is encountered.
+     * @param b a byte.
+     * @return true if it's a continuation char.
      */
-    public void setDefaultCharset(Charset defaultCharset) {
-        if (defaultCharset != null)
-            this.defaultCharset = defaultCharset;
-        else
-            this.defaultCharset = getDefaultSystemCharset();
+    private static boolean isContinuationChar(byte b) {
+        return b <= -65;
+    }
+
+    /**
+     * If the byte has the form 110xxxx, then it's the first byte of a two-bytes sequence character.
+     *
+     * @param b a byte.
+     * @return true if it's the first byte of a two-bytes sequence.
+     */
+    private static boolean isTwoBytesSequence(byte b) {
+        return -64 <= b && b <= -33;
+    }
+
+    /**
+     * If the byte has the form 1110xxx, then it's the first byte of a three-bytes sequence character.
+     *
+     * @param b a byte.
+     * @return true if it's the first byte of a three-bytes sequence.
+     */
+    private static boolean isThreeBytesSequence(byte b) {
+        return -32 <= b && b <= -17;
+    }
+
+    /**
+     * If the byte has the form 11110xx, then it's the first byte of a four-bytes sequence character.
+     *
+     * @param b a byte.
+     * @return true if it's the first byte of a four-bytes sequence.
+     */
+    private static boolean isFourBytesSequence(byte b) {
+        return -16 <= b && b <= -9;
+    }
+
+    /**
+     * If the byte has the form 11110xx, then it's the first byte of a five-bytes sequence character.
+     *
+     * @param b a byte.
+     * @return true if it's the first byte of a five-bytes sequence.
+     */
+    private static boolean isFiveBytesSequence(byte b) {
+        return -8 <= b && b <= -5;
+    }
+
+    /**
+     * If the byte has the form 1110xxx, then it's the first byte of a six-bytes sequence character.
+     *
+     * @param b a byte.
+     * @return true if it's the first byte of a six-bytes sequence.
+     */
+    private static boolean isSixBytesSequence(byte b) {
+        return -4 <= b && b <= -3;
+    }
+
+    /**
+     * Retrieve the default charset of the system.
+     *
+     * @return the default <code>Charset</code>.
+     */
+    public static Charset getDefaultSystemCharset() {
+        return Charset.defaultCharset();
+    }
+
+    /**
+     * Retrieves all the available <code>Charset</code>s on the platform,
+     * among which the default <code>charset</code>.
+     *
+     * @return an array of <code>Charset</code>s.
+     */
+    public static Charset[] getAvailableCharsets() {
+        Collection collection = Charset.availableCharsets().values();
+        return (Charset[]) collection.toArray(EMPTY_CHARSET_ARRAY);
     }
 
     public Charset getCharset() {
         if (this.charset == null)
             this.charset = guessEncoding();
         return charset;
+    }
+
+    /**
+     * Gets the enforce8Bit flag, in case we do not want to ever get a US-ASCII encoding.
+     *
+     * @return a boolean representing the flag of use of US-ASCII.
+     */
+    public boolean getEnforce8Bit() {
+        return this.enforce8Bit;
     }
 
     /**
@@ -122,19 +197,24 @@ public class CharsetToolkit {
     }
 
     /**
-     * Gets the enforce8Bit flag, in case we do not want to ever get a US-ASCII encoding.
-     *
-     * @return a boolean representing the flag of use of US-ASCII.
-     */
-    public boolean getEnforce8Bit() {
-        return this.enforce8Bit;
-    }
-
-    /**
      * Retrieves the default Charset
      */
     public Charset getDefaultCharset() {
         return defaultCharset;
+    }
+
+    /**
+     * Defines the default <code>Charset</code> used in case the buffer represents
+     * an 8-bit <code>Charset</code>.
+     *
+     * @param defaultCharset the default <code>Charset</code> to be returned
+     *                       if an 8-bit <code>Charset</code> is encountered.
+     */
+    public void setDefaultCharset(Charset defaultCharset) {
+        if (defaultCharset != null)
+            this.defaultCharset = defaultCharset;
+        else
+            this.defaultCharset = getDefaultSystemCharset();
     }
 
     /**
@@ -245,8 +325,7 @@ public class CharsetToolkit {
                         validU8Char = false;
                     else
                         i += 5;
-                }
-                else
+                } else
                     validU8Char = false;
             }
             if (!validU8Char)
@@ -268,75 +347,6 @@ public class CharsetToolkit {
             return StandardCharsets.UTF_8;
         // finally, if it's not UTF-8 nor US-ASCII, let's assume the encoding is the default encoding
         return this.defaultCharset;
-    }
-
-    /**
-     * If the byte has the form 10xxxxx, then it's a continuation byte of a multiple byte character;
-     *
-     * @param b a byte.
-     * @return true if it's a continuation char.
-     */
-    private static boolean isContinuationChar(byte b) {
-        return b <= -65;
-    }
-
-    /**
-     * If the byte has the form 110xxxx, then it's the first byte of a two-bytes sequence character.
-     *
-     * @param b a byte.
-     * @return true if it's the first byte of a two-bytes sequence.
-     */
-    private static boolean isTwoBytesSequence(byte b) {
-        return -64 <= b && b <= -33;
-    }
-
-    /**
-     * If the byte has the form 1110xxx, then it's the first byte of a three-bytes sequence character.
-     *
-     * @param b a byte.
-     * @return true if it's the first byte of a three-bytes sequence.
-     */
-    private static boolean isThreeBytesSequence(byte b) {
-        return -32 <= b && b <= -17;
-    }
-
-    /**
-     * If the byte has the form 11110xx, then it's the first byte of a four-bytes sequence character.
-     *
-     * @param b a byte.
-     * @return true if it's the first byte of a four-bytes sequence.
-     */
-    private static boolean isFourBytesSequence(byte b) {
-        return -16 <= b && b <= -9;
-    }
-
-    /**
-     * If the byte has the form 11110xx, then it's the first byte of a five-bytes sequence character.
-     *
-     * @param b a byte.
-     * @return true if it's the first byte of a five-bytes sequence.
-     */
-    private static boolean isFiveBytesSequence(byte b) {
-        return -8 <= b && b <= -5;
-    }
-
-    /**
-     * If the byte has the form 1110xxx, then it's the first byte of a six-bytes sequence character.
-     *
-     * @param b a byte.
-     * @return true if it's the first byte of a six-bytes sequence.
-     */
-    private static boolean isSixBytesSequence(byte b) {
-        return -4 <= b && b <= -3;
-    }
-
-    /**
-     * Retrieve the default charset of the system.
-     *
-     * @return the default <code>Charset</code>.
-     */
-    public static Charset getDefaultSystemCharset() {
-        return Charset.defaultCharset();
     }
 
     /**
@@ -390,23 +400,11 @@ public class CharsetToolkit {
         if (hasUTF8Bom() || hasUTF16LEBom() || hasUTF16BEBom()) {
             try {
                 reader.read();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 // should never happen, as a file with no content
                 // but with a BOM has at least one char
             }
         }
         return reader;
-    }
-
-    /**
-     * Retrieves all the available <code>Charset</code>s on the platform,
-     * among which the default <code>charset</code>.
-     *
-     * @return an array of <code>Charset</code>s.
-     */
-    public static Charset[] getAvailableCharsets() {
-        Collection collection = Charset.availableCharsets().values();
-        return (Charset[]) collection.toArray(EMPTY_CHARSET_ARRAY);
     }
 }

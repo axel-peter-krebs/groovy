@@ -34,44 +34,44 @@ import javax.swing.tree.TreeNode
  */
 final class ScriptToTreeNodeAdapterTest extends GroovyTestCase {
 
-     private final classLoader = new GroovyClassLoader()
+    private final classLoader = new GroovyClassLoader()
 
-     private createAdapter(showScriptFreeForm, showScriptClass, showClosureClasses) {
+    private createAdapter(showScriptFreeForm, showScriptClass, showClosureClasses) {
         def nodeMaker = new SwingTreeNodeMaker()
         new ScriptToTreeNodeAdapter(classLoader, showScriptFreeForm, showScriptClass, showClosureClasses, nodeMaker)
-     }
+    }
 
     /**
      * Asserts that a given script produces the expected tree like
      * structure.
      */
-     private assertTreeStructure(String script, List<Closure> specification) {
-         ScriptToTreeNodeAdapter adapter = createAdapter(true, true, true)
-         assertTreeStructure(script, specification, adapter)
-     }
+    private assertTreeStructure(String script, List<Closure> specification) {
+        ScriptToTreeNodeAdapter adapter = createAdapter(true, true, true)
+        assertTreeStructure(script, specification, adapter)
+    }
 
-     private assertTreeStructure(String script, List<Closure> specification, ScriptToTreeNodeAdapter adapter) {
-         assertTreeStructure(script, CompilePhase.SEMANTIC_ANALYSIS, specification, adapter)
-     }
+    private assertTreeStructure(String script, List<Closure> specification, ScriptToTreeNodeAdapter adapter) {
+        assertTreeStructure(script, CompilePhase.SEMANTIC_ANALYSIS, specification, adapter)
+    }
 
     private assertTreeStructure(String script, CompilePhase compilePhase, List<Closure> specification, ScriptToTreeNodeAdapter adapter) {
-         TreeNode root = adapter.compile(script, compilePhase.phaseNumber)
-         def original = root
-         def lastSpec = 0
-         specification.each { spec ->
-             if (root) lastSpec++
-             root = root?.children()?.find { spec(it) }
-         }
-         if (!root) {
-             fail("Could not locate Expression in AST.${printSpecs(specification, lastSpec)}\nAST: ${printnode(original)}")
-         }
-     }
+        TreeNode root = adapter.compile(script, compilePhase.phaseNumber)
+        def original = root
+        def lastSpec = 0
+        specification.each { spec ->
+            if (root) lastSpec++
+            root = root?.children()?.find { spec(it) }
+        }
+        if (!root) {
+            fail("Could not locate Expression in AST.${printSpecs(specification, lastSpec)}\nAST: ${printnode(original)}")
+        }
+    }
 
     private printSpecs(specification, index) {
         def len = specification.size()
-        (index > 1 ? '\nPassed: ' : '') + specification[0..<index].collect{ extractSpecType(it.class.name) }.join(', ') +
-        '\nFailed: ' + extractSpecType(specification[index-1].class.name) +
-        (index < len ? '\nIgnored: ' + specification[index..-1].collect{ extractSpecType(it.class.name) }.join(', ') : '')
+        (index > 1 ? '\nPassed: ' : '') + specification[0..<index].collect { extractSpecType(it.class.name) }.join(', ') +
+            '\nFailed: ' + extractSpecType(specification[index - 1].class.name) +
+            (index < len ? '\nIgnored: ' + specification[index..-1].collect { extractSpecType(it.class.name) }.join(', ') : '')
     }
 
     private extractSpecType(fullyQualified) {
@@ -105,9 +105,9 @@ final class ScriptToTreeNodeAdapterTest extends GroovyTestCase {
     private printnode(TreeNode node, String prefix = '') {
         def buffer = new StringBuffer()
         buffer << '\n' << prefix << node <<
-        node.children().each {
-            buffer << printnode(it, prefix + '  ')
-        }
+            node.children().each {
+                buffer << printnode(it, prefix + '  ')
+            }
         buffer
     }
 
@@ -121,7 +121,7 @@ final class ScriptToTreeNodeAdapterTest extends GroovyTestCase {
     /**
      * Returns a function that acts much like String#contains for Objects.
      */
-    private contains(String target)  {
+    private contains(String target) {
         return {
             it.toString().contains(target)
         }
@@ -129,60 +129,60 @@ final class ScriptToTreeNodeAdapterTest extends GroovyTestCase {
 
     void testHelloWorld() {
         assertTreeStructure(
-                '"Hello World"',
-                [
-                        eq('BlockStatement - (1)'),
-                        startsWith('ExpressionStatement'),
-                        startsWith('Constant - java.lang.String Hello World')
-                ])
+            '"Hello World"',
+            [
+                eq('BlockStatement - (1)'),
+                startsWith('ExpressionStatement'),
+                startsWith('Constant - java.lang.String Hello World')
+            ])
     }
 
     void testSimpleClass() {
         assertTreeStructure(
-                ' class Foo { public aField } ',
-                [
-                        eq('ClassNode - Foo'),
-                        eq('Fields'),
-                        startsWith('FieldNode - java.lang.Object aField'),
-                ]
+            ' class Foo { public aField } ',
+            [
+                eq('ClassNode - Foo'),
+                eq('Fields'),
+                startsWith('FieldNode - java.lang.Object aField'),
+            ]
         )
     }
 
     void testMethodWithParameter() {
         assertTreeStructure(
-                ' def foo(String bar) { println bar } ',
-                [
-                    startsWith('ClassNode - script'),
-                    eq('Methods'),
-                    eq('MethodNode - foo(java.lang.String)'),
-                    eq('Parameters'),
-                    eq('Parameter - java.lang.String bar'),
-                ]
-            )
+            ' def foo(String bar) { println bar } ',
+            [
+                startsWith('ClassNode - script'),
+                eq('Methods'),
+                eq('MethodNode - foo(java.lang.String)'),
+                eq('Parameters'),
+                eq('Parameter - java.lang.String bar'),
+            ]
+        )
     }
 
     void testMethodWithParameterAndInitialValue() {
         def script = ' def foo(String bar = "some_value") { println bar } '
         // check path for bar
         assertTreeStructure(script, [
-                startsWith('ClassNode - script'),
-                eq('Methods'),
-                eq('MethodNode - foo(java.lang.String)'),
-                eq('Parameters'),
-                eq('Parameter - java.lang.String bar = some_value'),
+            startsWith('ClassNode - script'),
+            eq('Methods'),
+            eq('MethodNode - foo(java.lang.String)'),
+            eq('Parameters'),
+            eq('Parameter - java.lang.String bar = some_value'),
         ])
     }
 
     void testClosureParameters() {
         assertTreeStructure(
-                ' def x = { parm1 ->  println parm1 } ',
-                [
-                        eq('BlockStatement - (1)'),
-                        startsWith('ExpressionStatement'),
-                        startsWith('Declaration - def x ='),
-                        startsWith('ClosureExpression'),
-                        startsWith('Parameter - java.lang.Object parm1'),
-                ]
+            ' def x = { parm1 ->  println parm1 } ',
+            [
+                eq('BlockStatement - (1)'),
+                startsWith('ExpressionStatement'),
+                startsWith('Declaration - def x ='),
+                startsWith('ClosureExpression'),
+                startsWith('Parameter - java.lang.Object parm1'),
+            ]
         )
     }
 
@@ -190,11 +190,11 @@ final class ScriptToTreeNodeAdapterTest extends GroovyTestCase {
         def script = ' def x = { parm1 = "some_value" ->  println parm1 } '
         // check path for parm1
         assertTreeStructure(script, [
-                eq('BlockStatement - (1)'),
-                startsWith('ExpressionStatement'),
-                startsWith('Declaration - def x ='),
-                eq('ClosureExpression'),
-                startsWith('Parameter - java.lang.Object parm1'),
+            eq('BlockStatement - (1)'),
+            startsWith('ExpressionStatement'),
+            startsWith('Declaration - def x ='),
+            eq('ClosureExpression'),
+            startsWith('Parameter - java.lang.Object parm1'),
         ])
     }
 
@@ -225,74 +225,74 @@ final class ScriptToTreeNodeAdapterTest extends GroovyTestCase {
 
     void testDynamicVariable() {
         assertTreeStructure(
-                " foo = 'bar' ",
-                [
-                        eq('BlockStatement - (1)'),
-                        eq('ExpressionStatement - BinaryExpression'),
-                        eq('Binary - (foo = bar)'),
-                        startsWith('Variable - java.lang.Object foo'),
-                        eq('DynamicVariable - foo'),
-                ]
-            )
+            " foo = 'bar' ",
+            [
+                eq('BlockStatement - (1)'),
+                eq('ExpressionStatement - BinaryExpression'),
+                eq('Binary - (foo = bar)'),
+                startsWith('Variable - java.lang.Object foo'),
+                eq('DynamicVariable - foo'),
+            ]
+        )
     }
 
     void testVariableParameters() {
         assertTreeStructure(
-                " 'foo' ",
-                [
-                        startsWith('ClassNode'),
-                        eq('Methods'),
-                        startsWith('MethodNode - run()'),
-                        eq('Body'),
-                        startsWith('BlockStatement'),
-                        startsWith('ExpressionStatement'),
-                        startsWith('Constant - java.lang.String foo'),
-                ]
+            " 'foo' ",
+            [
+                startsWith('ClassNode'),
+                eq('Methods'),
+                startsWith('MethodNode - run()'),
+                eq('Body'),
+                startsWith('BlockStatement'),
+                startsWith('ExpressionStatement'),
+                startsWith('Constant - java.lang.String foo'),
+            ]
         )
     }
 
     void testMultipleAssignments() {
         assertTreeStructure(
-                ' def (x, y) = [1, 2] ',
-                [
-                        startsWith('BlockStatement'),
-                        startsWith('ExpressionStatement'),
-                        eq('Declaration - def (x, y) = [1, 2]'),
-                        eq('Tuple - (x, y)'),
-                ]
+            ' def (x, y) = [1, 2] ',
+            [
+                startsWith('BlockStatement'),
+                startsWith('ExpressionStatement'),
+                eq('Declaration - def (x, y) = [1, 2]'),
+                eq('Tuple - (x, y)'),
+            ]
         )
     }
 
     void testEnum() {
         assertTreeStructure(
-                '''enum MyEnum {
+            '''enum MyEnum {
                       FOO,
                       BAR;
                     }''',
-                [
-                        eq('ClassNode - MyEnum'),
-                        eq('Fields'),
-                        startsWith('FieldNode - MyEnum FOO'),
-                ])
+            [
+                eq('ClassNode - MyEnum'),
+                eq('Fields'),
+                startsWith('FieldNode - MyEnum FOO'),
+            ])
     }
 
     void testExpression_DuplicateDoesNotAppear() {
         assertTreeStructure(
-                " 'foo' ",
-                [
-                        startsWith('ClassNode'),
-                        eq('Methods'),
-                        eq('MethodNode - main(java.lang.String[])'),
-                        eq('Body'),
-                        startsWith('ExpressionStatement'),  //notice, there is only one ExpressionStatement
-                        startsWith('StaticMethodCallExpression'),
-                ]
+            " 'foo' ",
+            [
+                startsWith('ClassNode'),
+                eq('Methods'),
+                eq('MethodNode - main(java.lang.String[])'),
+                eq('Body'),
+                startsWith('ExpressionStatement'),  //notice, there is only one ExpressionStatement
+                startsWith('StaticMethodCallExpression'),
+            ]
         )
     }
 
     void testInnerClass() {
         assertTreeStructure(
-                '''class Outer {
+            '''class Outer {
                     private class Inner1 {
 
                     }
@@ -300,82 +300,82 @@ final class ScriptToTreeNodeAdapterTest extends GroovyTestCase {
 
                     }
                 }''',
-                [
-                        startsWith('InnerClassNode - Outer\$Inner2'),
-                ]
+            [
+                startsWith('InnerClassNode - Outer\$Inner2'),
+            ]
         )
     }
 
     void testInnerClassWithMethods() {
         assertTreeStructure(
-                '''class Outer {
+            '''class Outer {
                     private class Inner {
                         def someMethod() {}
                     }
                 }''',
-                [
-                        startsWith('InnerClassNode - Outer\$Inner'),
-                        eq('Methods'),
-                        eq('MethodNode - someMethod()'),
-                        eq('Body'),
-                        startsWith('BlockStatement'),
-                ]
+            [
+                startsWith('InnerClassNode - Outer\$Inner'),
+                eq('Methods'),
+                eq('MethodNode - someMethod()'),
+                eq('Body'),
+                startsWith('BlockStatement'),
+            ]
         )
     }
 
     void testInnerClassWithFields() {
         assertTreeStructure(
-                '''class Outer {
+            '''class Outer {
                     private class Inner {
                         String field
                     }
                 }''',
-                [
-                        startsWith('InnerClassNode - Outer\$Inner'),
-                        eq('Fields'),
-                        startsWith('FieldNode - java.lang.String field'),
-                ]
+            [
+                startsWith('InnerClassNode - Outer\$Inner'),
+                eq('Fields'),
+                startsWith('FieldNode - java.lang.String field'),
+            ]
         )
     }
 
     void testInnerClassWithProperties() {
         assertTreeStructure(
-                '''class Outer {
+            '''class Outer {
                     private class Inner {
                         def property
                     }
                 }''',
-                [
-                        startsWith('InnerClassNode - Outer\$Inner'),
-                        eq('Properties'),
-                        startsWith('PropertyNode - java.lang.Object property'),
-                ]
+            [
+                startsWith('InnerClassNode - Outer\$Inner'),
+                eq('Properties'),
+                startsWith('PropertyNode - java.lang.Object property'),
+            ]
         )
     }
 
     void testScriptWithMethods() {
         // verify the free form script
         assertTreeStructure(
-                'def foo(String bar) {}',
-                [
-                    eq('Methods'),
-                    eq('MethodNode - foo(java.lang.String)'),
-                    eq('Parameters'),
-                    eq('Parameter - java.lang.String bar'),
-                ]
-            )
+            'def foo(String bar) {}',
+            [
+                eq('Methods'),
+                eq('MethodNode - foo(java.lang.String)'),
+                eq('Parameters'),
+                eq('Parameter - java.lang.String bar'),
+            ]
+        )
 
         // verify the script's class
         assertTreeStructure(
-                'def foo(String bar) {}',
-                [
-                    startsWith('ClassNode - script'),
-                    eq('Methods'),
-                    eq('MethodNode - foo(java.lang.String)'),
-                    eq('Parameters'),
-                    eq('Parameter - java.lang.String bar'),
-                ]
-            )
+            'def foo(String bar) {}',
+            [
+                startsWith('ClassNode - script'),
+                eq('Methods'),
+                eq('MethodNode - foo(java.lang.String)'),
+                eq('Parameters'),
+                eq('Parameter - java.lang.String bar'),
+            ]
+        )
     }
 
     void testScriptWithAdapterThatLoadsClassButNotFreeForm() {
@@ -384,19 +384,49 @@ final class ScriptToTreeNodeAdapterTest extends GroovyTestCase {
         // since free standing script is not being loaded, it should fail
         shouldFail(AssertionFailedError) {
             assertTreeStructure(
-                    'def foo(String bar) {}',
-                    [
-                        eq('Methods'),
-                        eq('MethodNode - foo(java.lang.String)'),
-                        eq('Parameters'),
-                        eq('Parameter - java.lang.String bar'),
-                    ],
-                    adapter
-                )
+                'def foo(String bar) {}',
+                [
+                    eq('Methods'),
+                    eq('MethodNode - foo(java.lang.String)'),
+                    eq('Parameters'),
+                    eq('Parameter - java.lang.String bar'),
+                ],
+                adapter
+            )
         }
 
         // since script class is being loaded, it should go through
         assertTreeStructure(
+            'def foo(String bar) {}',
+            [
+                startsWith('ClassNode - script'),
+                eq('Methods'),
+                eq('MethodNode - foo(java.lang.String)'),
+                eq('Parameters'),
+                eq('Parameter - java.lang.String bar'),
+            ],
+            adapter
+        )
+    }
+
+    void testScriptWithAdapterThatLoadsFreeFormButNotClass() {
+        ScriptToTreeNodeAdapter adapter = createAdapter(true, false, false)
+
+        // since free standing script is being loaded, it should go through
+        assertTreeStructure(
+            'def foo(String bar) {}',
+            [
+                eq('Methods'),
+                eq('MethodNode - foo(java.lang.String)'),
+                eq('Parameters'),
+                eq('Parameter - java.lang.String bar'),
+            ],
+            adapter
+        )
+
+        // since script class is not being loaded, it should fail
+        shouldFail(AssertionFailedError) {
+            assertTreeStructure(
                 'def foo(String bar) {}',
                 [
                     startsWith('ClassNode - script'),
@@ -407,69 +437,39 @@ final class ScriptToTreeNodeAdapterTest extends GroovyTestCase {
                 ],
                 adapter
             )
-    }
-
-    void testScriptWithAdapterThatLoadsFreeFormButNotClass() {
-        ScriptToTreeNodeAdapter adapter = createAdapter(true, false, false)
-
-        // since free standing script is being loaded, it should go through
-        assertTreeStructure(
-                'def foo(String bar) {}',
-                [
-                    eq('Methods'),
-                    eq('MethodNode - foo(java.lang.String)'),
-                    eq('Parameters'),
-                    eq('Parameter - java.lang.String bar'),
-                ],
-                adapter
-            )
-
-        // since script class is not being loaded, it should fail
-        shouldFail(AssertionFailedError) {
-            assertTreeStructure(
-                    'def foo(String bar) {}',
-                    [
-                        startsWith('ClassNode - script'),
-                        eq('Methods'),
-                        eq('MethodNode - foo(java.lang.String)'),
-                        eq('Parameters'),
-                        eq('Parameter - java.lang.String bar'),
-                    ],
-                    adapter
-                )
         }
     }
 
-   void testScriptWithAdapterThatLoadsNeitherFreeFormNorClass() {
+    void testScriptWithAdapterThatLoadsNeitherFreeFormNorClass() {
         ScriptToTreeNodeAdapter adapter = createAdapter(false, false, false)
 
         // since free standing script is not being loaded, it should fail
         shouldFail(AssertionFailedError) {
             assertTreeStructure(
-                    'def foo(String bar) {}',
-                    [
-                        eq('Methods'),
-                        eq('MethodNode - foo(String)'),
-                        eq('Parameters'),
-                        eq('Parameter - bar'),
-                    ],
-                    adapter
-                )
+                'def foo(String bar) {}',
+                [
+                    eq('Methods'),
+                    eq('MethodNode - foo(String)'),
+                    eq('Parameters'),
+                    eq('Parameter - bar'),
+                ],
+                adapter
+            )
         }
 
         // since script class is not being loaded, it should fail
         shouldFail(AssertionFailedError) {
             assertTreeStructure(
-                    'def foo(String bar) {}',
-                    [
-                        startsWith('ClassNode - script'),
-                        eq('Methods'),
-                        eq('MethodNode - foo(String)'),
-                        eq('Parameters'),
-                        eq('Parameter - bar'),
-                    ],
-                    adapter
-                )
+                'def foo(String bar) {}',
+                [
+                    startsWith('ClassNode - script'),
+                    eq('Methods'),
+                    eq('MethodNode - foo(String)'),
+                    eq('Parameters'),
+                    eq('Parameter - bar'),
+                ],
+                adapter
+            )
         }
     }
 
@@ -493,14 +493,14 @@ final class ScriptToTreeNodeAdapterTest extends GroovyTestCase {
         ScriptToTreeNodeAdapter adapter = createAdapter(false, true, true)
 
         assertTreeStructure(
-                "def c = { println 'hello world' }", CompilePhase.CLASS_GENERATION,
-                [
-                    contains('closure1'),
-                    eq('Methods'),
-                    eq('MethodNode - doCall()'),
-                ],
-                adapter
-            )
+            "def c = { println 'hello world' }", CompilePhase.CLASS_GENERATION,
+            [
+                contains('closure1'),
+                eq('Methods'),
+                eq('MethodNode - doCall()'),
+            ],
+            adapter
+        )
     }
 
     void testScriptWithAdapterThatLoadsMultipleGeneratedClosureClasses() {
@@ -517,34 +517,34 @@ final class ScriptToTreeNodeAdapterTest extends GroovyTestCase {
             '''
 
         assertTreeStructure(source, CompilePhase.CLASS_GENERATION,
-                [
-                        startsWith('ClassNode - Controller')
-                ],
-                adapter)
+            [
+                startsWith('ClassNode - Controller')
+            ],
+            adapter)
 
         assertTreeStructure(source, CompilePhase.CLASS_GENERATION,
-                [
-                        contains('closure1'),
-                        eq('Methods'),
-                        eq('MethodNode - doCall()'),
-                ],
-                adapter)
+            [
+                contains('closure1'),
+                eq('Methods'),
+                eq('MethodNode - doCall()'),
+            ],
+            adapter)
 
         assertTreeStructure(source, CompilePhase.CLASS_GENERATION,
-                [
-                        contains('closure2'),
-                        eq('Methods'),
-                        eq('MethodNode - doCall()'),
-                ],
-                adapter)
+            [
+                contains('closure2'),
+                eq('Methods'),
+                eq('MethodNode - doCall()'),
+            ],
+            adapter)
 
         assertTreeStructure(source, CompilePhase.CLASS_GENERATION,
-                [
-                        contains('closure3'),
-                        eq('Methods'),
-                        eq('MethodNode - doCall()'),
-                ],
-                adapter)
+            [
+                contains('closure3'),
+                eq('Methods'),
+                eq('MethodNode - doCall()'),
+            ],
+            adapter)
     }
 
     // GROOVY-4636
@@ -564,14 +564,14 @@ final class ScriptToTreeNodeAdapterTest extends GroovyTestCase {
             '''
 
         assertTreeStructure(source, CompilePhase.CONVERSION,
-                [
-                        startsWith('ClassNode - A'),
-                        eq('Object Initializers'),
-                        contains('BlockStatement'),
-                        contains('BlockStatement'),
-                        contains('ExpressionStatement')
-                ],
-                adapter)
+            [
+                startsWith('ClassNode - A'),
+                eq('Object Initializers'),
+                contains('BlockStatement'),
+                contains('BlockStatement'),
+                contains('ExpressionStatement')
+            ],
+            adapter)
 
     }
 
@@ -590,12 +590,12 @@ final class ScriptToTreeNodeAdapterTest extends GroovyTestCase {
             '''
 
         assertTreeStructure(source, CompilePhase.CANONICALIZATION,
-                [
-                        startsWith('ClassNode - TestInterceptor'),
-                        eq('Object Initializers'),
-                        eq('ExpressionStatement - MethodCallExpression')
-                ],
-                adapter)
+            [
+                startsWith('ClassNode - TestInterceptor'),
+                eq('Object Initializers'),
+                eq('ExpressionStatement - MethodCallExpression')
+            ],
+            adapter)
     }
 
     void testCompileIndyBytecode() {

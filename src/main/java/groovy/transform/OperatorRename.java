@@ -50,16 +50,28 @@ import java.lang.annotation.Target;
 @GroovyASTTransformationClass("org.codehaus.groovy.transform.OperatorRenameASTTransformation")
 public @interface OperatorRename {
     String plus() default Undefined.STRING;
+
     String minus() default Undefined.STRING;
+
     String multiply() default Undefined.STRING;
+
     String div() default Undefined.STRING;
+
     String remainder() default Undefined.STRING;
+
     String power() default Undefined.STRING;
+
     String leftShift() default Undefined.STRING;
+
     String rightShift() default Undefined.STRING;
+
     String rightShiftUnsigned() default Undefined.STRING;
+
     String and() default Undefined.STRING;
+
     String or() default Undefined.STRING;
+
     String xor() default Undefined.STRING;
+
     String compareTo() default Undefined.STRING;
 }

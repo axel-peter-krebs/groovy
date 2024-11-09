@@ -20,22 +20,22 @@ package groovy.bugs
 
 /**
  * A base class for testing constructors
- * 
+ *
  */
 
- class TestBase {
+class TestBase {
 
-     String foo
+    String foo
 
-     TestBase() {
-     }
+    TestBase() {
+    }
 
-     TestBase(String aFoo) {
-         this.foo = aFoo
-     }
-     /** @todo fix bug */
+    TestBase(String aFoo) {
+        this.foo = aFoo
+    }
+    /** @todo fix bug  */
 
-     def doSomething() {
-         "TestBase"
-     }
- }
+    def doSomething() {
+        "TestBase"
+    }
+}

@@ -79,6 +79,40 @@ import java.util.Map;
  */
 public class SourceAwareCustomizerFactory extends AbstractFactory implements PostCompletionFactory {
 
+    private static void addExtensionValidator(final SourceAwareCustomizer sourceAwareCustomizer, final SourceOptions data) {
+        final List<String> extensions = data.extensions != null ? data.extensions : new LinkedList<String>();
+        if (data.extension != null) extensions.add(data.extension);
+        Closure<Boolean> extensionValidator = data.extensionValidator;
+        if (extensionValidator == null && !extensions.isEmpty()) {
+            extensionValidator = new Closure<Boolean>(sourceAwareCustomizer) {
+                private static final long serialVersionUID = 925642730835101872L;
+
+                @Override
+                public Boolean call(final Object arguments) {
+                    return extensions.contains(arguments);
+                }
+            };
+        }
+        sourceAwareCustomizer.setExtensionValidator(extensionValidator);
+    }
+
+    private static void addBasenameValidator(final SourceAwareCustomizer sourceAwareCustomizer, final SourceOptions data) {
+        final List<String> basenames = data.basenames != null ? data.basenames : new LinkedList<String>();
+        if (data.basename != null) basenames.add(data.basename);
+        Closure<Boolean> basenameValidator = data.basenameValidator;
+        if (basenameValidator == null && !basenames.isEmpty()) {
+            basenameValidator = new Closure<Boolean>(sourceAwareCustomizer) {
+                private static final long serialVersionUID = 7714937867958607043L;
+
+                @Override
+                public Boolean call(final Object arguments) {
+                    return basenames.contains(arguments);
+                }
+            };
+        }
+        sourceAwareCustomizer.setBaseNameValidator(basenameValidator);
+    }
+
     @Override
     public Object newInstance(final FactoryBuilderSupport builder, final Object name, final Object value, final Map attributes) throws InstantiationException, IllegalAccessException {
         SourceOptions data = new SourceOptions();
@@ -106,52 +140,18 @@ public class SourceAwareCustomizerFactory extends AbstractFactory implements Pos
     public Object postCompleteNode(final FactoryBuilderSupport factory, final Object parent, final Object node) {
         SourceOptions data = (SourceOptions) node;
         SourceAwareCustomizer sourceAwareCustomizer = new SourceAwareCustomizer(data.delegate);
-        if (data.extensionValidator !=null && (data.extension!=null || data.extensions!=null)) {
+        if (data.extensionValidator != null && (data.extension != null || data.extensions != null)) {
             throw new RuntimeException("You must choose between an extension name validator or an explicit extension name");
         }
-        if (data.basenameValidator!=null && (data.basename!=null || data.basenames!=null)) {
+        if (data.basenameValidator != null && (data.basename != null || data.basenames != null)) {
             throw new RuntimeException("You must choose between an base name validator or an explicit base name");
         }
 
         addExtensionValidator(sourceAwareCustomizer, data);
         addBasenameValidator(sourceAwareCustomizer, data);
-        if (data.unitValidator!=null) sourceAwareCustomizer.setSourceUnitValidator(data.unitValidator);
-        if (data.classValidator!=null) sourceAwareCustomizer.setClassValidator(data.classValidator);
+        if (data.unitValidator != null) sourceAwareCustomizer.setSourceUnitValidator(data.unitValidator);
+        if (data.classValidator != null) sourceAwareCustomizer.setClassValidator(data.classValidator);
         return sourceAwareCustomizer;
-    }
-
-    private static void addExtensionValidator(final SourceAwareCustomizer sourceAwareCustomizer, final SourceOptions data) {
-        final List<String> extensions = data.extensions!=null?data.extensions : new LinkedList<String>();
-        if (data.extension!=null) extensions.add(data.extension);
-        Closure<Boolean> extensionValidator = data.extensionValidator;
-        if (extensionValidator==null && !extensions.isEmpty()) {
-            extensionValidator = new Closure<Boolean>(sourceAwareCustomizer) {
-                private static final long serialVersionUID = 925642730835101872L;
-
-                @Override
-                public Boolean call(final Object arguments) {
-                    return extensions.contains(arguments);
-                }
-            };
-        }
-        sourceAwareCustomizer.setExtensionValidator(extensionValidator);
-    }
-
-    private static void addBasenameValidator(final SourceAwareCustomizer sourceAwareCustomizer, final SourceOptions data) {
-        final List<String> basenames = data.basenames!=null?data.basenames : new LinkedList<String>();
-        if (data.basename!=null) basenames.add(data.basename);
-        Closure<Boolean> basenameValidator = data.basenameValidator;
-        if (basenameValidator==null && !basenames.isEmpty()) {
-            basenameValidator = new Closure<Boolean>(sourceAwareCustomizer) {
-                private static final long serialVersionUID = 7714937867958607043L;
-
-                @Override
-                public Boolean call(final Object arguments) {
-                    return basenames.contains(arguments);
-                }
-            };
-        }
-        sourceAwareCustomizer.setBaseNameValidator(basenameValidator);
     }
 
     public static class SourceOptions {

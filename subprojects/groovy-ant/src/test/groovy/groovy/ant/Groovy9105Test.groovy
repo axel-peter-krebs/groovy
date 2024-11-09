@@ -36,7 +36,7 @@ class Groovy9105Test extends AntTestCase {
             ant.mkdir(dir: 'build')
             ant.taskdef(name: 'generateStubs', classname: 'org.codehaus.groovy.ant.GenerateStubsTask')
             ant.generateStubs(srcdir: 'src', destdir: 'build')
-            def buildDir = new File(ant.project.baseDir,"build")
+            def buildDir = new File(ant.project.baseDir, "build")
             assert ['AbstractClass.java', 'ConcreteClass.java'].sort() == (buildDir.list() as List).sort()
         }
     }

@@ -27,12 +27,12 @@ class AnnotationCollectorStubTest extends StringSourcesStubTestCase {
 
     Map<String, String> provideSources() {
         [
-                'foo/Main.java'    : '''
+            'foo/Main.java'         : '''
                     package foo;
 
                     public class Main {}
                 ''',
-                'bar/GroovyClass.groovy': '''
+            'bar/GroovyClass.groovy': '''
                     package bar
                     import org.codehaus.groovy.tools.stubgenerator.*
 
@@ -59,10 +59,10 @@ class AnnotationCollectorStubTest extends StringSourcesStubTestCase {
 }
 
 @GroovyCoreTeam([
-        @GroovyDeveloper('Paul'),
-        @GroovyDeveloper('Cedric'),
-        @GroovyDeveloper('Jochen'),
-        @GroovyDeveloper('Guillaume')
+    @GroovyDeveloper('Paul'),
+    @GroovyDeveloper('Cedric'),
+    @GroovyDeveloper('Jochen'),
+    @GroovyDeveloper('Guillaume')
 ])
 @AnnotationCollector
 @interface TheSuperGroovyHeroes {}

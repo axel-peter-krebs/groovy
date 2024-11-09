@@ -22,27 +22,27 @@ import gls.CompilableTestSupport
 
 class ReturnTest extends CompilableTestSupport {
 
-  void testObjectInitializer() {
-      shouldNotCompile """
+    void testObjectInitializer() {
+        shouldNotCompile """
          class A {
             {return}
-         }      
+         }
       """
-  }
+    }
 
-  void testStaticInitializer() {
-      assertScript """
+    void testStaticInitializer() {
+        assertScript """
          class A {
              static foo=2
              static { return; foo=1 }
          }
          assert A.foo==2
-      """      
-  }
+      """
+    }
 
-  void testReturnAdditionInFinally() {
-      //GROOVY-7065
-      assertScript """
+    void testReturnAdditionInFinally() {
+        //GROOVY-7065
+        assertScript """
         class CountDown { int counter = 10 }
 
         CountDown finalCountDown() {
@@ -58,5 +58,5 @@ class ReturnTest extends CompilableTestSupport {
 
         assert finalCountDown().counter == 9
       """
-  }
+    }
 }

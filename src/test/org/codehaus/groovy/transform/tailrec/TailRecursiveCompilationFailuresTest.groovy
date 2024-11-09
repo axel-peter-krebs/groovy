@@ -55,31 +55,36 @@ class TailRecursiveCompilationFailuresTest extends GroovyShellTestCase {
     }
 
     void testFailIfNotAllRecursiveCallsCanBeTransformed() {
-		shouldFail(CompilationFailedException) { evaluate("""
+        shouldFail(CompilationFailedException) {
+            evaluate("""
             import groovy.transform.TailRecursive
             class TargetClass {
             	@TailRecursive
             	int aNonTailRecursiveMethod() {
-            		return 1 + aNonTailRecursiveMethod() 
+            		return 1 + aNonTailRecursiveMethod()
             	}
             }
-        """) }
-	}
+        """)
+        }
+    }
 
-	void testFailIfNotAllStaticRecursiveCallsCanBeTransformed() {
-		shouldFail(CompilationFailedException) { evaluate("""
+    void testFailIfNotAllStaticRecursiveCallsCanBeTransformed() {
+        shouldFail(CompilationFailedException) {
+            evaluate("""
             import groovy.transform.TailRecursive
             class TargetClass {
             	@TailRecursive
             	static int aNonTailRecursiveMethod() {
-            		return 1 + aNonTailRecursiveMethod() 
+            		return 1 + aNonTailRecursiveMethod()
             	}
             }
-        """) }
-	}
+        """)
+        }
+    }
 
     void testFailIfRecursiveMethodCannotBeStaticallyCompiled() {
-        shouldFail(CompilationFailedException) { evaluate("""
+        shouldFail(CompilationFailedException) {
+            evaluate("""
             import groovy.transform.TailRecursive
             import groovy.transform.CompileStatic
 
@@ -93,7 +98,8 @@ class TailRecursiveCompilationFailuresTest extends GroovyShellTestCase {
             	}
             }
             new TargetClass()
-        """) }
+        """)
+        }
     }
 
     void testTailRecursiveAsFirstAnnotationIsIncompatibleWithMemoized() {

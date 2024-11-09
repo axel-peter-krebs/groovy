@@ -34,8 +34,7 @@ public class MethodFailureTest extends GroovyTestCase {
             object.invokeMethod("nonExistentMethod", "hello");
 
             fail("Should have thrown an exception");
-        }
-        catch (GroovyRuntimeException e) {
+        } catch (GroovyRuntimeException e) {
             // expected
         }
     }
@@ -46,8 +45,7 @@ public class MethodFailureTest extends GroovyTestCase {
             object.invokeMethod("methodThatFails", null);
 
             fail("Should have thrown an exception");
-        }
-        catch (GroovyRuntimeException e) {
+        } catch (GroovyRuntimeException e) {
             // expected
         }
     }
@@ -62,8 +60,7 @@ public class MethodFailureTest extends GroovyTestCase {
             });
 
             fail("Should have thrown an exception");
-        }
-        catch (GroovyRuntimeException e) {
+        } catch (GroovyRuntimeException e) {
             // expected
         }
     }

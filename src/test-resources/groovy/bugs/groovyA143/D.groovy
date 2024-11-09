@@ -21,20 +21,23 @@ package groovy.bugs.groovyA143
 @groovy.transform.CompileStatic
 @groovy.transform.SelfType([A])
 trait D extends B {
-	boolean booleanMethod1() {
-		true
-	}
-	boolean booleanMethod2() {
-		true
-	}
-	boolean booleanMethod3() {
-		true
-	}
-	@Override
-	Object getManager() {
-		if (managerObject == null) {
-			managerObject = new E(this as B)
-		}
-		managerObject
-	}
+    boolean booleanMethod1() {
+        true
+    }
+
+    boolean booleanMethod2() {
+        true
+    }
+
+    boolean booleanMethod3() {
+        true
+    }
+
+    @Override
+    Object getManager() {
+        if (managerObject == null) {
+            managerObject = new E(this as B)
+        }
+        managerObject
+    }
 }

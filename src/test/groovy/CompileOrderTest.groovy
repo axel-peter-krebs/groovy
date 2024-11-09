@@ -21,34 +21,34 @@ package groovy
 import groovy.test.GroovyTestCase
 
 class CompileOrderTest extends GroovyTestCase {
-   void testCompileOrder() {
-      def interfaceFile = File.createTempFile("TestOrderInterface", ".groovy", buildDir())
-      def concreteFile = File.createTempFile("TestOrderConcrete", ".groovy", buildDir())
-      def cl = new GroovyClassLoader(this.class.classLoader)
-      def currentDir = concreteFile.parentFile.absolutePath
-      cl.addClasspath(currentDir)
-      cl.shouldRecompile = true
+    void testCompileOrder() {
+        def interfaceFile = File.createTempFile("TestOrderInterface", ".groovy", buildDir())
+        def concreteFile = File.createTempFile("TestOrderConcrete", ".groovy", buildDir())
+        def cl = new GroovyClassLoader(this.class.classLoader)
+        def currentDir = concreteFile.parentFile.absolutePath
+        cl.addClasspath(currentDir)
+        cl.shouldRecompile = true
 
-      try {
-         // Create the interface
-         interfaceFile.deleteOnExit()
-         def interfaceName = interfaceFile.name - ".groovy"
-         interfaceFile.write "interface $interfaceName { }\n"
+        try {
+            // Create the interface
+            interfaceFile.deleteOnExit()
+            def interfaceName = interfaceFile.name - ".groovy"
+            interfaceFile.write "interface $interfaceName { }\n"
 
-         // Create a concrete class which implements the interface
-         concreteFile.deleteOnExit()
-         def concreteName = concreteFile.name - ".groovy"
-         concreteFile.write "class $concreteName implements $interfaceName { }\n"
+            // Create a concrete class which implements the interface
+            concreteFile.deleteOnExit()
+            def concreteName = concreteFile.name - ".groovy"
+            concreteFile.write "class $concreteName implements $interfaceName { }\n"
 
-         // We're testing whether this fails:
-         def groovyClass = cl.loadClass(concreteName,true,false)
-         // Create an object, just for good measure.
-         def object = groovyClass.newInstance()
-      } finally {
-         interfaceFile.delete()
-         concreteFile.delete()
-      }
-   }
+            // We're testing whether this fails:
+            def groovyClass = cl.loadClass(concreteName, true, false)
+            // Create an object, just for good measure.
+            def object = groovyClass.newInstance()
+        } finally {
+            interfaceFile.delete()
+            concreteFile.delete()
+        }
+    }
 
     private File buildDir() {
         new File("build")
@@ -76,7 +76,7 @@ class CompileOrderTest extends GroovyTestCase {
 
             GroovyCodeSource codeSource = new GroovyCodeSource(concreteFile.toURI())
             // We're testing whether this fails:
-            def groovyClass = cl.parseClass(codeSource,false)
+            def groovyClass = cl.parseClass(codeSource, false)
             // Create an object, just for good measure.
             def object = groovyClass.newInstance()
         } finally {

@@ -37,14 +37,14 @@ import java.util.Arrays;
 public abstract class StaticPropertyAccessHelper {
 
     public static Expression transformToSetterCall(
-            final Expression receiver,
-            final MethodNode setterMethod,
-            final Expression valueExpression,
-            final boolean implicitThis,
-            final boolean safe,
-            final boolean spreadSafe,
-            final boolean returnValue,
-            final Expression sourceExpression) {
+        final Expression receiver,
+        final MethodNode setterMethod,
+        final Expression valueExpression,
+        final boolean implicitThis,
+        final boolean safe,
+        final boolean spreadSafe,
+        final boolean returnValue,
+        final Expression sourceExpression) {
         if (returnValue) {
             TemporaryVariableExpression tmp = new TemporaryVariableExpression(valueExpression);
             PoppingMethodCallExpression call = new PoppingMethodCallExpression(receiver, setterMethod, tmp);

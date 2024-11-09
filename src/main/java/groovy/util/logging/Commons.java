@@ -66,6 +66,7 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.ternaryX;
 @GroovyASTTransformationClass("org.codehaus.groovy.transform.LogASTTransformation")
 public @interface Commons {
     String value() default "log";
+
     String category() default LogASTTransformation.DEFAULT_CATEGORY_NAME;
 
     /**
@@ -87,12 +88,12 @@ public @interface Commons {
         @Override
         public FieldNode addLoggerFieldToClass(ClassNode classNode, String logFieldName, String categoryName, int fieldModifiers) {
             return classNode.addField(logFieldName,
-                    fieldModifiers,
-                    classNode(LOGGER_NAME),
-                    new MethodCallExpression(
-                            new ClassExpression(classNode(LOGGERFACTORY_NAME)),
-                            "getLog",
-                            new ConstantExpression(getCategoryName(classNode, categoryName))));
+                fieldModifiers,
+                classNode(LOGGER_NAME),
+                new MethodCallExpression(
+                    new ClassExpression(classNode(LOGGERFACTORY_NAME)),
+                    "getLog",
+                    new ConstantExpression(getCategoryName(classNode, categoryName))));
         }
 
         @Override
@@ -103,12 +104,12 @@ public @interface Commons {
         @Override
         public Expression wrapLoggingMethodCall(Expression logVariable, String methodName, Expression originalExpression) {
             MethodCallExpression condition = new MethodCallExpression(
-                    logVariable,
-                    "is" + methodName.substring(0, 1).toUpperCase(Locale.ENGLISH) + methodName.substring(1) + "Enabled",
-                    ArgumentListExpression.EMPTY_ARGUMENTS);
+                logVariable,
+                "is" + methodName.substring(0, 1).toUpperCase(Locale.ENGLISH) + methodName.substring(1) + "Enabled",
+                ArgumentListExpression.EMPTY_ARGUMENTS);
             condition.setImplicitThis(false);
 
             return ternaryX(condition, originalExpression, nullX());
         }
-   }
+    }
 }

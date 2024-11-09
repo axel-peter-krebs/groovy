@@ -87,6 +87,48 @@ class TraitReceiverTransformer extends ClassCodeExpressionTransformer {
         this.knownFields = knownFields;
     }
 
+    private static void markDynamicCall(final MethodCallExpression mce, final FieldNode fn, final boolean isStatic) {
+        if (isStatic) {
+            mce.putNodeMetaData(TraitASTTransformation.DO_DYNAMIC, fn.getOriginType());
+        }
+    }
+
+    private static FieldNode tryGetFieldNode(final ClassNode weavedType, final String fieldName) {
+        FieldNode fn = weavedType.getDeclaredField(fieldName);
+        if (fn == null && ClassHelper.isClassType(weavedType)) {
+            GenericsType[] genericsTypes = weavedType.getGenericsTypes();
+            if (genericsTypes != null && genericsTypes.length == 1) {
+                // for static properties
+                fn = genericsTypes[0].getType().getDeclaredField(fieldName);
+            }
+        }
+        return fn;
+    }
+
+    private static MethodNode findConcreteMethod(final ClassNode traitClass, final String methodName) {
+        for (MethodNode methodNode : traitClass.getDeclaredMethods(methodName)) {
+            if (methodNode.isPrivate() || methodNode.isStatic()) {
+                return methodNode;
+            }
+        }
+
+        // GROOVY-8272, GROOVY-10312: public static method from super trait
+        var traits = Traits.findTraits(traitClass);
+        traits.remove(traitClass);
+
+        for (ClassNode superTrait : traits) {
+            for (MethodNode methodNode : Traits.findHelper(superTrait).getDeclaredMethods(methodName)) {
+                if (methodNode.isPublic() && methodNode.isStatic()
+                    // exclude public method with body as it's included in trait interface
+                    && ClassHelper.isClassType(methodNode.getParameters()[0].getType())) {
+                    return methodNode;
+                }
+            }
+        }
+
+        return null;
+    }
+
     @Override
     protected SourceUnit getSourceUnit() {
         return unit;
@@ -115,7 +157,7 @@ class TraitReceiverTransformer extends ClassCodeExpressionTransformer {
                 if (knownFields.contains(vexp.getName())) {
                     boolean isStatic = accessedVariable.isStatic();
                     return transformFieldReference(exp, accessedVariable instanceof FieldNode
-                            ? (FieldNode) accessedVariable : ((PropertyNode) accessedVariable).getField(), isStatic);
+                        ? (FieldNode) accessedVariable : ((PropertyNode) accessedVariable).getField(), isStatic);
                 } else {
                     PropertyExpression propertyExpression = propX(varX(weaved), vexp.getName());
                     propertyExpression.getProperty().setSourcePosition(exp);
@@ -146,9 +188,9 @@ class TraitReceiverTransformer extends ClassCodeExpressionTransformer {
             }
         } else if (exp instanceof ClosureExpression) {
             MethodCallExpression mce = callX(exp, "rehydrate", args(
-                    varX(weaved),
-                    varX(weaved),
-                    varX(weaved)
+                varX(weaved),
+                varX(weaved),
+                varX(weaved)
             ));
             mce.setImplicitThis(false);
             mce.setSourcePosition(exp);
@@ -178,7 +220,7 @@ class TraitReceiverTransformer extends ClassCodeExpressionTransformer {
             } else if (leftExpression instanceof FieldExpression) {
                 leftFieldName = ((FieldExpression) leftExpression).getFieldName();
             } else if (leftExpression instanceof PropertyExpression
-                    && (((PropertyExpression) leftExpression).isImplicitThis() || "this".equals(((PropertyExpression) leftExpression).getObjectExpression().getText()))) {
+                && (((PropertyExpression) leftExpression).isImplicitThis() || "this".equals(((PropertyExpression) leftExpression).getObjectExpression().getText()))) {
                 leftFieldName = ((PropertyExpression) leftExpression).getPropertyAsString();
             }
             if (leftFieldName != null) {
@@ -197,9 +239,9 @@ class TraitReceiverTransformer extends ClassCodeExpressionTransformer {
                 }
                 String method = Traits.helperSetterName(fn);
                 MethodCallExpression mce = callX(
-                        receiver,
-                        method,
-                        super.transform(rightExpression)
+                    receiver,
+                    method,
+                    super.transform(rightExpression)
                 );
                 mce.setImplicitThis(false);
                 mce.setSourcePosition(exp);
@@ -211,7 +253,7 @@ class TraitReceiverTransformer extends ClassCodeExpressionTransformer {
         Expression leftTransform = transform(leftExpression);
         Expression rightTransform = transform(rightExpression);
         Expression ret = exp instanceof DeclarationExpression ?
-                new DeclarationExpression(leftTransform, operation, rightTransform) : binX(leftTransform, operation, rightTransform);
+            new DeclarationExpression(leftTransform, operation, rightTransform) : binX(leftTransform, operation, rightTransform);
         ret.setSourcePosition(exp);
         ret.copyNodeMetaData(exp);
         return ret;
@@ -228,24 +270,6 @@ class TraitReceiverTransformer extends ClassCodeExpressionTransformer {
         mce.setSourcePosition(exp);
         markDynamicCall(mce, fn, isStatic);
         return mce;
-    }
-
-    private static void markDynamicCall(final MethodCallExpression mce, final FieldNode fn, final boolean isStatic) {
-        if (isStatic) {
-            mce.putNodeMetaData(TraitASTTransformation.DO_DYNAMIC, fn.getOriginType());
-        }
-    }
-
-    private static FieldNode tryGetFieldNode(final ClassNode weavedType, final String fieldName) {
-        FieldNode fn = weavedType.getDeclaredField(fieldName);
-        if (fn == null && ClassHelper.isClassType(weavedType)) {
-            GenericsType[] genericsTypes = weavedType.getGenericsTypes();
-            if (genericsTypes != null && genericsTypes.length == 1) {
-                // for static properties
-                fn = genericsTypes[0].getType().getDeclaredField(fieldName);
-            }
-        }
-        return fn;
     }
 
     private void throwSuperError(final ASTNode node) {
@@ -269,9 +293,9 @@ class TraitReceiverTransformer extends ClassCodeExpressionTransformer {
             superCallArgs.addExpression(arguments);
         }
         MethodCallExpression newCall = callX(
-                weaved,
-                Traits.getSuperTraitMethodName(traitClass, method),
-                superCallArgs
+            weaved,
+            Traits.getSuperTraitMethodName(traitClass, method),
+            superCallArgs
         );
         newCall.setSourcePosition(call);
         newCall.setSafe(call.isSafe());
@@ -281,9 +305,9 @@ class TraitReceiverTransformer extends ClassCodeExpressionTransformer {
     }
 
     private Expression transformMethodCallOnThis(final MethodCallExpression call) {
-        Expression method    = call.getMethod();
+        Expression method = call.getMethod();
         Expression arguments = call.getArguments();
-        Expression thisExpr  = call.getObjectExpression();
+        Expression thisExpr = call.getObjectExpression();
 
         if (method instanceof ConstantExpression) {
             // GROOVY-7213, GROOVY-7214, GROOVY-8282, GROOVY-8859, GROOVY-10106, GROOVY-10312
@@ -307,29 +331,6 @@ class TraitReceiverTransformer extends ClassCodeExpressionTransformer {
         newCall.setSpreadSafe(call.isSpreadSafe());
         newCall.setSourcePosition(call);
         return newCall;
-    }
-
-    private static MethodNode findConcreteMethod(final ClassNode traitClass, final String methodName) {
-        for (MethodNode methodNode : traitClass.getDeclaredMethods(methodName)) {
-            if (methodNode.isPrivate() || methodNode.isStatic()) {
-                return methodNode;
-            }
-        }
-
-        // GROOVY-8272, GROOVY-10312: public static method from super trait
-        var traits = Traits.findTraits(traitClass); traits.remove(traitClass);
-
-        for (ClassNode superTrait : traits) {
-            for (MethodNode methodNode : Traits.findHelper(superTrait).getDeclaredMethods(methodName)) {
-                if (methodNode.isPublic() && methodNode.isStatic()
-                        // exclude public method with body as it's included in trait interface
-                        && ClassHelper.isClassType(methodNode.getParameters()[0].getType())) {
-                    return methodNode;
-                }
-            }
-        }
-
-        return null;
     }
 
     private ArgumentListExpression createArgumentList(final Expression self, final Expression arguments) {

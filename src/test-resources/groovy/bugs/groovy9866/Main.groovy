@@ -22,12 +22,15 @@ class C implements I {
     @Override
     String getName() {
     }
+
     @Override
     boolean isLoggable(Level level) { // System.Logger.Level
     }
+
     @Override
     void log(Level level, ResourceBundle bundle, String msg, Throwable throwable) {
     }
+
     @Override
     void log(Level level, ResourceBundle bundle, String format, Object... params) {
     }

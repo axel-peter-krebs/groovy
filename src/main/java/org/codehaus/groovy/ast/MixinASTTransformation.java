@@ -75,7 +75,7 @@ public class MixinASTTransformation extends AbstractASTTransformation {
             }
 
             ((BlockStatement) clinit.getCode()).addStatement(
-                    stmt(callX(callX(targetClass, "getMetaClass"), "mixin", useClasses))
+                stmt(callX(callX(targetClass, "getMetaClass"), "mixin", useClasses))
             );
         }
     }

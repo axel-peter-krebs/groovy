@@ -67,7 +67,7 @@ final class Groovy10700 {
             cu.addSources(a, b)
             cu.compile()
 
-            def basePath = config.targetDirectory.absolutePath.replace('\\','/')
+            def basePath = config.targetDirectory.absolutePath.replace('\\', '/')
             assertScript """
                 def loader = new GroovyClassLoader(this.class.classLoader)
                 loader.addClasspath('$basePath')

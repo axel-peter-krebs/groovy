@@ -29,9 +29,9 @@ import java.util.Objects;
  */
 public class ExceptionMessage extends Message {
 
-    private final Exception cause;
     protected final boolean debug;
     protected final ProcessingUnit owner;
+    private final Exception cause;
 
     public ExceptionMessage(final Exception cause, final boolean debug, final ProcessingUnit owner) {
         this.cause = Objects.requireNonNull(cause);
@@ -61,6 +61,7 @@ public class ExceptionMessage extends Message {
         }
         output.println();
 
-        /*if (debug)*/ cause.printStackTrace(output);
+        /*if (debug)*/
+        cause.printStackTrace(output);
     }
 }

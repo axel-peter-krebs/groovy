@@ -37,12 +37,12 @@ import java.util.Map;
  *     <li><i>alias</i> for imports with alias</li>
  *     <li><i>staticMember</i> for static imports of individual members</li>
  * </ul>
- *
+ * <p>
  * For example:
  * <pre><code>builder.imports {
  * alias 'AI', 'java.util.concurrent.atomic.AtomicInteger'
  * alias 'AL', 'java.util.concurrent.atomic.AtomicLong'
- *}</code></pre>
+ * }</code></pre>
  *
  * @since 2.1.0
  */
@@ -60,19 +60,19 @@ public class ImportCustomizerFactory extends AbstractFactory {
     }
 
     private void addImport(final ImportCustomizer customizer, final Object value) {
-        if (value==null) return;
+        if (value == null) return;
         if (value instanceof Collection) {
-            for (Object e : (Collection)value) {
+            for (Object e : (Collection) value) {
                 addImport(customizer, e);
             }
         } else if (value instanceof String) {
-            customizer.addImports((String)value);
+            customizer.addImports((String) value);
         } else if (value instanceof Class) {
             customizer.addImports(((Class) value).getName());
         } else if (value instanceof GString) {
             customizer.addImports(value.toString());
         } else {
-            throw new RuntimeException("Unsupported import value type ["+value+"]");
+            throw new RuntimeException("Unsupported import value type [" + value + "]");
         }
     }
 
@@ -97,6 +97,7 @@ public class ImportCustomizerFactory extends AbstractFactory {
         protected void normal(String... names) {
             customizer.addImports(names);
         }
+
         protected void normal(Class... classes) {
             for (Class aClass : classes) {
                 customizer.addImports(aClass.getName());
@@ -106,6 +107,7 @@ public class ImportCustomizerFactory extends AbstractFactory {
         protected void alias(String alias, String name) {
             customizer.addImport(alias, name);
         }
+
         protected void alias(String alias, Class clazz) {
             customizer.addImport(alias, clazz.getName());
         }
@@ -117,6 +119,7 @@ public class ImportCustomizerFactory extends AbstractFactory {
         protected void staticStar(String... classNames) {
             customizer.addStaticStars(classNames);
         }
+
         protected void staticStar(Class... classes) {
             for (Class aClass : classes) {
                 customizer.addStaticStars(aClass.getName());
@@ -126,6 +129,7 @@ public class ImportCustomizerFactory extends AbstractFactory {
         protected void staticMember(String name, String field) {
             customizer.addStaticImport(name, field);
         }
+
         protected void staticMember(String alias, String name, String field) {
             customizer.addStaticImport(alias, name, field);
         }

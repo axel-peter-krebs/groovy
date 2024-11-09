@@ -37,7 +37,7 @@ public class StaticInitTest extends TestCase {
 
     static boolean failed;
 
-    public void testInitOrder () throws NoSuchFieldException, IllegalAccessException, ClassNotFoundException {
+    public void testInitOrder() throws NoSuchFieldException, IllegalAccessException, ClassNotFoundException {
         final Field f = new GroovyClassLoader().loadClass("org.codehaus.groovy.runtime.XforStaticInitTest", false, false, false).getField("field");
         assertTrue(!failed);
         f.getInt(null);

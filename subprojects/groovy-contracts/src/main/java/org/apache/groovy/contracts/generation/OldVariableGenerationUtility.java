@@ -72,10 +72,10 @@ public class OldVariableGenerationUtility {
             final ClassNode fieldType = ClassHelper.getWrapper(fieldNode.getType());
 
             if (fieldType.getName().startsWith("java.lang") || ClassHelper.isPrimitiveType(fieldType) || fieldType.getName().startsWith("java.math") ||
-                    fieldType.getName().startsWith("java.util") ||
-                    fieldType.getName().startsWith("java.sql") ||
-                    "groovy.lang.GString".equals(fieldType.getName()) ||
-                    "java.lang.String".equals(fieldType.getName())) {
+                fieldType.getName().startsWith("java.util") ||
+                fieldType.getName().startsWith("java.sql") ||
+                "groovy.lang.GString".equals(fieldType.getName()) ||
+                "java.lang.String".equals(fieldType.getName())) {
 
                 MethodNode cloneMethod = fieldType.getMethod("clone", Parameter.EMPTY_ARRAY);
                 // if a clone classNode is available, the value is cloned
@@ -92,10 +92,10 @@ public class OldVariableGenerationUtility {
                     oldVariablesMap.addMapEntryExpression(mapEntryX(constX(oldVariable.getName().substring("$old$".length())), oldVariable));
 
                 } else if (ClassHelper.isPrimitiveType(fieldType)
-                        || ClassHelper.isNumberType(fieldType)
-                        || fieldType.getName().startsWith("java.math")
-                        || "groovy.lang.GString".equals(fieldType.getName())
-                        || "java.lang.String".equals(fieldType.getName())) {
+                    || ClassHelper.isNumberType(fieldType)
+                    || fieldType.getName().startsWith("java.math")
+                    || "groovy.lang.GString".equals(fieldType.getName())
+                    || "java.lang.String".equals(fieldType.getName())) {
 
                     VariableExpression oldVariable = localVarX("$old$" + fieldNode.getName(), fieldNode.getType());
                     Statement oldVariableAssignment = declS(oldVariable, fieldX(fieldNode));
@@ -114,7 +114,7 @@ public class OldVariableGenerationUtility {
         if (classNode.getSuperClass() != null && classNode.getSuperClass().getMethod(OLD_VARIABLES_METHOD, Parameter.EMPTY_ARRAY) != null) {
             mergedOldVariables = localVarX("mergedOldVariables", new ClassNode(Map.class));
             methodBlockStatement.addStatement(declS(mergedOldVariables,
-                    callX(oldVariable, "plus", args(callSuperX(OLD_VARIABLES_METHOD)))));
+                callX(oldVariable, "plus", args(callSuperX(OLD_VARIABLES_METHOD)))));
         }
 
         methodBlockStatement.addStatement(returnS(mergedOldVariables != null ? mergedOldVariables : oldVariable));

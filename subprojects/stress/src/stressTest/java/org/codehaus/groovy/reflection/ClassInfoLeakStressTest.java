@@ -87,7 +87,7 @@ public class ClassInfoLeakStressTest {
 
         int ciSize = queueSize(classInfoQueue);
         assertEquals("ClassInfo objects [" + ciSize + "] collected by GC, expected [" + NUM_OBJECTS + "]",
-                NUM_OBJECTS, ciSize);
+            NUM_OBJECTS, ciSize);
     }
 
     private int queueSize(ReferenceQueue<?> queue) {

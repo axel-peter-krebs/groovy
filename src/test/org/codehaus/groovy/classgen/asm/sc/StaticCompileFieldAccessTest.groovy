@@ -26,7 +26,7 @@ import org.codehaus.groovy.classgen.asm.AbstractBytecodeTestCase
 final class StaticCompileFieldAccessTest extends AbstractBytecodeTestCase {
 
     void testAccessProperty() {
-        compile(method:'m', '''
+        compile(method: 'm', '''
             class A {
                 int x
             }
@@ -44,7 +44,7 @@ final class StaticCompileFieldAccessTest extends AbstractBytecodeTestCase {
     }
 
     void testAccessField() {
-        compile(method:'m', '''
+        compile(method: 'm', '''
             class A {
                 int x
             }
@@ -62,7 +62,7 @@ final class StaticCompileFieldAccessTest extends AbstractBytecodeTestCase {
     }
 
     void testReturnProperty() {
-        compile(method:'m', '''
+        compile(method: 'm', '''
             class A {
                 int x = 10
             }
@@ -75,16 +75,16 @@ final class StaticCompileFieldAccessTest extends AbstractBytecodeTestCase {
             assert m(a) == 10
         ''')
         assert sequence.hasStrictSequence([
-                'ALOAD',
-                'INVOKEVIRTUAL A.getX ()I',
-                'IRETURN'
+            'ALOAD',
+            'INVOKEVIRTUAL A.getX ()I',
+            'IRETURN'
         ])
 
         clazz.newInstance().run()
     }
 
     void testReturnPublicField() {
-        compile(method:'m', '''
+        compile(method: 'm', '''
             class A {
                 public int x = 10
             }
@@ -97,16 +97,16 @@ final class StaticCompileFieldAccessTest extends AbstractBytecodeTestCase {
             assert m(a) == 10
         ''')
         assert sequence.hasStrictSequence([
-                'ALOAD',
-                'GETFIELD A.x : I',
-                'IRETURN'
+            'ALOAD',
+            'GETFIELD A.x : I',
+            'IRETURN'
         ])
 
         clazz.newInstance().run()
     }
 
     void testReturnProtectedField() {
-        compile(method:'m', '''
+        compile(method: 'm', '''
             class A {
                 protected int x = 10
             }
@@ -119,16 +119,16 @@ final class StaticCompileFieldAccessTest extends AbstractBytecodeTestCase {
             assert m(a) == 10
         ''')
         assert sequence.hasStrictSequence([
-                'ALOAD',
-                'GETFIELD A.x : I',
-                'IRETURN'
+            'ALOAD',
+            'GETFIELD A.x : I',
+            'IRETURN'
         ])
 
         clazz.newInstance().run()
     }
 
     void testReturnPublicFieldFromNonGroovyObject() {
-        compile(method:'m', '''
+        compile(method: 'm', '''
             java.awt.Point a = [100,200]
 
             @groovy.transform.CompileStatic
@@ -137,17 +137,17 @@ final class StaticCompileFieldAccessTest extends AbstractBytecodeTestCase {
             }
             assert m(a) == 100
         ''')
-       assert sequence.hasStrictSequence([
-                'ALOAD',
-                'GETFIELD java/awt/Point.x : I',
-                'IRETURN'
+        assert sequence.hasStrictSequence([
+            'ALOAD',
+            'GETFIELD java/awt/Point.x : I',
+            'IRETURN'
         ])
 
         clazz.newInstance().run()
     }
 
     void testReturnFieldFromNonGroovyObjectUsingGetter() {
-        compile(method:'m', '''
+        compile(method: 'm', '''
             java.awt.Point a = [100,200]
 
             @groovy.transform.CompileStatic
@@ -156,17 +156,17 @@ final class StaticCompileFieldAccessTest extends AbstractBytecodeTestCase {
             }
             assert usingGetter(a) == 100
         ''')
-       assert sequence.hasStrictSequence([
-                'ALOAD',
-                'INVOKEVIRTUAL java/awt/Point.getX ()D',
-                'DRETURN'
+        assert sequence.hasStrictSequence([
+            'ALOAD',
+            'INVOKEVIRTUAL java/awt/Point.getX ()D',
+            'DRETURN'
         ])
 
         clazz.newInstance().run()
     }
 
     void testReturnPropertyFromNonGroovyObject() {
-        compile(method:'m', '''
+        compile(method: 'm', '''
             Object a = 'hello'
 
             @groovy.transform.CompileStatic
@@ -175,10 +175,10 @@ final class StaticCompileFieldAccessTest extends AbstractBytecodeTestCase {
             }
             assert m(a) == String
         ''')
-       assert sequence.hasStrictSequence([
-                'ALOAD',
-                'INVOKEVIRTUAL java/lang/Object.getClass ()Ljava/lang/Class;',
-                'ARETURN'
+        assert sequence.hasStrictSequence([
+            'ALOAD',
+            'INVOKEVIRTUAL java/lang/Object.getClass ()Ljava/lang/Class;',
+            'ARETURN'
         ])
 
         clazz.newInstance().run()
@@ -186,7 +186,7 @@ final class StaticCompileFieldAccessTest extends AbstractBytecodeTestCase {
 
     void testReturnPrivateFieldFromNonGroovyObjectAndNoGetter() {
         shouldFail {
-            compile(method:'m', '''
+            compile(method: 'm', '''
                 Date a = new Date()
 
                 @groovy.transform.CompileStatic

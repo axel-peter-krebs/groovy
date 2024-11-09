@@ -52,7 +52,7 @@ class MetaClassOverridingTest extends CompilableTestSupport {
             class A {
                  private MetaClass metaClass
             }
-        """        
+        """
     }
 
 }

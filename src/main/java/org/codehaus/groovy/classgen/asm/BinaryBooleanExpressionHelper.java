@@ -31,13 +31,13 @@ import static org.codehaus.groovy.syntax.Types.PLUS;
  */
 public class BinaryBooleanExpressionHelper extends BinaryIntExpressionHelper {
 
-    public BinaryBooleanExpressionHelper(WriterController wc) {
-        super(wc, boolArraySet, boolArrayGet);
-    }
-
     private static final MethodCaller
         boolArrayGet = MethodCaller.newStatic(BytecodeInterface8.class, "zArrayGet"),
         boolArraySet = MethodCaller.newStatic(BytecodeInterface8.class, "zArraySet");
+
+    public BinaryBooleanExpressionHelper(WriterController wc) {
+        super(wc, boolArraySet, boolArrayGet);
+    }
 
     @Override
     protected ClassNode getArrayGetResultType() {
@@ -88,14 +88,17 @@ public class BinaryBooleanExpressionHelper extends BinaryIntExpressionHelper {
     protected void removeTwoOperands(MethodVisitor mv) {
         throw new GroovyBugError("should not reach here");
     }
+
     @Override
     protected void writePlusPlus(MethodVisitor mv) {
         throw new GroovyBugError("should not reach here");
     }
+
     @Override
     protected void writeMinusMinus(MethodVisitor mv) {
         throw new GroovyBugError("should not reach here");
     }
+
     @Override
     protected void doubleTwoOperands(MethodVisitor mv) {
         throw new GroovyBugError("should not reach here");

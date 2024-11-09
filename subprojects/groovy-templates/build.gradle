@@ -24,7 +24,7 @@ dependencies {
     api rootProject // Template uses Writable...
     implementation projects.groovyXml
     testImplementation projects.groovyTest
-    testImplementation ("org.spockframework:spock-core:${versions.spock}") {
+    testImplementation("org.spockframework:spock-core:${versions.spock}") {
         exclude group: 'org.codehaus.groovy'
     }
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:${versions.junit5}") {
@@ -39,9 +39,9 @@ tasks.named('test') {
 
 tasks.named('rat') {
     excludes += [
-            // test files
-            'src/spec/test-resources/*.txt',
-            'src/test/resources/includes/hello-escaped.txt',
-            'src/test/resources/includes/hello.html'
+        // test files
+        'src/spec/test-resources/*.txt',
+        'src/test/resources/includes/hello-escaped.txt',
+        'src/test/resources/includes/hello.html'
     ]
 }

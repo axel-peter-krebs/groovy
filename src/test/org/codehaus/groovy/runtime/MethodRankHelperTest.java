@@ -48,31 +48,31 @@ public class MethodRankHelperTest extends TestCase {
 
         //A transposition and a casemodification
         assertEquals("TraCase Start1", MethodRankHelper.DL_CASE + MethodRankHelper.DL_TRANSPOSITION,
-                MethodRankHelper.delDistance("sAdf", "asdf"));
+            MethodRankHelper.delDistance("sAdf", "asdf"));
         assertEquals("TraCase Start2", MethodRankHelper.DL_CASE + MethodRankHelper.DL_TRANSPOSITION,
-                MethodRankHelper.delDistance("Sadf", "asdf"));
+            MethodRankHelper.delDistance("Sadf", "asdf"));
         assertEquals("TraCase Mid1", MethodRankHelper.DL_CASE + MethodRankHelper.DL_TRANSPOSITION,
-                MethodRankHelper.delDistance("aDsf", "asdf"));
+            MethodRankHelper.delDistance("aDsf", "asdf"));
         assertEquals("TraCase Mid2", MethodRankHelper.DL_CASE + MethodRankHelper.DL_TRANSPOSITION,
-                MethodRankHelper.delDistance("adSf", "asdf"));
+            MethodRankHelper.delDistance("adSf", "asdf"));
         assertEquals("TraCase End1", MethodRankHelper.DL_CASE + MethodRankHelper.DL_TRANSPOSITION,
-                MethodRankHelper.delDistance("asFd", "asdf"));
+            MethodRankHelper.delDistance("asFd", "asdf"));
         assertEquals("TraCase End2", MethodRankHelper.DL_CASE + MethodRankHelper.DL_TRANSPOSITION,
-                MethodRankHelper.delDistance("asfD", "asdf"));
+            MethodRankHelper.delDistance("asfD", "asdf"));
 
         assertEquals("2x TraCase1", (MethodRankHelper.DL_CASE + MethodRankHelper.DL_TRANSPOSITION) * 2,
-                MethodRankHelper.delDistance("sAfD", "asdf"));
+            MethodRankHelper.delDistance("sAfD", "asdf"));
         assertEquals("2x TraCase2", (MethodRankHelper.DL_CASE + MethodRankHelper.DL_TRANSPOSITION) * 2,
-                MethodRankHelper.delDistance("SaFd", "asdf"));
+            MethodRankHelper.delDistance("SaFd", "asdf"));
 
         assertEquals("2x TraCase + Case", (MethodRankHelper.DL_CASE + MethodRankHelper.DL_TRANSPOSITION) * 2 + MethodRankHelper.DL_CASE,
-                MethodRankHelper.delDistance("SAfD", "asdf"));
+            MethodRankHelper.delDistance("SAfD", "asdf"));
         assertEquals("2x TraCase + Case", (MethodRankHelper.DL_CASE + MethodRankHelper.DL_TRANSPOSITION) * 2 + MethodRankHelper.DL_CASE,
-                MethodRankHelper.delDistance("SAFd", "asdf"));
+            MethodRankHelper.delDistance("SAFd", "asdf"));
         assertEquals("2x TraCase + Case", (MethodRankHelper.DL_CASE + MethodRankHelper.DL_TRANSPOSITION) * 2 + MethodRankHelper.DL_CASE,
-                MethodRankHelper.delDistance("sAFD", "asdf"));
+            MethodRankHelper.delDistance("sAFD", "asdf"));
         assertEquals("2x TraCase + Case", (MethodRankHelper.DL_CASE + MethodRankHelper.DL_TRANSPOSITION) * 2 + MethodRankHelper.DL_CASE,
-                MethodRankHelper.delDistance("SaFD", "asdf"));
+            MethodRankHelper.delDistance("SaFD", "asdf"));
     }
 
     /**
@@ -116,6 +116,16 @@ public class MethodRankHelperTest extends TestCase {
         assertEquals(MethodRankHelperTest.class, MethodRankHelper.boxVar(MethodRankHelperTest.class));
     }
 
+    public void testGetMethodSuggestionString() {
+        assertEquals("No suggestion", 0, MethodRankHelper.getMethodSuggestionString("noSuchMethod", TempClass.class, new Object[]{}).length());
+        assertEquals("getx", true, MethodRankHelper.getMethodSuggestionString("getx", TempClass.class, new Object[]{}).indexOf("getX") > 0);
+        assertEquals("To great distance", true, MethodRankHelper.getMethodSuggestionString("getx", TempClass.class, new Object[]{}).indexOf("getXYMultiplied") < 0);
+    }
+
+    public void testGetConstructorSuggestionString() {
+        assertEquals("No suggestion", 0, MethodRankHelper.getConstructorSuggestionString(TempClass.class, new Object[]{null, null, null, null, null}).length());
+    }
+
     /*
     A better set of more complete tests of everything below is on the way!
     */
@@ -135,11 +145,11 @@ public class MethodRankHelperTest extends TestCase {
             return x;
         }
 
-        public int gety() {
-            return y;
+        public void setX(int x) {
         }
 
-        public void setX(int x) {
+        public int gety() {
+            return y;
         }
 
         public void setXY(int x, int y) {
@@ -148,15 +158,5 @@ public class MethodRankHelperTest extends TestCase {
         public int getXYMultiplied() {
             return x * y;
         }
-    }
-
-    public void testGetMethodSuggestionString() {
-        assertEquals("No suggestion", 0, MethodRankHelper.getMethodSuggestionString("noSuchMethod", TempClass.class, new Object[]{}).length());
-        assertEquals("getx", true, MethodRankHelper.getMethodSuggestionString("getx", TempClass.class, new Object[]{}).indexOf("getX") > 0);
-        assertEquals("To great distance", true, MethodRankHelper.getMethodSuggestionString("getx", TempClass.class, new Object[]{}).indexOf("getXYMultiplied") < 0);
-    }
-
-    public void testGetConstructorSuggestionString() {
-        assertEquals("No suggestion", 0, MethodRankHelper.getConstructorSuggestionString(TempClass.class, new Object[]{null, null, null, null, null}).length());
     }
 }

@@ -193,7 +193,9 @@ final class GroovyClassLoaderTest {
             }
         }
         sleep(100)
-        for (i in 0..<100) {ts[i].join()}
+        for (i in 0..<100) {
+            ts[i].join()
+        }
 
         assert GroovyClassLoaderTestFoo2 == loader.loadClass('Foox')
     }
@@ -211,7 +213,7 @@ final class GroovyClassLoaderTest {
         String oldEncoding = System.getProperty('file.encoding')
         System.setProperty('file.encoding', 'US-ASCII')
         try {
-            def gcl = new GroovyClassLoader(this.class.classLoader, new CompilerConfiguration().tap{sourceEncoding = 'UTF-8'})
+            def gcl = new GroovyClassLoader(this.class.classLoader, new CompilerConfiguration().tap { sourceEncoding = 'UTF-8' })
             def clazz = gcl.parseClass('return "\u20AC"') // EURO currency symbol
             def result = clazz.getDeclaredConstructor().newInstance().run()
             int i = result[0]
@@ -301,6 +303,7 @@ final class GroovyClassLoaderTest {
 //------------------------------------------------------------------------------
 
 class GroovyClassLoaderTestFoo1 {}
+
 class GroovyClassLoaderTestFoo2 {}
 
 class GroovyClassLoaderTestCustomGCL extends GroovyClassLoader {
@@ -308,6 +311,7 @@ class GroovyClassLoaderTestCustomGCL extends GroovyClassLoader {
         super(null, config)
     }
     def counter = new AtomicInteger(0)
+
     @Override
     protected Class recompile(URL source, String name, Class oldClass) {
         if (name == 'Foox') {
@@ -319,6 +323,7 @@ class GroovyClassLoaderTestCustomGCL extends GroovyClassLoader {
         }
         return super.recompile(source, name, oldClass)
     }
+
     @Override
     protected boolean isSourceNewer(URL source, Class cls) {
         return true

@@ -16,7 +16,9 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 import org.apache.groovy.gradle.ConcurrentExecutionControlBuildService
+
 import javax.inject.Inject
 
 // Instead of adding to the test sources, this should
@@ -35,26 +37,27 @@ sourceSets {
 tasks.withType(Test).configureEach {
     def fs = objects.newInstance(TestServices).fileSystemOperations
     def grapeDirectory = new File(temporaryDir, 'grape')
-    def jdk8 = ['-XX:+UseConcMarkSweepGC']
-    def jdk9 = ['-Djava.locale.providers=COMPAT,SPI'/*, '--illegal-access=debug'*/]
-    def common = ['-ea', "-Xms${groovyJUnit_ms}", "-Xmx${groovyJUnit_mx}", '-Duser.language=en']
-    if (JavaVersion.current().isJava9Compatible()) {
-        jvmArgs(*common, *jdk9)
-        systemProperty 'groovy.force.illegal.access', findProperty('groovy.force.illegal.access')
-    } else {
-        jvmArgs(*common, *jdk8)
-    }
+    String groovyJUnit_ms = findProperty("groovy.junit.xms") ?: '512m'
+    String groovyJUnit_mx = findProperty("groovy.junit.xmx") ?: '2g'
+    String groovyJUnit_permSize = findProperty("groovy.junit.perm.size") ?: '64m'
+    String groovyJUnit_maxPermSize = findProperty("groovy.junit.perm.max.size") ?: '256m'
+    def javaParams = buildJavaParameters(JavaVersion.current(), groovyJUnit_ms, groovyJUnit_mx, groovyJUnit_permSize, groovyJUnit_maxPermSize)
+    println("Setting JVM arguments: " + javaParams)
+    jvmArgs(javaParams)
+
+    systemProperty 'groovy.force.illegal.access', findProperty('groovy.force.illegal.access')
+
     def headless = System.properties['java.awt.headless']
     if (headless == 'true') {
         systemProperties 'java.awt.headless': 'true'
     }
     systemProperties 'apple.awt.UIElement': 'true',
-            'javadocAssertion.src.dir': './src/main'
+        'javadocAssertion.src.dir': './src/main'
 
     jvmArgumentProviders.add(new TestCommandLineArgumentProvider(
-            grapeRoot: grapeDirectory,
-            gradleHome: gradle.gradleHomeDir, // this is needed by the security.policy
-            userHome: temporaryDir // make sure tests are isolated from real user home or tests using Grape may fail
+        grapeRoot: grapeDirectory,
+        gradleHome: gradle.gradleHomeDir, // this is needed by the security.policy
+        userHome: temporaryDir // make sure tests are isolated from real user home or tests using Grape may fail
     ))
 
     if (rootProject.hasProperty('target.java.home')) {
@@ -94,6 +97,26 @@ tasks.withType(Test).configureEach {
             delete(files(".").filter { it.name.endsWith '.class' })
         }
     }
+}
+
+String[] buildJavaParameters(JavaVersion javaVersion, String junitXms, String junitXmx, String junitPersSize, String junitMaxPermSize) {
+    Integer majorVersionInt = javaVersion.getMajorVersion().toInteger()
+    String[] params = ['-ea', "-Xms${junitXms}", "-Xmx${junitXmx}", '-Duser.language=en'] // common
+    def jdk9 = ['-Djava.locale.providers=COMPAT,SPI'/*, '--illegal-access=debug'*/]
+    def jdk11 = ['-Djava.locale.providers=HOST,CLDR,COMPAT'/*, '--illegal-access=debug'*/]
+    boolean forceIllegalAccess = false
+    if (majorVersionInt <= 8) {
+        params += '-XX:+UseConcMarkSweepGC'
+    } else if (majorVersionInt >= 9 && majorVersionInt < 11) {
+        params += jdk9
+        forceIllegalAccess = true
+    }
+    //else if (majorVersion >= 11) {
+    else {
+        params += jdk11
+        forceIllegalAccess = true
+    }
+    return params
 }
 
 class TestCommandLineArgumentProvider implements CommandLineArgumentProvider {

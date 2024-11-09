@@ -36,10 +36,6 @@ import static org.junit.Assert.assertTrue;
 
 public class GroovyDocTest {
 
-    @Rule
-    public BuildFileRule rule = new BuildFileRule();
-
-    private File tmpDir;
     private static final String SRC_TESTFILES;
 
     static {
@@ -53,6 +49,10 @@ public class GroovyDocTest {
             SRC_TESTFILES = null;
         }
     }
+
+    @Rule
+    public BuildFileRule rule = new BuildFileRule();
+    private File tmpDir;
 
     @Before
     public void setUp() {

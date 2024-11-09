@@ -23,7 +23,7 @@ final class Groovy8774 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'Dummy.java': '''
+            'Dummy.java'              : '''
                 public interface Dummy { }
             ''',
             'test/package-info.groovy': '''

@@ -27,10 +27,10 @@ import java.lang.annotation.Target;
  * This is an annotation on some item that indicates that
  * an associated transform classes should be executed.  As of
  * Groovy 1.6 the only valid target is the annotation type.
- *
+ * <p>
  * Each of the class names in the value must be annotated with
  * {@link GroovyASTTransformation}.
- *
+ * <p>
  * It is a compile time error to specify a {@link GroovyASTTransformationClass}
  * that is not accessible at compile time.  It need not be available at runtime.
  */
@@ -40,5 +40,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface GroovyASTTransformationClass {
     String[] value() default {};
+
     Class[] classes() default {};
 }

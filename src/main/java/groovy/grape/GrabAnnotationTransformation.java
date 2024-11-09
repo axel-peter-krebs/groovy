@@ -76,7 +76,7 @@ import static org.codehaus.groovy.transform.AbstractASTTransformation.getMemberS
 /**
  * Transformation for declarative dependency management.
  */
-@GroovyASTTransformation(phase=CompilePhase.CONVERSION)
+@GroovyASTTransformation(phase = CompilePhase.CONVERSION)
 public class GrabAnnotationTransformation extends ClassCodeVisitorSupport implements ASTTransformation, CompilationUnitAware {
 
     private static final String GRAB_CLASS_NAME = Grab.class.getName();
@@ -102,12 +102,12 @@ public class GrabAnnotationTransformation extends ClassCodeVisitorSupport implem
     private static final ClassNode THREAD_CLASSNODE = ClassHelper.make(Thread.class);
     private static final ClassNode SYSTEM_CLASSNODE = ClassHelper.make(System.class);
 
-    private static final List<String> GRABEXCLUDE_REQUIRED  = List.of("group", "module");
+    private static final List<String> GRABEXCLUDE_REQUIRED = List.of("group", "module");
     private static final List<String> GRABRESOLVER_REQUIRED = List.of("name", "root");
-    private static final List<String> GRAB_REQUIRED         = List.of("group", "module", "version");
-    private static final List<String> GRAB_OPTIONAL         = List.of("classifier", "transitive", "conf", "ext", "type", "changing", "force", "initClass");
-    private static final List<String> GRAB_BOOLEAN          = List.of("transitive", "changing", "force", "initClass");
-    private static final List<String> GRAB_ALL              = DefaultGroovyMethods.plus(GRAB_REQUIRED, GRAB_OPTIONAL);
+    private static final List<String> GRAB_REQUIRED = List.of("group", "module", "version");
+    private static final List<String> GRAB_OPTIONAL = List.of("classifier", "transitive", "conf", "ext", "type", "changing", "force", "initClass");
+    private static final List<String> GRAB_BOOLEAN = List.of("transitive", "changing", "force", "initClass");
+    private static final List<String> GRAB_ALL = DefaultGroovyMethods.plus(GRAB_REQUIRED, GRAB_OPTIONAL);
 
     private static final Pattern IVY_PATTERN = Pattern.compile("([a-zA-Z0-9-/._+=]+)#([a-zA-Z0-9-/._+=]+)(;([a-zA-Z0-9-/.\\(\\)\\[\\]\\{\\}_+=,:@][a-zA-Z0-9-/.\\(\\)\\]\\{\\}_+=,:@]*))?(\\[([a-zA-Z0-9-/._+=,]*)\\])?");
     private static final Pattern ATTRIBUTES_PATTERN = Pattern.compile("(.*;|^)([a-zA-Z0-9]+)=([a-zA-Z0-9.*\\[\\]\\-\\(\\),]*)$");
@@ -115,6 +115,28 @@ public class GrabAnnotationTransformation extends ClassCodeVisitorSupport implem
     private static final String AUTO_DOWNLOAD_SETTING = Grape.AUTO_DOWNLOAD_SETTING;
     private static final String DISABLE_CHECKSUMS_SETTING = Grape.DISABLE_CHECKSUMS_SETTING;
     private static final String SYSTEM_PROPERTIES_SETTING = Grape.SYSTEM_PROPERTIES_SETTING;
+    boolean allowShortGrab;
+    Set<String> grabAliases;
+    List<AnnotationNode> grabAnnotations;
+    boolean allowShortGrabExcludes;
+    Set<String> grabExcludeAliases;
+    List<AnnotationNode> grabExcludeAnnotations;
+    boolean allowShortGrabConfig;
+    Set<String> grabConfigAliases;
+    List<AnnotationNode> grabConfigAnnotations;
+    boolean allowShortGrapes;
+    Set<String> grapesAliases;
+    List<AnnotationNode> grapesAnnotations;
+    boolean allowShortGrabResolver;
+    Set<String> grabResolverAliases;
+    List<AnnotationNode> grabResolverAnnotations;
+    CompilationUnit compilationUnit;
+    SourceUnit sourceUnit;
+    ClassLoader loader;
+    boolean initContextClassLoader;
+    Boolean autoDownload;
+    Boolean disableChecksums;
+    Map<String, String> systemProperties;
 
     private static String dotName(String className) {
         return className.substring(className.lastIndexOf('.'));
@@ -124,33 +146,76 @@ public class GrabAnnotationTransformation extends ClassCodeVisitorSupport implem
         return className.substring(1);
     }
 
-    boolean allowShortGrab;
-    Set<String> grabAliases;
-    List<AnnotationNode> grabAnnotations;
+    private static void addGrabResolverAsStaticInitIfNeeded(final ClassNode grapeClassNode, final AnnotationNode node,
+                                                            final List<Statement> grabResolverInitializers, final Map<String, Object> grabResolverMap) {
+        Expression initClass = node.getMember("initClass");
+        if (initClass == null || (initClass instanceof ConstantExpression
+            && ((ConstantExpression) initClass).isTrueExpression())) {
+            MapExpression resolverArgs = new MapExpression();
+            for (Map.Entry<String, Object> next : grabResolverMap.entrySet()) {
+                resolverArgs.addMapEntryExpression(constX(next.getKey()), constX(next.getValue()));
+            }
+            grabResolverInitializers.add(stmt(callX(grapeClassNode, "addResolver", args(resolverArgs))));
+        }
+    }
 
-    boolean allowShortGrabExcludes;
-    Set<String> grabExcludeAliases;
-    List<AnnotationNode> grabExcludeAnnotations;
+    private static void checkForConvenienceForm(final AnnotationNode node, final boolean exclude) {
+        Object val = node.getMember("value");
+        if (!(val instanceof ConstantExpression)) return;
+        Object allParts = ((ConstantExpression) val).getValue();
+        if (!(allParts instanceof String)) return;
+        String allstr = (String) allParts;
 
-    boolean allowShortGrabConfig;
-    Set<String> grabConfigAliases;
-    List<AnnotationNode> grabConfigAnnotations;
+        // strip off trailing attributes
+        boolean done = false;
+        while (!done) {
+            Matcher attrs = ATTRIBUTES_PATTERN.matcher(allstr);
+            if (attrs.find()) {
+                String attrName = attrs.group(2);
+                String attrValue = attrs.group(3);
+                if (attrName == null || attrValue == null) continue;
+                boolean isBool = GRAB_BOOLEAN.contains(attrName);
+                ConstantExpression value = constX(isBool ? Boolean.valueOf(attrValue) : attrValue);
+                value.setSourcePosition(node);
+                node.addMember(attrName, value);
+                int lastSemi = allstr.lastIndexOf(';');
+                if (lastSemi == -1) {
+                    allstr = "";
+                    break;
+                }
+                allstr = allstr.substring(0, lastSemi);
+            } else {
+                done = true;
+            }
+        }
 
-    boolean allowShortGrapes;
-    Set<String> grapesAliases;
-    List<AnnotationNode> grapesAnnotations;
-
-    boolean allowShortGrabResolver;
-    Set<String> grabResolverAliases;
-    List<AnnotationNode> grabResolverAnnotations;
-
-    CompilationUnit compilationUnit;
-    SourceUnit sourceUnit;
-    ClassLoader loader;
-    boolean initContextClassLoader;
-    Boolean autoDownload;
-    Boolean disableChecksums;
-    Map<String, String> systemProperties;
+        if (allstr.contains("#")) {
+            // Support for Ivy syntax
+            // see: https://ant.apache.org/ivy/history/latest-milestone/textual.html
+            Matcher m = IVY_PATTERN.matcher(allstr);
+            if (!m.find()) return;
+            if (m.group(1) == null || m.group(2) == null) return;
+            node.addMember("module", constX(m.group(2)));
+            node.addMember("group", constX(m.group(1)));
+            if (m.group(6) != null) node.addMember("conf", constX(m.group(6)));
+            if (m.group(4) != null) node.addMember("version", constX(m.group(4)));
+            else if (!exclude && node.getMember("version") == null) node.addMember("version", constX("*"));
+            node.getMembers().remove("value");
+        } else if (allstr.contains(":")) {
+            // Support for Gradle syntax (covers Gradle/Maven)
+            // see: https://docs.gradle.org/3.5.1/userguide/dependency_management.html#sec:how_to_declare_your_dependencies
+            // see: https://docs.gradle.org/7.2/userguide/declaring_dependencies.html
+            Map<String, Object> parts = GrapeUtil.getIvyParts(allstr);
+            for (Map.Entry<String, Object> entry : parts.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue().toString();
+                if (!"version".equals(key) || !"*".equals(value) || !exclude) {
+                    node.addMember(key, constX(value));
+                }
+            }
+            node.getMembers().remove("value");
+        }
+    }
 
     @Override
     public SourceUnit getSourceUnit() {
@@ -167,19 +232,19 @@ public class GrabAnnotationTransformation extends ClassCodeVisitorSupport implem
         loader = null;
         sourceUnit = source;
         initContextClassLoader = false;
-        allowShortGrab         = true;
+        allowShortGrab = true;
         allowShortGrabExcludes = true;
-        allowShortGrabConfig   = true;
-        allowShortGrapes       = true;
+        allowShortGrabConfig = true;
+        allowShortGrapes = true;
         allowShortGrabResolver = true;
-        grabAliases         = new HashSet<>();
-        grabExcludeAliases  = new HashSet<>();
-        grabConfigAliases   = new HashSet<>();
-        grapesAliases       = new HashSet<>();
+        grabAliases = new HashSet<>();
+        grabExcludeAliases = new HashSet<>();
+        grabConfigAliases = new HashSet<>();
+        grapesAliases = new HashSet<>();
         grabResolverAliases = new HashSet<>();
         ModuleNode mn = (ModuleNode) nodes[0];
         for (ImportNode im : mn.getImports()) {
-            String alias     = im.getAlias();
+            String alias = im.getAlias();
             String className = im.getClassName();
             boolean hasAlias = (alias != null && !alias.isBlank());
             if ((className.endsWith(GRAB_DOT_NAME) && !hasAlias) || GRAB_CLASS_NAME.equals(alias)) {
@@ -199,15 +264,15 @@ public class GrabAnnotationTransformation extends ClassCodeVisitorSupport implem
             }
         }
         ClassNode grapeClassNode = ClassHelper.make(Grape.class);
-        Collection<Map<String,Object>> grabMaps = new LinkedHashSet<>();
-        Collection<Map<String,Object>> grabMapsInit = new ArrayList<>();
-        Collection<Map<String,Object>> grabExcludeMaps = new ArrayList<>();
+        Collection<Map<String, Object>> grabMaps = new LinkedHashSet<>();
+        Collection<Map<String, Object>> grabMapsInit = new ArrayList<>();
+        Collection<Map<String, Object>> grabExcludeMaps = new ArrayList<>();
 
         for (ClassNode classNode : sourceUnit.getAST().getClasses()) {
-            grabAnnotations         = new ArrayList<>();
-            grabExcludeAnnotations  = new ArrayList<>();
-            grabConfigAnnotations   = new ArrayList<>();
-            grapesAnnotations       = new ArrayList<>();
+            grabAnnotations = new ArrayList<>();
+            grabExcludeAnnotations = new ArrayList<>();
+            grabConfigAnnotations = new ArrayList<>();
+            grapesAnnotations = new ArrayList<>();
             grabResolverAnnotations = new ArrayList<>();
 
             if (classNode.getOuterClass() == null) {
@@ -326,7 +391,7 @@ public class GrabAnnotationTransformation extends ClassCodeVisitorSupport implem
                             addError("Attribute \"" + s + "\" has value " + member.getText() + " but should be an inline constant in @" + node.getClassNode().getNameWithoutPackage() + " annotations", node);
                             continue grabExcludeAnnotationLoop;
                         }
-                        grabExcludeMap.put(s, ((ConstantExpression)member).getValue());
+                        grabExcludeMap.put(s, ((ConstantExpression) member).getValue());
                     }
                     grabExcludeMaps.add(grabExcludeMap);
                 }
@@ -349,7 +414,7 @@ public class GrabAnnotationTransformation extends ClassCodeVisitorSupport implem
                             continue grabAnnotationLoop;
                         }
                         if (node.getMember(s) != null) {
-                            grabMap.put(s, ((ConstantExpression)member).getValue());
+                            grabMap.put(s, ((ConstantExpression) member).getValue());
                         }
                     }
                     grabMaps.add(grabMap);
@@ -389,14 +454,14 @@ public class GrabAnnotationTransformation extends ClassCodeVisitorSupport implem
     }
 
     private void callGrabAsStaticInitIfNeeded(final ClassNode classNode, final ClassNode grapeClassNode,
-            final Collection<Map<String,Object>> grabMapsInit, final Collection<Map<String, Object>> grabExcludeMaps) {
+                                              final Collection<Map<String, Object>> grabMapsInit, final Collection<Map<String, Object>> grabExcludeMaps) {
         List<Statement> grabInitializers = new ArrayList<>();
         MapExpression basicArgs = new MapExpression();
-        if (autoDownload != null)  {
+        if (autoDownload != null) {
             basicArgs.addMapEntryExpression(constX(AUTO_DOWNLOAD_SETTING), constX(autoDownload));
         }
 
-        if (disableChecksums != null)  {
+        if (disableChecksums != null) {
             basicArgs.addMapEntryExpression(constX(DISABLE_CHECKSUMS_SETTING), constX(disableChecksums));
         }
 
@@ -444,27 +509,13 @@ public class GrabAnnotationTransformation extends ClassCodeVisitorSupport implem
         classNode.addStaticInitializerStatements(grabInitializers, true);
     }
 
-    private static void addGrabResolverAsStaticInitIfNeeded(final ClassNode grapeClassNode, final AnnotationNode node,
-            final List<Statement> grabResolverInitializers, final Map<String, Object> grabResolverMap) {
-        Expression initClass = node.getMember("initClass");
-        if (initClass == null || (initClass instanceof ConstantExpression
-                                    && ((ConstantExpression) initClass).isTrueExpression()))
-        {
-            MapExpression resolverArgs = new MapExpression();
-            for (Map.Entry<String, Object> next : grabResolverMap.entrySet()) {
-                resolverArgs.addMapEntryExpression(constX(next.getKey()), constX(next.getValue()));
-            }
-            grabResolverInitializers.add(stmt(callX(grapeClassNode, "addResolver", args(resolverArgs))));
-        }
-    }
-
     private void addInitContextClassLoaderIfNeeded(final ClassNode classNode) {
         if (initContextClassLoader) {
             Statement initStatement = stmt(callX(
-                            callX(THREAD_CLASSNODE, "currentThread"),
-                            "setContextClassLoader",
-                            callX(callThisX("getClass"), "getClassLoader")
-                    )
+                    callX(THREAD_CLASSNODE, "currentThread"),
+                    "setContextClassLoader",
+                    callX(callThisX("getClass"), "getClassLoader")
+                )
             );
             classNode.addObjectInitializerStatements(initStatement);
         }
@@ -473,7 +524,7 @@ public class GrabAnnotationTransformation extends ClassCodeVisitorSupport implem
     private void checkForClassLoader(final AnnotationNode node) {
         Object val = node.getMember("systemClassLoader");
         if (!(val instanceof ConstantExpression)) return;
-        Object systemClassLoaderObject = ((ConstantExpression)val).getValue();
+        Object systemClassLoaderObject = ((ConstantExpression) val).getValue();
         if (!(systemClassLoaderObject instanceof Boolean)) return;
         Boolean systemClassLoader = (Boolean) systemClassLoaderObject;
         if (systemClassLoader) loader = ClassLoader.getSystemClassLoader();
@@ -482,7 +533,7 @@ public class GrabAnnotationTransformation extends ClassCodeVisitorSupport implem
     private void checkForInitContextClassLoader(final AnnotationNode node) {
         Object val = node.getMember("initContextClassLoader");
         if (!(val instanceof ConstantExpression)) return;
-        Object initContextClassLoaderObject = ((ConstantExpression)val).getValue();
+        Object initContextClassLoaderObject = ((ConstantExpression) val).getValue();
         if (!(initContextClassLoaderObject instanceof Boolean)) return;
         initContextClassLoader = (Boolean) initContextClassLoaderObject;
     }
@@ -490,7 +541,7 @@ public class GrabAnnotationTransformation extends ClassCodeVisitorSupport implem
     private void checkForAutoDownload(final AnnotationNode node) {
         Object val = node.getMember(AUTO_DOWNLOAD_SETTING);
         if (!(val instanceof ConstantExpression)) return;
-        Object autoDownloadValue = ((ConstantExpression)val).getValue();
+        Object autoDownloadValue = ((ConstantExpression) val).getValue();
         if (!(autoDownloadValue instanceof Boolean)) return;
         autoDownload = (Boolean) autoDownloadValue;
     }
@@ -498,7 +549,7 @@ public class GrabAnnotationTransformation extends ClassCodeVisitorSupport implem
     private void checkForDisableChecksums(final AnnotationNode node) {
         Object val = node.getMember(DISABLE_CHECKSUMS_SETTING);
         if (!(val instanceof ConstantExpression)) return;
-        Object disableChecksumsValue = ((ConstantExpression)val).getValue();
+        Object disableChecksumsValue = ((ConstantExpression) val).getValue();
         if (!(disableChecksumsValue instanceof Boolean)) return;
         disableChecksums = (Boolean) disableChecksumsValue;
     }
@@ -516,64 +567,6 @@ public class GrabAnnotationTransformation extends ClassCodeVisitorSupport implem
         }
     }
 
-    private static void checkForConvenienceForm(final AnnotationNode node, final boolean exclude) {
-        Object val = node.getMember("value");
-        if (!(val instanceof ConstantExpression)) return;
-        Object allParts = ((ConstantExpression)val).getValue();
-        if (!(allParts instanceof String)) return;
-        String allstr = (String) allParts;
-
-        // strip off trailing attributes
-        boolean done = false;
-        while (!done) {
-            Matcher attrs = ATTRIBUTES_PATTERN.matcher(allstr);
-            if (attrs.find()) {
-                String attrName = attrs.group(2);
-                String attrValue = attrs.group(3);
-                if (attrName == null || attrValue == null) continue;
-                boolean isBool = GRAB_BOOLEAN.contains(attrName);
-                ConstantExpression value = constX(isBool ? Boolean.valueOf(attrValue) : attrValue);
-                value.setSourcePosition(node);
-                node.addMember(attrName, value);
-                int lastSemi = allstr.lastIndexOf(';');
-                if (lastSemi == -1) {
-                    allstr = "";
-                    break;
-                }
-                allstr = allstr.substring(0, lastSemi);
-            } else {
-                done = true;
-            }
-        }
-
-        if (allstr.contains("#")) {
-            // Support for Ivy syntax
-            // see: https://ant.apache.org/ivy/history/latest-milestone/textual.html
-            Matcher m = IVY_PATTERN.matcher(allstr);
-            if (!m.find()) return;
-            if (m.group(1) == null || m.group(2) == null) return;
-            node.addMember("module", constX(m.group(2)));
-            node.addMember("group", constX(m.group(1)));
-            if (m.group(6) != null) node.addMember("conf", constX(m.group(6)));
-            if (m.group(4) != null) node.addMember("version", constX(m.group(4)));
-            else if (!exclude && node.getMember("version") == null) node.addMember("version", constX("*"));
-            node.getMembers().remove("value");
-        } else if (allstr.contains(":")) {
-            // Support for Gradle syntax (covers Gradle/Maven)
-            // see: https://docs.gradle.org/3.5.1/userguide/dependency_management.html#sec:how_to_declare_your_dependencies
-            // see: https://docs.gradle.org/7.2/userguide/declaring_dependencies.html
-            Map<String, Object> parts = GrapeUtil.getIvyParts(allstr);
-            for (Map.Entry<String, Object> entry : parts.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue().toString();
-                if (!"version".equals(key) || !"*".equals(value) || !exclude) {
-                    node.addMember(key, constX(value));
-                }
-            }
-            node.getMembers().remove("value");
-        }
-    }
-
     private void extractGrab(final Expression init, final ConstantExpression ce) {
         if (ce.getValue() instanceof AnnotationNode) {
             AnnotationNode annotation = (AnnotationNode) ce.getValue();
@@ -582,23 +575,23 @@ public class GrabAnnotationTransformation extends ClassCodeVisitorSupport implem
             }
             String name = annotation.getClassNode().getName();
             if ((GRAB_CLASS_NAME.equals(name))
-                    || (allowShortGrab && GRAB_SHORT_NAME.equals(name))
-                    || (grabAliases.contains(name))) {
+                || (allowShortGrab && GRAB_SHORT_NAME.equals(name))
+                || (grabAliases.contains(name))) {
                 grabAnnotations.add(annotation);
             }
             if ((GRABEXCLUDE_CLASS_NAME.equals(name))
-                    || (allowShortGrabExcludes && GRABEXCLUDE_SHORT_NAME.equals(name))
-                    || (grabExcludeAliases.contains(name))) {
+                || (allowShortGrabExcludes && GRABEXCLUDE_SHORT_NAME.equals(name))
+                || (grabExcludeAliases.contains(name))) {
                 grabExcludeAnnotations.add(annotation);
             }
             if ((GRABCONFIG_CLASS_NAME.equals(name))
-                    || (allowShortGrabConfig && GRABCONFIG_SHORT_NAME.equals(name))
-                    || (grabConfigAliases.contains(name))) {
+                || (allowShortGrabConfig && GRABCONFIG_SHORT_NAME.equals(name))
+                || (grabConfigAliases.contains(name))) {
                 grabConfigAnnotations.add(annotation);
             }
             if ((GRABRESOLVER_CLASS_NAME.equals(name))
-                    || (allowShortGrabResolver && GRABRESOLVER_SHORT_NAME.equals(name))
-                    || (grabResolverAliases.contains(name))) {
+                || (allowShortGrabResolver && GRABRESOLVER_SHORT_NAME.equals(name))
+                || (grabResolverAliases.contains(name))) {
                 grabResolverAnnotations.add(annotation);
             }
         }
@@ -615,28 +608,28 @@ public class GrabAnnotationTransformation extends ClassCodeVisitorSupport implem
         for (AnnotationNode an : node.getAnnotations()) {
             String name = an.getClassNode().getName();
             if ((GRAB_CLASS_NAME.equals(name))
-                    || (allowShortGrab && GRAB_SHORT_NAME.equals(name))
-                    || (grabAliases.contains(name))) {
+                || (allowShortGrab && GRAB_SHORT_NAME.equals(name))
+                || (grabAliases.contains(name))) {
                 grabAnnotations.add(an);
             }
             if ((GRABEXCLUDE_CLASS_NAME.equals(name))
-                    || (allowShortGrabExcludes && GRABEXCLUDE_SHORT_NAME.equals(name))
-                    || (grabExcludeAliases.contains(name))) {
+                || (allowShortGrabExcludes && GRABEXCLUDE_SHORT_NAME.equals(name))
+                || (grabExcludeAliases.contains(name))) {
                 grabExcludeAnnotations.add(an);
             }
             if ((GRABCONFIG_CLASS_NAME.equals(name))
-                    || (allowShortGrabConfig && GRABCONFIG_SHORT_NAME.equals(name))
-                    || (grabConfigAliases.contains(name))) {
+                || (allowShortGrabConfig && GRABCONFIG_SHORT_NAME.equals(name))
+                || (grabConfigAliases.contains(name))) {
                 grabConfigAnnotations.add(an);
             }
             if ((GRAPES_CLASS_NAME.equals(name))
-                    || (allowShortGrapes && GRAPES_SHORT_NAME.equals(name))
-                    || (grapesAliases.contains(name))) {
+                || (allowShortGrapes && GRAPES_SHORT_NAME.equals(name))
+                || (grapesAliases.contains(name))) {
                 grapesAnnotations.add(an);
             }
             if ((GRABRESOLVER_CLASS_NAME.equals(name))
-                    || (allowShortGrabResolver && GRABRESOLVER_SHORT_NAME.equals(name))
-                    || (grabResolverAliases.contains(name))) {
+                || (allowShortGrabResolver && GRABRESOLVER_SHORT_NAME.equals(name))
+                || (grabResolverAliases.contains(name))) {
                 grabResolverAnnotations.add(an);
             }
         }

@@ -39,19 +39,19 @@ class Groovy252_Bug extends GroovyTestCase {
 
 
     def f() {
-         if (count++ == 5)
+        if (count++ == 5)
             return null
-         else
+        else
             return null
-    } 
+    }
 
     def g() {
-         ++count
-         return null
-    } 
+        ++count
+        return null
+    }
 
     def h() {
-         ++count
-         return null
-    } 
+        ++count
+        return null
+    }
 }

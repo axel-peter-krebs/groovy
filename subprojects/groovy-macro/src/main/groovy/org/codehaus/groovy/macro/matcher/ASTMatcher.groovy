@@ -73,13 +73,14 @@ import org.codehaus.groovy.ast.stmt.WhileStatement
 import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.macro.matcher.internal.MatchingConstraintsBuilder
 
-@AutoFinal @CompileStatic
+@AutoFinal
+@CompileStatic
 class ASTMatcher extends ContextualClassCodeVisitor {
 
     public static final String WILDCARD = '_'
 
     private boolean match = true
-    private Object  current
+    private Object current
 
     private ASTMatcher() {
     }
@@ -142,7 +143,7 @@ class ASTMatcher extends ContextualClassCodeVisitor {
         }
     }
 
-    def <T> T ifConstraint(T defaultValue, @DelegatesTo(value=MatchingConstraints, strategy=Closure.DELEGATE_FIRST) Closure<T> code) {
+    def <T> T ifConstraint(T defaultValue, @DelegatesTo(value = MatchingConstraints, strategy = Closure.DELEGATE_FIRST) Closure<T> code) {
         def constraints = (List<MatchingConstraints>) treeContext.getUserdata(MatchingConstraints, true)
         if (constraints) {
             def clone = (Closure<T>) code.clone()
@@ -180,7 +181,7 @@ class ASTMatcher extends ContextualClassCodeVisitor {
 
         boolean doPush = (treeContext.node != foundNode && foundNode instanceof ASTNode)
         if (doPush) {
-            pushContext((ASTNode)foundNode)
+            pushContext((ASTNode) foundNode)
             if (patternNode instanceof ASTNode) {
                 storeContraints(patternNode)
             }
@@ -223,7 +224,7 @@ class ASTMatcher extends ContextualClassCodeVisitor {
             }
 
             def cur = (ClassNode) current
-            failIfNot(cur.superClass==node.superClass)
+            failIfNot(cur.superClass == node.superClass)
 
             def intfs = node.interfaces
             def curIntfs = cur.interfaces
@@ -420,7 +421,8 @@ class ASTMatcher extends ContextualClassCodeVisitor {
         }
     }
 
-    @Override @CompileDynamic
+    @Override
+    @CompileDynamic
     void visitDeclarationExpression(DeclarationExpression expression) {
         doWithNode(expression, current) {
             super.visitDeclarationExpression(expression)
@@ -547,9 +549,9 @@ class ASTMatcher extends ContextualClassCodeVisitor {
                 call.arguments.visit(this)
             }
             failIfNot(matchByName(call.methodAsString, mce.methodAsString)
-                    && call.safe == mce.safe
-                    && call.spreadSafe == mce.spreadSafe
-                    && call.implicitThis == mce.implicitThis)
+                && call.safe == mce.safe
+                && call.spreadSafe == mce.spreadSafe
+                && call.implicitThis == mce.implicitThis)
         }
     }
 
@@ -841,7 +843,8 @@ class ASTMatcher extends ContextualClassCodeVisitor {
         }
     }
 
-    @Override @CompileDynamic
+    @Override
+    @CompileDynamic
     void visitConstantExpression(ConstantExpression expression) {
         doWithNode(expression, current) {
             def cur = (ConstantExpression) current
@@ -850,7 +853,8 @@ class ASTMatcher extends ContextualClassCodeVisitor {
         }
     }
 
-    @Override @CompileDynamic
+    @Override
+    @CompileDynamic
     void visitClassExpression(ClassExpression expression) {
         doWithNode(expression, current) {
             super.visitClassExpression(expression)
@@ -864,7 +868,7 @@ class ASTMatcher extends ContextualClassCodeVisitor {
         doWithNode(expression, current) {
             def curVar = (VariableExpression) current
             failIfNot(matchByName(expression.name, curVar.name)
-                    && expression.type == curVar.type && expression.originType == curVar.originType)
+                && expression.type == curVar.type && expression.originType == curVar.originType)
         }
     }
 
@@ -879,9 +883,9 @@ class ASTMatcher extends ContextualClassCodeVisitor {
                 expression.property.visit(this)
             }
             failIfNot(expression.propertyAsString == currentPexp.propertyAsString
-                    && expression.implicitThis == currentPexp.implicitThis
-                    && expression.safe == currentPexp.safe
-                    && expression.spreadSafe == currentPexp.spreadSafe)
+                && expression.implicitThis == currentPexp.implicitThis
+                && expression.safe == currentPexp.safe
+                && expression.spreadSafe == currentPexp.spreadSafe)
         }
     }
 
@@ -896,9 +900,9 @@ class ASTMatcher extends ContextualClassCodeVisitor {
                 expression.property.visit(this)
             }
             failIfNot(expression.propertyAsString == currentPexp.propertyAsString
-                    && expression.implicitThis == currentPexp.implicitThis
-                    && expression.safe == currentPexp.safe
-                    && expression.spreadSafe == currentPexp.spreadSafe)
+                && expression.implicitThis == currentPexp.implicitThis
+                && expression.safe == currentPexp.safe
+                && expression.spreadSafe == currentPexp.spreadSafe)
         }
     }
 
@@ -940,7 +944,7 @@ class ASTMatcher extends ContextualClassCodeVisitor {
     void visitClosureListExpression(ClosureListExpression cle) {
         doWithNode(cle, current) {
             def exprs = cle.expressions
-            doWithNode(exprs, ((ClosureListExpression)current).expressions) {
+            doWithNode(exprs, ((ClosureListExpression) current).expressions) {
                 visitListOfExpressions(exprs)
             }
         }
@@ -1010,7 +1014,7 @@ class ASTMatcher extends ContextualClassCodeVisitor {
      * @param constraintsSpec a closure specification of matching constraints
      * @return the same pattern, annotated with constraints
      */
-    static ASTNode withConstraints(ASTNode pattern, @DelegatesTo(value=MatchingConstraintsBuilder, strategy=Closure.DELEGATE_ONLY) Closure constraintsSpec) {
+    static ASTNode withConstraints(ASTNode pattern, @DelegatesTo(value = MatchingConstraintsBuilder, strategy = Closure.DELEGATE_ONLY) Closure constraintsSpec) {
         def builder = new MatchingConstraintsBuilder()
         def constraints = builder.build(constraintsSpec)
         pattern.putNodeMetaData(MatchingConstraints, constraints)

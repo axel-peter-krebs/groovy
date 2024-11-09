@@ -47,9 +47,9 @@ import java.util.Map;
 public class GroovyMBean extends GroovyObjectSupport {
     private final MBeanServerConnection server;
     private final ObjectName name;
-    private MBeanInfo beanInfo;
     private final boolean ignoreErrors;
     private final Map<String, String[]> operations = new HashMap<String, String[]>();
+    private MBeanInfo beanInfo;
 
     public GroovyMBean(MBeanServerConnection server, String objectName) throws JMException, IOException {
         this(server, objectName, false);
@@ -94,13 +94,11 @@ public class GroovyMBean extends GroovyObjectSupport {
     public Object getProperty(String property) {
         try {
             return server.getAttribute(name, property);
-        }
-        catch (MBeanException e) {
+        } catch (MBeanException e) {
             throwExceptionWithTarget("Could not access property: " + property + ". Reason: ", e);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if (!ignoreErrors)
-            throwException("Could not access property: " + property + ". Reason: ", e);
+                throwException("Could not access property: " + property + ". Reason: ", e);
         }
         return null;
     }
@@ -109,11 +107,9 @@ public class GroovyMBean extends GroovyObjectSupport {
     public void setProperty(String property, Object value) {
         try {
             server.setAttribute(name, new Attribute(property, value));
-        }
-        catch (MBeanException e) {
+        } catch (MBeanException e) {
             throwExceptionWithTarget("Could not set property: " + property + ". Reason: ", e);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throwException("Could not set property: " + property + ". Reason: ", e);
         }
     }
@@ -133,11 +129,9 @@ public class GroovyMBean extends GroovyObjectSupport {
         if (signature != null) {
             try {
                 return server.invoke(name, method, argArray, signature);
-            }
-            catch (MBeanException e) {
+            } catch (MBeanException e) {
                 throwExceptionWithTarget("Could not invoke method: " + method + ". Reason: ", e);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throwException("Could not invoke method: " + method + ". Reason: ", e);
             }
             return null;
@@ -242,9 +236,9 @@ public class GroovyMBean extends GroovyObjectSupport {
             buf.append("w");
         }
         buf.append(") ")
-                .append(attr.getType())
-                .append(" ")
-                .append(attr.getName());
+            .append(attr.getType())
+            .append(" ")
+            .append(attr.getName());
         return buf.toString();
     }
 
@@ -336,9 +330,9 @@ public class GroovyMBean extends GroovyObjectSupport {
     protected String describeOperation(MBeanOperationInfo operation) {
         StringBuilder buf = new StringBuilder();
         buf.append(operation.getReturnType())
-                .append(" ")
-                .append(operation.getName())
-                .append("(");
+            .append(" ")
+            .append(operation.getName())
+            .append("(");
 
         MBeanParameterInfo[] params = operation.getSignature();
         for (int j = 0; j < params.length; j++) {
@@ -347,8 +341,8 @@ public class GroovyMBean extends GroovyObjectSupport {
                 buf.append(", ");
             }
             buf.append(param.getType())
-                    .append(" ")
-                    .append(param.getName());
+                .append(" ")
+                .append(param.getName());
         }
         buf.append(")");
         return buf.toString();
@@ -363,9 +357,9 @@ public class GroovyMBean extends GroovyObjectSupport {
     public String toString() {
         StringBuilder buf = new StringBuilder();
         buf.append("MBean Name:")
-                .append("\n  ")
-                .append(name.getCanonicalName())
-                .append("\n  ");
+            .append("\n  ")
+            .append(name.getCanonicalName())
+            .append("\n  ");
         if (!listAttributeDescriptions().isEmpty()) {
             buf.append("\nAttributes:");
             for (String attrDesc : listAttributeDescriptions()) {

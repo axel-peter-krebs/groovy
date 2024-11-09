@@ -34,29 +34,26 @@ import static org.codehaus.groovy.tools.Utilities.isJavaIdentifier;
  */
 public class MethodCallExpression extends Expression implements MethodCall {
 
-    private Expression objectExpression;
-    private Expression method;
-    private Expression arguments;
-
-    private boolean implicitThis = true;
-    private boolean spreadSafe;
-    private boolean safe;
-
-    // type spec for generics
-    private GenericsType[] genericsTypes;
-
-    private MethodNode target;
-
     public static final Expression NO_ARGUMENTS = new TupleExpression() {
         @Override
         public List<Expression> getExpressions() {
             return Collections.unmodifiableList(super.getExpressions());
         }
+
         @Override
         public TupleExpression addExpression(Expression e) {
             throw new UnsupportedOperationException();
         }
     };
+    private Expression objectExpression;
+    private Expression method;
+    private Expression arguments;
+    private boolean implicitThis = true;
+    private boolean spreadSafe;
+    private boolean safe;
+    // type spec for generics
+    private GenericsType[] genericsTypes;
+    private MethodNode target;
 
     public MethodCallExpression(Expression objectExpression, String method, Expression arguments) {
         this(objectExpression, new ConstantExpression(method), arguments);
@@ -111,7 +108,7 @@ public class MethodCallExpression extends Expression implements MethodCall {
     }
 
     public void setMethod(Expression method) {
-      this.method = method;
+        this.method = method;
     }
 
     /**
@@ -128,7 +125,7 @@ public class MethodCallExpression extends Expression implements MethodCall {
     }
 
     public void setObjectExpression(Expression objectExpression) {
-      this.objectExpression = objectExpression;
+        this.objectExpression = objectExpression;
     }
 
     @Override
@@ -138,7 +135,7 @@ public class MethodCallExpression extends Expression implements MethodCall {
 
     @Override
     public String getText() {
-        StringBuilder builder = new StringBuilder( 64 );
+        StringBuilder builder = new StringBuilder(64);
         builder.append(getObjectExpression().getText());
         if (isSpreadSafe()) builder.append('*');
         if (isSafe()) builder.append('?');
@@ -229,6 +226,7 @@ public class MethodCallExpression extends Expression implements MethodCall {
     /**
      * Sets a method call target for a direct method call.
      * WARNING: A method call made this way will run outside of the MOP!
+     *
      * @param mn the target as MethodNode, mn==null means no target
      */
     public void setMethodTarget(MethodNode mn) {

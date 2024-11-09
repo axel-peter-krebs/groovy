@@ -23,7 +23,7 @@ final class Groovy9405 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'test/Requires.java': '''
+            'test/Requires.java'      : '''
                 package test;
                 import java.lang.annotation.*;
                 @Retention(RetentionPolicy.RUNTIME)

@@ -193,12 +193,12 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
         }
 
         statementList << declS(
-                localVarX(metaDataMapName).tap{ modifiers |= Opcodes.ACC_FINAL },
-                callX(MAPS_TYPE, "of", args(
-                        constX(MD_ALIAS_NAME_LIST), aliasNameListExpression,
-                        constX(MD_GROUP_NAME_LIST), groupNameListExpression,
-                        constX(MD_SELECT_NAME_LIST), selectNameListExpression
-                ))
+            localVarX(metaDataMapName).tap { modifiers |= Opcodes.ACC_FINAL },
+            callX(MAPS_TYPE, "of", args(
+                constX(MD_ALIAS_NAME_LIST), aliasNameListExpression,
+                constX(MD_GROUP_NAME_LIST), groupNameListExpression,
+                constX(MD_SELECT_NAME_LIST), selectNameListExpression
+            ))
         )
         if (rowNumberUsed) {
             statementList << declS(localVarX(rowNumberName), ctorX(ATOMIC_LONG_TYPE, constX(-1L)))
@@ -209,20 +209,20 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
 
         final resultName = "__r${System.nanoTime()}"
         statementList << tryCatchS(
-                block(
-                        declS(localVarX(resultName).tap{ modifiers |= Opcodes.ACC_FINAL }, selectMethodCallExpression),
-                        returnS(varX(resultName))
-                ),
-                block(
-                        parallelEnabled ? invokeRemoveVarMethod(PARALLEL) : EmptyStatement.INSTANCE,
-                        useWindowFunction ? invokeRemoveVarMethod(USE_WINDOW_FUNCTION) : EmptyStatement.INSTANCE
-                )
+            block(
+                declS(localVarX(resultName).tap { modifiers |= Opcodes.ACC_FINAL }, selectMethodCallExpression),
+                returnS(varX(resultName))
+            ),
+            block(
+                parallelEnabled ? invokeRemoveVarMethod(PARALLEL) : EmptyStatement.INSTANCE,
+                useWindowFunction ? invokeRemoveVarMethod(USE_WINDOW_FUNCTION) : EmptyStatement.INSTANCE
+            )
         )
 
         def resultLambda = lambdaX(null, block(statementList as Statement[]))
         def result = parallelEnabled
-                        ? callX(callX(QUERYABLE_HELPER_TYPE, 'submit', args(resultLambda)), "get")
-                        : callX(resultLambda, "call")
+            ? callX(callX(QUERYABLE_HELPER_TYPE, 'submit', args(resultLambda)), "get")
+            : callX(resultLambda, "call")
 
         ginqExpressionStack.pop()
         return result
@@ -307,10 +307,10 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
 
         if (hasAggFunctionInSelect) {
             currentGinqExpression.groupExpression =
-                    new GroupExpression(
-                            new ArgumentListExpression(
-                                    Collections.singletonList(
-                                            (Expression) fieldX(QUERYABLE_TYPE, "NULL"))))
+                new GroupExpression(
+                    new ArgumentListExpression(
+                        Collections.singletonList(
+                            (Expression) fieldX(QUERYABLE_TYPE, "NULL"))))
         }
     }
 
@@ -329,10 +329,10 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
 
         if (!onExpression && !joinExpression.crossJoin) {
             collectSyntaxError(
-                    new GinqSyntaxError(
-                            "`on` clause is expected for `" + joinExpression.joinName + "`",
-                            joinExpression.getLineNumber(), joinExpression.getColumnNumber()
-                    )
+                new GinqSyntaxError(
+                    "`on` clause is expected for `" + joinExpression.joinName + "`",
+                    joinExpression.getLineNumber(), joinExpression.getColumnNumber()
+                )
             )
         }
 
@@ -349,13 +349,13 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
 
     private MethodCallExpression constructFromMethodCallExpression(Expression dataSourceExpr) {
         callX(
-                classX(QUERYABLE_TYPE),
-                'from',
-                args(
-                        dataSourceExpr instanceof AbstractGinqExpression
-                                ? visit((AbstractGinqExpression) dataSourceExpr)
-                                : dataSourceExpr
-                )
+            classX(QUERYABLE_TYPE),
+            'from',
+            args(
+                dataSourceExpr instanceof AbstractGinqExpression
+                    ? visit((AbstractGinqExpression) dataSourceExpr)
+                    : dataSourceExpr
+            )
         )
     }
 
@@ -393,21 +393,21 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
 
             if (onExpression.filterExpr !instanceof BinaryExpression) {
                 collectSyntaxError(
-                        new GinqSyntaxError(
-                                "Only binary expressions(`==`, `&&`) are allowed in `on` clause of hash join",
-                                onExpression.filterExpr.getLineNumber(), onExpression.filterExpr.getColumnNumber()
-                        )
+                    new GinqSyntaxError(
+                        "Only binary expressions(`==`, `&&`) are allowed in `on` clause of hash join",
+                        onExpression.filterExpr.getLineNumber(), onExpression.filterExpr.getColumnNumber()
+                    )
                 )
             }
 
             if (!equalExpressionList) {
                 collectEqualExpressionForHashJoin(onExpression,
-                        expression -> collectSyntaxError(
-                                new GinqSyntaxError(
-                                        "`" + expression.operation.text + "` is not allowed in `on` clause of hash join",
-                                        expression.getLineNumber(), expression.getColumnNumber()
-                                )
-                        ))
+                    expression -> collectSyntaxError(
+                        new GinqSyntaxError(
+                            "`" + expression.operation.text + "` is not allowed in `on` clause of hash join",
+                            expression.getLineNumber(), expression.getColumnNumber()
+                        )
+                    ))
             }
 
             equalExpressionList.forEach((BinaryExpression expression) -> {
@@ -416,35 +416,35 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
 
             statementList.add(stmt(listX(leftExpressionList)))
             argumentExpressionList << lambdaX(
-                    params(
-                            param(dynamicType(), otherParamName)
-                    ),
-                    block(statementList as Statement[])
+                params(
+                    param(dynamicType(), otherParamName)
+                ),
+                block(statementList as Statement[])
             )
 
             argumentExpressionList << lambdaX(
-                    params(
-                            param(dynamicType(), joinExpression.aliasExpr.text)
-                    ),
-                    block(stmt(listX(rightExpressionList)))
+                params(
+                    param(dynamicType(), joinExpression.aliasExpr.text)
+                ),
+                block(stmt(listX(rightExpressionList)))
             )
         } else {
             statementList.add(stmt(filterExpr))
             argumentExpressionList << (null == onExpression ? EmptyExpression.INSTANCE : lambdaX(
-                    params(
-                            param(dynamicType(), otherParamName),
-                            param(dynamicType(), joinExpression.aliasExpr.text)
-                    ),
-                    block(statementList as Statement[])))
+                params(
+                    param(dynamicType(), otherParamName),
+                    param(dynamicType(), joinExpression.aliasExpr.text)
+                ),
+                block(statementList as Statement[])))
         }
 
         MethodCallExpression resultMethodCallExpression
         MethodCallExpression joinMethodCallExpression =
-                callX(receiver,
-                        joinName
-                                .replace('join', 'Join')
-                                .replace('hash', 'Hash'),
-                        args(argumentExpressionList))
+            callX(receiver,
+                joinName
+                    .replace('join', 'Join')
+                    .replace('hash', 'Hash'),
+                args(argumentExpressionList))
         resultMethodCallExpression = joinMethodCallExpression
 
         if (joinExpression.crossJoin) {
@@ -458,7 +458,7 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
         return resultMethodCallExpression
     }
 
-    private List<BinaryExpression> collectEqualExpressionForHashJoin(OnExpression onExpression, Consumer<BinaryExpression> errorCollector=null) {
+    private List<BinaryExpression> collectEqualExpressionForHashJoin(OnExpression onExpression, Consumer<BinaryExpression> errorCollector = null) {
         if (!onExpression) return Collections.emptyList()
 
         List<BinaryExpression> equalExpressionList = []
@@ -488,7 +488,7 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
     }
 
     private void collectHashJoinFields(List<Expression> expressionList, String joinAliasName, List<Expression> leftExpressionList, List<Expression> rightExpressionList) {
-        expressionList.each {expression ->
+        expressionList.each { expression ->
             List<Expression> foundVariableExpressionList = []
             expression.visit(new CodeVisitorSupport() {
                 @Override
@@ -502,10 +502,10 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
             def variableNameList = foundVariableExpressionList.collect { it.text }
             if (1 != variableNameList.size()) {
                 collectSyntaxError(
-                        new GinqSyntaxError(
-                                "Only one alias expected at each side of `==`, but found: ${variableNameList}",
-                                expression.getLineNumber(), expression.getColumnNumber()
-                        )
+                    new GinqSyntaxError(
+                        "Only one alias expected at each side of `==`, but found: ${variableNameList}",
+                        expression.getLineNumber(), expression.getColumnNumber()
+                    )
                 )
             }
 
@@ -516,10 +516,10 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
                 leftExpressionList << expression
             } else {
                 collectSyntaxError(
-                        new GinqSyntaxError(
-                                "Unknown alias: ${aliasName}",
-                                expression.getLineNumber(), expression.getColumnNumber()
-                        )
+                    new GinqSyntaxError(
+                        "Unknown alias: ${aliasName}",
+                        expression.getLineNumber(), expression.getColumnNumber()
+                    )
                 )
             }
         }
@@ -610,15 +610,15 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
                 target = e.leftExpression
 
                 String orderOption =
-                        e.rightExpression instanceof MethodCallExpression
-                                ? ((MethodCallExpression) e.rightExpression).methodAsString
-                                : e.rightExpression.text
+                    e.rightExpression instanceof MethodCallExpression
+                        ? ((MethodCallExpression) e.rightExpression).methodAsString
+                        : e.rightExpression.text
                 if (!ORDER_OPTION_LIST.contains(orderOption)) {
                     collectSyntaxError(
-                            new GinqSyntaxError(
-                                    "Invalid order: " + orderOption + ", `asc`/`desc` is expected",
-                                    e.rightExpression.getLineNumber(), e.rightExpression.getColumnNumber()
-                            )
+                        new GinqSyntaxError(
+                            "Invalid order: " + orderOption + ", `asc`/`desc` is expected",
+                            e.rightExpression.getLineNumber(), e.rightExpression.getColumnNumber()
+                        )
                     )
                 }
 
@@ -633,19 +633,19 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
                             nullsOption = nullsOptionExpression.text
                             if (!NULLS_OPTION_LIST.contains(nullsOption)) {
                                 collectSyntaxError(
-                                        new GinqSyntaxError(
-                                                "Invalid nulls order: " + nullsOption + ", `nullslast`/`nullsfirst` is expected",
-                                                nullsOptionExpression.getLineNumber(), nullsOptionExpression.getColumnNumber()
-                                        )
+                                    new GinqSyntaxError(
+                                        "Invalid nulls order: " + nullsOption + ", `nullslast`/`nullsfirst` is expected",
+                                        nullsOptionExpression.getLineNumber(), nullsOptionExpression.getColumnNumber()
+                                    )
                                 )
                             }
                         }
                     } else {
                         collectSyntaxError(
-                                new GinqSyntaxError(
-                                        "Only `nullslast`/`nullsfirst` is expected",
-                                        mce.arguments.getLineNumber(), mce.arguments.getColumnNumber()
-                                )
+                            new GinqSyntaxError(
+                                "Only `nullslast`/`nullsfirst` is expected",
+                                mce.arguments.getLineNumber(), mce.arguments.getColumnNumber()
+                            )
                         )
                     }
                     if (nullsOption) {
@@ -724,8 +724,8 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
 
                 if (expression instanceof AbstractGinqExpression) {
                     return callX(
-                            classX(QUERYABLE_HELPER_TYPE), "singleValue",
-                            visit((AbstractGinqExpression) expression)
+                        classX(QUERYABLE_HELPER_TYPE), "singleValue",
+                        visit((AbstractGinqExpression) expression)
                     )
                 }
 
@@ -767,9 +767,9 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
                                                     }
 
                                                     return callX(
-                                                            classX(QUERYABLE_HELPER_TYPE),
-                                                            "navigate",
-                                                            args(varX(windowFunctionLambdaName), getMetaDataMethodCall(MD_ALIAS_NAME_LIST))
+                                                        classX(QUERYABLE_HELPER_TYPE),
+                                                        "navigate",
+                                                        args(varX(windowFunctionLambdaName), getMetaDataMethodCall(MD_ALIAS_NAME_LIST))
                                                     )
                                                 }
                                             }
@@ -781,8 +781,8 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
                                         argumentExpressionList << argumentListExpression.getExpression(0)
                                     } else {
                                         argumentExpressionList << lambdaX(
-                                                params(param(dynamicType(), windowFunctionLambdaName)),
-                                                block(stmt(windowFunctionLambdaCode))
+                                            params(param(dynamicType(), windowFunctionLambdaName)),
+                                            block(stmt(windowFunctionLambdaCode))
                                         )
                                     }
 
@@ -796,18 +796,18 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
 
                                 def windowDefinitionFactoryMethodCallExpression = constructWindowDefinitionFactoryMethodCallExpression(expression, dataSourceExpression)
                                 Expression newObjectExpression = callX(wqVar, 'over', args(
-                                        callX(TUPLE_TYPE, 'tuple', args(currentRecordVar, parallel ? supplyAsyncLambdaParam : getRowNumberMethodCall())),
-                                        windowDefinitionFactoryMethodCallExpression
+                                    callX(TUPLE_TYPE, 'tuple', args(currentRecordVar, parallel ? supplyAsyncLambdaParam : getRowNumberMethodCall())),
+                                    windowDefinitionFactoryMethodCallExpression
                                 ))
                                 result = callX(
-                                        newObjectExpression,
-                                        windowFunctionMethodCallExpression.methodAsString,
-                                        args(argumentExpressionList)
+                                    newObjectExpression,
+                                    windowFunctionMethodCallExpression.methodAsString,
+                                    args(argumentExpressionList)
                                 )
                             } else {
                                 collectSyntaxError(new GinqSyntaxError(
-                                        "Unsupported window function: `${windowFunctionMethodCallExpression.methodAsString}`",
-                                        windowFunctionMethodCallExpression.getLineNumber(), windowFunctionMethodCallExpression.getColumnNumber()
+                                    "Unsupported window function: `${windowFunctionMethodCallExpression.methodAsString}`",
+                                    windowFunctionMethodCallExpression.getLineNumber(), windowFunctionMethodCallExpression.getColumnNumber()
                                 ))
                             }
 
@@ -889,16 +889,16 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
 
         if (rowsExpr && rangeExpr) {
             collectSyntaxError(new GinqSyntaxError(
-                    "`rows` and `range` cannot be used in the same time",
-                    rangeExpr.getLineNumber(), rangeExpr.getColumnNumber()
+                "`rows` and `range` cannot be used in the same time",
+                rangeExpr.getLineNumber(), rangeExpr.getColumnNumber()
             ))
         }
 
         if (rowsExpr) {
             if (2 != ((ArgumentListExpression) rowsExpr).getExpressions().size()) {
                 collectSyntaxError(new GinqSyntaxError(
-                        "Both lower bound and upper bound are expected for `rows`",
-                        rowsExpr.getLineNumber(), rowsExpr.getColumnNumber()
+                    "Both lower bound and upper bound are expected for `rows`",
+                    rowsExpr.getLineNumber(), rowsExpr.getColumnNumber()
                 ))
             }
 
@@ -909,21 +909,21 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
         if (rangeExpr) {
             if (2 != ((ArgumentListExpression) rangeExpr).getExpressions().size()) {
                 collectSyntaxError(new GinqSyntaxError(
-                        "Both lower bound and upper bound are expected for `range`",
-                        rangeExpr.getLineNumber(), rangeExpr.getColumnNumber()
+                    "Both lower bound and upper bound are expected for `range`",
+                    rangeExpr.getLineNumber(), rangeExpr.getColumnNumber()
                 ))
             }
 
             if (!orderExpr) {
                 collectSyntaxError(new GinqSyntaxError(
-                        "`orderby` is expected when using `range`",
-                        rangeExpr.getLineNumber(), rangeExpr.getColumnNumber()
+                    "`orderby` is expected when using `range`",
+                    rangeExpr.getLineNumber(), rangeExpr.getColumnNumber()
                 ))
             }
             if (((ArgumentListExpression) orderExpr).getExpressions().size() != 1) {
                 collectSyntaxError(new GinqSyntaxError(
-                        "Only one field is expected in the `orderby` clause when using `range`",
-                        orderExpr.getLineNumber(), orderExpr.getColumnNumber()
+                    "Only one field is expected in the `orderby` clause when using `range`",
+                    orderExpr.getLineNumber(), orderExpr.getColumnNumber()
                 ))
             }
 
@@ -947,13 +947,13 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
         })
 
         callX(
-                callX(classX(WINDOW_DEFINITION_TYPE), 'of', args(argumentExpressionList)),
-                'setId',
-                callX(TUPLE_TYPE, 'tuple', args(
-                        constX(partitionByClauseText),
-                        constX(orderByClauseText),
-                        constX(argumentListExpression.text)
-                ))
+            callX(classX(WINDOW_DEFINITION_TYPE), 'of', args(argumentExpressionList)),
+            'setId',
+            callX(TUPLE_TYPE, 'tuple', args(
+                constX(partitionByClauseText),
+                constX(orderByClauseText),
+                constX(argumentListExpression.text)
+            ))
         )
     }
 
@@ -969,13 +969,14 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
         if (ignoredMethodCallExpressionList) {
             MethodCallExpression ignoredMce = ignoredMethodCallExpressionList.get(0)
             collectSyntaxError(new GinqSyntaxError(
-                    "Unknown window clause: `${ignoredMce.methodAsString}`",
-                    ignoredMce.getLineNumber(), ignoredMce.getColumnNumber()
+                "Unknown window clause: `${ignoredMce.methodAsString}`",
+                ignoredMce.getLineNumber(), ignoredMce.getColumnNumber()
             ))
         }
     }
 
     private int windowQueryableNameSeq = 0
+
     private String getWindowQueryableName() {
         String name = (String) currentGinqExpression.getNodeMetaData(__WINDOW_QUERYABLE_NAME)
 
@@ -1014,8 +1015,8 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
                             def rootObjectExpression = findRootObjectExpression(expr).text
                             if (rootObjectExpression !in getGroupNameList() && rootObjectExpression in getAliasNameList()) {
                                 collectSyntaxError(new GinqSyntaxError(
-                                        "`${expr.text}` is not in the `groupby` clause",
-                                        expr.getLineNumber(), expr.getColumnNumber()
+                                    "`${expr.text}` is not in the `groupby` clause",
+                                    expr.getLineNumber(), expr.getColumnNumber()
                                 ))
                             }
                         } else if (isExpression(expr, MethodCallExpression)) {
@@ -1024,14 +1025,14 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
                             }
                             if (((MethodCallExpression) expr).implicitThis) {
                                 collectSyntaxError(new GinqSyntaxError(
-                                        "`${expr instanceof CastExpression ? expr.expression.text : expr.text}` is not an aggregate function",
-                                        expr.getLineNumber(), expr.getColumnNumber()
+                                    "`${expr instanceof CastExpression ? expr.expression.text : expr.text}` is not an aggregate function",
+                                    expr.getLineNumber(), expr.getColumnNumber()
                                 ))
                             }
                         } else if (isExpression(expr, AbstractGinqExpression)) {
                             collectSyntaxError(new GinqSyntaxError(
-                                    "sub-query could not be used in the `select` clause with `groupby`",
-                                    expr.getLineNumber(), expr.getColumnNumber()
+                                "sub-query could not be used in the `select` clause with `groupby`",
+                                expr.getLineNumber(), expr.getColumnNumber()
                             ))
                         }
                         return expr.transformExpression(this)
@@ -1077,16 +1078,17 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
         currentGinqExpression.putNodeMetaData(metaDataKey, nameListExpression)
 
         ConstructorCallExpression namedRecordCtorCallExpression =
-                ctorX(NAMED_RECORD_TYPE,
-                        args(
-                                new ListExpression(elementExpressionList),
-                                getMetaDataMethodCall(metaDataKey), getMetaDataMethodCall(MD_ALIAS_NAME_LIST)
-                        )
+            ctorX(NAMED_RECORD_TYPE,
+                args(
+                    new ListExpression(elementExpressionList),
+                    getMetaDataMethodCall(metaDataKey), getMetaDataMethodCall(MD_ALIAS_NAME_LIST)
                 )
+            )
         return namedRecordCtorCallExpression
     }
 
     private int metaDataMapNameSeq = 0
+
     private String getMetaDataMapName() {
         String name = (String) currentGinqExpression.getNodeMetaData(__META_DATA_MAP_NAME_PREFIX)
 
@@ -1099,6 +1101,7 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
     }
 
     private int rowNumberNameSeq = 0
+
     private String getRowNumberName() {
         String name = (String) currentGinqExpression.getNodeMetaData(__ROW_NUMBER_NAME_PREFIX)
 
@@ -1111,6 +1114,7 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
     }
 
     private int supplyAsyncLambdaParamNameSeq = 0
+
     private String getSupplyAsyncLambdaParamName() {
         String name = (String) currentGinqExpression.getNodeMetaData(SUPPLY_ASYNC_LAMBDA_PARAM_NAME_PREFIX)
 
@@ -1183,18 +1187,18 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
             def lambdaParam = varX(lambdaParamName)
             Map<String, Expression> aliasToAccessPathMap = findAliasAccessPath(dataSourceExpression, lambdaParam)
             declarationExpressionList =
-                    aliasToAccessPathMap.entrySet().stream()
-                            .filter(e -> variableNameSet.contains(e.key))
-                            .map(e -> {
-                                def v = localVarX(e.key).tap { modifiers |= Opcodes.ACC_FINAL }
+                aliasToAccessPathMap.entrySet().stream()
+                    .filter(e -> variableNameSet.contains(e.key))
+                    .map(e -> {
+                        def v = localVarX(e.key).tap { modifiers |= Opcodes.ACC_FINAL }
 
-                                if (isGroup) {
-                                    return declX(v, propX(varX(__SOURCE_RECORD), e.key))
-                                } else {
-                                    return declX(v, e.value)
-                                }
-                            })
-                            .collect(Collectors.toList())
+                        if (isGroup) {
+                            return declX(v, propX(varX(__SOURCE_RECORD), e.key))
+                        } else {
+                            return declX(v, e.value)
+                        }
+                    })
+                    .collect(Collectors.toList())
         }
 
         // correct itself and its children nodes
@@ -1220,7 +1224,7 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
     }
 
     private boolean isExternalVariable(Expression rootObjectExpression) {
-        rootObjectExpression.text != _G  && rootObjectExpression.text !in groupNameList && rootObjectExpression.text !in aliasNameList
+        rootObjectExpression.text != _G && rootObjectExpression.text !in groupNameList && rootObjectExpression.text !in aliasNameList
     }
 
     private Expression correctVars(DataSourceExpression dataSourceExpression, String lambdaParamName, Expression expression) {
@@ -1238,7 +1242,8 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
         } else if (expression instanceof VariableExpression) {
             if (expression.isThisExpression()) return expression
             if (expression.text in [__SOURCE_RECORD, __GROUP]) return expression
-            if (expression.text && Character.isUpperCase(expression.text.charAt(0))) return expression // type should not be transformed
+            if (expression.text && Character.isUpperCase(expression.text.charAt(0))) return expression
+            // type should not be transformed
             if (expression.text.startsWith(__META_DATA_MAP_NAME_PREFIX)) return expression
 
             if (groupByVisited) { //  groupby
@@ -1252,11 +1257,11 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
                     if (visitingAggregateFunctionStack) {
                         if (FUNCTION_AGG == visitingAggregateFunctionStack.peek() && _G == expression.text) {
                             transformedExpression =
-                                    callX(
-                                        classX(QUERYABLE_HELPER_TYPE),
-                                            "navigate",
-                                        args(varX(lambdaParamName), getMetaDataMethodCall(MD_ALIAS_NAME_LIST))
-                                    )
+                                callX(
+                                    classX(QUERYABLE_HELPER_TYPE),
+                                    "navigate",
+                                    args(varX(lambdaParamName), getMetaDataMethodCall(MD_ALIAS_NAME_LIST))
+                                )
                         } else {
                             transformedExpression = varX(lambdaParamName)
                             boolean isJoin = dataSourceExpression instanceof JoinExpression
@@ -1268,7 +1273,7 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
                         }
                     } else {
                         if (groupNameListExpression.getExpressions().stream().map(e -> e.text).anyMatch(e -> e == expression.text)
-                                && aliasNameListExpression.getExpressions().stream().map(e -> e.text).allMatch(e -> e != expression.text)
+                            && aliasNameListExpression.getExpressions().stream().map(e -> e.text).allMatch(e -> e != expression.text)
                         ) {
                             // replace `gk` in the groupby with `__t.v1.gk`, note: __t.v1 stores the group key
                             transformedExpression = propX(varX(__SOURCE_RECORD), expression.text)
@@ -1279,7 +1284,7 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
                 if (visitingWindowFunction) {
                     boolean isJoin = dataSourceExpression instanceof JoinExpression
                     if (isJoin) {
-                        Map<String, Expression>  aliasAccessPathMap = findAliasAccessPath(dataSourceExpression, varX(lambdaParamName))
+                        Map<String, Expression> aliasAccessPathMap = findAliasAccessPath(dataSourceExpression, varX(lambdaParamName))
                         transformedExpression = aliasAccessPathMap.get(expression.text)
                     }
                 }
@@ -1290,16 +1295,17 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
                 if (isAggregateFunction(expression)) {
                     String methodName = expression.methodAsString
                     visitingAggregateFunctionStack.push(methodName)
-                    if (FUNCTION_COUNT == methodName && ((TupleExpression) expression.arguments).getExpressions().isEmpty()) { // Similar to count(*) in SQL
+                    if (FUNCTION_COUNT == methodName && ((TupleExpression) expression.arguments).getExpressions().isEmpty()) {
+                        // Similar to count(*) in SQL
                         expression.objectExpression = varX(__GROUP)
                         transformedExpression = expression
                     } else if (methodName in AGG_FUNCTION_NAME_LIST) {
                         Expression lambdaCode = ((TupleExpression) expression.arguments).getExpression(0)
                         lambdaCode.putNodeMetaData(__LAMBDA_PARAM_NAME, findRootObjectExpression(lambdaCode).text)
                         transformedExpression =
-                                callXWithLambda(
-                                        varX(__GROUP), methodName,
-                                        dataSourceExpression, lambdaCode)
+                            callXWithLambda(
+                                varX(__GROUP), methodName,
+                                dataSourceExpression, lambdaCode)
                     }
                     visitingAggregateFunctionStack.pop()
                 }
@@ -1356,7 +1362,8 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
     private static Expression findRootObjectExpression(Expression expression) {
         if (expression instanceof PropertyExpression) {
             Expression expr = expression
-            for (; expr instanceof PropertyExpression; expr = ((PropertyExpression) expr).objectExpression) {}
+            for (; expr instanceof PropertyExpression; expr = ((PropertyExpression) expr).objectExpression) {
+            }
             return expr
         }
         expression
@@ -1394,17 +1401,17 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
 
         def transformedLambdCode = paramNameAndLambdaCode.v3
         if (async) {
-            ArgumentListExpression  argumentListExpression
+            ArgumentListExpression argumentListExpression
             argumentListExpression = rowNumberUsed
-                                        ? args(lambdaX(params(param(dynamicType(), supplyAsyncLambdaParamName)),
-                                                        stmt(transformedLambdCode)),
-                                                rowNumberUsed ? getRowNumberMethodCall() : nullX())
-                                        : args(lambdaX(stmt(transformedLambdCode)))
+                ? args(lambdaX(params(param(dynamicType(), supplyAsyncLambdaParamName)),
+                stmt(transformedLambdCode)),
+                rowNumberUsed ? getRowNumberMethodCall() : nullX())
+                : args(lambdaX(stmt(transformedLambdCode)))
 
             transformedLambdCode = callX(
-                    classX(QUERYABLE_HELPER_TYPE),
-                    "supplyAsync",
-                    argumentListExpression
+                classX(QUERYABLE_HELPER_TYPE),
+                "supplyAsync",
+                argumentListExpression
             )
         }
         statementList.add(stmt(transformedLambdCode))
@@ -1415,12 +1422,13 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
         }
 
         lambdaX(
-                params(paramList as Parameter[]),
-                block(statementList as Statement[])
+            params(paramList as Parameter[]),
+            block(statementList as Statement[])
         )
     }
 
     private int lambdaParamSeq = 0
+
     private String generateLambdaParamName() {
         "__t_${lambdaParamSeq++}"
     }
@@ -1451,13 +1459,13 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
 
                 if (groupByVisited) {
                     final sourceRecordDecl =
-                            declX(localVarX(__SOURCE_RECORD).tap{ modifiers |= Opcodes.ACC_FINAL },
-                                    propX(varX(lambdaParamName), 'v1'))
+                        declX(localVarX(__SOURCE_RECORD).tap { modifiers |= Opcodes.ACC_FINAL },
+                            propX(varX(lambdaParamName), 'v1'))
                     declarationExpressionList.add(0, sourceRecordDecl)
 
                     final groupDecl =
-                            declX(localVarX(__GROUP).tap{ modifiers |= Opcodes.ACC_FINAL },
-                                    propX(varX(lambdaParamName), 'v2'))
+                        declX(localVarX(__GROUP).tap { modifiers |= Opcodes.ACC_FINAL },
+                            propX(varX(lambdaParamName), 'v2'))
                     declarationExpressionList.add(1, groupDecl)
                 }
             }
@@ -1501,24 +1509,26 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
     }
 
     private boolean isRowNumberUsed() {
-        currentGinqExpression.getNodeMetaData(__RN_USED)  ?: false
+        currentGinqExpression.getNodeMetaData(__RN_USED) ?: false
     }
 
     private static MethodCallExpression callXWithLambda(Expression receiver, String methodName, LambdaExpression lambdaExpression) {
         callX(
-                receiver,
-                methodName,
-                lambdaExpression
+            receiver,
+            methodName,
+            lambdaExpression
         )
     }
 
     final SourceUnit sourceUnit
 
     private Map<String, String> configuration
+
     @Override
     void setConfiguration(Map<String, String> configuration) {
         this.configuration = configuration
     }
+
     @Override
     Map<String, String> getConfiguration() {
         return configuration
@@ -1578,7 +1588,7 @@ class GinqAstWalker implements GinqAstVisitor<Expression>, SyntaxErrorReportable
     private static final String __VISITING_SELECT = "__VISITING_SELECT"
     private static final String __VISITING_WINDOW_FUNCTION = "__VISITING_WINDOW_FUNCTION"
     private static final String __LAMBDA_PARAM_NAME = "__LAMBDA_PARAM_NAME"
-    private static final String  __RN_USED = '__RN_USED'
+    private static final String __RN_USED = '__RN_USED'
     private static final String __META_DATA_MAP_NAME_PREFIX = '__metaDataMap_'
     private static final String __WINDOW_QUERYABLE_NAME = '__wq_'
     private static final String __ROW_NUMBER_NAME_PREFIX = '__rowNumber_'

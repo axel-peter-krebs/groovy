@@ -72,26 +72,12 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.getAllProperties;
  */
 public class VariableScopeVisitor extends ClassCodeVisitorSupport {
 
-    private ClassNode currentClass;
-    private VariableScope currentScope;
-    private boolean inClosure, inConstructor, inSpecialConstructorCall;
-
     private final SourceUnit source;
     private final boolean recurseInnerClasses;
     private final Deque<StateStackElement> stateStack = new LinkedList<>();
-
-    private static class StateStackElement {
-        final ClassNode clazz;
-        final VariableScope scope;
-        final boolean inClosure, inConstructor;
-
-        StateStackElement(final ClassNode currentClass, final VariableScope currentScope, final boolean inClosure, final boolean inConstructor) {
-            clazz = currentClass;
-            scope = currentScope;
-            this.inClosure = inClosure;
-            this.inConstructor = inConstructor;
-        }
-    }
+    private ClassNode currentClass;
+    private VariableScope currentScope;
+    private boolean inClosure, inConstructor, inSpecialConstructorCall;
 
     public VariableScopeVisitor(SourceUnit source, boolean recurseInnerClasses) {
         this.source = source;
@@ -108,15 +94,15 @@ public class VariableScopeVisitor extends ClassCodeVisitorSupport {
         return source;
     }
 
-    //----------------------------------
-    // helper methods
-    //----------------------------------
-
     private void pushState(final boolean isStatic) {
         stateStack.push(new StateStackElement(currentClass, currentScope, inClosure, inConstructor));
         currentScope = new VariableScope(currentScope);
         currentScope.setInStaticContext(isStatic);
     }
+
+    //----------------------------------
+    // helper methods
+    //----------------------------------
 
     private void pushState() {
         pushState(currentScope.isInStaticContext());
@@ -124,9 +110,9 @@ public class VariableScopeVisitor extends ClassCodeVisitorSupport {
 
     private void popState() {
         StateStackElement state = stateStack.pop();
-        this.currentClass  = state.clazz;
-        this.currentScope  = state.scope;
-        this.inClosure     = state.inClosure;
+        this.currentClass = state.clazz;
+        this.currentScope = state.scope;
+        this.inClosure = state.inClosure;
         this.inConstructor = state.inConstructor;
     }
 
@@ -142,16 +128,16 @@ public class VariableScopeVisitor extends ClassCodeVisitorSupport {
         }
         visitTypeReference(variable.getOriginType());
 
-        String scopeType    = "scope";
+        String scopeType = "scope";
         String variableType = "variable";
         if (context.getClass() == FieldNode.class) {
-            scopeType    = "class";
+            scopeType = "class";
             variableType = "field";
         } else if (context.getClass() == PropertyNode.class) {
-            scopeType    = "class";
+            scopeType = "class";
             variableType = "property";
         } else if (context.getClass() == ClosureExpression.class) {
-            scopeType    = "parameter list";
+            scopeType = "parameter list";
             variableType = "parameter";
         }
 
@@ -311,7 +297,7 @@ public class VariableScopeVisitor extends ClassCodeVisitorSupport {
         if (node.isArray()) {
             visitTypeReference(node.getComponentType());
         } else if (node.getGenericsTypes() != null && !node.isGenericsPlaceHolder()
-                && (node.isRedirectNode() || (!node.isResolved() && !node.isPrimaryClassNode()))) {
+            && (node.isRedirectNode() || (!node.isResolved() && !node.isPrimaryClassNode()))) {
             visitTypeVariables(node.getGenericsTypes()); // "String" from "List<String> -> List<E>"
         }
     }
@@ -326,10 +312,6 @@ public class VariableScopeVisitor extends ClassCodeVisitorSupport {
             variable.setClosureSharedVariable(true);
         }
     }
-
-    //----------------------------------
-    // variable checks
-    //----------------------------------
 
     private void checkFinalFieldAccess(final Expression expression) {
         BiConsumer<VariableExpression, ASTNode> checkForFinal = (expr, node) -> {
@@ -353,6 +335,10 @@ public class VariableScopeVisitor extends ClassCodeVisitorSupport {
         // currently not looking for PropertyExpression: dealt with at runtime using ReadOnlyPropertyException
     }
 
+    //----------------------------------
+    // variable checks
+    //----------------------------------
+
     /**
      * A property on "this", like this.x is transformed to a direct field access,
      * so we need to check the static context here.
@@ -373,9 +359,9 @@ public class VariableScopeVisitor extends ClassCodeVisitorSupport {
     private void checkVariableContextAccess(final Variable variable, final Expression expression) {
         if (variable.isInStaticContext()) {
             if (inConstructor && currentClass.isEnum() && variable instanceof FieldNode
-                    && currentClass.equals(((FieldNode) variable).getDeclaringClass())) { // GROOVY-7025
+                && currentClass.equals(((FieldNode) variable).getDeclaringClass())) { // GROOVY-7025
                 if (!isFinal(variable.getModifiers()) || !(ClassHelper.isStaticConstantInitializerType(variable.getOriginType())
-                        || "String".equals(variable.getOriginType().getName()))) { // TODO: String requires constant initializer
+                    || "String".equals(variable.getOriginType().getName()))) { // TODO: String requires constant initializer
                     addError("Cannot refer to the static enum field '" + variable.getName() + "' within an initializer", expression);
                 }
             }
@@ -386,8 +372,6 @@ public class VariableScopeVisitor extends ClassCodeVisitorSupport {
         }
     }
 
-    //--------------------------------------------------------------------------
-
     /**
      * Sets the current class node context.
      */
@@ -395,6 +379,8 @@ public class VariableScopeVisitor extends ClassCodeVisitorSupport {
         currentClass = node;
         currentScope.setClassScope(node);
     }
+
+    //--------------------------------------------------------------------------
 
     @Override
     public void visitClass(final ClassNode node) {
@@ -478,8 +464,6 @@ public class VariableScopeVisitor extends ClassCodeVisitorSupport {
         popState();
     }
 
-    // statements:
-
     @Override
     public void visitBlockStatement(final BlockStatement statement) {
         pushState();
@@ -487,6 +471,8 @@ public class VariableScopeVisitor extends ClassCodeVisitorSupport {
         super.visitBlockStatement(statement);
         popState();
     }
+
+    // statements:
 
     @Override
     public void visitCatchStatement(final CatchStatement statement) {
@@ -520,13 +506,13 @@ public class VariableScopeVisitor extends ClassCodeVisitorSupport {
         popState();
     }
 
-    // expressions:
-
     @Override
     public void visitArrayExpression(final ArrayExpression expression) {
         visitTypeReference(expression.getType());
         super.visitArrayExpression(expression);
     }
+
+    // expressions:
 
     @Override
     public void visitBinaryExpression(final BinaryExpression expression) {
@@ -608,7 +594,7 @@ public class VariableScopeVisitor extends ClassCodeVisitorSupport {
             if (initExpression != null) {
                 pushState(field.isStatic());
                 if (initExpression.isSynthetic() && initExpression instanceof VariableExpression
-                        && ((VariableExpression) initExpression).getAccessedVariable() instanceof Parameter) {
+                    && ((VariableExpression) initExpression).getAccessedVariable() instanceof Parameter) {
                     // GROOVY-6834: accessing a parameter which is not yet seen in scope
                     popState();
                     continue;
@@ -692,6 +678,19 @@ public class VariableScopeVisitor extends ClassCodeVisitorSupport {
         if (variable != null) {
             expression.setAccessedVariable(variable);
             checkVariableContextAccess(variable, expression);
+        }
+    }
+
+    private static class StateStackElement {
+        final ClassNode clazz;
+        final VariableScope scope;
+        final boolean inClosure, inConstructor;
+
+        StateStackElement(final ClassNode currentClass, final VariableScope currentScope, final boolean inClosure, final boolean inConstructor) {
+            clazz = currentClass;
+            scope = currentScope;
+            this.inClosure = inClosure;
+            this.inConstructor = inConstructor;
         }
     }
 }

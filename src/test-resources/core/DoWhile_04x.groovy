@@ -22,11 +22,12 @@ import groovy.transform.CompileStatic
 def a() {
     int i = 0;
     int result = 0;
-   do {
+    do {
         result += 2
-    } while(i++ < 2)
-        result += 3
+    } while (i++ < 2)
+    result += 3
 
     return result;
 }
+
 assert 9 == a()

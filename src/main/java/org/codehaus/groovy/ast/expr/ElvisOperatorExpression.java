@@ -57,8 +57,8 @@ public class ElvisOperatorExpression extends TernaryExpression {
     @Override
     public Expression transformExpression(ExpressionTransformer transformer) {
         Expression ret = new ElvisOperatorExpression(
-                transformer.transform(getTrueExpression()),
-                transformer.transform(getFalseExpression()));
+            transformer.transform(getTrueExpression()),
+            transformer.transform(getFalseExpression()));
         ret.setSourcePosition(this);
         ret.copyNodeMetaData(this);
         return ret;

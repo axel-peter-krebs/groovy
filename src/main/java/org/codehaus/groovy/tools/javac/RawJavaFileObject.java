@@ -33,6 +33,7 @@ import java.util.Objects;
 
 /**
  * Represents a Java source file in file to compile
+ *
  * @since 3.0.0
  */
 public class RawJavaFileObject extends SimpleJavaFileObject {
@@ -44,7 +45,7 @@ public class RawJavaFileObject extends SimpleJavaFileObject {
      * Construct a RawJavaFileObject of the given kind and with the
      * given URI.
      *
-     * @param uri  the URI for this file object
+     * @param uri the URI for this file object
      */
     public RawJavaFileObject(URI uri) {
         super(uri, JavaFileObject.Kind.SOURCE);
@@ -58,6 +59,7 @@ public class RawJavaFileObject extends SimpleJavaFileObject {
 
     /**
      * delete the Java source file
+     *
      * @return <code>true</code> if deleted successfully
      */
     @Override
@@ -81,7 +83,7 @@ public class RawJavaFileObject extends SimpleJavaFileObject {
     @Override
     public String toString() {
         return "RawJavaFileObject{" +
-                "uri=" + uri +
-                '}';
+            "uri=" + uri +
+            '}';
     }
 }

@@ -27,11 +27,11 @@ import java.lang.reflect.Modifier;
 
 /**
  * This exception is thrown if the runtime is unable to select
- * a method. This class builds the exception text when calling 
+ * a method. This class builds the exception text when calling
  * getMessage.
  * <p>
  * <b>Note:</b> This exception as for internal use only!
- * 
+ *
  * @since Groovy 1.1
  */
 public class MethodSelectionException extends GroovyRuntimeException {
@@ -43,6 +43,7 @@ public class MethodSelectionException extends GroovyRuntimeException {
 
     /**
      * Creates a new MethodSelectionException.
+     *
      * @param methodName name of the method
      * @param methods    a FastArray of methods
      * @param arguments  the method call argument classes
@@ -54,17 +55,6 @@ public class MethodSelectionException extends GroovyRuntimeException {
         this.methods = methods;
     }
 
-    @Override
-    public String getMessage() {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("Could not find which method ").append(methodName);
-        appendClassNames(buffer,arguments);
-        buffer.append(" to invoke from this list:");
-        appendMethods(buffer);
-        return buffer.toString();
-    }
-
-
     private static void appendClassNames(StringBuilder argBuf, Class[] classes) {
         argBuf.append("(");
         for (int i = 0; i < classes.length; i++) {
@@ -72,10 +62,20 @@ public class MethodSelectionException extends GroovyRuntimeException {
                 argBuf.append(", ");
             }
             Class clazz = classes[i];
-            String name = clazz==null? "null": clazz.getName();
+            String name = clazz == null ? "null" : clazz.getName();
             argBuf.append(name);
         }
         argBuf.append(")");
+    }
+
+    @Override
+    public String getMessage() {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("Could not find which method ").append(methodName);
+        appendClassNames(buffer, arguments);
+        buffer.append(" to invoke from this list:");
+        appendMethods(buffer);
+        return buffer.toString();
     }
 
     private void appendMethods(StringBuilder buffer) {
@@ -89,14 +89,13 @@ public class MethodSelectionException extends GroovyRuntimeException {
                 buffer.append(" ").append(method.getDeclaringClass().getName());
                 buffer.append("#");
                 buffer.append(method.getName());
-                appendClassNames(buffer,method.getNativeParameterTypes());
-            }
-            else {
+                appendClassNames(buffer, method.getNativeParameterTypes());
+            } else {
                 CachedConstructor constructor = (CachedConstructor) methodOrConstructor;
                 buffer.append(Modifier.toString(constructor.getModifiers()));
                 buffer.append(" ").append(constructor.getDeclaringClass().getName());
                 buffer.append("#<init>");
-                appendClassNames(buffer,constructor.getNativeParameterTypes());
+                appendClassNames(buffer, constructor.getNativeParameterTypes());
             }
         }
     }

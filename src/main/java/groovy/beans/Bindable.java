@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotates a groovy property or a class.
- *
+ * <p>
  * When annotating a property it indicates that the property should be a
  * bound property according to the JavaBeans spec, announcing to listeners
  * that the value has changed.

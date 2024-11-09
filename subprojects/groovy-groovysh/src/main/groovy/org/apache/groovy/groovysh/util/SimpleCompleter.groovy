@@ -29,8 +29,8 @@ class SimpleCompleter implements Completer {
     SortedSet<String> candidates
 
     /**
-    * A delimiter to use to qualify completions.
-    */
+     * A delimiter to use to qualify completions.
+     */
     protected String delimiter
 
     boolean withBlank = true

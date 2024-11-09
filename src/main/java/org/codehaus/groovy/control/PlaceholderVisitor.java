@@ -36,6 +36,14 @@ public class PlaceholderVisitor extends ClassCodeVisitorSupport {
         this.source = source;
     }
 
+    private static void markAsPlaceholder(ASTNode node) {
+        node.setNodeMetaData(PLACEHOLDER, Boolean.TRUE);
+    }
+
+    public static boolean isPlaceholder(ASTNode node) {
+        return Boolean.TRUE.equals(node.getNodeMetaData(PLACEHOLDER));
+    }
+
     @Override
     protected SourceUnit getSourceUnit() {
         return source;
@@ -85,12 +93,5 @@ public class PlaceholderVisitor extends ClassCodeVisitorSupport {
             }
         }
         super.visitClosureExpression(expression);
-    }
-    private static void markAsPlaceholder(ASTNode node) {
-        node.setNodeMetaData(PLACEHOLDER, Boolean.TRUE);
-    }
-
-    public static boolean isPlaceholder(ASTNode node) {
-        return Boolean.TRUE.equals(node.getNodeMetaData(PLACEHOLDER));
     }
 }

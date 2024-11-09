@@ -167,7 +167,7 @@ class AstSpecificationCompiler implements GroovyInterceptable {
      */
     @CompileStatic
     private void captureAndCreateNode(String name, @DelegatesTo(AstSpecificationCompiler) Closure argBlock,
-            @ClosureParams(value=FromString, options='java.util.List<org.codehaus.groovy.ast.ASTNode>') Closure ctorBlock) {
+                                      @ClosureParams(value = FromString, options = 'java.util.List<org.codehaus.groovy.ast.ASTNode>') Closure ctorBlock) {
         if (!argBlock) throw new IllegalArgumentException("nodes of type $name require arguments to be specified")
 
         def oldProps = new ArrayList<>(expression)
@@ -841,9 +841,9 @@ class AstSpecificationCompiler implements GroovyInterceptable {
     void classNode(String name, int modifiers, @DelegatesTo(AstSpecificationCompiler) Closure argBlock) {
         captureAndCreateNode('ClassNode', argBlock) {
             def result = new ClassNode(name, modifiers,
-                    expression[0],
-                    new ArrayList(expression[1]) as ClassNode[],
-                    new ArrayList(expression[2]) as MixinNode[]
+                expression[0],
+                new ArrayList(expression[1]) as ClassNode[],
+                new ArrayList(expression[2]) as MixinNode[]
             )
             while (expression.size() > 3) {
                 if (!List.isAssignableFrom(expression[3].getClass())) {
@@ -1010,12 +1010,12 @@ class AstSpecificationCompiler implements GroovyInterceptable {
         captureAndCreateNode('InnerClassNode', argBlock) {
             //todo: enforce contract
             new InnerClassNode(
-                    expression[0],
-                    name,
-                    modifiers,
-                    expression[1],
-                    new ArrayList(expression[2]) as ClassNode[],
-                    new ArrayList(expression[3]) as MixinNode[])
+                expression[0],
+                name,
+                modifiers,
+                expression[1],
+                new ArrayList(expression[2]) as ClassNode[],
+                new ArrayList(expression[3]) as MixinNode[])
         }
     }
 
@@ -1032,9 +1032,9 @@ class AstSpecificationCompiler implements GroovyInterceptable {
                 expression.remove(expression.size() - 1)
             }
             def result = new PropertyNode(name, modifiers, ClassHelper.make(type), ClassHelper.make(owner),
-                    expression[0],  // initial value (possibly null)
-                    expression[1],  // getter block (possibly null)
-                    expression[2])  // setter block (possibly null)
+                expression[0],  // initial value (possibly null)
+                expression[1],  // getter block (possibly null)
+                expression[2])  // setter block (possibly null)
             if (annotations) {
                 result.addAnnotations(new ArrayList(annotations))
             }

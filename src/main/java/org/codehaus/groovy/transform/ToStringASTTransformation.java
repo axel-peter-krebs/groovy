@@ -89,56 +89,6 @@ public class ToStringASTTransformation extends AbstractASTTransformation {
     private static final String TO_STRING = "toString";
     private static final String UNDER_TO_STRING = "_toString";
 
-    @Override
-    public void visit(ASTNode[] nodes, SourceUnit source) {
-        init(nodes, source);
-        AnnotatedNode parent = (AnnotatedNode) nodes[1];
-        AnnotationNode anno = (AnnotationNode) nodes[0];
-        if (!MY_TYPE.equals(anno.getClassNode())) return;
-
-        if (parent instanceof ClassNode) {
-            ClassNode cNode = (ClassNode) parent;
-            if (!checkNotInterface(cNode, MY_TYPE_NAME)) return;
-            boolean includeSuper = memberHasValue(anno, "includeSuper", true);
-            boolean includeSuperProperties = memberHasValue(anno, "includeSuperProperties", true);
-            boolean includeSuperFields = memberHasValue(anno, "includeSuperFields", true);
-            boolean cacheToString = memberHasValue(anno, "cache", true);
-            List<String> excludes = getMemberStringList(anno, "excludes");
-            List<String> includes = getMemberStringList(anno, "includes");
-            String leftDelim = getMemberStringValue(anno, "leftDelimiter", "(");
-            String rightDelim = getMemberStringValue(anno, "rightDelimiter", ")");
-            String nameValueSep = getMemberStringValue(anno, "nameValueSeparator", ":");
-            String fieldSep = getMemberStringValue(anno, "fieldSeparator", ", ");
-            boolean useGetter = !memberHasValue(anno, "useGetters", false);
-            if (includes != null && includes.contains("super")) {
-                includeSuper = true;
-            }
-            if (includeSuper && "java.lang.Object".equals(cNode.getSuperClass().getName())) {
-                addError("Error during " + MY_TYPE_NAME + " processing: includeSuper=true but '" + cNode.getName() + "' has no super class.", anno);
-            }
-            boolean includeNames = memberHasValue(anno, "includeNames", true);
-            boolean includeFields = memberHasValue(anno, "includeFields", true);
-            boolean ignoreNulls = memberHasValue(anno, "ignoreNulls", true);
-            boolean includePackage = !memberHasValue(anno, "includePackage", false);
-            boolean allProperties = !memberHasValue(anno, "allProperties", false);
-            boolean allNames = memberHasValue(anno, "allNames", true);
-            // Look for @POJO annotation by default but annotation attribute overrides
-            Object pojoMember = getMemberValue(anno, "pojo");
-            boolean pojo;
-            if (pojoMember == null) {
-                pojo = !cNode.getAnnotations(POJO_TYPE).isEmpty();
-            } else {
-                pojo = (boolean) pojoMember;
-            }
-
-            if (!checkIncludeExcludeUndefinedAware(anno, excludes, includes, MY_TYPE_NAME)) return;
-            if (!checkPropertyList(cNode, includes != null ? DefaultGroovyMethods.minus(includes, "super") : null, "includes", anno, MY_TYPE_NAME, includeFields, includeSuperProperties, allProperties)) return;
-            if (!checkPropertyList(cNode, excludes, "excludes", anno, MY_TYPE_NAME, includeFields, includeSuperProperties, allProperties)) return;
-            String[] delims = new String[]{leftDelim, rightDelim, nameValueSep, fieldSep};
-            createToString(cNode, includeSuper, includeFields, excludes, includes, includeNames, ignoreNulls, includePackage, cacheToString, includeSuperProperties, allProperties, allNames, includeSuperFields, pojo, delims, useGetter);
-        }
-    }
-
     public static void createToString(ClassNode cNode, boolean includeSuper, boolean includeFields, List<String> excludes, List<String> includes, boolean includeNames) {
         createToString(cNode, includeSuper, includeFields, excludes, includes, includeNames, false);
     }
@@ -170,6 +120,7 @@ public class ToStringASTTransformation extends AbstractASTTransformation {
     public static void createToString(ClassNode cNode, boolean includeSuper, boolean includeFields, List<String> excludes, List<String> includes, boolean includeNames, boolean ignoreNulls, boolean includePackage, boolean cache, boolean includeSuperProperties, boolean allProperties, boolean allNames, boolean includeSuperFields, boolean pojo, String[] delims) {
         createToString(cNode, includeSuper, includeFields, excludes, includes, includeNames, ignoreNulls, includePackage, cache, includeSuperProperties, allProperties, allNames, includeSuperFields, pojo, delims, false);
     }
+
     public static void createToString(ClassNode cNode, boolean includeSuper, boolean includeFields, List<String> excludes, List<String> includes, boolean includeNames, boolean ignoreNulls, boolean includePackage, boolean cache, boolean includeSuperProperties, boolean allProperties, boolean allNames, boolean includeSuperFields, boolean pojo, String[] delims, boolean useGetter) {
         if (delims == null || delims.length != 4) {
             delims = new String[]{"(", ")", ":", ", "};
@@ -190,8 +141,8 @@ public class ToStringASTTransformation extends AbstractASTTransformation {
             final FieldNode cacheField = cNode.addField("$to$string", ACC_PRIVATE | ACC_SYNTHETIC, ClassHelper.STRING_TYPE, null);
             final Expression savedToString = varX(cacheField);
             body.addStatement(ifS(
-                    equalsNullX(savedToString),
-                    assignS(savedToString, calculateToStringStatements(cNode, includeSuper, includeFields, includeSuperFields, excludes, includes, includeNames, ignoreNulls, includePackage, includeSuperProperties, allProperties, body, allNames, pojo, delims, useGetter))
+                equalsNullX(savedToString),
+                assignS(savedToString, calculateToStringStatements(cNode, includeSuper, includeFields, includeSuperFields, excludes, includes, includeNames, ignoreNulls, includePackage, includeSuperProperties, allProperties, body, allNames, pojo, delims, useGetter))
             ));
             tempToString = savedToString;
         } else {
@@ -200,19 +151,7 @@ public class ToStringASTTransformation extends AbstractASTTransformation {
         body.addStatement(returnS(tempToString));
 
         addGeneratedMethod(cNode, hasExistingToString ? UNDER_TO_STRING : TO_STRING, hasExistingToString ? ACC_PRIVATE : ACC_PUBLIC,
-                ClassHelper.STRING_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, body);
-    }
-
-    private static class ToStringElement {
-        ToStringElement(Expression value, String name, boolean canBeSelf) {
-            this.value = value;
-            this.name = name;
-            this.canBeSelf = canBeSelf;
-        }
-
-        Expression value;
-        String name;
-        boolean canBeSelf;
+            ClassHelper.STRING_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, body);
     }
 
     private static Expression calculateToStringStatements(ClassNode cNode, boolean includeSuper, boolean includeFields, boolean includeSuperFields, List<String> excludes, final List<String> includes, boolean includeNames, boolean ignoreNulls, boolean includePackage, boolean includeSuperProperties, boolean allProperties, BlockStatement body, boolean allNames, boolean pojo, String[] delims, boolean useGetter) {
@@ -278,9 +217,9 @@ public class ToStringASTTransformation extends AbstractASTTransformation {
         Expression toString = pojo ? maybeNullToStringX(value) : callX(FORMAT_TYPE, TO_STRING, value);
         if (canBeSelf) {
             thenBlock.addStatement(ifElseS(
-                    sameX(value, varX("this")),
-                    appendS(result, constX("(this)")),
-                    appendS(result, toString)));
+                sameX(value, varX("this")),
+                appendS(result, constX("(this)")),
+                appendS(result, toString)));
         } else {
             thenBlock.addStatement(appendS(result, toString));
         }
@@ -294,9 +233,9 @@ public class ToStringASTTransformation extends AbstractASTTransformation {
     private static void appendCommaIfNotFirst(BlockStatement body, Expression result, VariableExpression first, String[] delims) {
         // if ($toStringFirst) $toStringFirst = false else result.append(", ")
         body.addStatement(ifElseS(
-                first,
-                assignS(first, ConstantExpression.FALSE),
-                appendS(result, constX(delims[3]))));
+            first,
+            assignS(first, ConstantExpression.FALSE),
+            appendS(result, constX(delims[3]))));
     }
 
     private static void appendPrefix(BlockStatement body, Expression result, String name, boolean includeNames, String[] delims) {
@@ -307,5 +246,68 @@ public class ToStringASTTransformation extends AbstractASTTransformation {
         final BlockStatement body = new BlockStatement();
         body.addStatement(appendS(result, constX(fName + delims[2])));
         return body;
+    }
+
+    @Override
+    public void visit(ASTNode[] nodes, SourceUnit source) {
+        init(nodes, source);
+        AnnotatedNode parent = (AnnotatedNode) nodes[1];
+        AnnotationNode anno = (AnnotationNode) nodes[0];
+        if (!MY_TYPE.equals(anno.getClassNode())) return;
+
+        if (parent instanceof ClassNode) {
+            ClassNode cNode = (ClassNode) parent;
+            if (!checkNotInterface(cNode, MY_TYPE_NAME)) return;
+            boolean includeSuper = memberHasValue(anno, "includeSuper", true);
+            boolean includeSuperProperties = memberHasValue(anno, "includeSuperProperties", true);
+            boolean includeSuperFields = memberHasValue(anno, "includeSuperFields", true);
+            boolean cacheToString = memberHasValue(anno, "cache", true);
+            List<String> excludes = getMemberStringList(anno, "excludes");
+            List<String> includes = getMemberStringList(anno, "includes");
+            String leftDelim = getMemberStringValue(anno, "leftDelimiter", "(");
+            String rightDelim = getMemberStringValue(anno, "rightDelimiter", ")");
+            String nameValueSep = getMemberStringValue(anno, "nameValueSeparator", ":");
+            String fieldSep = getMemberStringValue(anno, "fieldSeparator", ", ");
+            boolean useGetter = !memberHasValue(anno, "useGetters", false);
+            if (includes != null && includes.contains("super")) {
+                includeSuper = true;
+            }
+            if (includeSuper && "java.lang.Object".equals(cNode.getSuperClass().getName())) {
+                addError("Error during " + MY_TYPE_NAME + " processing: includeSuper=true but '" + cNode.getName() + "' has no super class.", anno);
+            }
+            boolean includeNames = memberHasValue(anno, "includeNames", true);
+            boolean includeFields = memberHasValue(anno, "includeFields", true);
+            boolean ignoreNulls = memberHasValue(anno, "ignoreNulls", true);
+            boolean includePackage = !memberHasValue(anno, "includePackage", false);
+            boolean allProperties = !memberHasValue(anno, "allProperties", false);
+            boolean allNames = memberHasValue(anno, "allNames", true);
+            // Look for @POJO annotation by default but annotation attribute overrides
+            Object pojoMember = getMemberValue(anno, "pojo");
+            boolean pojo;
+            if (pojoMember == null) {
+                pojo = !cNode.getAnnotations(POJO_TYPE).isEmpty();
+            } else {
+                pojo = (boolean) pojoMember;
+            }
+
+            if (!checkIncludeExcludeUndefinedAware(anno, excludes, includes, MY_TYPE_NAME)) return;
+            if (!checkPropertyList(cNode, includes != null ? DefaultGroovyMethods.minus(includes, "super") : null, "includes", anno, MY_TYPE_NAME, includeFields, includeSuperProperties, allProperties))
+                return;
+            if (!checkPropertyList(cNode, excludes, "excludes", anno, MY_TYPE_NAME, includeFields, includeSuperProperties, allProperties))
+                return;
+            String[] delims = new String[]{leftDelim, rightDelim, nameValueSep, fieldSep};
+            createToString(cNode, includeSuper, includeFields, excludes, includes, includeNames, ignoreNulls, includePackage, cacheToString, includeSuperProperties, allProperties, allNames, includeSuperFields, pojo, delims, useGetter);
+        }
+    }
+
+    private static class ToStringElement {
+        Expression value;
+        String name;
+        boolean canBeSelf;
+        ToStringElement(Expression value, String name, boolean canBeSelf) {
+            this.value = value;
+            this.name = name;
+            this.canBeSelf = canBeSelf;
+        }
     }
 }

@@ -90,6 +90,16 @@ public class PropertyNode extends AnnotatedNode implements Variable {
     }
 
     /**
+     * @since 4.0.0
+     */
+    public void setGetterName(final String getterName) {
+        if (getterName == null || getterName.trim().isEmpty()) {
+            throw new IllegalArgumentException("A non-null non-empty getter name is required");
+        }
+        this.getterName = getterName.trim();
+    }
+
+    /**
      * If an explicit getterName has been set, return that, otherwise return the default name for the property.
      * For a property {@code foo}, the default name is {@code getFoo} except for a boolean property where
      * {@code isFoo} is the default if no {@code getFoo} method exists in the declaring class.
@@ -100,20 +110,10 @@ public class PropertyNode extends AnnotatedNode implements Variable {
         if (getterName != null) return getterName;
         String defaultName = "get" + capitalize(getName());
         if (ClassHelper.isPrimitiveBoolean(getOriginType())
-                && !getDeclaringClass().hasMethod(defaultName, Parameter.EMPTY_ARRAY)) {
+            && !getDeclaringClass().hasMethod(defaultName, Parameter.EMPTY_ARRAY)) {
             defaultName = "is" + capitalize(getName());
         }
         return defaultName;
-    }
-
-    /**
-     * @since 4.0.0
-     */
-    public void setGetterName(final String getterName) {
-        if (getterName == null || getterName.trim().isEmpty()) {
-            throw new IllegalArgumentException("A non-null non-empty getter name is required");
-        }
-        this.getterName = getterName.trim();
     }
 
     /**
@@ -126,18 +126,18 @@ public class PropertyNode extends AnnotatedNode implements Variable {
     /**
      * @since 4.0.0
      */
-    public String getSetterNameOrDefault() {
-        return setterName != null ? setterName : MetaProperty.getSetterName(getName());
-    }
-
-    /**
-     * @since 4.0.0
-     */
     public void setSetterName(final String setterName) {
         if (setterName == null || setterName.trim().isEmpty()) {
             throw new IllegalArgumentException("A non-null non-empty setter name is required");
         }
         this.setterName = setterName.trim();
+    }
+
+    /**
+     * @since 4.0.0
+     */
+    public String getSetterNameOrDefault() {
+        return setterName != null ? setterName : MetaProperty.getSetterName(getName());
     }
 
     //--------------------------------------------------------------------------
@@ -152,13 +152,13 @@ public class PropertyNode extends AnnotatedNode implements Variable {
         return field.getType();
     }
 
+    public void setType(final ClassNode t) {
+        field.setType(t);
+    }
+
     @Override
     public ClassNode getOriginType() {
         return field.getOriginType();
-    }
-
-    public void setType(final ClassNode t) {
-        field.setType(t);
     }
 
     @Override

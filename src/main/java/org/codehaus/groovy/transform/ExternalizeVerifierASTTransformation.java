@@ -47,6 +47,14 @@ public class ExternalizeVerifierASTTransformation extends org.codehaus.groovy.tr
     private static final ClassNode EXTERNALIZABLE_TYPE = make(Externalizable.class);
     private static final ClassNode SERIALIZABLE_TYPE = make(Serializable.class);
 
+    private static boolean implementsExternalizable(ClassNode cNode) {
+        return cNode.implementsInterface(EXTERNALIZABLE_TYPE);
+    }
+
+    private static boolean implementsSerializable(ClassNode cNode) {
+        return cNode.implementsInterface(SERIALIZABLE_TYPE);
+    }
+
     @Override
     public void visit(ASTNode[] nodes, SourceUnit source) {
         init(nodes, source);
@@ -84,17 +92,9 @@ public class ExternalizeVerifierASTTransformation extends org.codehaus.groovy.tr
             ClassNode propType = fNode.getType();
             if (checkPropertyTypes && !isPrimitiveType(propType) && !implementsExternalizable(propType) && !implementsSerializable(propType)) {
                 addError(MY_TYPE_NAME + ": strict type checking is enabled and the non-primitive property (or field) '" + fNode.getName() +
-                        "' in an Externalizable class has the type '" + propType.getName() + "' which isn't Externalizable or Serializable", fNode);
+                    "' in an Externalizable class has the type '" + propType.getName() + "' which isn't Externalizable or Serializable", fNode);
             }
         }
-    }
-
-    private static boolean implementsExternalizable(ClassNode cNode) {
-        return cNode.implementsInterface(EXTERNALIZABLE_TYPE);
-    }
-
-    private static boolean implementsSerializable(ClassNode cNode) {
-        return cNode.implementsInterface(SERIALIZABLE_TYPE);
     }
 
 }

@@ -19,7 +19,7 @@
 package core
 
 @groovy.transform.CompileStatic
-@groovy.transform.TupleConstructor(defaults=false)
+@groovy.transform.TupleConstructor(defaults = false)
 record Point(int x, int y, String color) {
     public Point {
         x = -x

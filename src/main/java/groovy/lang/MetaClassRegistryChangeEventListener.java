@@ -25,9 +25,8 @@ import java.util.EventListener;
  *
  * @see groovy.lang.MetaClassRegistry
  * @see groovy.lang.MetaClassRegistryChangeEvent
- *
  */
-public interface MetaClassRegistryChangeEventListener extends EventListener{
+public interface MetaClassRegistryChangeEventListener extends EventListener {
 
     /**
      * Called when the constant MetaClass is updated. If the new MetaClass is null, then the MetaClass

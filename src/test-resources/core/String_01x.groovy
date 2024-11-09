@@ -17,7 +17,11 @@
  *  under the License.
  */
 
-assert '''string=\'a\'''' == '''string='a''''
-assert """string=\"a\"""" == """string="a""""
-assert '''123\'\'''' == '''123'''''
-assert """123\"\"""" == """123"""""
+assert '''string=\'a\'''' == '''string='a'''
+'
+assert """string=\"a\"""" == """string="a"""
+"
+assert '''123\'\'''' == '''123'''
+''
+assert """123\"\"""" == """123"""
+""

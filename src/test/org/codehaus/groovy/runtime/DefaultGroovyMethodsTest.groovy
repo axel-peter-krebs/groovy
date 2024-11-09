@@ -161,12 +161,12 @@ class DefaultGroovyMethodsTest extends GroovyTestCase {
     }
 
     void testGetBytes() {
-        byte[] bytes = [42,45,47,14,10,84] as byte[]
+        byte[] bytes = [42, 45, 47, 14, 10, 84] as byte[]
         ByteArrayInputStream is = new ByteArrayInputStream(bytes)
         try {
             byte[] answer = IOGroovyMethods.getBytes(is)
             assert bytes.length == answer.length
-            (0..<bytes.length).each{
+            (0..<bytes.length).each {
                 assert answer[it] == answer[it]
             }
         } catch (IOException e) {
@@ -175,13 +175,13 @@ class DefaultGroovyMethodsTest extends GroovyTestCase {
     }
 
     void testSetBytes() {
-        byte[] bytes = [42,45,47,14,10,84] as byte[]
+        byte[] bytes = [42, 45, 47, 14, 10, 84] as byte[]
         ByteArrayOutputStream os = new ByteArrayOutputStream()
         try {
             IOGroovyMethods.setBytes(os, bytes)
             byte[] answer = os.toByteArray()
             assert bytes.length == answer.length
-            (0..<bytes.length).each{
+            (0..<bytes.length).each {
                 assert answer[it] == answer[it]
             }
         } catch (IOException e) {
@@ -213,7 +213,7 @@ class DefaultGroovyMethodsTest extends GroovyTestCase {
         assertTrue(DefaultGroovyMethods.removeAll(list, "def".split("")))
         assertTrue(DefaultGroovyMethods.retainAll(list, "bcd".split("")))
         List<String> bAndC = ['b', 'c']
-        assertTrue(DefaultGroovyMethods.containsAll((Iterable)list, bAndC.toArray(new String[2])))
+        assertTrue(DefaultGroovyMethods.containsAll((Iterable) list, bAndC.toArray(new String[2])))
         assertEquals(list, bAndC)
         assertTrue(DefaultGroovyMethods.addAll(list, 1, ['a', 's', 'i'].toArray(new String[3])))
         assertEquals(list, ['b', 'a', 's', 'i', 'c'])
@@ -232,11 +232,12 @@ class DefaultGroovyMethodsTest extends GroovyTestCase {
     }
 
     void testCollectionMinusString() {
-        def values = ['foo','bar','baz']
+        def values = ['foo', 'bar', 'baz']
         def subset = null
 
         String.metaClass = new DelegatingMetaClass(String) {
-            @Override invokeMethod(Object object, String methodName, Object[] arguments) {
+            @Override
+            invokeMethod(Object object, String methodName, Object[] arguments) {
                 if (methodName == 'compareTo') return -1 // what if?
                 super.invokeMethod(object, methodName, arguments)
             }
@@ -276,7 +277,7 @@ class DefaultGroovyMethodsTest extends GroovyTestCase {
         int nextCount = 0
         def iterator = [
             hasNext: { -> hasNextCount++; true },
-            next: { -> nextCount++ }
+            next   : { -> nextCount++ }
         ] as Iterator<Integer>
         iterator.take(3).toList()
         assertEquals(3, hasNextCount)

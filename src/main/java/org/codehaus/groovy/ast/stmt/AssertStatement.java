@@ -54,15 +54,15 @@ public class AssertStatement extends Statement {
         return messageExpression;
     }
 
+    public void setMessageExpression(Expression messageExpression) {
+        this.messageExpression = messageExpression;
+    }
+
     public BooleanExpression getBooleanExpression() {
         return booleanExpression;
     }
 
     public void setBooleanExpression(BooleanExpression booleanExpression) {
         this.booleanExpression = booleanExpression;
-    }
-
-    public void setMessageExpression(Expression messageExpression) {
-        this.messageExpression = messageExpression;
     }
 }

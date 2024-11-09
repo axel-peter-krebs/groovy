@@ -86,7 +86,7 @@ class CanonicalComponentsTransformTest extends GroovyShellTestCase {
         def c1 = new Customer1('John', 'Smith', ['ipod', 'shiraz'], new Date())
         def c2 = c1.clone()
 
-        assert [p1, c1, c1.favItems, c1.since].every{ it instanceof Cloneable }
+        assert [p1, c1, c1.favItems, c1.since].every { it instanceof Cloneable }
         assert !(p1.first instanceof Cloneable)
         assert p1 == p2
         assert !p1.is(p2)
@@ -104,7 +104,7 @@ class CanonicalComponentsTransformTest extends GroovyShellTestCase {
         def c1 = new Customer1CS('John', 'Smith', ['ipod', 'shiraz'], new Date())
         def c2 = c1.clone()
 
-        assert [p1, c1, c1.favItems, c1.since].every{ it instanceof Cloneable }
+        assert [p1, c1, c1.favItems, c1.since].every { it instanceof Cloneable }
         assert !(p1.first instanceof Cloneable)
         assert p1 == p2
         assert !p1.is(p2)
@@ -117,12 +117,12 @@ class CanonicalComponentsTransformTest extends GroovyShellTestCase {
     }
 
     void testCloningWithNonFinalFields() {
-        def p1 = new Person2(first:'John', last:'Smith')
+        def p1 = new Person2(first: 'John', last: 'Smith')
         def p2 = p1.clone()
-        def c1 = new Customer2(first:'John', last:'Smith', favItems:['ipod', 'shiraz'], since:new Date())
+        def c1 = new Customer2(first: 'John', last: 'Smith', favItems: ['ipod', 'shiraz'], since: new Date())
         def c2 = c1.clone()
 
-        assert [p1, c1, c1.favItems, c1.since].every{ it instanceof Cloneable }
+        assert [p1, c1, c1.favItems, c1.since].every { it instanceof Cloneable }
         assert !(p1.first instanceof Cloneable)
         assert !p1.is(p2)
         assert !c1.is(c2)
@@ -133,12 +133,12 @@ class CanonicalComponentsTransformTest extends GroovyShellTestCase {
     }
 
     void testCloningWithNonFinalFieldsCompileStatic() {
-        def p1 = new Person2CS(first:'John', last:'Smith')
+        def p1 = new Person2CS(first: 'John', last: 'Smith')
         def p2 = p1.clone()
-        def c1 = new Customer2CS(first:'John', last:'Smith', favItems:['ipod', 'shiraz'], since:new Date())
+        def c1 = new Customer2CS(first: 'John', last: 'Smith', favItems: ['ipod', 'shiraz'], since: new Date())
         def c2 = c1.clone()
 
-        assert [p1, c1, c1.favItems, c1.since].every{ it instanceof Cloneable }
+        assert [p1, c1, c1.favItems, c1.since].every { it instanceof Cloneable }
         assert !(p1.first instanceof Cloneable)
         assert !p1.is(p2)
         assert !c1.is(c2)
@@ -149,10 +149,10 @@ class CanonicalComponentsTransformTest extends GroovyShellTestCase {
     }
 
     void testCloningWithSerializable() {
-        def c1 = new Customer3(first:'John', last:'Smith', favItems:['ipod', 'shiraz'], since:new Date(), bonus:10)
+        def c1 = new Customer3(first: 'John', last: 'Smith', favItems: ['ipod', 'shiraz'], since: new Date(), bonus: 10)
         def c2 = c1.clone()
 
-        assert [c1, c1.favItems, c1.since].every{ it instanceof Cloneable }
+        assert [c1, c1.favItems, c1.since].every { it instanceof Cloneable }
         assert !(c1.first instanceof Cloneable)
         assert c1 == c2
         assert !c1.is(c2)
@@ -164,10 +164,10 @@ class CanonicalComponentsTransformTest extends GroovyShellTestCase {
     }
 
     void testCloningWithSerializableCompileStatic() {
-        def c1 = new Customer3CS(first:'John', last:'Smith', favItems:['ipod', 'shiraz'], since:new Date(), bonus:10)
+        def c1 = new Customer3CS(first: 'John', last: 'Smith', favItems: ['ipod', 'shiraz'], since: new Date(), bonus: 10)
         def c2 = c1.clone()
 
-        assert [c1, c1.favItems, c1.since].every{ it instanceof Cloneable }
+        assert [c1, c1.favItems, c1.since].every { it instanceof Cloneable }
         assert !(c1.first instanceof Cloneable)
         assert c1 == c2
         assert !c1.is(c2)
@@ -179,11 +179,11 @@ class CanonicalComponentsTransformTest extends GroovyShellTestCase {
     }
 
     void testCloningWithExternalizable() {
-        def c1 = new Customer4(first:'John', last:'Smith', favItems:['ipod', 'shiraz'], since:new Date(), bonus:10)
+        def c1 = new Customer4(first: 'John', last: 'Smith', favItems: ['ipod', 'shiraz'], since: new Date(), bonus: 10)
         def c2 = c1.clone()
 
         assert c1 instanceof Externalizable
-        assert [c1, c1.favItems, c1.since].every{ it instanceof Cloneable }
+        assert [c1, c1.favItems, c1.since].every { it instanceof Cloneable }
         assert !(c1.first instanceof Cloneable)
         assert c1 == c2
         assert !c1.is(c2)
@@ -195,11 +195,11 @@ class CanonicalComponentsTransformTest extends GroovyShellTestCase {
     }
 
     void testCloningWithExternalizableCompileStatic() {
-        def c1 = new Customer4CS(first:'John', last:'Smith', favItems:['ipod', 'shiraz'], since:new Date(), bonus:10)
+        def c1 = new Customer4CS(first: 'John', last: 'Smith', favItems: ['ipod', 'shiraz'], since: new Date(), bonus: 10)
         def c2 = c1.clone()
 
         assert c1 instanceof Externalizable
-        assert [c1, c1.favItems, c1.since].every{ it instanceof Cloneable }
+        assert [c1, c1.favItems, c1.since].every { it instanceof Cloneable }
         assert !(c1.first instanceof Cloneable)
         assert c1 == c2
         assert !c1.is(c2)
@@ -211,7 +211,7 @@ class CanonicalComponentsTransformTest extends GroovyShellTestCase {
     }
 
     void testCloningWithDefaultObjectClone() {
-        def c1 = new Customer5(first:'John', last:'Smith', favItems:['ipod', 'shiraz'], age:25)
+        def c1 = new Customer5(first: 'John', last: 'Smith', favItems: ['ipod', 'shiraz'], age: 25)
         def c2 = c1.clone()
         assert c1.first == c2.first
         assert c1.last == c2.last
@@ -221,7 +221,7 @@ class CanonicalComponentsTransformTest extends GroovyShellTestCase {
     }
 
     void testCloningWithDefaultObjectCloneCompileStatic() {
-        def c1 = new Customer5CS(first:'John', last:'Smith', favItems:['ipod', 'shiraz'], age:25)
+        def c1 = new Customer5CS(first: 'John', last: 'Smith', favItems: ['ipod', 'shiraz'], age: 25)
         def c2 = c1.clone()
         assert c1.first == c2.first
         assert c1.last == c2.last
@@ -232,16 +232,16 @@ class CanonicalComponentsTransformTest extends GroovyShellTestCase {
 
     // GROOVY-4786
     void testExcludesWithEqualsAndHashCode() {
-        def p1 = new PointIgnoreY(x:1, y:10)
-        def p2 = new PointIgnoreY(x:1, y:100)
+        def p1 = new PointIgnoreY(x: 1, y: 10)
+        def p2 = new PointIgnoreY(x: 1, y: 100)
         assert p1 == p2
         assert p1.hashCode() == p2.hashCode()
     }
 
     // GROOVY-4894
     void testIncludesWithToString() {
-        def p1 = new PointIgnoreY(x:1, y:5)
-        def p2 = new PointIgnoreY(x:10, y:50)
+        def p1 = new PointIgnoreY(x: 1, y: 5)
+        def p2 = new PointIgnoreY(x: 10, y: 50)
         assert p1.toString() == "org.codehaus.groovy.transform.PointIgnoreY(1)"
         assert p2.toString() == "org.codehaus.groovy.transform.PointIgnoreY(10)"
     }
@@ -269,7 +269,9 @@ class CanonicalComponentsTransformTest extends GroovyShellTestCase {
     // GROOVY-4844
     void testToStringCustomGetter() {
         def p1 = new Point(1, 2)
-        def p2 = new Point(1, 1) { int getY() { 2 } }
+        def p2 = new Point(1, 1) {
+            int getY() { 2 }
+        }
         assert p1.toString() == 'org.codehaus.groovy.transform.Point(1, 2)'
         assert p2.toString() == 'org.codehaus.groovy.transform.Point(1, 2)'
     }
@@ -397,43 +399,43 @@ class CanonicalComponentsTransformTest extends GroovyShellTestCase {
 
     // GROOVY-5901
     void testSimpleCloning() {
-      def p1 = new Person6(first:'John', last:'Smith', since:new Date())
-      def p2 = p1.clone()
-      def c1 = new Customer6(first:'John', last:'Smith', favItems:['ipod', 'shiraz'], since:new Date())
-      def c2 = c1.clone()
+        def p1 = new Person6(first: 'John', last: 'Smith', since: new Date())
+        def p2 = p1.clone()
+        def c1 = new Customer6(first: 'John', last: 'Smith', favItems: ['ipod', 'shiraz'], since: new Date())
+        def c2 = c1.clone()
 
-      assert [p1, p1.since, c1, c1.favItems, c1.since].every{ it instanceof Cloneable }
-      assert !(p1.first instanceof Cloneable)
-      assert !p1.is(p2)
-      assert !c1.is(c2)
-      assert !c1.favItems.is(c2.favItems)
-      assert !p1.since.is(p2.since)
-      assert !c1.since.is(c2.since)
-      assert p1.first.is(p2.first)
-      assert c1.first.is(c2.first)
+        assert [p1, p1.since, c1, c1.favItems, c1.since].every { it instanceof Cloneable }
+        assert !(p1.first instanceof Cloneable)
+        assert !p1.is(p2)
+        assert !c1.is(c2)
+        assert !c1.favItems.is(c2.favItems)
+        assert !p1.since.is(p2.since)
+        assert !c1.since.is(c2.since)
+        assert p1.first.is(p2.first)
+        assert c1.first.is(c2.first)
     }
 
     void testSimpleCloningCompileStatic() {
-      def p1 = new Person6CS(first:'John', last:'Smith', since:new Date())
-      def p2 = p1.clone()
-      def c1 = new Customer6CS(first:'John', last:'Smith', favItems:['ipod', 'shiraz'], since:new Date())
-      def c2 = c1.clone()
+        def p1 = new Person6CS(first: 'John', last: 'Smith', since: new Date())
+        def p2 = p1.clone()
+        def c1 = new Customer6CS(first: 'John', last: 'Smith', favItems: ['ipod', 'shiraz'], since: new Date())
+        def c2 = c1.clone()
 
-      assert [p1, p1.since, c1, c1.favItems, c1.since].every{ it instanceof Cloneable }
-      assert !(p1.first instanceof Cloneable)
-      assert !p1.is(p2)
-      assert !c1.is(c2)
-      assert !c1.favItems.is(c2.favItems)
-      assert !p1.since.is(p2.since)
-      assert !c1.since.is(c2.since)
-      assert p1.first.is(p2.first)
-      assert c1.first.is(c2.first)
+        assert [p1, p1.since, c1, c1.favItems, c1.since].every { it instanceof Cloneable }
+        assert !(p1.first instanceof Cloneable)
+        assert !p1.is(p2)
+        assert !c1.is(c2)
+        assert !c1.favItems.is(c2.favItems)
+        assert !p1.since.is(p2.since)
+        assert !c1.since.is(c2.since)
+        assert p1.first.is(p2.first)
+        assert c1.first.is(c2.first)
     }
 
     // GROOVY-4849
     void testCanEqualDefined() {
         def p1 = new IntPair(1, 2)
-        def p2 = new IntPairNoCanEqual(x:1, y:2)
+        def p2 = new IntPairNoCanEqual(x: 1, y: 2)
         assert p1 != p2
         assert p1.hashCode() == p2.hashCode()
         assert 'canEqual' in p1.class.methods*.name
@@ -849,42 +851,62 @@ class CanonicalComponentsTransformTest extends GroovyShellTestCase {
 }
 
 @TupleConstructor
-@AutoClone(style=COPY_CONSTRUCTOR)
+@AutoClone(style = COPY_CONSTRUCTOR)
 @EqualsAndHashCode
-class Person1 { final String first, last }
+class Person1 {
+    final String first, last
+}
 
-@TupleConstructor(includeSuperProperties=true, callSuper=true)
-@AutoClone(style=COPY_CONSTRUCTOR)
+@TupleConstructor(includeSuperProperties = true, callSuper = true)
+@AutoClone(style = COPY_CONSTRUCTOR)
 @EqualsAndHashCode
-class Customer1 extends Person1 { final List favItems; final Date since }
+class Customer1 extends Person1 {
+    final List favItems;
+    final Date since
+}
 
 @TupleConstructor
-@AutoClone(style=COPY_CONSTRUCTOR)
+@AutoClone(style = COPY_CONSTRUCTOR)
 @EqualsAndHashCode
 @CompileStatic
-class Person1CS { final String first, last }
+class Person1CS {
+    final String first, last
+}
 
 @CompileStatic
-@TupleConstructor(includeSuperProperties=true, callSuper=true)
-@AutoClone(style=COPY_CONSTRUCTOR)
+@TupleConstructor(includeSuperProperties = true, callSuper = true)
+@AutoClone(style = COPY_CONSTRUCTOR)
 @EqualsAndHashCode
-class Customer1CS extends Person1CS { final List favItems; final Date since }
+class Customer1CS extends Person1CS {
+    final List favItems;
+    final Date since
+}
 
-@AutoClone(style=COPY_CONSTRUCTOR)
-class Person2 { String first, last }
+@AutoClone(style = COPY_CONSTRUCTOR)
+class Person2 {
+    String first, last
+}
 
-@AutoClone(style=COPY_CONSTRUCTOR)
-class Customer2 extends Person2 { List favItems = []; Date since }
+@AutoClone(style = COPY_CONSTRUCTOR)
+class Customer2 extends Person2 {
+    List favItems = [];
+    Date since
+}
 
-@AutoClone(style=COPY_CONSTRUCTOR)
+@AutoClone(style = COPY_CONSTRUCTOR)
 @CompileStatic
-class Person2CS { String first, last }
+class Person2CS {
+    String first, last
+}
 
 @CompileStatic
-@AutoClone(style=COPY_CONSTRUCTOR)
-class Customer2CS extends Person2CS { List favItems = []; Date since }
+@AutoClone(style = COPY_CONSTRUCTOR)
+class Customer2CS extends Person2CS {
+    List favItems = [];
+    Date since
+}
 
-@AutoClone(style=SERIALIZATION)
+@AutoClone(style = SERIALIZATION)
 @EqualsAndHashCode
 class Customer3 implements Serializable {
     String first, last
@@ -893,7 +915,7 @@ class Customer3 implements Serializable {
     int bonus
 }
 
-@AutoClone(style=SERIALIZATION)
+@AutoClone(style = SERIALIZATION)
 @CompileStatic
 @EqualsAndHashCode
 class Customer3CS implements Serializable {
@@ -904,7 +926,7 @@ class Customer3CS implements Serializable {
 }
 
 @AutoExternalize
-@AutoClone(style=SERIALIZATION)
+@AutoClone(style = SERIALIZATION)
 @EqualsAndHashCode
 class Customer4 {
     String first, last
@@ -915,7 +937,7 @@ class Customer4 {
 
 @CompileStatic
 @AutoExternalize
-@AutoClone(style=SERIALIZATION)
+@AutoClone(style = SERIALIZATION)
 @EqualsAndHashCode
 class Customer4CS {
     String first, last
@@ -929,6 +951,7 @@ class Customer5 {
     String first, last
     List favItems
     private int age
+
     int agePeek() { age }
 }
 
@@ -938,44 +961,59 @@ class Customer5CS {
     String first, last
     List favItems
     private int age
+
     int agePeek() { age }
 }
 
 @TupleConstructor
-@AutoClone(style=SIMPLE)
+@AutoClone(style = SIMPLE)
 @EqualsAndHashCode
-class Person6 { String first, last; Date since }
+class Person6 {
+    String first, last;
+    Date since
+}
 
-@TupleConstructor(includeSuperProperties=true, callSuper=true)
-@AutoClone(style=SIMPLE)
+@TupleConstructor(includeSuperProperties = true, callSuper = true)
+@AutoClone(style = SIMPLE)
 @EqualsAndHashCode
-class Customer6 extends Person6 { List<String> favItems }
+class Customer6 extends Person6 {
+    List<String> favItems
+}
 
 @TupleConstructor
-@AutoClone(style=SIMPLE)
+@AutoClone(style = SIMPLE)
 @EqualsAndHashCode
 @CompileStatic
-class Person6CS { String first, last; Date since }
+class Person6CS {
+    String first, last;
+    Date since
+}
 
 @CompileStatic
-@TupleConstructor(includeSuperProperties=true, callSuper=true)
-@AutoClone(style=SIMPLE)
+@TupleConstructor(includeSuperProperties = true, callSuper = true)
+@AutoClone(style = SIMPLE)
 @EqualsAndHashCode
-class Customer6CS extends Person6CS { List<String> favItems }
+class Customer6CS extends Person6CS {
+    List<String> favItems
+}
 
 // GROOVY-5864
 @Canonical
-@ToString(includePackage=false)
-class Name7 implements Serializable { String first, last }
+@ToString(includePackage = false)
+class Name7 implements Serializable {
+    String first, last
+}
 
 // GROOVY-5864
 @AutoExternalize
-@ToString(includePackage=false)
-class Address7 { String street, town }
+@ToString(includePackage = false)
+class Address7 {
+    String street, town
+}
 
 // GROOVY-5864
-@ToString(includePackage=false)
-@AutoExternalize(checkPropertyTypes=true)
+@ToString(includePackage = false)
+@AutoExternalize(checkPropertyTypes = true)
 class Person7 {
     Name7 name
     Address7 address
@@ -983,8 +1021,8 @@ class Person7 {
     Boolean verified
 }
 
-@ToString(includePackage=false)
-@AutoExternalize(checkPropertyTypes=true)
+@ToString(includePackage = false)
+@AutoExternalize(checkPropertyTypes = true)
 @CompileStatic
 class Person7CS {
     Name7CS name
@@ -995,18 +1033,22 @@ class Person7CS {
 
 @Canonical
 @CompileStatic
-@ToString(includePackage=false)
-class Name7CS implements Serializable { String first, last }
+@ToString(includePackage = false)
+class Name7CS implements Serializable {
+    String first, last
+}
 
 @AutoExternalize
-@ToString(includePackage=false)
+@ToString(includePackage = false)
 @CompileStatic
-class Address7CS { String street, town }
+class Address7CS {
+    String street, town
+}
 
 // GROOVY-7644
 class Person7NestedAddressCS {
-    @ToString(includePackage=false)
-    @AutoExternalize(checkPropertyTypes=true)
+    @ToString(includePackage = false)
+    @AutoExternalize(checkPropertyTypes = true)
     @CompileStatic
     static class Address7CS {
         String street, town
@@ -1014,40 +1056,47 @@ class Person7NestedAddressCS {
 }
 
 // GROOVY-4786
-@EqualsAndHashCode(excludes="y")
-@ToString(includes="x")
+@EqualsAndHashCode(excludes = "y")
+@ToString(includes = "x")
 class PointIgnoreY {
     int x
     int y // y coordinate excluded from Equals and hashCode
 }
 
 // GROOVY-4844
-@TupleConstructor @ToString
-class Point { int x, y }
-
-// GROOVY-4849
-@Canonical class IntPair {
+@TupleConstructor
+@ToString
+class Point {
     int x, y
 }
 
 // GROOVY-4849
-@EqualsAndHashCode(useCanEqual=false)
+@Canonical
+class IntPair {
+    int x, y
+}
+
+// GROOVY-4849
+@EqualsAndHashCode(useCanEqual = false)
 class IntPairNoCanEqual {
     int x, y
 }
 
 // GROOVY-4570
-@ToString(includeNames=true)
+@ToString(includeNames = true)
 enum Color {
-    BLACK(0,0,0), WHITE(255,255,255), PURPLE(255,0,255)
+    BLACK(0, 0, 0), WHITE(255, 255, 255), PURPLE(255, 0, 255)
     int r, g, b
+
     Color(int r, g, b) { this.r = r; this.g = g; this.b = b }
 }
 
-@TupleConstructor(force=true) @AutoClone(style=COPY_CONSTRUCTOR)
+@TupleConstructor(force = true)
+@AutoClone(style = COPY_CONSTRUCTOR)
 class Shopper {
     final String name
     final List<List<String>> shoppingHistory
+
     Shopper(Shopper other) {
         name = other.name
         // requires deep clone

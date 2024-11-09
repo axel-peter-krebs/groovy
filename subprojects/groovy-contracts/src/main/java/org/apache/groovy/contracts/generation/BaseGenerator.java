@@ -90,8 +90,8 @@ public abstract class BaseGenerator {
     protected BlockStatement getInlineModeBlockStatement(BlockStatement blockStatement) {
         BooleanExpression combinedBooleanExpression = ExpressionUtils.getBooleanExpression(ExpressionUtils.getBooleanExpressionsFromAssertionStatements(blockStatement));
         return block(ifS(
-                boolX(varX(BaseVisitor.GCONTRACTS_ENABLED_VAR, ClassHelper.boolean_TYPE)),
-                block(ifS(notX(combinedBooleanExpression), blockStatement))));
+            boolX(varX(BaseVisitor.GCONTRACTS_ENABLED_VAR, ClassHelper.boolean_TYPE)),
+            block(ifS(notX(combinedBooleanExpression), blockStatement))));
     }
 
     protected BlockStatement wrapAssertionBooleanExpression(ClassNode type, MethodNode methodNode, BooleanExpression classInvariantExpression, String assertionType) {
@@ -100,29 +100,29 @@ public abstract class BaseGenerator {
         gcResult.setAccessedVariable(gcResult);
 
         BlockStatement ifBlockStatement = block(
-                declS(gcResult, ConstantExpression.FALSE),
-                stmt(callX(classX(violationTrackerClassNode), "init")),
-                assignS(gcResult, classInvariantExpression),
+            declS(gcResult, ConstantExpression.FALSE),
+            stmt(callX(classX(violationTrackerClassNode), "init")),
+            assignS(gcResult, classInvariantExpression),
+            ifS(
+                boolX(notX(callX(gcResult, "booleanValue"))),
                 ifS(
-                        boolX(notX(callX(gcResult, "booleanValue"))),
-                        ifS(
-                                boolX(callX(classX(violationTrackerClassNode), "violationsOccurred")),
-                                tryCatchS(
-                                        stmt(callX(classX(violationTrackerClassNode), "rethrowFirst")),
-                                        block(stmt(callX(classX(violationTrackerClassNode), "deinit"))))
-                        )
+                    boolX(callX(classX(violationTrackerClassNode), "violationsOccurred")),
+                    tryCatchS(
+                        stmt(callX(classX(violationTrackerClassNode), "rethrowFirst")),
+                        block(stmt(callX(classX(violationTrackerClassNode), "deinit"))))
                 )
+            )
         );
 
         TryCatchStatement lockTryCatchStatement = tryCatchS(
-                ifS(
-                        boolX(callX(classX(ClassHelper.make(ContractExecutionTracker.class)), "track", args(constX(type.getName()), constX(methodNode.getTypeDescriptor()), constX(assertionType), methodNode.isStatic() ? ConstantExpression.TRUE : ConstantExpression.FALSE))),
-                        ifBlockStatement),
-                block(new VariableScope(), stmt(callX(
-                        classX(ClassHelper.make(ContractExecutionTracker.class)),
-                        "clear",
-                        args(constX(type.getName()), constX(methodNode.getTypeDescriptor()), constX(assertionType), methodNode.isStatic() ? ConstantExpression.TRUE : ConstantExpression.FALSE)
-                ))));
+            ifS(
+                boolX(callX(classX(ClassHelper.make(ContractExecutionTracker.class)), "track", args(constX(type.getName()), constX(methodNode.getTypeDescriptor()), constX(assertionType), methodNode.isStatic() ? ConstantExpression.TRUE : ConstantExpression.FALSE))),
+                ifBlockStatement),
+            block(new VariableScope(), stmt(callX(
+                classX(ClassHelper.make(ContractExecutionTracker.class)),
+                "clear",
+                args(constX(type.getName()), constX(methodNode.getTypeDescriptor()), constX(assertionType), methodNode.isStatic() ? ConstantExpression.TRUE : ConstantExpression.FALSE)
+            ))));
 
         return block(ifS(boolX(varX(BaseVisitor.GCONTRACTS_ENABLED_VAR, ClassHelper.boolean_TYPE)), lockTryCatchStatement));
     }

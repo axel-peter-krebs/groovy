@@ -72,9 +72,9 @@ public class GenericsTypeTest extends GenericsTestCase {
     }
 
     void testNestedGenerics() {
-        def listStringType  = extractTypesFromCode('List<String> type').type
+        def listStringType = extractTypesFromCode('List<String> type').type
         def listIntegerType = extractTypesFromCode('List<Integer> type').type
-        def stringListType  = extractTypesFromCode('org.codehaus.groovy.ast.GenericsTypeTest.StringList type').type
+        def stringListType = extractTypesFromCode('org.codehaus.groovy.ast.GenericsTypeTest.StringList type').type
         def integerListType = extractTypesFromCode('org.codehaus.groovy.ast.GenericsTypeTest.IntegerList type').type
 
         def typeinfo = extractTypesFromCode('List<? extends List<String>> type')
@@ -158,7 +158,9 @@ public class GenericsTypeTest extends GenericsTestCase {
     // ------------------ Support methods -------------------------
 
     protected static class StringList extends LinkedList<String> {}
+
     protected static class IntegerList extends LinkedList<Integer> {}
+
     protected static class WeirdComparable implements Comparable<Integer> {
         int compareTo(Integer o) {
             return 0

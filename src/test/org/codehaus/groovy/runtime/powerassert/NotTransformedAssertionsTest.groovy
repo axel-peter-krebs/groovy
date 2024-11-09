@@ -32,6 +32,6 @@ final class NotTransformedAssertionsTest extends GroovyTestCase {
         // but at least make sure it doesn't fail
         assert true, "so true"
 
-        isNotTransformed { assert false : "so false" }
+        isNotTransformed { assert false: "so false" }
     }
 }

@@ -24,13 +24,13 @@ class Groovy7215Bug extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-                'FooJ.java': '''
+            'FooJ.java'          : '''
 
                 public class FooJ {
                     public static String TEXT = "FooJ";
                 }
             ''',
-                'FilterConfig.groovy':'''
+            'FilterConfig.groovy': '''
 
                 @groovy.transform.CompileStatic
                 class FilterConfig implements org.codehaus.groovy.transform.traitx.Groovy7215SupportTrait {

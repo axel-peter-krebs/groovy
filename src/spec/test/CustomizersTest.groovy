@@ -114,42 +114,42 @@ class CustomizersTest extends GroovyTestCase {
             // the list of tokens the user can find
             // constants are defined in org.codehaus.groovy.syntax.Types
             allowedTokens = [ // <1>
-                    PLUS,
-                    MINUS,
-                    MULTIPLY,
-                    DIVIDE,
-                    REMAINDER,
-                    POWER,
-                    PLUS_PLUS,
-                    MINUS_MINUS,
-                    COMPARE_EQUAL,
-                    COMPARE_NOT_EQUAL,
-                    COMPARE_LESS_THAN,
-                    COMPARE_LESS_THAN_EQUAL,
-                    COMPARE_GREATER_THAN,
-                    COMPARE_GREATER_THAN_EQUAL,
+                              PLUS,
+                              MINUS,
+                              MULTIPLY,
+                              DIVIDE,
+                              REMAINDER,
+                              POWER,
+                              PLUS_PLUS,
+                              MINUS_MINUS,
+                              COMPARE_EQUAL,
+                              COMPARE_NOT_EQUAL,
+                              COMPARE_LESS_THAN,
+                              COMPARE_LESS_THAN_EQUAL,
+                              COMPARE_GREATER_THAN,
+                              COMPARE_GREATER_THAN_EQUAL,
             ].asImmutable()
             // limit the types of constants that a user can define to number types only
             allowedConstantTypesClasses = [ // <2>
-                    Integer,
-                    Float,
-                    Long,
-                    Double,
-                    BigDecimal,
-                    Integer.TYPE,
-                    Long.TYPE,
-                    Float.TYPE,
-                    Double.TYPE
+                                            Integer,
+                                            Float,
+                                            Long,
+                                            Double,
+                                            BigDecimal,
+                                            Integer.TYPE,
+                                            Long.TYPE,
+                                            Float.TYPE,
+                                            Double.TYPE
             ].asImmutable()
             // method calls are only allowed if the receiver is of one of those types
             // be careful, it's not a runtime type!
             allowedReceiversClasses = [ // <2>
-                    Math,
-                    Integer,
-                    Float,
-                    Double,
-                    Long,
-                    BigDecimal
+                                        Math,
+                                        Integer,
+                                        Float,
+                                        Double,
+                                        Long,
+                                        BigDecimal
             ].asImmutable()
         }
         // end::secure_cz[]

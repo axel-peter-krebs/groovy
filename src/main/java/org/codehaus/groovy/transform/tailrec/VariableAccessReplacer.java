@@ -32,6 +32,16 @@ import java.util.Map;
  * The VariableReplacedListener can be set if clients want to react to variable replacement.
  */
 public class VariableAccessReplacer {
+    /**
+     * Nested map of variable accesses to replace
+     * e.g.: [
+     * 'varToReplace': [name: 'newVar', type: TypeOfVar],
+     * 'varToReplace2': [name: 'newVar2', type: TypeOfVar2],
+     * ]
+     */
+    private Map<String, Map> nameAndTypeMapping;
+    private VariableReplacedListener listener = VariableReplacedListener.NULL;
+
     public VariableAccessReplacer(Map<String, Map> nameAndTypeMapping) {
         this.nameAndTypeMapping = nameAndTypeMapping;
     }
@@ -70,14 +80,4 @@ public class VariableAccessReplacer {
     public void setListener(VariableReplacedListener listener) {
         this.listener = listener;
     }
-
-    /**
-     * Nested map of variable accesses to replace
-     * e.g.: [
-     * 'varToReplace': [name: 'newVar', type: TypeOfVar],
-     * 'varToReplace2': [name: 'newVar2', type: TypeOfVar2],
-     * ]
-     */
-    private Map<String, Map> nameAndTypeMapping;
-    private VariableReplacedListener listener = VariableReplacedListener.NULL;
 }

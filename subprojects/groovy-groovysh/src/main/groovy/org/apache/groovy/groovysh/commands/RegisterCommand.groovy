@@ -50,11 +50,9 @@ class RegisterCommand extends CommandSupport {
 
         if (args.size() == 1) {                   // use default name
             command = type.newInstance(shell) as Command
-        }
-        else if (args.size() == 2) {              // pass name to completer
+        } else if (args.size() == 2) {              // pass name to completer
             command = type.newInstance(shell, args.get(1), null) as Command
-        }
-        else if (args.size() == 3) {              // pass name, alias to completer
+        } else if (args.size() == 3) {              // pass name, alias to completer
             command = type.newInstance(shell, args.get(1), args.get(2)) as Command
         }
 

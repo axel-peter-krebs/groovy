@@ -17,7 +17,7 @@
  *  under the License.
  */
 beforeVisitClass { cn ->
-    if (cn.name=='B') {
+    if (cn.name == 'B') {
         handled = true // disables visit of this class node
     }
 }

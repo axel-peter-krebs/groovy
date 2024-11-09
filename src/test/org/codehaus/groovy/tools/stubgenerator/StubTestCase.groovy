@@ -56,7 +56,7 @@ import static groovy.io.FileType.*
 abstract class StubTestCase extends GroovyTestCase {
 
     protected final File targetDir = createTempDirectory()
-    protected final File stubDir   = createTempDirectory()
+    protected final File stubDir = createTempDirectory()
 
     protected File sourceRootPath
 
@@ -187,7 +187,7 @@ abstract class StubTestCase extends GroovyTestCase {
             compileError = t
         } finally {
             try {
-                use (QDoxCategory) {
+                use(QDoxCategory) {
                     verifyStubs()
                 }
             } catch (AssertionError | RuntimeException e) {

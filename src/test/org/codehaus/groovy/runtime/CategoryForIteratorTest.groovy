@@ -21,7 +21,7 @@ package org.codehaus.groovy.runtime
 import groovy.test.GroovyTestCase
 
 /**
- * Test whether the Invoker includes categories when 
+ * Test whether the Invoker includes categories when
  * trying to find an iterator (via the method iterator())
  */
 class CategoryForIteratorTest extends GroovyTestCase {
@@ -63,6 +63,7 @@ class CategoryForIteratorTest extends GroovyTestCase {
  * The category simply adds an iterator()-method returning
  * the null iterator defined below
  */
+
 class IteratorCategory {
     static Iterator iterator(Closure c) {
         return new TestIterator()
@@ -73,6 +74,7 @@ class IteratorCategory {
  * This iterator returns 0 elements, allowing us to distinguish
  * from the default collection-iterator
  */
+
 class TestIterator implements Iterator {
     public boolean hasNext() { return false }
 

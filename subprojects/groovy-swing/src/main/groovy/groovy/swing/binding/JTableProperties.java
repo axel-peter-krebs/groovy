@@ -55,7 +55,7 @@ class JTableElementsBinding extends AbstractSyntheticBinding implements TableMod
 
     @Override
     protected void syntheticBind() {
-        boundTable = (JTable) ((PropertyBinding)sourceBinding).getBean();
+        boundTable = (JTable) ((PropertyBinding) sourceBinding).getBean();
         boundTable.addPropertyChangeListener("model", this);
         boundTable.getModel().addTableModelListener(this);
     }
@@ -88,7 +88,7 @@ class JTableSelectedElementBinding extends AbstractSyntheticBinding implements P
 
     @Override
     public synchronized void syntheticBind() {
-        boundTable = (JTable) ((PropertyBinding)sourceBinding).getBean();
+        boundTable = (JTable) ((PropertyBinding) sourceBinding).getBean();
         boundTable.addPropertyChangeListener("selectionModel", this);
         boundTable.getSelectionModel().addListSelectionListener(this);
     }

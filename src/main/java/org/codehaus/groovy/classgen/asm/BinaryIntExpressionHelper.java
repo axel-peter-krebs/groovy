@@ -139,14 +139,15 @@ public class BinaryIntExpressionHelper extends BinaryExpressionWriter {
     /**
      * writes a std compare. This involves the tokens IF_ICMPEQ, IF_ICMPNE,
      * IF_ICMPEQ, IF_ICMPNE, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE and IF_ICMPLT
+     *
      * @param type the token type
      * @return true if a successful std compare write
      */
     @Override
     protected boolean writeStdCompare(int type, boolean simulate) {
-        type = type-COMPARE_NOT_EQUAL;
+        type = type - COMPARE_NOT_EQUAL;
         // look if really compare
-        if (type<0||type>7) return false;
+        if (type < 0 || type > 7) return false;
 
         if (!simulate) {
             MethodVisitor mv = getController().getMethodVisitor();
@@ -154,7 +155,7 @@ public class BinaryIntExpressionHelper extends BinaryExpressionWriter {
             // operands are on the stack already
             int bytecode = stdCompareCodes[type];
             Label l1 = new Label();
-            mv.visitJumpInsn(bytecode,l1);
+            mv.visitJumpInsn(bytecode, l1);
             mv.visitInsn(ICONST_1);
             Label l2 = new Label();
             mv.visitJumpInsn(GOTO, l2);
@@ -168,6 +169,7 @@ public class BinaryIntExpressionHelper extends BinaryExpressionWriter {
 
     /**
      * writes the spaceship operator, type should be COMPARE_TO
+     *
      * @param type the token type
      * @return true if a successful spaceship operator write
      */
@@ -225,7 +227,7 @@ public class BinaryIntExpressionHelper extends BinaryExpressionWriter {
             mv.visitInsn(DUP2);
 
             Label l1 = new Label();
-            mv.visitJumpInsn(IF_ICMPGE,l1);
+            mv.visitJumpInsn(IF_ICMPGE, l1);
             // no jump, so -1, need to pop off surplus II
             mv.visitInsn(POP2);
             mv.visitInsn(ICONST_M1);
@@ -234,9 +236,9 @@ public class BinaryIntExpressionHelper extends BinaryExpressionWriter {
 
             mv.visitLabel(l1);
             Label l3 = new Label();
-            mv.visitJumpInsn(IF_ICMPNE,l3);
+            mv.visitJumpInsn(IF_ICMPNE, l3);
             mv.visitInsn(ICONST_0);
-            mv.visitJumpInsn(GOTO,l2);
+            mv.visitJumpInsn(GOTO, l2);
 
             mv.visitLabel(l3);
             mv.visitInsn(ICONST_1);

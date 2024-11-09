@@ -33,10 +33,9 @@ import java.util.List;
  */
 public class SourceText {
     private final int firstLine;
-    private String normalizedText;
-
     private final List<Integer> lineOffsets = new ArrayList<Integer>();
     private final List<Integer> textOffsets = new ArrayList<Integer>();
+    private String normalizedText;
 
     /**
      * Constructs a <tt>SourceText</tt> by reading the given assertion's source
@@ -76,6 +75,21 @@ public class SourceText {
         normalizedText = normalizedTextBuffer.toString();
     }
 
+    private static boolean hasPlausibleSourcePosition(ASTNode node) {
+        return node.getLineNumber() > 0
+            && node.getColumnNumber() > 0
+            && node.getLastLineNumber() >= node.getLineNumber()
+            && node.getLastColumnNumber() >
+            (node.getLineNumber() == node.getLastLineNumber() ? node.getColumnNumber() : 0);
+    }
+
+    private static int countLeadingWhitespace(String lineText) {
+        int result = 0;
+        while (result < lineText.length() && Character.isWhitespace(lineText.charAt(result)))
+            result++;
+        return result;
+    }
+
     /**
      * Returns the assertion's source text after removing line breaks.
      * <p>Limitation: Line comments within the assertion's source text are not
@@ -95,7 +109,7 @@ public class SourceText {
      * @param line   a line number
      * @param column a column number
      * @return the column in getNormalizedText() corresponding to the given line
-     *         and column in the original source text
+     * and column in the original source text
      */
     public int getNormalizedColumn(int line, int column) {
         int deltaLine = line - firstLine;
@@ -106,20 +120,5 @@ public class SourceText {
             return -1;
 
         return textOffsets.get(deltaLine) + deltaColumn;
-    }
-
-    private static boolean hasPlausibleSourcePosition(ASTNode node) {
-        return node.getLineNumber() > 0
-                && node.getColumnNumber() > 0
-                && node.getLastLineNumber() >= node.getLineNumber()
-                && node.getLastColumnNumber() >
-                (node.getLineNumber() == node.getLastLineNumber() ? node.getColumnNumber() : 0);
-    }
-
-    private static int countLeadingWhitespace(String lineText) {
-        int result = 0;
-        while (result < lineText.length() && Character.isWhitespace(lineText.charAt(result)))
-            result++;
-        return result;
     }
 }

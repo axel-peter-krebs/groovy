@@ -50,22 +50,16 @@ import static java.util.Arrays.stream;
  */
 public class FormatHelper {
 
-    private FormatHelper() {}
-
-    private static final String SQ = "'";
-    private static final String DQ = "\"";
-
-    private static final Object[] EMPTY_ARGS = {};
-
-    // heuristic size to pre-allocate stringbuffers for collections of items
-    private static final int ITEM_ALLOCATE_SIZE = 5;
-
     public static final MetaClassRegistry metaRegistry = GroovySystem.getMetaClassRegistry();
-    private static final String XMLUTIL_CLASS_FULL_NAME = "groovy.xml.XmlUtil";
-    private static final String SERIALIZE_METHOD_NAME = "serialize";
-
     static final Set<String> DEFAULT_IMPORT_PKGS = new HashSet<>();
     static final Set<String> DEFAULT_IMPORT_CLASSES = new HashSet<>();
+    private static final String SQ = "'";
+    private static final String DQ = "\"";
+    private static final Object[] EMPTY_ARGS = {};
+    // heuristic size to pre-allocate stringbuffers for collections of items
+    private static final int ITEM_ALLOCATE_SIZE = 5;
+    private static final String XMLUTIL_CLASS_FULL_NAME = "groovy.xml.XmlUtil";
+    private static final String SERIALIZE_METHOD_NAME = "serialize";
 
     static {
         for (String pkgName : ResolveVisitor.DEFAULT_IMPORTS) {
@@ -73,6 +67,9 @@ public class FormatHelper {
         }
         FormatHelper.DEFAULT_IMPORT_CLASSES.add("java.math.BigDecimal");
         FormatHelper.DEFAULT_IMPORT_CLASSES.add("java.math.BigInteger");
+    }
+
+    private FormatHelper() {
     }
 
     public static String toString(Object arguments) {
@@ -112,17 +109,17 @@ public class FormatHelper {
      * </dl>
      * </pre>
      *
-     * @param options a map of configuration options
+     * @param options   a map of configuration options
      * @param arguments the argument(s) to calculate the {@code toString} for
      * @return the string rendering of the argument(s)
      * @see DefaultGroovyMethods#inspect(Object)
      */
     public static String toString(@NamedParams({
-            @NamedParam(value = "safe", type = Boolean.class),
-            @NamedParam(value = "maxSize", type = Integer.class),
-            @NamedParam(value = "verbose", type = Boolean.class),
-            @NamedParam(value = "escapeBackslashes", type = Boolean.class),
-            @NamedParam(value = "inspect", type = Boolean.class)
+        @NamedParam(value = "safe", type = Boolean.class),
+        @NamedParam(value = "maxSize", type = Integer.class),
+        @NamedParam(value = "verbose", type = Boolean.class),
+        @NamedParam(value = "escapeBackslashes", type = Boolean.class),
+        @NamedParam(value = "inspect", type = Boolean.class)
     }) Map<String, Object> options, Object arguments) {
         Object safe = options.get("safe");
         if (!(safe instanceof Boolean)) safe = false;
@@ -186,7 +183,8 @@ public class FormatHelper {
             try {
                 Method serialize = Class.forName(XMLUTIL_CLASS_FULL_NAME).getMethod(SERIALIZE_METHOD_NAME, Element.class);
                 return (String) serialize.invoke(null, arguments);
-            } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException |
+                     NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -219,11 +217,11 @@ public class FormatHelper {
     public static String escapeBackslashes(String orig) {
         // must replace backslashes first, as the other replacements add backslashes not to be escaped
         return orig
-                .replace("\\", "\\\\")           // backslash
-                .replace("\n", "\\n")            // line feed
-                .replace("\r", "\\r")            // carriage return
-                .replace("\t", "\\t")            // tab
-                .replace("\f", "\\f");           // form feed
+            .replace("\\", "\\\\")           // backslash
+            .replace("\n", "\\n")            // line feed
+            .replace("\r", "\\r")            // carriage return
+            .replace("\t", "\\t")            // tab
+            .replace("\f", "\\f");           // form feed
     }
 
     private static String handleFormattingException(Object item, Exception ex) {
@@ -325,8 +323,8 @@ public class FormatHelper {
         }
         if (maxSize < 0) {
             return stream(arguments)
-                    .map(arg -> arg != null ? typeName(arg) : "null")
-                    .collect(java.util.stream.Collectors.joining(", "));
+                .map(arg -> arg != null ? typeName(arg) : "null")
+                .collect(java.util.stream.Collectors.joining(", "));
         }
 
         var plainForm = new StringBuilder();
@@ -532,9 +530,9 @@ public class FormatHelper {
         } else if (object instanceof InputStream || object instanceof Reader) {
             // Copy stream to stream
             try (Reader reader =
-                         object instanceof InputStream
-                                 ? new InputStreamReader((InputStream) object)
-                                 : (Reader) object) {
+                     object instanceof InputStream
+                         ? new InputStreamReader((InputStream) object)
+                         : (Reader) object) {
                 char[] chars = new char[8192];
                 for (int i; (i = reader.read(chars)) != -1; ) {
                     for (int j = 0; j < i; j++) {

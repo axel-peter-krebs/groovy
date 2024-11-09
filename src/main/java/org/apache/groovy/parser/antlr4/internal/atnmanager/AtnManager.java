@@ -35,12 +35,10 @@ import java.util.logging.Logger;
  */
 public abstract class AtnManager {
     private static final ReentrantReadWriteLock RRWL = new ReentrantReadWriteLock(true);
-    private static final ReentrantReadWriteLock.WriteLock WRITE_LOCK = RRWL.writeLock();
     public static final ReentrantReadWriteLock.ReadLock READ_LOCK = RRWL.readLock();
+    private static final ReentrantReadWriteLock.WriteLock WRITE_LOCK = RRWL.writeLock();
     private static final String DFA_CACHE_THRESHOLD_OPT = "groovy.antlr4.cache.threshold";
     private static final long DFA_CACHE_THRESHOLD;
-    private final ReferenceQueue<AtnWrapper> atnWrapperReferenceQueue = new ReferenceQueue<>();
-    private AtnWrapperSoftReference atnWrapperSoftReference;
 
     static {
         long t = SystemUtil.getLongSafe(DFA_CACHE_THRESHOLD_OPT, 0L);
@@ -50,6 +48,9 @@ public abstract class AtnManager {
 
         DFA_CACHE_THRESHOLD = t;
     }
+
+    private final ReferenceQueue<AtnWrapper> atnWrapperReferenceQueue = new ReferenceQueue<>();
+    private AtnWrapperSoftReference atnWrapperSoftReference;
 
     {
         Thread cleanupThread = new Thread(() -> {
@@ -101,6 +102,19 @@ public abstract class AtnManager {
 
     protected abstract boolean shouldClearDfaCache();
 
+    private static class AtnWrapperSoftReference extends SoftReference<AtnWrapper> {
+        private final AtnManager atnManager;
+
+        public AtnWrapperSoftReference(AtnWrapper referent, AtnManager atnManager, ReferenceQueue<? super AtnWrapper> q) {
+            super(referent, q);
+            this.atnManager = atnManager;
+        }
+
+        public AtnManager getAtnManager() {
+            return atnManager;
+        }
+    }
+
     protected class AtnWrapper {
         private final ATN atn;
         private final AtomicLong counter = new AtomicLong(0);
@@ -130,19 +144,6 @@ public abstract class AtnManager {
             } finally {
                 WRITE_LOCK.unlock();
             }
-        }
-    }
-
-    private static class AtnWrapperSoftReference extends SoftReference<AtnWrapper> {
-        private final AtnManager atnManager;
-
-        public AtnWrapperSoftReference(AtnWrapper referent, AtnManager atnManager, ReferenceQueue<? super AtnWrapper> q) {
-            super(referent, q);
-            this.atnManager = atnManager;
-        }
-
-        public AtnManager getAtnManager() {
-            return atnManager;
         }
     }
 }

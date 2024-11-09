@@ -81,7 +81,7 @@ class MixinTest extends GroovyTestCase {
     }
 
     void testGroovyObjectWithEmc() {
-        ObjToTest.metaClass.getValue = {->
+        ObjToTest.metaClass.getValue = { ->
             "emc changed"
         }
         ObjToTest obj = new ObjToTest()
@@ -100,16 +100,16 @@ class MixinTest extends GroovyTestCase {
         assertEquals([x, 8, 9, 3, 2, 1, 4], [x, [8, 9] as Object[], [3, 2, [2: 1, 3: 4]], [2, 3]].flattenTo() as List)
 
         x.metaClass = null
-        x.metaClass.flattenTo = {Set set -> set << delegate }
+        x.metaClass.flattenTo = { Set set -> set << delegate }
         assertEquals([x, 8, 9, 3, 2, 1, 4], [x, [8, 9] as Object[], [3, 2, [2: 1, 3: 4]], [2, 3]].flattenTo() as List)
 
         x.metaClass = null
-        Object.metaClass.flattenTo(ArrayList) {->
+        Object.metaClass.flattenTo(ArrayList) { ->
             LinkedHashSet set = new LinkedHashSet()
             delegate.flattenTo(set)
             return set
         }
-        Object.metaClass.flattenTo(ArrayList) {Set set ->
+        Object.metaClass.flattenTo(ArrayList) { Set set ->
             set << "oops"
             return Collection.metaClass.invokeMethod(delegate, "flattenTo", set)
         }
@@ -118,18 +118,18 @@ class MixinTest extends GroovyTestCase {
 
         ArrayList.metaClass = null
         Object.metaClass {
-            flattenTo(ArrayList) {->
+            flattenTo(ArrayList) { ->
                 LinkedHashSet set = new LinkedHashSet()
                 delegate.flattenTo(set)
                 return set
             }
 
-            flattenTo(ArrayList) {Set set ->
+            flattenTo(ArrayList) { Set set ->
                 set << "oopsssss"
                 return Collection.metaClass.invokeMethod(delegate, "flattenTo", set)
             }
 
-            asList {->
+            asList { ->
                 delegate as List
             }
         }
@@ -138,19 +138,19 @@ class MixinTest extends GroovyTestCase {
         ArrayList.metaClass = null
         Object.metaClass {
             define(ArrayList) {
-                flattenTo {->
+                flattenTo { ->
                     LinkedHashSet set = new LinkedHashSet()
                     delegate.flattenTo(set)
                     return set
                 }
 
-                flattenTo {Set set ->
+                flattenTo { Set set ->
                     set << "ssoops"
                     return Collection.metaClass.invokeMethod(delegate, "flattenTo", set)
                 }
             }
 
-            asList {->
+            asList { ->
                 delegate as List
             }
         }
@@ -174,7 +174,7 @@ class MixinTest extends GroovyTestCase {
 
     void testConcurrentQueue() {
         ReentrantLock.metaClass {
-            withLock {Closure operation ->
+            withLock { Closure operation ->
                 lock()
                 try {
                     operation()
@@ -198,7 +198,7 @@ class MixinTest extends GroovyTestCase {
 
     void testDynamicConcurrentQueue() {
         ReentrantLock.metaClass {
-            withLock {Closure operation ->
+            withLock { Closure operation ->
                 lock()
                 try {
                     operation()
@@ -213,13 +213,13 @@ class MixinTest extends GroovyTestCase {
         queue.metaClass {
             mixin LinkedList, ReentrantLock
 
-            get {->
+            get { ->
                 withLock {
                     removeFirst()
                 }
             }
 
-            put {obj ->
+            put { obj ->
                 withLock {
                     addLast(obj)
                 }
@@ -234,7 +234,7 @@ class MixinTest extends GroovyTestCase {
         assertEquals 3, queue.get()
 
         queue.metaClass {
-            iterator {->
+            iterator { ->
                 mixedIn[LinkedList].iterator()
             }
 
@@ -269,7 +269,7 @@ class MixinTest extends GroovyTestCase {
         list.metaClass {
             mixin NoDuplicateCollection, LinkedList
 
-            find = {Closure check ->
+            find = { Closure check ->
                 mixedIn[LinkedList].find(check)
             }
         }
@@ -292,7 +292,7 @@ class MixinTest extends GroovyTestCase {
         u.metaClass {
             mixin HashSet
 
-            leftShift {obj ->
+            leftShift { obj ->
                 mixedIn[List] << obj
                 mixedIn[Set] << obj
             }
@@ -327,7 +327,7 @@ class MixinTest extends GroovyTestCase {
         Overflow_B.metaClass {
             mixin Overflow_A
 
-            foo = {->
+            foo = { ->
                 println 'New foo ' + receive('')
             }
         }
@@ -346,8 +346,8 @@ class MixinTest extends GroovyTestCase {
                 protected final foo() {
                     bar { counter }
                 }
-                private final String bar(Closure code) { 
-                    return "Bar " + code() 
+                private final String bar(Closure code) {
+                    return "Bar " + code()
                 }
             }
 
@@ -424,7 +424,7 @@ class DeepFlattenToCategory {
 
     // Collection - flatten each element
     static void flattenTo(Collection elements, Set addTo) {
-        elements.each {element ->
+        elements.each { element ->
             element.flattenTo(addTo)
         }
     }
@@ -436,7 +436,7 @@ class DeepFlattenToCategory {
 
     // Array - flatten each element
     static void flattenTo(Object[] elements, Set addTo) {
-        elements.each {element ->
+        elements.each { element ->
             element.flattenTo(addTo)
         }
     }

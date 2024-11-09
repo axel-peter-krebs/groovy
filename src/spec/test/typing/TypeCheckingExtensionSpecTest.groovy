@@ -61,12 +61,12 @@ final class TypeCheckingExtensionSpecTest extends GroovyTestCase {
         assertScriptWithExtension 'unresolvedvariable.groovy', '''
             assert people.size() == 2
         ''', {
-            it.setVariable('people', ['John','Meg'])
+            it.setVariable('people', ['John', 'Meg'])
         }
     }
 
     void testUnresolvedProperty() {
-        use (SpecSupport) {
+        use(SpecSupport) {
             assertScriptWithExtension 'unresolvedproperty.groovy', '''
                 assert 'string'.longueur == 6
             '''
@@ -120,7 +120,7 @@ final class TypeCheckingExtensionSpecTest extends GroovyTestCase {
     }
 
     void testMethodNotFound() {
-        use (SpecSupport) {
+        use(SpecSupport) {
             assertScriptWithExtension 'methodnotfound.groovy', '''
                 assert 'string'.longueur() == 6
             '''
@@ -128,7 +128,7 @@ final class TypeCheckingExtensionSpecTest extends GroovyTestCase {
     }
 
     void testBeforeVisitMethod() {
-        use (SpecSupport) {
+        use(SpecSupport) {
             assertScriptWithExtension 'beforevisitmethod.groovy', '''
                 void skipIt() {
                     'blah'.doesNotExist()
@@ -226,7 +226,7 @@ final class TypeCheckingExtensionSpecTest extends GroovyTestCase {
     }
 
     void testNewMethod() {
-        assertScriptWithExtension 'newmethod.groovy','''
+        assertScriptWithExtension 'newmethod.groovy', '''
             class Foo {
                 def methodMissing(String name, args) { this }
             }
@@ -236,10 +236,10 @@ final class TypeCheckingExtensionSpecTest extends GroovyTestCase {
     }
 
     void testScopingMethods() {
-        assertScriptWithExtension 'scoping.groovy','''
+        assertScriptWithExtension 'scoping.groovy', '''
             1+1
         '''
-        assertScriptWithExtension 'scoping_alt.groovy','''
+        assertScriptWithExtension 'scoping_alt.groovy', '''
             1+1
         '''
     }
@@ -594,7 +594,7 @@ new DelegateTest().delegate()
     //--------------------------------------------------------------------------
 
     private static assertScriptWithExtension(String extensionName, String script,
-            @ClosureParams(value=SimpleType, options='groovy.lang.Binding') Closure<Void> configurator=null) {
+                                             @ClosureParams(value = SimpleType, options = 'groovy.lang.Binding') Closure<Void> configurator = null) {
         def shell = GroovyShell.withConfig {
             ast(TypeChecked, extensions: [extensionName])
         }
@@ -606,7 +606,9 @@ new DelegateTest().delegate()
 
     private static class SpecSupport {
         static int getLongueur(String self) { self.length() }
+
         static int longueur(String self) { self.length() }
+
         static void doesNotExist(String self) {}
     }
 }

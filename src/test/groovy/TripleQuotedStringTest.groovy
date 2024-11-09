@@ -34,7 +34,7 @@ class TripleQuotedStringTest extends GroovyTestCase {
         assert idx > 0
     }
 
-    static void main( String[] args ) { 
+    static void main(String[] args) {
         def o = new TripleQuotedStringTest();
         o.testTripleQuotedString();
     }

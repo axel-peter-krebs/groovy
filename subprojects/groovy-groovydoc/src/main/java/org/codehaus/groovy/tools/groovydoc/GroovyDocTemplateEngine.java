@@ -74,6 +74,10 @@ public class GroovyDocTemplateEngine {
 
     }
 
+    private static StringWriter reasonableSizeWriter() {
+        return new StringWriter(65536);
+    }
+
     String applyClassTemplates(GroovyClassDoc classDoc) {
         String templatePath = classTemplatePaths.get(0); // todo (iterate)
         String templateWithBindingApplied = "";
@@ -92,10 +96,6 @@ public class GroovyDocTemplateEngine {
             e.printStackTrace();
         }
         return templateWithBindingApplied;
-    }
-
-    private static StringWriter reasonableSizeWriter() {
-        return new StringWriter(65536);
     }
 
     String applyPackageTemplate(String template, GroovyPackageDoc packageDoc) {

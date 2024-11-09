@@ -58,10 +58,10 @@ class CommandCompleterTest extends CompleterTestSupport {
     void testSet() {
         CommandsMultiCompleter completer = new CommandsMultiCompleter()
         def candidates = []
-        groovyshMocker.demand.getINTERPRETER_MODE_PREFERENCE_KEY(1){'interpreterMode'}
-        groovyshMocker.demand.getAUTOINDENT_PREFERENCE_KEY(1){'autoindent'}
-        groovyshMocker.demand.getCOLORS_PREFERENCE_KEY(1){'colors'}
-        groovyshMocker.demand.getMETACLASS_COMPLETION_PREFIX_LENGTH_PREFERENCE_KEY(1){'meta-completion-prefix-length'}
+        groovyshMocker.demand.getINTERPRETER_MODE_PREFERENCE_KEY(1) { 'interpreterMode' }
+        groovyshMocker.demand.getAUTOINDENT_PREFERENCE_KEY(1) { 'autoindent' }
+        groovyshMocker.demand.getCOLORS_PREFERENCE_KEY(1) { 'colors' }
+        groovyshMocker.demand.getMETACLASS_COMPLETION_PREFIX_LENGTH_PREFERENCE_KEY(1) { 'meta-completion-prefix-length' }
         groovyshMocker.use {
             Groovysh groovyshMock = new Groovysh()
             completer.add(new SetCommand(groovyshMock))
@@ -122,11 +122,11 @@ class CommandCompleterTest extends CompleterTestSupport {
     void testSaveSetShow() {
         CommandsMultiCompleter completer = new CommandsMultiCompleter()
         def candidates = []
-        groovyshMocker.demand.getINTERPRETER_MODE_PREFERENCE_KEY(1){'interpreterMode'}
-        groovyshMocker.demand.getAUTOINDENT_PREFERENCE_KEY(1){'autoindent'}
-        groovyshMocker.demand.getCOLORS_PREFERENCE_KEY(1){'colors'}
-        groovyshMocker.demand.getMETACLASS_COMPLETION_PREFIX_LENGTH_PREFERENCE_KEY(1){'meta-completion-prefix-length'}
-        groovyshMocker.demand.getIo(1){testio}
+        groovyshMocker.demand.getINTERPRETER_MODE_PREFERENCE_KEY(1) { 'interpreterMode' }
+        groovyshMocker.demand.getAUTOINDENT_PREFERENCE_KEY(1) { 'autoindent' }
+        groovyshMocker.demand.getCOLORS_PREFERENCE_KEY(1) { 'colors' }
+        groovyshMocker.demand.getMETACLASS_COMPLETION_PREFIX_LENGTH_PREFERENCE_KEY(1) { 'meta-completion-prefix-length' }
+        groovyshMocker.demand.getIo(1) { testio }
         groovyshMocker.use {
             Groovysh groovyshMock = new Groovysh()
             completer.add(new SaveCommand(groovyshMock))
@@ -139,10 +139,10 @@ class CommandCompleterTest extends CompleterTestSupport {
             candidates = []
             String buffer = SaveCommand.COMMAND_NAME + ' '
             assert 6 == completer.complete(buffer, buffer.length(), candidates)
-            assert ! candidates.contains('all')
+            assert !candidates.contains('all')
             candidates = []
             assert 3 == completer.complete(':s ', ':s '.length(), candidates)
-            assert ! candidates.contains('all')
+            assert !candidates.contains('all')
 
         }
 

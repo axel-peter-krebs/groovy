@@ -51,8 +51,7 @@ public class Reference<T> extends GroovyObjectSupport implements Serializable {
         Object value = get();
         if (value != null) {
             InvokerHelper.setProperty(value, property, newValue);
-        }
-        else {
+        } else {
             super.setProperty(property, newValue);
         }
     }
@@ -63,12 +62,10 @@ public class Reference<T> extends GroovyObjectSupport implements Serializable {
         if (value != null) {
             try {
                 return InvokerHelper.invokeMethod(value, name, args);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return super.invokeMethod(name, args);
             }
-        }
-        else {
+        } else {
             return super.invokeMethod(name, args);
         }
     }

@@ -29,13 +29,13 @@ import static org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation
 
 public class CachedField extends MetaProperty {
 
+    private final Field field;
+    private boolean madeAccessible;
     public CachedField(final Field field) {
         super(field.getName(), field.getType());
         this.field = field;
     }
 
-    private final Field field;
-    private boolean madeAccessible;
     private void makeAccessible() {
         ReflectionUtils.makeAccessibleInPrivilegedAction(field);
         AccessPermissionChecker.checkAccessPermission(field);
@@ -76,7 +76,7 @@ public class CachedField extends MetaProperty {
      * {@inheritDoc}
      */
     @Override
-    public  void  setProperty(final Object object, Object newValue) {
+    public void setProperty(final Object object, Object newValue) {
         if (isFinal()) {
             throw new GroovyRuntimeException("Cannot set the property '" + name + "' because the backing field is final.");
         }

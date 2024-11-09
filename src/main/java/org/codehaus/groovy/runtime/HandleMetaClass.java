@@ -28,8 +28,8 @@ import groovy.lang.MetaMethod;
 import java.lang.reflect.Method;
 
 public class HandleMetaClass extends DelegatingMetaClass {
-    private Object object;
     private static final Object NONE = new Object();
+    private Object object;
 
     public HandleMetaClass(MetaClass mc) {
         this(mc, null);
@@ -39,9 +39,9 @@ public class HandleMetaClass extends DelegatingMetaClass {
         super(mc);
         if (obj != null) {
             if (InvokerHelper.getMetaClass(obj.getClass()) == mc || !(mc instanceof ExpandoMetaClass))
-              object = obj; // object has default metaclass, so we need to replace it on demand
+                object = obj; // object has default metaclass, so we need to replace it on demand
             else
-              object = NONE; // object already has per instance metaclass
+                object = NONE; // object already has per instance metaclass
         }
     }
 
@@ -54,26 +54,25 @@ public class HandleMetaClass extends DelegatingMetaClass {
     public GroovyObject replaceDelegate() {
         if (object == null) {
             if (!(delegate instanceof ExpandoMetaClass)) {
-              delegate = new ExpandoMetaClass(delegate.getTheClass(), true, true);
-              delegate.initialize();
+                delegate = new ExpandoMetaClass(delegate.getTheClass(), true, true);
+                delegate.initialize();
             }
             DefaultGroovyMethods.setMetaClass(delegate.getTheClass(), delegate);
+        } else {
+            if (object != NONE) {
+                final MetaClass metaClass = delegate;
+                delegate = new ExpandoMetaClass(delegate.getTheClass(), false, true);
+                if (metaClass instanceof ExpandoMetaClass) {
+                    ExpandoMetaClass emc = (ExpandoMetaClass) metaClass;
+                    for (MetaMethod method : emc.getExpandoMethods())
+                        ((ExpandoMetaClass) delegate).registerInstanceMethod(method);
+                }
+                delegate.initialize();
+                MetaClassHelper.doSetMetaClass(object, delegate);
+                object = NONE;
+            }
         }
-        else {
-          if (object != NONE) {
-              final MetaClass metaClass = delegate;
-              delegate = new ExpandoMetaClass(delegate.getTheClass(), false, true);
-              if (metaClass instanceof ExpandoMetaClass) {
-                  ExpandoMetaClass emc = (ExpandoMetaClass) metaClass;
-                  for (MetaMethod method : emc.getExpandoMethods())
-                    ((ExpandoMetaClass)delegate).registerInstanceMethod(method);
-              }
-              delegate.initialize();
-              MetaClassHelper.doSetMetaClass(object, delegate);
-              object = NONE;
-          }
-        }
-        return (GroovyObject)delegate;
+        return (GroovyObject) delegate;
     }
 
     @Override
@@ -84,11 +83,11 @@ public class HandleMetaClass extends DelegatingMetaClass {
     // this method mimics EMC behavior
     @Override
     public Object getProperty(String property) {
-        if(ExpandoMetaClass.isValidExpandoProperty(property)) {
-            if(property.equals(ExpandoMetaClass.STATIC_QUALIFIER) ||
-               property.equals(ExpandoMetaClass.CONSTRUCTOR) ||
-               Holder.META_CLASS.hasProperty(this, property) == null) {
-                  return replaceDelegate().getProperty(property);
+        if (ExpandoMetaClass.isValidExpandoProperty(property)) {
+            if (property.equals(ExpandoMetaClass.STATIC_QUALIFIER) ||
+                property.equals(ExpandoMetaClass.CONSTRUCTOR) ||
+                Holder.META_CLASS.hasProperty(this, property) == null) {
+                return replaceDelegate().getProperty(property);
             }
         }
         return Holder.META_CLASS.getProperty(this, property);
@@ -121,7 +120,7 @@ public class HandleMetaClass extends DelegatingMetaClass {
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj) || getAdaptee().equals(obj) || (obj instanceof HandleMetaClass && equals(((HandleMetaClass)obj).getAdaptee()));
+        return super.equals(obj) || getAdaptee().equals(obj) || (obj instanceof HandleMetaClass && equals(((HandleMetaClass) obj).getAdaptee()));
     }
 
     // Lazily initialize the single instance of the HandleMetaClass metaClass

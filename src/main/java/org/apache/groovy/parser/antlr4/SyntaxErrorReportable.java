@@ -30,6 +30,7 @@ public interface SyntaxErrorReportable {
     default void require(boolean condition, String msg, int offset, boolean toAttachPositionInfo) {
         require(condition, msg, Tuple.tuple(0, offset), toAttachPositionInfo);
     }
+
     default void require(boolean condition, String msg, Tuple2<Integer, Integer> offset, boolean toAttachPositionInfo) {
         if (condition) {
             return;
@@ -45,8 +46,9 @@ public interface SyntaxErrorReportable {
     default void require(boolean condition, String msg, int offset) {
         require(condition, msg, Tuple.tuple(0, offset));
     }
+
     default void require(boolean condition, String msg, Tuple2<Integer, Integer> offset) {
-        require(condition, msg, offset,false);
+        require(condition, msg, offset, false);
     }
 
     default void require(boolean condition, String msg) {
@@ -56,12 +58,13 @@ public interface SyntaxErrorReportable {
     default void throwSyntaxError(String msg, int offset, boolean toAttachPositionInfo) {
         throwSyntaxError(msg, Tuple.tuple(0, offset), toAttachPositionInfo);
     }
+
     default void throwSyntaxError(String msg, Tuple2<Integer, Integer> offset, boolean toAttachPositionInfo) {
         PositionInfo positionInfo = this.genPositionInfo(offset);
         throw new GroovySyntaxError(msg + (toAttachPositionInfo ? positionInfo.toString() : ""),
-                this.getSyntaxErrorSource(),
-                positionInfo.getLine(),
-                positionInfo.getColumn()
+            this.getSyntaxErrorSource(),
+            positionInfo.getLine(),
+            positionInfo.getColumn()
         );
     }
 
@@ -70,10 +73,12 @@ public interface SyntaxErrorReportable {
     default PositionInfo genPositionInfo(int offset) {
         return genPositionInfo(Tuple.tuple(0, offset));
     }
+
     default PositionInfo genPositionInfo(Tuple2<Integer, Integer> offset) {
         return new PositionInfo(getErrorLine() + offset.getV1(), getErrorColumn() + offset.getV2());
     }
 
     int getErrorLine();
+
     int getErrorColumn();
 }

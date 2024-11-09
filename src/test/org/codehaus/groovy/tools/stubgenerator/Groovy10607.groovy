@@ -23,7 +23,7 @@ final class Groovy10607 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'p/Bar.java': '''
+            'p/Bar.java'  : '''
                 package p;
                 public class Bar {
                 }
@@ -36,7 +36,7 @@ final class Groovy10607 extends StringSourcesStubTestCase {
                     }
                 }
             ''',
-            'Main.java': '''
+            'Main.java'   : '''
                 public class Main {
                     public static void main(String[] args) {
                         new q.Foo();

@@ -46,15 +46,15 @@ public class CatchStatement extends Statement {
         return code;
     }
 
+    public void setCode(Statement code) {
+        this.code = code;
+    }
+
     public ClassNode getExceptionType() {
         return variable.getType();
     }
 
     public Parameter getVariable() {
         return variable;
-    }
-
-    public void setCode(Statement code) {
-        this.code = code;
     }
 }

@@ -50,8 +50,12 @@ public class AutoFinalASTTransformation extends AbstractASTTransformation {
 
     private AnnotatedNode target;
 
+    private static boolean hasNoExplicitAutoFinal(final AnnotatedNode node) {
+        return node.getAnnotations(MY_TYPE).isEmpty();
+    }
+
     @Override
-    public  void visit(final ASTNode[] nodes, final SourceUnit source) {
+    public void visit(final ASTNode[] nodes, final SourceUnit source) {
         init(nodes, source);
         process(nodes, createVisitor());
     }
@@ -93,7 +97,8 @@ public class AutoFinalASTTransformation extends AbstractASTTransformation {
             }
         }
 
-        for (Iterator<? extends ClassNode> it = node.getInnerClasses(); it.hasNext(); ) { ClassNode cn = it.next();
+        for (Iterator<? extends ClassNode> it = node.getInnerClasses(); it.hasNext(); ) {
+            ClassNode cn = it.next();
             if (hasNoExplicitAutoFinal(cn) && !cn.isInterface()) { // GROOVY-10585
                 processClass(cn, visitor);
             }
@@ -118,14 +123,14 @@ public class AutoFinalASTTransformation extends AbstractASTTransformation {
         visitor.visitMethod(node);
     }
 
+    //--------------------------------------------------------------------------
+
     private void processLocalVariable(final DeclarationExpression expr, final ClassCodeVisitorSupport visitor) {
         if (!isEnabled(expr)) return;
         if (expr.getRightExpression() instanceof ClosureExpression) {
             visitor.visitDeclarationExpression(expr);
         }
     }
-
-    //--------------------------------------------------------------------------
 
     private ClassCodeVisitorSupport createVisitor() {
         return new ClassCodeVisitorSupport() {
@@ -173,9 +178,5 @@ public class AutoFinalASTTransformation extends AbstractASTTransformation {
         // classes to true and one class to be explicitly disabled
         return node != null && node.getAnnotations(MY_TYPE).stream()
             .noneMatch(anno -> memberHasValue(anno, "enabled", Boolean.FALSE));
-    }
-
-    private static boolean hasNoExplicitAutoFinal(final AnnotatedNode node) {
-        return node.getAnnotations(MY_TYPE).isEmpty();
     }
 }

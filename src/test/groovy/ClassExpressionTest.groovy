@@ -69,7 +69,7 @@ class ClassExpressionTest extends GroovyTestCase {
     }
 
     void testArrayClassReference() {
-       def foo = int[]
-       assert foo.name == "[I"
+        def foo = int[]
+        assert foo.name == "[I"
     }
 }

@@ -28,5 +28,5 @@ class Groovy2801Bug extends GroovyTestCase {
 }
 
 interface IGroovy2801Bug {
-   String foo()
+    String foo()
 }

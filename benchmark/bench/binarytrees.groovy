@@ -16,8 +16,8 @@ final class TreeNode {
     private static bottomUpTree(item, depth) {
         if (depth > 0) {
             return new TreeNode(
-                bottomUpTree(2*item-1, depth-1),
-                bottomUpTree(2*item,   depth-1),
+                bottomUpTree(2 * item - 1, depth - 1),
+                bottomUpTree(2 * item, depth - 1),
                 item
             )
         } else {
@@ -54,10 +54,10 @@ while (depth <= maxDepth) {
     check = 0
     for (i in 1..iterations) {
         check += (TreeNode.bottomUpTree(i, depth)).itemCheck()
-        check += (TreeNode.bottomUpTree(-i,depth)).itemCheck()
+        check += (TreeNode.bottomUpTree(-i, depth)).itemCheck()
     }
 
-    println "${iterations*2}\t trees of depth ${depth}\t check: ${check}"
+    println "${iterations * 2}\t trees of depth ${depth}\t check: ${check}"
     depth += 2
 }
 

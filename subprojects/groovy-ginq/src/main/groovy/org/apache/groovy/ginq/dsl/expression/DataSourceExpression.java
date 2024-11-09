@@ -37,9 +37,11 @@ public abstract class DataSourceExpression extends AbstractGinqExpression implem
     public Expression getAliasExpr() {
         return aliasExpr;
     }
+
     public Expression getDataSourceExpr() {
         return dataSourceExpr;
     }
+
     public void setDataSourceExpr(Expression dataSourceExpr) {
         this.dataSourceExpr = dataSourceExpr;
     }

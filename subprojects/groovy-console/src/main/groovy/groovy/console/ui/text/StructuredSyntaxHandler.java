@@ -62,10 +62,8 @@ public class StructuredSyntaxHandler extends DefaultHandler {
     public static final String SUPERSCRIPT = "superscript";
     public static final String TAB_SET = "tabSet";
     public static final String UNDERLINE = "underline";
-
-    private StructuredSyntaxDocumentFilter.LexerNode currentNode;
-
     private final StructuredSyntaxDocumentFilter filter;
+    private StructuredSyntaxDocumentFilter.LexerNode currentNode;
 
     /**
      * Creates a new instance of MasterFrameHandler

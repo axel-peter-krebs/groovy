@@ -27,10 +27,10 @@ class GroovyCharSequenceMethodsTest extends GroovyTestCase {
 
     private static CharSequence makeCharSequence(String s) {
         [
-                toString   : { -> s },
-                subSequence: { int f, int t -> s.substring(f, t) },
-                length     : { -> s.length() },
-                charAt     : { int i -> s.chars[i] },
+            toString   : { -> s },
+            subSequence: { int f, int t -> s.substring(f, t) },
+            length     : { -> s.length() },
+            charAt     : { int i -> s.chars[i] },
         ] as CharSequence
     }
 
@@ -50,7 +50,7 @@ class GroovyCharSequenceMethodsTest extends GroovyTestCase {
         assert cs2.isCase('Foobar')
         assert !cs2.isCase('Baz')
         // typical usage
-        switch(cs2) {
+        switch (cs2) {
             case 'Foobar': break
             default: assert false, 'Should not get here'
         }
@@ -108,17 +108,17 @@ class GroovyCharSequenceMethodsTest extends GroovyTestCase {
     void testFind() {
         def csDigits = makeCharSequence(/\d{4}/)
         assert cs1.find(csDigits) == '2011'
-        assert cs1.find(csDigits, {"--$it--"}) == '--2011--'
+        assert cs1.find(csDigits, { "--$it--" }) == '--2011--'
         assert cs1.find(~/\d\d:\d\d/) == '06:38'
-        assert cs1.find(~/\d\d:\d\d/, {"|$it|"}) == '|06:38|'
+        assert cs1.find(~/\d\d:\d\d/, { "|$it|" }) == '|06:38|'
     }
 
     void testFindAll() {
         def csDigits = makeCharSequence(/\d\d/)
         assert cs1.findAll(csDigits) == ['28', '06', '38', '07', '20', '11']
-        assert cs1.findAll(csDigits, {"<$it>"}) == ['<28>', '<06>', '<38>', '<07>', '<20>', '<11>']
+        assert cs1.findAll(csDigits, { "<$it>" }) == ['<28>', '<06>', '<38>', '<07>', '<20>', '<11>']
         assert cs1.findAll(~/\s\d\d/) == [' 28', ' 06', ' 20']
-        assert cs1.findAll(~/\s\d\d/, {"<$it >"}) == ['< 28 >', '< 06 >', '< 20 >']
+        assert cs1.findAll(~/\s\d\d/, { "<$it >" }) == ['< 28 >', '< 06 >', '< 20 >']
     }
 
     void testPad() {
@@ -300,10 +300,10 @@ class GroovyCharSequenceMethodsTest extends GroovyTestCase {
 
     void testEachLine() {
         def result = []
-        cs3.eachLine{ line, num -> result << "$num:${line.size()}" }
+        cs3.eachLine { line, num -> result << "$num:${line.size()}" }
         assert result == ["0:20", "1:20", "2:17"]
         result = []
-        cs3.eachLine(10){ line, num -> result << "$num:${line.size()}" }
+        cs3.eachLine(10) { line, num -> result << "$num:${line.size()}" }
         assert result == ["10:20", "11:20", "12:17"]
     }
 
@@ -312,10 +312,10 @@ class GroovyCharSequenceMethodsTest extends GroovyTestCase {
         def csOp = makeCharSequence(regexOp)
         def csTwoLines = makeCharSequence('10*15\n11 * 9')
         def result = []
-        csTwoLines.splitEachLine(csOp){ left, right -> result << left.toInteger() * right.toInteger() }
+        csTwoLines.splitEachLine(csOp) { left, right -> result << left.toInteger() * right.toInteger() }
         assert result == [150, 99]
         result = []
-        csTwoLines.splitEachLine(~regexOp){ left, right -> result << left.toInteger() * right.toInteger() }
+        csTwoLines.splitEachLine(~regexOp) { left, right -> result << left.toInteger() * right.toInteger() }
         assert result == [150, 99]
     }
 
@@ -358,7 +358,10 @@ class GroovyCharSequenceMethodsTest extends GroovyTestCase {
         assert ints[-1] == 114
     }
 
-    private enum Coin { penny, nickel, dime, quarter }
+    private enum Coin {
+        penny, nickel, dime, quarter
+    }
+
     void testAsType() {
         def csDime = makeCharSequence('dime')
         def dime = csDime as Coin

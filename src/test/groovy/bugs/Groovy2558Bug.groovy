@@ -21,7 +21,7 @@ package groovy.bugs
 import groovy.test.GroovyTestCase
 
 class Groovy2558Bug extends GroovyTestCase {
-    void testMe () {
+    void testMe() {
         Person person = new Person()
         String propertyName = 'name'
         person."$propertyName" = 'peter'

@@ -20,7 +20,7 @@ package groovy.bugs
 
 import groovy.test.GroovyTestCase
 
-/** 
+/**
  */
 class StaticMethodCallBug extends GroovyTestCase {
 

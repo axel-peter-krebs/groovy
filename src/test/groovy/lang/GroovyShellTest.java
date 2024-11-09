@@ -34,6 +34,12 @@ import static org.junit.Assert.fail;
 
 public final class GroovyShellTest {
 
+    private static CompilerConfiguration baseScript(Class<? extends Script> c) {
+        CompilerConfiguration config = new CompilerConfiguration();
+        config.setScriptBaseClass(c.getName());
+        return config;
+    }
+
     @Test
     public void testExecuteScript() {
         Object result = new GroovyShell().evaluate("test = 1", "Test.groovy");
@@ -86,7 +92,7 @@ public final class GroovyShellTest {
     public void testScriptWithBindingInitField() {
         String arg = "Hello Groovy";
         String script =
-                "@groovy.transform.Field def script_args = getProperty('args')\n" +
+            "@groovy.transform.Field def script_args = getProperty('args')\n" +
                 "assert script_args[0] == '" + arg + "'\n" +
                 "script_args[0]\n";
         Object result = new GroovyShell(baseScript(BaseScript8096.class)).run(script, "Script8096.groovy", new String[]{arg});
@@ -96,9 +102,9 @@ public final class GroovyShellTest {
     @Test
     public void testClassLoader() {
         String script =
-                "evaluate '''\n"+
-                "class XXXX{}\n"+
-                "assert evaluate('XXXX') == XXXX\n"+
+            "evaluate '''\n" +
+                "class XXXX{}\n" +
+                "assert evaluate('XXXX') == XXXX\n" +
                 "'''";
         new GroovyShell().evaluate(script);
     }
@@ -118,17 +124,19 @@ public final class GroovyShellTest {
         }
     }
 
+    //--------------------------------------------------------------------------
+
     @Test
     public void testLaunchesJUnitTestSuite() throws Exception {
         // create a valid (empty) test suite on disk
-        String testName = "GroovyShellTestJUnit3Test"+System.currentTimeMillis();
+        String testName = "GroovyShellTestJUnit3Test" + System.currentTimeMillis();
         File testSuite = new File(System.getProperty("java.io.tmpdir"), testName);
         ResourceGroovyMethods.write(testSuite, "import junit.framework.*; \r\n" +
-                "public class " + testName + " extends TestSuite { \r\n" +
-                "    public static Test suite() { \r\n" +
-                "        return new TestSuite(); \r\n" +
-                "    } \r\n" +
-                "} \r\n");
+            "public class " + testName + " extends TestSuite { \r\n" +
+            "    public static Test suite() { \r\n" +
+            "        return new TestSuite(); \r\n" +
+            "    } \r\n" +
+            "} \r\n");
         testSuite.deleteOnExit();
 
         PrintStream out = System.out;
@@ -141,26 +149,21 @@ public final class GroovyShellTest {
         }
     }
 
-    //--------------------------------------------------------------------------
-
-    private static CompilerConfiguration baseScript(Class<? extends Script> c) {
-        CompilerConfiguration config = new CompilerConfiguration();
-        config.setScriptBaseClass(c.getName());
-        return config;
-    }
-
-    public static abstract class BaseScript228  extends Script {
+    public static abstract class BaseScript228 extends Script {
         public String doSomething(String food) {
             return "I like " + food;
         }
+
         public String getCheese() {
             return "Cheddar";
         }
     }
 
     public static abstract class BaseScript6615 extends Script {
-        abstract protected Object runScriptBody();
         public String cheese = "Swiss";
+
+        abstract protected Object runScriptBody();
+
         @Override
         public Object run() {
             cheese = "Cheddar";
@@ -172,6 +175,7 @@ public final class GroovyShellTest {
         protected BaseScript8096(Binding binding) {
             super(binding);
         }
+
         protected BaseScript8096() {
             super();
         }

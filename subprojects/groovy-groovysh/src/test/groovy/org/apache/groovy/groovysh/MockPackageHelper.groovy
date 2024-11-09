@@ -25,6 +25,7 @@ import org.apache.groovy.groovysh.util.PackageHelper
  */
 class MockPackageHelper implements PackageHelper {
     Set<String> mockContents
+
     MockPackageHelper(Collection<String> mockContents) {
         this.mockContents = new HashSet<String>(mockContents)
     }
@@ -35,5 +36,5 @@ class MockPackageHelper implements PackageHelper {
     }
 
     @Override
-    void reset() { }
+    void reset() {}
 }

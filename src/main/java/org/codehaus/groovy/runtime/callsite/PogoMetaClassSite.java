@@ -39,10 +39,10 @@ public class PogoMetaClassSite extends MetaClassSite {
                     return metaClass.invokeMethod(receiver, name, args);
                 } catch (MissingMethodException e) {
                     if (e instanceof MissingMethodExecutionFailed) {
-                        throw (MissingMethodException)e.getCause();
+                        throw (MissingMethodException) e.getCause();
                     } else if (receiver.getClass() == e.getType() && e.getMethod().equals(name)) {
                         // in case there's nothing else, invoke the object's own invokeMethod()
-                        return ((GroovyObject)receiver).invokeMethod(name, args);
+                        return ((GroovyObject) receiver).invokeMethod(name, args);
                     } else {
                         throw e;
                     }

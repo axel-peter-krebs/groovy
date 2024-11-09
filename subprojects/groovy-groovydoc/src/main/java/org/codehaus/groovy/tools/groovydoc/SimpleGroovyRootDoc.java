@@ -37,13 +37,12 @@ public class SimpleGroovyRootDoc extends SimpleGroovyDoc implements GroovyRootDo
     private static final GroovyPackageDoc[] EMPTY_GROOVYPACKAGEDOC_ARRAY = new GroovyPackageDoc[0];
 
     private final Map<String, GroovyPackageDoc> packageDocs;
-    private List<GroovyPackageDoc> packageDocValues = null;
     private final Map<String, GroovyClassDoc> classDocs;
     private final Map<String, String> equivalentPackageImports;
-    private List<GroovyClassDoc> classDocValues = null;
     private final Map<String, GroovyClassDoc> cachedResolvedClasses = new HashMap<>();
     private final ClassNamedCache classNamedCache;
-
+    private List<GroovyPackageDoc> packageDocValues = null;
+    private List<GroovyClassDoc> classDocValues = null;
     private String description = "";
 
     public SimpleGroovyRootDoc(String name) {
@@ -129,7 +128,7 @@ public class SimpleGroovyRootDoc extends SimpleGroovyDoc implements GroovyRootDo
             String fullClassName = entry.getKey();
             String equivalentPackageImport = findEquivalentPackageImport(fullClassName);
             if (importedClassesAndPackages.contains(fullClassName) ||
-                    importedClassesAndPackages.contains(equivalentPackageImport)) {
+                importedClassesAndPackages.contains(equivalentPackageImport)) {
                 GroovyClassDoc classDoc = entry.getValue();
                 visibleClasses.put(classDoc.name(), classDoc);
             }

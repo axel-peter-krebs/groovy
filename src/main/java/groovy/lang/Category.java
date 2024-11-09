@@ -100,5 +100,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @GroovyASTTransformationClass("org.codehaus.groovy.transform.CategoryASTTransformation")
 public @interface Category {
-    Class value () default Object.class;
+    Class value() default Object.class;
 }

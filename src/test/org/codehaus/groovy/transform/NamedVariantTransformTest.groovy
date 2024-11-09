@@ -180,7 +180,8 @@ final class NamedVariantTransformTest {
         '''
     }
 
-    @Test // GROOVY-9158, GROOVY-10497
+    @Test
+    // GROOVY-9158, GROOVY-10497
     void testNamedParamWithDefaultArgument() {
         assertScript shell, '''
             import static groovy.test.GroovyAssert.shouldFail
@@ -230,7 +231,8 @@ final class NamedVariantTransformTest {
         '''
     }
 
-    @Test // GROOVY-10176
+    @Test
+    // GROOVY-10176
     void testNamedParamWithPrimitiveValues() {
         assertScript shell, '''
             @ToString(includeNames=true)
@@ -288,7 +290,8 @@ final class NamedVariantTransformTest {
         assert err =~ /required named param 'color' not found/
     }
 
-    @Test // GROOVY-9183
+    @Test
+    // GROOVY-9183
     void testNamedDelegateWithPrimitiveValues() {
         assertScript shell, '''
             class Color {
@@ -307,7 +310,8 @@ final class NamedVariantTransformTest {
         '''
     }
 
-    @Test // GROOVY-10261
+    @Test
+    // GROOVY-10261
     void testNamedVariantWithDefaultArguments() {
         assertScript shell, '''
             @TupleConstructor(defaults=false)
@@ -328,7 +332,8 @@ final class NamedVariantTransformTest {
         '''
     }
 
-    @Test // GROOVY-9183, GROOVY-10500
+    @Test
+    // GROOVY-9183, GROOVY-10500
     void testNamedDelegateWithPropertyDefault() {
         assertScript shell, '''
             class RowMapper {
@@ -368,7 +373,8 @@ final class NamedVariantTransformTest {
         '''
     }
 
-    @Test // GROOVY-10561
+    @Test
+    // GROOVY-10561
     void testDefaultArgumentReferenceToParam1() {
         assertScript shell, '''
             @NamedVariant
@@ -383,7 +389,8 @@ final class NamedVariantTransformTest {
         '''
     }
 
-    @Test // GROOVY-10561
+    @Test
+    // GROOVY-10561
     void testDefaultArgumentReferenceToParam2() {
         assertScript shell, '''
             @NamedVariant
@@ -398,7 +405,8 @@ final class NamedVariantTransformTest {
         '''
     }
 
-    @Test // GROOVY-11325
+    @Test
+    // GROOVY-11325
     void testDefaultArgumentReferenceToParam3() {
         assertScript shell, '''
             @NamedVariant
@@ -418,7 +426,8 @@ final class NamedVariantTransformTest {
         '''
     }
 
-    @Test // GROOVY-10889
+    @Test
+    // GROOVY-10889
     void testDefaultArgumentCoerceIsPreserved() {
         assertScript shell, '''
             @NamedVariant

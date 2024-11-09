@@ -73,15 +73,15 @@ class AllCompletersTest extends GroovyTestCase {
     void setUp() {
         super.setUp()
         mockOut = new BufferedOutputStream(
-                new ByteArrayOutputStream())
+            new ByteArrayOutputStream())
 
         mockErr = new BufferedOutputStream(
-                new ByteArrayOutputStream())
+            new ByteArrayOutputStream())
 
         testio = new IO(
-                new ByteArrayInputStream(),
-                mockOut,
-                mockErr)
+            new ByteArrayInputStream(),
+            mockOut,
+            mockErr)
 
 
         Groovysh groovysh = new Groovysh(testio)
@@ -98,7 +98,7 @@ class AllCompletersTest extends GroovyTestCase {
             }
         }
         groovysh.history = new FileHistory(filemock)
-        InteractiveShellRunner shellRun = new InteractiveShellRunner(groovysh, { '>'})
+        InteractiveShellRunner shellRun = new InteractiveShellRunner(groovysh, { '>' })
         // setup completers in run()
         shellRun.run()
         completers = shellRun.reader.completers

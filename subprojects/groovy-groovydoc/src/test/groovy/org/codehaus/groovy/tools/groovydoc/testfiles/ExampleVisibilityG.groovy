@@ -22,20 +22,33 @@ import groovy.transform.PackageScope
 
 class ExampleVisibilityG {
     public void a1() {}
+
     void a2() {}
+
     protected void b() {}
-    @groovy.transform.PackageScope void c1() {}
-    @PackageScope void c2() {}
+
+    @groovy.transform.PackageScope
+    void c1() {}
+
+    @PackageScope
+    void c2() {}
+
     private void d() {}
 
     public _a
     protected _b
-    @PackageScope _c
+    @PackageScope
+        _c
     private _d
 
     public class A1 {}
+
     class A2 {}
+
     protected class B {}
-    @PackageScope class C {}
+
+    @PackageScope
+    class C {}
+
     private class D {}
 }

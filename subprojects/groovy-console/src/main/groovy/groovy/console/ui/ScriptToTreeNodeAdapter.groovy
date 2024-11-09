@@ -124,7 +124,7 @@ class ScriptToTreeNodeAdapter {
 
     static {
         try {
-            URL url =  ClassLoader.getSystemResource('groovy/console/ui/AstBrowserProperties.groovy')
+            URL url = ClassLoader.getSystemResource('groovy/console/ui/AstBrowserProperties.groovy')
             if (!url) {
                 url = ScriptToTreeNodeAdapter.class.classLoader.getResource('groovy/console/ui/AstBrowserProperties.groovy')
             }
@@ -141,7 +141,7 @@ class ScriptToTreeNodeAdapter {
                     classNameToStringForm.putAll(customConfig.toProperties())
                 }
             }
-        } catch(ex) {
+        } catch (ex) {
             // on restricted environments like, such calls may fail, but that should not prevent the class
             // from being loaded. Tree nodes can still get rendered with their simple names.
             classNameToStringForm = new Properties()
@@ -309,7 +309,7 @@ class TreeNodeBuildingNodeOperation implements CompilationUnit.IPrimaryClassNode
             collectModuleNodeMethodData('Methods', ast.getMethods())
         }
 
-        if(classNode.isScript() && !showScriptClass) return
+        if (classNode.isScript() && !showScriptClass) return
 
         def child = adapter.make(classNode)
         root.add(child)
@@ -321,7 +321,7 @@ class TreeNodeBuildingNodeOperation implements CompilationUnit.IPrimaryClassNode
         collectPropertyData(child, 'Properties', classNode)
         collectRecordComponentData(child, 'Record Components', classNode)
 
-        if (showClosureClasses)  {
+        if (showClosureClasses) {
             makeClosureClassTreeNodes(classNode)
         }
     }
@@ -388,7 +388,7 @@ class TreeNodeBuildingNodeOperation implements CompilationUnit.IPrimaryClassNode
     }
 
     private void collectModuleNodeMethodData(String name, List methods) {
-        if(!methods) return
+        if (!methods) return
         def allMethods = nodeMaker.makeNode(name)
         root.add(allMethods)
 
@@ -655,7 +655,7 @@ class TreeNodeBuildingVisitor extends CodeVisitorSupport {
      * Makes walking parameters look like others in the visitor.
      */
     void visitParameter(Parameter node) {
-        addNode(node, Parameter, { })
+        addNode(node, Parameter, {})
     }
 
     @Override
@@ -743,9 +743,9 @@ class TreeNodeBuildingVisitor extends CodeVisitorSupport {
         addNode(node, VariableExpression, { VariableExpression it ->
             if (it.accessedVariable) {
                 if (it.accessedVariable instanceof Parameter) {
-                    visitParameter((Parameter)it.accessedVariable)
+                    visitParameter((Parameter) it.accessedVariable)
                 } else if (it.accessedVariable instanceof DynamicVariable) {
-                    addNode(it.accessedVariable, DynamicVariable,{ it.initialExpression?.visit(this)})
+                    addNode(it.accessedVariable, DynamicVariable, { it.initialExpression?.visit(this) })
                 }
             }
         })
@@ -802,7 +802,7 @@ class TreeNodeBuildingVisitor extends CodeVisitorSupport {
     @Override
     void visitListOfExpressions(List<? extends Expression> list) {
         list.each { Expression node ->
-            if (node instanceof NamedArgumentListExpression ) {
+            if (node instanceof NamedArgumentListExpression) {
                 addNode(node, NamedArgumentListExpression, { it.visit(this) })
             } else {
                 node.visit(this)

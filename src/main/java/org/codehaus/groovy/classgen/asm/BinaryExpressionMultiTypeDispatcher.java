@@ -59,63 +59,18 @@ import static org.codehaus.groovy.syntax.Types.RIGHT_SHIFT_UNSIGNED;
  */
 public class BinaryExpressionMultiTypeDispatcher extends BinaryExpressionHelper {
 
-    private static class BinaryCharExpressionHelper extends BinaryIntExpressionHelper {
-        private BinaryCharExpressionHelper(final WriterController wc) {
-            super(wc, charArraySet, charArrayGet);
-        }
-        private static final MethodCaller
-            charArrayGet = MethodCaller.newStatic(BytecodeInterface8.class, "cArrayGet"),
-            charArraySet = MethodCaller.newStatic(BytecodeInterface8.class, "cArraySet");
-        @Override protected ClassNode getArrayGetResultType() { return char_TYPE; }
-    }
-
-    private static class BinaryByteExpressionHelper extends BinaryIntExpressionHelper {
-        private BinaryByteExpressionHelper(final WriterController wc) {
-            super(wc, byteArraySet, byteArrayGet);
-        }
-        private static final MethodCaller
-            byteArrayGet = MethodCaller.newStatic(BytecodeInterface8.class, "bArrayGet"),
-            byteArraySet = MethodCaller.newStatic(BytecodeInterface8.class, "bArraySet");
-        @Override protected ClassNode getArrayGetResultType() { return byte_TYPE; }
-    }
-
-    private static class BinaryShortExpressionHelper extends BinaryIntExpressionHelper {
-        private BinaryShortExpressionHelper(final WriterController wc) {
-            super(wc, shortArraySet, shortArrayGet);
-        }
-        private static final MethodCaller
-            shortArrayGet = MethodCaller.newStatic(BytecodeInterface8.class, "sArrayGet"),
-            shortArraySet = MethodCaller.newStatic(BytecodeInterface8.class, "sArraySet");
-        @Override protected ClassNode getArrayGetResultType() { return short_TYPE; }
-    }
-
-    protected BinaryExpressionWriter[] binExpWriter = initializeDelegateHelpers();
-
-    protected BinaryExpressionWriter[] initializeDelegateHelpers() {
-        return new BinaryExpressionWriter[]{
-                /* 0: dummy  */ new BinaryObjectExpressionHelper(controller),
-                /* 1: int    */ new BinaryIntExpressionHelper(controller),
-                /* 2: long   */ new BinaryLongExpressionHelper(controller),
-                /* 3: double */ new BinaryDoubleExpressionHelper(controller),
-                /* 4: char   */ new BinaryCharExpressionHelper(controller),
-                /* 5: byte   */ new BinaryByteExpressionHelper(controller),
-                /* 6: short  */ new BinaryShortExpressionHelper(controller),
-                /* 7: float  */ new BinaryFloatExpressionHelper(controller),
-                /* 8: bool   */ new BinaryBooleanExpressionHelper(controller),
-        };
-    }
-
-    public static final Map<ClassNode,Integer> typeMap = Maps.of(
-        int_TYPE,     1,
-        long_TYPE,    2,
-        double_TYPE,  3,
-        char_TYPE,    4,
-        byte_TYPE,    5,
-        short_TYPE,   6,
-        float_TYPE,   7,
+    public static final Map<ClassNode, Integer> typeMap = Maps.of(
+        int_TYPE, 1,
+        long_TYPE, 2,
+        double_TYPE, 3,
+        char_TYPE, 4,
+        byte_TYPE, 5,
+        short_TYPE, 6,
+        float_TYPE, 7,
         boolean_TYPE, 8
     );
     public static final String[] typeMapKeyNames = {"dummy", "int", "long", "double", "char", "byte", "short", "float", "boolean"};
+    protected BinaryExpressionWriter[] binExpWriter = initializeDelegateHelpers();
 
     public BinaryExpressionMultiTypeDispatcher(final WriterController wc) {
         super(wc);
@@ -127,6 +82,31 @@ public class BinaryExpressionMultiTypeDispatcher extends BinaryExpressionHelper 
         if (isBigDecCategory(leftType) && isBigDecCategory(rightType)) return 0;
         if (isDoubleCategory(leftType) && isDoubleCategory(rightType)) return 3;
         return 0;
+    }
+
+    private static boolean isShiftOperation(final int operation) {
+        return operation == LEFT_SHIFT || operation == RIGHT_SHIFT || operation == RIGHT_SHIFT_UNSIGNED;
+    }
+
+    private static boolean isAssignmentToArray(final BinaryExpression binExp) {
+        Expression leftExpression = binExp.getLeftExpression();
+        if (!(leftExpression instanceof BinaryExpression)) return false;
+        BinaryExpression leftBinExpr = (BinaryExpression) leftExpression;
+        return leftBinExpr.getOperation().getType() == LEFT_SQUARE_BRACKET;
+    }
+
+    protected BinaryExpressionWriter[] initializeDelegateHelpers() {
+        return new BinaryExpressionWriter[]{
+            /* 0: dummy  */ new BinaryObjectExpressionHelper(controller),
+            /* 1: int    */ new BinaryIntExpressionHelper(controller),
+            /* 2: long   */ new BinaryLongExpressionHelper(controller),
+            /* 3: double */ new BinaryDoubleExpressionHelper(controller),
+            /* 4: char   */ new BinaryCharExpressionHelper(controller),
+            /* 5: byte   */ new BinaryByteExpressionHelper(controller),
+            /* 6: short  */ new BinaryShortExpressionHelper(controller),
+            /* 7: float  */ new BinaryFloatExpressionHelper(controller),
+            /* 8: bool   */ new BinaryBooleanExpressionHelper(controller),
+        };
     }
 
     protected int getOperandType(final ClassNode type) {
@@ -145,7 +125,7 @@ public class BinaryExpressionMultiTypeDispatcher extends BinaryExpressionHelper 
         Expression rightExp = binExp.getRightExpression();
         int operation = binExp.getOperation().getType();
 
-        int operationType = getOperandConversionType(leftType,rightType);
+        int operationType = getOperandConversionType(leftType, rightType);
         BinaryExpressionWriter bew = binExpWriter[operationType];
 
         if (!bew.write(operation, true)) return false;
@@ -163,7 +143,7 @@ public class BinaryExpressionMultiTypeDispatcher extends BinaryExpressionHelper 
 
     @Override
     protected void evaluateCompareExpression(final MethodCaller compareMethod, final BinaryExpression binExp) {
-        ClassNode current =  controller.getClassNode();
+        ClassNode current = controller.getClassNode();
         TypeChooser typeChooser = controller.getTypeChooser();
 
         Expression leftExp = binExp.getLeftExpression();
@@ -233,24 +213,13 @@ public class BinaryExpressionMultiTypeDispatcher extends BinaryExpressionHelper 
         }
     }
 
-    private static boolean isShiftOperation(final int operation) {
-        return operation == LEFT_SHIFT || operation == RIGHT_SHIFT || operation == RIGHT_SHIFT_UNSIGNED;
-    }
-
-    private static boolean isAssignmentToArray(final BinaryExpression binExp) {
-        Expression leftExpression = binExp.getLeftExpression();
-        if (!(leftExpression instanceof BinaryExpression)) return false;
-        BinaryExpression leftBinExpr = (BinaryExpression) leftExpression;
-        return leftBinExpr.getOperation().getType() == LEFT_SQUARE_BRACKET;
-    }
-
     private boolean doAssignmentToArray(final BinaryExpression binExp) {
         if (!isAssignmentToArray(binExp)) return false;
         // we need to handle only assignment to arrays combined with an operation
         // special here. e.g x[a] += b
 
         int operation = removeAssignment(binExp.getOperation().getType());
-        ClassNode current =  controller.getClassNode();
+        ClassNode current = controller.getClassNode();
 
         Expression leftExp = binExp.getLeftExpression();
         ClassNode leftType = controller.getTypeChooser().resolveType(leftExp, current);
@@ -301,7 +270,7 @@ public class BinaryExpressionMultiTypeDispatcher extends BinaryExpressionHelper 
 
         // complete rhs: load b, call operation [load sub, call arraySet]
         binExp.getRightExpression().visit(acg);
-        if (! (bew instanceof BinaryObjectExpressionHelper)) {
+        if (!(bew instanceof BinaryObjectExpressionHelper)) {
             // in primopts we convert to the left type for supported binary operations
             operandStack.doGroovyCast(leftType);
         }
@@ -400,6 +369,51 @@ public class BinaryExpressionMultiTypeDispatcher extends BinaryExpressionHelper 
             operandStack.replace(bew.getNormalOpResultType());
         } else {
             super.writePostOrPrefixMethod(op, method, expression, orig);
+        }
+    }
+
+    private static class BinaryCharExpressionHelper extends BinaryIntExpressionHelper {
+        private static final MethodCaller
+            charArrayGet = MethodCaller.newStatic(BytecodeInterface8.class, "cArrayGet"),
+            charArraySet = MethodCaller.newStatic(BytecodeInterface8.class, "cArraySet");
+
+        private BinaryCharExpressionHelper(final WriterController wc) {
+            super(wc, charArraySet, charArrayGet);
+        }
+
+        @Override
+        protected ClassNode getArrayGetResultType() {
+            return char_TYPE;
+        }
+    }
+
+    private static class BinaryByteExpressionHelper extends BinaryIntExpressionHelper {
+        private static final MethodCaller
+            byteArrayGet = MethodCaller.newStatic(BytecodeInterface8.class, "bArrayGet"),
+            byteArraySet = MethodCaller.newStatic(BytecodeInterface8.class, "bArraySet");
+
+        private BinaryByteExpressionHelper(final WriterController wc) {
+            super(wc, byteArraySet, byteArrayGet);
+        }
+
+        @Override
+        protected ClassNode getArrayGetResultType() {
+            return byte_TYPE;
+        }
+    }
+
+    private static class BinaryShortExpressionHelper extends BinaryIntExpressionHelper {
+        private static final MethodCaller
+            shortArrayGet = MethodCaller.newStatic(BytecodeInterface8.class, "sArrayGet"),
+            shortArraySet = MethodCaller.newStatic(BytecodeInterface8.class, "sArraySet");
+
+        private BinaryShortExpressionHelper(final WriterController wc) {
+            super(wc, shortArraySet, shortArrayGet);
+        }
+
+        @Override
+        protected ClassNode getArrayGetResultType() {
+            return short_TYPE;
         }
     }
 }

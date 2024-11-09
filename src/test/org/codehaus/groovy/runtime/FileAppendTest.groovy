@@ -255,7 +255,9 @@ class FileAppendTest extends GroovyTestCase {
             fileReader.read(cbuf)
             return expected == String.valueOf(cbuf)
         }
-        finally { fileReader?.close() }
+        finally {
+            fileReader?.close()
+        }
     }
 
     boolean hasContents(File f, List expected) {
@@ -266,7 +268,9 @@ class FileAppendTest extends GroovyTestCase {
             fis.read(buf)
             return (expected as byte[]) == buf
         }
-        finally { fis?.close() }
+        finally {
+            fis?.close()
+        }
     }
 }
 

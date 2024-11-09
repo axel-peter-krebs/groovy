@@ -25,8 +25,7 @@ import jline.console.completer.Completer
  * Provides the interface required for command extensions.
  */
 @CompileStatic
-interface Command
-{
+interface Command {
     String getName()
 
     String getShortcut()

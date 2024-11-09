@@ -98,7 +98,8 @@ final class ExtensionModuleTest {
         '''
     }
 
-    @Test // GROOVY-7225
+    @Test
+    // GROOVY-7225
     void testExtensionModuleUsingGrabAndClosure() {
         doInFork '''
             ExtensionModuleRegistry registry = GroovySystem.metaClassRegistry.moduleRegistry

@@ -57,10 +57,11 @@ public abstract class Traits {
     public static final ClassNode TRAITBRIDGE_CLASSNODE = ClassHelper.make(TraitBridge.class);
     public static final Class<Trait> TRAIT_CLASS = Trait.class;
     public static final ClassNode TRAIT_CLASSNODE = ClassHelper.make(TRAIT_CLASS);
+    static final String TRAIT_TYPE_NAME = "@" + TRAIT_CLASSNODE.getNameWithoutPackage();
     public static final ClassNode GENERATED_PROXY_CLASSNODE = ClassHelper.make(GeneratedGroovyProxy.class);
     public static final ClassNode SELFTYPE_CLASSNODE = ClassHelper.make(SelfType.class);
-
-    static final String TRAIT_TYPE_NAME = "@" + TRAIT_CLASSNODE.getNameWithoutPackage();
+    public static final String THIS_OBJECT = "$self";
+    public static final String STATIC_THIS_OBJECT = "$static$self";
     static final String TRAIT_HELPER = "$Trait$Helper";
     static final String FIELD_HELPER = "$Trait$FieldHelper";
     static final String STATIC_FIELD_HELPER = "$Trait$StaticFieldHelper";
@@ -68,8 +69,6 @@ public abstract class Traits {
     static final String DIRECT_GETTER_SUFFIX = "$get";
     static final String INIT_METHOD = "$init$";
     static final String STATIC_INIT_METHOD = "$static$init$";
-    public static final String THIS_OBJECT = "$self";
-    public static final String STATIC_THIS_OBJECT = "$static$self";
     static final String STATIC_FIELD_PREFIX = "$static";
     static final String FIELD_PREFIX = "$ins";
     static final String PUBLIC_FIELD_PREFIX = "$0";
@@ -104,7 +103,7 @@ public abstract class Traits {
     }
 
     static String remappedFieldName(final ClassNode traitNode, final String name) {
-        return traitNode.getName().replace('.','_')+"__"+name;
+        return traitNode.getName().replace('.', '_') + "__" + name;
     }
 
     private static ClassNode unwrapOwner(ClassNode owner) {
@@ -164,6 +163,7 @@ public abstract class Traits {
 
     /**
      * Returns true if the specified class node is a trait.
+     *
      * @param cNode a class node to test
      * @return true if the classnode represents a trait
      */
@@ -173,6 +173,7 @@ public abstract class Traits {
 
     /**
      * Returns true if the specified class is a trait.
+     *
      * @param clazz a class to test
      * @return true if the classnode represents a trait
      */
@@ -182,6 +183,7 @@ public abstract class Traits {
 
     /**
      * Returns true if the specified class node is annotated with the {@link Trait} interface.
+     *
      * @param cNode a class node
      * @return true if the specified class node is annotated with the {@link Trait} interface.
      */
@@ -192,6 +194,7 @@ public abstract class Traits {
 
     /**
      * Indicates whether a method in a trait interface has a default implementation.
+     *
      * @param method a method node
      * @return true if the method has a default implementation in the trait
      */
@@ -201,32 +204,35 @@ public abstract class Traits {
 
     /**
      * Indicates whether a method in a trait interface has a default implementation.
+     *
      * @param method a method node
      * @return true if the method has a default implementation in the trait
      */
     public static boolean hasDefaultImplementation(final Method method) {
-        return method.getAnnotation(Implemented.class)!=null;
+        return method.getAnnotation(Implemented.class) != null;
     }
 
     /**
      * Reflection API to indicate whether some method is a bridge method to the default implementation
      * of a trait.
+     *
      * @param someMethod a method node
      * @return null if it is not a method implemented in a trait. If it is, returns the method from the trait class.
      */
     public static boolean isBridgeMethod(Method someMethod) {
         TraitBridge annotation = someMethod.getAnnotation(TraitBridge.class);
-        return annotation!=null;
+        return annotation != null;
     }
 
     /**
      * Reflection API to find the method corresponding to the default implementation of a trait, given a bridge method.
+     *
      * @param someMethod a method node
      * @return null if it is not a method implemented in a trait. If it is, returns the method from the trait class.
      */
     public static Method getBridgeMethodTarget(Method someMethod) {
         TraitBridge annotation = someMethod.getAnnotation(TraitBridge.class);
-        if (annotation==null) {
+        if (annotation == null) {
             return null;
         }
         Class<?> aClass = annotation.traitClass();
@@ -245,14 +251,15 @@ public abstract class Traits {
      * Converts a class implementing some trait into a target class. If the trait is a dynamic proxy and
      * that the target class is assignable to the target object of the proxy, then the target object is
      * returned. Otherwise, falls back to {@link org.codehaus.groovy.runtime.DefaultGroovyMethods#asType(java.lang.Object, Class)}
-     * @param self an object to be coerced to some class
+     *
+     * @param self  an object to be coerced to some class
      * @param clazz the class to be coerced to
      * @return the object coerced to the target class, or the proxy instance if it is compatible with the target class.
      */
     @SuppressWarnings("unchecked")
     public static <T> T getAsType(Object self, Class<T> clazz) {
         if (self instanceof GeneratedGroovyProxy) {
-            Object proxyTarget = ((GeneratedGroovyProxy)self).getProxyTarget();
+            Object proxyTarget = ((GeneratedGroovyProxy) self).getProxyTarget();
             if (clazz.isAssignableFrom(proxyTarget.getClass())) {
                 return (T) proxyTarget;
             }
@@ -280,7 +287,8 @@ public abstract class Traits {
      * Collects all interfaces of a class node, but reverses the order of the declaration of direct interfaces
      * of this class node. This is used to make sure a trait implementing A,B where both A and B have the same
      * method will take the method from B (latest), aligning the behavior with categories.
-     * @param cNode a class node
+     *
+     * @param cNode      a class node
      * @param interfaces ordered set of interfaces
      */
     public static LinkedHashSet<ClassNode> collectAllInterfacesReverseOrder(final ClassNode cNode, final LinkedHashSet<ClassNode> interfaces) {
@@ -298,10 +306,10 @@ public abstract class Traits {
     /**
      * Collects all the self types that a type should extend or implement, given
      * the traits is implements. Collects from interfaces and superclasses too.
-     * @param receiver a class node that may implement a trait
+     *
+     * @param receiver  a class node that may implement a trait
      * @param selfTypes a set where the self types will be put
      * @return the {@code selfTypes} collection
-     *
      * @since 2.4.0
      */
     public static LinkedHashSet<ClassNode> collectSelfTypes(final ClassNode receiver, final LinkedHashSet<ClassNode> selfTypes) {
@@ -311,12 +319,12 @@ public abstract class Traits {
     /**
      * Collects all the self types that a type should extend or implement, given
      * the traits is implements.
-     * @param receiver a class node that may implement a trait
-     * @param selfTypes a set where the self types will be put
+     *
+     * @param receiver        a class node that may implement a trait
+     * @param selfTypes       a set where the self types will be put
      * @param checkInterfaces should the interfaces that the node implements be collected too
      * @param checkSuperClass should we collect from the superclass too
      * @return the {@code selfTypes} collection
-     *
      * @since 2.4.0
      */
     public static LinkedHashSet<ClassNode> collectSelfTypes(final ClassNode receiver, final LinkedHashSet<ClassNode> selfTypes, final boolean checkInterfaces, final boolean checkSuperClass) {
@@ -359,7 +367,7 @@ public abstract class Traits {
     }
 
     static String getSuperTraitMethodName(ClassNode trait, String method) {
-        return trait.getName().replace("_","__").replace('.','_')+SUPER_TRAIT_METHOD_PREFIX+method;
+        return trait.getName().replace("_", "__").replace('.', '_') + SUPER_TRAIT_METHOD_PREFIX + method;
     }
 
     /**
@@ -386,7 +394,8 @@ public abstract class Traits {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface Implemented {}
+    public @interface Implemented {
+    }
 
     /**
      * Internal annotation used to indicate that a method is a bridge method to a trait
@@ -394,7 +403,7 @@ public abstract class Traits {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-     public @interface TraitBridge {
+    public @interface TraitBridge {
         /**
          * @return the trait class
          */

@@ -23,10 +23,10 @@ class AuthorTestHelper {
     static void testAuthorDataSet(Sql sql) {
         // tag::with_dataset[]
         def authorDS = sql.dataSet('Author')
-        def result = authorDS.findAll{ it.firstname > 'Dierk' }
-                .findAll{ it.lastname < 'Pragt' }
-                .sort{ it.lastname }
-                .reverse()
+        def result = authorDS.findAll { it.firstname > 'Dierk' }
+            .findAll { it.lastname < 'Pragt' }
+            .sort { it.lastname }
+            .reverse()
         assert result.rows()*.firstname == ['Eric', 'Guillaume', 'Paul']
         // end::with_dataset[]
     }

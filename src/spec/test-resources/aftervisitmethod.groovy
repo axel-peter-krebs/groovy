@@ -31,7 +31,7 @@ onMethodSelection { expr, node ->
 // tag::event[]
 afterVisitMethod { methodNode ->
     scopeExit {
-        if (methods>2) {
+        if (methods > 2) {
             addStaticTypeError("Method ${methodNode.name} contains more than 2 method calls", methodNode)
         }
     }

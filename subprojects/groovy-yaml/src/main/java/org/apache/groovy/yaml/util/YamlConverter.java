@@ -29,21 +29,26 @@ import java.io.Reader;
 import java.util.List;
 
 /**
- *  A converter for converting YAML to JSON, vice versa
- *  @since 3.0.0
+ * A converter for converting YAML to JSON, vice versa
+ *
+ * @since 3.0.0
  */
 public final class YamlConverter {
+    private YamlConverter() {
+    }
+
     /**
      * Convert yaml to json
+     *
      * @param yamlReader the reader of yaml
      * @return the text of json
      */
     public static String convertYamlToJson(Reader yamlReader) {
         try (Reader reader = yamlReader) {
             List<Object> resultList =
-                    new ObjectMapper()
-                            .readValues(new YAMLFactory().createParser(reader), Object.class)
-                            .readAll();
+                new ObjectMapper()
+                    .readValues(new YAMLFactory().createParser(reader), Object.class)
+                    .readAll();
             Object yaml = 1 == resultList.size() ? resultList.get(0) : resultList;
             return new ObjectMapper().writeValueAsString(yaml);
         } catch (IOException e) {
@@ -53,6 +58,7 @@ public final class YamlConverter {
 
     /**
      * Convert json to yaml
+     *
      * @param jsonReader the reader of json
      * @return the text of yaml
      */
@@ -65,6 +71,4 @@ public final class YamlConverter {
             throw new YamlRuntimeException(e);
         }
     }
-
-    private YamlConverter() {}
 }

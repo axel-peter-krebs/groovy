@@ -23,7 +23,7 @@ final class Groovy8343 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'groovy/Groovy8343.java': '''
+            'groovy/Groovy8343.java'      : '''
                 package groovy;
                 /**
                  * Precompiled Java class in same package as Groovy8343Test

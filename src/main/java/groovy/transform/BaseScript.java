@@ -81,7 +81,7 @@ import java.lang.annotation.Target;
  * Script body run
  * postRunning
  * </pre>
- *
+ * <p>
  * Note that while you can declare arguments for the script body's method, as
  * the AST is currently implemented they are not accessible in the script body code.
  * </p>
@@ -140,6 +140,7 @@ import java.lang.annotation.Target;
  * assert car.distance == 20
  * assert car.state == 'stopped'
  * </pre>
+ *
  * @since 2.2.0
  */
 @Documented

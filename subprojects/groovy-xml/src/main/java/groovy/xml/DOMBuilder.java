@@ -43,6 +43,14 @@ public class DOMBuilder extends BuilderSupport {
     Document document;
     DocumentBuilder documentBuilder;
 
+    public DOMBuilder(Document document) {
+        this.document = document;
+    }
+
+    public DOMBuilder(DocumentBuilder documentBuilder) {
+        this.documentBuilder = documentBuilder;
+    }
+
     public static DOMBuilder newInstance() throws ParserConfigurationException {
         return newInstance(false, true);
     }
@@ -73,7 +81,7 @@ public class DOMBuilder extends BuilderSupport {
 
     /**
      * Creates a DocumentBuilder and uses it to parse the XML text read from the given reader, allowing
-     * parser validation and namespace awareness to be controlled. Documents are not allowed to contain 
+     * parser validation and namespace awareness to be controlled. Documents are not allowed to contain
      * DOCYTYPE declarations.
      *
      * @param reader         the reader to read the XML text from
@@ -87,7 +95,7 @@ public class DOMBuilder extends BuilderSupport {
      *                                      the configuration requested.
      */
     public static Document parse(Reader reader, boolean validating, boolean namespaceAware)
-            throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException, ParserConfigurationException {
         return parse(reader, validating, namespaceAware, false);
     }
 
@@ -107,7 +115,7 @@ public class DOMBuilder extends BuilderSupport {
      *                                      the configuration requested.
      */
     public static Document parse(Reader reader, boolean validating, boolean namespaceAware, boolean allowDocTypeDeclaration)
-            throws SAXException, IOException, ParserConfigurationException {
+        throws SAXException, IOException, ParserConfigurationException {
         DocumentBuilderFactory factory = FactorySupport.createDocumentBuilderFactory();
         factory.setNamespaceAware(namespaceAware);
         factory.setValidating(validating);
@@ -115,6 +123,11 @@ public class DOMBuilder extends BuilderSupport {
         XmlUtil.setFeatureQuietly(factory, "http://apache.org/xml/features/disallow-doctype-decl", !allowDocTypeDeclaration);
         DocumentBuilder documentBuilder = factory.newDocumentBuilder();
         return documentBuilder.parse(new InputSource(reader));
+    }
+
+    private static void setStringNS(Element element, Object key, Object value) {
+        String prefix = (String) key;
+        element.setAttributeNS("http://www.w3.org/2000/xmlns/", "".equals(prefix) ? "xmlns" : "xmlns:" + prefix, value.toString());
     }
 
     /**
@@ -131,14 +144,6 @@ public class DOMBuilder extends BuilderSupport {
      */
     public Document parseText(String text) throws SAXException, IOException, ParserConfigurationException {
         return parse(new StringReader(text));
-    }
-
-    public DOMBuilder(Document document) {
-        this.document = document;
-    }
-
-    public DOMBuilder(DocumentBuilder documentBuilder) {
-        this.documentBuilder = documentBuilder;
     }
 
     @Override
@@ -225,10 +230,5 @@ public class DOMBuilder extends BuilderSupport {
                 throw new IllegalArgumentException("The key: " + key + " should be an instance of " + QName.class);
             }
         }
-    }
-
-    private static void setStringNS(Element element, Object key, Object value) {
-        String prefix = (String) key;
-        element.setAttributeNS("http://www.w3.org/2000/xmlns/", "".equals(prefix) ? "xmlns" : "xmlns:" + prefix, value.toString());
     }
 }

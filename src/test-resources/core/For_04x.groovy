@@ -34,6 +34,7 @@ def testCS() {
     }
     assert 9 == result
 }
+
 testCS()
 
 def test() {
@@ -51,4 +52,5 @@ def test() {
     }
     assert 9 == result
 }
+
 test()

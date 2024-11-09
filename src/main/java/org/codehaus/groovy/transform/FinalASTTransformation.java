@@ -41,6 +41,13 @@ public class FinalASTTransformation extends AbstractASTTransformation {
 
     private static final ClassNode MY_TYPE = make(Final.class);
 
+    static void checkModifiers(final AbstractASTTransformation xform, final int modifiers, final AnnotatedNode node, final String place) {
+        if ((modifiers & ACC_FINAL) == 0 && (modifiers & (ACC_ABSTRACT | ACC_SYNTHETIC)) == (ACC_ABSTRACT | ACC_SYNTHETIC)) {
+            xform.addError("Error during " + MY_TYPE.getNameWithoutPackage() +
+                " processing: annotation found on " + place + " with innapropriate modifiers", node);
+        }
+    }
+
     @Override
     public void visit(ASTNode[] nodes, SourceUnit source) {
         init(nodes, source);
@@ -62,13 +69,6 @@ public class FinalASTTransformation extends AbstractASTTransformation {
             FieldNode fNode = (FieldNode) candidate;
             checkModifiers(this, fNode.getModifiers(), fNode, "field " + fNode.getName());
             fNode.setModifiers(fNode.getModifiers() | ACC_FINAL);
-        }
-    }
-
-    static void checkModifiers(final AbstractASTTransformation xform, final int modifiers, final AnnotatedNode node, final String place) {
-        if ((modifiers & ACC_FINAL) == 0 && (modifiers & (ACC_ABSTRACT | ACC_SYNTHETIC)) == (ACC_ABSTRACT | ACC_SYNTHETIC)) {
-            xform.addError("Error during " + MY_TYPE.getNameWithoutPackage() +
-                    " processing: annotation found on " + place + " with innapropriate modifiers", node);
         }
     }
 

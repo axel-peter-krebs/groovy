@@ -22,119 +22,95 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 @Deprecated
-public class ComplexKeyHashMap
-{
-  public static class Entry {
-    public int hash;
-    public Entry next;
-    public Object value;
-
-    public Object getValue() {
-      return value;
+public class ComplexKeyHashMap {
+    protected static final int DEFAULT_CAPACITY = 32;
+    protected static final int MINIMUM_CAPACITY = 4;
+    protected static final int MAXIMUM_CAPACITY = 1 << 28;
+    protected Entry[] table;
+    protected int size;
+    protected transient int threshold;
+    public ComplexKeyHashMap() {
+        init(DEFAULT_CAPACITY);
     }
-
-    public void setValue(Object value) {
-      this.value = value;
-    }
-  }
-
-  protected Entry[] table;
-
-  protected static final int DEFAULT_CAPACITY = 32;
-  protected static final int MINIMUM_CAPACITY = 4;
-  protected static final int MAXIMUM_CAPACITY = 1 << 28;
-
-  protected int size;
-  protected transient int threshold;
-
-  public ComplexKeyHashMap() {
-      init(DEFAULT_CAPACITY);
-  }
 
     public ComplexKeyHashMap(boolean b) {
     }
 
-  public ComplexKeyHashMap(int expectedMaxSize) {
-    init (capacity(expectedMaxSize));
-  }
+    public ComplexKeyHashMap(int expectedMaxSize) {
+        init(capacity(expectedMaxSize));
+    }
 
-  public static int hash(int h) {
-    h += ~(h << 9);
-    h ^=  (h >>> 14);
-    h +=  (h << 4);
-    h ^=  (h >>> 10);
-    return h;
-  }
+    public static int hash(int h) {
+        h += ~(h << 9);
+        h ^= (h >>> 14);
+        h += (h << 4);
+        h ^= (h >>> 10);
+        return h;
+    }
 
-  public int size() {
-      return size;
-  }
+    private static int capacity(int expectedMaxSize) {
+        // Compute min capacity for expectedMaxSize given a load factor of 3/4
+        int minCapacity = (8 * expectedMaxSize) / 6;
 
-  public boolean isEmpty() {
-      return size == 0;
-  }
-
-  public void clear() {
-      Object[] tab = table;
-      Arrays.fill(tab, null);
-      size = 0;
-  }
-
-  public void init(int initCapacity) {
-      threshold = (initCapacity * 6)/8;
-      table = new Entry[initCapacity];
-  }
-
-  public void resize(int newLength) {
-      Entry[] oldTable = table;
-      int oldLength = table.length;
-
-      Entry[] newTable = new Entry[newLength];
-
-      for (int j = 0; j < oldLength; j++) {
-
-        for (Entry e = oldTable [j]; e != null;) {
-          Entry next = e.next;
-          int index = e.hash & (newLength-1);
-
-          e.next = newTable[index];
-          newTable [index] = e;
-
-          e = next;
+        // Compute the appropriate capacity
+        int result;
+        if (minCapacity > MAXIMUM_CAPACITY || minCapacity < 0) {
+            result = MAXIMUM_CAPACITY;
+        } else {
+            result = MINIMUM_CAPACITY;
+            while (result < minCapacity)
+                result <<= 1;
         }
-      }
+        return result;
+    }
 
-      table = newTable;
-      threshold = (6 * newLength) / 8;
-  }
+    public int size() {
+        return size;
+    }
 
-  private static int capacity(int expectedMaxSize) {
-      // Compute min capacity for expectedMaxSize given a load factor of 3/4
-      int minCapacity = (8 * expectedMaxSize)/6;
+    public boolean isEmpty() {
+        return size == 0;
+    }
 
-      // Compute the appropriate capacity
-      int result;
-      if (minCapacity > MAXIMUM_CAPACITY || minCapacity < 0) {
-          result = MAXIMUM_CAPACITY;
-      } else {
-          result = MINIMUM_CAPACITY;
-          while (result < minCapacity)
-              result <<= 1;
-      }
-      return result;
-  }
+    public void clear() {
+        Object[] tab = table;
+        Arrays.fill(tab, null);
+        size = 0;
+    }
 
-  public interface EntryIterator {
-      boolean hasNext ();
-      Entry   next ();
-  }
+    public void init(int initCapacity) {
+        threshold = (initCapacity * 6) / 8;
+        table = new Entry[initCapacity];
+    }
 
+    public void resize(int newLength) {
+        Entry[] oldTable = table;
+        int oldLength = table.length;
+
+        Entry[] newTable = new Entry[newLength];
+
+        for (int j = 0; j < oldLength; j++) {
+
+            for (Entry e = oldTable[j]; e != null; ) {
+                Entry next = e.next;
+                int index = e.hash & (newLength - 1);
+
+                e.next = newTable[index];
+                newTable[index] = e;
+
+                e = next;
+            }
+        }
+
+        table = newTable;
+        threshold = (6 * newLength) / 8;
+    }
 
     public ComplexKeyHashMap.Entry[] getTable() {
         return table;
     }
 
-  public EntryIterator  getEntrySetIterator() {
+    public EntryIterator getEntrySetIterator() {
         return new EntryIterator() {
             Entry next;       // next entry to return
             int index;        // current slot
@@ -144,7 +120,8 @@ public class ComplexKeyHashMap
                 int i = t.length;
                 Entry n = null;
                 if (size != 0) { // advance to first entry
-                    while (i > 0 && (n = t[--i]) == null) {}
+                    while (i > 0 && (n = t[--i]) == null) {
+                    }
                 }
                 next = n;
                 index = i;
@@ -175,5 +152,26 @@ public class ComplexKeyHashMap
                 return e;
             }
         };
-  }
+    }
+
+
+    public interface EntryIterator {
+        boolean hasNext();
+
+        Entry next();
+    }
+
+    public static class Entry {
+        public int hash;
+        public Entry next;
+        public Object value;
+
+        public Object getValue() {
+            return value;
+        }
+
+        public void setValue(Object value) {
+            this.value = value;
+        }
+    }
 }

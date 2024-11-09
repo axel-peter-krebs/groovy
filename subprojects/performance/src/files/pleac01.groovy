@@ -59,7 +59,7 @@ assert string[start..-1] == 'potamus'
 
 // String is immutable but new strings can be created in various ways
 assert string - 'hippo' - 'mus' + 'to' == 'potato'
-assert string.replace('ppopotam','bisc') == 'hibiscus'
+assert string.replace('ppopotam', 'bisc') == 'hibiscus'
 assert string.substring(0, 2) + 'bisc' + string[-2..-1] == 'hibiscus'
 // StringBuffer is mutable
 sb = new StringBuffer(string)
@@ -81,15 +81,15 @@ s = new Scanner(data)
 s.findInLine(/(.{5}).{8}(.{5}) (.{5}) (.*)/)
 m = s.match()
 fields = []
-(1..m.groupCount()).each{ fields << m.group(it) }
+(1..m.groupCount()).each { fields << m.group(it) }
 assert fields == ['hippo', 'means', 'river', 'horse']
 
 // another scanner example similar to the javadoc example
 input = '1 fish 2 fish red fish blue fish'
 s = new Scanner(input).useDelimiter(/\s*fish\s*/)
 fields = []
-2.times{ fields << s.nextInt() }
-2.times{ fields << s.next() }
+2.times { fields << s.nextInt() }
+2.times { fields << s.next() }
 assert fields == [1, 2, 'red', 'blue']
 
 // split at five characters boundaries
@@ -107,18 +107,18 @@ string = "This is what you have"
 // tens   221111111111000000000
 // units  109876543210987654321-
 
-assert string[0]          == 'T'
-assert string[5..6]       == 'is'
-assert string[13..-1]     == 'you have'
-assert string[-1]         == 'e'
-assert string[-4..-1]     == 'have'
+assert string[0] == 'T'
+assert string[5..6] == 'is'
+assert string[13..-1] == 'you have'
+assert string[-1] == 'e'
+assert string[-4..-1] == 'have'
 assert string[-8, -7, -6] == 'you'
 
 data = new StringBuffer(string)
-data[5..6] = "wasn't"       ; assert data.toString() == "This wasn't what you have"
-data[-12..-1] = "ondrous"   ; assert data.toString() == "This wasn't wondrous"
-data[0..0] = ""             ; assert data.toString() == "his wasn't wondrous"
-data[-10..-1]  = ""         ; assert data.toString() == "his wasn'"
+data[5..6] = "wasn't"; assert data.toString() == "This wasn't what you have"
+data[-12..-1] = "ondrous"; assert data.toString() == "This wasn't wondrous"
+data[0..0] = ""; assert data.toString() == "his wasn't wondrous"
+data[-10..-1] = ""; assert data.toString() == "his wasn'"
 
 string = "This wasn't wondrous"
 // check last ten characters match some pattern
@@ -149,7 +149,7 @@ def unpack(String format, String data) {
     int formatOffset = 0, dataOffset = 0
     int minDataOffset = 0, maxDataOffset = data.size()
 
-    new StringTokenizer(format).each{ token ->
+    new StringTokenizer(format).each { token ->
         int tokenLen = token.length()
 
         // count determination
@@ -233,6 +233,7 @@ assert System.getProperty('user.name')
 def setDefaultIfNullOrEmpty(startingPoint) {
     (!startingPoint || startingPoint.length() == 0) ? 'Greenwich' : startingPoint
 }
+
 assert setDefaultIfNullOrEmpty(null) == 'Greenwich'
 assert setDefaultIfNullOrEmpty('') == 'Greenwich'
 assert setDefaultIfNullOrEmpty('Something else') == 'Something else'
@@ -269,9 +270,9 @@ assert new String(ascii) == "sample"
 assert new String([115, 97, 109, 112, 108, 101] as char[]) == "sample"
 
 // convert 'HAL' to 'IBM' (in increasing order of Grooviness)
-assert "HAL".toCharArray().collect{new String(it+1 as char[])}.join() == 'IBM'
-assert ("HAL" as String[]).collect{it.next()}.join() == 'IBM'
-assert "HAL".replaceAll('.', {it.next()}) == 'IBM'
+assert "HAL".toCharArray().collect { new String(it + 1 as char[]) }.join() == 'IBM'
+assert ("HAL" as String[]).collect { it.next() }.join() == 'IBM'
+assert "HAL".replaceAll('.', { it.next() }) == 'IBM'
 //----------------------------------------------------------------------------------
 
 // @@PLEAC@@_1.5
@@ -285,7 +286,7 @@ assert string.split('').toList().unique().sort().join() == ' adelnpy'
 // Usage: groovy CheckSum <file>
 // script:
 checksum = 0
-new File(args[0]).eachByte{ checksum += it }
+new File(args[0]).eachByte { checksum += it }
 checksum %= (int) Math.pow(2, 16) - 1
 println checksum
 //----------------------------------------------------------------------------------
@@ -297,7 +298,7 @@ println checksum
 // Usage: groovy Slowcat <file> <delay_millis_between_each_char>
 // script:
 delay = args[1].toInteger()
-new File(args[0]).eachByte{ print ((char) it); Thread.sleep(delay) }
+new File(args[0]).eachByte { print((char) it); Thread.sleep(delay) }
 //----------------------------------------------------------------------------------
 
 // @@PLEAC@@_1.6
@@ -309,7 +310,7 @@ revwords = string.split(' ').toList().reverse().join(' ')
 assert revwords == 'this?" see you "can said, Yoda'
 
 words = ['bob', 'alpha', 'rotator', 'omega', 'reviver']
-long_palindromes = words.findAll{ w -> w == w.reverse() && w.size() > 5 }
+long_palindromes = words.findAll { w -> w == w.reverse() && w.size() > 5 }
 assert long_palindromes == ['rotator', 'reviver']
 //----------------------------------------------------------------------------------
 
@@ -317,21 +318,23 @@ assert long_palindromes == ['rotator', 'reviver']
 //----------------------------------------------------------------------------------
 s1 = 'abc\t def\tghi \n\tx'
 s2 = 'abc      def    ghi \n        x'
+
 def expand(s) {
-    s.split('\n').toList().collect{
+    s.split('\n').toList().collect {
         line = it
         while (line.contains('\t')) {
-            line = line.replaceAll(/([^\t]*)(\t)(.*)/){
-                all,pre,tab,suf -> pre + ' ' * (8 - pre.size() % 8) + suf
+            line = line.replaceAll(/([^\t]*)(\t)(.*)/) {
+                all, pre, tab, suf -> pre + ' ' * (8 - pre.size() % 8) + suf
             }
         }
         return line
     }.join('\n')
 }
+
 def unexpand(s) {
-    s.split('\n').toList().collect{
+    s.split('\n').toList().collect {
         line = it
-        for (i in line.size()-1..1) {
+        for (i in line.size() - 1..1) {
             if (i % 8 == 0) {
                 prefix = line[0..<i]
                 if (prefix.trim().size() != prefix.size()) {
@@ -342,6 +345,7 @@ def unexpand(s) {
         return line
     }.join('\n')
 }
+
 assert expand(s1) == s2
 assert unexpand(s2) == s1
 //----------------------------------------------------------------------------------
@@ -354,23 +358,26 @@ assert "You owe $debt to me" == 'You owe 150 to me'
 rows = 24; cols = 80
 assert "I am $rows high and $cols wide" == 'I am 24 high and 80 wide'
 
-assert 'I am 17 years old'.replaceAll(/\d+/, {2*it.toInteger()}) == 'I am 34 years old'
+assert 'I am 17 years old'.replaceAll(/\d+/, { 2 * it.toInteger() }) == 'I am 34 years old'
 //----------------------------------------------------------------------------------
 
 // @@PLEAC@@_1.9
 //----------------------------------------------------------------------------------
 assert "bo peep".toUpperCase() == 'BO PEEP'
 assert 'JOHN'.toLowerCase() == 'john'
-def capitalize(s) {s[0].toUpperCase() + (s.size()<2 ? '' : s[1..-1]?.toLowerCase())}
+
+def capitalize(s) { s[0].toUpperCase() + (s.size() < 2 ? '' : s[1..-1]?.toLowerCase()) }
+
 assert capitalize('joHn') == 'John'
 
-s = "thIS is a loNG liNE".replaceAll(/\w+/){capitalize(it)}
+s = "thIS is a loNG liNE".replaceAll(/\w+/) { capitalize(it) }
 assert s == 'This Is A Long Line'
 
 s1 = 'JOhn'; s2 = 'joHN'
 assert s1.equalsIgnoreCase(s2)
 
 Random rand
+
 def randomCase(char ch) {
     (rand.nextInt(100) < 20) ? Character.toLowerCase(ch) : ch
 }
@@ -379,22 +386,24 @@ def randomCase(char ch) {
 // @@PLEAC@@_1.10
 //----------------------------------------------------------------------------------
 n = 10
-assert "I have ${n+1} guanacos." == 'I have 11 guanacos.'
-assert "I have " + (n+1) + " guanacos." == 'I have 11 guanacos.'
+assert "I have ${n + 1} guanacos." == 'I have 11 guanacos.'
+assert "I have " + (n + 1) + " guanacos." == 'I have 11 guanacos.'
 
 // sending templated email is solved in two parts: templating and sending
 // Part 1: creating an email template
 naughty = 'Mr Bad Credit'
+
 def get_manager_list(s) { 'The Big Boss' }
+
 msg = """
 To: $naughty
 From: Your Bank
-Cc: ${ get_manager_list(naughty) }
-Date: ${ new Date() }
+Cc: ${get_manager_list(naughty)}
+Date: ${new Date()}
 
 Dear $naughty,
 
-Today, you bounced check number ${ 500 + new Random().nextInt(100) } to us.
+Today, you bounced check number ${500 + new Random().nextInt(100)} to us.
 Your account is now closed.
 
 Sincerely,
@@ -414,8 +423,8 @@ Your account is now closed.
 Sincerely,
 the management
 '''
-sanitized = msg.replaceAll('(?m)^Date: (.*)$','Date: XXX')
-sanitized = sanitized.replaceAll(/(?m)check number (\d+) to/,'check number XXX to')
+sanitized = msg.replaceAll('(?m)^Date: (.*)$', 'Date: XXX')
+sanitized = sanitized.replaceAll(/(?m)check number (\d+) to/, 'check number XXX to')
 assert sanitized == expected
 // note: Groovy also has several additional built-in templating facilities
 // Part 2: sending email
@@ -424,9 +433,9 @@ assert sanitized == expected
 // script:
 
 ant = new AntBuilder()
-ant.mail(from:'manager@grumpybank.com', tolist:'innocent@poorhouse.com',
-    encoding:'plain', mailhost:'mail.someserver.com',
-    subject:'Friendly Letter', message:'this is a test message')
+ant.mail(from: 'manager@grumpybank.com', tolist: 'innocent@poorhouse.com',
+    encoding: 'plain', mailhost: 'mail.someserver.com',
+    subject: 'Friendly Letter', message: 'this is a test message')
 // Ant has many options for setting encoding, security, attachments, etc., see:
 // http://ant.apache.org/manual/CoreTasks/mail.html
 // Groovy could also use the Java Mail Api directly if required
@@ -444,8 +453,8 @@ your text
 goes here
 '''
 
-assert raw.split('\n').toList().collect{
-    it.replaceAll(/^\s+/,'')
+assert raw.split('\n').toList().collect {
+    it.replaceAll(/^\s+/, '')
 }.join('\n') + '\n' == expected
 //----------------------------------------------------------------------------------
 
@@ -478,6 +487,7 @@ def wrap(text, maxSize) {
     all += line
     return all.join('\n')
 }
+
 assert wrap(input, 20) == expected
 //----------------------------------------------------------------------------------
 
@@ -485,9 +495,9 @@ assert wrap(input, 20) == expected
 //----------------------------------------------------------------------------------
 string = /Mom said, "Don't do that."/
 // backslash special chars
-assert string.replaceAll(/['"]/){'\\'+it[0]} == /Mom said, \"Don\'t do that.\"/
+assert string.replaceAll(/['"]/) { '\\' + it[0] } == /Mom said, \"Don\'t do that.\"/
 // double special chars
-assert string.replaceAll(/['"]/){it[0]+it[0]} == /Mom said, ""Don''t do that.""/
+assert string.replaceAll(/['"]/) { it[0] + it[0] } == /Mom said, ""Don''t do that.""/
 //backslash quote all non-capital letters
 //assert "DIR /?".replaceAll(/[^A-Z]/){/\\/+it[0]} == /DIR\ \/\?/
 //----------------------------------------------------------------------------------
@@ -497,7 +507,7 @@ assert string.replaceAll(/['"]/){it[0]+it[0]} == /Mom said, ""Don''t do that.""/
 assert '     x     '.trim() == 'x'
 // print what's typed, but surrounded by >< symbols
 // script:
-new BufferedReader(new InputStreamReader(System.in)).eachLine{
+new BufferedReader(new InputStreamReader(System.in)).eachLine {
     println(">" + it.trim() + "<");
 }
 //----------------------------------------------------------------------------------
@@ -533,17 +543,18 @@ aren't worried about the colour, it is a dropin replacement.'''        //'
 expected = '''I have analyzed the new part. As long as you
 aren't worried about the color, it is a drop-in replacement.'''        //'
 
-translations = [colour:'color', analysed:'analyzed', dropin:'drop-in']
+translations = [colour: 'color', analysed: 'analyzed', dropin: 'drop-in']
 
 def fixstyle(s) {
-    s.split('\n').toList().collect{
+    s.split('\n').toList().collect {
         line = it
-        translations.each{ key, value ->
+        translations.each { key, value ->
             line = line.replaceAll(/(?<=\W)/ + key + /(?=\W)/, value)
         }
         return line
     }.join('\n')
 }
+
 assert fixstyle(input) == expected
 //----------------------------------------------------------------------------------
 
@@ -567,26 +578,28 @@ select2 = '''
 
 // line below must be configured for your unix - this one's cygwin
 format = cut2fmt([10, 18, 26, 37, 42, 47, 56])
+
 def psgrep(s) {
     out = []
-    lines = input.split('\n').findAll{ it.size() }
-    vars = unpack(format, lines[0]).toList().collect{ it.toLowerCase().trim() }
+    lines = input.split('\n').findAll { it.size() }
+    vars = unpack(format, lines[0]).toList().collect { it.toLowerCase().trim() }
     out += lines[0]
-    lines[1..-1].each{
-        values = unpack(format, it).toList().collect{
+    lines[1..-1].each {
+        values = unpack(format, it).toList().collect {
             try {
                 return it.toInteger()
-            } catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 return it.trim()
             }
         }
-        vars.eachWithIndex{ var, i ->
+        vars.eachWithIndex { var, i ->
             binding.setVariable(var, values[i])
         }
         if (new GroovyShell(binding).evaluate(s)) out += it
     }
     return '\n' + out.join('\n') + '\n'
 }
+
 assert psgrep('winpid < 800') == select1
 assert psgrep('uid % 5 == 0 && command =~ /sh$/') == select2
 // Part 2: obtaining text stream from process

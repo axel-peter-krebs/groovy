@@ -63,7 +63,8 @@ class NumberRangeTest extends TestCase {
         n = new NumberRange(0, 3)
         other = new NumberRange(0.0, 3.0)
         assert n == other
-        assert n.hashCode() != other.hashCode() // not desired but reflects Groovy's extra eagerness for friendly equality
+        assert n.hashCode() != other.hashCode()
+        // not desired but reflects Groovy's extra eagerness for friendly equality
 //        assert n.canonicalHashCode() == other.canonicalHashCode()
         assert n.fastEquals(other)
 

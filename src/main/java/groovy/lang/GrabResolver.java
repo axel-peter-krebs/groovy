@@ -45,12 +45,12 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target({
-        ElementType.CONSTRUCTOR,
-        ElementType.FIELD,
-        ElementType.LOCAL_VARIABLE,
-        ElementType.METHOD,
-        ElementType.PARAMETER,
-        ElementType.TYPE})
+    ElementType.CONSTRUCTOR,
+    ElementType.FIELD,
+    ElementType.LOCAL_VARIABLE,
+    ElementType.METHOD,
+    ElementType.PARAMETER,
+    ElementType.TYPE})
 public @interface GrabResolver {
     /**
      * Allows a shorthand form which sets the name and root to this value.

@@ -27,12 +27,12 @@ final class ClosureCurryTest {
 
     @Test
     void testCurry() {
-        def clos1 = {s1, s2 -> s1 + s2}
+        def clos1 = { s1, s2 -> s1 + s2 }
         def clos2 = clos1.curry("hi")
         def value = clos2("there")
         assert value == "hithere"
 
-        def clos3 = {s1, s2, s3 -> s1 + s2 + s3}
+        def clos3 = { s1, s2, s3 -> s1 + s2 + s3 }
         def clos4 = clos3.curry('a')
         def clos5 = clos4.curry('b')
         def clos6 = clos4.curry('x')
@@ -46,7 +46,7 @@ final class ClosureCurryTest {
         value = clos7()
         assert value == "afg"
 
-        clos3 = {s1, s2, s3 -> s1 + s2 + s3}.asWritable()
+        clos3 = { s1, s2, s3 -> s1 + s2 + s3 }.asWritable()
         clos4 = clos3.curry('a')
         clos5 = clos4.curry('b')
         clos6 = clos4.curry('x')
@@ -60,7 +60,7 @@ final class ClosureCurryTest {
         value = clos7()
         assert value == "afg"
 
-        clos3 = {s1, s2, s3 -> s1 + s2 + s3}
+        clos3 = { s1, s2, s3 -> s1 + s2 + s3 }
         clos4 = clos3.curry('a').asWritable()
         clos5 = clos4.curry('b').asWritable()
         clos6 = clos4.curry('x').asWritable()
@@ -74,7 +74,7 @@ final class ClosureCurryTest {
         value = clos7()
         assert value == "afg"
 
-        clos3 = {s1, s2, s3 -> s1 + s2 + s3}
+        clos3 = { s1, s2, s3 -> s1 + s2 + s3 }
         clos4 = clos3.curry('a').clone()
         clos5 = clos4.curry('b').clone()
         clos6 = clos4.curry('x').clone()
@@ -88,7 +88,7 @@ final class ClosureCurryTest {
         value = clos7()
         assert value == "afg"
 
-        clos3 = {s1, s2, s3 -> s1 + s2 + s3}
+        clos3 = { s1, s2, s3 -> s1 + s2 + s3 }
         clos4 = clos3.curry('a').asWritable().clone()
         clos5 = clos4.curry('b').asWritable().clone()
         clos6 = clos4.curry('x').asWritable().clone()
@@ -105,7 +105,7 @@ final class ClosureCurryTest {
 
     @Test
     void testParameterTypes() {
-        def cl1 = {String s1, int i -> return s1 + i }
+        def cl1 = { String s1, int i -> return s1 + i }
         assert "foo5" == cl1("foo", 5)
         assert [String, int] == cl1.getParameterTypes().toList()
 
@@ -124,7 +124,7 @@ final class ClosureCurryTest {
         assert c.parameterTypes.name == ['java.lang.Object', '[Ljava.lang.Object;']
         def d = a.curry('a')
         assert d.parameterTypes.name == ['[Ljava.lang.Object;']
-        def g = { String s, Integer num, Date da, Object[] others ->  }
+        def g = { String s, Integer num, Date da, Object[] others -> }
         def h = g.ncurry(1, 4, new Date(), 'foo')
         assert h.parameterTypes.name == ['java.lang.String', '[Ljava.lang.Object;']
     }
@@ -132,18 +132,18 @@ final class ClosureCurryTest {
     @Test
     void testVarargCurry() {
         def c = { arg, Object[] extras -> arg + ', ' + extras.join(', ') }
-        def d = c.curry( 1 ) //curry first param only
-        assert d( 2, 3, 4 ) == '1, 2, 3, 4'
-        def e = c.curry( 1, 3 ) //curry part of Object[] also
-        assert e( 5 ) == '1, 3, 5'
-        def f = e.curry( 5, 7, 9, 11 ) //currying continues on Object
-        assert f( 13, 15 ) == '1, 3, 5, 7, 9, 11, 13, 15'
+        def d = c.curry(1) //curry first param only
+        assert d(2, 3, 4) == '1, 2, 3, 4'
+        def e = c.curry(1, 3) //curry part of Object[] also
+        assert e(5) == '1, 3, 5'
+        def f = e.curry(5, 7, 9, 11) //currying continues on Object
+        assert f(13, 15) == '1, 3, 5, 7, 9, 11, 13, 15'
     }
 
     @Test
     void testDelegate() {
         def res = null
-        def c = {a -> res = z}
+        def c = { a -> res = z }
         def cc = c.curry(1)
 
         cc.delegate = [z: "goodbye"]
@@ -154,7 +154,7 @@ final class ClosureCurryTest {
     @Test
     void testExpandoWithCurry() {
         def sz = 'java.util.Date'.size()
-        def c = {arg -> arg + delegate.getClass().name.size() }
+        def c = { arg -> arg + delegate.getClass().name.size() }
         def d = new Date()
         d.metaClass.foo = c
         assert d.foo(42) == 42 + sz
@@ -186,7 +186,7 @@ final class ClosureCurryTest {
         // Collections#binarySearch(List list, Object key, Comparator c)
         def catSearcher = Collections.&binarySearch.ncurry(1, "cat")
         def combos = [[animals1, animals2], [caseInsensitive, caseSensitive]].combinations()
-        assert combos.collect{ List a, Comparator c ->
+        assert combos.collect { List a, Comparator c ->
             // make sure we use DGM#sort, not JDK8 sort
             def sorted = a.sort(false, c)
             catSearcher(sorted, c)
@@ -203,39 +203,39 @@ final class ClosureCurryTest {
 
     @Test
     void testEquivalentsNormal() {
-        def a = {one, two, three, four, five -> "$one,$two,$three,$four,$five"}
+        def a = { one, two, three, four, five -> "$one,$two,$three,$four,$five" }
         def expected = '1,2,3,4,5'
         checkEquivalents(a, expected)
     }
 
     @Test
     void testEquivalentsVararg() {
-        def a = {one, two, Object[] others -> "one=$one, two=$two, others=${others.join(',')}"}
+        def a = { one, two, Object[] others -> "one=$one, two=$two, others=${others.join(',')}" }
         def expected = 'one=1, two=2, others=3,4,5'
         checkEquivalents(a, expected)
     }
 
     private void checkEquivalents(a, expected) {
         def examples = [
-            [a.curry(1), [2,3,4,5]],
-            [a.curry(1,2), [3,4,5]],
-            [a.curry(1,2,3), [4,5]],
-            [a.curry(1,2,3,4), [5]],
-            [a.curry(1,2,3,4,5), []],
-            [a.curry(1,2).curry(3,4), [5]],
+            [a.curry(1), [2, 3, 4, 5]],
+            [a.curry(1, 2), [3, 4, 5]],
+            [a.curry(1, 2, 3), [4, 5]],
+            [a.curry(1, 2, 3, 4), [5]],
+            [a.curry(1, 2, 3, 4, 5), []],
+            [a.curry(1, 2).curry(3, 4), [5]],
             [a.curry(1).curry(2).curry(3).curry(4), [5]],
-            [a.rcurry(5), [1,2,3,4]],
-            [a.rcurry(5).rcurry(3,4), [1,2]],
-            [a.rcurry(4,5).rcurry(3), [1,2]],
-            [a.rcurry(4,5), [1,2,3]],
-            [a.rcurry(2,3,4,5), [1]],
-            [a.rcurry(1,2,3,4,5), []],
-            [a.ncurry(2,3), [1,2,4,5]],
-            [a.ncurry(2,3,4), [1,2,5]],
-            [a.ncurry(-3,3,4), [1,2,5]],
-            [a.ncurry(-3,3), [1,2,4,5]]
+            [a.rcurry(5), [1, 2, 3, 4]],
+            [a.rcurry(5).rcurry(3, 4), [1, 2]],
+            [a.rcurry(4, 5).rcurry(3), [1, 2]],
+            [a.rcurry(4, 5), [1, 2, 3]],
+            [a.rcurry(2, 3, 4, 5), [1]],
+            [a.rcurry(1, 2, 3, 4, 5), []],
+            [a.ncurry(2, 3), [1, 2, 4, 5]],
+            [a.ncurry(2, 3, 4), [1, 2, 5]],
+            [a.ncurry(-3, 3, 4), [1, 2, 5]],
+            [a.ncurry(-3, 3), [1, 2, 4, 5]]
         ]
-        examples.each{ clos, args ->
+        examples.each { clos, args ->
             assert clos(args as Object[]) == expected
         }
     }
@@ -260,27 +260,31 @@ final class ClosureCurryTest {
         assert { x, y -> x ?: y }.curry([null] as Object[])(2) == 2
     }
 
-    private a(Integer b, Integer c, Integer d){ "3Int: $b $c $d" }
-    private a(b,c,d){ "3Obj: $b $c $d" }
-    private a(b,c){ "2Obj: $b $c" }
-    private a(b){ "1Obj: $b" }
+    private a(Integer b, Integer c, Integer d) { "3Int: $b $c $d" }
+
+    private a(b, c, d) { "3Obj: $b $c $d" }
+
+    private a(b, c) { "2Obj: $b $c" }
+
+    private a(b) { "1Obj: $b" }
 
     @Test
     void testCurryWithMethodClosure() {
         def c = (this.&a).curry(0)
-        assert c(1,2) == '3Int: 0 1 2'
-        assert c("foo",2) == '3Obj: 0 foo 2'
+        assert c(1, 2) == '3Int: 0 1 2'
+        assert c("foo", 2) == '3Obj: 0 foo 2'
         assert c(1) == '2Obj: 0 1'
         assert c() == '1Obj: 0'
 
         def b = (this.&a).rcurry(0)
-        assert b(1,2) == '3Int: 1 2 0'
-        assert b("foo",2) == '3Obj: foo 2 0'
+        assert b(1, 2) == '3Int: 1 2 0'
+        assert b("foo", 2) == '3Obj: foo 2 0'
         assert b(1) == '2Obj: 1 0'
         assert b() == '1Obj: 0'
     }
 
-    @Test // GROOVY-5051, GROOVY-10568
+    @Test
+    // GROOVY-5051, GROOVY-10568
     void testCurryWithMethodClosure2() {
         assertScript '''
             class C {
@@ -315,7 +319,7 @@ final class ClosureCurryTest {
 
     @Test
     void testCurryInComboWithDefaultArgs() {
-        def cl = { a, b, c='c', d='d' -> a + b + c + d }
+        def cl = { a, b, c = 'c', d = 'd' -> a + b + c + d }
         assert 'abcd' == cl.ncurry(0, 'a')('b')
         assert 'xycd' == cl.ncurry(1, 'y')('x')
         assert 'abdd' == cl.ncurry(0, 'a').rcurry('d')('b')

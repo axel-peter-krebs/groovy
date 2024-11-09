@@ -77,13 +77,16 @@ class Gep3Test extends GroovyTestCase {
     void testSimpleClassicalCommandExpressions() {
         foo txt
         foo a1()
-        foo a2{}
-        foo a2{}, and: txt
+        foo a2 {}
+        foo a2 {}, and: txt
     }
 
     static void foo(a) { assert a == txt }
+
     static void foo(Map m, a) { assert a == txt && m.and == txt }
+
     static a1() { return txt }
+
     static a2(Closure c) { return txt }
 
     void testNewSyntax() {
@@ -96,7 +99,7 @@ class Gep3Test extends GroovyTestCase {
     }
 
     void testContactInfo() {
-        def contact = [name: { String name -> assert name == "Guillaume"; [age: { int age -> assert age == 33 }]}]
+        def contact = [name: { String name -> assert name == "Guillaume"; [age: { int age -> assert age == 33 }] }]
         contact.name "Guillaume" age 33
     }
 
@@ -126,17 +129,18 @@ class Gep3Test extends GroovyTestCase {
 
     void testArgWith() {
         def arr = ["he", "ll", "o"]
-        def concat = { String s1 -> [with: { String s2 -> [and: { String s3 -> assert s1+s2+s3 == "hello"}]}]}
+        def concat = { String s1 -> [with: { String s2 -> [and: { String s3 -> assert s1 + s2 + s3 == "hello" }] }] }
 
         concat arr[0] with arr[1] and arr[2]
     }
 
     void testWaitAndExecuteUsingParamsTakingClosureAsArg() {
         Number.metaClass.getSecond { -> delegate * 1000 }
-        def wait = { int t -> [and: { Closure c -> c() }]}
+        def wait = { int t -> [and: { Closure c -> c() }] }
 
         wait 1.second and execute { assert true }
     }
+
     static execute(Closure c) { c }
 
 
@@ -156,7 +160,9 @@ class Gep3Test extends GroovyTestCase {
     }
 
     def take(DrugQuantity dq) { drugQuantity = dq; this }
+
     def of(Drug d) { drug = d; this }
+
     def after(Duration dur) { message = "Take $drugQuantity of $drug after $dur" }
 
     void testRecipeDsl() {
@@ -180,7 +186,7 @@ class Gep3Test extends GroovyTestCase {
         def check = { Map m -> margherita }
 
         check that:
-                margherita tastes good
+            margherita tastes good
 
         assert success
     }
@@ -188,8 +194,8 @@ class Gep3Test extends GroovyTestCase {
     def check(Map m) { m.that }
 
     void testExtendedCommandExpressionsOnTheRHS() {
-        def ( coffee,   sugar,   milk,   liquor ) =
-            ["coffee", "sugar", "milk", "liquor"]
+        def (coffee, sugar, milk, liquor) =
+        ["coffee", "sugar", "milk", "liquor"]
         def drink = Drink.&drink
 
         def r1 = drink coffee
@@ -245,7 +251,7 @@ class Gep3Test extends GroovyTestCase {
      */
     void testOnlyClosureParameters() {
         def bdd = 0
-        def given = { c1 -> c1(); [when: { c2 -> c2(); [then: { c3 -> c3() }] }]}
+        def given = { c1 -> c1(); [when: { c2 -> c2(); [then: { c3 -> c3() }] }] }
 
         given {
             bdd++
@@ -283,7 +289,7 @@ class Gep3Test extends GroovyTestCase {
     void testZeroArgMethodCallInTheMiddleOfTheChain() {
         def uploaded = false
         def (file, here) = ['file', 'here']
-        def upload = { String s1 -> [check: {-> [decompress: { String s2 -> uploaded = true }] }]}
+        def upload = { String s1 -> [check: { -> [decompress: { String s2 -> uploaded = true }] }] }
 
         upload file check() decompress here
 
@@ -301,20 +307,20 @@ class Gep3Test extends GroovyTestCase {
         def (cube, topLayer, down) = ['cube', 3, 'down']
         def resolve = { String s1 -> [move: [0, 1, 2, { c -> [upside: { String s2 -> resolved = true }] }]] }
 
-        resolve cube move [topLayer]() {} upside down
+        resolve cube move[topLayer]() {} upside down
 
         assert resolved
     }
 
     /**
-    * Case where an Integer is used as name
-    *
-    * case            a b 1 2
-    * equivalent      a(b)."1"(2)
-    */
+     * Case where an Integer is used as name
+     *
+     * case            a b 1 2
+     * equivalent      a(b)."1"(2)
+     */
     void testIntegerAsName() {
-        Integer.metaClass."1" = {x-> assert delegate == 10; x}
-        def a = {x-> assert x == "b"; 10}
+        Integer.metaClass."1" = { x -> assert delegate == 10; x }
+        def a = { x -> assert x == "b"; 10 }
         def b = "b"
         def x = a b 1 2
         assert x == 2
@@ -373,7 +379,7 @@ class Gep3Test extends GroovyTestCase {
             }
             def a(x){this}
             def b(x){x*10}
-            task copy(type: Copy) { a 10 b 10 }        
+            task copy(type: Copy) { a 10 b 10 }
         """
     }
 
@@ -395,7 +401,7 @@ class Gep3Test extends GroovyTestCase {
             def constraints(Closure c) {
                 c.delegate = [authCode: { Map m -> println m }]
                 c.resolveStrategy = Closure.DELEGATE_FIRST
-                c() 
+                c()
             }
 
             def authCode(Map m) {
@@ -406,9 +412,9 @@ class Gep3Test extends GroovyTestCase {
 
             name xxx: "/c/$val"(controller: 'foo', action: 'bar') {
                 constraints {
-                    authCode blank: false 
+                    authCode blank: false
                 }
-            }        
+            }
         '''
     }
 
@@ -452,10 +458,21 @@ class Drink {
     }
 }
 
-enum Container { medium_bowl }
-enum Ingredient { soy_sauce, vinegar, chili_powder, garlic, chicken, sauce }
-enum CookingAction { coat }
-enum Temperature { room_temperature }
+enum Container {
+    medium_bowl
+}
+
+enum Ingredient {
+    soy_sauce, vinegar, chili_powder, garlic, chicken, sauce
+}
+
+enum CookingAction {
+    coat
+}
+
+enum Temperature {
+    room_temperature
+}
 
 class Recipe {
     static instructions(Closure c) {
@@ -475,7 +492,7 @@ class Recipe {
 
     def place(Ingredient ingr) {
         assert ingr == Ingredient.chicken
-        [into: { Ingredient otherIngr -> assert otherIngr == Ingredient.sauce}]
+        [into: { Ingredient otherIngr -> assert otherIngr == Ingredient.sauce }]
     }
 
     def turn(Integer i) {
@@ -491,18 +508,21 @@ class Recipe {
 
 class Drug {
     String name
+
     String toString() { name }
 }
 
 class DrugQuantity {
     Number q
     String form
+
     String toString() { "$q $form" }
 }
 
 class Duration {
     Number q
     String unit
+
     String toString() { "$q $unit" }
 }
 

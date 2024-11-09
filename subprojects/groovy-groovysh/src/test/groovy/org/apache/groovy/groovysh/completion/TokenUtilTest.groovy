@@ -34,7 +34,7 @@ class TokenUtilTest extends GroovyTestCase {
         CurlyCountingGroovyLexer lexer = CurlyCountingGroovyLexer.createGroovyLexer(src)
         def result = lexer.toList()
         if (result && result.size() > 1) {
-           return result[0..-2]
+            return result[0..-2]
         }
         return []
     }

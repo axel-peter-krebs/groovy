@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
 
 /**
  * A class annotation used to make a class Comparable by (potentially) multiple Comparators.
- *
+ * <p>
  * As an example, given this class:
  * <pre>
  * {@code @Sortable} class Person {

@@ -39,15 +39,15 @@ class Demand {
             range = args[0]..args[0]
         }
         if (args[-1] instanceof Closure) {
-            recorded << new CallSpec(name:methodName, behavior:args[-1], range:range)
+            recorded << new CallSpec(name: methodName, behavior: args[-1], range: range)
         }
     }
 
     def verify(List calls) {
-        for (i in 0 ..< recorded.size()) {
+        for (i in 0..<recorded.size()) {
             def call = recorded[i]
             def callCounter = calls[i] ? calls[i] : 0
-            if (! call.range.contains( callCounter ) ) {
+            if (!call.range.contains(callCounter)) {
                 def msg = "verify[$i]: expected ${call.range.toString()} call(s) to '${call.name}' but was "
                 throw new AssertionFailedError(msg + "called $callCounter time(s).")
             }
@@ -57,7 +57,7 @@ class Demand {
 }
 
 class CallSpec {
-    String  name
+    String name
     Closure behavior
-    Range   range
+    Range range
 }

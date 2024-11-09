@@ -264,6 +264,7 @@ public class StampedCommonCache<K, V> implements EvictableCache<K, V>, ValueConv
 
     /**
      * deal with the backed cache guarded by write lock
+     *
      * @param action the content to complete
      */
     private <R> R doWithWriteLock(Action<K, V, R> action) {
@@ -277,6 +278,7 @@ public class StampedCommonCache<K, V> implements EvictableCache<K, V>, ValueConv
 
     /**
      * deal with the backed cache guarded by read lock
+     *
      * @param action the content to complete
      */
     private <R> R doWithReadLock(Action<K, V, R> action) {

@@ -25,10 +25,10 @@ import groovy.test.GroovyTestCase
 class CallingClosuresWithClosuresBug extends GroovyTestCase {
 
     void testBug() {
-        def a = {1}
+        def a = { 1 }
         // old workaround
         //def b = {a.call()}
-        def b = {a()}
+        def b = { a() }
 
         def value = b()
 

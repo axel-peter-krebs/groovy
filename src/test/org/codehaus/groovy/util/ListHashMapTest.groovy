@@ -71,7 +71,7 @@ final class ListHashMapTest {
         assert lhm.remove('c') == 'c'
         assert lhm.size() == 2
         assert lhm.@innerMap == null
-        assert lhm.keySet() == ['a','b'] as Set
+        assert lhm.keySet() == ['a', 'b'] as Set
     }
 
     @Test
@@ -95,8 +95,8 @@ final class ListHashMapTest {
         assert lhm.size() == 3
         assert lhm.@innerMap != null
         assert lhm.@innerMap.size() == 3
-        assert lhm.keySet() == ['a','b','c'] as Set
-        assert lhm.values()  as Set == ['1','2','3'] as Set
+        assert lhm.keySet() == ['a', 'b', 'c'] as Set
+        assert lhm.values() as Set == ['1', '2', '3'] as Set
     }
 
     @Test

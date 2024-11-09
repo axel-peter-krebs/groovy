@@ -20,6 +20,8 @@ package org.codehaus.groovy.tools.groovydoc.testfiles;
 
 public class JavaStaticNestedClassWithDiamond<E> {
 
+    public JavaStaticNestedClassWithDiamond<Object> expectedObject = new JavaStaticNestedClassWithDiamond.Nested<>();
+
     JavaStaticNestedClassWithDiamond() {
     }
 
@@ -32,7 +34,5 @@ public class JavaStaticNestedClassWithDiamond<E> {
         Nested() {
         }
     }
-
-    public JavaStaticNestedClassWithDiamond<Object> expectedObject = new JavaStaticNestedClassWithDiamond.Nested<>();
 
 }

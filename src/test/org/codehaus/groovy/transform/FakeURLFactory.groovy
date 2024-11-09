@@ -26,6 +26,7 @@ class FakeURLFactory {
     /*
      * Creates a URL whose InputStream will return the given content.
      */
+
     URL createURL(String content) {
         return new URL(null, "fake://abc", new FakeURLStreamHandler(content))
     }

@@ -40,15 +40,15 @@ public abstract class Memoize {
 
     /**
      * Creates a new closure delegating to the supplied one and memoizing all return values by the arguments.
-     *
+     * <p>
      * The supplied cache is used to store the memoized values and it is the cache's responsibility to put limits
      * on the cache size or implement cache eviction strategy.
      * The LRUCache, for example, allows to set the maximum cache size constraint and implements
      * the LRU (Last Recently Used) eviction strategy.
      *
-     * @param cache A map to hold memoized return values
+     * @param cache   A map to hold memoized return values
      * @param closure The closure to memoize
-     * @param <V> The closure's return type
+     * @param <V>     The closure's return type
      * @return A new memoized closure
      */
     public static <V> Closure<V> buildMemoizeFunction(final MemoizeCache<Object, Object> cache, final Closure<V> closure) {
@@ -59,25 +59,25 @@ public abstract class Memoize {
      * Creates a new closure delegating to the supplied one and memoizing all return values by the arguments.
      * The memoizing closure will use SoftReferences to remember the return values allowing the garbage collector
      * to reclaim the memory, if needed.
-     *
+     * <p>
      * The supplied cache is used to store the memoized values and it is the cache's responsibility to put limits
      * on the cache size or implement cache eviction strategy.
      * The LRUCache, for example, allows to set the maximum cache size constraint and implements
      * the LRU (Last Recently Used) eviction strategy.
-     *
+     * <p>
      * If the protectedCacheSize argument is greater than 0 an optional LRU (Last Recently Used) cache of hard references
      * is maintained to protect recently touched memoized values against eviction by the garbage collector.
      *
      * @param protectedCacheSize The number of hard references to keep in order to prevent some (LRU) memoized return values from eviction
-     * @param cache A map to hold memoized return values
-     * @param closure The closure to memoize
-     * @param <V> The closure's return type
+     * @param cache              A map to hold memoized return values
+     * @param closure            The closure to memoize
+     * @param <V>                The closure's return type
      * @return A new memoized closure
      */
     public static <V> Closure<V> buildSoftReferenceMemoizeFunction(final int protectedCacheSize, final MemoizeCache<Object, SoftReference<Object>> cache, final Closure<V> closure) {
         final ProtectionStorage lruProtectionStorage = protectedCacheSize > 0 ?
-                new LRUProtectionStorage(protectedCacheSize) :
-                new NullProtectionStorage(); // Nothing should be done when no elements need protection against eviction
+            new LRUProtectionStorage(protectedCacheSize) :
+            new NullProtectionStorage(); // Nothing should be done when no elements need protection against eviction
 
         final ReferenceQueue queue = new ReferenceQueue();
 
@@ -88,7 +88,6 @@ public abstract class Memoize {
      * Creates a key to use in the memoize cache
      *
      * @param args The arguments supplied to the closure invocation
-     *
      * @return The key - a list holding all arguments
      */
     private static Object generateKey(final Object[] args) {
@@ -153,15 +152,28 @@ public abstract class Memoize {
         final ReferenceQueue queue;
 
         SoftReferenceMemoizeFunction(final MemoizeCache<Object, SoftReference<Object>> cache, Closure<V> closure,
-                ProtectionStorage lruProtectionStorage, ReferenceQueue queue) {
+                                     ProtectionStorage lruProtectionStorage, ReferenceQueue queue) {
             super(cache, closure);
             this.lruProtectionStorage = lruProtectionStorage;
             this.queue = queue;
         }
 
+        /**
+         * After the garbage collector has done its job, we need to clean the cache from references to all the evicted memoized values.
+         *
+         * @param cache The cache to prune
+         * @param queue A reference queue holding references to gc-evicted memoized values
+         */
+        private static void cleanUpNullReferences(final MemoizeCache<Object, Object> cache, final ReferenceQueue queue) {
+            while (queue.poll() != null) {
+            }  //empty the reference queue
+            cache.cleanUpNullReferences();
+        }
+
         @Override
         public V call(final Object... args) {
-            if (queue.poll() != null) cleanUpNullReferences(cache, queue);  // if something has been evicted, do a clean-up
+            if (queue.poll() != null)
+                cleanUpNullReferences(cache, queue);  // if something has been evicted, do a clean-up
             final Object key = generateKey(args);
 
             SoftReference reference = (SoftReference) cache.getAndPut(key, k -> {
@@ -174,16 +186,6 @@ public abstract class Memoize {
             lruProtectionStorage.touch(key, result);
 
             return result == MEMOIZE_NULL ? null : (V) result;
-        }
-
-        /**
-         * After the garbage collector has done its job, we need to clean the cache from references to all the evicted memoized values.
-         * @param cache The cache to prune
-         * @param queue A reference queue holding references to gc-evicted memoized values
-         */
-        private static void cleanUpNullReferences(final MemoizeCache<Object, Object> cache, final ReferenceQueue queue) {
-            while(queue.poll() != null) {}  //empty the reference queue
-            cache.cleanUpNullReferences();
         }
     }
 }

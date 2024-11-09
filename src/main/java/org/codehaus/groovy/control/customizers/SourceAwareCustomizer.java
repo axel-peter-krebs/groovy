@@ -81,8 +81,8 @@ public class SourceAwareCustomizer extends DelegatingCustomizer {
 
     public boolean accept(String fileName) {
         int ext = fileName.lastIndexOf('.');
-        String baseName = ext<0?fileName:fileName.substring(0, ext);
-        String extension = ext<0?"":fileName.substring(ext+1);
+        String baseName = ext < 0 ? fileName : fileName.substring(0, ext);
+        String extension = ext < 0 ? "" : fileName.substring(ext + 1);
         return acceptExtension(extension) && acceptBaseName(baseName);
     }
 
@@ -91,14 +91,14 @@ public class SourceAwareCustomizer extends DelegatingCustomizer {
     }
 
     public boolean acceptSource(SourceUnit unit) {
-        return sourceUnitValidator==null || sourceUnitValidator.call(unit);
+        return sourceUnitValidator == null || sourceUnitValidator.call(unit);
     }
 
     public boolean acceptExtension(String extension) {
-        return extensionValidator==null || extensionValidator.call(extension);
+        return extensionValidator == null || extensionValidator.call(extension);
     }
 
     public boolean acceptBaseName(String baseName) {
-        return baseNameValidator==null || baseNameValidator.call(baseName);
+        return baseNameValidator == null || baseNameValidator.call(baseName);
     }
 }

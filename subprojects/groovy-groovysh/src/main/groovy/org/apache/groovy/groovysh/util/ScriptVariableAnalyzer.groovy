@@ -82,7 +82,7 @@ class ScriptVariableAnalyzer {
 
         @Override
         void call(final SourceUnit source, final GeneratorContext context, final ClassNode classNode)
-                throws CompilationFailedException {
+            throws CompilationFailedException {
             classNode.visitContents(visitor)
         }
     }
@@ -94,7 +94,7 @@ class ScriptVariableAnalyzer {
         final GroovyClassVisitor visitor
 
         VisitorClassLoader(final GroovyClassVisitor visitor, ClassLoader parent) {
-            super(parent == null ?  Thread.currentThread().getContextClassLoader() : parent)
+            super(parent == null ? Thread.currentThread().getContextClassLoader() : parent)
             this.visitor = visitor
         }
 

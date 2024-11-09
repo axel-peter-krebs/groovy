@@ -160,7 +160,8 @@ final class MultipleAssignmentDeclarationTest {
         '''
     }
 
-    @Test // GROOVY-5744
+    @Test
+    // GROOVY-5744
     void testMultiAssignFromIterator() {
         assertScript '''
             def list = [1,2,3]
@@ -172,7 +173,8 @@ final class MultipleAssignmentDeclarationTest {
         '''
     }
 
-    @Test // GROOVY-10666
+    @Test
+    // GROOVY-10666
     void testMultiAssignFromIterable() {
         assertScript '''
             class MySet {
@@ -215,7 +217,8 @@ final class MultipleAssignmentDeclarationTest {
         '''
     }
 
-    @Test // GROOVY-10666
+    @Test
+    // GROOVY-10666
     void testMultiAssignFromJavaStream() {
         assertScript '''import java.util.stream.Stream
 

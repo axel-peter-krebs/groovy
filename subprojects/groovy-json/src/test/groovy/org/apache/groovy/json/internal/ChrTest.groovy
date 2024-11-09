@@ -28,8 +28,8 @@ class ChrTest extends GroovyTestCase {
         def results = lpad('abc'.toCharArray(), 5, '#' as char)
 
         assertArrayEquals(
-                '##abc'.toCharArray(),
-                results
+            '##abc'.toCharArray(),
+            results
         )
     }
 
@@ -59,23 +59,23 @@ class ChrTest extends GroovyTestCase {
         letters = grow(letters, 21)
 
         assertEquals(
-                'e',
-                letters[4]
+            'e',
+            letters[4]
         )
 
         assertEquals(
-                'a',
-                letters[0]
+            'a',
+            letters[0]
         )
 
         assertEquals(
-                26,
-                letters.length
+            26,
+            letters.length
         )
 
         assertEquals(
-                '\0',
-                letters[20]
+            '\0',
+            letters[20]
         )
     }
 
@@ -84,23 +84,23 @@ class ChrTest extends GroovyTestCase {
         letters = grow(letters)
 
         assertEquals(
-                'e',
-                letters[4]
+            'e',
+            letters[4]
         )
 
         assertEquals(
-                'a',
-                letters[0]
+            'a',
+            letters[0]
         )
 
         assertEquals(
-                12,
-                letters.length
+            12,
+            letters.length
         )
 
         assertEquals(
-                letters[9],
-                '\0'
+            letters[9],
+            '\0'
         )
     }
 
@@ -108,8 +108,8 @@ class ChrTest extends GroovyTestCase {
         def chars = 'abcde'.toCharArray()
 
         assertArrayEquals(
-                chars,
-                copy(chars)
+            chars,
+            copy(chars)
         )
     }
 

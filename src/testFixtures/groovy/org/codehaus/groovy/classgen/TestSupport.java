@@ -56,17 +56,16 @@ public class TestSupport extends GroovyTestCase implements Opcodes {
 
     final ClassLoader parentLoader = getClass().getClassLoader();
     protected final GroovyClassLoader loader =
-            createClassLoader();
+        createClassLoader();
+    final CompileUnit unit = new CompileUnit(loader, new CompilerConfiguration());
+    final ModuleNode module = new ModuleNode(unit);
 
     @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
     private GroovyClassLoader createClassLoader() {
         return java.security.AccessController.doPrivileged(
-                (PrivilegedAction<GroovyClassLoader>) () -> new GroovyClassLoader(parentLoader)
+            (PrivilegedAction<GroovyClassLoader>) () -> new GroovyClassLoader(parentLoader)
         );
     }
-
-    final CompileUnit unit = new CompileUnit(loader, new CompilerConfiguration());
-    final ModuleNode module = new ModuleNode(unit);
 
     protected Class loadClass(ClassNode classNode) {
         classNode.setModule(module);
@@ -88,7 +87,7 @@ public class TestSupport extends GroovyTestCase implements Opcodes {
         Method method = descriptor.getReadMethod();
         assertNotNull("has getter method", method);
 
-        Object[] args = { };
+        Object[] args = {};
         Object value = invokeMethod(bean, method, args);
 
         assertEquals("property value", expected, value);
@@ -97,8 +96,7 @@ public class TestSupport extends GroovyTestCase implements Opcodes {
     protected Object invokeMethod(Object bean, Method method, Object[] args) throws Exception {
         try {
             return method.invoke(bean, args);
-        }
-        catch (InvocationTargetException e) {
+        } catch (InvocationTargetException e) {
             fail("InvocationTargetException: " + e.getTargetException());
             return null;
         }
@@ -126,10 +124,10 @@ public class TestSupport extends GroovyTestCase implements Opcodes {
 
     protected ExpressionStatement createPrintlnStatement(Expression expression) throws NoSuchFieldException {
         return new ExpressionStatement(
-                new MethodCallExpression(
-                        new FieldExpression(FieldNode.newStatic(System.class, "out")),
-                        "println",
-                        expression));
+            new MethodCallExpression(
+                new FieldExpression(FieldNode.newStatic(System.class, "out")),
+                "println",
+                expression));
     }
 
     /**
@@ -151,7 +149,7 @@ public class TestSupport extends GroovyTestCase implements Opcodes {
     @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
     private GroovyCodeSource getCodeSource(String text, String scriptName) {
         return java.security.AccessController.doPrivileged(
-                (PrivilegedAction<GroovyCodeSource>) () -> new GroovyCodeSource(text, scriptName, "/groovy/testSupport")
+            (PrivilegedAction<GroovyCodeSource>) () -> new GroovyCodeSource(text, scriptName, "/groovy/testSupport")
         );
     }
 

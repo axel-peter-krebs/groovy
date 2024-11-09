@@ -35,12 +35,12 @@ public abstract class Builder extends GroovyObjectSupport {
             final List value = (List) entry.getValue();
             final Closure dg = ((Closure) value.get(1)).asWritable();
 
-            this.namespaceMethodMap.put(key, new Object[] { value.get(0), dg, fettleMethodMap(dg, (Map) value.get(2)) });
+            this.namespaceMethodMap.put(key, new Object[]{value.get(0), dg, fettleMethodMap(dg, (Map) value.get(2))});
         }
     }
 
     private static Map fettleMethodMap(final Closure defaultGenerator, final Map methodMap) {
-    final Map newMethodMap = new HashMap();
+        final Map newMethodMap = new HashMap();
 
         for (Object o : methodMap.keySet()) {
             final Object key = o;
@@ -59,13 +59,13 @@ public abstract class Builder extends GroovyObjectSupport {
     public abstract Object bind(Closure root);
 
     protected abstract static class Built extends GroovyObjectSupport {
-    protected final Closure root;
-    protected final Map namespaceSpecificTags = new HashMap();
+        protected final Closure root;
+        protected final Map namespaceSpecificTags = new HashMap();
 
         public Built(final Closure root, final Map namespaceTagMap) {
             this.namespaceSpecificTags.putAll(namespaceTagMap);
 
-            this.root = (Closure)root.clone();
+            this.root = (Closure) root.clone();
 
             this.root.setDelegate(this);
         }

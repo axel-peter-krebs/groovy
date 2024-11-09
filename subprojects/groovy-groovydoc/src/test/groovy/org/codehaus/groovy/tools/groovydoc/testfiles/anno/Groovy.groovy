@@ -29,7 +29,8 @@ class Groovy implements Serializable {
     @groovy.transform.Internal
     public String annotatedField
 
-    @Deprecated List annotatedProperty
+    @Deprecated
+    List annotatedProperty
 
     @NamedVariant
     Groovy(@NamedParam List ctorParam) {}

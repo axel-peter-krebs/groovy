@@ -16,5 +16,6 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-for (foo in []) {;
+for (foo in []) {
+    ;
 }

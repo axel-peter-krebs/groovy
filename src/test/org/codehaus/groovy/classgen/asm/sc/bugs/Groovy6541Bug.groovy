@@ -39,6 +39,7 @@ for (i in 1..2) {
 }
     '''
     }
+
     void testShouldCompileGetAtWithPrimitiveInteger() {
         assertScript '''class Foo {
     String getAt(Integer i) {
@@ -72,6 +73,7 @@ for (i in 1..2) {
 }
     '''
     }
+
     void testShouldCompilePutAtWithPrimitiveInteger() {
         assertScript '''class Foo {
     String getAt(Integer i) {

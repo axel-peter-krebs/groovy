@@ -103,7 +103,7 @@ final class ArraysAndCollectionsStaticCompileTest extends ArraysAndCollectionsST
 
     // GROOVY-11309
     void testListLiteralToSetAssignmentSC() {
-        for (t in ['LinkedHashSet','HashSet','Set']) {
+        for (t in ['LinkedHashSet', 'HashSet', 'Set']) {
             astTrees.clear()
             assertScript """
                 $t <String> set = []
@@ -119,7 +119,7 @@ final class ArraysAndCollectionsStaticCompileTest extends ArraysAndCollectionsST
 
     // GROOVY-11309
     void testListLiteralToListAssignmentSC() {
-        for (t in ['ArrayList','List','Collection','Iterable']) {
+        for (t in ['ArrayList', 'List', 'Collection', 'Iterable']) {
             astTrees.clear()
             assertScript """
                 $t <String> list = []
@@ -132,7 +132,7 @@ final class ArraysAndCollectionsStaticCompileTest extends ArraysAndCollectionsST
             assert !script.contains('ScriptBytecodeAdapter.createList')
         }
 
-        for (t in ['Object','Cloneable','Serializable','RandomAccess']) {
+        for (t in ['Object', 'Cloneable', 'Serializable', 'RandomAccess']) {
             astTrees.clear()
             assertScript """
                 $t list = []
@@ -163,7 +163,7 @@ final class ArraysAndCollectionsStaticCompileTest extends ArraysAndCollectionsST
         String out = astTrees['C'][1]
         out = out.substring(out.indexOf('main([Ljava/lang/String;)'))
         assert out.contains('INVOKEINTERFACE java/util/List.toArray')
-        assert !out.contains('INVOKEDYNAMIC cast(Ljava/util/List;)') : 'dynamic cast should have been replaced by direct method call'
+        assert !out.contains('INVOKEDYNAMIC cast(Ljava/util/List;)'): 'dynamic cast should have been replaced by direct method call'
     }
 
     void testCollectionToObjectAssignmentSC() {

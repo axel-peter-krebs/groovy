@@ -20,8 +20,7 @@ package groovy
 
 import java.util.HashMap as Goober;
 
-class Cheddar extends Goober implements Runnable
-{
+class Cheddar extends Goober implements Runnable {
     Goober theMap;
     protected def cheesier;
     public static def cheesiest;
@@ -31,18 +30,18 @@ class Cheddar extends Goober implements Runnable
         println f
     }
 
-    def cheeseIt() {  }
+    def cheeseIt() {}
 
-    String getStringCheese() { }
-    String getOtherCheese(foo,bar) { }
+    String getStringCheese() {}
+
+    String getOtherCheese(foo, bar) {}
 
     void run() { cheeseIt() }
 
-    static Goober mutateGoober(Goober theGoober) { }
+    static Goober mutateGoober(Goober theGoober) {}
 
 }
 
-class Provolone
-{
+class Provolone {
 
 }

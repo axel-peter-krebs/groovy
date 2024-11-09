@@ -30,9 +30,9 @@ final class CategoryTest extends GroovyTestCase {
     }
 
     void testCategories() {
-        use (StringCategory) {
+        use(StringCategory) {
             assert "Sam".lower() == "sam";
-            use (IntegerCategory.class) {
+            use(IntegerCategory.class) {
                 assert "Sam".lower() == "sam";
                 assert 1.inc() == 2;
             }
@@ -104,7 +104,7 @@ final class CategoryTest extends GroovyTestCase {
         def cth = new CategoryTestHelper()
         cth.aProperty = "aValue"
         assert cth.aProperty == "aValue"
-        use (CategoryTestHelperPropertyReplacer) {
+        use(CategoryTestHelperPropertyReplacer) {
             assert cth.aProperty == "anotherValue"
             cth.aProperty = "this is boring"
             assert cth.aProperty == "this is boring"
@@ -113,7 +113,7 @@ final class CategoryTest extends GroovyTestCase {
     }
 
     void testCategoryHiddenByClassMethod() {
-      assertScript """
+        assertScript """
          class A{}
          class B extends A{def m(){1}}
          class Category{ static m(A a) {2}}
@@ -125,7 +125,7 @@ final class CategoryTest extends GroovyTestCase {
     }
 
     void testCategoryOverridingClassMethod() {
-      assertScript """
+        assertScript """
          class A {def m(){1}}
          class Category{ static m(A a) {2}}
          def a = new A()
@@ -133,7 +133,7 @@ final class CategoryTest extends GroovyTestCase {
            assert a.m() == 2
          }
       """
-      assertScript """
+        assertScript """
          class A {def m(){1}}
          class B extends A{}
          class Category{ static m(A a) {2}}
@@ -145,7 +145,7 @@ final class CategoryTest extends GroovyTestCase {
     }
 
     void testCategoryWithMixedOverriding() {
-      assertScript """
+        assertScript """
          class A{def m(){0}}
          class B extends A{def m(){1}}
          class Category{ static m(A a) {2}}
@@ -157,7 +157,7 @@ final class CategoryTest extends GroovyTestCase {
     }
 
     void testCategoryInheritance() {
-      assertScript """
+        assertScript """
         public class Foo {
           static Object foo(Object obj) {
             "Foo.foo()"
@@ -212,18 +212,18 @@ final class CategoryTest extends GroovyTestCase {
         """
     }
 
-    def foo(x){x.bar()}
+    def foo(x) { x.bar() }
 
     void testMethodHiding1() {
         def x = new X()
         assert foo(x) == 1
-        use (XCat) {
+        use(XCat) {
             assert foo(x) == 2
-            def t = Thread.start {assert foo(x)==1}
+            def t = Thread.start { assert foo(x) == 1 }
             t.join()
         }
         assert foo(x) == 1
-        def t = Thread.start {use (XCat2){assert foo(x)==3}}
+        def t = Thread.start { use(XCat2) { assert foo(x) == 3 } }
         t.join()
         assert foo(x) == 1
     }
@@ -231,16 +231,16 @@ final class CategoryTest extends GroovyTestCase {
     void testMethodHiding2() {
         def x = new X()
         assert foo(x) == 1
-        use (XCat) {
+        use(XCat) {
             assert foo(x) == 2
-            def t = Thread.start {use (XCat2){assert foo(x)==3}}
+            def t = Thread.start { use(XCat2) { assert foo(x) == 3 } }
             t.join()
             assert foo(x) == 2
-            t = Thread.start {assert foo(x)==1}
+            t = Thread.start { assert foo(x) == 1 }
             t.join()
         }
         assert foo(x) == 1
-        def t = Thread.start {use (XCat2){assert foo(x)==3}}
+        def t = Thread.start { use(XCat2) { assert foo(x) == 3 } }
         t.join()
         assert foo(x) == 1
     }
@@ -372,12 +372,12 @@ final class CategoryTest extends GroovyTestCase {
     void testMethodMissing() {
         def x = new X()
         assert foo(x) == 1
-        use (XCat3) {
+        use(XCat3) {
             assert foo(x) == 1 // regular foo() is not affected by methodMissing in category
             assert x.baz() == 4 // XCat3.methodMissing is called
         }
         assert foo(x) == 1
-        def t = Thread.start {use (XCat3){assert x.baz()==4}}
+        def t = Thread.start { use(XCat3) { assert x.baz() == 4 } }
         t.join()
         assert foo(x) == 1
         shouldFail(MissingMethodException) {
@@ -388,7 +388,7 @@ final class CategoryTest extends GroovyTestCase {
     // GROOVY-3867
     void testMethodMissingNoStatic() {
         def x = new X()
-        use (XCat3) {
+        use(XCat3) {
             assert x.baz() == 4 // XCat3.methodMissing is called for instance
             shouldFail(MissingMethodException) {
                 assert X.baz() != 4 // XCat3.methodMissing should not be called for static method of X
@@ -397,11 +397,25 @@ final class CategoryTest extends GroovyTestCase {
     }
 }
 
-class X{ def bar(){1}}
-class XCat{ static bar(X x){2}}
-class XCat2{ static bar(X x){3}}
-class XCat3{ static methodMissing(X x, String name, args) {4}}
-class XCat4{ static propertyMissing(X x, String name) {"works"}}
+class X {
+    def bar() { 1 }
+}
+
+class XCat {
+    static bar(X x) { 2 }
+}
+
+class XCat2 {
+    static bar(X x) { 3 }
+}
+
+class XCat3 {
+    static methodMissing(X x, String name, args) { 4 }
+}
+
+class XCat4 {
+    static propertyMissing(X x, String name) { "works" }
+}
 
 class StringCategory {
     static String lower(String string) {
@@ -417,7 +431,9 @@ class IntegerCategory {
 
 class CategoryTestPropertyCategory {
     private static aVal = "hello"
+
     static getSomething(Object self) { return aVal }
+
     static void setSomething(Object self, newValue) { aVal = newValue }
 }
 
@@ -427,6 +443,8 @@ class CategoryTestHelper {
 
 class CategoryTestHelperPropertyReplacer {
     private static aVal = "anotherValue"
+
     static getaProperty(CategoryTestHelper self) { return aVal }
+
     static void setaProperty(CategoryTestHelper self, newValue) { aVal = newValue }
 }

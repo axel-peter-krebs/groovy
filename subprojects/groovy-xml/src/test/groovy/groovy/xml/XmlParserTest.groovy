@@ -258,9 +258,9 @@ p() {
         def parser = new XmlParser()
         def root = parser.parseText(xml)
         def middle = root.appendNode('middle')
-        middle.appendNode('child', [attr:'child attr'])
+        middle.appendNode('child', [attr: 'child attr'])
         middle.appendNode('child', 'child text')
-        root.appendNode('child', [attr:'child attr'], 'child text')
+        root.appendNode('child', [attr: 'child attr'], 'child text')
         root.@attr = 'root attr'
         root.'@other' = 'other attr'
 

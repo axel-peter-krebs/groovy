@@ -40,21 +40,18 @@ import java.util.List;
 public class ErrorCollector implements Serializable {
 
     private static final long serialVersionUID = 2844774170905056755L;
-
-    /**
-     * ErrorMessages collected during processing
-     */
-    protected LinkedList<Message> errors;
-
-    /**
-     * WarningMessages collected during processing
-     */
-    protected LinkedList<WarningMessage> warnings;
-
     /**
      * Configuration and other settings that control processing
      */
     protected final CompilerConfiguration configuration;
+    /**
+     * ErrorMessages collected during processing
+     */
+    protected LinkedList<Message> errors;
+    /**
+     * WarningMessages collected during processing
+     */
+    protected LinkedList<WarningMessage> warnings;
 
     /**
      * Initialize the ErrorReporter.
@@ -116,8 +113,8 @@ public class ErrorCollector implements Serializable {
      * Adds an optionally-fatal error to the message set.
      * The message is not required to have a source line and column specified, but it is best practice to try
      * and include that information.
-     * @param fatal
-     *      if true then processing will stop
+     *
+     * @param fatal if true then processing will stop
      */
     public void addError(final Message message, final boolean fatal) throws CompilationFailedException {
         if (fatal) {

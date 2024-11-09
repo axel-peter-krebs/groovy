@@ -35,7 +35,7 @@ package groovy.xml
  * </pre>
  * Or an external library such as Jettison can be used as follows:
  * <pre class="groovyTestCase">
- * @Grab('org.codehaus.jettison:jettison:1.2')
+ * @Grab ('org.codehaus.jettison:jettison:1.2')
  * import org.codehaus.jettison.mapped.*
  * import javax.xml.stream.XMLStreamException
  *

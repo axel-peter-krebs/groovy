@@ -35,54 +35,14 @@ import static groovy.test.GroovyAssert.isAtLeastJdk;
 
 public class SecurityTest extends GroovyTestCase {
 
-    @SuppressWarnings("unused")
-    public class TestClass{
-        public String publicField;
-        protected String protectedField;
-        String packagePrivateField;
-        private String privateField;
-
-        private boolean methodCalled = false;
-
-        public void publicMethod() {
-            privateMethod();
-        }
-
-        private void privateMethod() {
-            methodCalled = true;
-        }
-
-        void packagePrivateMethod() {
-            privateMethod();
-        }
-
-        void protectedMethod() {
-            privateMethod();
-        }
-
-        public boolean isMethodCalled() {
-            return methodCalled;
-        }
-    }
-
-    @SuppressWarnings("unused")
-    public class TestGroovyClass extends GroovyObjectSupport{
-        private String privateField;
-        private boolean methodCalled = false;
-        private void privateMethod() {
-            methodCalled = true;
-        }
-        public boolean isMethodCalled() {
-            return methodCalled;
-        }
-    }
     @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager
     SecurityManager restrictiveSecurityManager;
     CachedMethod cachedMethodUnderTest;
     CachedField cachedFieldUnderTest;
     Permissions forbidden;
 
-    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager & AccessControlException
+    @SuppressWarnings("removal")
+    // TODO in a future Groovy version remove reference to SecurityManager & AccessControlException
     public void setUp() {
         // Forbidding suppressAccessChecks in the test will make the internal implementation of some JDK fail,
         // so load vm plugin before security manager is installed:
@@ -112,8 +72,9 @@ public class SecurityTest extends GroovyTestCase {
         };
     }
 
-    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
-    public void tearDown(){
+    @SuppressWarnings("removal")
+    // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
+    public void tearDown() {
         System.setSecurityManager(null);
     }
 
@@ -139,7 +100,8 @@ public class SecurityTest extends GroovyTestCase {
         return new CachedField(field);
     }
 
-    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
+    @SuppressWarnings("removal")
+    // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
     public void testInvokesPublicMethodsWithoutChecks() throws Exception {
         if (isAtLeastJdk("18.0")) return;
         cachedMethodUnderTest = createCachedMethod("publicMethod");
@@ -147,7 +109,8 @@ public class SecurityTest extends GroovyTestCase {
         assertTrue(invokesCachedMethod());
     }
 
-    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
+    @SuppressWarnings("removal")
+    // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
     public void testReturnsAccesiblePublicMethodsWithoutChecks() throws Exception {
         if (isAtLeastJdk("18.0")) return;
         cachedMethodUnderTest = createCachedMethod("publicMethod");
@@ -156,7 +119,8 @@ public class SecurityTest extends GroovyTestCase {
         assertEquals("publicMethod", cachedMethodUnderTest.getName());
     }
 
-    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
+    @SuppressWarnings("removal")
+    // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
     public void testAccessesPublicFieldsWithoutChecks() throws Exception {
         if (isAtLeastJdk("18.0")) return;
         cachedFieldUnderTest = createCachedField("publicField");
@@ -166,12 +130,13 @@ public class SecurityTest extends GroovyTestCase {
         assertEquals("value", cachedFieldUnderTest.getProperty(object));
     }
 
-    public void testInvokesPrivateMethodsWithoutSecurityManager() throws Exception{
+    public void testInvokesPrivateMethodsWithoutSecurityManager() throws Exception {
         cachedMethodUnderTest = createCachedMethod("privateMethod");
         assertTrue(invokesCachedMethod());
     }
 
-    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
+    @SuppressWarnings("removal")
+    // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
     public void testAccessesPrivateFieldsWithoutSecurityManager() throws Exception {
         if (isAtLeastJdk("18.0")) return;
         cachedFieldUnderTest = createCachedField("privateField");
@@ -181,7 +146,8 @@ public class SecurityTest extends GroovyTestCase {
         assertEquals("value", cachedFieldUnderTest.getProperty(object));
     }
 
-    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
+    @SuppressWarnings("removal")
+    // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
     public void testReturnsAccesiblePrivateMethodsWithoutSecurityManager() throws Exception {
         if (isAtLeastJdk("18.0")) return;
         cachedMethodUnderTest = createCachedMethod("privateMethod");
@@ -190,7 +156,8 @@ public class SecurityTest extends GroovyTestCase {
         assertEquals("privateMethod", cachedMethodUnderTest.getName());
     }
 
-    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
+    @SuppressWarnings("removal")
+    // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
     public void testChecksReflectPermissionForInvokeOnPrivateMethods() throws Exception {
         if (isAtLeastJdk("18.0")) return;
         cachedMethodUnderTest = createCachedMethod("privateMethod");
@@ -198,13 +165,13 @@ public class SecurityTest extends GroovyTestCase {
         try {
             invokesCachedMethod();
             fail();
-        }
-        catch (InvokerInvocationException e) {
+        } catch (InvokerInvocationException e) {
             assertEquals(CacheAccessControlException.class, e.getCause().getClass());
         }
     }
 
-    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
+    @SuppressWarnings("removal")
+    // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
     public void testChecksReflectPermissionForFieldAccessOnPrivateFields() throws Exception {
         if (isAtLeastJdk("18.0")) return;
         cachedFieldUnderTest = createCachedField("privateField");
@@ -213,19 +180,18 @@ public class SecurityTest extends GroovyTestCase {
         try {
             cachedFieldUnderTest.setProperty(object, "value");
             fail();
-        }
-        catch (CacheAccessControlException e) {
+        } catch (CacheAccessControlException e) {
         }
 
         try {
             cachedFieldUnderTest.getProperty(object);
             fail();
-        }
-        catch (CacheAccessControlException e) {
+        } catch (CacheAccessControlException e) {
         }
     }
 
-    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
+    @SuppressWarnings("removal")
+    // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
     public void testChecksReflectPermissionForMethodAccessOnPrivateMethods() throws Exception {
         if (isAtLeastJdk("18.0")) return;
         cachedMethodUnderTest = createCachedMethod("privateMethod");
@@ -233,19 +199,18 @@ public class SecurityTest extends GroovyTestCase {
         try {
             cachedMethodUnderTest.setAccessible();
             fail();
-        }
-        catch (CacheAccessControlException e) {
+        } catch (CacheAccessControlException e) {
         }
 
         try {
             cachedMethodUnderTest.getCachedMethod();
             fail();
-        }
-        catch (CacheAccessControlException e) {
+        } catch (CacheAccessControlException e) {
         }
     }
 
-    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
+    @SuppressWarnings("removal")
+    // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
     public void testInvokesPackagePrivateMethodsWithoutChecksInNonRestrictedPackages() throws Exception {
         if (isAtLeastJdk("18.0")) return;
         cachedMethodUnderTest = createCachedMethod("packagePrivateMethod");
@@ -253,7 +218,8 @@ public class SecurityTest extends GroovyTestCase {
         assertTrue(invokesCachedMethod());
     }
 
-    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK9+
+    @SuppressWarnings("removal")
+    // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK9+
     public void testChecksReflectPermissionForInvokeOnPackagePrivateMethodsInRestrictedJavaPackages() throws Exception {
         // FIX_JDK9 remove this exemption for JDK9
         if (isAtLeastJdk("9.0")) return;
@@ -263,13 +229,13 @@ public class SecurityTest extends GroovyTestCase {
         try {
             cachedMethodUnderTest.invoke(null, new Object[]{});
             fail();
-        }
-        catch (InvokerInvocationException e) {
+        } catch (InvokerInvocationException e) {
             assertEquals(CacheAccessControlException.class, e.getCause().getClass());
         }
     }
 
-    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
+    @SuppressWarnings("removal")
+    // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
     public void testInvokesProtectedMethodsWithoutChecks() throws Exception {
         if (isAtLeastJdk("18.0")) return;
         cachedMethodUnderTest = createCachedMethod("protectedMethod");
@@ -277,7 +243,8 @@ public class SecurityTest extends GroovyTestCase {
         assertTrue(invokesCachedMethod());
     }
 
-    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK16+
+    @SuppressWarnings("removal")
+    // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK16+
     public void testChecksCreateClassLoaderPermissionForClassLoaderProtectedMethodAccess() throws Exception {
         // Illegal access to java.lang.ClassLoader.defineClass(java.lang.String,java.nio.ByteBuffer,java.security.ProtectionDomain)
         if (isAtLeastJdk("16.0")) return;
@@ -292,13 +259,13 @@ public class SecurityTest extends GroovyTestCase {
         try {
             cachedMethodUnderTest.invoke(classLoader, new Object[]{null, null, null});
             fail();
-        }
-        catch (InvokerInvocationException e) {
+        } catch (InvokerInvocationException e) {
             assertEquals(CacheAccessControlException.class, e.getCause().getClass());
         }
     }
 
-    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
+    @SuppressWarnings("removal")
+    // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
     public void testInvokesPrivateMethodsInGroovyObjectsWithoutChecks() throws Exception {
         if (isAtLeastJdk("18.0")) return;
         cachedMethodUnderTest = createCachedMethod(TestGroovyClass.class, "privateMethod");
@@ -308,7 +275,8 @@ public class SecurityTest extends GroovyTestCase {
         assertTrue(object.isMethodCalled());
     }
 
-    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
+    @SuppressWarnings("removal")
+    // TODO in a future Groovy version remove reference to SecurityManager, for now not run for JDK18+
     public void testAccessesPrivateFieldsInGroovyObjectsWithoutChecks() throws Exception {
         if (isAtLeastJdk("18.0")) return;
         Field field = TestGroovyClass.class.getDeclaredField("privateField");
@@ -318,5 +286,49 @@ public class SecurityTest extends GroovyTestCase {
         System.setSecurityManager(restrictiveSecurityManager);
         cachedFieldUnderTest.setProperty(object, "value");
         assertEquals("value", cachedFieldUnderTest.getProperty(object));
+    }
+
+    @SuppressWarnings("unused")
+    public class TestClass {
+        public String publicField;
+        protected String protectedField;
+        String packagePrivateField;
+        private String privateField;
+
+        private boolean methodCalled = false;
+
+        public void publicMethod() {
+            privateMethod();
+        }
+
+        private void privateMethod() {
+            methodCalled = true;
+        }
+
+        void packagePrivateMethod() {
+            privateMethod();
+        }
+
+        void protectedMethod() {
+            privateMethod();
+        }
+
+        public boolean isMethodCalled() {
+            return methodCalled;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public class TestGroovyClass extends GroovyObjectSupport {
+        private String privateField;
+        private boolean methodCalled = false;
+
+        private void privateMethod() {
+            methodCalled = true;
+        }
+
+        public boolean isMethodCalled() {
+            return methodCalled;
+        }
     }
 }

@@ -40,12 +40,25 @@ public class ConvertedMap extends ConversionHandler {
         super(closures);
     }
 
+    /**
+     * Checks whether a method is a core method from java.lang.Object.
+     * Such methods often receive special treatment because they are
+     * deemed fundamental enough to not be tampered with.
+     * call toString() is an exception to allow overriding toString() by a closure specified in the map
+     *
+     * @param method the method to check
+     * @return true if the method is deemed to be a core method
+     */
+    public static boolean isCoreObjectMethod(Method method) {
+        return ConversionHandler.isCoreObjectMethod(method) && !"toString".equals(method.getName());
+    }
+
     @Override
     public Object invokeCustom(Object proxy, Method method, Object[] args)
-            throws Throwable {
+        throws Throwable {
         Map m = (Map) getDelegate();
         Closure cl = (Closure) m.get(method.getName());
-        if(cl == null && "toString".equals(method.getName())) {
+        if (cl == null && "toString".equals(method.getName())) {
             return m.toString();
         }
         if (cl == null) {
@@ -62,19 +75,6 @@ public class ConvertedMap extends ConversionHandler {
     @Override
     protected boolean checkMethod(Method method) {
         return isCoreObjectMethod(method);
-    }
-
-    /**
-     * Checks whether a method is a core method from java.lang.Object.
-     * Such methods often receive special treatment because they are
-     * deemed fundamental enough to not be tampered with.
-     * call toString() is an exception to allow overriding toString() by a closure specified in the map
-     *
-     * @param method the method to check
-     * @return true if the method is deemed to be a core method
-     */
-    public static boolean isCoreObjectMethod(Method method) {
-        return ConversionHandler.isCoreObjectMethod(method) && !"toString".equals(method.getName());
     }
 }
 

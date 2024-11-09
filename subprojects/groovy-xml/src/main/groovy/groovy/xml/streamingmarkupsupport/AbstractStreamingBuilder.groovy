@@ -19,7 +19,7 @@
 package groovy.xml.streamingmarkupsupport
 
 class AbstractStreamingBuilder {
-    def badTagClosure = {tag, doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, Object[] rest ->
+    def badTagClosure = { tag, doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, Object[] rest ->
         def uri = pendingNamespaces[prefix]
         if (uri == null) {
             uri = namespaces[prefix]
@@ -27,9 +27,9 @@ class AbstractStreamingBuilder {
         throw new GroovyRuntimeException("Tag ${tag} is not allowed in namespace ${uri}")
     }
 
-    def namespaceSetupClosure = {doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, Object[] rest ->
+    def namespaceSetupClosure = { doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, Object[] rest ->
         attrs.each { key, value ->
-            if ( key == '') {
+            if (key == '') {
                 key = ':'    // marker for default namespace
             }
             value = value.toString()     // in case it's not a string
@@ -44,7 +44,7 @@ class AbstractStreamingBuilder {
     }
 
     @SuppressWarnings('Instanceof')
-    def aliasSetupClosure = {doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, Object[] rest ->
+    def aliasSetupClosure = { doc, pendingNamespaces, namespaces, namespaceSpecificTags, prefix, attrs, Object[] rest ->
         attrs.each { key, value ->
             if (value instanceof Map) {
                 // key is a namespace prefix value is the mapping
@@ -66,7 +66,7 @@ class AbstractStreamingBuilder {
 
     def getNamespaceClosure = { doc, pendingNamespaces, namespaces, Object[] rest -> [namespaces, pendingNamespaces] }
 
-    def toMapStringClosure = { Map instruction, checkDoubleQuotationMarks={ value -> !value.toString().contains('"') } ->
+    def toMapStringClosure = { Map instruction, checkDoubleQuotationMarks = { value -> !value.toString().contains('"') } ->
         def buf = new StringBuilder()
         instruction.each { name, value ->
             if (checkDoubleQuotationMarks(value)) {
@@ -78,9 +78,9 @@ class AbstractStreamingBuilder {
         buf.toString()
     }
 
-    def specialTags = ['declareNamespace':namespaceSetupClosure,
-                           'declareAlias':aliasSetupClosure,
-                          'getNamespaces':getNamespaceClosure]
+    def specialTags = ['declareNamespace': namespaceSetupClosure,
+                       'declareAlias'    : aliasSetupClosure,
+                       'getNamespaces'   : getNamespaceClosure]
 
     def builder = null
 }

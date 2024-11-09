@@ -58,7 +58,8 @@ import static org.codehaus.groovy.control.CompilerConfiguration.DEFAULT
  *
  * @see XmlCommandRegistrar
  */
-@AutoFinal @CompileStatic
+@AutoFinal
+@CompileStatic
 class Groovysh extends Shell {
 
     private static final Pattern TYPEDEF_PATTERN = ~'^\\s*((?:public|protected|private|static|abstract|final)\\s+)*(?:class|enum|interface).*'
@@ -117,7 +118,7 @@ class Groovysh extends Shell {
 
     //--------------------------------------------------------------------------
 
-    Groovysh(ClassLoader classLoader, Binding binding, IO io, @ClosureParams(value=SimpleType, options='org.apache.groovy.groovysh.Groovysh') Closure registrar, CompilerConfiguration configuration, Interpreter interpreter) {
+    Groovysh(ClassLoader classLoader, Binding binding, IO io, @ClosureParams(value = SimpleType, options = 'org.apache.groovy.groovysh.Groovysh') Closure registrar, CompilerConfiguration configuration, Interpreter interpreter) {
         super(io)
         assert classLoader
         assert binding
@@ -129,8 +130,8 @@ class Groovysh extends Shell {
         this.configuration = configuration
     }
 
-    Groovysh(ClassLoader classLoader, Binding binding, IO io, @ClosureParams(value=SimpleType, options='org.apache.groovy.groovysh.Groovysh') Closure registrar = null, CompilerConfiguration configuration = DEFAULT) {
-       this(classLoader, binding, io, registrar, configuration, new Interpreter(classLoader, binding, configuration))
+    Groovysh(ClassLoader classLoader, Binding binding, IO io, @ClosureParams(value = SimpleType, options = 'org.apache.groovy.groovysh.Groovysh') Closure registrar = null, CompilerConfiguration configuration = DEFAULT) {
+        this(classLoader, binding, io, registrar, configuration, new Interpreter(classLoader, binding, configuration))
     }
 
     // ClassLoader,Binding,IO variants (drop left-to-right)
@@ -204,10 +205,10 @@ class Groovysh extends Shell {
 
                 if (!Boolean.valueOf(getPreference(INTERPRETER_MODE_PREFERENCE_KEY, 'false')) || isTypeOrMethodDeclaration(current)) {
                     // Evaluate the current buffer w/imports and dummy statement
-                    List buff = [importsSpec] + [ 'true' ] + current
+                    List buff = [importsSpec] + ['true'] + current
                     try {
                         setLastResult(result = interp.evaluate(buff))
-                    } catch(MultipleCompilationErrorsException t) {
+                    } catch (MultipleCompilationErrorsException t) {
                         if (isIncompleteCaseOfAntlr4(t)) {
                             // treat like INCOMPLETE case
                             buffers.updateSelected(current)
@@ -219,7 +220,7 @@ class Groovysh extends Shell {
                     // Evaluate Buffer wrapped with code storing bounded vars
                     try {
                         result = evaluateWithStoredBoundVars(importsSpec, current)
-                    } catch(MultipleCompilationErrorsException t) {
+                    } catch (MultipleCompilationErrorsException t) {
                         if (isIncompleteCaseOfAntlr4(t)) {
                             // treat like INCOMPLETE case
                             buffers.updateSelected(current)
@@ -251,11 +252,11 @@ class Groovysh extends Shell {
     private boolean isIncompleteCaseOfAntlr4(MultipleCompilationErrorsException t) {
         // TODO antlr4 parser errors pop out here - can we rework to be like antlr2?
         (
-                (t.message.contains('Unexpected input: ') || t.message.contains('Unexpected character: ')) && !(
-                            t.message.contains("Unexpected input: '}'")
-                        || t.message.contains("Unexpected input: ')'")
-                        || t.message.contains("Unexpected input: ']'")
-                )
+            (t.message.contains('Unexpected input: ') || t.message.contains('Unexpected character: ')) && !(
+                t.message.contains("Unexpected input: '}'")
+                    || t.message.contains("Unexpected input: ')'")
+                    || t.message.contains("Unexpected input: ']'")
+            )
         )
     }
 
@@ -272,6 +273,7 @@ class Groovysh extends Shell {
      * to simulate an interpreter mode, this method wraps the statements into a try/finally block that
      * stores bound variables like unbound variables
      */
+
     private Object evaluateWithStoredBoundVars(String importsSpec, List<String> current) {
         Object result
         String variableBlocks = null
@@ -323,7 +325,7 @@ try {$COLLECTED_BOUND_VARS_MAP_VARNAME[\"$varname\"] = $varname;
     }
 
     String getImportStatements() {
-        return this.imports.collect({String it -> "import $it;"}).join('')
+        return this.imports.collect({ String it -> "import $it;" }).join('')
     }
 
     //
@@ -349,7 +351,7 @@ try {$COLLECTED_BOUND_VARS_MAP_VARNAME[\"$varname\"] = $varname;
         }
         def groovyshellEnv = System.getenv('GROOVYSH_PROMPT')
         if (groovyshellEnv) {
-            return  "@|bold ${groovyshellEnv}:|@${lineNum}@|bold >|@ "
+            return "@|bold ${groovyshellEnv}:|@${lineNum}@|bold >|@ "
         }
         return "@|bold groovy:|@${lineNum}@|bold >|@ "
 
@@ -366,7 +368,7 @@ try {$COLLECTED_BOUND_VARS_MAP_VARNAME[\"$varname\"] = $varname;
             return ''
         }
         StringBuilder src = new StringBuilder()
-        for (String line: buffer) {
+        for (String line : buffer) {
             src.append(line).append('\n')
         }
 
@@ -416,7 +418,7 @@ try {$COLLECTED_BOUND_VARS_MAP_VARNAME[\"$varname\"] = $varname;
 
                 // Disable the result hook for profile scripts
                 def previousHook = resultHook
-                resultHook = { result -> /* nothing */}
+                resultHook = { result -> /* nothing */ }
                 try {
                     command.load(file.toURI().toURL())
                 }
@@ -480,7 +482,7 @@ try {$COLLECTED_BOUND_VARS_MAP_VARNAME[\"$varname\"] = $varname;
             throw new IllegalStateException('Result hook is not set')
         }
 
-        resultHook.call((Object)result)
+        resultHook.call((Object) result)
 
         interp.context['_'] = result
 
@@ -490,7 +492,7 @@ try {$COLLECTED_BOUND_VARS_MAP_VARNAME[\"$varname\"] = $varname;
     final Closure defaultErrorHook = { Throwable cause ->
         assert cause != null
 
-        if (log.debug || ! (cause instanceof CompilationFailedException)) {
+        if (log.debug || !(cause instanceof CompilationFailedException)) {
             // For CompilationErrors, the Exception Class is usually not useful to the user
             io.err.println("@|bold,red ERROR|@ ${cause.getClass().name}:")
         }
@@ -516,8 +518,7 @@ try {$COLLECTED_BOUND_VARS_MAP_VARNAME[\"$varname\"] = $varname;
             if (log.debug) {
                 // If we have debug enabled then skip the fancy bits below
                 log.debug(cause)
-            }
-            else {
+            } else {
                 boolean sanitize = getPreference(SANITIZE_PREFERENCE_KEY, 'false')
                 // Sanitize the stack trace unless we are in verbose mode, or the user has request otherwise
                 def trace = (sanitize && !io.verbose ? StackTraceUtils.deepSanitize(cause) : cause).stackTrace
@@ -538,8 +539,8 @@ try {$COLLECTED_BOUND_VARS_MAP_VARNAME[\"$varname\"] = $varname;
                     buff << "        @|bold at|@ ${e.className}.${e.methodName} (@|bold "
 
                     buff << (e.nativeMethod ? 'Native Method' :
-                            (e.fileName != null && e.lineNumber != -1 ? "${e.fileName}:${e.lineNumber}" :
-                                    (e.fileName != null ? e.fileName : 'Unknown Source')))
+                        (e.fileName != null && e.lineNumber != -1 ? "${e.fileName}:${e.lineNumber}" :
+                            (e.fileName != null ? e.fileName : 'Unknown Source')))
 
                     buff << '|@)'
 
@@ -577,8 +578,8 @@ try {$COLLECTED_BOUND_VARS_MAP_VARNAME[\"$varname\"] = $varname;
     }
 
     /**
-    * Run the Interactive Shell with optional initial script and files to load.
-    */
+     * Run the Interactive Shell with optional initial script and files to load.
+     */
     int run(String evalString, List<String> filenames) {
         List<String> startCommands = []
         if (evalString?.trim()) {

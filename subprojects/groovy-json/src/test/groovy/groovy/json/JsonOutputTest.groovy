@@ -29,7 +29,8 @@ import static groovy.test.GroovyAssert.shouldFail
 
 final class JsonOutputTest {
 
-    @Test // GROOVY-5918
+    @Test
+    // GROOVY-5918
     void testExpando() {
         assert toJson(new Expando(a: 42)) == '{"a":42}'
         assert new JsonBuilder(new Expando(a: 42)).toString() == '{"a":42}'
@@ -194,7 +195,8 @@ final class JsonOutputTest {
     @Test
     void testURL() {
         assert toJson(new URL("http://glaforge.appspot.com")) == '"http://glaforge.appspot.com"'
-        assert toJson(new URL('file', '', 'C:\\this\\is\\windows\\path')) == '"file:C:\\\\this\\\\is\\\\windows\\\\path"' // GROOVY-6560
+        assert toJson(new URL('file', '', 'C:\\this\\is\\windows\\path')) == '"file:C:\\\\this\\\\is\\\\windows\\\\path"'
+        // GROOVY-6560
     }
 
     @Test
@@ -209,7 +211,7 @@ final class JsonOutputTest {
     @Test
     void testComplexObject() {
         assert toJson([name: 'Guillaume', age: 33, address: [line1: "1 main street", line2: "", zip: 1234], pets: ['dog', 'cat']]) ==
-                '{"name":"Guillaume","age":33,"address":{"line1":"1 main street","line2":"","zip":1234},"pets":["dog","cat"]}'
+            '{"name":"Guillaume","age":33,"address":{"line1":"1 main street","line2":"","zip":1234},"pets":["dog","cat"]}'
 
         assert toJson([[:], [:]]) == '[{},{}]'
     }
@@ -240,22 +242,22 @@ final class JsonOutputTest {
         def json = new JsonBuilder()
 
         json.trends {
-            "2010-06-22 17:20" ([
-                    name: "Groovy rules",
-                    query: "Groovy rules"
+            "2010-06-22 17:20"([
+                name : "Groovy rules",
+                query: "Groovy rules"
             ], {
                 name "#worldcup"
                 query "#worldcup"
             }, [
-                    name: "Uruguai",
-                    query: "Uruguai"
+                name : "Uruguai",
+                query: "Uruguai"
             ])
-            "2010-06-22 06:20" ({
+            "2010-06-22 06:20"({
                 name "#groovy"
                 query "#groovy"
             }, [
-                    name: "#java",
-                    query: "#java"
+                name : "#java",
+                query: "#java"
             ])
         }
 
@@ -333,14 +335,14 @@ final class JsonOutputTest {
     @Test
     void testSerializePogos() {
         def city = new JsonCity("Paris", [
-                new JsonDistrict(1, [
-                        new JsonStreet("Saint-Honore", JsonStreetKind.street),
-                        new JsonStreet("de l'Opera", JsonStreetKind.avenue)
-                ] as JsonStreet[]),
-                new JsonDistrict(2, [
-                        new JsonStreet("des Italiens", JsonStreetKind.boulevard),
-                        new JsonStreet("Bonne Nouvelle", JsonStreetKind.boulevard)
-                ] as JsonStreet[])
+            new JsonDistrict(1, [
+                new JsonStreet("Saint-Honore", JsonStreetKind.street),
+                new JsonStreet("de l'Opera", JsonStreetKind.avenue)
+            ] as JsonStreet[]),
+            new JsonDistrict(2, [
+                new JsonStreet("des Italiens", JsonStreetKind.boulevard),
+                new JsonStreet("Bonne Nouvelle", JsonStreetKind.boulevard)
+            ] as JsonStreet[])
         ])
 
         assert JsonOutput.prettyPrint(toJson(city)) == '''\
@@ -384,7 +386,8 @@ final class JsonOutputTest {
         }
     }
 
-    @Test // GROOVY-5247
+    @Test
+    // GROOVY-5247
     void testTreeMap() {
         def m = new TreeMap()
         m.a = 1
@@ -397,7 +400,8 @@ final class JsonOutputTest {
         assert json == '{"name":"pillow","properties":{"state":"fluffy","color":"white"}}'
     }
 
-    @Test // GROOVY-5494
+    @Test
+    // GROOVY-5494
     void testDeclaredPropertiesMethod() {
         String json = toJson(new Pogo5494(name: "foo"))
         assert json == '{"name":"foo","properties":0}'
@@ -405,6 +409,7 @@ final class JsonOutputTest {
 
     static class Pogo5494 {
         String name
+
         int getProperties() { return 0 }
     }
 
@@ -455,20 +460,21 @@ final class JsonOutputTest {
         assert toJson(new Expando('\u0002': 0)) == '{"\\u0002":0}'
 
         // Closure
-        assert toJson({'"' 0}) == '{"\\"":0}'
-        assert toJson({'\b' 0}) == '{"\\b":0}'
-        assert toJson({'\f' 0}) == '{"\\f":0}'
-        assert toJson({'\n' 0}) == '{"\\n":0}'
-        assert toJson({'\r' 0}) == '{"\\r":0}'
-        assert toJson({'\t' 0}) == '{"\\t":0}'
-        assert toJson({'\\' 0}) == '{"\\\\":0}'
-        assert toJson({'\1' 0}) == '{"\\u0001":0}'
-        assert toJson({'\u0002' 0}) == '{"\\u0002":0}'
+        assert toJson({ '"' 0 }) == '{"\\"":0}'
+        assert toJson({ '\b' 0 }) == '{"\\b":0}'
+        assert toJson({ '\f' 0 }) == '{"\\f":0}'
+        assert toJson({ '\n' 0 }) == '{"\\n":0}'
+        assert toJson({ '\r' 0 }) == '{"\\r":0}'
+        assert toJson({ '\t' 0 }) == '{"\\t":0}'
+        assert toJson({ '\\' 0 }) == '{"\\\\":0}'
+        assert toJson({ '\1' 0 }) == '{"\\u0001":0}'
+        assert toJson({ '\u0002' 0 }) == '{"\\u0002":0}'
     }
 
-    @Test // GROOVY-7519
+    @Test
+    // GROOVY-7519
     void testFile() {
-        def file  = File.createTempFile('test', 'file-json')
+        def file = File.createTempFile('test', 'file-json')
         file.deleteOnExit()
         assert toJson(file)
 
@@ -477,7 +483,8 @@ final class JsonOutputTest {
         assert toJson(dir)
     }
 
-    @Test // GROOVY-5169
+    @Test
+    // GROOVY-5169
     void testPropertyModifiers1() {
         assertScript '''
             class Pogo {
@@ -492,7 +499,8 @@ final class JsonOutputTest {
         '''
     }
 
-    @Test // GROOVY-7682
+    @Test
+    // GROOVY-7682
     void testStackOverflowError1() {
         assertScript '''
             @Grab('joda-time:joda-time:2.10.10')
@@ -538,7 +546,8 @@ final class JsonOutputTest {
         '''
     }
 
-    @Test // GROOVY-8371
+    @Test
+    // GROOVY-8371
     void testStackOverflowError2() {
         assertScript '''
             final  date = java.time.LocalDate.of(1970, 1, 1)
@@ -547,7 +556,7 @@ final class JsonOutputTest {
                 "chronology":{
                     "calendarType":"iso8601",
                     "id":"ISO"
-                    ''' + ((isAtLeastJdk("19.0")) ? ',"isoBased":true' : '' ) + '''
+                    ''' + ((isAtLeastJdk("19.0")) ? ',"isoBased":true' : '') + '''
                 },
                 "dayOfMonth":1,
                 "dayOfWeek":"THURSDAY",
@@ -561,12 +570,13 @@ final class JsonOutputTest {
         '''
     }
 
-    @Test // GROOVY-11167
+    @Test
+    // GROOVY-11167
     void testRecordsVsClass() {
         def a = new PersonA('Guillaume')
         def b = new PersonB('Jochen')
         def c = new PersonC('Eric')
-        assert toJson([a,b,c]) == '[{"name":"Guillaume"},{"name":"Jochen"},{"name":"Eric"}]'
+        assert toJson([a, b, c]) == '[{"name":"Guillaume"},{"name":"Jochen"},{"name":"Eric"}]'
     }
 }
 
@@ -597,7 +607,7 @@ enum JsonStreetKind {
 import groovy.transform.RecordOptions
 import static groovy.transform.RecordTypeMode.*
 
-@RecordOptions(mode=EMULATE)
+@RecordOptions(mode = EMULATE)
 record PersonA(String name) {}
 
 // different JDK versions will cover the NATIVE case

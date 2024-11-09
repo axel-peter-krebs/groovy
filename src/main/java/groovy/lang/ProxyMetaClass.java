@@ -40,21 +40,21 @@ public class ProxyMetaClass extends MetaClassImpl implements AdaptingMetaClass {
     protected Interceptor interceptor;
 
     /**
-     * convenience factory method for the most usual case.
-     */
-    public static ProxyMetaClass getInstance(final Class theClass) {
-        MetaClassRegistry metaRegistry = GroovySystem.getMetaClassRegistry();
-        MetaClass meta = metaRegistry.getMetaClass(theClass);
-        return new ProxyMetaClass(metaRegistry, theClass, meta);
-    }
-
-    /**
      * @param adaptee the MetaClass to decorate with interceptability
      */
     public ProxyMetaClass(final MetaClassRegistry registry, final Class theClass, final MetaClass adaptee) {
         super(registry, theClass);
         this.adaptee = Objects.requireNonNull(adaptee, "adaptee must not be null");
         super.initialize();
+    }
+
+    /**
+     * convenience factory method for the most usual case.
+     */
+    public static ProxyMetaClass getInstance(final Class theClass) {
+        MetaClassRegistry metaRegistry = GroovySystem.getMetaClassRegistry();
+        MetaClass meta = metaRegistry.getMetaClass(theClass);
+        return new ProxyMetaClass(metaRegistry, theClass, meta);
     }
 
     @Override

@@ -103,23 +103,6 @@ public class AstBuilderTransformation extends MethodCallTransformation {
             }
         }
 
-        @Override
-        protected boolean handleTargetMethodCallExpression(MethodCallExpression call) {
-            ClosureExpression closureExpression = getClosureArgument(call);
-            List<Expression> otherArgs = getNonClosureArguments(call);
-            String source = convertClosureToSource(closureExpression);
-
-            // parameter order is build(CompilePhase, boolean, String)
-            otherArgs.add(new ConstantExpression(source));
-            call.setArguments(new ArgumentListExpression(otherArgs));
-            call.setMethod(new ConstantExpression("buildFromBlock"));
-            call.setSpreadSafe(false);
-            call.setSafe(false);
-            call.setImplicitThis(false);
-
-            return false;
-        }
-
         private static List<Expression> getNonClosureArguments(MethodCallExpression call) {
             List<Expression> result = new ArrayList<>();
             if (call.getArguments() instanceof TupleExpression) {
@@ -142,6 +125,23 @@ public class AstBuilderTransformation extends MethodCallTransformation {
                 }
             }
             return null;
+        }
+
+        @Override
+        protected boolean handleTargetMethodCallExpression(MethodCallExpression call) {
+            ClosureExpression closureExpression = getClosureArgument(call);
+            List<Expression> otherArgs = getNonClosureArguments(call);
+            String source = convertClosureToSource(closureExpression);
+
+            // parameter order is build(CompilePhase, boolean, String)
+            otherArgs.add(new ConstantExpression(source));
+            call.setArguments(new ArgumentListExpression(otherArgs));
+            call.setMethod(new ConstantExpression("buildFromBlock"));
+            call.setSpreadSafe(false);
+            call.setSafe(false);
+            call.setImplicitThis(false);
+
+            return false;
         }
 
         /**

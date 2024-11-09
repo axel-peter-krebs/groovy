@@ -94,9 +94,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * In this case, your template source file should be HTML with the appropriate embedded placeholders.
  */
 public class GStringTemplateEngine extends TemplateEngine {
-    private final ClassLoader parentLoader;
-    private static AtomicInteger counter = new AtomicInteger();
     private static final boolean REUSE_CLASS_LOADER = SystemUtil.getBooleanSafe("groovy.GStringTemplateEngine.reuseClassLoader");
+    private static AtomicInteger counter = new AtomicInteger();
+    private final ClassLoader parentLoader;
 
     public GStringTemplateEngine() {
         this(GStringTemplate.class.getClassLoader());
@@ -107,8 +107,8 @@ public class GStringTemplateEngine extends TemplateEngine {
     }
 
     /* (non-Javadoc)
-    * @see groovy.text.TemplateEngine#createTemplate(java.io.Reader)
-    */
+     * @see groovy.text.TemplateEngine#createTemplate(java.io.Reader)
+     */
     @Override
     public Template createTemplate(final Reader reader) throws CompilationFailedException, ClassNotFoundException, IOException {
         return new GStringTemplate(reader, parentLoader);
@@ -190,9 +190,9 @@ public class GStringTemplateEngine extends TemplateEngine {
 
             // Use a new class loader by default for each class so each class can be independently garbage collected
             final GroovyClassLoader loader =
-                    REUSE_CLASS_LOADER && parentLoader instanceof GroovyClassLoader
-                            ? (GroovyClassLoader) parentLoader
-                            : createClassLoader(parentLoader);
+                REUSE_CLASS_LOADER && parentLoader instanceof GroovyClassLoader
+                    ? (GroovyClassLoader) parentLoader
+                    : createClassLoader(parentLoader);
             final Class<?> groovyClass;
             try {
                 groovyClass = loader.parseClass(new GroovyCodeSource(templateExpressions.toString(), "GStringTemplateScript" + counter.incrementAndGet() + ".groovy", "x"));
@@ -208,14 +208,10 @@ public class GStringTemplateEngine extends TemplateEngine {
                 // books = 'foo' in a template would store 'books' in the binding of the template script itself ("script")
                 // instead of storing it in the delegate, which is a Binding too
                 this.template.setResolveStrategy(Closure.DELEGATE_FIRST);
-            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                     InvocationTargetException e) {
                 throw new ClassNotFoundException(e.getMessage());
             }
-        }
-
-        @SuppressWarnings("removal") // TODO a future Groovy version should create the loader not as a privileged action
-        private GroovyClassLoader createClassLoader(ClassLoader parentLoader) {
-            return java.security.AccessController.doPrivileged((PrivilegedAction<GroovyClassLoader>) () -> new GroovyClassLoader(parentLoader));
         }
 
         private static void appendCharacter(final char c,
@@ -225,20 +221,6 @@ public class GStringTemplateEngine extends TemplateEngine {
                 templateExpressions.append("out << \"\"\"");
             }
             templateExpressions.append(c);
-        }
-
-        private void parseGSstring(Reader reader, boolean writingString, StringBuilder templateExpressions) throws IOException {
-            if (!writingString) {
-                templateExpressions.append("\"\"\"; ");
-            }
-            while (true) {
-                int c = reader.read();
-                if (c == -1) break;
-                templateExpressions.append((char) c);
-                if (c == '}') {
-                    break;
-                }
-            }
         }
 
         /**
@@ -256,7 +238,7 @@ public class GStringTemplateEngine extends TemplateEngine {
                                          final Reader reader,
                                          final boolean writingString,
                                          final StringBuilder templateExpressions)
-                throws IOException {
+            throws IOException {
             if (writingString) {
                 templateExpressions.append("\"\"\"; ");
             }
@@ -291,7 +273,7 @@ public class GStringTemplateEngine extends TemplateEngine {
         private static void parseExpression(final Reader reader,
                                             final boolean writingString,
                                             final StringBuilder templateExpressions)
-                throws IOException {
+            throws IOException {
             if (!writingString) {
                 templateExpressions.append("out << \"\"\"");
             }
@@ -301,6 +283,25 @@ public class GStringTemplateEngine extends TemplateEngine {
             readAndAppend(reader, templateExpressions);
 
             templateExpressions.append('}');
+        }
+
+        @SuppressWarnings("removal") // TODO a future Groovy version should create the loader not as a privileged action
+        private GroovyClassLoader createClassLoader(ClassLoader parentLoader) {
+            return java.security.AccessController.doPrivileged((PrivilegedAction<GroovyClassLoader>) () -> new GroovyClassLoader(parentLoader));
+        }
+
+        private void parseGSstring(Reader reader, boolean writingString, StringBuilder templateExpressions) throws IOException {
+            if (!writingString) {
+                templateExpressions.append("\"\"\"; ");
+            }
+            while (true) {
+                int c = reader.read();
+                if (c == -1) break;
+                templateExpressions.append((char) c);
+                if (c == '}') {
+                    break;
+                }
+            }
         }
 
         @Override

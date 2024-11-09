@@ -56,7 +56,7 @@ class MacroVariableSubstitutionTest extends GroovyTestCase {
 @Retention(RetentionPolicy.SOURCE)
 @Target([ElementType.FIELD])
 @GroovyASTTransformationClass(["metaprogramming.MD5ASTTransformation"])
-@interface MD5 { }
+@interface MD5 {}
 // end::md5annotation[]
 
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC
@@ -71,12 +71,12 @@ class MD5ASTTransformation extends AbstractASTTransformation {
         ClassNode classNode = fieldNode.declaringClass
         String capitalizedName = fieldNode.name.capitalize()
         MethodNode methodNode = new MethodNode(
-                "get${capitalizedName}MD5",
-                ACC_PUBLIC,
-                ClassHelper.STRING_TYPE,
-                [] as Parameter[],
-                [] as ClassNode[],
-                buildMD5MethodCode(fieldNode))
+            "get${capitalizedName}MD5",
+            ACC_PUBLIC,
+            ClassHelper.STRING_TYPE,
+            [] as Parameter[],
+            [] as ClassNode[],
+            buildMD5MethodCode(fieldNode))
 
         classNode.addMethod(methodNode)
     }
@@ -86,10 +86,10 @@ class MD5ASTTransformation extends AbstractASTTransformation {
 
         return macro(CompilePhase.SEMANTIC_ANALYSIS, true) {            // <2>
             return java.security.MessageDigest
-                    .getInstance('MD5')
-                    .digest($v { fieldVar }.getBytes())                 // <3>
-                    .encodeHex()
-                    .toString()
+                .getInstance('MD5')
+                .digest($v { fieldVar }.getBytes())                 // <3>
+                .encodeHex()
+                .toString()
         }
     }
 }

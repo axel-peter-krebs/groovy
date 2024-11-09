@@ -60,7 +60,7 @@ class StackTraceTest extends GroovyTestCase {
             assert mpe.message.indexOf('unknownProp') > 0
             def found = mpe.stackTrace.find {
                 it.lineNumber == 1 &&
-                        it.fileName == 'testMissingProperty.tst'
+                    it.fileName == 'testMissingProperty.tst'
             }
             assertDone = found != null
         }

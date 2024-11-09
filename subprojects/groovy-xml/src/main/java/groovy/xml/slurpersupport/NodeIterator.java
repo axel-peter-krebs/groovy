@@ -33,8 +33,8 @@ public abstract class NodeIterator implements Iterator {
         this.nextNode = DELAYED_INIT;
     }
 
-    private void initNextNode(){
-        if (nextNode==DELAYED_INIT) nextNode = getNextNode(iter);
+    private void initNextNode() {
+        if (nextNode == DELAYED_INIT) nextNode = getNextNode(iter);
     }
 
     @Override

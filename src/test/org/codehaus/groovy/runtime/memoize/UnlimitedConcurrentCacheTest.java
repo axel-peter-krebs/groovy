@@ -32,13 +32,13 @@ public class UnlimitedConcurrentCacheTest {
     @Test
     public void get() {
         UnlimitedConcurrentCache<String, String> sc =
-                new UnlimitedConcurrentCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new UnlimitedConcurrentCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
         Assert.assertEquals("Daniel", sc.get("name"));
         Assert.assertEquals("Male", sc.get("gender"));
@@ -62,7 +62,7 @@ public class UnlimitedConcurrentCacheTest {
         UnlimitedConcurrentCache<String, String> sc = new UnlimitedConcurrentCache<>();
 
         EvictableCache.ValueProvider vp =
-                (EvictableCache.ValueProvider<String, String>) key -> "Chinese";
+            (EvictableCache.ValueProvider<String, String>) key -> "Chinese";
 
         Assert.assertEquals("Chinese", sc.getAndPut("language", vp));
         Assert.assertEquals("Chinese", sc.get("language"));
@@ -71,13 +71,13 @@ public class UnlimitedConcurrentCacheTest {
     @Test
     public void values() {
         UnlimitedConcurrentCache<String, String> sc =
-                new UnlimitedConcurrentCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new UnlimitedConcurrentCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
         Assert.assertEquals(new TreeSet<>(Arrays.asList("Daniel", "Male", "Shanghai")), new TreeSet<>(sc.values()));
     }
@@ -85,13 +85,13 @@ public class UnlimitedConcurrentCacheTest {
     @Test
     public void keys() {
         UnlimitedConcurrentCache<String, String> sc =
-                new UnlimitedConcurrentCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new UnlimitedConcurrentCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
         Assert.assertEquals(new TreeSet<>(Arrays.asList("name", "gender", "city")), new TreeSet<>(sc.keys()));
     }
@@ -99,13 +99,13 @@ public class UnlimitedConcurrentCacheTest {
     @Test
     public void containsKey() {
         UnlimitedConcurrentCache<String, String> sc =
-                new UnlimitedConcurrentCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new UnlimitedConcurrentCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
         Assert.assertTrue(sc.containsKey("name"));
     }
@@ -113,13 +113,13 @@ public class UnlimitedConcurrentCacheTest {
     @Test
     public void size() {
         UnlimitedConcurrentCache<String, String> sc =
-                new UnlimitedConcurrentCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new UnlimitedConcurrentCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
         Assert.assertEquals(3, sc.size());
     }
@@ -127,13 +127,13 @@ public class UnlimitedConcurrentCacheTest {
     @Test
     public void remove() {
         UnlimitedConcurrentCache<String, String> sc =
-                new UnlimitedConcurrentCache<>(
-                        new HashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new UnlimitedConcurrentCache<>(
+                new HashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
         Assert.assertEquals("Shanghai", sc.remove("city"));
         Assert.assertNull(sc.get("city"));
@@ -142,13 +142,13 @@ public class UnlimitedConcurrentCacheTest {
     @Test
     public void clear() {
         UnlimitedConcurrentCache<String, String> sc =
-                new UnlimitedConcurrentCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new UnlimitedConcurrentCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
         Assert.assertEquals(new TreeSet<>(Arrays.asList("Daniel", "Male", "Shanghai")), new TreeSet<>(sc.clearAll().values()));
     }
@@ -156,13 +156,13 @@ public class UnlimitedConcurrentCacheTest {
     @Test
     public void cleanUpNullReferences() {
         UnlimitedConcurrentCache<String, Object> sc =
-                new UnlimitedConcurrentCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", new SoftReference(null))
-                        )
-                );
+            new UnlimitedConcurrentCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", new SoftReference(null))
+                )
+            );
 
         sc.cleanUpNullReferences();
         Assert.assertEquals(new TreeSet<>(Arrays.asList("Daniel", "Male")), new TreeSet<>(sc.values()));

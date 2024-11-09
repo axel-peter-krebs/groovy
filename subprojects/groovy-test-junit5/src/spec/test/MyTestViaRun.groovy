@@ -19,8 +19,8 @@
 import groovy.test.GroovyTestCase
 
 class MyTestViaRun extends GroovyTestCase {
-  void testJunit5ViaRun() {
-    new GroovyShell().run '''
+    void testJunit5ViaRun() {
+        new GroovyShell().run '''
 //@Grab('org.junit.jupiter:junit-jupiter-params:5.2.0')
 import org.junit.jupiter.api.*
 import org.junit.jupiter.params.ParameterizedTest
@@ -74,7 +74,7 @@ class MyTest {
 }
 // end::junit5_test_part2[]
 ''', "MyTest", []
-  }
+    }
 /*
 // tag::junit5_test_output[]
 JUnit5 launcher: passed=8, failed=0, skipped=0, time=246ms

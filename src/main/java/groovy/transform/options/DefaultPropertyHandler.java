@@ -52,10 +52,27 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.varX;
 public class DefaultPropertyHandler extends PropertyHandler {
     private static final ClassNode POJO_TYPE = make(POJO.class);
 
+    private static Statement assignToFieldS(final String name, final Expression var) {
+        return assignS(propX(varX("this"), name), var);
+    }
+
+    private static Statement setViaSetterS(final String name, final Expression var) {
+        return stmt(callThisX(getSetterName(name), var));
+    }
+
+    private static Statement assignFieldS(final boolean useSetters, final Parameter map, final String name) {
+        ArgumentListExpression nameArg = args(constX(name));
+        MethodCallExpression var = callX(varX(map), "get", nameArg);
+        var.setImplicitThis(false);
+        MethodCallExpression containsKey = callX(varX(map), "containsKey", nameArg);
+        containsKey.setImplicitThis(false);
+        return ifS(containsKey, useSetters ? setViaSetterS(name, var) : assignToFieldS(name, var));
+    }
+
     @Override
     public boolean validateAttributes(final AbstractASTTransformation xform, final AnnotationNode anno) {
         boolean success = true;
-      //success |= isValidAttribute(xform, anno, "");
+        //success |= isValidAttribute(xform, anno, "");
         return success;
     }
 
@@ -85,22 +102,5 @@ public class DefaultPropertyHandler extends PropertyHandler {
                 return assignToFieldS(name, var);
             }
         }
-    }
-
-    private static Statement assignToFieldS(final String name, final Expression var) {
-        return assignS(propX(varX("this"), name), var);
-    }
-
-    private static Statement setViaSetterS(final String name, final Expression var) {
-        return stmt(callThisX(getSetterName(name), var));
-    }
-
-    private static Statement assignFieldS(final boolean useSetters, final Parameter map, final String name) {
-        ArgumentListExpression nameArg = args(constX(name));
-        MethodCallExpression var = callX(varX(map), "get", nameArg);
-        var.setImplicitThis(false);
-        MethodCallExpression containsKey = callX(varX(map), "containsKey", nameArg);
-        containsKey.setImplicitThis(false);
-        return ifS(containsKey, useSetters ? setViaSetterS(name, var) : assignToFieldS(name, var));
     }
 }

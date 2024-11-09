@@ -121,7 +121,7 @@ import static org.objectweb.asm.Opcodes.PUTSTATIC;
  */
 public class StaticTypesCallSiteWriter extends CallSiteWriter {
 
-    private static final ClassNode  INVOKERHELPER_TYPE = ClassHelper.make(InvokerHelper.class);
+    private static final ClassNode INVOKERHELPER_TYPE = ClassHelper.make(InvokerHelper.class);
     private static final MethodNode COLLECTION_SIZE_METHOD = COLLECTION_TYPE.getMethod("size", Parameter.EMPTY_ARRAY);
     private static final MethodNode MAP_GET_METHOD = MAP_TYPE.getMethod("get", new Parameter[]{new Parameter(OBJECT_TYPE, "key")});
     private static final MethodNode GROOVYOBJECT_GETPROPERTY_METHOD = GROOVY_OBJECT_TYPE.getMethod("getProperty", new Parameter[]{new Parameter(STRING_TYPE, "propertyName")});
@@ -146,7 +146,7 @@ public class StaticTypesCallSiteWriter extends CallSiteWriter {
     @Override
     public void makeCallSite(final Expression receiver, final String message, final Expression arguments, final boolean safe, final boolean implicitThis, final boolean callCurrent, final boolean callStatic) {
         throw new GroovyBugError(
-                "at line " + receiver.getLineNumber() + " column " + receiver.getColumnNumber() + "\n" +
+            "at line " + receiver.getLineNumber() + " column " + receiver.getColumnNumber() + "\n" +
                 "On receiver: " + receiver.getText() + " with message: " + message + " and arguments: " + arguments.getText() + "\n" +
                 "StaticTypesCallSiteWriter#makeCallSite should not have been called. Call site lacked method target for static compilation.\n" +
                 "Please try to create a simple example reproducing this error and file a bug report at https://issues.apache.org/jira/browse/GROOVY");
@@ -180,12 +180,12 @@ public class StaticTypesCallSiteWriter extends CallSiteWriter {
         if (makeGetPropertyWithGetter(receiver, receiverType, propertyName, safe, implicitThis)) return;
 
         boolean isStaticProperty = (receiver instanceof ClassExpression
-                && (receiverType.isDerivedFrom(receiver.getType()) || receiverType.implementsInterface(receiver.getType())));
+            && (receiverType.isDerivedFrom(receiver.getType()) || receiverType.implementsInterface(receiver.getType())));
 
         // GROOVY-5001, GROOVY-5491, GROOVY-5517, GROOVY-6144, GROOVY-8788: for map types,
         // replace "map.foo" with "map.get('foo')" -- if no public field "foo" is declared
         if (!isStaticProperty && isOrImplements(receiverType, MAP_TYPE)
-                && getField(receiverType, propertyName, FieldNode::isPublic) == null) {
+            && getField(receiverType, propertyName, FieldNode::isPublic) == null) {
             writeMapDotProperty(receiver, propertyName, safe);
             return;
         }
@@ -212,9 +212,9 @@ public class StaticTypesCallSiteWriter extends CallSiteWriter {
     private void makeDynamicGetProperty(final Expression receiver, final String propertyName, final boolean safe) {
         MethodNode target = safe ? INVOKERHELPER_GETPROPERTYSAFE_METHOD : INVOKERHELPER_GETPROPERTY_METHOD;
         MethodCallExpression call = callX(
-                classX(INVOKERHELPER_TYPE),
-                target.getName(),
-                args(receiver, constX(propertyName))
+            classX(INVOKERHELPER_TYPE),
+            target.getName(),
+            args(receiver, constX(propertyName))
         );
         call.setImplicitThis(false);
         call.setMethodTarget(target);
@@ -302,8 +302,8 @@ public class StaticTypesCallSiteWriter extends CallSiteWriter {
         mv.visitLabel(l4);
         mv.visitVarInsn(ALOAD, list);
         Expression pexp = propX(
-                bytecodeX(componentType, v -> v.visitVarInsn(ALOAD, next)),
-                propertyName
+            bytecodeX(componentType, v -> v.visitVarInsn(ALOAD, next)),
+            propertyName
         );
         pexp.visit(controller.getAcg());
         operandStack.box();
@@ -330,7 +330,7 @@ public class StaticTypesCallSiteWriter extends CallSiteWriter {
         if (field != null) {
             ClassNode classNode = controller.getClassNode();
             if (field.isPrivate() && !receiverType.equals(classNode)
-                    && StaticInvocationWriter.isPrivateBridgeMethodsCallAllowed(receiverType, classNode)) {
+                && StaticInvocationWriter.isPrivateBridgeMethodsCallAllowed(receiverType, classNode)) {
                 Map<String, MethodNode> accessors = receiverType.redirect().getNodeMetaData(StaticCompilationMetadataKeys.PRIVATE_FIELDS_ACCESSORS);
                 if (accessors != null) {
                     MethodNode methodNode = accessors.get(fieldName);
@@ -385,15 +385,15 @@ public class StaticTypesCallSiteWriter extends CallSiteWriter {
         if (makeGetPropertyWithGetter(receiver, receiverType, propertyName, safe, implicitThis)) return;
 
         boolean isStaticProperty = (receiver instanceof ClassExpression
-                && (receiverType.isDerivedFrom(receiver.getType()) || receiverType.implementsInterface(receiver.getType())));
+            && (receiverType.isDerivedFrom(receiver.getType()) || receiverType.implementsInterface(receiver.getType())));
         boolean isMapDotProperty = !isStaticProperty && isOrImplements(receiverType, MAP_TYPE);
 
         // GROOVY-5001, GROOVY-5491, GROOVY-5517, GROOVY-6144, GROOVY-8788: for map types,
         // replace "map.foo" with "map.get('foo')" -- if no public field "foo" is declared
         if (isMapDotProperty
-                && getField(receiverType, propertyName, FieldNode::isPublic) == null
-                // GROOVY-11367, GROOVY-11402, GROOVY-11403: "this.name" outside closure includes non-public fields of lexical scope
-                && (!isThisExpression(receiver) || controller.isInGeneratedFunction() || receiverType.getDeclaredField(propertyName) == null)) {
+            && getField(receiverType, propertyName, FieldNode::isPublic) == null
+            // GROOVY-11367, GROOVY-11402, GROOVY-11403: "this.name" outside closure includes non-public fields of lexical scope
+            && (!isThisExpression(receiver) || controller.isInGeneratedFunction() || receiverType.getDeclaredField(propertyName) == null)) {
             writeMapDotProperty(receiver, propertyName, safe);
             return;
         }
@@ -436,12 +436,12 @@ public class StaticTypesCallSiteWriter extends CallSiteWriter {
         PropertyNode propertyNode = receiverType.getProperty(propertyName);
         if (getterNode == null && propertyNode != null) {
             getterNode = new MethodNode(
-                    propertyNode.getGetterNameOrDefault(), // GROOVY-10548
-                    ACC_PUBLIC | (propertyNode.isStatic() ? ACC_STATIC : 0),
-                    propertyNode.getOriginType(),
-                    Parameter.EMPTY_ARRAY,
-                    ClassNode.EMPTY_ARRAY,
-                    EmptyStatement.INSTANCE);
+                propertyNode.getGetterNameOrDefault(), // GROOVY-10548
+                ACC_PUBLIC | (propertyNode.isStatic() ? ACC_STATIC : 0),
+                propertyNode.getOriginType(),
+                Parameter.EMPTY_ARRAY,
+                ClassNode.EMPTY_ARRAY,
+                EmptyStatement.INSTANCE);
             getterNode.setDeclaringClass(receiverType);
         }
         if (getterNode != null) {
@@ -547,25 +547,25 @@ public class StaticTypesCallSiteWriter extends CallSiteWriter {
         ClassNode aType = controller.getTypeChooser().resolveType(argument, controller.getClassNode());
         if (getWrapper(rType).isDerivedFrom(Number_TYPE) && getWrapper(aType).isDerivedFrom(Number_TYPE)) {
             switch (message) {
-              case "plus":
-              case "minus":
-              case "multiply":
-              case "div"/*ide*/:
-                writeNumberNumberCall(receiver, message, argument);
-                return;
-              case "power":
-                writePowerCall(receiver, argument, rType, aType);
-                return;
-              case "and":
-              case  "or":
-              case "xor":
-              case "implies":
-              case "remainder":
-              case "leftShift":
-              case "rightShift":
-              case "rightShiftUnsigned":
-                writeOperatorCall(receiver, argument, message);
-                return;
+                case "plus":
+                case "minus":
+                case "multiply":
+                case "div"/*ide*/:
+                    writeNumberNumberCall(receiver, message, argument);
+                    return;
+                case "power":
+                    writePowerCall(receiver, argument, rType, aType);
+                    return;
+                case "and":
+                case "or":
+                case "xor":
+                case "implies":
+                case "remainder":
+                case "leftShift":
+                case "rightShift":
+                case "rightShiftUnsigned":
+                    writeOperatorCall(receiver, argument, message);
+                    return;
             }
         } else if ("plus".equals(message) && isStringType(rType)) {
             writeStringPlusCall(receiver, message, argument);
@@ -597,7 +597,7 @@ public class StaticTypesCallSiteWriter extends CallSiteWriter {
         }
 
         throw new GroovyBugError(
-                "at line " + receiver.getLineNumber() + " column " + receiver.getColumnNumber() + "\n" +
+            "at line " + receiver.getLineNumber() + " column " + receiver.getColumnNumber() + "\n" +
                 "On receiver: " + receiver.getText() + " with message: " + message + " and arguments: " + argument.getText() + "\n" +
                 "This method should not have been called. Please try to create a simple example reproducing " +
                 "this error and file a bug report at https://issues.apache.org/jira/browse/GROOVY");
@@ -735,7 +735,7 @@ public class StaticTypesCallSiteWriter extends CallSiteWriter {
                 ClassNode classNode = controller.getClassNode();
                 FieldNode fieldNode = receiverType.getField(name);
                 if (fieldNode != null && fieldNode.isPrivate() && !receiverType.equals(classNode)
-                        && StaticInvocationWriter.isPrivateBridgeMethodsCallAllowed(receiverType, classNode)) {
+                    && StaticInvocationWriter.isPrivateBridgeMethodsCallAllowed(receiverType, classNode)) {
                     Map<String, MethodNode> mutators = receiverType.redirect().getNodeMetaData(StaticCompilationMetadataKeys.PRIVATE_FIELDS_MUTATORS);
                     if (mutators != null) {
                         MethodNode methodNode = mutators.get(name);
@@ -763,7 +763,7 @@ public class StaticTypesCallSiteWriter extends CallSiteWriter {
             // GROOVY-6954, GROOVY-11376: for map types, replace "map.foo = ..."
             // with "map.put('foo', ...)" if no public field exists
             if (!isClassReceiver[0] && isOrImplements(receiverType, MAP_TYPE)
-                    && getField(receiverType, name, FieldNode::isPublic) == null) {
+                && getField(receiverType, name, FieldNode::isPublic) == null) {
                 MethodVisitor mv = controller.getMethodVisitor();
 
                 // store value in temporary variable

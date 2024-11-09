@@ -26,7 +26,7 @@ class LocalVariableTest extends GroovyTestCase {
         def x = "abc"
 
         assert x != "foo"
-        assert x !=  null
+        assert x != null
         assert x != "def"
         assert x == "abc"
 

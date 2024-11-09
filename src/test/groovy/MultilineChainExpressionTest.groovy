@@ -33,11 +33,11 @@ class MultilineChainExpressionTest extends GroovyTestCase {
                 )
         )
         assert PrintStream
-                .class
-                .isAssignableFrom(
-                    System
-                        .err
-                        .class
-                )
+            .class
+            .isAssignableFrom(
+                System
+                    .err
+                    .class
+            )
     }
 }

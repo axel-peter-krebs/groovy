@@ -66,8 +66,8 @@ public abstract class Script extends GroovyObjectSupport {
         } else if ("metaClass".equals(property)) {
             setMetaClass((MetaClass) newValue);
         } else if (!binding.hasVariable(property)
-                // GROOVY-9554: @Field adds setter
-                && hasSetterMethodFor(property)) {
+            // GROOVY-9554: @Field adds setter
+            && hasSetterMethodFor(property)) {
             super.setProperty(property, newValue);
         } else {
             binding.setVariable(property, newValue);
@@ -79,8 +79,8 @@ public abstract class Script extends GroovyObjectSupport {
         for (Class<?> c = getClass(); !c.equals(Script.class); c = c.getSuperclass()) {
             for (Method method : c.getDeclaredMethods()) {
                 if (method.getParameterCount() == 1
-                        // TODO: Test modifiers or return type?
-                        && method.getName().equals(setterName)) {
+                    // TODO: Test modifiers or return type?
+                    && method.getName().equals(setterName)) {
                     return true;
                 }
             }
@@ -156,7 +156,7 @@ public abstract class Script extends GroovyObjectSupport {
         try {
             object = getProperty("out");
         } catch (MissingPropertyException e) {
-            DefaultGroovyMethods.print(System.out,value);
+            DefaultGroovyMethods.print(System.out, value);
             return;
         }
 
@@ -174,7 +174,7 @@ public abstract class Script extends GroovyObjectSupport {
         try {
             object = getProperty("out");
         } catch (MissingPropertyException e) {
-            DefaultGroovyMethods.println(System.out,value);
+            DefaultGroovyMethods.println(System.out, value);
             return;
         }
 
@@ -185,7 +185,7 @@ public abstract class Script extends GroovyObjectSupport {
      * Prints a formatted string using the specified format string and argument.
      *
      * @param format the format to follow
-     * @param value the value to be formatted
+     * @param value  the value to be formatted
      */
     public void printf(String format, Object value) {
         Object object;
@@ -197,7 +197,7 @@ public abstract class Script extends GroovyObjectSupport {
             return;
         }
 
-        InvokerHelper.invokeMethod(object, "printf", new Object[] { format, value });
+        InvokerHelper.invokeMethod(object, "printf", new Object[]{format, value});
     }
 
     /**
@@ -216,7 +216,7 @@ public abstract class Script extends GroovyObjectSupport {
             return;
         }
 
-        InvokerHelper.invokeMethod(object, "printf", new Object[] { format, values });
+        InvokerHelper.invokeMethod(object, "printf", new Object[]{format, values});
     }
 
     /**

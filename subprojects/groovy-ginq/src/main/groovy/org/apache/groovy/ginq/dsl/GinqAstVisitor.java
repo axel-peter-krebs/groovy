@@ -42,17 +42,33 @@ import java.util.Map;
  */
 public interface GinqAstVisitor<R> {
     R visitGinqExpression(GinqExpression ginqExpression);
+
     R visitFromExpression(FromExpression fromExpression);
+
     R visitJoinExpression(JoinExpression joinExpression);
+
     R visitOnExpression(OnExpression onExpression);
+
     R visitWhereExpression(WhereExpression whereExpression);
+
     R visitGroupExpression(GroupExpression groupExpression);
+
     R visitHavingExpression(HavingExpression havingExpression);
+
     R visitOrderExpression(OrderExpression orderExpression);
+
     R visitLimitExpression(LimitExpression limitExpression);
+
     R visitSelectExpression(SelectExpression selectExpression);
+
     R visitShutdownExpression(ShutdownExpression shutdownExpression);
+
     R visit(AbstractGinqExpression expression);
-    default void setConfiguration(Map<String, String> configuration) {}
-    default Map<String, String> getConfiguration() { return Collections.emptyMap(); }
+
+    default Map<String, String> getConfiguration() {
+        return Collections.emptyMap();
+    }
+
+    default void setConfiguration(Map<String, String> configuration) {
+    }
 }

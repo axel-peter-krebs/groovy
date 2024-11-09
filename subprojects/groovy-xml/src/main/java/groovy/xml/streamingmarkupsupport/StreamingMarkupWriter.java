@@ -35,34 +35,36 @@ import java.util.function.Function;
 public class StreamingMarkupWriter extends Writer {
     protected final Writer writer;
     protected final String encoding;
-    protected boolean encodingKnown;
     protected final CharsetEncoder encoder;
-    protected boolean writingAttribute = false;
-    protected boolean haveHighSurrogate = false;
-    protected StringBuilder surrogatePair = new StringBuilder(2);
     private final Function<Character, Optional<String>> stdFilter = new StandardXmlFilter();
     private final Function<Character, Optional<String>> attrFilter = new StandardXmlAttributeFilter();
     private final Function<Character, Optional<String>> quoteFilter;
-    private final Writer escapedWriter = new Writer() {
+    protected boolean encodingKnown;
+    protected boolean writingAttribute = false;
+    protected boolean haveHighSurrogate = false;
+    protected StringBuilder surrogatePair = new StringBuilder(2);
+    public StreamingMarkupWriter(final Writer writer, final String encoding) {
+        this(writer, encoding, false);
+    }    private final Writer escapedWriter = new Writer() {
         /* (non-Javadoc)
-        * @see java.io.Writer#close()
-        */
+         * @see java.io.Writer#close()
+         */
         @Override
         public void close() throws IOException {
             StreamingMarkupWriter.this.close();
         }
 
         /* (non-Javadoc)
-        * @see java.io.Writer#flush()
-        */
+         * @see java.io.Writer#flush()
+         */
         @Override
         public void flush() throws IOException {
             StreamingMarkupWriter.this.flush();
         }
 
         /* (non-Javadoc)
-        * @see java.io.Writer#write(int)
-        */
+         * @see java.io.Writer#write(int)
+         */
         @Override
         public void write(final int c) throws IOException {
             Optional<String> transformed = stdFilter.apply((char) c);
@@ -74,8 +76,8 @@ public class StreamingMarkupWriter extends Writer {
         }
 
         /* (non-Javadoc)
-        * @see java.io.Writer#write(char[], int, int)
-        */
+         * @see java.io.Writer#write(char[], int, int)
+         */
         @Override
         public void write(final char[] cbuf, int off, int len) throws IOException {
             while (len-- > 0) {
@@ -95,10 +97,6 @@ public class StreamingMarkupWriter extends Writer {
             return StreamingMarkupWriter.this;
         }
     };
-
-    public StreamingMarkupWriter(final Writer writer, final String encoding) {
-        this(writer, encoding, false);
-    }
 
     public StreamingMarkupWriter(final Writer writer, final String encoding, boolean useDoubleQuotes) {
         this.quoteFilter = useDoubleQuotes ? new DoubleQuoteFilter() : new SingleQuoteFilter();
@@ -121,33 +119,33 @@ public class StreamingMarkupWriter extends Writer {
         this.encoder = Charset.forName(this.encoding).newEncoder();
     }
 
-    private static String getNormalizedEncoding(String unnormalized) {
-        return Charset.forName(unnormalized).name();
-    }
-
     public StreamingMarkupWriter(final Writer writer) {
         this(writer, null);
     }
 
+    private static String getNormalizedEncoding(String unnormalized) {
+        return Charset.forName(unnormalized).name();
+    }
+
     /* (non-Javadoc)
-    * @see java.io.Writer#close()
-    */
+     * @see java.io.Writer#close()
+     */
     @Override
     public void close() throws IOException {
         this.writer.close();
     }
 
     /* (non-Javadoc)
-    * @see java.io.Writer#flush()
-    */
+     * @see java.io.Writer#flush()
+     */
     @Override
     public void flush() throws IOException {
         this.writer.flush();
     }
 
     /* (non-Javadoc)
-    * @see java.io.Writer#write(int)
-    */
+     * @see java.io.Writer#write(int)
+     */
     @Override
     public void write(final int c) throws IOException {
         if (c >= 0XDC00 && c <= 0XDFFF) {
@@ -200,8 +198,8 @@ public class StreamingMarkupWriter extends Writer {
     }
 
     /* (non-Javadoc)
-    * @see java.io.Writer#write(char[], int, int)
-    */
+     * @see java.io.Writer#write(char[], int, int)
+     */
     @Override
     public void write(final char[] cbuf, int off, int len) throws IOException {
         while (len-- > 0) {
@@ -228,4 +226,6 @@ public class StreamingMarkupWriter extends Writer {
     public boolean getEncodingKnown() {
         return this.encodingKnown;
     }
+
+
 }

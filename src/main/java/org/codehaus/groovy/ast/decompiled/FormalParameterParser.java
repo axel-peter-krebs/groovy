@@ -30,11 +30,10 @@ import static org.codehaus.groovy.control.CompilerConfiguration.ASM_API_VERSION;
 
 abstract class FormalParameterParser extends SignatureVisitor {
 
-    private String currentTypeParameter;
     private final List<ClassNode> parameterBounds = new ArrayList<>();
     private final List<GenericsType> typeParameters = new ArrayList<>();
-
     private final AsmReferenceResolver resolver;
+    private String currentTypeParameter;
 
     public FormalParameterParser(final AsmReferenceResolver resolver) {
         super(ASM_API_VERSION);

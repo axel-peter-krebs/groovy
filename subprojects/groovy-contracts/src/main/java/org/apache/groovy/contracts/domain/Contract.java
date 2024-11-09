@@ -27,10 +27,9 @@ import org.codehaus.groovy.ast.ClassNode;
 public class Contract {
 
     private final ClassNode classNode;
-
-    private ClassInvariant classInvariant = ClassInvariant.DEFAULT;
     private final AssertionMap<Precondition> preconditions;
     private final AssertionMap<Postcondition> postconditions;
+    private ClassInvariant classInvariant = ClassInvariant.DEFAULT;
 
     public Contract(final ClassNode classNode) {
         Validate.notNull(classNode);

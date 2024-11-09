@@ -44,9 +44,8 @@ import static org.junit.Assert.fail;
 @SuppressWarnings("serial")
 public class InspectorTest implements Serializable {
 
-    public String someField = "only for testing";
-
     public static final String SOME_CONST = "only for testing";
+    public String someField = "only for testing";
 
     public static void main(String[] args) {
     }
@@ -124,10 +123,10 @@ public class InspectorTest implements Serializable {
     public void testClassPropsJava() {
         Inspector inspector = new Inspector(this);
         String[] classProps = inspector.getClassProps();
-        assertEquals("package groovy.inspect",     classProps[Inspector.CLASS_PACKAGE_IDX]);
+        assertEquals("package groovy.inspect", classProps[Inspector.CLASS_PACKAGE_IDX]);
         assertEquals("public class InspectorTest", classProps[Inspector.CLASS_CLASS_IDX]);
-        assertEquals("implements Serializable ",   classProps[Inspector.CLASS_INTERFACE_IDX]);
-        assertEquals("extends Object",             classProps[Inspector.CLASS_SUPERCLASS_IDX]);
+        assertEquals("implements Serializable ", classProps[Inspector.CLASS_INTERFACE_IDX]);
+        assertEquals("extends Object", classProps[Inspector.CLASS_SUPERCLASS_IDX]);
         assertEquals("is Primitive: false, is Array: false, is Groovy: false", classProps[Inspector.CLASS_OTHER_IDX]);
     }
 
@@ -185,7 +184,7 @@ public class InspectorTest implements Serializable {
             "with", "withMethodClosure", "withTraits", "stream", "sleep", "sleep", "macro", "macro", "macro", "macro"
         };
         assertEquals("Incorrect number of methods found examining: " + Arrays.stream(metaMethods)
-                .map(mm -> ((String[])mm)[Inspector.MEMBER_NAME_IDX]).collect(Collectors.toList()), names.length, metaMethods.length);
+            .map(mm -> ((String[]) mm)[Inspector.MEMBER_NAME_IDX]).collect(Collectors.toList()), names.length, metaMethods.length);
         assertNameEquals(names, metaMethods);
         String[] details = {"GROOVY", "public", "Object", "void", "println", "Object", "n/a"};
         assertContains(metaMethods, details);
@@ -212,15 +211,20 @@ public class InspectorTest implements Serializable {
         String[] result = inspector.fieldInfo(new PropertyValue(object, null) {
             @Override
             public String getName() {
-                name[0] += 1; return "thing";
+                name[0] += 1;
+                return "thing";
             }
+
             @Override
             public Class<?> getType() {
-                type[0] += 1; return Object.class;
+                type[0] += 1;
+                return Object.class;
             }
+
             @Override
             public Object getValue() {
-                value[0] += 1; throw new RuntimeException();
+                value[0] += 1;
+                throw new RuntimeException();
             }
         });
         assertEquals(1, name[0]);

@@ -21,13 +21,13 @@ package groovy.bugs
 import groovy.test.GroovyTestCase
 
 /**
-  * Test that ensures that:
-  * <ul>
-  *   <li>it is possible to write a builder in Groovy</li>
-  *   <li>it is possible to call normal methods from the builder,
-  *       without the methods being trapped endlessly by createNode()</li>
-  * </ul>
-  */
+ * Test that ensures that:
+ * <ul>
+ *   <li>it is possible to write a builder in Groovy</li>
+ *   <li>it is possible to call normal methods from the builder,
+ *       without the methods being trapped endlessly by createNode()</li>
+ * </ul>
+ */
 class InvokeNormalMethodFromBuilder_Bug657 extends GroovyTestCase {
     void testInvokeNormalMethod() {
         def b = new Builder()
@@ -42,15 +42,18 @@ class Builder extends BuilderSupport {
 
     void setParent(Object parent, Object child) {}
 
-    Object createNode(Object name)                 { return createNode(name, [:], null) }
+    Object createNode(Object name) { return createNode(name, [:], null) }
+
     Object createNode(Object name, Map attributes) { return createNode(name, attributes, null) }
-    Object createNode(Object name, Object value)   { return createNode(name, [:], value) }
+
+    Object createNode(Object name, Object value) { return createNode(name, [:], value) }
 
     Object createNode(Object name, Map attributes, Object value) {
         return callOtherStaticallyTypedMethod()
     }
 
-    String callNormalMethod()               { return "first" }
+    String callNormalMethod() { return "first" }
+
     String callOtherStaticallyTypedMethod() { return "second" }
 
 }

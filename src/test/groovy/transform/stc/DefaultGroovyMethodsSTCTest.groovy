@@ -68,7 +68,7 @@ class DefaultGroovyMethodsSTCTest extends StaticTypeCheckingTestCase {
     }
 
     void testShouldAcceptMethodFromDefaultDateMethods() {
-      assertScript '''
+        assertScript '''
           def s = new Date()
           println s.year
           println s.format("yyyyMMdd")
@@ -121,10 +121,10 @@ class DefaultGroovyMethodsSTCTest extends StaticTypeCheckingTestCase {
             numbers.sequence
             numbers.string
         ''',
-        'Cannot call <CS extends java.lang.CharSequence> org.codehaus.groovy.runtime.m12n.TestStringExtension#getSequence(java.util.List<CS>) with arguments [java.util.ArrayList<java.lang.Number>]',
-        'Cannot call org.codehaus.groovy.runtime.m12n.TestStringExtension#getString(java.util.List<java.lang.String>) with arguments [java.util.ArrayList<java.lang.Number>]',
-        'No such property: sequence for class: java.util.ArrayList',
-        'No such property: string for class: java.util.ArrayList'
+            'Cannot call <CS extends java.lang.CharSequence> org.codehaus.groovy.runtime.m12n.TestStringExtension#getSequence(java.util.List<CS>) with arguments [java.util.ArrayList<java.lang.Number>]',
+            'Cannot call org.codehaus.groovy.runtime.m12n.TestStringExtension#getString(java.util.List<java.lang.String>) with arguments [java.util.ArrayList<java.lang.Number>]',
+            'No such property: sequence for class: java.util.ArrayList',
+            'No such property: string for class: java.util.ArrayList'
     }
 
     // GROOVY-5584
@@ -338,13 +338,13 @@ class DefaultGroovyMethodsSTCTest extends StaticTypeCheckingTestCase {
             String[] arr = ['abc']
             arr.putAt(0, new Object())
         ''',
-        '#putAt(T[], int, U) with arguments [java.lang.String[], int, java.lang.Object]'
+            '#putAt(T[], int, U) with arguments [java.lang.String[], int, java.lang.Object]'
 
         shouldFailWithMessages '''
             Serializable[] arr = ['abc']
             arr.putAt(0, new groovy.xml.XmlSlurper())
         ''',
-        '#putAt(T[], int, U) with arguments [java.io.Serializable[], int, groovy.xml.XmlSlurper]'
+            '#putAt(T[], int, U) with arguments [java.io.Serializable[], int, groovy.xml.XmlSlurper]'
     }
 
     void testListGetAtNext() {
@@ -483,6 +483,6 @@ class DefaultGroovyMethodsSTCTest extends StaticTypeCheckingTestCase {
             Map<String, String> map = [:]
             map.put("${'key'}",'val')
         ''',
-        'Cannot call java.util.LinkedHashMap#put(java.lang.String, java.lang.String) with arguments [groovy.lang.GString, java.lang.String]'
+            'Cannot call java.util.LinkedHashMap#put(java.lang.String, java.lang.String) with arguments [groovy.lang.GString, java.lang.String]'
     }
 }

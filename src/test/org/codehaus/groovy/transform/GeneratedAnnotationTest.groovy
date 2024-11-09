@@ -109,34 +109,34 @@ final class GeneratedAnnotationTest {
             new C()
         '''
 
-        def method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithVariable__variableA$get'}
+        def method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithVariable__variableA$get' }
         assert method.annotations*.annotationType()*.name.contains('groovy.transform.Generated')
-        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithVariable__variableA$set'}
-        assert method.annotations*.annotationType()*.name.contains('groovy.transform.Generated')
-
-        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithFinalVariable__variableB$get'}
-        assert method.annotations*.annotationType()*.name.contains('groovy.transform.Generated')
-        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithFinalVariable__variableB$set'}
+        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithVariable__variableA$set' }
         assert method.annotations*.annotationType()*.name.contains('groovy.transform.Generated')
 
-        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithStaticVariable__variableC$get'}
+        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithFinalVariable__variableB$get' }
         assert method.annotations*.annotationType()*.name.contains('groovy.transform.Generated')
-        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithStaticVariable__variableC$set'}
+        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithFinalVariable__variableB$set' }
         assert method.annotations*.annotationType()*.name.contains('groovy.transform.Generated')
 
-        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithVariableInitialized__variableA$get'}
+        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithStaticVariable__variableC$get' }
+        assert method.annotations*.annotationType()*.name.contains('groovy.transform.Generated')
+        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithStaticVariable__variableC$set' }
+        assert method.annotations*.annotationType()*.name.contains('groovy.transform.Generated')
+
+        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithVariableInitialized__variableA$get' }
         assert method.annotations*.annotationType().name.contains('groovy.transform.Generated')
-        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithVariableInitialized__variableA$set'}
+        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithVariableInitialized__variableA$set' }
         assert method.annotations*.annotationType()*.name.contains('groovy.transform.Generated')
 
-        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithFinalVariableInitialized__variableB$get'}
+        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithFinalVariableInitialized__variableB$get' }
         assert method.annotations*.annotationType()*.name.contains('groovy.transform.Generated')
-        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithFinalVariableInitialized__variableB$set'}
+        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithFinalVariableInitialized__variableB$set' }
         assert method.annotations*.annotationType()*.name.contains('groovy.transform.Generated')
 
-        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithStaticVariableInitialized__variableC$get'}
+        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithStaticVariableInitialized__variableC$get' }
         assert method.annotations*.annotationType()*.name.contains('groovy.transform.Generated')
-        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithStaticVariableInitialized__variableC$set'}
+        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithStaticVariableInitialized__variableC$set' }
         assert method.annotations*.annotationType()*.name.contains('groovy.transform.Generated')
     }
 
@@ -164,27 +164,27 @@ final class GeneratedAnnotationTest {
             new C()
         '''
 
-        def method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithMethodAsGeneratedtrait$super$methodB'}
+        def method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithMethodAsGeneratedtrait$super$methodB' }
         assert method.annotations*.annotationType()*.name.contains('groovy.transform.Generated')
 
-        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithMethodtrait$super$methodA'}
+        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithMethodtrait$super$methodA' }
         assert method.annotations*.annotationType()*.name.contains('groovy.transform.Generated')
 
-        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithFinalMethodtrait$super$methodD'}
+        method = objectUnderTest.class.declaredMethods.find { it.name == 'TraitWithFinalMethodtrait$super$methodD' }
         assert method.annotations*.annotationType()*.name.contains('groovy.transform.Generated')
 
         // and original methods are marked as they were
 
-        method = objectUnderTest.class.declaredMethods.find { it.name == 'methodA'}
+        method = objectUnderTest.class.declaredMethods.find { it.name == 'methodA' }
         assert !(method.annotations*.annotationType()*.name).contains('groovy.transform.Generated')
 
-        method = objectUnderTest.class.declaredMethods.find { it.name == 'methodB'}
-        assert  (method.annotations*.annotationType()*.name).contains('groovy.transform.Generated')
+        method = objectUnderTest.class.declaredMethods.find { it.name == 'methodB' }
+        assert (method.annotations*.annotationType()*.name).contains('groovy.transform.Generated')
 
-        method = objectUnderTest.class.declaredMethods.find { it.name == 'methodC'}
+        method = objectUnderTest.class.declaredMethods.find { it.name == 'methodC' }
         assert !(method.annotations*.annotationType()*.name).contains('groovy.transform.Generated')
 
-        method = objectUnderTest.class.declaredMethods.find { it.name == 'methodD'}
+        method = objectUnderTest.class.declaredMethods.find { it.name == 'methodD' }
         assert !(method.annotations*.annotationType()*.name).contains('groovy.transform.Generated')
     }
 }

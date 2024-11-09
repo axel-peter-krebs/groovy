@@ -35,17 +35,19 @@ class GrabCommand extends CommandSupport {
         super(shell, COMMAND_NAME, ':g')
     }
 
-    @Override protected List<Completer> createCompleters() { [ null ] }
+    @Override
+    protected List<Completer> createCompleters() { [null] }
 
-    @Override Object execute(List<String> args) {
+    @Override
+    Object execute(List<String> args) {
         validate(args)
         grab(dependency(args))
         shell.packageHelper.reset()
     }
 
     private void validate(List<String> args) {
-        if ( args?.size() != 1 || 
-             !( args[0] ==~ /^(\w|\.|-)+:(\w|\.|-)+(\w|\.|-)(:+(\w|\.|-|\*)+){0,2}$/ ) ) {
+        if (args?.size() != 1 ||
+            !(args[0] ==~ /^(\w|\.|-)+:(\w|\.|-)+(\w|\.|-)(:+(\w|\.|-|\*)+){0,2}$/)) {
             fail("usage: @|bold ${COMMAND_NAME}|@ ${usage}")
         }
     }
@@ -61,8 +63,8 @@ class GrabCommand extends CommandSupport {
 
     private void grab(String dependency) {
         Grape.grab([classLoader: shell.interp.classLoader.parent,
-                    refObject: shell.interp],
-                   dependencyMap(dependency))
+                    refObject  : shell.interp],
+            dependencyMap(dependency))
     }
 
 }

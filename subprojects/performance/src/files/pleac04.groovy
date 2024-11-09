@@ -26,18 +26,18 @@
 
 // @@PLEAC@@_4.0
 //----------------------------------------------------------------------------------
-simple = [ "this", "that", "the", "other" ]
-nested = [ "this", "that", [ "the", "other" ] ]
+simple = ["this", "that", "the", "other"]
+nested = ["this", "that", ["the", "other"]]
 assert nested.size() == 3
 assert nested[2].size() == 2
 
-flattenNestedToSimple = [ "this", "that", [ "the", "other" ] ].flatten()
+flattenNestedToSimple = ["this", "that", ["the", "other"]].flatten()
 assert flattenNestedToSimple.size() == 4
 //----------------------------------------------------------------------------------
 
 // @@PLEAC@@_4.1
 //----------------------------------------------------------------------------------
-a = [ "quick", "brown", "fox" ]
+a = ["quick", "brown", "fox"]
 assert a.size() == 3
 a = 'Why are you teasing me?'.split(' ')
 assert a == ["Why", "are", "you", "teasing", "me?"]
@@ -56,7 +56,7 @@ assert lines == ["The boy stood on the burning deck,",
 lines = new File('mydata.txt').readLines()
 
 // processFileScript:
-new File('mydata.txt').eachLine{
+new File('mydata.txt').eachLine {
     // dosomething
 }
 //----------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ assert marbleColors.join(', ') == 'red, green, yellow'
 
 def commify(items) {
     if (!items) return items
-    def sepchar = items.find{ it =~ /,/ } ? '; ' : ', '
+    def sepchar = items.find { it =~ /,/ } ? '; ' : ', '
     switch (items.size()) {
         case 1: return items[0]
         case 2: return items.join(' and ')
@@ -79,15 +79,15 @@ def commify(items) {
 assert commify(marbleColors) == 'red, green, and yellow'
 
 lists = [
-    [ 'just one thing' ],
-    [ 'Mutt', 'Jeff' ],
+    ['just one thing'],
+    ['Mutt', 'Jeff'],
     'Peter Paul Mary'.split(' '),
-    [ 'To our parents', 'Mother Theresa', 'God' ],
-    [ 'pastrami', 'ham and cheese', 'peanut butter and jelly', 'tuna' ],
-    [ 'recycle tired, old phrases', 'ponder big, happy thoughts' ],
-    [ 'recycle tired, old phrases',
-      'ponder big, happy thoughts',
-      'sleep and dream peacefully' ],
+    ['To our parents', 'Mother Theresa', 'God'],
+    ['pastrami', 'ham and cheese', 'peanut butter and jelly', 'tuna'],
+    ['recycle tired, old phrases', 'ponder big, happy thoughts'],
+    ['recycle tired, old phrases',
+     'ponder big, happy thoughts',
+     'sleep and dream peacefully'],
 ]
 
 expected = '''
@@ -100,7 +100,7 @@ recycle tired, old phrases and ponder big, happy thoughts
 recycle tired, old phrases; ponder big, happy thoughts; and sleep and dream peacefully
 '''
 
-assert expected == '\n' + lists.collect{commify(it)}.join('\n') + '\n'
+assert expected == '\n' + lists.collect { commify(it) }.join('\n') + '\n'
 //----------------------------------------------------------------------------------
 
 // @@PLEAC@@_4.3
@@ -129,19 +129,21 @@ startsWithCapital = { word -> word[0] in 'A'..'Z' }
 // closure style
 people.each { person -> assert startsWithCapital(person) }
 // for loop style
-for (person in people) { assert startsWithCapital(person) }
+for (person in people) {
+    assert startsWithCapital(person)
+}
 
 // unixScriptToFindAllUsersStartingWithLetterA:
 all = 'who'.execute().text.replaceAll('\r', '').split('\n')
-all.grep(~/^a.*/).each{ println it }
+all.grep(~/^a.*/).each { println it }
 
 // printFileWithWordsReversedScript:
-new File('Pleac/src/SlowCat.groovy').eachLine{ line ->
-     line.split(' ').each{ print it.reverse() }
+new File('Pleac/src/SlowCat.groovy').eachLine { line ->
+    line.split(' ').each { print it.reverse() }
 }
 
 a = [0.5, 3]; b = [0, 1]
-assert [a, b].flatten().collect{ it * 7 } == [3.5, 21, 0, 7]
+assert [a, b].flatten().collect { it * 7 } == [3.5, 21, 0, 7]
 // above doesn't modify original arrays
 // instead use a = a.collect{ ... }
 //----------------------------------------------------------------------------------
@@ -157,13 +159,13 @@ for (item in items) {
 
 // @@PLEAC@@_4.6
 //----------------------------------------------------------------------------------
-assert [ 1, 1, 2, 2, 3, 3, 3, 5 ].unique() == [ 1, 2, 3, 5 ]
+assert [1, 1, 2, 2, 3, 3, 3, 5].unique() == [1, 2, 3, 5]
 //----------------------------------------------------------------------------------
 
 // @@PLEAC@@_4.7
 //----------------------------------------------------------------------------------
-assert [ 1, 1, 2, 2, 3, 3, 3, 4, 5 ] - [ 1, 2, 4 ]  ==  [3, 3, 3, 5]
-assert [ 1, 1, 2, 2, 3, 3, 3, 4, 5 ].unique() - [ 1, 2, 4 ]  ==  [3, 5]
+assert [1, 1, 2, 2, 3, 3, 3, 4, 5] - [1, 2, 4] == [3, 3, 3, 5]
+assert [1, 1, 2, 2, 3, 3, 3, 4, 5].unique() - [1, 2, 4] == [3, 5]
 //----------------------------------------------------------------------------------
 
 // @@PLEAC@@_4.8
@@ -180,8 +182,8 @@ assert (a - b) == [1, 6, 8]
 
 // @@PLEAC@@_4.9
 //----------------------------------------------------------------------------------
-members = [ "Time", "Flies" ]
-initiates =  [ "An", "Arrow" ]
+members = ["Time", "Flies"]
+initiates = ["An", "Arrow"]
 members += initiates
 assert members == ["Time", "Flies", "An", "Arrow"]
 
@@ -199,19 +201,19 @@ items = ["the", "quick", "brown", "fox"]
 assert items.reverse() == ["fox", "brown", "quick", "the"]
 
 firstLetters = []
-items.reverseEach{ firstLetters += it[0] }
+items.reverseEach { firstLetters += it[0] }
 assert firstLetters.join() == 'fbqt'
 
 descending = items.sort().reverse()
 assert descending == ["the", "quick", "fox", "brown"]
-descendingBySecondLastLetter = items.sort { a,b -> b[-2] <=> a[-2] }
+descendingBySecondLastLetter = items.sort { a, b -> b[-2] <=> a[-2] }
 assert descendingBySecondLastLetter == ["brown", "fox", "the", "quick"]
 //----------------------------------------------------------------------------------
 
 // @@PLEAC@@_4.11
 //----------------------------------------------------------------------------------
 // warning: not an exact equivalent, idiomatic use would return copies
-def shift2 = {one = friends[0]; two = friends[1]; 2.times{friends.remove(0)}}
+def shift2 = { one = friends[0]; two = friends[1]; 2.times { friends.remove(0) } }
 friends = 'Peter Paul Mary Jim Tim'.split(' ').toList()
 shift2()
 assert one == 'Peter'
@@ -219,6 +221,7 @@ assert two == 'Paul'
 assert friends == ["Mary", "Jim", "Tim"]
 
 def pop2(items) { items[0..1] }
+
 beverages = 'Dew Jolt Cola Sprite Fresca'.split(' ').toList()
 pair = pop2(beverages)
 assert pair == ["Dew", "Jolt"]
@@ -232,9 +235,10 @@ class Employee {
     def position
     def salary
 }
-staff = [new Employee(name:'Jim',position:'Manager',salary:26000),
-         new Employee(name:'Jill',position:'Engineer',salary:24000),
-         new Employee(name:'Jack',position:'Engineer',salary:22000)]
+
+staff = [new Employee(name: 'Jim', position: 'Manager', salary: 26000),
+         new Employee(name: 'Jill', position: 'Engineer', salary: 24000),
+         new Employee(name: 'Jack', position: 'Engineer', salary: 22000)]
 highestEngineer = staff.find { emp -> emp.position == 'Engineer' }
 assert highestEngineer.salary == 24000
 //----------------------------------------------------------------------------------
@@ -255,7 +259,7 @@ assert [100, 3, 20].sort() == [3, 20, 100]
 // strings representing numbers will be sorted alphabetically
 assert ['100', '3', '20'].sort() == ["100", "20", "3"]
 // closure style sorting allows arbitrary expressions for the comparison
-assert ['100', '3', '20'].sort{ a,b -> a.toLong() <=> b.toLong()} == ["3", "20", "100"]
+assert ['100', '3', '20'].sort { a, b -> a.toLong() <=> b.toLong() } == ["3", "20", "100"]
 
 // obtain the following on unix systems using: 'ps ux'.execute().text
 processInput = '''
@@ -263,24 +267,26 @@ processInput = '''
      3868       1    3868       3868  con 1005 06:23:34 /usr/bin/bash
      3456    3868    3456       3528  con 1005 06:23:39 /usr/bin/ps
 '''
-nonEmptyLines = {it.trim()}
+nonEmptyLines = { it.trim() }
 lines = processInput.split("\n").findAll(nonEmptyLines)[1..-1]
+
 def col(n, s) { s.tokenize()[n] }
+
 commandIdx = 7
 pidIdx = 0
 ppidIdx = 1
-linesByPid = lines.sort{ col(pidIdx,it).toLong() }
+linesByPid = lines.sort { col(pidIdx, it).toLong() }
 assert col(commandIdx, linesByPid[0]) == '/usr/bin/ps'
-linesByPpid = lines.sort{ col(ppidIdx,it).toLong() }
+linesByPpid = lines.sort { col(ppidIdx, it).toLong() }
 assert col(commandIdx, linesByPpid[0]) == '/usr/bin/bash'
 //----------------------------------------------------------------------------------
 
 // @@PLEAC@@_4.15
 //----------------------------------------------------------------------------------
 // sort staff from 4.12 by name
-assert staff.sort { a,b -> a.name <=> b.name }*.name == ["Jack", "Jill", "Jim"]
+assert staff.sort { a, b -> a.name <=> b.name }*.name == ["Jack", "Jill", "Jim"]
 // sort by first two characters of name and if equal by descending salary
-assert staff.sort { a,b ->
+assert staff.sort { a, b ->
     astart = a.name[0..1]
     bstart = b.name[0..1]
     if (astart == bstart) return b.salary <=> a.salary
@@ -292,7 +298,7 @@ assert staff.sort { a,b ->
 //----------------------------------------------------------------------------------
 items = [1, 2, 3, 4, 5]
 processed = []
-10.times{
+10.times {
     processed << items[0]
     items = items[1..-1] + items[0]
 }
@@ -302,10 +308,11 @@ assert processed == [1, 2, 3, 4, 5, 1, 2, 3, 4, 5]
 // @@PLEAC@@_4.17
 //----------------------------------------------------------------------------------
 import java.text.DateFormatSymbols as Symbols
+
 items = new Symbols().shortWeekdays.toList()[1..7]
 assert items == ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 // not as random as you might expect
-println items.sort{ Math.random() }
+println items.sort { Math.random() }
 // => ["Sat", "Tue", "Sun", "Wed", "Mon", "Thu", "Fri"]
 // better to use the built-in method for this purpose
 Collections.shuffle(items)
@@ -322,17 +329,17 @@ words = symbols.weekdays.toList()[1..7] +
     symbols.amPmStrings.toList()
 
 expected = //
-'AD        August    February  July      May       October   September Tuesday   \n' +
-'AM        BC        Friday    June      Monday    PM        Sunday    Wednesday \n' +
-'April     December  January   March     November  Saturday  Thursday  \n'
+    'AD        August    February  July      May       October   September Tuesday   \n' +
+        'AM        BC        Friday    June      Monday    PM        Sunday    Wednesday \n' +
+        'April     December  January   March     November  Saturday  Thursday  \n'
 
 class WordFormatter {
     def cols
 
     def process(list) {
         def sb = new StringBuffer()
-        def colWidth = list.max{it.size()}.size() + 1
-        int columns = [cols/colWidth, 1].max()
+        def colWidth = list.max { it.size() }.size() + 1
+        int columns = [cols / colWidth, 1].max()
         def numWords = list.size()
         int rows = (numWords + columns - 1) / columns
         for (row in 0..<rows) {
@@ -353,14 +360,15 @@ class WordFormatter {
 def getWinCharWidth() { 80 }
 
 // main script
-actual = new WordFormatter(cols:getWinCharWidth()).process(words.sort())
+actual = new WordFormatter(cols: getWinCharWidth()).process(words.sort())
 assert actual == expected
 //----------------------------------------------------------------------------------
 
 // @@PLEAC@@_4.19
 //----------------------------------------------------------------------------------
 // recursive version is simplest but can be inefficient
-def fact(n) { (n == 1) ? 1 : n * fact(n-1)}
+def fact(n) { (n == 1) ? 1 : n * fact(n - 1) }
+
 assert fact(10) == 3628800
 // unwrapped version: note use of BigInteger
 def factorial(n) {
@@ -371,6 +379,7 @@ def factorial(n) {
     }
     return result
 }
+
 expected = 93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000
 assert expected == factorial(100)
 // println factorial(10000)
@@ -389,6 +398,7 @@ def simplePermute(items, perms) {
             simplePermute(newitems, newperms)
         }
 }
+
 simplePermute(['dog', 'bites', 'man'], [])
 // =>
 //dog bites man
@@ -423,10 +433,10 @@ def n2pat(n, length) {
 // pat2perm(pat): turn pattern returned by n2pat() into
 // permutation of integers.
 def pat2perm(pat) {
-    def source = (0 ..< pat.size()).collect{ it/*.toString()*/ }
+    def source = (0..<pat.size()).collect { it/*.toString()*/ }
     def perm = []
     while (pat.size() > 0) {
-        def next = pat.remove(pat.size()-1)
+        def next = pat.remove(pat.size() - 1)
         perm << source[next]
         source.remove(next)
     }
@@ -434,7 +444,7 @@ def pat2perm(pat) {
 }
 
 def n2perm(n, len) {
-    pat2perm(n2pat((int)n,len))
+    pat2perm(n2pat((int) n, len))
 }
 
 data = ['man', 'bites', 'dog']

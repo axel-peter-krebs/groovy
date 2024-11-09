@@ -53,15 +53,22 @@ public class StructuredSyntaxDocumentFilter extends DocumentFilter {
 
     // The styled document the filter parses
     protected DefaultStyledDocument styledDocument;
-
+    /**
+     * The position tree of multi-line comments.
+     */
+    protected SortedSet<Object> mlTextRunSet = new TreeSet<>(ML_COMPARATOR);
     // the document buffer and segment
     private Segment segment = new Segment();
     private CharBuffer buffer;
 
     /**
-     * The position tree of multi-line comments.
+     * Creates a new instance of StructuredSyntaxDocumentFilter
+     *
+     * @param document the styled document to parse
      */
-    protected SortedSet<Object> mlTextRunSet = new TreeSet<>(ML_COMPARATOR);
+    public StructuredSyntaxDocumentFilter(DefaultStyledDocument document) {
+        this.styledDocument = document;
+    }
 
     // Ensures not adding any regexp with capturing groups
     private static void checkRegexp(String regexp) {
@@ -75,15 +82,6 @@ public class StructuredSyntaxDocumentFilter extends DocumentFilter {
             msg.append("^");
             throw new IllegalArgumentException(msg.toString());
         }
-    }
-
-    /**
-     * Creates a new instance of StructuredSyntaxDocumentFilter
-     *
-     * @param document the styled document to parse
-     */
-    public StructuredSyntaxDocumentFilter(DefaultStyledDocument document) {
-        this.styledDocument = document;
     }
 
     private int calcBeginParse(int offset) {
@@ -276,6 +274,20 @@ public class StructuredSyntaxDocumentFilter extends DocumentFilter {
         return string;
     }
 
+    private static class MLComparator implements Comparator<Object>, Serializable {
+
+        private static final long serialVersionUID = -4210196728719411217L;
+
+        @Override
+        public int compare(Object obj, Object obj1) {
+            return valueOf(obj) - valueOf(obj1);
+        }
+
+        private int valueOf(Object obj) {
+            return obj instanceof Integer ? (Integer) obj : (obj instanceof MultiLineRun) ? ((MultiLineRun) obj).start() : ((Position) obj).getOffset();
+        }
+    }
+
     public final class LexerNode {
 
         private Style defaultStyle;
@@ -311,6 +323,10 @@ public class StructuredSyntaxDocumentFilter extends DocumentFilter {
 
         public Style getDefaultStyle() {
             return defaultStyle;
+        }
+
+        public void setDefaultStyle(Style style) {
+            defaultStyle = style;
         }
 
         private void initialize() {
@@ -478,10 +494,6 @@ public class StructuredSyntaxDocumentFilter extends DocumentFilter {
         public void removeStyle(String[] regexps) {
             removeStyle(buildRegexp(regexps));
         }
-
-        public void setDefaultStyle(Style style) {
-            defaultStyle = style;
-        }
     }
 
     protected class MultiLineRun {
@@ -529,19 +541,5 @@ public class StructuredSyntaxDocumentFilter extends DocumentFilter {
             return start.toString() + " " + end.toString();
         }
 
-    }
-
-    private static class MLComparator implements Comparator<Object>, Serializable {
-
-        private static final long serialVersionUID = -4210196728719411217L;
-
-        @Override
-        public int compare(Object obj, Object obj1) {
-            return valueOf(obj) - valueOf(obj1);
-        }
-
-        private int valueOf(Object obj) {
-            return obj instanceof Integer ? (Integer) obj : (obj instanceof MultiLineRun) ? ((MultiLineRun) obj).start() : ((Position) obj).getOffset();
-        }
     }
 }

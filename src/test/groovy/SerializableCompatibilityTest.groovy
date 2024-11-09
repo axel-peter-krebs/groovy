@@ -27,7 +27,7 @@ class SerializableCompatibilityTest extends TestSupport {
         assert obj.message == 'boom'
 
         def out = new ByteArrayOutputStream();
-        out.withObjectOutputStream{
+        out.withObjectOutputStream {
             it.writeObject(obj)
         }
 

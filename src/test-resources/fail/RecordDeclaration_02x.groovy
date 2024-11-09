@@ -18,4 +18,6 @@
  */
 package core
 
-class Fruit(String name, double price) {}
+class Fruit
+
+(String name, double price) {}

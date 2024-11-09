@@ -84,6 +84,18 @@ public class Java8 implements VMPlugin {
     private static final Method[] EMPTY_METHOD_ARRAY = new Method[0];
     private static final Annotation[] EMPTY_ANNOTATION_ARRAY = new Annotation[0];
     private static final Permission ACCESS_PERMISSION = new ReflectPermission("suppressAccessChecks");
+    protected final Map<ElementType, Integer> elementTypeToTarget = new EnumMap<>(Maps.of(
+        ElementType.TYPE, AnnotationNode.TYPE_TARGET,
+        ElementType.FIELD, AnnotationNode.FIELD_TARGET,
+        ElementType.METHOD, AnnotationNode.METHOD_TARGET,
+        ElementType.PARAMETER, AnnotationNode.PARAMETER_TARGET,
+        ElementType.CONSTRUCTOR, AnnotationNode.CONSTRUCTOR_TARGET,
+        ElementType.LOCAL_VARIABLE, AnnotationNode.LOCAL_VARIABLE_TARGET,
+        ElementType.ANNOTATION_TYPE, AnnotationNode.ANNOTATION_TARGET,
+        ElementType.PACKAGE, AnnotationNode.PACKAGE_TARGET,
+        ElementType.TYPE_PARAMETER, AnnotationNode.TYPE_PARAMETER_TARGET,
+        ElementType.TYPE_USE, AnnotationNode.TYPE_USE_TARGET
+    ));
 
     public static GenericsType configureTypeVariableDefinition(final ClassNode base, final ClassNode[] bounds) {
         ClassNode redirect = base.redirect();
@@ -121,23 +133,33 @@ public class Java8 implements VMPlugin {
         }
     }
 
+    //--------------------------------------------------------------------------
+
     private static void setRetentionPolicy(final RetentionPolicy value, final AnnotationNode node) {
         switch (value) {
-          case RUNTIME:
-            node.setRuntimeRetention(true);
-            break;
-          case SOURCE:
-            node.setSourceRetention(true);
-            break;
-          case CLASS:
-            node.setClassRetention(true);
-            break;
-          default:
-            throw new GroovyBugError("unsupported Retention " + value);
+            case RUNTIME:
+                node.setRuntimeRetention(true);
+                break;
+            case SOURCE:
+                node.setSourceRetention(true);
+                break;
+            case CLASS:
+                node.setClassRetention(true);
+                break;
+            default:
+                throw new GroovyBugError("unsupported Retention " + value);
         }
     }
 
-    //--------------------------------------------------------------------------
+    @Deprecated(since = "5.0.0")
+    public static MethodHandles.Lookup of(final Class<?> targetClass) {
+        return ((Java8) VMPluginFactory.getPlugin()).newLookup(targetClass);
+    }
+
+    @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
+    private static <T> T doPrivilegedInternal(final java.security.PrivilegedAction<T> action) {
+        return java.security.AccessController.doPrivileged(action);
+    }
 
     @Override
     public Class<?>[] getPluginDefaultGroovyMethods() {
@@ -212,6 +234,8 @@ public class Java8 implements VMPlugin {
         return wt;
     }
 
+    //
+
     private ClassNode configureParameterizedType(final ParameterizedType parameterizedType) {
         ClassNode base = configureType(parameterizedType.getRawType());
         GenericsType[] gts = configureTypeArguments(parameterizedType.getActualTypeArguments());
@@ -247,8 +271,6 @@ public class Java8 implements VMPlugin {
         return gt;
     }
 
-    //
-
     @Override
     public void configureAnnotation(final AnnotationNode node) {
         ClassNode type = node.getClassNode();
@@ -269,15 +291,15 @@ public class Java8 implements VMPlugin {
             RetentionPolicy value = r.value();
             setRetentionPolicy(value, node);
             node.setMember("value", new PropertyExpression(
-                    new ClassExpression(ClassHelper.makeWithoutCaching(RetentionPolicy.class, false)),
-                    value.toString()));
+                new ClassExpression(ClassHelper.makeWithoutCaching(RetentionPolicy.class, false)),
+                value.toString()));
         } else if (type == Target.class) {
             Target t = (Target) annotation;
             ElementType[] elements = t.value();
             ListExpression elementExprs = new ListExpression();
             for (ElementType element : elements) {
                 elementExprs.addExpression(new PropertyExpression(
-                        new ClassExpression(ClassHelper.ELEMENT_TYPE_TYPE), element.name()));
+                    new ClassExpression(ClassHelper.ELEMENT_TYPE_TYPE), element.name()));
             }
             node.setMember("value", elementExprs);
         } else {
@@ -299,6 +321,8 @@ public class Java8 implements VMPlugin {
         }
     }
 
+    //
+
     private void setAnnotationMetaData(final Annotation[] annotations, final AnnotatedNode target) {
         for (Annotation annotation : annotations) {
             target.addAnnotation(toAnnotationNode(annotation));
@@ -317,10 +341,10 @@ public class Java8 implements VMPlugin {
             return new ConstantExpression(value);
 
         if (value instanceof Class)
-            return new ClassExpression(ClassHelper.makeWithoutCaching((Class<?>)value));
+            return new ClassExpression(ClassHelper.makeWithoutCaching((Class<?>) value));
 
         if (value instanceof Annotation)
-            return new AnnotationConstantExpression(toAnnotationNode((Annotation)value));
+            return new AnnotationConstantExpression(toAnnotationNode((Annotation) value));
 
         if (value instanceof Enum)
             return new PropertyExpression(new ClassExpression(ClassHelper.makeWithoutCaching(value.getClass())), value.toString());
@@ -334,21 +358,6 @@ public class Java8 implements VMPlugin {
 
         return null;
     }
-
-    //
-
-    protected final Map<ElementType, Integer> elementTypeToTarget = new EnumMap<>(Maps.of(
-        ElementType.TYPE,            AnnotationNode.TYPE_TARGET,
-        ElementType.FIELD,           AnnotationNode.FIELD_TARGET,
-        ElementType.METHOD,          AnnotationNode.METHOD_TARGET,
-        ElementType.PARAMETER,       AnnotationNode.PARAMETER_TARGET,
-        ElementType.CONSTRUCTOR,     AnnotationNode.CONSTRUCTOR_TARGET,
-        ElementType.LOCAL_VARIABLE,  AnnotationNode.LOCAL_VARIABLE_TARGET,
-        ElementType.ANNOTATION_TYPE, AnnotationNode.ANNOTATION_TARGET,
-        ElementType.PACKAGE,         AnnotationNode.PACKAGE_TARGET,
-        ElementType.TYPE_PARAMETER,  AnnotationNode.TYPE_PARAMETER_TARGET,
-        ElementType.TYPE_USE,        AnnotationNode.TYPE_USE_TARGET
-    ));
 
     @Override
     public void configureAnnotationNodeFromDefinition(final AnnotationNode definition, final AnnotationNode root) {
@@ -413,7 +422,8 @@ public class Java8 implements VMPlugin {
             }
 
             Class<?> sc = clazz.getSuperclass();
-            if (sc != null) classNode.setUnresolvedSuperClass(makeClassNode(compileUnit, clazz.getGenericSuperclass(), sc));
+            if (sc != null)
+                classNode.setUnresolvedSuperClass(makeClassNode(compileUnit, clazz.getGenericSuperclass(), sc));
             makeInterfaceTypes(compileUnit, classNode, clazz);
             makePermittedSubclasses(compileUnit, classNode, clazz);
             makeRecordComponents(compileUnit, classNode, clazz);
@@ -428,7 +438,7 @@ public class Java8 implements VMPlugin {
         } catch (TypeNotPresentException e) {
             throw new NoClassDefFoundError("Unable to configure " + classNode.getName() + " due to missing dependency " + e.typeName());
         } catch (GenericSignatureFormatError | MalformedParameterizedTypeException e) {
-            throw new RuntimeException(    "Unable to configure " + classNode.getName() + " due to malformed type info" , e);
+            throw new RuntimeException("Unable to configure " + classNode.getName() + " due to malformed type info", e);
         }
     }
 
@@ -439,7 +449,7 @@ public class Java8 implements VMPlugin {
      * a RUNTIME retention (this occurs for JDK8 and below). This method will
      * normalize the annotations array so that it contains the same number of
      * elements as the array returned from {@link Constructor#getParameterTypes()}.
-     *
+     * <p>
      * If adjustment is required, the adjusted array will be prepended with a
      * zero-length element. If no adjustment is required, the original array
      * from {@link Constructor#getParameterAnnotations()} will be returned.
@@ -463,7 +473,7 @@ public class Java8 implements VMPlugin {
             // - for an enum we expect two params to account for the synthetic name and ordinal
             if ((!constructor.getDeclaringClass().isEnum() && diff > 1) || diff > 2) {
                 throw new GroovyBugError(
-                        "Constructor parameter annotations length [" + annotations.length + "] " +
+                    "Constructor parameter annotations length [" + annotations.length + "] " +
                         "does not match the parameter length: " + constructor
                 );
             }
@@ -480,8 +490,8 @@ public class Java8 implements VMPlugin {
     private void makePermittedSubclasses(final CompileUnit cu, final ClassNode classNode, final Class<?> clazz) {
         if (!ReflectionUtils.isSealed(clazz)) return;
         List<ClassNode> permittedSubclasses = Arrays.stream(ReflectionUtils.getPermittedSubclasses(clazz))
-                .map(c -> makeClassNode(cu, c, c))
-                .collect(Collectors.toList());
+            .map(c -> makeClassNode(cu, c, c))
+            .collect(Collectors.toList());
         classNode.setPermittedSubclasses(permittedSubclasses);
     }
 
@@ -532,6 +542,8 @@ public class Java8 implements VMPlugin {
         return back.getPlainNodeReference();
     }
 
+    //--------------------------------------------------------------------------
+
     private Parameter[] makeParameters(final CompileUnit cu, final Type[] types, final Class<?>[] cls, final Annotation[][] parameterAnnotations, final Member member) {
         Parameter[] params = Parameter.EMPTY_ARRAY;
         final int n = types.length;
@@ -541,7 +553,7 @@ public class Java8 implements VMPlugin {
             fillParameterNames(names, member);
             for (int i = 0; i < n; i += 1) {
                 setAnnotationMetaData(parameterAnnotations[i],
-                        params[i] = new Parameter(makeClassNode(cu, types[i], cls[i]), names[i]));
+                    params[i] = new Parameter(makeClassNode(cu, types[i], cls[i]), names[i]));
             }
         }
         return params;
@@ -558,15 +570,13 @@ public class Java8 implements VMPlugin {
         }
     }
 
-    //--------------------------------------------------------------------------
-
     /**
      * The following scenarios can not set accessible, i.e. the return value is false
      * 1) SecurityException occurred
      * 2) the accessible object is a Constructor object for the Class class
      *
      * @param accessibleObject the accessible object to check
-     * @param callerClass the callerClass to invoke {@code setAccessible}
+     * @param callerClass      the callerClass to invoke {@code setAccessible}
      * @return the check result
      */
     @Override
@@ -623,6 +633,8 @@ public class Java8 implements VMPlugin {
         IndyInterface.invalidateSwitchPoints();
     }
 
+    //--------------------------------------------------------------------------
+
     @Override
     public Object getInvokeSpecialHandle(final Method method, final Object receiver) {
         final Class<?> receiverClass = receiver.getClass();
@@ -648,13 +660,6 @@ public class Java8 implements VMPlugin {
         return ((MethodHandle) handle).invokeWithArguments(arguments);
     }
 
-    //--------------------------------------------------------------------------
-
-    @Deprecated(since = "5.0.0")
-    public static MethodHandles.Lookup of(final Class<?> targetClass) {
-        return ((Java8) VMPluginFactory.getPlugin()).newLookup(targetClass);
-    }
-
     protected MethodHandles.Lookup newLookup(final Class<?> targetClass) {
         throw new IllegalStateException();
     }
@@ -669,10 +674,5 @@ public class Java8 implements VMPlugin {
     @Deprecated(since = "4.0.2")
     public <T> T doPrivileged(final java.security.PrivilegedExceptionAction<T> action) {
         throw new UnsupportedOperationException("doPrivileged is no longer supported");
-    }
-
-    @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
-    private static <T> T doPrivilegedInternal(final java.security.PrivilegedAction<T> action) {
-        return java.security.AccessController.doPrivileged(action);
     }
 }

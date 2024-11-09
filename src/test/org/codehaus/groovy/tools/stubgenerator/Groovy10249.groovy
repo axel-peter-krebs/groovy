@@ -25,6 +25,7 @@ final class Groovy10249 extends StringSourcesStubTestCase {
 
     static trait T {
         C[] p
+
         void test(C[] array) {
         }
     }
@@ -36,7 +37,7 @@ final class Groovy10249 extends StringSourcesStubTestCase {
                 class Impl implements org.codehaus.groovy.tools.stubgenerator.Groovy10249.T {
                 }
             ''',
-            'Main.java': '''
+            'Main.java'  : '''
                 public class Main {
                     public static void main(String[] args) {
                         new Impl();

@@ -25,15 +25,15 @@ class ClassTest extends GroovyTestCase {
     void testClassExpression() {
         def c = String.class
         assert c instanceof Class
-        assert c.name == "java.lang.String" , c.name
+        assert c.name == "java.lang.String", c.name
 
         c = GroovyTestCase.class
         assert c instanceof Class
-        assert c.name.endsWith("GroovyTestCase") , c.name
+        assert c.name.endsWith("GroovyTestCase"), c.name
 
         c = ClassTest.class
         assert c instanceof Class
-        assert c.name.endsWith("ClassTest") , c.name
+        assert c.name.endsWith("ClassTest"), c.name
     }
 
     def testClassesHaveSuperModiferSet() {

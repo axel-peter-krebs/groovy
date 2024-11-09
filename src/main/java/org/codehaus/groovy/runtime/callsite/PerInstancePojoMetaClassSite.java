@@ -23,7 +23,7 @@ import org.codehaus.groovy.reflection.ClassInfo;
 import org.codehaus.groovy.runtime.InvokerHelper;
 import org.codehaus.groovy.runtime.ScriptBytecodeAdapter;
 
-public class PerInstancePojoMetaClassSite extends AbstractCallSite{
+public class PerInstancePojoMetaClassSite extends AbstractCallSite {
     private final ClassInfo info;
 
     public PerInstancePojoMetaClassSite(CallSite site, ClassInfo info) {

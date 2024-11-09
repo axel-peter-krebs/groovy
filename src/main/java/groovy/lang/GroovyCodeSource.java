@@ -44,26 +44,22 @@ import java.util.Objects;
 public class GroovyCodeSource {
 
     /**
+     * The certificates used to sign the items from the codesource
+     */
+    Certificate[] certs;
+    /**
      * The codeSource to be given the generated class.  This can be used by policy file
      * grants to administer security.
      */
     private CodeSource codeSource;
-
     /**
      * The name given to the generated class
      */
     private String name;
-
     /**
      * The groovy source to be compiled and turned into a class
      */
     private String scriptText;
-
-    /**
-     * The certificates used to sign the items from the codesource
-     */
-    Certificate[] certs;
-
     private boolean cachable;
 
     private File file;
@@ -112,8 +108,7 @@ public class GroovyCodeSource {
         try {
             if (!file.canRead())
                 throw new RuntimeException(file.toString() + " can not be read. Check the read permission of the file \"" + file.toString() + "\" (" + file.getAbsolutePath() + ").");
-        }
-        catch (SecurityException e) {
+        } catch (SecurityException e) {
             throw e;
         }
 
@@ -147,11 +142,6 @@ public class GroovyCodeSource {
             }
             throw new RuntimeException("Could not construct CodeSource for file: " + file, cause);
         }
-    }
-
-    @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
-    private <T> T doPrivileged(PrivilegedExceptionAction<T> action) throws PrivilegedActionException {
-        return java.security.AccessController.doPrivileged(action);
     }
 
     /**
@@ -188,13 +178,13 @@ public class GroovyCodeSource {
 
     /**
      * TODO(jwagenleitner): remove or fix in future release
-     *
+     * <p>
      * According to the spec getContentEncoding() returns the Content-Encoding
      * HTTP Header which typically carries values such as 'gzip' or 'deflate'
      * and is not the character set encoding. For compatibility in 2.4.x,
      * this behavior is retained but should be removed or fixed (parse
      * charset from Content-Type header) in future releases.
-     *
+     * <p>
      * see GROOVY-8056 and https://github.com/apache/groovy/pull/500
      */
     private static String getContentEncoding(URL url) throws IOException {
@@ -206,6 +196,24 @@ public class GroovyCodeSource {
             // For compatibility, ignore exceptions from getInputStream() call
         }
         return encoding;
+    }
+
+    @SuppressWarnings("removal") // TODO a future Groovy version should remove the security check
+    private static CodeSource createCodeSource(final String codeBase) {
+        SecurityManager sm = System.getSecurityManager();
+        if (sm != null) {
+            sm.checkPermission(new GroovyCodeSourcePermission(codeBase));
+        }
+        try {
+            return new CodeSource(new URL("file", "", codeBase), (java.security.cert.Certificate[]) null);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("A CodeSource file URL cannot be constructed from the supplied codeBase: " + codeBase);
+        }
+    }
+
+    @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
+    private <T> T doPrivileged(PrivilegedExceptionAction<T> action) throws PrivilegedActionException {
+        return java.security.AccessController.doPrivileged(action);
     }
 
     public CodeSource getCodeSource() {
@@ -228,26 +236,12 @@ public class GroovyCodeSource {
         return url;
     }
 
-    public void setCachable(boolean b) {
-        cachable = b;
-    }
-
     public boolean isCachable() {
         return cachable;
     }
 
-    @SuppressWarnings("removal") // TODO a future Groovy version should remove the security check
-    private static CodeSource createCodeSource(final String codeBase) {
-        SecurityManager sm = System.getSecurityManager();
-        if (sm != null) {
-            sm.checkPermission(new GroovyCodeSourcePermission(codeBase));
-        }
-        try {
-            return new CodeSource(new URL("file", "", codeBase), (java.security.cert.Certificate[]) null);
-        }
-        catch (MalformedURLException e) {
-            throw new RuntimeException("A CodeSource file URL cannot be constructed from the supplied codeBase: " + codeBase);
-        }
+    public void setCachable(boolean b) {
+        cachable = b;
     }
 
     @Override

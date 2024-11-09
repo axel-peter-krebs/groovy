@@ -160,210 +160,210 @@ public class BinaryExpressionHelper {
 
     public void eval(final BinaryExpression expression) {
         switch (expression.getOperation().getType()) {
-        case EQUAL: // = (aka assignment)
-            evaluateEqual(expression, false);
-            break;
-
-        case COMPARE_EQUAL: // ==
-            evaluateCompareExpression(compareEqualMethod, expression);
-            break;
-
-        case COMPARE_NOT_EQUAL:
-            evaluateCompareExpression(compareNotEqualMethod, expression);
-            break;
-
-        case COMPARE_TO:
-            evaluateCompareTo(expression);
-            break;
-
-        case COMPARE_GREATER_THAN:
-            evaluateCompareExpression(compareGreaterThanMethod, expression);
-            break;
-
-        case COMPARE_GREATER_THAN_EQUAL:
-            evaluateCompareExpression(compareGreaterThanEqualMethod, expression);
-            break;
-
-        case COMPARE_LESS_THAN:
-            evaluateCompareExpression(compareLessThanMethod, expression);
-            break;
-
-        case COMPARE_LESS_THAN_EQUAL:
-            evaluateCompareExpression(compareLessThanEqualMethod, expression);
-            break;
-
-        case LOGICAL_AND:
-            evaluateLogicalAndExpression(expression);
-            break;
-
-        case LOGICAL_OR:
-            evaluateLogicalOrExpression(expression);
-            break;
-
-        case BITWISE_AND:
-            evaluateBinaryExpression("and", expression);
-            break;
-
-        case BITWISE_AND_EQUAL:
-            evaluateBinaryExpressionWithAssignment("and", expression);
-            break;
-
-        case BITWISE_OR:
-            evaluateBinaryExpression("or", expression);
-            break;
-
-        case BITWISE_OR_EQUAL:
-            evaluateBinaryExpressionWithAssignment("or", expression);
-            break;
-
-        case BITWISE_XOR:
-            evaluateBinaryExpression("xor", expression);
-            break;
-
-        case IMPLIES:
-            evaluateImplicationExpression(expression);
-            break;
-
-        case BITWISE_XOR_EQUAL:
-            evaluateBinaryExpressionWithAssignment("xor", expression);
-            break;
-
-        case PLUS:
-            evaluateBinaryExpression("plus", expression);
-            break;
-
-        case PLUS_EQUAL:
-            evaluateBinaryExpressionWithAssignment("plus", expression);
-            break;
-
-        case MINUS:
-            evaluateBinaryExpression("minus", expression);
-            break;
-
-        case MINUS_EQUAL:
-            evaluateBinaryExpressionWithAssignment("minus", expression);
-            break;
-
-        case MULTIPLY:
-            evaluateBinaryExpression("multiply", expression);
-            break;
-
-        case MULTIPLY_EQUAL:
-            evaluateBinaryExpressionWithAssignment("multiply", expression);
-            break;
-
-        case DIVIDE:
-            evaluateBinaryExpression("div", expression);
-            break;
-
-        case DIVIDE_EQUAL:
-            //SPG don't use divide since BigInteger implements directly
-            //and we want to dispatch through DefaultGroovyMethods to get a BigDecimal result
-            evaluateBinaryExpressionWithAssignment("div", expression);
-            break;
-
-        case INTDIV:
-            evaluateBinaryExpression("intdiv", expression);
-            break;
-
-        case INTDIV_EQUAL:
-            evaluateBinaryExpressionWithAssignment("intdiv", expression);
-            break;
-
-        case MOD:
-            evaluateBinaryExpression("mod", expression);
-            break;
-
-        case MOD_EQUAL:
-            evaluateBinaryExpressionWithAssignment("mod", expression);
-            break;
-
-        case REMAINDER:
-            evaluateBinaryExpression("remainder", expression);
-            break;
-
-        case REMAINDER_EQUAL:
-            evaluateBinaryExpressionWithAssignment("remainder", expression);
-            break;
-
-        case POWER:
-            evaluateBinaryExpression("power", expression);
-            break;
-
-        case POWER_EQUAL:
-            evaluateBinaryExpressionWithAssignment("power", expression);
-            break;
-
-        case ELVIS_EQUAL:
-            evaluateElvisEqual(expression);
-            break;
-
-        case LEFT_SHIFT:
-            evaluateBinaryExpression("leftShift", expression);
-            break;
-
-        case LEFT_SHIFT_EQUAL:
-            evaluateBinaryExpressionWithAssignment("leftShift", expression);
-            break;
-
-        case RIGHT_SHIFT:
-            evaluateBinaryExpression("rightShift", expression);
-            break;
-
-        case RIGHT_SHIFT_EQUAL:
-            evaluateBinaryExpressionWithAssignment("rightShift", expression);
-            break;
-
-        case RIGHT_SHIFT_UNSIGNED:
-            evaluateBinaryExpression("rightShiftUnsigned", expression);
-            break;
-
-        case RIGHT_SHIFT_UNSIGNED_EQUAL:
-            evaluateBinaryExpressionWithAssignment("rightShiftUnsigned", expression);
-            break;
-
-        case KEYWORD_INSTANCEOF:
-            evaluateInstanceof(expression);
-            break;
-
-        case COMPARE_NOT_INSTANCEOF:
-            evaluateNotInstanceof(expression);
-            break;
-
-        case FIND_REGEX:
-            evaluateCompareExpression(findRegexMethod, expression);
-            break;
-
-        case MATCH_REGEX:
-            evaluateCompareExpression(matchRegexMethod, expression);
-            break;
-
-        case LEFT_SQUARE_BRACKET:
-            if (controller.getCompileStack().isLHS()) {
+            case EQUAL: // = (aka assignment)
                 evaluateEqual(expression, false);
-            } else {
-                evaluateBinaryExpression("getAt", expression);
-            }
-            break;
+                break;
 
-        case KEYWORD_IN:
-            evaluateCompareExpression(isCaseMethod, expression);
-            break;
+            case COMPARE_EQUAL: // ==
+                evaluateCompareExpression(compareEqualMethod, expression);
+                break;
 
-        case COMPARE_NOT_IN:
-            evaluateCompareExpression(isNotCaseMethod, expression);
-            break;
+            case COMPARE_NOT_EQUAL:
+                evaluateCompareExpression(compareNotEqualMethod, expression);
+                break;
 
-        case COMPARE_IDENTICAL:
-            evaluateCompareExpression(compareIdenticalMethod, expression);
-            break;
+            case COMPARE_TO:
+                evaluateCompareTo(expression);
+                break;
 
-        case COMPARE_NOT_IDENTICAL:
-            evaluateCompareExpression(compareNotIdenticalMethod, expression);
-            break;
+            case COMPARE_GREATER_THAN:
+                evaluateCompareExpression(compareGreaterThanMethod, expression);
+                break;
 
-        default:
-            throw new GroovyBugError("Operation: " + expression.getOperation() + " not supported");
+            case COMPARE_GREATER_THAN_EQUAL:
+                evaluateCompareExpression(compareGreaterThanEqualMethod, expression);
+                break;
+
+            case COMPARE_LESS_THAN:
+                evaluateCompareExpression(compareLessThanMethod, expression);
+                break;
+
+            case COMPARE_LESS_THAN_EQUAL:
+                evaluateCompareExpression(compareLessThanEqualMethod, expression);
+                break;
+
+            case LOGICAL_AND:
+                evaluateLogicalAndExpression(expression);
+                break;
+
+            case LOGICAL_OR:
+                evaluateLogicalOrExpression(expression);
+                break;
+
+            case BITWISE_AND:
+                evaluateBinaryExpression("and", expression);
+                break;
+
+            case BITWISE_AND_EQUAL:
+                evaluateBinaryExpressionWithAssignment("and", expression);
+                break;
+
+            case BITWISE_OR:
+                evaluateBinaryExpression("or", expression);
+                break;
+
+            case BITWISE_OR_EQUAL:
+                evaluateBinaryExpressionWithAssignment("or", expression);
+                break;
+
+            case BITWISE_XOR:
+                evaluateBinaryExpression("xor", expression);
+                break;
+
+            case IMPLIES:
+                evaluateImplicationExpression(expression);
+                break;
+
+            case BITWISE_XOR_EQUAL:
+                evaluateBinaryExpressionWithAssignment("xor", expression);
+                break;
+
+            case PLUS:
+                evaluateBinaryExpression("plus", expression);
+                break;
+
+            case PLUS_EQUAL:
+                evaluateBinaryExpressionWithAssignment("plus", expression);
+                break;
+
+            case MINUS:
+                evaluateBinaryExpression("minus", expression);
+                break;
+
+            case MINUS_EQUAL:
+                evaluateBinaryExpressionWithAssignment("minus", expression);
+                break;
+
+            case MULTIPLY:
+                evaluateBinaryExpression("multiply", expression);
+                break;
+
+            case MULTIPLY_EQUAL:
+                evaluateBinaryExpressionWithAssignment("multiply", expression);
+                break;
+
+            case DIVIDE:
+                evaluateBinaryExpression("div", expression);
+                break;
+
+            case DIVIDE_EQUAL:
+                //SPG don't use divide since BigInteger implements directly
+                //and we want to dispatch through DefaultGroovyMethods to get a BigDecimal result
+                evaluateBinaryExpressionWithAssignment("div", expression);
+                break;
+
+            case INTDIV:
+                evaluateBinaryExpression("intdiv", expression);
+                break;
+
+            case INTDIV_EQUAL:
+                evaluateBinaryExpressionWithAssignment("intdiv", expression);
+                break;
+
+            case MOD:
+                evaluateBinaryExpression("mod", expression);
+                break;
+
+            case MOD_EQUAL:
+                evaluateBinaryExpressionWithAssignment("mod", expression);
+                break;
+
+            case REMAINDER:
+                evaluateBinaryExpression("remainder", expression);
+                break;
+
+            case REMAINDER_EQUAL:
+                evaluateBinaryExpressionWithAssignment("remainder", expression);
+                break;
+
+            case POWER:
+                evaluateBinaryExpression("power", expression);
+                break;
+
+            case POWER_EQUAL:
+                evaluateBinaryExpressionWithAssignment("power", expression);
+                break;
+
+            case ELVIS_EQUAL:
+                evaluateElvisEqual(expression);
+                break;
+
+            case LEFT_SHIFT:
+                evaluateBinaryExpression("leftShift", expression);
+                break;
+
+            case LEFT_SHIFT_EQUAL:
+                evaluateBinaryExpressionWithAssignment("leftShift", expression);
+                break;
+
+            case RIGHT_SHIFT:
+                evaluateBinaryExpression("rightShift", expression);
+                break;
+
+            case RIGHT_SHIFT_EQUAL:
+                evaluateBinaryExpressionWithAssignment("rightShift", expression);
+                break;
+
+            case RIGHT_SHIFT_UNSIGNED:
+                evaluateBinaryExpression("rightShiftUnsigned", expression);
+                break;
+
+            case RIGHT_SHIFT_UNSIGNED_EQUAL:
+                evaluateBinaryExpressionWithAssignment("rightShiftUnsigned", expression);
+                break;
+
+            case KEYWORD_INSTANCEOF:
+                evaluateInstanceof(expression);
+                break;
+
+            case COMPARE_NOT_INSTANCEOF:
+                evaluateNotInstanceof(expression);
+                break;
+
+            case FIND_REGEX:
+                evaluateCompareExpression(findRegexMethod, expression);
+                break;
+
+            case MATCH_REGEX:
+                evaluateCompareExpression(matchRegexMethod, expression);
+                break;
+
+            case LEFT_SQUARE_BRACKET:
+                if (controller.getCompileStack().isLHS()) {
+                    evaluateEqual(expression, false);
+                } else {
+                    evaluateBinaryExpression("getAt", expression);
+                }
+                break;
+
+            case KEYWORD_IN:
+                evaluateCompareExpression(isCaseMethod, expression);
+                break;
+
+            case COMPARE_NOT_IN:
+                evaluateCompareExpression(isNotCaseMethod, expression);
+                break;
+
+            case COMPARE_IDENTICAL:
+                evaluateCompareExpression(compareIdenticalMethod, expression);
+                break;
+
+            case COMPARE_NOT_IDENTICAL:
+                evaluateCompareExpression(compareNotIdenticalMethod, expression);
+                break;
+
+            default:
+                throw new GroovyBugError("Operation: " + expression.getOperation() + " not supported");
         }
     }
 
@@ -381,9 +381,9 @@ public class BinaryExpressionHelper {
         Expression lhs = expression.getLeftExpression();
         Expression rhs = elvisX(lhs, expression.getRightExpression());
         BinaryExpression assignment = binX(
-                lhs,
-                Token.newSymbol(ASSIGN, expression.getOperation().getStartLine(), expression.getOperation().getStartColumn()),
-                rhs
+            lhs,
+            Token.newSymbol(ASSIGN, expression.getOperation().getStartLine(), expression.getOperation().getStartColumn()),
+            rhs
         );
         assignment.copyNodeMetaData(expression);
         evaluateEqual(assignment, false);
@@ -416,7 +416,8 @@ public class BinaryExpressionHelper {
             array.setSourcePosition(rightExpression);
             array.visit(acg);
         } else if (rightExpression instanceof EmptyExpression) { // define field
-            /*  */ if (ClassHelper.isPrimitiveDouble(lhsType)) {
+            /*  */
+            if (ClassHelper.isPrimitiveDouble(lhsType)) {
                 mv.visitInsn(DCONST_0);
             } else if (ClassHelper.isPrimitiveFloat(lhsType)) {
                 mv.visitInsn(FCONST_0);
@@ -480,7 +481,7 @@ public class BinaryExpressionHelper {
 
         // GROOVY-11288: get value from the stack
         if (singleAssignment && !returnRightValue
-                && !(leftExpression instanceof BinaryExpression)) {
+            && !(leftExpression instanceof BinaryExpression)) {
             compileStack.pushLHS(true);
             leftExpression.visit(acg);
             compileStack.popLHS();
@@ -592,8 +593,8 @@ public class BinaryExpressionHelper {
     protected void evaluateCompareExpression(final MethodCaller compareMethod, final BinaryExpression expression) {
         Expression leftExp = expression.getLeftExpression();
         Expression rightExp = expression.getRightExpression();
-        ClassNode  leftType = controller.getTypeChooser().resolveType(leftExp, controller.getClassNode());
-        ClassNode  rightType = controller.getTypeChooser().resolveType(rightExp, controller.getClassNode());
+        ClassNode leftType = controller.getTypeChooser().resolveType(leftExp, controller.getClassNode());
+        ClassNode rightType = controller.getTypeChooser().resolveType(rightExp, controller.getClassNode());
 
         boolean done = false;
         if (ClassHelper.isPrimitiveType(leftType) && ClassHelper.isPrimitiveType(rightType)) {
@@ -711,10 +712,10 @@ public class BinaryExpressionHelper {
         // ensure VariableArguments are read, not stored
         compileStack.pushLHS(false);
         controller.getInvocationWriter().makeSingleArgumentCall(
-                expression.getLeftExpression(),
-                message,
-                expression.getRightExpression(),
-                expression.isSafe()
+            expression.getLeftExpression(),
+            message,
+            expression.getRightExpression(),
+            expression.isSafe()
         );
         compileStack.popLHS();
     }
@@ -729,7 +730,7 @@ public class BinaryExpressionHelper {
         // the result of x[a] += b is x[a]+b, thus:
         // -> subscript=a, receiver=x, receiver#putAt(subscript, ret=receiver#getAt(subscript)#plus(b)), ret
         ExpressionAsVariableSlot subscript = new ExpressionAsVariableSlot(controller, leftBinExpr.getRightExpression(), "subscript");
-        ExpressionAsVariableSlot receiver  = new ExpressionAsVariableSlot(controller, leftBinExpr.getLeftExpression(), "receiver");
+        ExpressionAsVariableSlot receiver = new ExpressionAsVariableSlot(controller, leftBinExpr.getLeftExpression(), "receiver");
         MethodCallExpression getAt = callX(receiver, "getAt", args(subscript));
         MethodCallExpression operation = callX(getAt, method, expression.getRightExpression());
         ExpressionAsVariableSlot ret = new ExpressionAsVariableSlot(controller, operation, "ret");
@@ -781,13 +782,13 @@ public class BinaryExpressionHelper {
 
     private void evaluateNotInstanceof(final BinaryExpression expression) {
         unaryExpressionHelper.writeNotExpression(
-                notX(
-                        binX(
-                                expression.getLeftExpression(),
-                                GeneralUtils.INSTANCEOF,
-                                expression.getRightExpression()
-                        )
+            notX(
+                binX(
+                    expression.getLeftExpression(),
+                    GeneralUtils.INSTANCEOF,
+                    expression.getRightExpression()
                 )
+            )
         );
     }
 
@@ -937,10 +938,10 @@ public class BinaryExpressionHelper {
         // After this call the JVM operand stack will contain the result of
         // the method call... usually simply Object in operandStack
         controller.getCallSiteWriter().makeCallSite(
-                callSiteReceiverSwap,
-                method,
-                MethodCallExpression.NO_ARGUMENTS,
-                false, false, false, false);
+            callSiteReceiverSwap,
+            method,
+            MethodCallExpression.NO_ARGUMENTS,
+            false, false, false, false);
         // now rhs is completely done and we need only to store. In a[1]++ this
         // would be a.getAt(1).next() for the rhs, "lhs" code is a.putAt(1, rhs)
     }

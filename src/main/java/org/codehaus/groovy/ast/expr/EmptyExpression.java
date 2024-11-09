@@ -35,25 +35,6 @@ import java.util.Map;
 public class EmptyExpression extends Expression {
 
     /**
-     * @see EmptyExpression#INSTANCE
-     */
-    public EmptyExpression() {
-        super();
-    }
-
-    @Override
-    public Expression transformExpression(ExpressionTransformer transformer) {
-        return this;
-    }
-
-    @Override
-    public void visit(GroovyCodeVisitor visitor) {
-        visitor.visitEmptyExpression(this);
-    }
-
-    //--------------------------------------------------------------------------
-
-    /**
      * Immutable singleton that is recommended for use when source range or any
      * other occurrence-specific metadata is not needed.
      */
@@ -124,4 +105,23 @@ public class EmptyExpression extends Expression {
             throwUnsupportedOperationException();
         }
     };
+
+    /**
+     * @see EmptyExpression#INSTANCE
+     */
+    public EmptyExpression() {
+        super();
+    }
+
+    @Override
+    public Expression transformExpression(ExpressionTransformer transformer) {
+        return this;
+    }
+
+    //--------------------------------------------------------------------------
+
+    @Override
+    public void visit(GroovyCodeVisitor visitor) {
+        visitor.visitEmptyExpression(this);
+    }
 }

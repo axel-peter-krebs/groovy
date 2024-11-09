@@ -25,11 +25,11 @@ import groovy.test.GroovyTestCase
  */
 class DefaultGroovyStaticMethodsTest extends GroovyTestCase {
     void testCurrentTimeSeconds() {
-	    long timeMillis = System.currentTimeMillis()
+        long timeMillis = System.currentTimeMillis()
         long timeSeconds = System.currentTimeSeconds()
         long timeMillis2 = System.currentTimeMillis()
-        assert timeMillis/1000 as int <= timeSeconds
-        assert timeMillis2/1000 as int >= timeSeconds
+        assert timeMillis / 1000 as int <= timeSeconds
+        assert timeMillis2 / 1000 as int >= timeSeconds
     }
 
     void testDumpAll() {

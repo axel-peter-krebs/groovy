@@ -70,7 +70,7 @@ final class DefaultRunners {
          * JUnit 3.8.x test, i.e. checks if it extends JUnit 3.8.x's TestCase.
          *
          * @param scriptClass the class we want to check
-         * @param loader the class loader
+         * @param loader      the class loader
          * @return true if the class appears to be a test
          */
         @Override
@@ -90,7 +90,7 @@ final class DefaultRunners {
          * groovy scripts and classes would have to add another dependency on their classpath.
          *
          * @param scriptClass the class to be run as a unit test
-         * @param loader the class loader
+         * @param loader      the class loader
          */
         @Override
         public Object run(Class<?> scriptClass, GroovyClassLoader loader) {
@@ -109,7 +109,7 @@ final class DefaultRunners {
          * JUnit 3.8.x test suite, i.e. checks if it extends JUnit 3.8.x's TestSuite.
          *
          * @param scriptClass the class we want to check
-         * @param loader the class loader
+         * @param loader      the class loader
          * @return true if the class appears to be a test
          */
         @Override
@@ -129,7 +129,7 @@ final class DefaultRunners {
          * groovy scripts and classes would have to add another dependency on their classpath.
          *
          * @param scriptClass the class to be run as a unit test
-         * @param loader the class loader
+         * @param loader      the class loader
          */
         @Override
         public Object run(Class<?> scriptClass, GroovyClassLoader loader) {
@@ -143,18 +143,46 @@ final class DefaultRunners {
     }
 
     private static class Junit4TestRunner implements GroovyRunner {
+        private static boolean hasRunWithAnnotation(Class<?> scriptClass, ClassLoader loader) {
+            try {
+                @SuppressWarnings("unchecked")
+                Class<? extends Annotation> runWithAnnotationClass =
+                    (Class<? extends Annotation>) loader.loadClass("org.junit.runner.RunWith");
+                return scriptClass.isAnnotationPresent(runWithAnnotationClass);
+            } catch (Throwable e) {
+                return false;
+            }
+        }
+
+        private static boolean hasTestAnnotatedMethod(Class<?> scriptClass, ClassLoader loader) {
+            try {
+                @SuppressWarnings("unchecked")
+                Class<? extends Annotation> testAnnotationClass =
+                    (Class<? extends Annotation>) loader.loadClass("org.junit.Test");
+                Method[] methods = scriptClass.getMethods();
+                for (Method method : methods) {
+                    if (method.isAnnotationPresent(testAnnotationClass)) {
+                        return true;
+                    }
+                }
+            } catch (Throwable e) {
+                // fall through
+            }
+            return false;
+        }
+
         /**
          * Utility method to check via reflection if the parsed class appears to be a JUnit4
          * test, i.e. checks whether it appears to be using the relevant JUnit 4 annotations.
          *
          * @param scriptClass the class we want to check
-         * @param loader the class loader
+         * @param loader      the class loader
          * @return true if the class appears to be a test
          */
         @Override
         public boolean canRun(Class<?> scriptClass, GroovyClassLoader loader) {
             return hasRunWithAnnotation(scriptClass, loader)
-                    || hasTestAnnotatedMethod(scriptClass, loader);
+                || hasTestAnnotatedMethod(scriptClass, loader);
         }
 
         /**
@@ -164,14 +192,14 @@ final class DefaultRunners {
          * groovy scripts and classes would have to add another dependency on their classpath.
          *
          * @param scriptClass the class to be run as a unit test
-         * @param loader the class loader
+         * @param loader      the class loader
          */
         @Override
         public Object run(Class<?> scriptClass, GroovyClassLoader loader) {
             try {
                 Class<?> junitCoreClass = loader.loadClass("org.junit.runner.JUnitCore");
                 Object result = InvokerHelper.invokeStaticMethod(junitCoreClass,
-                        "runClasses", new Object[]{scriptClass});
+                    "runClasses", new Object[]{scriptClass});
                 System.out.print("JUnit 4 Runner, Tests: " + InvokerHelper.getProperty(result, "runCount"));
                 System.out.print(", Failures: " + InvokerHelper.getProperty(result, "failureCount"));
                 System.out.println(", Time: " + InvokerHelper.getProperty(result, "runTime"));
@@ -184,34 +212,6 @@ final class DefaultRunners {
             } catch (ClassNotFoundException e) {
                 throw new GroovyRuntimeException("Error running JUnit 4 test.", e);
             }
-        }
-
-        private static boolean hasRunWithAnnotation(Class<?> scriptClass, ClassLoader loader) {
-            try {
-                @SuppressWarnings("unchecked")
-                Class<? extends Annotation> runWithAnnotationClass =
-                        (Class<? extends Annotation>)loader.loadClass("org.junit.runner.RunWith");
-                return scriptClass.isAnnotationPresent(runWithAnnotationClass);
-            } catch (Throwable e) {
-                return false;
-            }
-        }
-
-        private static boolean hasTestAnnotatedMethod(Class<?> scriptClass, ClassLoader loader) {
-            try {
-                @SuppressWarnings("unchecked")
-                Class<? extends Annotation> testAnnotationClass =
-                        (Class<? extends Annotation>) loader.loadClass("org.junit.Test");
-                Method[] methods = scriptClass.getMethods();
-                for (Method method : methods) {
-                    if (method.isAnnotationPresent(testAnnotationClass)) {
-                        return true;
-                    }
-                }
-            } catch (Throwable e) {
-                // fall through
-            }
-            return false;
         }
     }
 

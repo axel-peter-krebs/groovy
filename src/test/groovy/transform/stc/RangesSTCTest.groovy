@@ -18,7 +18,7 @@
  */
 package groovy.transform.stc
 
-class RangesSTCTest extends StaticTypeCheckingTestCase{
+class RangesSTCTest extends StaticTypeCheckingTestCase {
     // GROOVY-5699
     void testIntRangeInference() {
         assertScript '''

@@ -67,7 +67,7 @@ class MacroStatementTest extends GroovyTestCase {
 @Retention(RetentionPolicy.SOURCE)
 @Target([ElementType.TYPE])
 @GroovyASTTransformationClass(["metaprogramming.AddMethodASTTransformation"])
-@interface AddMethod { }
+@interface AddMethod {}
 // end::addmethodannotation[]
 
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC
@@ -80,17 +80,17 @@ class AddMethodASTTransformation extends AbstractASTTransformation {
         ClassNode classNode = (ClassNode) nodes[1]
 
         ReturnStatement code =
-                new ReturnStatement(                              // <1>
-                        new ConstantExpression("42"))             // <2>
+            new ReturnStatement(                              // <1>
+                new ConstantExpression("42"))             // <2>
 
         MethodNode methodNode =
-                new MethodNode(
-                        "getMessage",
-                        ACC_PUBLIC,
-                        ClassHelper.make(String),
-                        [] as Parameter[],
-                        [] as ClassNode[],
-                        code)                                     // <3>
+            new MethodNode(
+                "getMessage",
+                ACC_PUBLIC,
+                ClassHelper.make(String),
+                [] as Parameter[],
+                [] as ClassNode[],
+                code)                                     // <3>
 
         classNode.addMethod(methodNode)                           // <4>
     }
@@ -100,7 +100,7 @@ class AddMethodASTTransformation extends AbstractASTTransformation {
 @Retention(RetentionPolicy.SOURCE)
 @Target([ElementType.TYPE])
 @GroovyASTTransformationClass(["metaprogramming.AddMethodWithMacrosASTTransformation"])
-@interface AddMethodWithMacros { }
+@interface AddMethodWithMacros {}
 
 // tag::basicWithMacro[]
 @GroovyASTTransformation(phase = CompilePhase.INSTRUCTION_SELECTION)
@@ -112,13 +112,13 @@ class AddMethodWithMacrosASTTransformation extends AbstractASTTransformation {
         ReturnStatement simplestCode = macro { return "42" }   // <1>
 
         MethodNode methodNode =
-                new MethodNode(
-                        "getMessage",
-                        ACC_PUBLIC,
-                        ClassHelper.make(String),
-                        [] as Parameter[],
-                        [] as ClassNode[],
-                        simplestCode)                          // <2>
+            new MethodNode(
+                "getMessage",
+                ACC_PUBLIC,
+                ClassHelper.make(String),
+                [] as Parameter[],
+                [] as ClassNode[],
+                simplestCode)                          // <2>
 
         classNode.addMethod(methodNode)                        // <3>
     }

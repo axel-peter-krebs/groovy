@@ -55,22 +55,22 @@ public class DoubleCachedClass extends NumberCachedClass { // Double, double
     @Override
     public boolean isAssignableFrom(Class classToTransformFrom) {
         return (allowNull && classToTransformFrom == null)
-                || classToTransformFrom == Double.class
-                || classToTransformFrom == Integer.class
-                || classToTransformFrom == Long.class
-                || classToTransformFrom == Short.class
-                || classToTransformFrom == Byte.class
-                || classToTransformFrom == Float.class
-                || classToTransformFrom == Double.TYPE
-                || classToTransformFrom == Integer.TYPE
-                || classToTransformFrom == Long.TYPE
-                || classToTransformFrom == Short.TYPE
-                || classToTransformFrom == Byte.TYPE
-                || classToTransformFrom == Float.TYPE
-                || classToTransformFrom == BigDecimal.class
-                || classToTransformFrom == BigInteger.class
-                || (classToTransformFrom!=null && BigDecimal.class.isAssignableFrom(classToTransformFrom))
-                || (classToTransformFrom!=null && BigInteger.class.isAssignableFrom(classToTransformFrom))
-                ;
+            || classToTransformFrom == Double.class
+            || classToTransformFrom == Integer.class
+            || classToTransformFrom == Long.class
+            || classToTransformFrom == Short.class
+            || classToTransformFrom == Byte.class
+            || classToTransformFrom == Float.class
+            || classToTransformFrom == Double.TYPE
+            || classToTransformFrom == Integer.TYPE
+            || classToTransformFrom == Long.TYPE
+            || classToTransformFrom == Short.TYPE
+            || classToTransformFrom == Byte.TYPE
+            || classToTransformFrom == Float.TYPE
+            || classToTransformFrom == BigDecimal.class
+            || classToTransformFrom == BigInteger.class
+            || (classToTransformFrom != null && BigDecimal.class.isAssignableFrom(classToTransformFrom))
+            || (classToTransformFrom != null && BigInteger.class.isAssignableFrom(classToTransformFrom))
+            ;
     }
 }

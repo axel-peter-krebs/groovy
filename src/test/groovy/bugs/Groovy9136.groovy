@@ -45,7 +45,8 @@ final class Groovy9136 {
         '''
     }
 
-    @Test // GROOVY-9195
+    @Test
+    // GROOVY-9195
     void testMethodParameterFieldAccessFromClosure2() {
         assertScript '''
             class Foo {

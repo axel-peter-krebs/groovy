@@ -40,7 +40,7 @@ public class SpoofTask extends Task {
         SpoofTaskContainer.spoof("tag name from wrapper: " + getWrapper().getElementTag());
         // don't rely on Map.toString(), behaviour is not documented
         SpoofTaskContainer.spoof("attributes map from wrapper: "
-                + FormatHelper.toMapString(getWrapper().getAttributeMap()));
+            + FormatHelper.toMapString(getWrapper().getAttributeMap()));
         SpoofTaskContainer.spoof("param foo: " + foo);
 
         SpoofTaskContainer.spoof("end SpoofTask execute");

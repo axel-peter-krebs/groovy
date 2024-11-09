@@ -91,23 +91,36 @@ public class GroovyClassLoader extends URLClassLoader {
     private static final AtomicInteger scriptNameCounter = new AtomicInteger(1_000_000); // 1,000,000 avoids conflicts with names from the GroovyShell
     private static final String HASH_ALGORITHM = System.getProperty("groovy.cache.hashing.algorithm", "md5");
 
+    static {
+        registerAsParallelCapable();
+    }
+
     /**
      * This cache contains the loaded classes or PARSING, if the class is currently parsed.
      */
     protected final EvictableCache<String, Class> classCache = new UnlimitedConcurrentCache<>();
-
     /**
      * This cache contains mappings of file name to class. It is used to bypass compilation.
      */
     protected final StampedCommonCache<String, Class> sourceCache = new StampedCommonCache<>();
-
     private final CompilerConfiguration config;
     private final String sourceEncoding;
     private Boolean recompile;
-
-    static {
-        registerAsParallelCapable();
-    }
+    private GroovyResourceLoader resourceLoader = new GroovyResourceLoader() {
+        @Override
+        public URL loadGroovySource(final String filename) {
+            return doPrivileged(() -> {
+                for (String extension : config.getScriptExtensions()) {
+                    try {
+                        URL url = getSourceFile(filename, extension);
+                        if (url != null) return url;
+                    } catch (Throwable ignore) {
+                    }
+                }
+                return null;
+            });
+        }
+    };
 
     /**
      * Creates a GroovyClassLoader using the current Thread's context ClassLoader as parent.
@@ -138,6 +151,8 @@ public class GroovyClassLoader extends URLClassLoader {
         this(parent, config, true);
     }
 
+    //--------------------------------------------------------------------------
+
     /**
      * Creates a GroovyClassLoader.
      *
@@ -159,28 +174,111 @@ public class GroovyClassLoader extends URLClassLoader {
             .orElseGet(() -> groovy.util.CharsetToolkit.getDefaultSystemCharset().name());
     }
 
-    //--------------------------------------------------------------------------
-
     @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
     private static <T> T doPrivileged(java.security.PrivilegedAction<T> action) {
         return java.security.AccessController.doPrivileged(action);
     }
 
-    private GroovyResourceLoader resourceLoader = new GroovyResourceLoader() {
-        @Override
-        public URL loadGroovySource(final String filename) {
-            return doPrivileged(() -> {
-                for (String extension : config.getScriptExtensions()) {
-                    try {
-                        URL url = getSourceFile(filename, extension);
-                        if (url != null) return url;
-                    } catch (Throwable ignore) {
-                    }
+    private static void collect(final ClassCollector collector, final LinkedHashMap<ClassNode, ClassVisitor> generatedClasses) {
+        // GROOVY-10687: drive ClassCollector after classgen -- interfaces first
+        var classes = new ArrayList<ClassNode>(generatedClasses.keySet());
+        classes.sort(Comparator.comparingInt(cn -> {
+            int n;
+            if (cn.isInterface()) {
+                var interfaces = cn.getInterfaces();
+                n = interfaces.length;
+                for (var in : interfaces) {
+                    n += in.getInterfaces().length;
                 }
-                return null;
-            });
+            } else {
+                n = 999;
+                while (cn != null) {
+                    n += 1;
+                    cn = cn.getSuperClass();
+                }
+            }
+            return n;
+        }));
+
+        for (ClassNode cn : classes) {
+            collector.call(generatedClasses.get(cn), cn);
         }
-    };
+    }
+
+    private static void validate(final GroovyCodeSource codeSource) {
+        if (codeSource.getFile() == null) {
+            if (codeSource.getScriptText() == null) {
+                throw new IllegalArgumentException("Script text to compile cannot be null!");
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------
+
+    /**
+     * This method will take a file name and try to "decode" any URL encoded characters.  For example
+     * if the file name contains any spaces this method call will take the resulting %20 encoded values
+     * and convert them to spaces.
+     * <p>
+     * This method was added specifically to fix defect:  Groovy-1787.  The defect involved a situation
+     * where two scripts were sitting in a directory with spaces in its name.  The code would fail
+     * when the class loader tried to resolve the file name and would choke on the URLEncoded space values.
+     */
+    private static String decodeFileName(final String fileName) {
+        String decodedFile = fileName;
+        decodedFile = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
+
+        return decodedFile;
+    }
+
+    private static boolean isFile(final URL ret) {
+        return ret != null && "file".equals(ret.getProtocol());
+    }
+
+    private static File getFileForUrl(final URL ret, final String filename) {
+        String fileWithoutPackage = filename;
+        if (fileWithoutPackage.indexOf('/') != -1) {
+            int index = fileWithoutPackage.lastIndexOf('/');
+            fileWithoutPackage = fileWithoutPackage.substring(index + 1);
+        }
+        return fileReallyExists(ret, fileWithoutPackage);
+    }
+
+    private static File fileReallyExists(final URL ret, final String fileWithoutPackage) {
+        File path;
+        try {
+            /* fix for GROOVY-5809 */
+            path = new File(ret.toURI());
+        } catch (URISyntaxException e) {
+            path = new File(decodeFileName(ret.getFile()));
+        }
+        path = path.getParentFile();
+
+        File file = new File(path, fileWithoutPackage);
+        if (file.exists()) {
+            // file.exists() might be case-insensitive.
+            // Let's do case-sensitive match for the filename
+            try {
+                String caseSensitiveName = file.getCanonicalPath();
+                int index = caseSensitiveName.lastIndexOf(File.separator);
+                if (index != -1) {
+                    caseSensitiveName = caseSensitiveName.substring(index + 1);
+                }
+                if (fileWithoutPackage.equals(caseSensitiveName)) {
+                    return file;
+                }
+            } catch (IOException ignore) {
+                // assume doesn't really exist if we can't read the file
+            }
+        }
+
+        // file does not exist!
+        return null;
+    }
+
+    public GroovyResourceLoader getResourceLoader() {
+        return resourceLoader;
+    }
 
     public void setResourceLoader(final GroovyResourceLoader resourceLoader) {
         if (resourceLoader == null) {
@@ -188,12 +286,6 @@ public class GroovyClassLoader extends URLClassLoader {
         }
         this.resourceLoader = resourceLoader;
     }
-
-    public GroovyResourceLoader getResourceLoader() {
-        return resourceLoader;
-    }
-
-    //--------------------------------------------------------------------------
 
     /**
      * Converts an array of bytes into an instance of {@code Class}. Before the
@@ -230,34 +322,10 @@ public class GroovyClassLoader extends URLClassLoader {
         }
     }
 
-    private static void collect(final ClassCollector collector, final LinkedHashMap<ClassNode, ClassVisitor> generatedClasses) {
-        // GROOVY-10687: drive ClassCollector after classgen -- interfaces first
-        var classes = new ArrayList<ClassNode>(generatedClasses.keySet());
-        classes.sort(Comparator.comparingInt(cn -> {
-            int n;
-            if (cn.isInterface()) {
-                var interfaces = cn.getInterfaces();
-                n = interfaces.length;
-                for (var in : interfaces) {
-                    n += in.getInterfaces().length;
-                }
-            } else {
-                n = 999;
-                while (cn != null) { n += 1;
-                    cn = cn.getSuperClass();
-                }
-            }
-            return n;
-        }));
-
-        for (ClassNode cn : classes) {
-            collector.call(generatedClasses.get(cn), cn);
-        }
-    }
-
     /**
      * Checks if this class loader has compatible {@link CompilerConfiguration}
      * with the provided one.
+     *
      * @param config the compiler configuration to test for compatibility
      * @return {@code true} if the provided config is exactly the same instance
      * of {@link CompilerConfiguration} as this loader has
@@ -380,7 +448,7 @@ public class GroovyClassLoader extends URLClassLoader {
         }
 
         ClassCollector collector = createCollector(unit, su);
-        var generatedClasses = new LinkedHashMap<ClassNode,ClassVisitor>();
+        var generatedClasses = new LinkedHashMap<ClassNode, ClassVisitor>();
         unit.setClassgenCallback((cv, cn) -> generatedClasses.put(cn, cv));
         unit.compile(config == null || config.getTargetDirectory() == null ? Phases.CLASS_GENERATION : Phases.OUTPUT);
 
@@ -395,14 +463,6 @@ public class GroovyClassLoader extends URLClassLoader {
             if (c.getName().equals(mainName)) answer = c;
         }
         return answer;
-    }
-
-    private static void validate(final GroovyCodeSource codeSource) {
-        if (codeSource.getFile() == null) {
-            if (codeSource.getScriptText() == null) {
-                throw new IllegalArgumentException("Script text to compile cannot be null!");
-            }
-        }
     }
 
     private void definePackageInternal(final String className) {
@@ -446,7 +506,7 @@ public class GroovyClassLoader extends URLClassLoader {
             ProtectionDomain myDomain = getProtectionDomain();
             PermissionCollection myPerms = myDomain.getPermissions();
             if (myPerms != null) {
-                for (Enumeration<Permission> elements = myPerms.elements(); elements.hasMoreElements();) {
+                for (Enumeration<Permission> elements = myPerms.elements(); elements.hasMoreElements(); ) {
                     perms.add(elements.nextElement());
                 }
             }
@@ -593,7 +653,7 @@ public class GroovyClassLoader extends URLClassLoader {
     /**
      * {@inheritDoc}
      *
-     * @see ClassLoader#loadClass(java.lang.String,boolean)
+     * @see ClassLoader#loadClass(java.lang.String, boolean)
      */
     @Override
     public Class<?> loadClass(final String name) throws ClassNotFoundException {
@@ -604,7 +664,7 @@ public class GroovyClassLoader extends URLClassLoader {
      * Implemented here to check package access prior to returning an
      * already-loaded class.
      *
-     * @throws ClassNotFoundException if class could not be found
+     * @throws ClassNotFoundException     if class could not be found
      * @throws CompilationFailedException if compilation of script failed
      */
     @Override
@@ -618,7 +678,7 @@ public class GroovyClassLoader extends URLClassLoader {
      * loadClass(name, lookupScriptFiles, preferClassOverScript, false);
      * </pre>
      *
-     * @throws ClassNotFoundException if class could not be found
+     * @throws ClassNotFoundException     if class could not be found
      * @throws CompilationFailedException if compilation of script failed
      */
     public Class loadClass(final String name, final boolean lookupScriptFiles, final boolean preferClassOverScript) throws ClassNotFoundException, CompilationFailedException {
@@ -757,67 +817,6 @@ public class GroovyClassLoader extends URLClassLoader {
         return Verifier.getTimestamp(cls);
     }
 
-    /**
-     * This method will take a file name and try to "decode" any URL encoded characters.  For example
-     * if the file name contains any spaces this method call will take the resulting %20 encoded values
-     * and convert them to spaces.
-     * <p>
-     * This method was added specifically to fix defect:  Groovy-1787.  The defect involved a situation
-     * where two scripts were sitting in a directory with spaces in its name.  The code would fail
-     * when the class loader tried to resolve the file name and would choke on the URLEncoded space values.
-     */
-    private static String decodeFileName(final String fileName) {
-        String decodedFile = fileName;
-        decodedFile = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
-
-        return decodedFile;
-    }
-
-    private static boolean isFile(final URL ret) {
-        return ret != null && "file".equals(ret.getProtocol());
-    }
-
-    private static File getFileForUrl(final URL ret, final String filename) {
-        String fileWithoutPackage = filename;
-        if (fileWithoutPackage.indexOf('/') != -1) {
-            int index = fileWithoutPackage.lastIndexOf('/');
-            fileWithoutPackage = fileWithoutPackage.substring(index + 1);
-        }
-        return fileReallyExists(ret, fileWithoutPackage);
-    }
-
-    private static File fileReallyExists(final URL ret, final String fileWithoutPackage) {
-        File path;
-        try {
-            /* fix for GROOVY-5809 */
-            path = new File(ret.toURI());
-        } catch (URISyntaxException e) {
-            path = new File(decodeFileName(ret.getFile()));
-        }
-        path = path.getParentFile();
-
-        File file = new File(path, fileWithoutPackage);
-        if (file.exists()) {
-            // file.exists() might be case-insensitive.
-            // Let's do case-sensitive match for the filename
-            try {
-                String caseSensitiveName = file.getCanonicalPath();
-                int index = caseSensitiveName.lastIndexOf(File.separator);
-                if (index != -1) {
-                    caseSensitiveName = caseSensitiveName.substring(index + 1);
-                }
-                if (fileWithoutPackage.equals(caseSensitiveName)) {
-                    return file;
-                }
-            } catch (IOException ignore) {
-                // assume doesn't really exist if we can't read the file
-            }
-        }
-
-        // file does not exist!
-        return null;
-    }
-
     private URL getSourceFile(final String name, final String extension) {
         String filename = name.replace('.', '/') + "." + extension;
         URL url = getResource(filename);
@@ -951,6 +950,29 @@ public class GroovyClassLoader extends URLClassLoader {
 
     //--------------------------------------------------------------------------
 
+    /**
+     * Generates an encoded string based on the specified characters and the defined encoding algorithm.
+     * Supported algorithms currently are "md5" and sha256".
+     * An exception is throw for an unknown algorithm or if the JVM doesn't support the algorithm.
+     *
+     * @param chars The characters to encode.
+     * @return The encoded string.
+     */
+    public String genEncodingString(CharSequence chars) {
+        try {
+            switch (HASH_ALGORITHM) {
+                case "md5":
+                    return EncodingGroovyMethods.md5(chars);
+                case "sha256":
+                    return EncodingGroovyMethods.sha256(chars);
+                default:
+                    throw new IllegalStateException("Unknown hash algorithm");
+            }
+        } catch (NoSuchAlgorithmException e) {
+            throw new GroovyRuntimeException(e);
+        }
+    }
+
     public static class InnerLoader extends GroovyClassLoader {
         private final GroovyClassLoader delegate;
         private final long timeStamp;
@@ -1036,6 +1058,11 @@ public class GroovyClassLoader extends URLClassLoader {
         }
 
         @Override
+        public void setResourceLoader(final GroovyResourceLoader resourceLoader) {
+            delegate.setResourceLoader(resourceLoader);
+        }
+
+        @Override
         public Enumeration<URL> getResources(final String name) throws IOException {
             return delegate.getResources(name);
         }
@@ -1118,22 +1145,17 @@ public class GroovyClassLoader extends URLClassLoader {
         }
 
         @Override
-        public void setResourceLoader(final GroovyResourceLoader resourceLoader) {
-            delegate.setResourceLoader(resourceLoader);
-        }
-
-        @Override
         public void setShouldRecompile(final Boolean mode) {
             delegate.setShouldRecompile(mode);
         }
     }
 
     public static class ClassCollector implements CompilationUnit.ClassgenCallback {
-        private Class generatedClass;
         private final GroovyClassLoader cl;
-        private final SourceUnit        su;
+        private final SourceUnit su;
         private final CompilationUnit unit;
         private final Collection<Class> loadedClasses = new ArrayList<>();
+        private Class generatedClass;
 
         protected ClassCollector(final InnerLoader cl, final CompilationUnit unit, final SourceUnit su) {
             this.cl = cl;
@@ -1184,25 +1206,26 @@ public class GroovyClassLoader extends URLClassLoader {
     private static class TimestampAdder implements CompilationUnit.IPrimaryClassNodeOperation {
         private static final TimestampAdder INSTANCE = new TimestampAdder();
 
-        private TimestampAdder() {}
+        private TimestampAdder() {
+        }
 
         protected void addTimeStamp(final ClassNode node) {
             if (node.getDeclaredField(Verifier.__TIMESTAMP) == null) { // in case Verifier visited the call already
                 FieldNode timeTagField = new FieldNode(
-                        Verifier.__TIMESTAMP,
-                        Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC,
-                        ClassHelper.long_TYPE,
-                        node,
-                        new ConstantExpression(System.currentTimeMillis()));
+                    Verifier.__TIMESTAMP,
+                    Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC,
+                    ClassHelper.long_TYPE,
+                    node,
+                    new ConstantExpression(System.currentTimeMillis()));
                 timeTagField.setSynthetic(true);
                 node.addField(timeTagField);
 
                 timeTagField = new FieldNode(
-                        Verifier.__TIMESTAMP__ + System.currentTimeMillis(),
-                        Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC,
-                        ClassHelper.long_TYPE,
-                        node,
-                        new ConstantExpression(0L));
+                    Verifier.__TIMESTAMP__ + System.currentTimeMillis(),
+                    Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC,
+                    ClassHelper.long_TYPE,
+                    node,
+                    new ConstantExpression(0L));
                 timeTagField.setSynthetic(true);
                 node.addField(timeTagField);
             }
@@ -1213,29 +1236,6 @@ public class GroovyClassLoader extends URLClassLoader {
             if (!classNode.isInterface() && classNode.getOuterClass() == null) {
                 addTimeStamp(classNode);
             }
-        }
-    }
-
-    /**
-     * Generates an encoded string based on the specified characters and the defined encoding algorithm.
-     * Supported algorithms currently are "md5" and sha256".
-     * An exception is throw for an unknown algorithm or if the JVM doesn't support the algorithm.
-     *
-     * @param chars The characters to encode.
-     * @return The encoded string.
-     */
-    public String genEncodingString(CharSequence chars) {
-        try {
-            switch(HASH_ALGORITHM) {
-                case "md5":
-                    return EncodingGroovyMethods.md5(chars);
-                case "sha256":
-                    return EncodingGroovyMethods.sha256(chars);
-                default:
-                    throw new IllegalStateException("Unknown hash algorithm");
-            }
-        } catch (NoSuchAlgorithmException e) {
-            throw new GroovyRuntimeException(e);
         }
     }
 }

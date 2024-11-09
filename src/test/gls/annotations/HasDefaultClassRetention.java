@@ -18,4 +18,5 @@
  */
 package gls.annotations;
 
-public @interface HasDefaultClassRetention { }
+public @interface HasDefaultClassRetention {
+}

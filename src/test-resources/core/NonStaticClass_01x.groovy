@@ -31,32 +31,39 @@ public class Y {
     }
 
     public static X createX(Y y) {
-        return y.new X('Daniel')
+        return y.new
+        X('Daniel')
     }
 
     public static X createX() {
-        return createY().new X('Daniel')
+        return createY().new
+        X('Daniel')
     }
 
     public static String getXName() {
-        return createY().new X('Daniel').name
+        return createY().new
+        X('Daniel').name
     }
 
     public static String getXName2() {
         return createY().
-                        new X('Daniel')
-                                        .name
+            new
+        X('Daniel')
+            .name
     }
 
     public static String getXName3() {
         return createY().
-                new X('Daniel')
-                                .getName()
+            new
+        X('Daniel')
+            .getName()
     }
+
     public static String getXName4() {
         return createY()
-                .new X('Daniel')
-                .getName()
+            .new
+        X('Daniel')
+            .getName()
     }
 }
 

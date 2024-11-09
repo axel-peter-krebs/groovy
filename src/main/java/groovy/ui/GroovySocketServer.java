@@ -62,30 +62,52 @@ import java.util.regex.Pattern;
  * </ul>
  */
 public class GroovySocketServer implements Runnable {
-    private URL url;
+    // RFC2396
+    // scheme        = alpha *( alpha | digit | "+" | "-" | "." )
+    private static final Pattern URI_PATTERN = Pattern.compile("\\p{Alpha}[-+.\\p{Alnum}]*:.*");
+    private static int counter;
     private final GroovyShell groovy;
     private final GroovyCodeSource source;
     private final boolean autoOutput;
-    private static int counter;
+    private URL url;
 
     /**
      * This creates and starts the socket server on a new Thread. There is no need to call run or spawn
      * a new thread yourself.
-     * @param groovy
-     *       The GroovyShell object that evaluates the incoming text. If you need additional classes in the
-     *       classloader then configure that through this object.
-     * @param isScriptFile
-     *       Whether the incoming socket data String will be a script or a file path.
-     * @param scriptFilenameOrText
-     *       This will be a groovy script or a file location depending on the argument isScriptFile.
-     * @param autoOutput
-     *       whether output should be automatically echoed back to the client
-     * @param port
-     *       the port to listen on
      *
+     * @param groovy               The GroovyShell object that evaluates the incoming text. If you need additional classes in the
+     *                             classloader then configure that through this object.
+     * @param isScriptFile         Whether the incoming socket data String will be a script or a file path.
+     * @param scriptFilenameOrText This will be a groovy script or a file location depending on the argument isScriptFile.
+     * @param autoOutput           whether output should be automatically echoed back to the client
+     * @param port                 the port to listen on
      */
     public GroovySocketServer(GroovyShell groovy, boolean isScriptFile, String scriptFilenameOrText, boolean autoOutput, int port) {
         this(groovy, getCodeSource(isScriptFile, scriptFilenameOrText), autoOutput, port);
+    }
+
+    /**
+     * This creates and starts the socket server on a new Thread. There is no need to call run or spawn
+     * a new thread yourself.
+     *
+     * @param groovy     The GroovyShell object that evaluates the incoming text. If you need additional classes in the
+     *                   classloader then configure that through this object.
+     * @param source     GroovyCodeSource for the Groovy script
+     * @param autoOutput whether output should be automatically echoed back to the client
+     * @param port       the port to listen on
+     * @since 2.3.0
+     */
+    public GroovySocketServer(GroovyShell groovy, GroovyCodeSource source, boolean autoOutput, int port) {
+        this.groovy = groovy;
+        this.source = source;
+        this.autoOutput = autoOutput;
+        try {
+            url = new URL("http", InetAddress.getLocalHost().getHostAddress(), port, "/");
+            System.out.println("groovy is listening on port " + port);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        new Thread(this).start();
     }
 
     private static GroovyCodeSource getCodeSource(boolean scriptFile, String scriptFilenameOrText) {
@@ -113,42 +135,10 @@ public class GroovySocketServer implements Runnable {
         return "ServerSocketScript" + (++counter) + ".groovy";
     }
 
-
-    // RFC2396
-    // scheme        = alpha *( alpha | digit | "+" | "-" | "." )
-    private static final Pattern URI_PATTERN = Pattern.compile("\\p{Alpha}[-+.\\p{Alnum}]*:.*");
-
     /**
-    * This creates and starts the socket server on a new Thread. There is no need to call run or spawn
-    * a new thread yourself.
-    * @param groovy
-    *       The GroovyShell object that evaluates the incoming text. If you need additional classes in the
-    *       classloader then configure that through this object.
-    * @param source
-    *       GroovyCodeSource for the Groovy script
-    * @param autoOutput
-    *       whether output should be automatically echoed back to the client
-    * @param port
-    *       the port to listen on
-    * @since 2.3.0
-    */
-    public GroovySocketServer(GroovyShell groovy, GroovyCodeSource source, boolean autoOutput, int port) {
-        this.groovy = groovy;
-        this.source = source;
-        this.autoOutput = autoOutput;
-        try {
-            url = new URL("http", InetAddress.getLocalHost().getHostAddress(), port, "/");
-            System.out.println("groovy is listening on port " + port);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        new Thread(this).start();
-    }
-
-    /**
-    * Runs this server. There is typically no need to call this method, as the object's constructor
-    * creates a new thread and runs this object automatically.
-    */
+     * Runs this server. There is typically no need to call this method, as the object's constructor
+     * creates a new thread and runs this object automatically.
+     */
     @Override
     public void run() {
         try (ServerSocket serverSocket = new ServerSocket(url.getPort())) {
@@ -175,7 +165,7 @@ public class GroovySocketServer implements Runnable {
         private PrintWriter writer;
         private boolean autoOutputFlag;
 
-        GroovyClientConnection(Script script, boolean autoOutput,Socket socket) throws IOException {
+        GroovyClientConnection(Script script, boolean autoOutput, Socket socket) throws IOException {
             this.script = script;
             this.autoOutputFlag = autoOutput;
             this.socket = socket;
@@ -183,6 +173,7 @@ public class GroovySocketServer implements Runnable {
             writer = new PrintWriter(socket.getOutputStream());
             new Thread(this, "Groovy client connection - " + socket.getInetAddress().getHostAddress()).start();
         }
+
         @Override
         public void run() {
             try {

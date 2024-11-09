@@ -70,19 +70,23 @@ import java.util.Map;
  * @since 1.5
  */
 public final class ClosureMetaClass extends MetaClassImpl {
-    private volatile boolean initialized, attributeInitDone;
-    private final FastArray closureMethods = new FastArray(3);
-    private final Map<String, CachedField> attributes = new HashMap<>();
-    private MethodChooser chooser;
-
-    private static MetaClassImpl classMetaClass;
-    private static MetaClassImpl CLOSURE_METACLASS;
     private static final Object[] EMPTY_ARGUMENTS = {};
     private static final String CLOSURE_CALL_METHOD = "call";
     private static final String CLOSURE_DO_CALL_METHOD = "doCall";
+    private static MetaClassImpl classMetaClass;
+    private static MetaClassImpl CLOSURE_METACLASS;
 
     static {
         resetCachedMetaClasses();
+    }
+
+    private final FastArray closureMethods = new FastArray(3);
+    private final Map<String, CachedField> attributes = new HashMap<>();
+    private volatile boolean initialized, attributeInitDone;
+    private MethodChooser chooser;
+
+    public ClosureMetaClass(final MetaClassRegistry registry, final Class theClass) {
+        super(registry, theClass);
     }
 
     public static void resetCachedMetaClasses() {
@@ -108,74 +112,66 @@ public final class ClosureMetaClass extends MetaClassImpl {
         return classMetaClass;
     }
 
-    private interface MethodChooser {
-        Object chooseMethod(Class[] arguments, boolean coerce);
-    }
-
-    private static class StandardClosureChooser implements MethodChooser {
-        private final MetaMethod doCall0;
-        private final MetaMethod doCall1;
-
-        StandardClosureChooser(final MetaMethod m0, final MetaMethod m1) {
-            doCall0 = m0;
-            doCall1 = m1;
-        }
-
-        @Override
-        public Object chooseMethod(final Class[] arguments, final boolean coerce) {
-            if (arguments.length == 0) return doCall0;
-            if (arguments.length == 1) return doCall1;
-            return null;
-        }
-    }
-
-    private static class NormalMethodChooser implements MethodChooser {
-        private final FastArray methods;
-        final Class theClass;
-
-        NormalMethodChooser(final Class theClass, final FastArray methods) {
-            this.theClass = theClass;
-            this.methods = methods;
-        }
-
-        @Override
-        public Object chooseMethod(final Class[] arguments, final boolean coerce) {
-            if (arguments.length == 0) {
-                return MetaClassHelper.chooseEmptyMethodParams(methods);
-            } else if (arguments.length == 1 && arguments[0] == null) {
-                return MetaClassHelper.chooseMostGeneralMethodWith1NullParam(methods);
-            } else {
-                List matchingMethods = new ArrayList();
-                final Object[] data = methods.getArray();
-                for (int i = 0, n = methods.size(); i < n; i += 1) {
-                    Object method = data[i];
-
-                    // making this false helps find matches
-                    if (((ParameterTypes) method).isValidMethod(arguments)) {
-                        matchingMethods.add(method);
-                    }
-                }
-
-                int size = matchingMethods.size();
-                if (0 == size) {
-                    return null;
-                } else if (1 == size) {
-                    return matchingMethods.get(0);
-                }
-
-                return chooseMostSpecificParams(CLOSURE_DO_CALL_METHOD, matchingMethods, arguments);
+    private static Object invokeOnDelegationObjects(final boolean i1, final Object o1, final boolean i2, final Object o2, final String methodName, final Object[] args, final Class c) {
+        MissingMethodException first = null;
+        if (i1) {
+            try {
+                return invokeOnDelegationObject(c, o1, methodName, args);
+            } catch (MissingMethodException mme) {
+                first = mme;
             }
         }
-
-        private Object chooseMostSpecificParams(final String name, final List matchingMethods, final Class[] arguments) {
-            return doChooseMostSpecificParams(theClass.getName(), name, matchingMethods, arguments, true);
+        if (i2 && (!i1 || o1 != o2)) {
+            try {
+                return invokeOnDelegationObject(c, o2, methodName, args);
+            } catch (MissingMethodException mme) {
+                if (first == null) first = mme;
+                else first.addSuppressed(mme);
+            }
         }
+        throw first;
+    }
+
+    private static Object invokeOnDelegationObject(final Class sender, final Object object, final String methodName, final Object[] arguments) {
+        MissingMethodException first = null;
+        try {
+            return InvokerHelper.invokeMethod(object, methodName, arguments); // includes callable property
+        } catch (MissingMethodException mme) {
+            first = mme;
+        } catch (GroovyRuntimeException gre) {
+            Throwable t = gre;
+            while (t.getCause() != t && t.getCause() instanceof GroovyRuntimeException) t = t.getCause();
+            if (t instanceof MissingMethodException && methodName.equals(((MissingMethodException) t).getMethod())) {
+                first = (MissingMethodException) t;
+            } else {
+                throw gre;
+            }
+        }
+        Class thisType = sender;
+        while (GeneratedClosure.class.isAssignableFrom(thisType)) thisType = thisType.getEnclosingClass();
+        if (thisType != sender && thisType != object.getClass() && thisType.isInstance(object)) { // GROOVY-2433, GROOVY-11128
+            try {
+                return ((GroovyObject) object).getMetaClass().invokeMethod(thisType, object, methodName, arguments, false, true);
+            } catch (GroovyRuntimeException gre) {
+                first.addSuppressed(gre);
+            }
+        }
+        throw first;
     }
 
     //--------------------------------------------------------------------------
 
-    public ClosureMetaClass(final MetaClassRegistry registry, final Class theClass) {
-        super(registry, theClass);
+    private static boolean isInternalMethod(final String methodName) {
+        switch (methodName) {
+            case "curry":
+            case "ncurry":
+            case "rcurry":
+            case "leftShift":
+            case "rightShift":
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override
@@ -270,40 +266,40 @@ public final class ClosureMetaClass extends MetaClassImpl {
         boolean invokeOnDelegate = false, invokeOnOwner = false, ownerFirst = true;
 
         switch (resolveStrategy) {
-          case Closure.TO_SELF:
-            break;
-          case Closure.DELEGATE_ONLY:
-            method = getDelegateMethod(closure, delegate, methodName, argClasses);
-            callObject = delegate;
-            if (method == null) {
-                invokeOnDelegate = (delegate != closure) && (delegate instanceof GroovyObject);
-            }
-            break;
-          case Closure.OWNER_ONLY:
-            method = getDelegateMethod(closure, owner, methodName, argClasses);
-            callObject = owner;
-            if (method == null) {
-                invokeOnOwner = (owner != closure) && (owner instanceof GroovyObject);
-            }
-            break;
-          case Closure.DELEGATE_FIRST:
-            method = getDelegateMethod(closure, delegate, methodName, argClasses);
-            callObject = delegate;
-            if (method == null) {
-                invokeOnDelegate = (delegate != closure);
-                invokeOnOwner = (owner != closure);
-                ownerFirst = false;
-            }
-            break;
-          default: //Closure.OWNER_FIRST:
-            method = getDelegateMethod(closure, owner, methodName, argClasses);
-            callObject = owner;
-            if (method == null) {
-                invokeOnDelegate = (delegate != closure);
-                invokeOnOwner = (owner != closure);
-                ownerFirst = true;
-            }
-            break;
+            case Closure.TO_SELF:
+                break;
+            case Closure.DELEGATE_ONLY:
+                method = getDelegateMethod(closure, delegate, methodName, argClasses);
+                callObject = delegate;
+                if (method == null) {
+                    invokeOnDelegate = (delegate != closure) && (delegate instanceof GroovyObject);
+                }
+                break;
+            case Closure.OWNER_ONLY:
+                method = getDelegateMethod(closure, owner, methodName, argClasses);
+                callObject = owner;
+                if (method == null) {
+                    invokeOnOwner = (owner != closure) && (owner instanceof GroovyObject);
+                }
+                break;
+            case Closure.DELEGATE_FIRST:
+                method = getDelegateMethod(closure, delegate, methodName, argClasses);
+                callObject = delegate;
+                if (method == null) {
+                    invokeOnDelegate = (delegate != closure);
+                    invokeOnOwner = (owner != closure);
+                    ownerFirst = false;
+                }
+                break;
+            default: //Closure.OWNER_FIRST:
+                method = getDelegateMethod(closure, owner, methodName, argClasses);
+                callObject = owner;
+                if (method == null) {
+                    invokeOnDelegate = (delegate != closure);
+                    invokeOnOwner = (owner != closure);
+                    ownerFirst = true;
+                }
+                break;
         }
 
         if (method != null) {
@@ -322,66 +318,6 @@ public final class ClosureMetaClass extends MetaClassImpl {
         }
 
         throw new MissingMethodException(methodName, theClass, theArguments, false);
-    }
-
-    private static Object invokeOnDelegationObjects(final boolean i1, final Object o1, final boolean i2, final Object o2, final String methodName, final Object[] args, final Class c) {
-        MissingMethodException first = null;
-        if (i1) {
-            try {
-                return invokeOnDelegationObject(c, o1, methodName, args);
-            } catch (MissingMethodException mme) {
-                first = mme;
-            }
-        }
-        if (i2 && (!i1 || o1 != o2)) {
-            try {
-                return invokeOnDelegationObject(c, o2, methodName, args);
-            } catch (MissingMethodException mme) {
-                if (first == null) first = mme;
-                else first.addSuppressed(mme);
-            }
-        }
-        throw first;
-    }
-
-    private static Object invokeOnDelegationObject(final Class sender, final Object object, final String methodName, final Object[] arguments) {
-        MissingMethodException first = null;
-        try {
-            return InvokerHelper.invokeMethod(object, methodName, arguments); // includes callable property
-        } catch (MissingMethodException mme) {
-            first = mme;
-        } catch (GroovyRuntimeException gre) {
-            Throwable t = gre;
-            while (t.getCause() != t && t.getCause() instanceof GroovyRuntimeException) t = t.getCause();
-            if (t instanceof MissingMethodException && methodName.equals(((MissingMethodException) t).getMethod())) {
-                first = (MissingMethodException) t;
-            } else {
-                throw gre;
-            }
-        }
-        Class thisType = sender;
-        while (GeneratedClosure.class.isAssignableFrom(thisType)) thisType = thisType.getEnclosingClass();
-        if (thisType != sender && thisType != object.getClass() && thisType.isInstance(object)) { // GROOVY-2433, GROOVY-11128
-            try {
-                return ((GroovyObject) object).getMetaClass().invokeMethod(thisType, object, methodName, arguments, false, true);
-            } catch (GroovyRuntimeException gre) {
-                first.addSuppressed(gre);
-            }
-        }
-        throw first;
-    }
-
-    private static boolean isInternalMethod(final String methodName) {
-        switch (methodName) {
-          case "curry":
-          case "ncurry":
-          case "rcurry":
-          case "leftShift":
-          case "rightShift":
-            return true;
-          default:
-            return false;
-        }
     }
 
     private synchronized void initAttributes() {
@@ -492,7 +428,7 @@ public final class ClosureMetaClass extends MetaClassImpl {
         if (object instanceof GroovyObject) {
             metaClass = ((GroovyObject) object).getMetaClass();
         } else if (object.getClass() == Class.class) {
-            metaClass = registry.getMetaClass((Class)object);
+            metaClass = registry.getMetaClass((Class) object);
         } else {
             metaClass = InvokerHelper.getMetaClass(object);
         }
@@ -663,12 +599,76 @@ public final class ClosureMetaClass extends MetaClassImpl {
 
     private synchronized void loadMetaInfo() {
         if (!isInitialized()) {
-          reinitialize();
+            reinitialize();
         }
     }
 
     @Override
     protected void applyPropertyDescriptors(final PropertyDescriptor[] propertyDescriptors) {
         // do nothing
+    }
+
+    private interface MethodChooser {
+        Object chooseMethod(Class[] arguments, boolean coerce);
+    }
+
+    private static class StandardClosureChooser implements MethodChooser {
+        private final MetaMethod doCall0;
+        private final MetaMethod doCall1;
+
+        StandardClosureChooser(final MetaMethod m0, final MetaMethod m1) {
+            doCall0 = m0;
+            doCall1 = m1;
+        }
+
+        @Override
+        public Object chooseMethod(final Class[] arguments, final boolean coerce) {
+            if (arguments.length == 0) return doCall0;
+            if (arguments.length == 1) return doCall1;
+            return null;
+        }
+    }
+
+    private static class NormalMethodChooser implements MethodChooser {
+        final Class theClass;
+        private final FastArray methods;
+
+        NormalMethodChooser(final Class theClass, final FastArray methods) {
+            this.theClass = theClass;
+            this.methods = methods;
+        }
+
+        @Override
+        public Object chooseMethod(final Class[] arguments, final boolean coerce) {
+            if (arguments.length == 0) {
+                return MetaClassHelper.chooseEmptyMethodParams(methods);
+            } else if (arguments.length == 1 && arguments[0] == null) {
+                return MetaClassHelper.chooseMostGeneralMethodWith1NullParam(methods);
+            } else {
+                List matchingMethods = new ArrayList();
+                final Object[] data = methods.getArray();
+                for (int i = 0, n = methods.size(); i < n; i += 1) {
+                    Object method = data[i];
+
+                    // making this false helps find matches
+                    if (((ParameterTypes) method).isValidMethod(arguments)) {
+                        matchingMethods.add(method);
+                    }
+                }
+
+                int size = matchingMethods.size();
+                if (0 == size) {
+                    return null;
+                } else if (1 == size) {
+                    return matchingMethods.get(0);
+                }
+
+                return chooseMostSpecificParams(CLOSURE_DO_CALL_METHOD, matchingMethods, arguments);
+            }
+        }
+
+        private Object chooseMostSpecificParams(final String name, final List matchingMethods, final Class[] arguments) {
+            return doChooseMostSpecificParams(theClass.getName(), name, matchingMethods, arguments, true);
+        }
     }
 }

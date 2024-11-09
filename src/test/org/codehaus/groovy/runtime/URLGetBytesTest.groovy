@@ -26,7 +26,7 @@ import groovy.test.GroovyTestCase
  */
 class URLGetBytesTest extends GroovyTestCase {
     void testGetBytesFromURLWithParameters() {
-        def url = new URL('http','groovy-lang.org',80, '/', new URLStreamHandler() {
+        def url = new URL('http', 'groovy-lang.org', 80, '/', new URLStreamHandler() {
             @Override
             protected URLConnection openConnection(URL u) {
                 new DummyURLConnection(new URL('http://groovy-lang.org'))
@@ -36,29 +36,29 @@ class URLGetBytesTest extends GroovyTestCase {
         assert url.bytes == 'Groovy'.bytes
 
         shouldFail(SocketTimeoutException) {
-            url.getBytes(readTimeout:5)
+            url.getBytes(readTimeout: 5)
         }
 
         shouldFail(SocketTimeoutException) {
-            url.getText(connectTimeout:5)
+            url.getText(connectTimeout: 5)
         }
 
         shouldFail(RuntimeException) {
-            url.getBytes(allowUserInteraction:true)
+            url.getBytes(allowUserInteraction: true)
         }
 
-        assert url.getBytes(useCaches:true) == 'Groovy cached'.bytes
+        assert url.getBytes(useCaches: true) == 'Groovy cached'.bytes
 
-        assert url.getBytes(requestProperties:[a:'b']) == 'Groovy a:b'.bytes
+        assert url.getBytes(requestProperties: [a: 'b']) == 'Groovy a:b'.bytes
 
-        assert url.getBytes(useCaches:true, requestProperties:[a:'b']) == 'Groovy cached a:b'.bytes
+        assert url.getBytes(useCaches: true, requestProperties: [a: 'b']) == 'Groovy cached a:b'.bytes
 
-        assert url.getBytes() == url.getBytes((Map)null)
+        assert url.getBytes() == url.getBytes((Map) null)
 
-        assert url.getBytes(requestProperties: [a:"b"]) == "Groovy a:b".bytes
+        assert url.getBytes(requestProperties: [a: "b"]) == "Groovy a:b".bytes
 
         def val = 'b'
-        assert url.getBytes(requestProperties: [a:"$val"]) == "Groovy a:b".bytes
+        assert url.getBytes(requestProperties: [a: "$val"]) == "Groovy a:b".bytes
     }
 
     private static class DummyURLConnection extends URLConnection {
@@ -78,8 +78,8 @@ class URLGetBytesTest extends GroovyTestCase {
             if (throwConnectTimeout) throw new SocketTimeoutException()
             if (throwReadTimeout) throw new SocketTimeoutException()
             if (allowUserInteraction) throw new RuntimeException('User interaction')
-            def string = useCache?'Groovy cached':'Groovy'
-            properties.each { k,v -> string = string + " $k:$v"}
+            def string = useCache ? 'Groovy cached' : 'Groovy'
+            properties.each { k, v -> string = string + " $k:$v" }
             new ByteArrayInputStream(string.bytes)
         }
 

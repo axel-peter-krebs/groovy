@@ -38,6 +38,7 @@ import java.util.logging.Logger
 import java.util.stream.Collectors
 
 import static org.apache.groovy.ginq.provider.collection.runtime.Queryable.from
+
 /**
  * Helper for {@link Queryable}
  *
@@ -56,9 +57,9 @@ class QueryableHelper {
      */
     static <T> Queryable<SourceRecord<T>> navigate(Queryable<? extends T> queryable, List<String> aliasList) {
         List<SourceRecord<T>> sourceRecordList =
-                queryable.stream()
-                        .map(e -> new SourceRecord<T>(e, aliasList))
-                        .collect(Collectors.toList())
+            queryable.stream()
+                .map(e -> new SourceRecord<T>(e, aliasList))
+                .collect(Collectors.toList())
 
         return from(sourceRecordList)
     }

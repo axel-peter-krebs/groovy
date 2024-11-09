@@ -32,7 +32,11 @@ import java.util.List;
  */
 public class JsonParserUsingCharacterSource extends BaseJsonParser {
 
+    protected static final char[] NULL = Chr.chars("null");
+    protected static final char[] TRUE = Chr.chars("true");
+    protected static char[] FALSE = Chr.chars("false");
     private CharacterSource characterSource;
+    private CharBuf builder = CharBuf.create(20);
 
     protected String exceptionDetails(String message) {
         return characterSource.errorDetails(message);
@@ -91,7 +95,7 @@ public class JsonParserUsingCharacterSource extends BaseJsonParser {
                     continue;
                 } else {
                     complain(
-                            "expecting '}' or ',' but got current char " + charDescription(ch));
+                        "expecting '}' or ',' but got current char " + charDescription(ch));
                 }
             }
         } catch (Exception ex) {
@@ -154,7 +158,7 @@ public class JsonParserUsingCharacterSource extends BaseJsonParser {
 
             default:
                 throw new JsonException(exceptionDetails("Unable to determine the " +
-                        "current character, it is not a string, number, array, or object"));
+                    "current character, it is not a string, number, array, or object"));
         }
 
         return value;
@@ -175,16 +179,12 @@ public class JsonParserUsingCharacterSource extends BaseJsonParser {
         return value;
     }
 
-    protected static final char[] NULL = Chr.chars("null");
-
     protected final Object decodeNull() {
         if (!characterSource.consumeIfMatch(NULL)) {
             throw new JsonException(exceptionDetails("null not parse properly"));
         }
         return null;
     }
-
-    protected static final char[] TRUE = Chr.chars("true");
 
     protected final boolean decodeTrue() {
         if (characterSource.consumeIfMatch(TRUE)) {
@@ -194,8 +194,6 @@ public class JsonParserUsingCharacterSource extends BaseJsonParser {
         }
     }
 
-    protected static char[] FALSE = Chr.chars("false");
-
     protected final boolean decodeFalse() {
         if (characterSource.consumeIfMatch(FALSE)) {
             return false;
@@ -203,8 +201,6 @@ public class JsonParserUsingCharacterSource extends BaseJsonParser {
             throw new JsonException(exceptionDetails("false not parsed properly"));
         }
     }
-
-    private CharBuf builder = CharBuf.create(20);
 
     private String decodeString() {
         CharacterSource characterSource = this.characterSource;
@@ -237,7 +233,7 @@ public class JsonParserUsingCharacterSource extends BaseJsonParser {
 
             characterSource.skipWhiteSpace();
 
-        /* the list might be empty  */
+            /* the list might be empty  */
             if (this.characterSource.currentChar() == ']') {
                 characterSource.nextChar();
                 return new ArrayList();
@@ -267,9 +263,9 @@ public class JsonParserUsingCharacterSource extends BaseJsonParser {
                     String charString = charDescription(c);
 
                     complain(
-                            String.format("expecting a ',' or a ']', " +
-                                    " but got \nthe current character of  %s " +
-                                    " on array index of %s \n", charString, list.size())
+                        String.format("expecting a ',' or a ']', " +
+                            " but got \nthe current character of  %s " +
+                            " on array index of %s \n", charString, list.size())
                     );
 
                 }

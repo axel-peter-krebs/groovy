@@ -26,7 +26,7 @@ public class ReflectionCache {
 
     public static CachedClass getCachedClass(Class klazz) {
         if (klazz == null)
-          return null;
+            return null;
 
         return ClassInfo.getClassInfo(klazz).getCachedClass();
     }

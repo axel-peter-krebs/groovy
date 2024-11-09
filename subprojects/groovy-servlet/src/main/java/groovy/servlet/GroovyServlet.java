@@ -81,8 +81,7 @@ public class GroovyServlet extends AbstractHttpServlet {
     /**
      * Initialize the GroovyServlet.
      *
-     * @throws ServletException
-     *  if this method encountered difficulties
+     * @throws ServletException if this method encountered difficulties
      */
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -104,7 +103,7 @@ public class GroovyServlet extends AbstractHttpServlet {
         final String scriptUri = getScriptUri(request);
 
         // Set it to HTML by default
-        response.setContentType("text/html; charset="+encoding);
+        response.setContentType("text/html; charset=" + encoding);
 
         // Set up the script context
         final ServletBinding binding = new ServletBinding(request, response, servletContext);
@@ -172,7 +171,7 @@ public class GroovyServlet extends AbstractHttpServlet {
      * Hook method to set up the GroovyScriptEngine to use.<br>
      * Subclasses may override this method to provide a custom engine.
      */
-    protected GroovyScriptEngine createGroovyScriptEngine(){
+    protected GroovyScriptEngine createGroovyScriptEngine() {
         return new GroovyScriptEngine(this);
     }
 }

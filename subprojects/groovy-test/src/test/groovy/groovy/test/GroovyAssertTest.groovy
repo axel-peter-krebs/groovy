@@ -49,20 +49,26 @@ final class GroovyAssertTest {
         assert re.message == 'x'
     }
 
-    @Test @TypeChecked // GROOVY-11225
+    @Test
+    @TypeChecked
+    // GROOVY-11225
     void shouldFailCheckExceptionClassAndReturnException() {
         RuntimeException re = shouldFail(RuntimeException) { throw new RuntimeException('x') }
         assert re.message == 'x'
     }
 
-    @Test @TypeChecked // GROOVY-11225
+    @Test
+    @TypeChecked
+    // GROOVY-11225
     void shouldFailCheckingCustomException() {
         RuntimeException re = shouldFail(GroovyAssertDummyException) {
             GroovyAssertDummyClass.throwException()
         }
     }
 
-    @Test @TypeChecked // GROOVY-11225
+    @Test
+    @TypeChecked
+    // GROOVY-11225
     void shouldFailWithNestedException() {
         GroovyAssertDummyException exception = shouldFail(GroovyAssertDummyException) {
             GroovyAssertDummyClass.throwExceptionWithCause()
@@ -83,7 +89,8 @@ final class GroovyAssertTest {
     }
 }
 
-@PackageScope class GroovyAssertDummyClass {
+@PackageScope
+class GroovyAssertDummyClass {
 
     static throwException() {
         throw new GroovyAssertDummyException()
@@ -94,10 +101,11 @@ final class GroovyAssertTest {
     }
 }
 
-@PackageScope class GroovyAssertDummyException extends RuntimeException {
+@PackageScope
+class GroovyAssertDummyException extends RuntimeException {
 
     GroovyAssertDummyException(Throwable cause) {
-        super((Throwable)cause)
+        super((Throwable) cause)
     }
 
     GroovyAssertDummyException() {

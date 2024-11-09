@@ -29,9 +29,9 @@ public class ExampleMacroMethods {
     @Macro
     public static Expression safe(MacroContext macroContext, MethodCallExpression callExpression) {
         return ternaryX(
-                notNullX(callExpression.getObjectExpression()),
-                callExpression,
-                constX(null)
+            notNullX(callExpression.getObjectExpression()),
+            callExpression,
+            constX(null)
         );
     }
 

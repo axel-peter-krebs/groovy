@@ -16,7 +16,9 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 enum E {
     A, B
+
     def y()
 }

@@ -38,8 +38,8 @@ public final class GStringUtil {
 
     public static GString plusImpl(Object[] thisValues, Object[] thatValues, String[] thisStrings, String[] thatStrings) {
         return new GStringImpl(
-                appendValues(thisValues, thatValues),
-                appendStrings(thisStrings, thatStrings, thisValues.length));
+            appendValues(thisValues, thatValues),
+            appendStrings(thisStrings, thatStrings, thisValues.length));
     }
 
     private static String[] appendStrings(String[] strings1, String[] strings2, int values1Length) {
@@ -91,7 +91,7 @@ public final class GStringUtil {
                         c.call(out);
                     } else {
                         throw new GroovyRuntimeException("Trying to evaluate a GString containing a Closure taking "
-                                + maximumNumberOfParameters + " parameters");
+                            + maximumNumberOfParameters + " parameters");
                     }
                 } else {
                     FormatHelper.write(out, value);

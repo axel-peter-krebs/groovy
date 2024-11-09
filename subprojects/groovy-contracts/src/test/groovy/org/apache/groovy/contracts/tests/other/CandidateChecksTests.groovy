@@ -63,11 +63,11 @@ class CandidateChecksTests {
     void testPrivateConstructors() {
         def classNode = ClassHelper.make(D.class)
         assertTrue "private constructors should support preconditions",
-                CandidateChecks.isPreconditionCandidate(classNode, classNode.getDeclaredConstructors().first())
+            CandidateChecks.isPreconditionCandidate(classNode, classNode.getDeclaredConstructors().first())
         assertTrue "private methods should support preconditions",
-                CandidateChecks.isPreconditionCandidate(classNode, classNode.getMethod("method", [] as Parameter[]))
+            CandidateChecks.isPreconditionCandidate(classNode, classNode.getMethod("method", [] as Parameter[]))
 
         assertFalse "private constructors should by now NOT support class invariants",
-                CandidateChecks.isClassInvariantCandidate(classNode, classNode.getDeclaredConstructors().first())
+            CandidateChecks.isClassInvariantCandidate(classNode, classNode.getDeclaredConstructors().first())
     }
 }

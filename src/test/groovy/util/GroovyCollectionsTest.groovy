@@ -120,8 +120,9 @@ final class GroovyCollectionsTest {
         assert sum([1, 2, 3]) == 6
     }
 
-    @Test // GROOVY-7267
+    @Test
+    // GROOVY-7267
     void testHashCodeCollisionInMinus() {
-        assert ([[1:2],[2:3]]-[["b":"a"]]) == [[1:2],[2:3]]
+        assert ([[1: 2], [2: 3]] - [["b": "a"]]) == [[1: 2], [2: 3]]
     }
 }

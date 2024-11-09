@@ -27,16 +27,17 @@ import java.util.Set;
 public class CallSiteClassLoader extends ClassLoaderForClassArtifacts {
 
     private static final Set<String> KNOWN_CLASSES = new HashSet<String>();
+
     static {
         Collections.addAll(KNOWN_CLASSES
-                , "org.codehaus.groovy.runtime.callsite.PogoMetaMethodSite"
-                , "org.codehaus.groovy.runtime.callsite.PojoMetaMethodSite"
-                , "org.codehaus.groovy.runtime.callsite.StaticMetaMethodSite"
-                , "org.codehaus.groovy.runtime.callsite.CallSite"
-                , "org.codehaus.groovy.runtime.callsite.CallSiteArray"
-                , "groovy.lang.MetaMethod"
-                , "groovy.lang.MetaClassImpl"
-                );
+            , "org.codehaus.groovy.runtime.callsite.PogoMetaMethodSite"
+            , "org.codehaus.groovy.runtime.callsite.PojoMetaMethodSite"
+            , "org.codehaus.groovy.runtime.callsite.StaticMetaMethodSite"
+            , "org.codehaus.groovy.runtime.callsite.CallSite"
+            , "org.codehaus.groovy.runtime.callsite.CallSiteArray"
+            , "groovy.lang.MetaMethod"
+            , "groovy.lang.MetaClassImpl"
+        );
     }
 
     public CallSiteClassLoader(Class klazz) {
@@ -46,12 +47,11 @@ public class CallSiteClassLoader extends ClassLoaderForClassArtifacts {
     @Override
     protected synchronized Class loadClass(String name, boolean resolve) throws ClassNotFoundException {
         if (KNOWN_CLASSES.contains(name))
-          return getClass().getClassLoader().loadClass(name);
+            return getClass().getClassLoader().loadClass(name);
         else {
             try {
                 return super.loadClass(name, resolve);
-            }
-            catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException e) {
                 return getClass().getClassLoader().loadClass(name);
             }
         }

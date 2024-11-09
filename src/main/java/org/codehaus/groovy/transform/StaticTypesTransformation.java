@@ -50,7 +50,7 @@ public class StaticTypesTransformation implements ASTTransformation, Compilation
     @Override
     public void visit(ASTNode[] nodes, SourceUnit source) {
         AnnotationNode annotationInformation = (AnnotationNode) nodes[0];
-        Map<String,Expression> members = annotationInformation.getMembers();
+        Map<String, Expression> members = annotationInformation.getMembers();
         Expression extensions = members.get("extensions");
         AnnotatedNode node = (AnnotatedNode) nodes[1];
         StaticTypeCheckingVisitor visitor = null;
@@ -71,7 +71,7 @@ public class StaticTypesTransformation implements ASTTransformation, Compilation
             visitor.visitMethod(methodNode);
         } else if (!(node instanceof PropertyNode)) {
             source.addError(new SyntaxException(STATIC_ERROR_PREFIX + "Unimplemented node type",
-                    node.getLineNumber(), node.getColumnNumber(), node.getLastLineNumber(), node.getLastColumnNumber()));
+                node.getLineNumber(), node.getColumnNumber(), node.getLastLineNumber(), node.getLastColumnNumber()));
         }
         if (visitor != null) {
             visitor.performSecondPass();
@@ -81,9 +81,9 @@ public class StaticTypesTransformation implements ASTTransformation, Compilation
     protected void addTypeCheckingExtensions(StaticTypeCheckingVisitor visitor, Expression extensions) {
         if (extensions instanceof ConstantExpression) {
             visitor.addTypeCheckingExtension(new GroovyTypeCheckingExtensionSupport(
-                    visitor,
-                    extensions.getText(),
-                    compilationUnit
+                visitor,
+                extensions.getText(),
+                compilationUnit
             ));
         } else if (extensions instanceof ListExpression) {
             ListExpression list = (ListExpression) extensions;
@@ -96,7 +96,6 @@ public class StaticTypesTransformation implements ASTTransformation, Compilation
     /**
      * Allows subclasses to provide their own visitor. This is useful for example for transformations relying
      * on the static type checker.
-     *
      *
      * @param unit the source unit
      * @param node the current classnode

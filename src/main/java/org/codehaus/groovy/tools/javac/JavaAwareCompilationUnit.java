@@ -49,10 +49,10 @@ public class JavaAwareCompilationUnit extends CompilationUnit {
 
     private final JavaStubGenerator stubGenerator;
     private final Set<String> javaSources = new HashSet<>();
-    private JavaCompilerFactory compilerFactory = new JavacCompilerFactory();
     private final File generationGoal;
     private final boolean keepStubs;
     private final boolean memStubEnabled;
+    private JavaCompilerFactory compilerFactory = new JavacCompilerFactory();
 
     public JavaAwareCompilationUnit() {
         this(null, null, null);

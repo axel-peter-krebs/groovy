@@ -121,7 +121,7 @@ final class DirectMethodCallWithVargsTest {
     //--------------------------------------------------------------------------
 
     private final GroovyShell shell = GroovyShell.withConfig {
-        imports{ staticMember 'groovy.test.GroovyAssert','shouldFail' }
+        imports { staticMember 'groovy.test.GroovyAssert', 'shouldFail' }
         inline(phase: 'CANONICALIZATION') { sourceUnit, x, classNode ->
             def visitor = new MethodCallVisitor(sourceUnit)
             classNode.methods.each(visitor.&acceptMethod)

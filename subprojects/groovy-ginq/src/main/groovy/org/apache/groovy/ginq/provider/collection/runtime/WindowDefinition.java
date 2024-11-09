@@ -47,8 +47,8 @@ public interface WindowDefinition<T, U extends Comparable<? super U>> {
      * Factory method to create {@link WindowDefinition} instance
      *
      * @param partitionBy partition definition
-     * @param <T> the type of {@link Queryable} element
-     * @param <U> the type of field to sort
+     * @param <T>         the type of {@link Queryable} element
+     * @param <U>         the type of field to sort
      * @return the {@link WindowDefinition} instance
      * @since 4.0.0
      */
@@ -60,8 +60,8 @@ public interface WindowDefinition<T, U extends Comparable<? super U>> {
      * Factory method to create {@link WindowDefinition} instance
      *
      * @param orderBy order definition
-     * @param <T> the type of {@link Queryable} element
-     * @param <U> the type of field to sort
+     * @param <T>     the type of {@link Queryable} element
+     * @param <U>     the type of field to sort
      * @return the {@link WindowDefinition} instance
      * @since 4.0.0
      */
@@ -73,8 +73,8 @@ public interface WindowDefinition<T, U extends Comparable<? super U>> {
      * Factory method to create {@link WindowDefinition} instance
      *
      * @param orderBy order definition
-     * @param <T> the type of {@link Queryable} element
-     * @param <U> the type of field to sort
+     * @param <T>     the type of {@link Queryable} element
+     * @param <U>     the type of field to sort
      * @return the {@link WindowDefinition} instance
      * @since 4.0.0
      */
@@ -86,9 +86,9 @@ public interface WindowDefinition<T, U extends Comparable<? super U>> {
      * Factory method to create {@link WindowDefinition} instance
      *
      * @param partitionBy partition definition
-     * @param orderBy order definition
-     * @param <T> the type of {@link Queryable} element
-     * @param <U> the type of field to sort
+     * @param orderBy     order definition
+     * @param <T>         the type of {@link Queryable} element
+     * @param <U>         the type of field to sort
      * @return the {@link WindowDefinition} instance
      * @since 4.0.0
      */
@@ -100,10 +100,10 @@ public interface WindowDefinition<T, U extends Comparable<? super U>> {
      * Factory method to create {@link WindowDefinition} instance
      *
      * @param partitionBy partition definition
-     * @param orderBy order definition
-     * @param rows the window bounds
-     * @param <T> the type of {@link Queryable} element
-     * @param <U> the type of field to sort
+     * @param orderBy     order definition
+     * @param rows        the window bounds
+     * @param <T>         the type of {@link Queryable} element
+     * @param <U>         the type of field to sort
      * @return the {@link WindowDefinition} instance
      * @since 4.0.0
      */
@@ -115,9 +115,9 @@ public interface WindowDefinition<T, U extends Comparable<? super U>> {
      * Factory method to create {@link WindowDefinition} instance
      *
      * @param orderBy order definition
-     * @param rows the window bounds
-     * @param <T> the type of {@link Queryable} element
-     * @param <U> the type of field to sort
+     * @param rows    the window bounds
+     * @param <T>     the type of {@link Queryable} element
+     * @param <U>     the type of field to sort
      * @return the {@link WindowDefinition} instance
      * @since 4.0.0
      */
@@ -129,10 +129,10 @@ public interface WindowDefinition<T, U extends Comparable<? super U>> {
      * Factory method to create {@link WindowDefinition} instance
      *
      * @param partitionBy partition definition
-     * @param orderBy order definition
-     * @param range the window bounds
-     * @param <T> the type of {@link Queryable} element
-     * @param <U> the type of field to sort
+     * @param orderBy     order definition
+     * @param range       the window bounds
+     * @param <T>         the type of {@link Queryable} element
+     * @param <U>         the type of field to sort
      * @return the {@link WindowDefinition} instance
      * @since 4.0.0
      */
@@ -144,9 +144,9 @@ public interface WindowDefinition<T, U extends Comparable<? super U>> {
      * Factory method to create {@link WindowDefinition} instance
      *
      * @param orderBy order definition
-     * @param range the window bounds
-     * @param <T> the type of {@link Queryable} element
-     * @param <U> the type of field to sort
+     * @param range   the window bounds
+     * @param <T>     the type of {@link Queryable} element
+     * @param <U>     the type of field to sort
      * @return the {@link WindowDefinition} instance
      * @since 4.0.0
      */

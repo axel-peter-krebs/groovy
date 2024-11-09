@@ -33,7 +33,7 @@ final class Groovy5859 extends StringSourcesStubTestCase {
                     }
                 }
             """,
-            'Main.java': '''
+            'Main.java'  : '''
                 public class Main { Pogo pogo; }
             '''
         ]

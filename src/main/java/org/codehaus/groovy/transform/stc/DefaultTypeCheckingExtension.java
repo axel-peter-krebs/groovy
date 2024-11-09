@@ -38,7 +38,7 @@ import java.util.List;
  * any of the type checking errors by default. This just means that whenever a type checking
  * error is detected, there's no additional information available to the type checker that
  * could help it.
- *
+ * <p>
  * The default handler is also capable of handling a collection of delegate handlers. If a list
  * of delegates is set, then the type checker will try all the delegates until one is capable
  * of handling an error.
@@ -110,7 +110,7 @@ public class DefaultTypeCheckingExtension extends TypeCheckingExtension {
     public List<MethodNode> handleAmbiguousMethods(final List<MethodNode> nodes, final Expression origin) {
         List<MethodNode> result = nodes;
         Iterator<TypeCheckingExtension> it = handlers.iterator();
-        while (result.size()>1 && it.hasNext()) {
+        while (result.size() > 1 && it.hasNext()) {
             result = it.next().handleAmbiguousMethods(result, origin);
         }
         return result;
@@ -122,7 +122,7 @@ public class DefaultTypeCheckingExtension extends TypeCheckingExtension {
         for (TypeCheckingExtension handler : handlers) {
             List<MethodNode> handlerResult = handler.handleMissingMethod(receiver, name, argumentList, argumentTypes, call);
             for (MethodNode mn : handlerResult) {
-                if (mn.getDeclaringClass()==null) {
+                if (mn.getDeclaringClass() == null) {
                     mn.setDeclaringClass(ClassHelper.OBJECT_TYPE);
                 }
             }

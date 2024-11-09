@@ -8,9 +8,11 @@ import java.text.*;
 
 class Lo_Exception extends Exception {
     int num = 0;
+
     public Lo_Exception(int num) {
         this.num = num;
     }
+
     public String toString() {
         return "Lo_Exception, num = " + this.num;
     }
@@ -18,9 +20,11 @@ class Lo_Exception extends Exception {
 
 class Hi_Exception extends Exception {
     int num = 0;
+
     public Hi_Exception(int num) {
         this.num = num;
     }
+
     public String toString() {
         return "Hi_Exception, num = " + this.num;
     }
@@ -33,7 +37,7 @@ public class except {
     public static void main(String args[]) throws IOException {
         int n = Integer.parseInt(args[0]);
 
-        for (int i=0; i<n; i++) {
+        for (int i = 0; i < n; i++) {
             some_function(i);
         }
         System.out.println("Exceptions: HI=" + Hi + " / LO=" + Lo);

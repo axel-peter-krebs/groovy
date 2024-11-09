@@ -29,12 +29,12 @@ import org.codehaus.groovy.runtime.MethodRankHelper;
  */
 public class MissingPropertyException extends GroovyRuntimeException {
 
-    public  static final Object MPE = new Object(); // synchronization?
+    public static final Object MPE = new Object(); // synchronization?
 
     private static final long serialVersionUID = -1780027060966200019L;
 
     private final String property;
-    private final Class  type;
+    private final Class type;
 
     public MissingPropertyException(final String property, final Class type) {
         this.property = property;
@@ -63,7 +63,7 @@ public class MissingPropertyException extends GroovyRuntimeException {
     public String getMessageWithoutLocationText() {
         String message = super.getMessageWithoutLocationText();
         String name = getProperty();
-        Class  type = getType();
+        Class type = getType();
 
         if (name != null && type != null) {
             if (getCause() != null) {
@@ -71,8 +71,8 @@ public class MissingPropertyException extends GroovyRuntimeException {
             } else if (message == null) {
                 var mp = InvokerHelper.getMetaClass(type).getMetaProperty(name); // GROOVY-6260, GROOVY-8064, et al.
                 if (mp instanceof MetaBeanProperty
-                        && ((MetaBeanProperty) mp).getField() == null
-                        && ((MetaBeanProperty) mp).getGetter() == null) {
+                    && ((MetaBeanProperty) mp).getField() == null
+                    && ((MetaBeanProperty) mp).getGetter() == null) {
                     message = "Cannot get write-only property: " + name + " for class: " + type.getName();
                 } else {
                     message = "No such property: " + name + " for class: " + type.getName() + MethodRankHelper.getPropertySuggestionString(name, type);

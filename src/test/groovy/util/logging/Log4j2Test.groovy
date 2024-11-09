@@ -54,13 +54,13 @@ class Log4j2Test extends GroovyTestCase {
 
     private static PatternLayout createLayout() {
         return PatternLayout.newBuilder()
-                .withPattern('%m')
-                .withCharset(Charset.forName('UTF-8'))
-                .withAlwaysWriteExceptions(true)
-                .withNoConsoleNoAnsi(false)
-                .withHeader('')
-                .withFooter('')
-                .build()
+            .withPattern('%m')
+            .withCharset(Charset.forName('UTF-8'))
+            .withAlwaysWriteExceptions(true)
+            .withNoConsoleNoAnsi(false)
+            .withHeader('')
+            .withFooter('')
+            .build()
     }
 
     void testPrivateFinalStaticLogFieldAppears() {
@@ -71,10 +71,10 @@ class Log4j2Test extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == 'log' &&
-                    isPrivate(field.getModifiers()) &&
-                    isStatic(field.getModifiers()) &&
-                    isTransient(field.getModifiers()) &&
-                    isFinal(field.getModifiers())
+                isPrivate(field.getModifiers()) &&
+                isStatic(field.getModifiers()) &&
+                isTransient(field.getModifiers()) &&
+                isFinal(field.getModifiers())
         }
     }
 
@@ -88,10 +88,10 @@ class Log4j2Test extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == 'log' &&
-                    isPrivate(field.getModifiers()) &&
-                    isStatic(field.getModifiers()) &&
-                    isTransient(field.getModifiers()) &&
-                    isFinal(field.getModifiers())
+                isPrivate(field.getModifiers()) &&
+                isStatic(field.getModifiers()) &&
+                isTransient(field.getModifiers()) &&
+                isFinal(field.getModifiers())
         }
     }
 
@@ -105,12 +105,12 @@ class Log4j2Test extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == 'log' &&
-                    !isPrivate(field.getModifiers()) &&
-                    !isProtected(field.getModifiers()) &&
-                    !isPublic(field.getModifiers()) &&
-                    isStatic(field.getModifiers()) &&
-                    isTransient(field.getModifiers()) &&
-                    isFinal(field.getModifiers())
+                !isPrivate(field.getModifiers()) &&
+                !isProtected(field.getModifiers()) &&
+                !isPublic(field.getModifiers()) &&
+                isStatic(field.getModifiers()) &&
+                isTransient(field.getModifiers()) &&
+                isFinal(field.getModifiers())
         }
     }
 
@@ -124,10 +124,10 @@ class Log4j2Test extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == 'log' &&
-                    isProtected(field.getModifiers()) &&
-                    isStatic(field.getModifiers()) &&
-                    isTransient(field.getModifiers()) &&
-                    isFinal(field.getModifiers())
+                isProtected(field.getModifiers()) &&
+                isStatic(field.getModifiers()) &&
+                isTransient(field.getModifiers()) &&
+                isFinal(field.getModifiers())
         }
     }
 
@@ -141,10 +141,10 @@ class Log4j2Test extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == 'log' &&
-                    isPublic(field.getModifiers()) &&
-                    isStatic(field.getModifiers()) &&
-                    isTransient(field.getModifiers()) &&
-                    isFinal(field.getModifiers())
+                isPublic(field.getModifiers()) &&
+                isStatic(field.getModifiers()) &&
+                isTransient(field.getModifiers()) &&
+                isFinal(field.getModifiers())
         }
     }
 
@@ -156,10 +156,10 @@ class Log4j2Test extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == 'log' &&
-                    isPrivate(field.getModifiers()) &&
-                    isStatic(field.getModifiers()) &&
-                    isTransient(field.getModifiers()) &&
-                    isFinal(field.getModifiers())
+                isPrivate(field.getModifiers()) &&
+                isStatic(field.getModifiers()) &&
+                isTransient(field.getModifiers()) &&
+                isFinal(field.getModifiers())
         }
     }
 
@@ -190,12 +190,12 @@ class Log4j2Test extends GroovyTestCase {
     @Log4j2
     static class MyClassLogInfo {
         def loggingMethod() {
-            log.fatal ('fatal called')
-            log.error ('error called')
-            log.warn  ('warn called')
-            log.info  ('info called')
-            log.debug ('debug called')
-            log.trace ('trace called')
+            log.fatal('fatal called')
+            log.error('error called')
+            log.warn('warn called')
+            log.info('info called')
+            log.debug('debug called')
+            log.trace('trace called')
         }
     }
 
@@ -224,7 +224,7 @@ class Log4j2Test extends GroovyTestCase {
     @Log4j2
     static class MyClassLogFromStaticMethods {
         static loggingMethod() {
-            log.info   ('(static) info called')
+            log.info('(static) info called')
         }
     }
 
@@ -242,12 +242,12 @@ class Log4j2Test extends GroovyTestCase {
     @Log4j2('logger')
     static class MyClassLogInfoForNamedLogger {
         def loggingMethod() {
-            logger.fatal ('fatal called')
-            logger.error ('error called')
-            logger.warn  ('warn called')
-            logger.info  ('info called')
-            logger.debug ('debug called')
-            logger.trace ('trace called')
+            logger.fatal('fatal called')
+            logger.error('error called')
+            logger.warn('warn called')
+            logger.info('info called')
+            logger.debug('debug called')
+            logger.trace('trace called')
         }
     }
 
@@ -352,7 +352,7 @@ class Log4j2Test extends GroovyTestCase {
         assert appender.getEvents().size() == 1
     }
 
-    @Log4j2(category='customCategory')
+    @Log4j2(category = 'customCategory')
     static class MyClassCustomCategory {
         static loggingMethod() {
             log.error('error called')

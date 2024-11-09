@@ -63,11 +63,10 @@ import java.util.regex.Pattern;
  */
 public class InvokerHelper {
     public static final Object[] EMPTY_ARGS = {};
-    protected static final Object[] EMPTY_ARGUMENTS = EMPTY_ARGS;
-    protected static final Class[] EMPTY_TYPES = {};
-
     public static final MetaClassRegistry metaRegistry = GroovySystem.getMetaClassRegistry();
     public static final String MAIN_METHOD_NAME = "main";
+    protected static final Object[] EMPTY_ARGUMENTS = EMPTY_ARGS;
+    protected static final Class[] EMPTY_TYPES = {};
 
     public static void removeClass(Class clazz) {
         metaRegistry.removeMetaClass(clazz);
@@ -277,13 +276,13 @@ public class InvokerHelper {
 
     public static Object unaryPlus(Object value) {
         if (value instanceof Integer ||
-                value instanceof Long ||
-                value instanceof BigInteger ||
-                value instanceof BigDecimal ||
-                value instanceof Double ||
-                value instanceof Float ||
-                value instanceof Short ||
-                value instanceof Byte) {
+            value instanceof Long ||
+            value instanceof BigInteger ||
+            value instanceof BigDecimal ||
+            value instanceof Double ||
+            value instanceof Float ||
+            value instanceof Short ||
+            value instanceof Byte) {
             return value;
         }
         if (value instanceof ArrayList) {
@@ -420,22 +419,6 @@ public class InvokerHelper {
         return invokeMethod(script, "run", EMPTY_ARGS);
     }
 
-    static class NullScript extends Script {
-
-        public NullScript(Binding context) {
-            super(context);
-        }
-
-        public NullScript() {
-            this(new Binding());
-        }
-
-        @Override
-        public Object run() {
-            return null;
-        }
-    }
-
     @SuppressWarnings("unchecked")
     public static Script createScript(final Class scriptClass, final Binding context) {
         if (scriptClass == null) {
@@ -540,11 +523,12 @@ public class InvokerHelper {
         }
     }
 
-    // Kept in for backwards compatibility
-
     public static List createRange(Object from, Object to, boolean inclusive) {
         return createRange(from, to, false, !inclusive);
     }
+
+    // Kept in for backwards compatibility
+
     public static Object bitwiseNegate(Object value) {
         if (value instanceof Integer) {
             Integer number = (Integer) value;
@@ -782,5 +766,21 @@ public class InvokerHelper {
     @Deprecated
     public static String toArrayString(Object[] arguments, int maxSize, boolean safe) {
         return FormatHelper.toArrayString(arguments, maxSize, safe);
+    }
+
+    static class NullScript extends Script {
+
+        public NullScript(Binding context) {
+            super(context);
+        }
+
+        public NullScript() {
+            this(new Binding());
+        }
+
+        @Override
+        public Object run() {
+            return null;
+        }
     }
 }

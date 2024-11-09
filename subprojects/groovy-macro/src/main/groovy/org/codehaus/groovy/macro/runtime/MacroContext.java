@@ -45,7 +45,6 @@ public class MacroContext {
     }
 
     /**
-     *
      * @return original method call expression
      */
     public MethodCallExpression getCall() {
@@ -53,7 +52,6 @@ public class MacroContext {
     }
 
     /**
-     *
      * @return current source unit
      */
     public SourceUnit getSourceUnit() {
@@ -61,7 +59,6 @@ public class MacroContext {
     }
 
     /**
-     *
      * @return current compilation unit
      */
     public CompilationUnit getCompilationUnit() {

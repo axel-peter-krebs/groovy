@@ -103,8 +103,17 @@ public abstract class ContextualClassCodeVisitor extends ClassCodeVisitorSupport
         pushContext(new TreeContext(null, null));
     }
 
+    @SuppressWarnings("unchecked")
+    public static List<ASTNodePredicate> matchByClass(Class<ASTNode>... classes) {
+        List<ASTNodePredicate> result = new ArrayList<>(classes.length);
+        for (final Class<ASTNode> astNodeClass : classes) {
+            result.add(new MatchByClass(astNodeClass));
+        }
+        return result;
+    }
+
     public TreeContext getTreeContext() {
-        return treeContextStack.isEmpty()?null:treeContextStack.peek();
+        return treeContextStack.isEmpty() ? null : treeContextStack.peek();
     }
 
     public TreeContext getLastContext() {
@@ -122,8 +131,8 @@ public abstract class ContextualClassCodeVisitor extends ClassCodeVisitorSupport
             contextAction.call(treeContext);
         }
         lastContext = treeContext;
-        ASTNode parentNode = treeContext.parent!=null?treeContext.parent.node:null;
-        if (treeContext.node instanceof Expression && parentNode !=null) {
+        ASTNode parentNode = treeContext.parent != null ? treeContext.parent.node : null;
+        if (treeContext.node instanceof Expression && parentNode != null) {
             ClassCodeExpressionTransformer trn = new ClassCodeExpressionTransformer() {
                 @Override
                 protected SourceUnit getSourceUnit() {
@@ -132,9 +141,9 @@ public abstract class ContextualClassCodeVisitor extends ClassCodeVisitorSupport
 
                 @Override
                 public Expression transform(final Expression exp) {
-                    if (exp==treeContext.node) {
+                    if (exp == treeContext.node) {
                         Expression replacement = treeContext.getReplacement();
-                        if (replacement!=null) {
+                        if (replacement != null) {
                             return replacement;
                         }
                     }
@@ -147,13 +156,12 @@ public abstract class ContextualClassCodeVisitor extends ClassCodeVisitorSupport
         return treeContext;
     }
 
-    protected void pushContext(ASTNode node) {
-        pushContext(getTreeContext().fork(node));
-    }
-
 
     // ----------------------- override visit methods to provide contextual information ---------------------------
 
+    protected void pushContext(ASTNode node) {
+        pushContext(getTreeContext().fork(node));
+    }
 
     @Override
     public void visitClass(final ClassNode node) {
@@ -164,11 +172,11 @@ public abstract class ContextualClassCodeVisitor extends ClassCodeVisitorSupport
 
     @Override
     public void visitPackage(final PackageNode node) {
-        if (node!=null) {
+        if (node != null) {
             pushContext(node);
         }
         super.visitPackage(node);
-        if (node!=null) {
+        if (node != null) {
             popContext();
         }
     }
@@ -563,7 +571,7 @@ public abstract class ContextualClassCodeVisitor extends ClassCodeVisitorSupport
         TreeContext current = lastContext.parent;
         for (ASTNodePredicate predicate : predicates) {
             path.add(current);
-            if (current==null || !predicate.matches(current.node)) {
+            if (current == null || !predicate.matches(current.node)) {
                 return Collections.emptyList();
             }
             current = current.parent;
@@ -582,24 +590,26 @@ public abstract class ContextualClassCodeVisitor extends ClassCodeVisitorSupport
         return pathUpTo(node, null);
     }
 
+    // ----------------------------- inner classes --------------------------------------
+
     public List<TreeContext> pathUpTo(Class<ASTNode> node, ASTNodePredicate predicate) {
         List<TreeContext> path = new LinkedList<TreeContext>();
         TreeContext current = lastContext;
         boolean found = false;
-        while (current!=null && !found) {
+        while (current != null && !found) {
             path.add(current);
             ASTNode currentNode = current.node;
-            if (node==null) {
+            if (node == null) {
                 if (predicate.matches(currentNode)) {
                     found = true;
                 }
             } else {
-                if (predicate==null) {
-                    if (currentNode==null || node==currentNode.getClass()) {
+                if (predicate == null) {
+                    if (currentNode == null || node == currentNode.getClass()) {
                         found = true;
                     }
                 } else {
-                    found = currentNode!=null && node==currentNode.getClass() && predicate.matches(currentNode);
+                    found = currentNode != null && node == currentNode.getClass() && predicate.matches(currentNode);
                 }
             }
 
@@ -611,17 +621,6 @@ public abstract class ContextualClassCodeVisitor extends ClassCodeVisitorSupport
         return Collections.emptyList();
     }
 
-    // ----------------------------- inner classes --------------------------------------
-
-    @SuppressWarnings("unchecked")
-    public static List<ASTNodePredicate> matchByClass(Class<ASTNode>... classes) {
-        List<ASTNodePredicate> result = new ArrayList<>(classes.length);
-        for (final Class<ASTNode> astNodeClass : classes) {
-            result.add(new MatchByClass(astNodeClass));
-        }
-        return result;
-    }
-
     private static class MatchByClass implements ASTNodePredicate {
         private final Class<ASTNode> astNodeClass;
 
@@ -631,7 +630,7 @@ public abstract class ContextualClassCodeVisitor extends ClassCodeVisitorSupport
 
         @Override
         public boolean matches(final ASTNode node) {
-            return astNodeClass ==node.getClass();
+            return astNodeClass == node.getClass();
         }
     }
 }

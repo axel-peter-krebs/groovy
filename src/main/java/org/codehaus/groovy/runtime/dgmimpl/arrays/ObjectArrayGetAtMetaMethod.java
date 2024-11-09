@@ -63,8 +63,7 @@ public class ObjectArrayGetAtMetaMethod extends ArrayGetAtMetaMethod {
                 try {
                     final Object[] objects = (Object[]) receiver;
                     return objects[normaliseIndex((Integer) arg, objects.length)];
-                }
-                catch (ClassCastException e) {
+                } catch (ClassCastException e) {
                     if ((receiver instanceof Object[]) && (arg instanceof Integer))
                         throw e;
                 }

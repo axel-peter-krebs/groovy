@@ -57,152 +57,19 @@ import java.util.Map;
 public class ClassNodeResolver {
 
     /**
-     * Helper class to return either a SourceUnit or ClassNode.
-     */
-    public static class LookupResult {
-        private final SourceUnit su;
-        private final ClassNode cn;
-        /**
-         * creates a new LookupResult. You are not supposed to supply
-         * a SourceUnit and a ClassNode at the same time
-         */
-        public LookupResult(SourceUnit su, ClassNode cn) {
-            this.su = su;
-            this.cn = cn;
-            if (su==null && cn==null) throw new IllegalArgumentException("Either the SourceUnit or the ClassNode must not be null.");
-            if (su!=null && cn!=null) throw new IllegalArgumentException("SourceUnit and ClassNode cannot be set at the same time.");
-        }
-        /**
-         * returns true if a ClassNode is stored
-         */
-        public boolean isClassNode() { return cn!=null; }
-        /**
-         * returns true if a SourceUnit is stored
-         */
-        public boolean isSourceUnit() { return su!=null; }
-        /**
-         * returns the SourceUnit
-         */
-        public SourceUnit getSourceUnit() { return su; }
-        /**
-         * returns the ClassNode
-         */
-        public ClassNode getClassNode() { return cn; }
-    }
-
-    // Map to store cached classes
-    private final Map<String, ClassNode> cachedClasses = new HashMap<>();
-    /**
      * Internal helper used to indicate a cache hit for a class that does not exist.
      * This way further lookups through a slow {@link #findClassNode(String, CompilationUnit)}
      * path can be avoided.
      * WARNING: This class is not to be used outside of ClassNodeResolver.
      */
-    protected static final ClassNode NO_CLASS = new ClassNode("NO_CLASS", Opcodes.ACC_PUBLIC,ClassHelper.OBJECT_TYPE) {
+    protected static final ClassNode NO_CLASS = new ClassNode("NO_CLASS", Opcodes.ACC_PUBLIC, ClassHelper.OBJECT_TYPE) {
         @Override
         public void setRedirect(ClassNode cn) {
             throw new GroovyBugError("This is a dummy class node only! Never use it for real classes.");
         }
     };
-
-    /**
-     * Resolves the name of a class to a SourceUnit or ClassNode. If no
-     * class or source is found this method returns null. A lookup is done
-     * by first asking the cache if there is an entry for the class already available
-     * to then call {@link #findClassNode(String, CompilationUnit)}. The result
-     * of that method call will be cached if a ClassNode is found. If a SourceUnit
-     * is found, this method will not be asked later on again for that class, because
-     * ResolveVisitor will first ask the CompilationUnit for classes in the
-     * compilation queue and it will find the class for that SourceUnit there then.
-     * method return a ClassNode instead of a SourceUnit, the res
-     * @param name - the name of the class
-     * @param compilationUnit - the current CompilationUnit
-     * @return the LookupResult
-     */
-    public LookupResult resolveName(final String name, final CompilationUnit compilationUnit) {
-        ClassNode type = getFromClassCache(name);
-        if (type != null) {
-            if (type == NO_CLASS) return null;
-            return new LookupResult(null, type);
-        }
-
-        LookupResult result = findClassNode(name, compilationUnit);
-        if (result != null) {
-            if (result.isClassNode()) {
-                cacheClass(name, result.getClassNode());
-            }
-            return result;
-        } else {
-            cacheClass(name, NO_CLASS);
-            return null;
-        }
-    }
-
-    /**
-     * caches a ClassNode
-     * @param name - the name of the class
-     * @param res - the ClassNode for that name
-     */
-    public void cacheClass(final String name, final ClassNode res) {
-        cachedClasses.put(name, res);
-    }
-
-    /**
-     * returns whatever is stored in the class cache for the given name
-     * @param name - the name of the class
-     * @return the result of the lookup, which may be null
-     */
-    public ClassNode getFromClassCache(final String name) {
-        // We use here the class cache cachedClasses to prevent
-        // calls to ClassLoader#loadClass. Disabling this cache will
-        // cause a major performance hit.
-        ClassNode cached = cachedClasses.get(name);
-        return cached;
-    }
-
-    /**
-     * Extension point for custom lookup logic of finding ClassNodes. Per default
-     * this will use the CompilationUnit class loader to do a lookup on the class
-     * path and load the needed class using that loader. Or if a script is found
-     * and that script is seen as "newer", the script will be used instead of the
-     * class.
-     *
-     * @param name - the name of the class
-     * @param compilationUnit - the current compilation unit
-     * @return the lookup result
-     */
-    public LookupResult findClassNode(final String name, final CompilationUnit compilationUnit) {
-        return compilationUnit == null ? null : tryAsLoaderClassOrScript(name, compilationUnit);
-    }
-
-    /**
-     * This method is used to realize the lookup of a class using the compilation
-     * unit class loader. Should no class be found we fall back to a script lookup.
-     * If a class is found we check if there is also a script and maybe use that
-     * one in case it is newer.<p/>
-     *
-     * Two class search strategies are possible: by ASM decompilation or by usual Java classloading.
-     * The latter is slower but is unavoidable for scripts executed in dynamic environments where
-     * the referenced classes might only be available in the classloader, not on disk.
-     */
-    private LookupResult tryAsLoaderClassOrScript(final String name, final CompilationUnit compilationUnit) {
-        GroovyClassLoader loader = compilationUnit.getClassLoader();
-        Map<String, Boolean> options = compilationUnit.configuration.getOptimizationOptions();
-        boolean noClassLoaderResolving = Boolean.FALSE.equals(options.get("classLoaderResolving"));
-
-        if (!Boolean.FALSE.equals(options.get("asmResolving"))) {
-            LookupResult result = findDecompiled(name, compilationUnit, loader, noClassLoaderResolving);
-            if (result != null) {
-                return result;
-            }
-        }
-
-        if (!noClassLoaderResolving) {
-            return findByClassLoading(name, compilationUnit, loader);
-        }
-
-        return tryAsScript(name, compilationUnit, null);
-    }
+    // Map to store cached classes
+    private final Map<String, ClassNode> cachedClasses = new HashMap<>();
 
     /**
      * Search for classes using class loading
@@ -236,47 +103,7 @@ public class ClassNodeResolver {
         if (cls.getClassLoader() != loader) {
             return tryAsScript(name, compilationUnit, cn);
         }
-        return new LookupResult(null,cn);
-    }
-
-    /**
-     * Search for classes using ASM decompiler
-     */
-    private LookupResult findDecompiled(final String name, final CompilationUnit compilationUnit, final GroovyClassLoader loader, boolean failOnUnexpectedParseClassException) {
-        ClassNode node = ClassHelper.make(name);
-        if (node.isResolved()) {
-            return new LookupResult(null, node);
-        }
-
-        DecompiledClassNode asmClass = null;
-        String fileName = name.replace('.', '/') + ".class";
-        URL resource = loader.getResource(fileName);
-        if (resource != null) {
-            try {
-                asmClass = new DecompiledClassNode(AsmDecompiler.parseClass(resource), new AsmReferenceResolver(this, compilationUnit));
-                if (!asmClass.getName().equals(name)) {
-                    // this may happen under Windows because getResource is case-insensitive under that OS!
-                    asmClass = null;
-                }
-            } catch (IOException e) {
-                // fall through and attempt other search strategies
-            } catch (IllegalArgumentException e) {
-                // very likely resolving failed here due to a class format error or similar
-                // if we do not try other means we should report this error to the user
-                if (failOnUnexpectedParseClassException) {
-                    throw e;
-                }
-            }
-        }
-
-        if (asmClass != null) {
-            if (isFromAnotherClassLoader(loader, fileName)) {
-                return tryAsScript(name, compilationUnit, asmClass);
-            }
-
-            return new LookupResult(null, asmClass);
-        }
-        return null;
+        return new LookupResult(null, cn);
     }
 
     private static boolean isFromAnotherClassLoader(final GroovyClassLoader loader, final String fileName) {
@@ -351,6 +178,197 @@ public class ClassNodeResolver {
         } catch (IOException e) {
             // if the stream can't be opened, let's keep the old reference
             return false;
+        }
+    }
+
+    /**
+     * Resolves the name of a class to a SourceUnit or ClassNode. If no
+     * class or source is found this method returns null. A lookup is done
+     * by first asking the cache if there is an entry for the class already available
+     * to then call {@link #findClassNode(String, CompilationUnit)}. The result
+     * of that method call will be cached if a ClassNode is found. If a SourceUnit
+     * is found, this method will not be asked later on again for that class, because
+     * ResolveVisitor will first ask the CompilationUnit for classes in the
+     * compilation queue and it will find the class for that SourceUnit there then.
+     * method return a ClassNode instead of a SourceUnit, the res
+     *
+     * @param name            - the name of the class
+     * @param compilationUnit - the current CompilationUnit
+     * @return the LookupResult
+     */
+    public LookupResult resolveName(final String name, final CompilationUnit compilationUnit) {
+        ClassNode type = getFromClassCache(name);
+        if (type != null) {
+            if (type == NO_CLASS) return null;
+            return new LookupResult(null, type);
+        }
+
+        LookupResult result = findClassNode(name, compilationUnit);
+        if (result != null) {
+            if (result.isClassNode()) {
+                cacheClass(name, result.getClassNode());
+            }
+            return result;
+        } else {
+            cacheClass(name, NO_CLASS);
+            return null;
+        }
+    }
+
+    /**
+     * caches a ClassNode
+     *
+     * @param name - the name of the class
+     * @param res  - the ClassNode for that name
+     */
+    public void cacheClass(final String name, final ClassNode res) {
+        cachedClasses.put(name, res);
+    }
+
+    /**
+     * returns whatever is stored in the class cache for the given name
+     *
+     * @param name - the name of the class
+     * @return the result of the lookup, which may be null
+     */
+    public ClassNode getFromClassCache(final String name) {
+        // We use here the class cache cachedClasses to prevent
+        // calls to ClassLoader#loadClass. Disabling this cache will
+        // cause a major performance hit.
+        ClassNode cached = cachedClasses.get(name);
+        return cached;
+    }
+
+    /**
+     * Extension point for custom lookup logic of finding ClassNodes. Per default
+     * this will use the CompilationUnit class loader to do a lookup on the class
+     * path and load the needed class using that loader. Or if a script is found
+     * and that script is seen as "newer", the script will be used instead of the
+     * class.
+     *
+     * @param name            - the name of the class
+     * @param compilationUnit - the current compilation unit
+     * @return the lookup result
+     */
+    public LookupResult findClassNode(final String name, final CompilationUnit compilationUnit) {
+        return compilationUnit == null ? null : tryAsLoaderClassOrScript(name, compilationUnit);
+    }
+
+    /**
+     * This method is used to realize the lookup of a class using the compilation
+     * unit class loader. Should no class be found we fall back to a script lookup.
+     * If a class is found we check if there is also a script and maybe use that
+     * one in case it is newer.<p/>
+     * <p>
+     * Two class search strategies are possible: by ASM decompilation or by usual Java classloading.
+     * The latter is slower but is unavoidable for scripts executed in dynamic environments where
+     * the referenced classes might only be available in the classloader, not on disk.
+     */
+    private LookupResult tryAsLoaderClassOrScript(final String name, final CompilationUnit compilationUnit) {
+        GroovyClassLoader loader = compilationUnit.getClassLoader();
+        Map<String, Boolean> options = compilationUnit.configuration.getOptimizationOptions();
+        boolean noClassLoaderResolving = Boolean.FALSE.equals(options.get("classLoaderResolving"));
+
+        if (!Boolean.FALSE.equals(options.get("asmResolving"))) {
+            LookupResult result = findDecompiled(name, compilationUnit, loader, noClassLoaderResolving);
+            if (result != null) {
+                return result;
+            }
+        }
+
+        if (!noClassLoaderResolving) {
+            return findByClassLoading(name, compilationUnit, loader);
+        }
+
+        return tryAsScript(name, compilationUnit, null);
+    }
+
+    /**
+     * Search for classes using ASM decompiler
+     */
+    private LookupResult findDecompiled(final String name, final CompilationUnit compilationUnit, final GroovyClassLoader loader, boolean failOnUnexpectedParseClassException) {
+        ClassNode node = ClassHelper.make(name);
+        if (node.isResolved()) {
+            return new LookupResult(null, node);
+        }
+
+        DecompiledClassNode asmClass = null;
+        String fileName = name.replace('.', '/') + ".class";
+        URL resource = loader.getResource(fileName);
+        if (resource != null) {
+            try {
+                asmClass = new DecompiledClassNode(AsmDecompiler.parseClass(resource), new AsmReferenceResolver(this, compilationUnit));
+                if (!asmClass.getName().equals(name)) {
+                    // this may happen under Windows because getResource is case-insensitive under that OS!
+                    asmClass = null;
+                }
+            } catch (IOException e) {
+                // fall through and attempt other search strategies
+            } catch (IllegalArgumentException e) {
+                // very likely resolving failed here due to a class format error or similar
+                // if we do not try other means we should report this error to the user
+                if (failOnUnexpectedParseClassException) {
+                    throw e;
+                }
+            }
+        }
+
+        if (asmClass != null) {
+            if (isFromAnotherClassLoader(loader, fileName)) {
+                return tryAsScript(name, compilationUnit, asmClass);
+            }
+
+            return new LookupResult(null, asmClass);
+        }
+        return null;
+    }
+
+    /**
+     * Helper class to return either a SourceUnit or ClassNode.
+     */
+    public static class LookupResult {
+        private final SourceUnit su;
+        private final ClassNode cn;
+
+        /**
+         * creates a new LookupResult. You are not supposed to supply
+         * a SourceUnit and a ClassNode at the same time
+         */
+        public LookupResult(SourceUnit su, ClassNode cn) {
+            this.su = su;
+            this.cn = cn;
+            if (su == null && cn == null)
+                throw new IllegalArgumentException("Either the SourceUnit or the ClassNode must not be null.");
+            if (su != null && cn != null)
+                throw new IllegalArgumentException("SourceUnit and ClassNode cannot be set at the same time.");
+        }
+
+        /**
+         * returns true if a ClassNode is stored
+         */
+        public boolean isClassNode() {
+            return cn != null;
+        }
+
+        /**
+         * returns true if a SourceUnit is stored
+         */
+        public boolean isSourceUnit() {
+            return su != null;
+        }
+
+        /**
+         * returns the SourceUnit
+         */
+        public SourceUnit getSourceUnit() {
+            return su;
+        }
+
+        /**
+         * returns the ClassNode
+         */
+        public ClassNode getClassNode() {
+            return cn;
         }
     }
 }

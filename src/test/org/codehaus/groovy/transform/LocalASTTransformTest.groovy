@@ -23,7 +23,7 @@ import org.codehaus.groovy.control.CompilationFailedException
 
 class LocalASTTransformTest extends GroovyShellTestCase {
 
-    void testVerifyCompilePhaseBeforeSemanticAnalysisWithStringClassName()  {
+    void testVerifyCompilePhaseBeforeSemanticAnalysisWithStringClassName() {
         def gcl = new GroovyClassLoader()
 
         gcl.parseClass """
@@ -60,7 +60,7 @@ class LocalASTTransformTest extends GroovyShellTestCase {
         }
     }
 
-    void testVerifyCompilePhaseBeforeSemanticAnalysisWithClassReference()  {
+    void testVerifyCompilePhaseBeforeSemanticAnalysisWithClassReference() {
         def gcl = new GroovyClassLoader()
 
         gcl.parseClass """

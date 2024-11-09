@@ -61,7 +61,7 @@ public class NotYetImplementedASTTransformation extends AbstractASTTransformatio
         AnnotationNode annotation = (AnnotationNode) nodes[0];
 
         ClassNode exception = getMemberClassValue(annotation, "exception");
-        boolean   withCause = false;
+        boolean withCause = false;
         if (exception == null) {
             exception = ClassHelper.make(AssertionError.class);
             withCause = true; // AssertionError(String,Throwable) is public
@@ -84,9 +84,9 @@ public class NotYetImplementedASTTransformation extends AbstractASTTransformatio
             // wrap code in try/catch with return for failure path followed by throws for success path
 
             TryCatchStatement tryCatchStatement = tryCatchS(
-                    methodNode.getCode(),
-                    EmptyStatement.INSTANCE,
-                    catchS(param(ClassHelper.THROWABLE_TYPE.getPlainNodeReference(), "ignore"), ReturnStatement.RETURN_NULL_OR_VOID));
+                methodNode.getCode(),
+                EmptyStatement.INSTANCE,
+                catchS(param(ClassHelper.THROWABLE_TYPE.getPlainNodeReference(), "ignore"), ReturnStatement.RETURN_NULL_OR_VOID));
 
             Expression arguments = constX("Method is marked with @NotYetImplemented but passes unexpectedly");
             if (withCause) arguments = args(arguments, castX(ClassHelper.THROWABLE_TYPE, nullX()));

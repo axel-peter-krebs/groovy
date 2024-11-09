@@ -18,6 +18,7 @@ import groovy.test.GroovyTestCase
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 class CodeGenerationASTTransformsTest extends GroovyTestCase {
 
     // specification tests for the @ToString AST transformation
@@ -530,7 +531,7 @@ assert p1.toString() == p2.toString()
 // end::tupleconstructor_example_includeFields[]
 '''
 
-       assertScript '''
+        assertScript '''
 // tag::tupleconstructor_example_includeSuperFields[]
 import groovy.transform.TupleConstructor
 

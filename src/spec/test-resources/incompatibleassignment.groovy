@@ -19,7 +19,7 @@
 // tag::event[]
 incompatibleAssignment { lhsType, rhsType, expr ->
     if (isBinaryExpression(expr) && isAssignment(expr.operation.type)) {
-        if (lhsType==classNodeFor(int) && rhsType==classNodeFor(Closure)) {
+        if (lhsType == classNodeFor(int) && rhsType == classNodeFor(Closure)) {
             handled = true
         }
     }

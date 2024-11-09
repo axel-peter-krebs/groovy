@@ -19,21 +19,21 @@
 package org.codehaus.groovy.classgen
 
 def ops = [
-        'plus',
-        'minus',
-        'multiply',
-        'div',
-        'or',
-        'and',
-        'xor',
-        'intdiv',
-        'remainder',
-        'leftShift',
-        'rightShift',
-        'rightShiftUnsigned'
+    'plus',
+    'minus',
+    'multiply',
+    'div',
+    'or',
+    'and',
+    'xor',
+    'intdiv',
+    'remainder',
+    'leftShift',
+    'rightShift',
+    'rightShiftUnsigned'
 ]
 
-def numbers = ['Byte':'byte', 'Short':'short', 'Integer':'int', 'Long':'long', 'Float':'float', 'Double':'double']
+def numbers = ['Byte': 'byte', 'Short': 'short', 'Integer': 'int', 'Long': 'long', 'Float': 'float', 'Double': 'double']
 
 ops.each { op ->
     numbers.each { wrappedType, type ->
@@ -51,7 +51,7 @@ ops.each { op ->
     println 'if (klazz==Object.class) {'
     numbers.each { wrappedType, type ->
         println "${type}_${op} = true;"
-            }
+    }
     println '}'
     println '}'
 }
@@ -60,13 +60,13 @@ ops.each { op ->
     numbers.each { wrappedType1, type1 ->
         numbers.each { wrappedType2, type2 ->
             def math = getMath(wrappedType1, wrappedType2)
-            if (math [op]) {
+            if (math[op]) {
                 println """public static ${math.resType} ${op}(${type1} op1, ${type2} op2) {
                    if (instance.${type1}_${op}) {
                       return ${op}Slow(op1, op2);
                    }
                    else {
-                      return ${math.resType != type1 ? '((' + math.resType+ ')op1)' : 'op1'} ${math[op]} ${math.resType != type2 ? '((' + math.resType+ ')op2)' : 'op2'};
+                      return ${math.resType != type1 ? '((' + math.resType + ')op1)' : 'op1'} ${math[op]} ${math.resType != type2 ? '((' + math.resType + ')op2)' : 'op2'};
                    }
                 }"""
                 println """private static ${math.resType} ${op}Slow(${type1} op1,${type2} op2) {
@@ -85,49 +85,49 @@ def isLong(number) {
     number == 'Long'
 }
 
-def getMath (left, right) {
+def getMath(left, right) {
     if (isFloatingPoint(left) || isFloatingPoint(right)) {
         return [
-                resType : 'double',
+            resType : 'double',
 
-                plus : '+',
-                minus : '-',
-                multiply : '*',
-                div : '/',
+            plus    : '+',
+            minus   : '-',
+            multiply: '*',
+            div     : '/',
         ]
     }
-    if (isLong(left) || isLong(right)){
+    if (isLong(left) || isLong(right)) {
         return [
-                resType : 'long',
+            resType           : 'long',
 
-                plus : '+',
-                minus : '-',
-                multiply : '*',
-                div : '/',
-                or : '|',
-                and : '&',
-                xor : '^',
-                intdiv : '/',
-                remainder : '%',
-                leftShift : '<<',
-                rightShift : '>>',
-                rightShiftUnsigned : '>>>'
+            plus              : '+',
+            minus             : '-',
+            multiply          : '*',
+            div               : '/',
+            or                : '|',
+            and               : '&',
+            xor               : '^',
+            intdiv            : '/',
+            remainder         : '%',
+            leftShift         : '<<',
+            rightShift        : '>>',
+            rightShiftUnsigned: '>>>'
         ]
     }
     [
-            resType : 'int',
+        resType           : 'int',
 
-            plus : '+',
-            minus : '-',
-            multiply : '*',
-            div : '/',
-            or : '|',
-            and : '&',
-            xor : '^',
-            intdiv : '/',
-            remainder : '%',
-            leftShift : '<<',
-            rightShift : '>>',
-            rightShiftUnsigned : '>>>'
+        plus              : '+',
+        minus             : '-',
+        multiply          : '*',
+        div               : '/',
+        or                : '|',
+        and               : '&',
+        xor               : '^',
+        intdiv            : '/',
+        remainder         : '%',
+        leftShift         : '<<',
+        rightShift        : '>>',
+        rightShiftUnsigned: '>>>'
     ]
 }

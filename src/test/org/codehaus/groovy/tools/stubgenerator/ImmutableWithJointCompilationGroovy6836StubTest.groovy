@@ -25,15 +25,15 @@ class ImmutableWithJointCompilationGroovy6836StubTest extends StringSourcesStubT
 
     Map<String, String> provideSources() {
         [
-                'foo/JavaFoo.java': '''package foo;
+            'foo/JavaFoo.java'        : '''package foo;
                     public final class JavaFoo {}
                 ''',
-                'foo/ImmutableBean.groovy': '''package foo
+            'foo/ImmutableBean.groovy': '''package foo
                     @groovy.transform.Immutable(knownImmutables=['id'])
                     @groovy.transform.CompileStatic // do NOT remove this
                     class ImmutableBean { JavaFoo id }
                 ''',
-                'foo/ImmutableTest.groovy': '''package foo
+            'foo/ImmutableTest.groovy': '''package foo
                     def map = [id:new JavaFoo()]
                     def mc = map.getMetaClass()
                     mc.blah = { 123 }

@@ -26,6 +26,11 @@ public class Tt1c {
             return "field";
         }
     };
+    private Closure p1 = new Closure(null) {
+        public Object doCall(final Object params) {
+            return "property";
+        }
+    };
 
     public Closure getX() {
         return this.p1;
@@ -38,10 +43,4 @@ public class Tt1c {
     public String x() {
         return "method";
     }
-
-    private Closure p1 = new Closure(null) {
-        public Object doCall(final Object params) {
-            return "property";
-        }
-    };
 }

@@ -34,22 +34,22 @@ import java.awt.*
 class TitledBorderFactory extends SwingBorderFactory {
 
     static final Map positions = [
-        'default':    TitledBorder.DEFAULT_POSITION,
-        aboveTop:    TitledBorder.ABOVE_TOP,
-        top:          TitledBorder.TOP,
-        belowTop:    TitledBorder.BELOW_TOP,
+        'default'  : TitledBorder.DEFAULT_POSITION,
+        aboveTop   : TitledBorder.ABOVE_TOP,
+        top        : TitledBorder.TOP,
+        belowTop   : TitledBorder.BELOW_TOP,
         aboveBottom: TitledBorder.ABOVE_BOTTOM,
-        bottom:       TitledBorder.BOTTOM,
+        bottom     : TitledBorder.BOTTOM,
         belowBottom: TitledBorder.BELOW_BOTTOM,
     ]
 
     static final Map justifications = [
         'default': TitledBorder.DEFAULT_JUSTIFICATION,
-        left:      TitledBorder.LEFT,
-        center:    TitledBorder.CENTER,
-        right:     TitledBorder.RIGHT,
-        leading:   TitledBorder.LEADING,
-        trailing:  TitledBorder.TRAILING,
+        left     : TitledBorder.LEFT,
+        center   : TitledBorder.CENTER,
+        right    : TitledBorder.RIGHT,
+        leading  : TitledBorder.LEADING,
+        trailing : TitledBorder.TRAILING,
     ]
 
 
@@ -69,20 +69,30 @@ class TitledBorderFactory extends SwingBorderFactory {
 
         def position = attributes.remove("position")
         position = positions[position] ?: position
-        if (position instanceof Integer) { border.setTitlePosition(position) }
+        if (position instanceof Integer) {
+            border.setTitlePosition(position)
+        }
 
         def justification = attributes.remove("justification")
         justification = justifications[justification] ?: justification
-        if (justification instanceof Integer) { border.setTitleJustification(justification) }
+        if (justification instanceof Integer) {
+            border.setTitleJustification(justification)
+        }
 
         Border otherBorder = attributes.remove("border")
-        if (otherBorder != null) { border.setBorder(otherBorder) }
+        if (otherBorder != null) {
+            border.setBorder(otherBorder)
+        }
 
         Color color = attributes.remove("color")
-        if (color) { border.setTitleColor(color) }
+        if (color) {
+            border.setTitleColor(color)
+        }
 
         Font font = attributes.remove("font")
-        if (font) { border.setTitleFont(font) }
+        if (font) {
+            border.setTitleFont(font)
+        }
 
         return border
     }

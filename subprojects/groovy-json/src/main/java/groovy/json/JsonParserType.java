@@ -26,7 +26,7 @@ package groovy.json;
  * <code><pre>
  *             parser = new JsonSlurper().setType(JsonParserType.INDEX_OVERLAY);
  * </pre></code>
- *
+ * <p>
  * INDEX_OVERLAY should be your parser of choice.
  * <p />
  * CHAR_BUFFER is the parser of choice due to element of least surprise and need to
@@ -39,19 +39,20 @@ package groovy.json;
  * Use CHAR_BUFFER for a non-fancy but super fast parser.
  *
  * <p>
- *     Parser speed in order: INDEX_OVERLAY, LAX, CHAR_BUFFER, CHARACTER_SOURCE.
+ * Parser speed in order: INDEX_OVERLAY, LAX, CHAR_BUFFER, CHARACTER_SOURCE.
  * </p>
- *
+ * <p>
  * Use Cases:
  * <p />
  *
  * <p>
- *     Use LAX for config files as it allows comments.
- *     Use INDEX_OVERLAY for REST calls, WebSocket messages, AJAX, inter process communication, etc.
- *     Use CHAR_BUFFER if eager parsing of ints, dates, longs, are appealing.
- *     Use CHARACTER_SOURCE if you are dealing with large JSON files over 2MB.
- *     INDEX_OVERLAY is highly tuned for object deserialization from JSON.
+ * Use LAX for config files as it allows comments.
+ * Use INDEX_OVERLAY for REST calls, WebSocket messages, AJAX, inter process communication, etc.
+ * Use CHAR_BUFFER if eager parsing of ints, dates, longs, are appealing.
+ * Use CHARACTER_SOURCE if you are dealing with large JSON files over 2MB.
+ * INDEX_OVERLAY is highly tuned for object deserialization from JSON.
  * </p>
+ *
  * @since 2.3.0
  */
 public enum JsonParserType {
@@ -62,10 +63,10 @@ public enum JsonParserType {
      * maybe index overlay objects pointing to original buffer.
      * You can mitigate these risks by using chop and lazy chop.
      * Chop eagerly dices up the buffer so each Value element points to a small copy of the original buffer.
-     *
+     * <p>
      * Lazy Chop dices up the buffer when a list get or map get is called so if an GPath expression or
      * such is applied.
-     *
+     * <p>
      * You do not need chop or lazy chop if you are not putting the map into a long term cache.
      * You do not need chop or lazy chop if you are doing object de-serialization.
      * Recommendation is to use this for JSON buffers under 2MB.

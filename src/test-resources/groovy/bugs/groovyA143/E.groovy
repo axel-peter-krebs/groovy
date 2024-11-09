@@ -20,7 +20,7 @@ package groovy.bugs.groovyA143
 
 @groovy.transform.InheritConstructors
 class E extends C {
-	String getStringValue() {
-		'string value'
-	}
+    String getStringValue() {
+        'string value'
+    }
 }

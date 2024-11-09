@@ -22,7 +22,7 @@ import org.codehaus.groovy.classgen.asm.AbstractBytecodeTestCase
 
 class StaticCompileDGMMethodTest extends AbstractBytecodeTestCase {
     void testShouldCallToIntegerOnString() {
-        def bytecode = compile([method:'m'],'''
+        def bytecode = compile([method: 'm'], '''
             @groovy.transform.CompileStatic
             int m() {
                 return "123".toInteger() // toInteger() is a DGM method
@@ -30,13 +30,13 @@ class StaticCompileDGMMethodTest extends AbstractBytecodeTestCase {
             assert m() == 123
         ''')
         assert bytecode.hasStrictSequence(
-                ['LDC','INVOKESTATIC org/codehaus/groovy/runtime/StringGroovyMethods.toInteger', 'INVOKEVIRTUAL java/lang/Integer.intValue','IRETURN']
+            ['LDC', 'INVOKESTATIC org/codehaus/groovy/runtime/StringGroovyMethods.toInteger', 'INVOKEVIRTUAL java/lang/Integer.intValue', 'IRETURN']
         )
         clazz.newInstance().run()
     }
 
     void testShouldCallToIntegerOnGString() {
-        def bytecode = compile([method:'m'],'''
+        def bytecode = compile([method: 'm'], '''
             @groovy.transform.CompileStatic
             int m() {
                 int i = 123
@@ -45,13 +45,13 @@ class StaticCompileDGMMethodTest extends AbstractBytecodeTestCase {
             assert m() == 123
         ''')
         assert bytecode.hasStrictSequence(
-                ['INVOKESTATIC org/codehaus/groovy/runtime/StringGroovyMethods.toInteger','INVOKEVIRTUAL java/lang/Integer.intValue','IRETURN']
+            ['INVOKESTATIC org/codehaus/groovy/runtime/StringGroovyMethods.toInteger', 'INVOKEVIRTUAL java/lang/Integer.intValue', 'IRETURN']
         )
         clazz.newInstance().run()
     }
 
     void testEach() {
-        def bytecode = compile([method:'m'],'''
+        def bytecode = compile([method: 'm'], '''
             @groovy.transform.CompileStatic
             int m() {
                 int x
@@ -64,7 +64,7 @@ class StaticCompileDGMMethodTest extends AbstractBytecodeTestCase {
     }
 
     void testCollect() {
-        def bytecode = compile([method:'m'],'''
+        def bytecode = compile([method: 'm'], '''
             @groovy.transform.CompileStatic
             int[] m() {
                 int[] result = [1,2,3,4].collect { int x -> x*x } as int[]

@@ -51,8 +51,7 @@ public class SequenceTest extends GroovyTestCase {
             sequence.add(Integer.valueOf(5));
 
             fail("Should have thrown exception");
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             System.out.println("Caught: " + e);
         }
     }
@@ -63,8 +62,7 @@ public class SequenceTest extends GroovyTestCase {
             sequence.add(null);
 
             fail("Should have thrown exception");
-        }
-        catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             System.out.println("Caught: " + e);
         }
     }

@@ -36,11 +36,11 @@ import java.util.List;
 public class LabelVerifier extends ClassCodeVisitorSupport {
 
     private final SourceUnit source;
+    boolean inLoop = false;
+    boolean inSwitch = false;
     private LinkedList<String> visitedLabels;
     private LinkedList<ContinueStatement> continueLabels;
     private LinkedList<BreakStatement> breakLabels;
-    boolean inLoop = false;
-    boolean inSwitch = false;
 
     public LabelVerifier(SourceUnit src) {
         source = src;

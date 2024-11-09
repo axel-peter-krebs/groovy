@@ -47,7 +47,7 @@ class PrimitiveTypeFieldTest extends GroovyTestCase {
         assert bugMethod2(123) == 246
 
         // GROOVY-133
-        def closure = {int x-> x * 2 }
+        def closure = { int x -> x * 2 }
         assert closure.call(123) == 246
 
     }
@@ -59,6 +59,7 @@ class PrimitiveTypeFieldTest extends GroovyTestCase {
     def bugMethod2(int x) {
         x * 2
     }
+
     void testStaticPrimitiveField() {
         shortField = (Short) 123
 

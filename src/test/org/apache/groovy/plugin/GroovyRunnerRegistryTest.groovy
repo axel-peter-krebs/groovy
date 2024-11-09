@@ -25,9 +25,9 @@ import static java.util.Collections.emptyMap
 class GroovyRunnerRegistryTest extends GroovyTestCase {
 
     Map<String, GroovyRunner> knownRunners = [
-            Junit3TestRunner: DefaultRunners.junit3TestRunner(),
-            Junit3SuiteRunner: DefaultRunners.junit3SuiteRunner(),
-            Junit4TestRunner: DefaultRunners.junit4TestRunner()
+        Junit3TestRunner : DefaultRunners.junit3TestRunner(),
+        Junit3SuiteRunner: DefaultRunners.junit3SuiteRunner(),
+        Junit4TestRunner : DefaultRunners.junit4TestRunner()
     ]
 
     GroovyRunnerRegistry registry = new GroovyRunnerRegistry(knownRunners)

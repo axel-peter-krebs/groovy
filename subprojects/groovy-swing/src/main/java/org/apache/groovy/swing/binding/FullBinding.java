@@ -27,21 +27,21 @@ public interface FullBinding extends BindingUpdatable {
 
     SourceBinding getSourceBinding();
 
-    TargetBinding getTargetBinding();
-
     void setSourceBinding(SourceBinding source);
+
+    TargetBinding getTargetBinding();
 
     void setTargetBinding(TargetBinding target);
 
-    void setValidator(Closure validator);
-
     Closure getValidator();
 
-    void setConverter(Closure converter);
+    void setValidator(Closure validator);
 
     Closure getConverter();
 
-    void setReverseConverter(Closure reverseConverter);
+    void setConverter(Closure converter);
 
     Closure getReverseConverter();
+
+    void setReverseConverter(Closure reverseConverter);
 }

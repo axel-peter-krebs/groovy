@@ -31,7 +31,7 @@ final class TernaryOperatorsTest {
         def x = (y > 1) ? "worked" : "failed"
         assert x == "worked"
 
-            x = (y < 4) ? "failed" : "worked"
+        x = (y < 4) ? "failed" : "worked"
         assert x == "worked"
     }
 
@@ -50,32 +50,32 @@ final class TernaryOperatorsTest {
     @Test
     void testWithBoolean() {
         def a = 1
-        def x = a!=null ? a!=2 : a!=1
+        def x = a != null ? a != 2 : a != 1
         assert x == true
-        def y = a!=1 ? a!=2 : a!=1
+        def y = a != 1 ? a != 2 : a != 1
         assert y == false
     }
 
     @Test
     void testElvisOperator() {
         def a = 1
-        def x = a?:2
-        assert x==a
+        def x = a ?: 2
+        assert x == a
         x = a
-          ?: 2
-        assert x==a
+            ?: 2
+        assert x == a
 
         a = null
-        x = a?:2
-        assert x==2
+        x = a ?: 2
+        assert x == 2
 
-        def list = ['a','b','c']
+        def list = ['a', 'b', 'c']
         def index = 0
-        def ret = list[index++]?:"something else"
-        assert index==1
-        assert ret=='a'
+        def ret = list[index++] ?: "something else"
+        assert index == 1
+        assert ret == 'a'
         def ret2 = list[index]
-          ?: "something else entirely"
+            ?: "something else entirely"
         assert ret2 == 'b'
     }
 
@@ -91,7 +91,7 @@ final class TernaryOperatorsTest {
         // this code will blow up if the true and false parts
         // are not handled correctly in regards to the registers.
         def i = 1
-        def c= { false? { i } : it == i }
+        def c = { false ? { i } : it == i }
         assert true
     }
 
@@ -118,13 +118,13 @@ final class TernaryOperatorsTest {
             : "cow"
         assert bar == 'cow'
 
-        bar = 0 ? "moo"         \
-              : "cow"
+        bar = 0 ? "moo"          \
+               : "cow"
         assert bar == 'cow'
 
         // This used to fail
         bar = 0 ? "moo"
-                : "cow"
+            : "cow"
         assert bar == 'cow'
     }
 
@@ -135,16 +135,17 @@ final class TernaryOperatorsTest {
 
         def staticPatternSlashy = ~/some static pattern \w+/
         def staticPatternString = ~"some static pattern \\w+"
-        def dynamicPatternSlashy = (random.nextInt() % 2 == 0) ? ~/pattern one \w+/  : ~/pattern two \w+/
+        def dynamicPatternSlashy = (random.nextInt() % 2 == 0) ? ~/pattern one \w+/ : ~/pattern two \w+/
         def dynamicPatternString = (random.nextInt() % 2 == 0) ? ~"pattern one \\w+" : ~"pattern two \\w+"
 
-        assert staticPatternSlashy  instanceof Pattern
-        assert staticPatternString  instanceof Pattern
+        assert staticPatternSlashy instanceof Pattern
+        assert staticPatternString instanceof Pattern
         assert dynamicPatternSlashy instanceof Pattern
         assert dynamicPatternString instanceof Pattern
     }
 
-    @Test // see StatementMetaTypeChooser#resolveType
+    @Test
+    // see StatementMetaTypeChooser#resolveType
     void testClassExpressionIsJavaLangClassNotLiteralType() {
         Class dsClass = true ? LinkedHashSet : HashSet
     }

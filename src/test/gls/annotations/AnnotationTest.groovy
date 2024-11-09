@@ -887,7 +887,8 @@ final class AnnotationTest {
     }
 
     // GROOVY-6025
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testAnnotationDefinitionDefaultValues2() {
         assertScript shell, '''
             @interface A {

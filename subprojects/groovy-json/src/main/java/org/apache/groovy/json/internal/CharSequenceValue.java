@@ -65,6 +65,25 @@ public class CharSequenceValue implements Value, CharSequence {
         }
     }
 
+    public static <T extends Enum> T toEnum(Class<T> cls, String value) {
+        try {
+            return (T) Enum.valueOf(cls, value);
+        } catch (Exception ex) {
+            return (T) Enum.valueOf(cls, value.toUpperCase().replace('-', '_'));
+        }
+    }
+
+    public static <T extends Enum> T toEnum(Class<T> cls, int value) {
+        T[] enumConstants = cls.getEnumConstants();
+        for (T e : enumConstants) {
+            if (e.ordinal() == value) {
+                return e;
+            }
+        }
+        die("Can't convert ordinal value " + value + " into enum of type " + cls);
+        return null;
+    }
+
     @Override
     public String toString() {
         if (startIndex == 0 && endIndex == buffer.length) {
@@ -90,25 +109,6 @@ public class CharSequenceValue implements Value, CharSequence {
                 return null;
         }
         die("toEnum " + cls + " value was " + stringValue());
-        return null;
-    }
-
-    public static <T extends Enum> T toEnum(Class<T> cls, String value) {
-        try {
-            return (T) Enum.valueOf(cls, value);
-        } catch (Exception ex) {
-            return (T) Enum.valueOf(cls, value.toUpperCase().replace('-', '_'));
-        }
-    }
-
-    public static <T extends Enum> T toEnum(Class<T> cls, int value) {
-        T[] enumConstants = cls.getEnumConstants();
-        for (T e : enumConstants) {
-            if (e.ordinal() == value) {
-                return e;
-            }
-        }
-        die("Can't convert ordinal value " + value + " into enum of type " + cls);
         return null;
     }
 

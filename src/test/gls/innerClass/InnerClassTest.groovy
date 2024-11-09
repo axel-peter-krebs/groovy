@@ -432,7 +432,8 @@ final class InnerClassTest {
         assert err =~ 'Could not find matching constructor for: A\\$B\\(Class\\)'
     }
 
-    @Test @NotYetImplemented
+    @Test
+    @NotYetImplemented
     void testNonStaticInnerClass3() {
         shouldFail CompilationFailedException, '''
             class A {
@@ -443,7 +444,8 @@ final class InnerClassTest {
     }
 
     // GROOVY-9781
-    @Test @NotYetImplemented
+    @Test
+    @NotYetImplemented
     void testNonStaticInnerClass4() {
         assertScript '''
             class A {
@@ -727,7 +729,8 @@ final class InnerClassTest {
         '''
     }
 
-    @Test // inner class is static instead of final
+    @Test
+    // inner class is static instead of final
     void testUsageOfOuterField8() {
         assertScript '''
             class Main extends Outer {

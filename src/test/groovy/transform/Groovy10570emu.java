@@ -22,13 +22,13 @@ import java.lang.annotation.*;
 
 import static java.util.Collections.singletonMap;
 
-@AnnotationCollector(serializeClass=Groovy10570emu.Data.class)
+@AnnotationCollector(serializeClass = Groovy10570emu.Data.class)
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.SOURCE)
 public @interface Groovy10570emu {
     class Data {
         public static Object[][] value() {
-            return new Object[][] {{EqualsAndHashCode.class, singletonMap("useCanEqual", Boolean.FALSE)}};
+            return new Object[][]{{EqualsAndHashCode.class, singletonMap("useCanEqual", Boolean.FALSE)}};
         }
     }
 }

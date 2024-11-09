@@ -31,20 +31,17 @@ import java.util.Arrays;
  */
 public class MethodClosure extends Closure {
 
-    public static boolean ALLOW_RESOLVE; // choose readObject/readResolve return/throw
     public static final String ANY_INSTANCE_METHOD_EXISTS = "anyInstanceMethodExists";
     public static final String NEW = "new";
-
-    //
-
     private static final long serialVersionUID = -2491254866810955844L;
 
+    //
+    public static boolean ALLOW_RESOLVE; // choose readObject/readResolve return/throw
+    private final String method;
     /**
      * Indicates if this may be related to an instance method.
      */
     private boolean anyInstanceMethodExists;
-
-    private final String method;
 
     //--------------------------------------------------------------------------
 
@@ -76,13 +73,6 @@ public class MethodClosure extends Closure {
         }
     }
 
-    private void setParameterTypesAndNumber(final Class[] parameterTypes) {
-        if (parameterTypes.length > this.maximumNumberOfParameters) {
-            this.maximumNumberOfParameters = parameterTypes.length;
-            this.parameterTypes = parameterTypes;
-        }
-    }
-
     /*
      * Creates an array of parameter types. If the owner is a class instance (ex:
      * String) and the method is instance method, we expand the original array of
@@ -102,6 +92,13 @@ public class MethodClosure extends Closure {
         }
 
         return newParameterTypes;
+    }
+
+    private void setParameterTypesAndNumber(final Class[] parameterTypes) {
+        if (parameterTypes.length > this.maximumNumberOfParameters) {
+            this.maximumNumberOfParameters = parameterTypes.length;
+            this.parameterTypes = parameterTypes;
+        }
     }
 
     //--------------------------------------------------------------------------
@@ -134,12 +131,12 @@ public class MethodClosure extends Closure {
     @Override
     public Object getProperty(final String property) {
         switch (property) {
-          case "method":
-            return getMethod();
-          case ANY_INSTANCE_METHOD_EXISTS:
-            return anyInstanceMethodExists;
-          default:
-            return super.getProperty(property);
+            case "method":
+                return getMethod();
+            case ANY_INSTANCE_METHOD_EXISTS:
+                return anyInstanceMethodExists;
+            default:
+                return super.getProperty(property);
         }
     }
 

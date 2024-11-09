@@ -28,17 +28,10 @@ import java.util.Objects;
  */
 public class CastExpression extends Expression {
 
-    private Expression expression;
     private final boolean ignoreAutoboxing;
-
+    private Expression expression;
     private boolean coerce;
     private boolean strict;
-
-    public static CastExpression asExpression(final ClassNode type, final Expression expression) {
-        CastExpression answer = new CastExpression(type, expression);
-        answer.setCoerce(true);
-        return answer;
-    }
 
     public CastExpression(final ClassNode type, final Expression expression) {
         this(type, expression, false);
@@ -48,6 +41,12 @@ public class CastExpression extends Expression {
         this.expression = expression;
         this.ignoreAutoboxing = ignoreAutoboxing;
         super.setType(Objects.requireNonNull(type));
+    }
+
+    public static CastExpression asExpression(final ClassNode type, final Expression expression) {
+        CastExpression answer = new CastExpression(type, expression);
+        answer.setCoerce(true);
+        return answer;
     }
 
     public Expression getExpression() {

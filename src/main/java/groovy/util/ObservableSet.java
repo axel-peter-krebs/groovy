@@ -66,12 +66,11 @@ import java.util.Stack;
  * </ul>
  */
 public class ObservableSet<E> implements Set<E> {
+    public static final String SIZE_PROPERTY = "size";
+    public static final String CONTENT_PROPERTY = "content";
     private final Set<E> delegate;
     private final PropertyChangeSupport pcs;
     private final Closure test;
-
-    public static final String SIZE_PROPERTY = "size";
-    public static final String CONTENT_PROPERTY = "content";
 
     public ObservableSet() {
         this(new HashSet<E>(), null);
@@ -321,38 +320,6 @@ public class ObservableSet<E> implements Set<E> {
         fireSizeChangedEvent(oldSize, size());
     }
 
-    protected class ObservableIterator<E> implements Iterator<E> {
-        private final Iterator<E> iterDelegate;
-        private final Stack<E> stack = new Stack<E>();
-
-        public ObservableIterator(Iterator<E> iterDelegate) {
-            this.iterDelegate = iterDelegate;
-        }
-
-        public Iterator<E> getDelegate() {
-            return iterDelegate;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return iterDelegate.hasNext();
-        }
-
-        @Override
-        public E next() {
-            stack.push(iterDelegate.next());
-            return stack.peek();
-        }
-
-        @Override
-        public void remove() {
-            int oldSize = ObservableSet.this.size();
-            iterDelegate.remove();
-            fireElementRemovedEvent(stack.pop());
-            fireSizeChangedEvent(oldSize, size());
-        }
-    }
-
     public enum ChangeType {
         ADDED, REMOVED, CLEARED, MULTI_ADD, MULTI_REMOVE, NONE;
 
@@ -443,6 +410,38 @@ public class ObservableSet<E> implements Set<E> {
 
         public List getValues() {
             return Collections.unmodifiableList(values);
+        }
+    }
+
+    protected class ObservableIterator<E> implements Iterator<E> {
+        private final Iterator<E> iterDelegate;
+        private final Stack<E> stack = new Stack<E>();
+
+        public ObservableIterator(Iterator<E> iterDelegate) {
+            this.iterDelegate = iterDelegate;
+        }
+
+        public Iterator<E> getDelegate() {
+            return iterDelegate;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iterDelegate.hasNext();
+        }
+
+        @Override
+        public E next() {
+            stack.push(iterDelegate.next());
+            return stack.peek();
+        }
+
+        @Override
+        public void remove() {
+            int oldSize = ObservableSet.this.size();
+            iterDelegate.remove();
+            fireElementRemovedEvent(stack.pop());
+            fireSizeChangedEvent(oldSize, size());
         }
     }
 }

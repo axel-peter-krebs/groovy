@@ -510,7 +510,7 @@ public class SwingExtensions {
         int cols = delegate.getColumnCount();
         Object[] rowData = new Object[cols];
         int i = 0;
-        for (Iterator<?> it = DefaultGroovyMethods.iterator(row); it.hasNext() && i < cols;) {
+        for (Iterator<?> it = DefaultGroovyMethods.iterator(row); it.hasNext() && i < cols; ) {
             rowData[i++] = it.next();
         }
         return rowData;
@@ -1074,7 +1074,8 @@ public class SwingExtensions {
 
     /**
      * Allows the usage of a one-element string for a mnemonic
-     * @param button a AbstractButton
+     *
+     * @param button   a AbstractButton
      * @param mnemonic the String
      * @since 2.3.7
      */

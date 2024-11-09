@@ -38,6 +38,7 @@ public interface MutableMetaClass extends MetaClass {
 
     /**
      * Return whether the MetaClass has been modified or not
+     *
      * @return True if it has
      */
     boolean isModified();
@@ -50,7 +51,7 @@ public interface MutableMetaClass extends MetaClass {
      *
      * @param method the method to be added
      */
-     void addNewInstanceMethod(Method method);
+    void addNewInstanceMethod(Method method);
 
     /**
      * adds a new static method to this MetaClass. This is only
@@ -58,7 +59,7 @@ public interface MutableMetaClass extends MetaClass {
      *
      * @param method the method to be added
      */
-     void addNewStaticMethod(Method method);
+    void addNewStaticMethod(Method method);
 
     /**
      * Adds a new MetaMethod to the MetaClass

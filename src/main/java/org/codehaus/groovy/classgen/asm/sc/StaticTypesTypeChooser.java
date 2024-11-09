@@ -33,6 +33,26 @@ import static org.codehaus.groovy.ast.ClassHelper.isPrimitiveVoid;
  */
 public class StaticTypesTypeChooser extends StatementMetaTypeChooser {
 
+    /**
+     * The inferred type, in case of a variable expression, can be set on the
+     * accessed variable, so we take it instead of the reference.
+     *
+     * @param exp the expression for which to return the target expression
+     * @return the target node
+     */
+    private static ASTNode getTarget(final Expression exp) {
+        ASTNode target = exp;
+        while (target instanceof VariableExpression) {
+            Object var = ((VariableExpression) target).getAccessedVariable();
+            if (var instanceof ASTNode && var != target) {
+                target = (ASTNode) var;
+            } else {
+                break;
+            }
+        }
+        return target;
+    }
+
     @Override
     public ClassNode resolveType(final Expression exp, final ClassNode current) {
         ClassNode inferredType = exp.getNodeMetaData(StaticTypesMarker.DECLARATION_INFERRED_TYPE);
@@ -53,25 +73,5 @@ public class StaticTypesTypeChooser extends StatementMetaTypeChooser {
         }
 
         return super.resolveType(exp, current);
-    }
-
-    /**
-     * The inferred type, in case of a variable expression, can be set on the
-     * accessed variable, so we take it instead of the reference.
-     *
-     * @param exp the expression for which to return the target expression
-     * @return the target node
-     */
-    private static ASTNode getTarget(final Expression exp) {
-        ASTNode target = exp;
-        while (target instanceof VariableExpression) {
-            Object var = ((VariableExpression) target).getAccessedVariable();
-            if (var instanceof ASTNode && var != target) {
-                target = (ASTNode) var;
-            } else {
-                break;
-            }
-        }
-        return target;
     }
 }

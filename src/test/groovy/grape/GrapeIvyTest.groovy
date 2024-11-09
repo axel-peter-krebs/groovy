@@ -38,15 +38,15 @@ final class GrapeIvyTest {
     @BeforeClass
     static void setUpClass() {
         // ensure files are installed locally
-        Grape.resolve([autoDownload:true, classLoader:new GroovyClassLoader()],
-            [groupId:'log4j', artifactId:'log4j', version:'1.1.3'],
-            [groupId:'org.apache.poi', artifactId:'poi', version:'3.7'],
-            [groupId:'commons-lang', artifactId:'commons-lang', version:'2.6'],
-            [groupId:'com.jidesoft', artifactId:'jide-oss', version: jideVersion],
-            [groupId:'org.neo4j', artifactId:'neo4j-kernel', version:'2.0.0-RC1'],
-            [groupId:'net.sf.json-lib', artifactId:'json-lib', version:'2.2.3', classifier:'jdk15'],
-            [groupId:'org.apache.ivy', artifactId:'ivy', version:'2.0.0', conf:['default', 'optional']],
-            [groupId:'org.apache.commons', artifactId:'commons-digester3', version:'3.2', transitive:false])
+        Grape.resolve([autoDownload: true, classLoader: new GroovyClassLoader()],
+            [groupId: 'log4j', artifactId: 'log4j', version: '1.1.3'],
+            [groupId: 'org.apache.poi', artifactId: 'poi', version: '3.7'],
+            [groupId: 'commons-lang', artifactId: 'commons-lang', version: '2.6'],
+            [groupId: 'com.jidesoft', artifactId: 'jide-oss', version: jideVersion],
+            [groupId: 'org.neo4j', artifactId: 'neo4j-kernel', version: '2.0.0-RC1'],
+            [groupId: 'net.sf.json-lib', artifactId: 'json-lib', version: '2.2.3', classifier: 'jdk15'],
+            [groupId: 'org.apache.ivy', artifactId: 'ivy', version: '2.0.0', conf: ['default', 'optional']],
+            [groupId: 'org.apache.commons', artifactId: 'commons-digester3', version: '3.2', transitive: false])
     }
 
     @Test
@@ -55,7 +55,7 @@ final class GrapeIvyTest {
         shouldFail(CompilationFailedException) {
             shell.evaluate('import com.jidesoft.swing.JideSplitButton; JideSplitButton.class')
         }
-        Grape.grab(groupId:'com.jidesoft', artifactId:'jide-oss', version:jideVersion, classLoader:shell.classLoader)
+        Grape.grab(groupId: 'com.jidesoft', artifactId: 'jide-oss', version: jideVersion, classLoader: shell.classLoader)
         assert shell.evaluate('import com.jidesoft.swing.JideSplitButton; JideSplitButton.class').name == 'com.jidesoft.swing.JideSplitButton';
     }
 
@@ -65,7 +65,7 @@ final class GrapeIvyTest {
         shouldFail(CompilationFailedException) {
             shell.evaluate('import org.apache.poi.POIDocument; POIDocument.class')
         }
-        Grape.grab(groupId:'org.apache.poi', artifactId:'poi', version:'3.7', classLoader:shell.classLoader)
+        Grape.grab(groupId: 'org.apache.poi', artifactId: 'poi', version: '3.7', classLoader: shell.classLoader)
         assert shell.evaluate('import org.apache.poi.POIDocument; POIDocument.class').name == 'org.apache.poi.POIDocument'
     }
 
@@ -79,9 +79,9 @@ final class GrapeIvyTest {
             shell.evaluate('import com.jidesoft.swing.JideSplitButton; JideSplitButton.class')
         }
 
-        Grape.grab(classLoader:shell.classLoader,
-            [groupId:'org.apache.poi', artifactId:'poi', version:'3.7'],
-            [groupId:'com.jidesoft', artifactId:'jide-oss', version:jideVersion])
+        Grape.grab(classLoader: shell.classLoader,
+            [groupId: 'org.apache.poi', artifactId: 'poi', version: '3.7'],
+            [groupId: 'com.jidesoft', artifactId: 'jide-oss', version: jideVersion])
 
         assert shell.evaluate('import org.apache.poi.POIDocument; POIDocument.class').name == 'org.apache.poi.POIDocument'
         assert shell.evaluate('import com.jidesoft.swing.JideSplitButton; JideSplitButton.class').name == 'com.jidesoft.swing.JideSplitButton';
@@ -97,14 +97,14 @@ final class GrapeIvyTest {
             shell.evaluate('import org.apache.poi.POIDocument; POIDocument.class')
         }
 
-        Grape.grab(classLoader:shell.classLoader,
-            [groupId:'org.apache.poi', artifactId:'poi', version:'3.7'],
-            [groupId:'com.jidesoft', artifactId:'jide-oss', version:jideVersion])
+        Grape.grab(classLoader: shell.classLoader,
+            [groupId: 'org.apache.poi', artifactId: 'poi', version: '3.7'],
+            [groupId: 'com.jidesoft', artifactId: 'jide-oss', version: jideVersion])
 
         def loadedDependencies = Grape.listDependencies(shell.classLoader)
         assert loadedDependencies == [
-            [group:'org.apache.poi', module:'poi', version:'3.7'],
-            [group:'com.jidesoft', module:'jide-oss', version:jideVersion]
+            [group: 'org.apache.poi', module: 'poi', version: '3.7'],
+            [group: 'com.jidesoft', module: 'jide-oss', version: jideVersion]
         ]
     }
 
@@ -194,14 +194,14 @@ final class GrapeIvyTest {
     @Test
     void testSerialGrabs() {
         GroovyClassLoader loader = new GroovyClassLoader()
-        Grape.grab(groupId:'log4j', artifactId:'log4j', version:'1.1.3', classLoader:loader)
-        Grape.grab(groupId:'org.apache.poi', artifactId:'poi', version:'3.7', classLoader:loader)
+        Grape.grab(groupId: 'log4j', artifactId: 'log4j', version: '1.1.3', classLoader: loader)
+        Grape.grab(groupId: 'org.apache.poi', artifactId: 'poi', version: '3.7', classLoader: loader)
         def jars = jarNames(loader)
         // because poi asks for log4j 1.2.13, but we already have 1.1.3 so it won't be loaded
         assert jars.contains('log4j-1.1.3.jar')
         assert !jars.contains('log4j-1.2.13.jar')
 
-        Grape.grab(groupId:'log4j', artifactId:'log4j', version:'1.2.13', classLoader:loader)
+        Grape.grab(groupId: 'log4j', artifactId: 'log4j', version: '1.2.13', classLoader: loader)
         jars = jarNames(loader)
         // because log4j 1.1.3 was loaded first, 1.2.13 should not get loaded
         // even though it was explicitly asked for
@@ -234,7 +234,7 @@ final class GrapeIvyTest {
         ]
 
         def loader = new GroovyClassLoader()
-        Grape.grab(groupId:'org.apache.ivy', artifactId:'ivy', version:'2.0.0', classLoader:loader)
+        Grape.grab(groupId: 'org.apache.ivy', artifactId: 'ivy', version: '2.0.0', classLoader: loader)
         def jars = jarNames(loader)
         assert jars == coreJars, 'assert that no extraneous jars are present'
         assert coreJars - jars == noJars, 'assert that all core jars are present'
@@ -242,7 +242,7 @@ final class GrapeIvyTest {
         assert optionalJars - jars == optionalJars, 'assert that no optional jars are present'
 
         loader = new GroovyClassLoader()
-        Grape.grab(groupId:'org.apache.ivy', artifactId:'ivy', version:'2.0.0', conf:'optional', classLoader:loader)
+        Grape.grab(groupId: 'org.apache.ivy', artifactId: 'ivy', version: '2.0.0', conf: 'optional', classLoader: loader)
         jars = jarNames(loader)
         assert jars == optionalJars, 'assert that no extraneous jars are present'
         assert coreJars - jars == coreJars, 'assert that no core jars are present'
@@ -250,7 +250,7 @@ final class GrapeIvyTest {
         assert optionalJars - jars == noJars, 'assert that all optional jars are present'
 
         loader = new GroovyClassLoader()
-        Grape.grab(groupId:'org.apache.ivy', artifactId:'ivy', version:'2.0.0', conf:['default', 'optional'], classLoader:loader)
+        Grape.grab(groupId: 'org.apache.ivy', artifactId: 'ivy', version: '2.0.0', conf: ['default', 'optional'], classLoader: loader)
         jars = jarNames(loader)
         assert coreJars - jars == noJars, 'assert that all core jars are present'
         assert testJars - jars == testJars, 'assert that no test jars are present'
@@ -258,7 +258,8 @@ final class GrapeIvyTest {
         assert jars == coreJars + optionalJars, 'assert that no extraneous jars are present'
     }
 
-    @Test // GROOVY-8372
+    @Test
+    // GROOVY-8372
     void testConf2() {
         def tempDir = File.createTempDir()
         def jarsDir = new File(tempDir, 'foo/bar/jars'); jarsDir.mkdirs()
@@ -300,7 +301,7 @@ final class GrapeIvyTest {
             Grape.@instance = null
             def loader = new GroovyClassLoader()
             // request conf="other" which should resolve to artifact "baz-1.2.3.jar"
-            def uris = Grape.resolve(classLoader:loader, validate:false, [group:'foo', module:'bar', version:'1.2.3', conf:'other'])
+            def uris = Grape.resolve(classLoader: loader, validate: false, [group: 'foo', module: 'bar', version: '1.2.3', conf: 'other'])
 
             def jars = uris.collect { uri -> uri.path.split('/')[-1] } as Set
             assert 'baz-1.2.3.jar' in jars
@@ -318,7 +319,7 @@ final class GrapeIvyTest {
         shouldFail(CompilationFailedException) {
             shell.evaluate('import net.sf.json.JSON; JSON')
         }
-        Grape.grab(groupId:'net.sf.json-lib', artifactId:'json-lib', version:'2.2.3', classifier:'jdk15', classLoader:shell.classLoader)
+        Grape.grab(groupId: 'net.sf.json-lib', artifactId: 'json-lib', version: '2.2.3', classifier: 'jdk15', classLoader: shell.classLoader)
         assert shell.evaluate('import net.sf.json.JSON; JSON').name == 'net.sf.json.JSON'
     }
 
@@ -351,19 +352,20 @@ final class GrapeIvyTest {
         ]
 
         def loader = new GroovyClassLoader()
-        Grape.grab(groupId:'net.sf.json-lib', artifactId:'json-lib', version:'2.2.3', classifier:'jdk15', classLoader:loader)
+        Grape.grab(groupId: 'net.sf.json-lib', artifactId: 'json-lib', version: '2.2.3', classifier: 'jdk15', classLoader: loader)
         assert jarNames(loader) == coreJars
 
         loader = new GroovyClassLoader()
-        Grape.grab(groupId:'net.sf.json-lib', artifactId:'json-lib', version:'2.2.3', classifier:'jdk15', conf:'optional', classLoader:loader)
+        Grape.grab(groupId: 'net.sf.json-lib', artifactId: 'json-lib', version: '2.2.3', classifier: 'jdk15', conf: 'optional', classLoader: loader)
         assert jarNames(loader) == optionalJars
 
         loader = new GroovyClassLoader()
-        Grape.grab(groupId:'net.sf.json-lib', artifactId:'json-lib', version:'2.2.3', classifier:'jdk15', conf:['default', 'optional'], classLoader:loader)
+        Grape.grab(groupId: 'net.sf.json-lib', artifactId: 'json-lib', version: '2.2.3', classifier: 'jdk15', conf: ['default', 'optional'], classLoader: loader)
         assert jarNames(loader) == coreJars + optionalJars
     }
 
-    @Test // BeanUtils is a transitive dependency for Digester
+    @Test
+    // BeanUtils is a transitive dependency for Digester
     void testTransitiveShorthandControl() {
         assertScript '''
             @Grab('org.apache.commons:commons-digester3:3.2')
@@ -448,11 +450,12 @@ final class GrapeIvyTest {
         assert Grape.instance.ivyInstance.settings.defaultResolver.name == 'downloadGrapes'
     }
 
-    @Test // GROOVY-470: multiple jars should be loaded for an artifacts with and without a classifier
+    @Test
+    // GROOVY-470: multiple jars should be loaded for an artifacts with and without a classifier
     void testClassifierAndNonClassifierOnSameArtifact() {
         GroovyClassLoader loader = new GroovyClassLoader()
-        Grape.grab(groupId:'org.neo4j', artifactId:'neo4j-kernel', version:'2.0.0-RC1', classLoader:loader)
-        Grape.grab(groupId:'org.neo4j', artifactId:'neo4j-kernel', version:'2.0.0-RC1', classifier:'tests', classLoader:loader)
+        Grape.grab(groupId: 'org.neo4j', artifactId: 'neo4j-kernel', version: '2.0.0-RC1', classLoader: loader)
+        Grape.grab(groupId: 'org.neo4j', artifactId: 'neo4j-kernel', version: '2.0.0-RC1', classifier: 'tests', classLoader: loader)
 
         def jars = jarNames(loader)
         assert jars.contains('neo4j-kernel-2.0.0-RC1.jar')
@@ -460,15 +463,16 @@ final class GrapeIvyTest {
 
         // also check reverse ordering of deps
         loader = new GroovyClassLoader()
-        Grape.grab(groupId:'org.neo4j', artifactId:'neo4j-kernel', version:'2.0.0-RC1', classifier:'tests', classLoader:loader)
-        Grape.grab(groupId:'org.neo4j', artifactId:'neo4j-kernel', version:'2.0.0-RC1', classLoader:loader)
+        Grape.grab(groupId: 'org.neo4j', artifactId: 'neo4j-kernel', version: '2.0.0-RC1', classifier: 'tests', classLoader: loader)
+        Grape.grab(groupId: 'org.neo4j', artifactId: 'neo4j-kernel', version: '2.0.0-RC1', classLoader: loader)
 
         jars = jarNames(loader)
         assert jars.contains('neo4j-kernel-2.0.0-RC1.jar')
         assert jars.contains('neo4j-kernel-2.0.0-RC1-tests.jar')
     }
 
-    @Test // GROOVY-7548
+    @Test
+    // GROOVY-7548
     void testSystemProperties() {
         System.setProperty('groovy7548prop', 'x')
         assert System.getProperty('groovy7548prop') == 'x'
@@ -486,18 +490,20 @@ final class GrapeIvyTest {
         }
     }
 
-    @Test // GROOVY-7649
+    @Test
+    // GROOVY-7649
     void testResolveSucceedsAfterFailure() {
         GroovyClassLoader loader = new GroovyClassLoader()
 
         shouldFail {
-            Grape.resolve([classLoader:loader], [], [groupId:'bogus', artifactId:'bogus', version:'0.1'])
+            Grape.resolve([classLoader: loader], [], [groupId: 'bogus', artifactId: 'bogus', version: '0.1'])
         }
 
-        Grape.resolve([classLoader:loader], [], [groupId:'org.apache.poi', artifactId:'poi', version:'3.7'])
+        Grape.resolve([classLoader: loader], [], [groupId: 'org.apache.poi', artifactId: 'poi', version: '3.7'])
     }
 
-    @Test // GROOVY-9312
+    @Test
+    // GROOVY-9312
     void testResolveSucceedsFromLocalMavenRepository() {
         assumeTrue System.getProperty('maven.home') != null
         def tempDir = File.createTempDir()

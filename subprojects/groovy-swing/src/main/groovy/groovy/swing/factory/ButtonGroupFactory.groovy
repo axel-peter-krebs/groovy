@@ -42,7 +42,7 @@ class ButtonGroupFactory extends BeanFactory {
                 node.model.group = o
                 attributes.remove(buttonGroupAttr)
             }
-         }
+        }
     }
 
 }

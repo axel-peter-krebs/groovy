@@ -34,22 +34,15 @@ import java.awt.event.KeyEvent;
 
 public class GroovyFilter extends StructuredSyntaxDocumentFilter {
 
-    // java tab policy action
-    private static final Action AUTO_TAB_ACTION = new AutoTabAction();
-
     // Style names
     public static final String COMMENT = "comment";
     public static final String SLASH_STAR_COMMENT = "/\\*(?s:.)*?(?:\\*/|\\z)";
     public static final String SLASH_SLASH_COMMENT = "//.*";
-
     public static final String QUOTES =
-            "(?ms:\"{3}.*?(?:\"{3}|\\z))|(?:\"{1}.*?(?:\"|\\Z))";
-
+        "(?ms:\"{3}.*?(?:\"{3}|\\z))|(?:\"{1}.*?(?:\"|\\Z))";
     public static final String SINGLE_QUOTES =
-            "(?ms:'{3}(?!'{1,3}).*?(?:'{3}|\\z))|(?:'{1}.*?(?:'|\\z))";
-
+        "(?ms:'{3}(?!'{1,3}).*?(?:'{3}|\\z))|(?:'{1}.*?(?:'|\\z))";
     public static final String SLASHY_QUOTES = "(?:/[^/*].*?(?<!\\\\)/|(?ms:\\$/.*?(?:/\\$|\\z)))";
-
     public static final String DIGIT = "DIGIT";
     public static final String DECIMAL_INTEGER_LITERAL = "(?:0|[1-9](?:[_0-9]*[0-9])?)[lL]?";
     public static final String HEX_INTEGER_LITERAL = "0[xX][0-9a-fA-F](?:[0-9a-fA-F_]*[0-9a-fA-F])?";
@@ -57,73 +50,71 @@ public class GroovyFilter extends StructuredSyntaxDocumentFilter {
     public static final String BINARY_INTEGER_LITERAL = "0[bB][01](?:[_01]*[01])?";
     public static final String DECIMAL_FLOATING_POINT_LITERAL = "(?:0|[1-9](?:[_0-9]*[0-9])?)?\\.?[0-9](?:[_0-9]*[0-9])?(?:[eE][+-]?[0-9]+(?:[_0-9]*[0-9])?)?[fFdD]?";
     public static final String HEXADECIMAL_FLOATING_POINT_LITERAL = "0[xX](?:[0-9a-fA-F](?:[0-9a-fA-F_]*[0-9a-fA-F])?)?\\.?(?:[0-9a-fA-F_]*[0-9a-fA-F])?(?:[pP][+-]?[0-9]+(?:[_0-9]*[0-9])?)?[fFdD]?";
-
     public static final String IDENT = "[\\w\\$&&[\\D]][\\w\\$]*";
     public static final String OPERATION = "[\\w\\$&&[\\D]][\\w\\$]* *\\(";
     public static final String LEFT_PARENS = "\\(";
-
-    private static final Color COMMENT_COLOR =
-            Color.LIGHT_GRAY.darker().darker();
-
-
     public static final String RESERVED_WORD = "reserved";
     public static final String[] RESERVED_WORDS = {"\\babstract\\b",
-            "\\bassert\\b",
-            "\\bdefault\\b",
-            "\\bif\\b",
-            "\\bprivate\\b",
-            "\\bthis\\b",
-            "\\bboolean\\b",
-            "\\bdo\\b",
-            "\\bimplements\\b",
-            "\\bprotected\\b",
-            "\\bthrow\\b",
-            "\\bbreak\\b",
-            "\\bdouble\\b",
-            "\\bimport\\b",
-            "\\bpublic\\b",
-            "\\bthrows\\b",
-            "\\bbyte\\b",
-            "\\belse\\b",
-            "\\binstanceof\\b",
-            "\\breturn\\b",
-            "\\btransient\\b",
-            "\\bcase\\b",
-            "\\bextends\\b",
-            "\\bint\\b",
-            "\\bshort\\b",
-            "\\btry\\b",
-            "\\bcatch\\b",
-            "\\bfinal\\b",
-            "\\binterface\\b",
-            "\\benum\\b",
-            "\\bstatic\\b",
-            "\\bvoid\\b",
-            "\\bchar\\b",
-            "\\bfinally\\b",
-            "\\blong\\b",
-            "\\bstrictfp\\b",
-            "\\bvolatile\\b",
-            "\\bclass\\b",
-            "\\bfloat\\b",
-            "\\bnative\\b",
-            "\\bsuper\\b",
-            "\\bwhile\\b",
-            "\\bconst\\b",
-            "\\bfor\\b",
-            "\\bnew\\b",
-            "\\bswitch\\b",
-            "\\bcontinue\\b",
-            "\\bgoto\\b",
-            "\\bpackage\\b",
-            "\\bdef\\b",
-            "\\bvar\\b",
-            "\\bas\\b",
-            "\\bin\\b",
-            "\\bsynchronized\\b",
-            "\\bnull\\b",
-            "\\btrait\\b"
+        "\\bassert\\b",
+        "\\bdefault\\b",
+        "\\bif\\b",
+        "\\bprivate\\b",
+        "\\bthis\\b",
+        "\\bboolean\\b",
+        "\\bdo\\b",
+        "\\bimplements\\b",
+        "\\bprotected\\b",
+        "\\bthrow\\b",
+        "\\bbreak\\b",
+        "\\bdouble\\b",
+        "\\bimport\\b",
+        "\\bpublic\\b",
+        "\\bthrows\\b",
+        "\\bbyte\\b",
+        "\\belse\\b",
+        "\\binstanceof\\b",
+        "\\breturn\\b",
+        "\\btransient\\b",
+        "\\bcase\\b",
+        "\\bextends\\b",
+        "\\bint\\b",
+        "\\bshort\\b",
+        "\\btry\\b",
+        "\\bcatch\\b",
+        "\\bfinal\\b",
+        "\\binterface\\b",
+        "\\benum\\b",
+        "\\bstatic\\b",
+        "\\bvoid\\b",
+        "\\bchar\\b",
+        "\\bfinally\\b",
+        "\\blong\\b",
+        "\\bstrictfp\\b",
+        "\\bvolatile\\b",
+        "\\bclass\\b",
+        "\\bfloat\\b",
+        "\\bnative\\b",
+        "\\bsuper\\b",
+        "\\bwhile\\b",
+        "\\bconst\\b",
+        "\\bfor\\b",
+        "\\bnew\\b",
+        "\\bswitch\\b",
+        "\\bcontinue\\b",
+        "\\bgoto\\b",
+        "\\bpackage\\b",
+        "\\bdef\\b",
+        "\\bvar\\b",
+        "\\bas\\b",
+        "\\bin\\b",
+        "\\bsynchronized\\b",
+        "\\bnull\\b",
+        "\\btrait\\b"
     };
+    // java tab policy action
+    private static final Action AUTO_TAB_ACTION = new AutoTabAction();
+    private static final Color COMMENT_COLOR =
+        Color.LIGHT_GRAY.darker().darker();
 
     /**
      * Creates a new instance of GroovyFilter
@@ -131,6 +122,12 @@ public class GroovyFilter extends StructuredSyntaxDocumentFilter {
     public GroovyFilter(DefaultStyledDocument doc) {
         super(doc);
         init();
+    }
+
+    public static void installAutoTabAction(JTextComponent tComp) {
+        tComp.getActionMap().put("GroovyFilter-autoTab", AUTO_TAB_ACTION);
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
+        tComp.getInputMap().put(keyStroke, "GroovyFilter-autoTab");
     }
 
     private void init() {
@@ -170,7 +167,7 @@ public class GroovyFilter extends StructuredSyntaxDocumentFilter {
         getRootNode().putStyle(SINGLE_QUOTES, charQuotes);
         getRootNode().putStyle(SLASHY_QUOTES, slashyQuotes);
 
-        getRootNode().putStyle(new String[] {
+        getRootNode().putStyle(new String[]{
             HEX_INTEGER_LITERAL,
             OCTAL_INTEGER_LITERAL,
             BINARY_INTEGER_LITERAL,
@@ -191,17 +188,11 @@ public class GroovyFilter extends StructuredSyntaxDocumentFilter {
         getRootNode().putChild(IDENT, node);
     }
 
-    public static void installAutoTabAction(JTextComponent tComp) {
-        tComp.getActionMap().put("GroovyFilter-autoTab", AUTO_TAB_ACTION);
-        KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
-        tComp.getInputMap().put(keyStroke, "GroovyFilter-autoTab");
-    }
-
     private static class AutoTabAction extends AbstractAction {
 
-        private StyledDocument doc;
         private final Segment segment = new Segment();
         private final StringBuilder buffer = new StringBuilder();
+        private StyledDocument doc;
 
         @Override
         public void actionPerformed(ActionEvent ae) {
@@ -210,8 +201,7 @@ public class GroovyFilter extends StructuredSyntaxDocumentFilter {
                 doc = (StyledDocument) tComp.getDocument();
                 try {
                     doc.getText(0, doc.getLength(), segment);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     // should NEVER reach here
                     e.printStackTrace();
                 }
@@ -226,9 +216,8 @@ public class GroovyFilter extends StructuredSyntaxDocumentFilter {
                 }
                 try {
                     doc.insertString(offset, buffer.toString(),
-                            doc.getDefaultRootElement().getAttributes());
-                }
-                catch (BadLocationException ble) {
+                        doc.getDefaultRootElement().getAttributes());
+                } catch (BadLocationException ble) {
                     ble.printStackTrace();
                 }
             }
@@ -241,17 +230,17 @@ public class GroovyFilter extends StructuredSyntaxDocumentFilter {
             while (offset > -1 && cont) {
                 Element el = doc.getCharacterElement(offset);
                 Object color =
-                        el.getAttributes().getAttribute(StyleConstants.Foreground);
+                    el.getAttributes().getAttribute(StyleConstants.Foreground);
                 if (!COMMENT_COLOR.equals(color)) {
                     cont = segment.array[offset] != '{' &&
-                            segment.array[offset] != '}';
+                        segment.array[offset] != '}';
                 }
                 offset -= cont ? 1 : 0;
             }
 
             if (offset > -1 && segment.array[offset] == '{') {
                 while (offset > -1 &&
-                        !Character.isWhitespace(segment.array[offset--])) {
+                    !Character.isWhitespace(segment.array[offset--])) {
                 }
             }
 

@@ -24,5 +24,6 @@ import java.lang.annotation.*
 @Target(ElementType.TYPE)
 @interface ConstAnnotation {
     int[] ints() default []
+
     String[] strings() default []
 }

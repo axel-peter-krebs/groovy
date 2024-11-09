@@ -32,29 +32,41 @@ import java.util.List;
  */
 public class TryCatchStatement extends Statement {
 
-    private Statement tryStatement;
-    private Statement finallyStatement;
     private final List<CatchStatement> catchStatements = new ArrayList<>();
     private final List<ExpressionStatement> resourceStatements = new ArrayList<>();
+    private Statement tryStatement;
+    private Statement finallyStatement;
 
     public TryCatchStatement(Statement tryStatement, Statement finallyStatement) {
         this.tryStatement = tryStatement;
         this.finallyStatement = finallyStatement;
     }
 
+    public static boolean isResource(final Expression expression) {
+        return Boolean.TRUE.equals(expression.getNodeMetaData("_IS_RESOURCE"));
+    }
+
+    //
+
     @Override
     public void visit(GroovyCodeVisitor visitor) {
         visitor.visitTryCatchFinally(this);
     }
 
-    //
-
     public Statement getTryStatement() {
         return tryStatement;
     }
 
+    public void setTryStatement(Statement tryStatement) {
+        this.tryStatement = tryStatement;
+    }
+
     public Statement getFinallyStatement() {
         return finallyStatement;
+    }
+
+    public void setFinallyStatement(Statement finallyStatement) {
+        this.finallyStatement = finallyStatement;
     }
 
     /**
@@ -71,6 +83,8 @@ public class TryCatchStatement extends Statement {
         return catchStatements;
     }
 
+    //--------------------------------------------------------------------------
+
     /**
      * @return The resource statement of the given index or null.
      */
@@ -83,20 +97,6 @@ public class TryCatchStatement extends Statement {
 
     public List<ExpressionStatement> getResourceStatements() {
         return resourceStatements;
-    }
-
-    public static boolean isResource(final Expression expression) {
-        return Boolean.TRUE.equals(expression.getNodeMetaData("_IS_RESOURCE"));
-    }
-
-    //--------------------------------------------------------------------------
-
-    public void setTryStatement(Statement tryStatement) {
-        this.tryStatement = tryStatement;
-    }
-
-    public void setFinallyStatement(Statement finallyStatement) {
-        this.finallyStatement = finallyStatement;
     }
 
     public void setCatchStatement(int idx, CatchStatement catchStatement) {

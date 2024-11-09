@@ -50,35 +50,45 @@ import static org.codehaus.groovy.runtime.MetaClassHelper.EMPTY_CLASS_ARRAY;
  */
 @SuppressWarnings({"rawtypes", "serial"})
 public class ProxyGenerator {
-    private static final Map<Object,Object> EMPTY_CLOSURE_MAP = Collections.emptyMap();
+    public static final ProxyGenerator INSTANCE = new ProxyGenerator(); // TODO: Should we make ProxyGenerator singleton?
+    private static final Map<Object, Object> EMPTY_CLOSURE_MAP = Collections.emptyMap();
 
     static {
         // wrap the standard MetaClass with the delegate
         setMetaClass(GroovySystem.getMetaClassRegistry().getMetaClass(ProxyGenerator.class));
     }
 
-    public static final ProxyGenerator INSTANCE = new ProxyGenerator(); // TODO: Should we make ProxyGenerator singleton?
-
     /**
      * Caches proxy classes. When, for example, a call like: <code>map as MyClass</code>
      * is found, then a lookup is made into the cache to find if a suitable adapter
      * exists already. If so, it is reused instead of generating a new one.
      */
-    private final Map<CacheKey,ProxyGeneratorAdapter> adapterCache;
+    private final Map<CacheKey, ProxyGeneratorAdapter> adapterCache;
+    private boolean debug;
+    private boolean emptyMethods;
+    private ClassLoader override;
 
     {
         final int cache_size = Integer.getInteger("groovy.adapter.cache.default.size", 64);
-        float load_factor = 0.75f; int init_capacity = (int) Math.ceil(cache_size / load_factor) + 1;
+        float load_factor = 0.75f;
+        int init_capacity = (int) Math.ceil(cache_size / load_factor) + 1;
         adapterCache = new LinkedHashMap<CacheKey, ProxyGeneratorAdapter>(init_capacity, load_factor, true) {
-            @Override protected boolean removeEldestEntry(Map.Entry<CacheKey, ProxyGeneratorAdapter> entry) {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<CacheKey, ProxyGeneratorAdapter> entry) {
                 return size() > cache_size;
             }
         };
     }
 
-    private boolean debug;
-    private boolean emptyMethods;
-    private ClassLoader override;
+    private static void setMetaClass(final MetaClass metaClass) {
+        final MetaClass newMetaClass = new DelegatingMetaClass(metaClass) {
+            @Override
+            public Object invokeStaticMethod(Object object, String methodName, Object[] arguments) {
+                return InvokerHelper.invokeMethod(INSTANCE, methodName, arguments);
+            }
+        };
+        GroovySystem.getMetaClassRegistry().setMetaClass(ProxyGenerator.class, newMetaClass);
+    }
 
     public boolean getDebug() {
         return debug;
@@ -169,7 +179,7 @@ public class ProxyGenerator {
         if (clazz != null && Modifier.isFinal(clazz.getModifiers())) {
             throw new GroovyCastException("Cannot coerce a map to class " + clazz.getName() + " because it is a final class");
         }
-        Map<Object,Object> map = closureMap != null ? closureMap : EMPTY_CLOSURE_MAP;
+        Map<Object, Object> map = closureMap != null ? closureMap : EMPTY_CLOSURE_MAP;
         ProxyGeneratorAdapter adapter = createAdapter(map, interfaces, null, clazz);
 
         return adapter.proxy(map, constructorArgs);
@@ -200,19 +210,19 @@ public class ProxyGenerator {
      *
      * @param closureMap the closure for methods not handled by the delegate
      * @param interfaces interfaces to be implemented
-     * @param delegate the delegate object
-     * @param baseClass the base class
-     * @param name the name of the proxy, unused, but kept for compatibility with previous versions of Groovy.
+     * @param delegate   the delegate object
+     * @param baseClass  the base class
+     * @param name       the name of the proxy, unused, but kept for compatibility with previous versions of Groovy.
      * @return a proxy object implementing the specified interfaces, and delegating to the provided object
      */
     public GroovyObject instantiateDelegateWithBaseClass(Map closureMap, List<Class> interfaces, Object delegate, Class baseClass, String name) {
-        Map<Object,Object> map = closureMap != null ? closureMap : EMPTY_CLOSURE_MAP;
+        Map<Object, Object> map = closureMap != null ? closureMap : EMPTY_CLOSURE_MAP;
         ProxyGeneratorAdapter adapter = createAdapter(map, interfaces, delegate.getClass(), baseClass);
 
-        return adapter.delegatingProxy(delegate, map, (Object[])null);
+        return adapter.delegatingProxy(delegate, map, (Object[]) null);
     }
 
-    private ProxyGeneratorAdapter createAdapter(final Map<Object,Object> closureMap, final List<Class> interfaceList, final Class delegateClass, final Class baseClass) {
+    private ProxyGeneratorAdapter createAdapter(final Map<Object, Object> closureMap, final List<Class> interfaceList, final Class delegateClass, final Class baseClass) {
         Class[] interfaces = interfaceList != null ? interfaceList.toArray(EMPTY_CLASS_ARRAY) : EMPTY_CLASS_ARRAY;
         final Class base = baseClass != null ? baseClass : (interfaces.length > 0 ? interfaces[0] : Object.class);
         Set<String> methodNames = closureMap.isEmpty() ? Collections.emptySet() : new HashSet<>();
@@ -228,16 +238,6 @@ public class ProxyGenerator {
                 return new ProxyGeneratorAdapter(closureMap, base, interfaces, classLoader, emptyMethods, useDelegate ? delegateClass : null);
             });
         }
-    }
-
-    private static void setMetaClass(final MetaClass metaClass) {
-        final MetaClass newMetaClass = new DelegatingMetaClass(metaClass) {
-            @Override
-            public Object invokeStaticMethod(Object object, String methodName, Object[] arguments) {
-                return InvokerHelper.invokeMethod(INSTANCE, methodName, arguments);
-            }
-        };
-        GroovySystem.getMetaClassRegistry().setMetaClass(ProxyGenerator.class, newMetaClass);
     }
 
     //--------------------------------------------------------------------------

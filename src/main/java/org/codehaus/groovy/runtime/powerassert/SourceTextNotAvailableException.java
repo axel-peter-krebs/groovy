@@ -30,7 +30,7 @@ public class SourceTextNotAvailableException extends RuntimeException {
     // only accepts AssertStatementS so that better error messages can be produced
     public SourceTextNotAvailableException(AssertStatement stat, SourceUnit unit, String msg) {
         super(String.format("%s for %s at (%d,%d)-(%d,%d) in %s",
-                msg, stat.getBooleanExpression().getText(), stat.getLineNumber(), stat.getColumnNumber(),
-                stat.getLastLineNumber(), stat.getLastColumnNumber(), unit.getName()));
+            msg, stat.getBooleanExpression().getText(), stat.getLineNumber(), stat.getColumnNumber(),
+            stat.getLastLineNumber(), stat.getLastColumnNumber(), unit.getName()));
     }
 }

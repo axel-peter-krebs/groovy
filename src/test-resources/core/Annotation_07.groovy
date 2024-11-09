@@ -16,5 +16,6 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-@Test1 @Test2
+@Test1
+@Test2
 import java.util.Map

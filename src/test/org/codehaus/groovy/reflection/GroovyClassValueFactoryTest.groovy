@@ -25,22 +25,22 @@ import java.util.concurrent.atomic.AtomicInteger
 import org.codehaus.groovy.reflection.GroovyClassValue.ComputeValue
 
 class GroovyClassValueFactoryTest extends GroovyTestCase {
-	void testCreateGroovyClassValue(){
-		final AtomicInteger counter = new AtomicInteger()
-		GroovyClassValue<String> classValue = GroovyClassValueFactory.createGroovyClassValue(new ComputeValue<String>(){
-			String computeValue(Class<?> type){
-				counter.incrementAndGet()
-				return type.name
-			}
-		})
-		assertEquals("retrieved String class value", String.name, classValue.get(String))
-		assertEquals("computeValue correctly invoked 1 time", 1, counter.get())
-		assertEquals("retrieved String class value", String.name, classValue.get(String))
-		assertEquals("computeValue correctly invoked 1 time", 1, counter.get())
-		assertEquals("retrieved Integer class value", Integer.name, classValue.get(Integer))
-		assertEquals("computeValue correctly invoked 2 times", 2, counter.get())
-		classValue.remove(String)
-		assertEquals("retrieved String class value", String.name, classValue.get(String))
-		assertEquals("computeValue correctly invoked 3 times", 3, counter.get())
-	}
+    void testCreateGroovyClassValue() {
+        final AtomicInteger counter = new AtomicInteger()
+        GroovyClassValue<String> classValue = GroovyClassValueFactory.createGroovyClassValue(new ComputeValue<String>() {
+            String computeValue(Class<?> type) {
+                counter.incrementAndGet()
+                return type.name
+            }
+        })
+        assertEquals("retrieved String class value", String.name, classValue.get(String))
+        assertEquals("computeValue correctly invoked 1 time", 1, counter.get())
+        assertEquals("retrieved String class value", String.name, classValue.get(String))
+        assertEquals("computeValue correctly invoked 1 time", 1, counter.get())
+        assertEquals("retrieved Integer class value", Integer.name, classValue.get(Integer))
+        assertEquals("computeValue correctly invoked 2 times", 2, counter.get())
+        classValue.remove(String)
+        assertEquals("retrieved String class value", String.name, classValue.get(String))
+        assertEquals("computeValue correctly invoked 3 times", 3, counter.get())
+    }
 }

@@ -26,7 +26,7 @@ import org.codehaus.groovy.classgen.asm.AbstractBytecodeTestCase
 class GetAnnotationStaticCompileTest extends AbstractBytecodeTestCase {
 
     void testGetAnnotationShouldNotProduceProxy() {
-        def bytecode = compile([method:'m'],'''import java.lang.annotation.Retention
+        def bytecode = compile([method: 'm'], '''import java.lang.annotation.Retention
             import java.lang.annotation.RetentionPolicy
             import java.lang.annotation.Target
             import java.lang.annotation.ElementType

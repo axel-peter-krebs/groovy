@@ -35,21 +35,21 @@ class CastTest extends GroovyTestCase {
     void testImplicitCast() {
         Short x = 6
 
-        assert x.class == Short , "Type is ${x.class}"
+        assert x.class == Short, "Type is ${x.class}"
 
         methodWithShort(x)
 
         x = 7
-        assert x.class == Short , "Type is ${x.class}"
+        assert x.class == Short, "Type is ${x.class}"
     }
 
     void testImplicitCastOfField() {
 
-        assert b.class == Short , "Type is ${b.class}"
+        assert b.class == Short, "Type is ${b.class}"
 
         b = 5
 
-        assert b.class == Short , "Type is ${b.class}"
+        assert b.class == Short, "Type is ${b.class}"
     }
 
     void testIntCast() {
@@ -63,7 +63,7 @@ class CastTest extends GroovyTestCase {
         def c = 'x'
 
         assert i == c
-        assert i =='x'
+        assert i == 'x'
         assert c == 'x'
         assert i == i
         assert c == c
@@ -78,7 +78,7 @@ class CastTest extends GroovyTestCase {
 
         assert c instanceof Character
 
-        c = (Character)10
+        c = (Character) 10
 
         assert c instanceof Character
     }
@@ -96,15 +96,15 @@ class CastTest extends GroovyTestCase {
     // br
     void testPrimitiveCasting() {
         def d = 1.23
-        def i1 = (int)d
-        def i2 = (Integer)d
+        def i1 = (int) d
+        def i2 = (Integer) d
         assert i1.class.name == 'java.lang.Integer'
         assert i2.class.name == 'java.lang.Integer'
 
         def ch = (char) i1
         assert ch.class.name == 'java.lang.Character'
 
-        def dd = (double)d
+        def dd = (double) d
         assert dd.class.name == 'java.lang.Double'
 
     }
@@ -115,14 +115,14 @@ class CastTest extends GroovyTestCase {
 
         // identity test
         mySet = {} as SortedSet
-        assert mySet.is ( mySet as SortedSet )
+        assert mySet.is(mySet as SortedSet)
 
         mySet = [2, 3, 4, 3] as Set
         assert mySet instanceof HashSet
 
         // identity test
         mySet = {} as Set
-        assert mySet.is ( mySet as Set )
+        assert mySet.is(mySet as Set)
 
         // array test
         mySet = new String[2] as Set // Array of 2 null Strings
@@ -133,12 +133,12 @@ class CastTest extends GroovyTestCase {
         mySet = "a,b".split(",") as Set // Array of 2 different Strings
         assert mySet instanceof Set
         assert mySet.size() == 2
-        assert mySet == new HashSet([ "a", "b" ])
+        assert mySet == new HashSet(["a", "b"])
 
         mySet = "a,a".split(",") as Set // Array of 2 different Strings
         assert mySet instanceof Set
         assert mySet.size() == 1
-        assert mySet == new HashSet([ "a" ])
+        assert mySet == new HashSet(["a"])
     }
 
     void testCastToAbstractClass() {
@@ -170,9 +170,9 @@ class CastTest extends GroovyTestCase {
         assert h == [100, 200]
         assert h.class.componentType == int
 
-        def sa = [null,"1"] as String[]
-        assert sa[0]==null
-        assert sa[1]=="1"
+        def sa = [null, "1"] as String[]
+        assert sa[0] == null
+        assert sa[1] == "1"
         assert sa.class.componentType == String
     }
 

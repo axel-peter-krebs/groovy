@@ -23,6 +23,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+interface AnnotatedStub {
+    List<AnnotationStub> getAnnotations();
+}
+
+interface AnnotatedTypeStub {
+    List<TypeAnnotationStub> getTypeAnnotations();
+}
+
 /**
  * Data structures holding class info to enable lazy loading
  */
@@ -32,11 +40,10 @@ public class ClassStub extends MemberStub {
     final String signature;
     final String superName;
     final String[] interfaceNames;
+    final List<String> permittedSubclasses = new ArrayList<>(1);
+    final List<RecordComponentStub> recordComponents = new ArrayList<>(1);
     List<MethodStub> methods;
     List<FieldStub> fields;
-    final List<String> permittedSubclasses = new ArrayList<>(1);
-    final List<RecordComponentStub> recordComponents  = new ArrayList<>(1);
-
     // Used to store the real access modifiers for inner classes
     int innerClassModifiers = -1;
 
@@ -47,14 +54,6 @@ public class ClassStub extends MemberStub {
         this.superName = superName;
         this.interfaceNames = interfaceNames;
     }
-}
-
-interface AnnotatedStub {
-    List<AnnotationStub> getAnnotations();
-}
-
-interface AnnotatedTypeStub {
-    List<TypeAnnotationStub> getTypeAnnotations();
 }
 
 class MemberStub implements AnnotatedStub {

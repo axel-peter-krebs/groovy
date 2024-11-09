@@ -61,7 +61,7 @@ class ASTMatcherFilteringTest extends GroovyTestCase {
 @Retention(RetentionPolicy.SOURCE)
 @Target([ElementType.METHOD])
 @GroovyASTTransformationClass(["metaprogramming.JokingASTTransformation"])
-@interface Joking { }
+@interface Joking {}
 // end::jokingannotation[]
 
 // tag::jokingtransformation[]

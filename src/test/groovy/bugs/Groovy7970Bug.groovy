@@ -24,7 +24,7 @@ class Groovy7970Bug extends GroovyTestCase {
 
     private static final String getScriptAIC(String visibility, boolean cs) {
         """
-        ${ cs ? '@groovy.transform.CompileStatic' : ''}
+        ${cs ? '@groovy.transform.CompileStatic' : ''}
         class Bar {
             $visibility String renderTemplate(String arg) { "dummy\$arg" }
             def foo() {
@@ -41,7 +41,7 @@ class Groovy7970Bug extends GroovyTestCase {
 
     private static final String getScriptNestedAIC(String visibility, boolean cs) {
         """
-        ${ cs ? '@groovy.transform.CompileStatic' : ''}
+        ${cs ? '@groovy.transform.CompileStatic' : ''}
         class Bar {
             $visibility String renderTemplate(String arg) { "dummy\$arg" }
             def foo() {
@@ -58,7 +58,7 @@ class Groovy7970Bug extends GroovyTestCase {
 
     private static final String getScriptInner(String visibility, boolean cs) {
         """
-        ${ cs ? '@groovy.transform.CompileStatic' : ''}
+        ${cs ? '@groovy.transform.CompileStatic' : ''}
         class Bar {
             $visibility String renderTemplate(String arg) { "dummy\$arg" }
             class Inner {
@@ -74,7 +74,7 @@ class Groovy7970Bug extends GroovyTestCase {
 
     private static final String getScriptNestedInner(String visibility, boolean cs) {
         """
-        ${ cs ? '@groovy.transform.CompileStatic' : ''}
+        ${cs ? '@groovy.transform.CompileStatic' : ''}
         class Bar {
             $visibility String renderTemplate(String arg) { "dummy\$arg" }
             class Inner {

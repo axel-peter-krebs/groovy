@@ -57,9 +57,9 @@ import java.util.Optional;
  *           |
  *       childLoader    (has classpath: a.jar;b.jar;c.jar)
  * </pre>
- *
+ * <p>
  * class C (from c.jar) extends B (from b.jar)
- *
+ * <p>
  * childLoader.find("C")
  * <pre>
  * --&gt; parentLoader does know C.class, try to load it
@@ -67,7 +67,7 @@ import java.util.Optional;
  * --&gt; parentLoader is unable to find B.class in a.jar or c.jar
  * --&gt; NoClassDefFoundException!
  * </pre>
- *
+ * <p>
  * if childLoader had tried to load the class by itself, there
  * would be no problem. Changing childLoader to be a RootLoader
  * instance will solve that problem.
@@ -117,8 +117,8 @@ public class RootLoader extends URLClassLoader {
         String groovyHome = System.getProperty("groovy.home");
         for (String url : lc.getGrabUrls()) {
             Map<String, Object> grabParts = GrapeUtil.getIvyParts(url);
-            String group   = (String) grabParts.get("group");
-            String module  = (String) grabParts.get("module");
+            String group = (String) grabParts.get("group");
+            String module = (String) grabParts.get("module");
             String version = (String) grabParts.get("version");
             File jar = new File(groovyHome + "/repo/" + group + "/" + module + "/jars/" + module + "-" + version + ".jar");
             try {

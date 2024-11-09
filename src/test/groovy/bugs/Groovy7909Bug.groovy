@@ -21,7 +21,7 @@ package groovy.bugs
 import gls.CompilableTestSupport
 
 class Groovy7909Bug extends CompilableTestSupport {
-    void testDynamicCompile(){
+    void testDynamicCompile() {
         shouldCompile '''
 trait Three implements One, Two {
     def postMake() {
@@ -46,7 +46,8 @@ Four f = new Four()
 f.make()
     '''
     }
-    void testStaticCompile(){
+
+    void testStaticCompile() {
         shouldCompile '''
 @groovy.transform.CompileStatic
 trait Three implements One, Two {

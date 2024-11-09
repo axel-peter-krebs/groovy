@@ -26,7 +26,7 @@ import org.codehaus.groovy.reflection.CachedMethod;
  */
 public class NewMetaMethod extends ReflectionMetaMethod {
     protected static final CachedClass[] EMPTY_TYPE_ARRAY = {};
-    protected CachedClass[] bytecodeParameterTypes ;
+    protected CachedClass[] bytecodeParameterTypes;
 
     public NewMetaMethod(CachedMethod method) {
         super(method);

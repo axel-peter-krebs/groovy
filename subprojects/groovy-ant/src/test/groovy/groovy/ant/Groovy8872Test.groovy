@@ -92,7 +92,7 @@ class Groovy8872Test extends AntTestCase {
 //            ant.project.addBuildListener(debugLogger)
             ant.mkdir(dir: 'build')
             ant.javac(classpath: '.', destdir: 'build', srcdir: 'src',
-                    includes: '*.java', includeantruntime: 'false', fork: 'true') {
+                includes: '*.java', includeantruntime: 'false', fork: 'true') {
                 compilerarg(value: '-parameters')
             }
             ant.taskdef(name: 'groovyc', classname: 'org.codehaus.groovy.ant.Groovyc')

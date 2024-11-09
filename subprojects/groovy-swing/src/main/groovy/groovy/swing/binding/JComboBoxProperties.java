@@ -64,7 +64,7 @@ class JComboBoxSelectedElementBinding extends AbstractSyntheticBinding implement
 
     @Override
     public synchronized void syntheticBind() {
-        boundComboBox = (JComboBox) ((PropertyBinding)sourceBinding).getBean();
+        boundComboBox = (JComboBox) ((PropertyBinding) sourceBinding).getBean();
         boundComboBox.addPropertyChangeListener("model", this);
         boundComboBox.addItemListener(this);
     }
@@ -102,7 +102,7 @@ class JComboBoxSelectedIndexBinding extends AbstractSyntheticBinding implements 
 
     @Override
     public synchronized void syntheticBind() {
-        boundComboBox = (JComboBox) ((PropertyBinding)sourceBinding).getBean();
+        boundComboBox = (JComboBox) ((PropertyBinding) sourceBinding).getBean();
         boundComboBox.addPropertyChangeListener("model", this);
         boundComboBox.addItemListener(this);
     }
@@ -140,7 +140,7 @@ class JComboBoxElementsBinding extends AbstractSyntheticBinding implements ListD
 
     @Override
     protected void syntheticBind() {
-        boundComboBox = (JComboBox) ((PropertyBinding)sourceBinding).getBean();
+        boundComboBox = (JComboBox) ((PropertyBinding) sourceBinding).getBean();
         boundComboBox.addPropertyChangeListener("model", this);
         boundComboBox.getModel().addListDataListener(this);
     }

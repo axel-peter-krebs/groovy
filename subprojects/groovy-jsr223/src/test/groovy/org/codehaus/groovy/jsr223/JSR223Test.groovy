@@ -95,7 +95,7 @@ class JSR223Test extends GroovyTestCase {
         assertNotNull(engine)
 
         try {
-            Object x =  engine.eval("z")
+            Object x = engine.eval("z")
             assertFalse("Didn't get ScriptException for syntax error", true)
         } catch (ScriptException e) {
         }
@@ -112,7 +112,7 @@ class JSR223Test extends GroovyTestCase {
 
     /**
      * Fix for GROOVY-3669:
-     * Can't use several times the same JSR-223 ScriptContext for different groovy script 
+     * Can't use several times the same JSR-223 ScriptContext for different groovy script
      */
     void testGroovy3669() {
         def scriptContext = new SimpleScriptContext()

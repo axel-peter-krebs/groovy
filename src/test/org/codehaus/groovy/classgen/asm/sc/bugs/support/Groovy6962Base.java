@@ -20,5 +20,7 @@ package org.codehaus.groovy.classgen.asm.sc.bugs.support;
 
 // package private
 class Groovy6962Base {
-    public int foo() { return 1; }
+    public int foo() {
+        return 1;
+    }
 }

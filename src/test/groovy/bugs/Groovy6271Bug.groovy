@@ -37,6 +37,7 @@ TestScripttestTraitWithCompileStaticAndCoercedClosure0.groovy: 33: [Static type 
 
 2 errors
      */
+
     @NotYetImplemented
     void testGroovy6271Bug() {
         shouldCompile '''

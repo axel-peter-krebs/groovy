@@ -41,59 +41,9 @@ public class IndyInterface {
      * flags for method and property calls
      */
     public static final int
-            SAFE_NAVIGATION = 1, THIS_CALL = 2,
-            GROOVY_OBJECT = 4, IMPLICIT_THIS = 8,
-            SPREAD_CALL = 16, UNCACHED_CALL = 32;
-
-    /**
-     * Enum for easy differentiation between call types
-     */
-    public enum CallType {
-        /**
-         * Method invocation type
-         */
-        METHOD("invoke"),
-        /**
-         * Constructor invocation type
-         */
-        INIT("init"),
-        /**
-         * Get property invocation type
-         */
-        GET("getProperty"),
-        /**
-         * Set property invocation type
-         */
-        SET("setProperty"),
-        /**
-         * Cast invocation type
-         */
-        CAST("cast");
-
-        private static final Map<String, CallType> NAME_CALLTYPE_MAP =
-                Stream.of(CallType.values()).collect(Collectors.toMap(CallType::getCallSiteName, Function.identity()));
-
-        /**
-         * The name of the call site type
-         */
-        private final String name;
-
-        CallType(String callSiteName) {
-            name = callSiteName;
-        }
-
-        /**
-         * Returns the name of the call site type
-         */
-        public String getCallSiteName() {
-            return name;
-        }
-
-        public static CallType fromCallSiteName(String callSiteName) {
-            return NAME_CALLTYPE_MAP.get(callSiteName);
-        }
-    }
-
+        SAFE_NAVIGATION = 1, THIS_CALL = 2,
+        GROOVY_OBJECT = 4, IMPLICIT_THIS = 8,
+        SPREAD_CALL = 16, UNCACHED_CALL = 32;
     /**
      * LOOKUP constant used for example in unreflect calls
      */
@@ -123,14 +73,14 @@ public class IndyInterface {
      * Get the cached methodhandle. if the related methodhandle is not found in the inline cache, cache and return it.
      */
     public static Object fromCache(MutableCallSite callSite, Class<?> sender, String methodName, int callID, Boolean safeNavigation, Boolean thisCall, Boolean spreadCall, Object dummyReceiver, Object[] arguments) throws Throwable {
-        return org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache((CacheableCallSite)callSite, sender, methodName, callID, safeNavigation, thisCall, spreadCall, dummyReceiver, arguments);
+        return org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache((CacheableCallSite) callSite, sender, methodName, callID, safeNavigation, thisCall, spreadCall, dummyReceiver, arguments);
     }
 
     /**
      * Core method for indy method selection using runtime types.
      */
     public static Object selectMethod(MutableCallSite callSite, Class<?> sender, String methodName, int callID, Boolean safeNavigation, Boolean thisCall, Boolean spreadCall, Object dummyReceiver, Object[] arguments) throws Throwable {
-        return org.codehaus.groovy.vmplugin.v8.IndyInterface.selectMethod((CacheableCallSite)callSite, sender, methodName, callID, safeNavigation, thisCall, spreadCall, dummyReceiver, arguments);
+        return org.codehaus.groovy.vmplugin.v8.IndyInterface.selectMethod((CacheableCallSite) callSite, sender, methodName, callID, safeNavigation, thisCall, spreadCall, dummyReceiver, arguments);
     }
 
     /**
@@ -138,5 +88,54 @@ public class IndyInterface {
      */
     public static CallSite staticArrayAccess(MethodHandles.Lookup lookup, String name, MethodType type) {
         return org.codehaus.groovy.vmplugin.v8.IndyInterface.staticArrayAccess(lookup, name, type);
+    }
+
+    /**
+     * Enum for easy differentiation between call types
+     */
+    public enum CallType {
+        /**
+         * Method invocation type
+         */
+        METHOD("invoke"),
+        /**
+         * Constructor invocation type
+         */
+        INIT("init"),
+        /**
+         * Get property invocation type
+         */
+        GET("getProperty"),
+        /**
+         * Set property invocation type
+         */
+        SET("setProperty"),
+        /**
+         * Cast invocation type
+         */
+        CAST("cast");
+
+        private static final Map<String, CallType> NAME_CALLTYPE_MAP =
+            Stream.of(CallType.values()).collect(Collectors.toMap(CallType::getCallSiteName, Function.identity()));
+
+        /**
+         * The name of the call site type
+         */
+        private final String name;
+
+        CallType(String callSiteName) {
+            name = callSiteName;
+        }
+
+        public static CallType fromCallSiteName(String callSiteName) {
+            return NAME_CALLTYPE_MAP.get(callSiteName);
+        }
+
+        /**
+         * Returns the name of the call site type
+         */
+        public String getCallSiteName() {
+            return name;
+        }
     }
 }

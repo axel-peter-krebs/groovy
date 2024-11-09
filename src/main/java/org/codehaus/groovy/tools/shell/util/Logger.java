@@ -30,12 +30,27 @@ import static org.fusesource.jansi.Ansi.ansi;
  * Provides a very, very basic logging API.
  */
 public final class Logger {
+    private static final String DEBUG = "DEBUG";
+    private static final String WARN = "WARN";
+    private static final String ERROR = "ERROR";
     public static volatile IO io;
     public final String name;
 
     private Logger(final String name) {
         assert name != null;
         this.name = name;
+    }
+
+    //
+    // Level helpers
+    //
+
+    public static Logger create(final Class type) {
+        return new Logger(type.getName());
+    }
+
+    public static Logger create(final Class type, final String suffix) {
+        return new Logger(type.getName() + "." + suffix);
     }
 
     private void log(final String level, Object msg, Throwable cause) {
@@ -83,12 +98,6 @@ public final class Logger {
         io.out.println(ansi().a(INTENSITY_BOLD).fg(color).a(level).reset().a(" [").a(name).a("] ").a(msg));
     }
 
-    //
-    // Level helpers
-    //
-
-    private static final String DEBUG = "DEBUG";
-
     public boolean isDebugEnabled() {
         return Preferences.verbosity == IO.Verbosity.DEBUG;
     }
@@ -109,8 +118,6 @@ public final class Logger {
         }
     }
 
-    private static final String WARN = "WARN";
-
     public void warn(final Object msg) {
         log(WARN, msg, null);
     }
@@ -119,7 +126,9 @@ public final class Logger {
         log(WARN, msg, cause);
     }
 
-    private static final String ERROR = "ERROR";
+    //
+    // Factory access
+    //
 
     public void error(final Object msg) {
         log(ERROR, msg, null);
@@ -127,17 +136,5 @@ public final class Logger {
 
     public void error(final Object msg, final Throwable cause) {
         log(ERROR, msg, cause);
-    }
-
-    //
-    // Factory access
-    //
-
-    public static Logger create(final Class type) {
-        return new Logger(type.getName());
-    }
-
-    public static Logger create(final Class type, final String suffix) {
-        return new Logger(type.getName() + "." + suffix);
     }
 }

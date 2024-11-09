@@ -18,7 +18,8 @@
  */
 
 def a(x, y, z) { 1 }
+
 def b = 1
 def c = 2
 def d = 3
-new int[] { a b, c, d }
+new int[]{a b, c, d }

@@ -25,7 +25,8 @@ public final class LongMath extends NumberMath {
 
     public static final LongMath INSTANCE = new LongMath();
 
-    private LongMath() {}
+    private LongMath() {
+    }
 
     @Override
     public Number absImpl(Number number) {

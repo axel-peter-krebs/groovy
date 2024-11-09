@@ -44,18 +44,8 @@ import java.util.Map;
  */
 public class GroovyResultSetExtension extends GroovyObjectSupport {
 
-    private boolean updated;
     private final ResultSet resultSet;
-
-    /**
-     * Gets the current result set.
-     *
-     * @return the result set
-     * @throws SQLException if the result set can not be returned
-     */
-    protected ResultSet getResultSet() throws SQLException {
-        return resultSet;
-    }
+    private boolean updated;
 
     /**
      * Creates a GroovyResultSet implementation.
@@ -65,6 +55,16 @@ public class GroovyResultSetExtension extends GroovyObjectSupport {
     public GroovyResultSetExtension(ResultSet set) {
         updated = false;
         resultSet = set;
+    }
+
+    /**
+     * Gets the current result set.
+     *
+     * @return the result set
+     * @throws SQLException if the result set can not be returned
+     */
+    protected ResultSet getResultSet() throws SQLException {
+        return resultSet;
     }
 
     @Override
@@ -77,7 +77,7 @@ public class GroovyResultSetExtension extends GroovyObjectSupport {
                 sb.append(metaData.getColumnName(i));
                 sb.append(":");
                 Object object = resultSet.getObject(i);
-                if (object!=null) {
+                if (object != null) {
                     sb.append(object.toString());
                 } else {
                     sb.append("[null]");
@@ -117,8 +117,7 @@ public class GroovyResultSetExtension extends GroovyObjectSupport {
     public Object getProperty(String columnName) {
         try {
             return getResultSet().getObject(columnName);
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new MissingPropertyException(columnName, GroovyResultSetProxy.class, e);
         }
     }
@@ -137,8 +136,7 @@ public class GroovyResultSetExtension extends GroovyObjectSupport {
         try {
             getResultSet().updateObject(columnName, newValue);
             updated = true;
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new MissingPropertyException(columnName, GroovyResultSetProxy.class, e);
         }
     }
@@ -235,7 +233,7 @@ public class GroovyResultSetExtension extends GroovyObjectSupport {
      * warning chain is cleared when a new row is read.
      *
      * @return <code>true</code> if the new current row is valid;
-     *         <code>false</code> if there are no more rows
+     * <code>false</code> if there are no more rows
      * @throws SQLException if a database access error occurs
      */
     public boolean next() throws SQLException {
@@ -251,7 +249,7 @@ public class GroovyResultSetExtension extends GroovyObjectSupport {
      * <code>getResultSet()</code> object.
      *
      * @return <code>true</code> if the cursor is on a valid row;
-     *         <code>false</code> if it is off the result set
+     * <code>false</code> if it is off the result set
      * @throws SQLException if a database access error
      *                      occurs or the result set type is <code>TYPE_FORWARD_ONLY</code>
      * @since 1.2

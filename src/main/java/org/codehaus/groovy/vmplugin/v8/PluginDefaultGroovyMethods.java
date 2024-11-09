@@ -87,7 +87,6 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *
      * @param self an Enum
      * @return the next defined enum from the enum class
-     *
      * @since 1.5.2
      */
     public static Object next(final Enum self) {
@@ -107,7 +106,6 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *
      * @param self an Enum
      * @return the previous defined enum from the enum class
-     *
      * @since 1.5.2
      */
     public static Object previous(final Enum self) {
@@ -139,52 +137,13 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self      a Future
      * @param transform the closure used to transform the Future value
      * @return a Future allowing the transformed value to be obtained asynchronously
-     *
      * @since 3.0.0
      */
-    public static <S,T> Future<T> collect(final Future<S> self, @ClosureParams(FirstParam.FirstGenericType.class) final Closure<T> transform) {
+    public static <S, T> Future<T> collect(final Future<S> self, @ClosureParams(FirstParam.FirstGenericType.class) final Closure<T> transform) {
         Objects.requireNonNull(self);
         Objects.requireNonNull(transform);
         return new TransformedFuture<T>(self, transform);
     }
-
-    private static class TransformedFuture<E> implements Future<E> {
-        private final Future delegate;
-        private final Closure<E> transform;
-
-        private TransformedFuture(final Future delegate, final Closure<E> transform) {
-            this.delegate = delegate;
-            this.transform = transform;
-        }
-
-        @Override
-        public boolean cancel(final boolean mayInterruptIfRunning) {
-            return delegate.cancel(mayInterruptIfRunning);
-        }
-
-        @Override
-        public boolean isCancelled() {
-            return delegate.isCancelled();
-        }
-
-        @Override
-        public boolean isDone() {
-            return delegate.isDone();
-        }
-
-        @Override
-        public E get() throws InterruptedException, ExecutionException {
-            return transform.call(delegate.get());
-        }
-
-        @Override
-        public E get(final long timeout, final TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-            return transform.call(delegate.get(timeout, unit));
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // Optional
 
     /**
      * Coerce an {@code Optional} instance to a {@code boolean} value.
@@ -195,12 +154,14 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * </pre>
      *
      * @return {@code true} if a value is present, {@code false} otherwise
-     *
      * @since 2.5.0
      */
     public static boolean asBoolean(final Optional<?> optional) {
         return optional.isPresent();
     }
+
+    //--------------------------------------------------------------------------
+    // Optional
 
     /**
      * If a value is present in the {@code OptionalInt}, returns the value.
@@ -210,7 +171,6 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * </pre>
      *
      * @throws NoSuchElementException if no value is present
-     *
      * @since 3.0.0
      */
     public static int get(final OptionalInt self) {
@@ -225,7 +185,6 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * </pre>
      *
      * @throws NoSuchElementException if no value is present
-     *
      * @since 3.0.0
      */
     public static long get(final OptionalLong self) {
@@ -240,7 +199,6 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * </pre>
      *
      * @throws NoSuchElementException if no value is present
-     *
      * @since 3.0.0
      */
     public static double get(final OptionalDouble self) {
@@ -270,16 +228,15 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * </pre>
      *
      * @throws IndexOutOfBoundsException if index is not 0 or -1
-     *
      * @since 5.0.0
      */
     public static <T> T getAt(final Optional<T> self, final int index) {
         switch (index) {
-          case  0:
-          case -1:
-            return self.orElse(null);
-          default:
-            throw new IndexOutOfBoundsException("" + index);
+            case 0:
+            case -1:
+                return self.orElse(null);
+            default:
+                throw new IndexOutOfBoundsException("" + index);
         }
     }
 
@@ -390,10 +347,9 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *
      * @param transform the closure used to transform the optional value if present
      * @return an Optional containing the transformed value or empty if the input is empty or the transform returns null
-     *
      * @since 3.0.0
      */
-    public static <S,T> Optional<T> collect(final Optional<S> self, @ClosureParams(FirstParam.FirstGenericType.class) final Closure<T> transform) {
+    public static <S, T> Optional<T> collect(final Optional<S> self, @ClosureParams(FirstParam.FirstGenericType.class) final Closure<T> transform) {
         Objects.requireNonNull(transform);
         return self.map(transform::call);
     }
@@ -593,9 +549,6 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return (Optional<T>) supplier.get();
     }
 
-    //--------------------------------------------------------------------------
-    // Runtime
-
     /**
      * Gets the pid of the current Java process.
      *
@@ -611,7 +564,7 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // StringBuilder
+    // Runtime
 
     /**
      * Overloads the left shift operator to provide an easy way to append multiple
@@ -620,7 +573,6 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self  a StringBuilder
      * @param value a value to append
      * @return the StringBuilder on which this operation was invoked
-     *
      * @since 1.5.2
      */
     public static StringBuilder leftShift(final StringBuilder self, final Object value) {
@@ -631,10 +583,13 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             return self.append(value.toString());
         }
         if (value instanceof CharSequence) {
-            return self.append((CharSequence)value);
+            return self.append((CharSequence) value);
         }
         return self.append(value);
     }
+
+    //--------------------------------------------------------------------------
+    // StringBuilder
 
     /**
      * Appends a String to this StringBuilder.
@@ -642,7 +597,6 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self  a StringBuilder
      * @param value a String
      * @return a String
-     *
      * @since 1.5.2
      */
     public static String plus(final StringBuilder self, final String value) {
@@ -655,7 +609,6 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self  a StringBuilder
      * @param range a Range
      * @param value the object that's toString() will be inserted
-     *
      * @since 1.5.2
      */
     public static void putAt(final StringBuilder self, final EmptyRange range, final Object value) {
@@ -670,7 +623,6 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self  a StringBuilder
      * @param range a Range
      * @param value the object that's toString() will be inserted
-     *
      * @since 1.5.2
      */
     public static void putAt(final StringBuilder self, final IntRange range, final Object value) {
@@ -683,22 +635,20 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *
      * @param self a StringBuilder
      * @return the length of the StringBuilder
-     *
-     * @since 1.5.2
-     *
      * @see org.codehaus.groovy.runtime.StringGroovyMethods#size(CharSequence)
+     * @since 1.5.2
      */
     @Deprecated
     public static int size(final StringBuilder self) {
         return self.length();
     }
 
-    //--------------------------------------------------------------------------
-
     @Deprecated
     public static <T> Stream<T> stream(final T self) {
         return Stream.of(self);
     }
+
+    //--------------------------------------------------------------------------
 
     @Deprecated
     public static <T> Stream<T> stream(final T[] self) {
@@ -828,5 +778,40 @@ public class PluginDefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     @Deprecated
     public static <T> Set<T> toSet(final BaseStream<T, ? extends BaseStream> self) {
         return StreamGroovyMethods.toSet(self);
+    }
+
+    private static class TransformedFuture<E> implements Future<E> {
+        private final Future delegate;
+        private final Closure<E> transform;
+
+        private TransformedFuture(final Future delegate, final Closure<E> transform) {
+            this.delegate = delegate;
+            this.transform = transform;
+        }
+
+        @Override
+        public boolean cancel(final boolean mayInterruptIfRunning) {
+            return delegate.cancel(mayInterruptIfRunning);
+        }
+
+        @Override
+        public boolean isCancelled() {
+            return delegate.isCancelled();
+        }
+
+        @Override
+        public boolean isDone() {
+            return delegate.isDone();
+        }
+
+        @Override
+        public E get() throws InterruptedException, ExecutionException {
+            return transform.call(delegate.get());
+        }
+
+        @Override
+        public E get(final long timeout, final TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+            return transform.call(delegate.get(timeout, unit));
+        }
     }
 }

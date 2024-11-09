@@ -25,14 +25,7 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Classpath
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 
 import javax.inject.Inject
@@ -50,7 +43,7 @@ class DocGDK extends DefaultTask {
 
     @OutputDirectory
     final DirectoryProperty outputDirectory = project.objects.directoryProperty()
-            .convention(project.layout.buildDirectory.dir("html/groovy-jdk"))
+        .convention(project.layout.buildDirectory.dir("html/groovy-jdk"))
 
 
     @Input
@@ -73,12 +66,12 @@ class DocGDK extends DefaultTask {
             it.mainClass.set('org.apache.groovy.docgenerator.DocGenerator')
             it.classpath = this.classpath
             it.args(
-                    ['-title',
-                     'Groovy JDK enhancements',
-                     '-link',
-                     'groovy,org.codehaus.groovy,org.apache.groovy=https://docs.groovy-lang.org/latest/html/gapi/',
-                     '-link',
-                     'java,org.xml,javax,org.w3c=https://docs.oracle.com/javase/8/docs/api/'] + classes.get()
+                ['-title',
+                 'Groovy JDK enhancements',
+                 '-link',
+                 'groovy,org.codehaus.groovy,org.apache.groovy=https://docs.groovy-lang.org/latest/html/gapi/',
+                 '-link',
+                 'java,org.xml,javax,org.w3c=https://docs.oracle.com/javase/8/docs/api/'] + classes.get()
             )
         }
         fs.copy {

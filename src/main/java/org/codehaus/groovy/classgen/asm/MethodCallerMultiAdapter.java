@@ -21,10 +21,9 @@ package org.codehaus.groovy.classgen.asm;
 import org.objectweb.asm.MethodVisitor;
 
 public class MethodCallerMultiAdapter {
-    private MethodCaller[] methods;
-    boolean skipSpreadSafeAndSafe;
-
     public static final int MAX_ARGS = 0;
+    boolean skipSpreadSafeAndSafe;
+    private MethodCaller[] methods;
 
     public static MethodCallerMultiAdapter newStatic(Class theClass, String baseName, boolean createNArgs, boolean skipSpreadSafeAndSafe) {
         MethodCallerMultiAdapter mcma = new MethodCallerMultiAdapter();
@@ -48,13 +47,13 @@ public class MethodCallerMultiAdapter {
 
         } else if (!skipSpreadSafeAndSafe) {
             mcma.methods = new MethodCaller[]{
-                    MethodCaller.newStatic(theClass, baseName),
-                    MethodCaller.newStatic(theClass, baseName + "Safe"),
-                    MethodCaller.newStatic(theClass, baseName + "SpreadSafe")
+                MethodCaller.newStatic(theClass, baseName),
+                MethodCaller.newStatic(theClass, baseName + "Safe"),
+                MethodCaller.newStatic(theClass, baseName + "SpreadSafe")
             };
         } else {
             mcma.methods = new MethodCaller[]{
-                    MethodCaller.newStatic(theClass, baseName)
+                MethodCaller.newStatic(theClass, baseName)
             };
         }
         return mcma;

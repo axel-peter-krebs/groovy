@@ -44,34 +44,34 @@ public class GStringTest extends TestSupport {
         compositeStringExpr.addString(new ConstantExpression("!"));
         BlockStatement block = new BlockStatement();
         block.addStatement(
-                new ExpressionStatement(
-                        new DeclarationExpression(
-                                new VariableExpression("user"),
-                                Token.newSymbol("=", -1, -1),
-                                new ConstantExpression("World"))));
+            new ExpressionStatement(
+                new DeclarationExpression(
+                    new VariableExpression("user"),
+                    Token.newSymbol("=", -1, -1),
+                    new ConstantExpression("World"))));
         block.addStatement(
-                new ExpressionStatement(
-                        new DeclarationExpression(new VariableExpression("str"), Token.newSymbol("=", -1, -1), compositeStringExpr)));
+            new ExpressionStatement(
+                new DeclarationExpression(new VariableExpression("str"), Token.newSymbol("=", -1, -1), compositeStringExpr)));
         block.addStatement(
-                new ExpressionStatement(
-                        new MethodCallExpression(VariableExpression.THIS_EXPRESSION, "println", new VariableExpression("str"))));
+            new ExpressionStatement(
+                new MethodCallExpression(VariableExpression.THIS_EXPRESSION, "println", new VariableExpression("str"))));
 
         block.addStatement(
-                new ExpressionStatement(
-                        new DeclarationExpression(
-                                new VariableExpression("text"),
-                                Token.newSymbol("=", -1, -1),
-                                new MethodCallExpression(new VariableExpression("str"), "toString", MethodCallExpression.NO_ARGUMENTS))));
+            new ExpressionStatement(
+                new DeclarationExpression(
+                    new VariableExpression("text"),
+                    Token.newSymbol("=", -1, -1),
+                    new MethodCallExpression(new VariableExpression("str"), "toString", MethodCallExpression.NO_ARGUMENTS))));
 
         block.addStatement(
-                new AssertStatement(
-                        new BooleanExpression(
-                                new BinaryExpression(
-                                        new VariableExpression("text"),
-                                        Token.newSymbol("==", -1, -1),
-                                        new ConstantExpression("Hello World!"))),
-                        new ConstantExpression("Assertion failed") // TODO FIX if empty, AssertionWriter fails because source text is null
-                )
+            new AssertStatement(
+                new BooleanExpression(
+                    new BinaryExpression(
+                        new VariableExpression("text"),
+                        Token.newSymbol("==", -1, -1),
+                        new ConstantExpression("Hello World!"))),
+                new ConstantExpression("Assertion failed") // TODO FIX if empty, AssertionWriter fails because source text is null
+            )
         );
         classNode.addMethod(new MethodNode("stringDemo", ACC_PUBLIC, ClassHelper.VOID_TYPE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, block));
 
@@ -85,8 +85,7 @@ public class GStringTest extends TestSupport {
 
         try {
             InvokerHelper.invokeMethod(bean, "stringDemo", null);
-        }
-        catch (InvokerInvocationException e) {
+        } catch (InvokerInvocationException e) {
             System.out.println("Caught: " + e.getCause());
             e.getCause().printStackTrace();
             fail("Should not have thrown an exception");

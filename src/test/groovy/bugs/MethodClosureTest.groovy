@@ -40,9 +40,9 @@ final class MethodClosureTest {
         assert closure instanceof Closure
         assert closure instanceof MethodClosure
 
-        Class[] c1 = [ Exception, Throwable ]
-        Class[] c2 = [ IllegalStateException ]
-        assert [c1, c2].collect(closure) == [c1,c2]
+        Class[] c1 = [Exception, Throwable]
+        Class[] c2 = [IllegalStateException]
+        assert [c1, c2].collect(closure) == [c1, c2]
     }
 
     @Test
@@ -51,17 +51,17 @@ final class MethodClosureTest {
         assert closure instanceof Closure
         assert closure instanceof MethodClosure
 
-        assert ["xx", "yy"].collect(closure) == ["XX","YY"]
+        assert ["xx", "yy"].collect(closure) == ["XX", "YY"]
     }
 
     @Test
     void testStaticMethodClosure() {
-       def list = [1].collect(this.&bb)
-       assert list == [1]
-       list = [1].collect(MethodClosureTest.&bb) // Class.staticMethod
-       assert list == [1]
-       list = [1].collect(new MethodClosureTest().&bb) // instance.staticMethod
-       assert list == [1]
+        def list = [1].collect(this.&bb)
+        assert list == [1]
+        list = [1].collect(MethodClosureTest.&bb) // Class.staticMethod
+        assert list == [1]
+        list = [1].collect(new MethodClosureTest().&bb) // instance.staticMethod
+        assert list == [1]
     }
 
     @Test

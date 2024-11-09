@@ -33,6 +33,6 @@ class Groovy996_SuperClass {
 
 class Groovy996_SubClass extends Groovy996_SuperClass {
     void out() {
-       println( x )
+        println(x)
     }
 }

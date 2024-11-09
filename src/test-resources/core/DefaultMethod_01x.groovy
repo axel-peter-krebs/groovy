@@ -19,9 +19,11 @@
 
 interface Greetable {
     String name();
+
     default String hello() {
         return 'hello'
     }
+
     default public String sayHello() {
         return this.hello() + ', ' + this.name()
     }

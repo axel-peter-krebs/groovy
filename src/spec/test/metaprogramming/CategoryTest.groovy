@@ -25,7 +25,7 @@ class CategoryTest extends GroovyTestCase {
 
     void testApplyTimeCategory() {
         // tag::time_category[]
-        use(TimeCategory)  {
+        use(TimeCategory) {
             println 1.minute.from.now       // <1>
             println 10.hours.ago
 

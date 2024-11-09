@@ -32,6 +32,7 @@
 // (3) new Integer(s)
 // (4) regex
 import java.text.*
+
 int nb = 0
 try {
     nb = NumberFormat.getInstance().parse('33.5') // '.5' will be ignored
@@ -77,12 +78,12 @@ b = a.setScale(2, BigDecimal.ROUND_HALF_UP);
 assert a.toString() == '0.255'
 assert b.toString() == '0.26'
 
-a = [3.3 , 3.5 , 3.7, -3.3] as double[]
+a = [3.3, 3.5, 3.7, -3.3] as double[]
 // warning rint() rounds to nearest integer - slightly different to Perl's int()
 rintExpected = [3.0, 4.0, 4.0, -3.0] as double[]
 floorExpected = [3.0, 3.0, 3.0, -4.0] as double[]
 ceilExpected = [4.0, 4.0, 4.0, -3.0] as double[]
-a.eachWithIndex{ val, i ->
+a.eachWithIndex { val, i ->
     assert Math.rint(val) == rintExpected[i]
     assert Math.floor(val) == floorExpected[i]
     assert Math.ceil(val) == ceilExpected[i]
@@ -112,7 +113,7 @@ for (i in x..y) {
 assert (x..y).step(7) == [3, 10, 17]
 
 years = []
-(5..<13).each{ age -> years += age }
+(5..<13).each { age -> years += age }
 assert years == [5, 6, 7, 8, 9, 10, 11, 12]
 //----------------------------------------------------------------------------------
 
@@ -120,13 +121,13 @@ assert years == [5, 6, 7, 8, 9, 10, 11, 12]
 //----------------------------------------------------------------------------------
 // We can add additional methods to the Integer class
 class IntegerCategory {
-    static def romanMap = [1000:'M', 900:'CM', 500:'D', 400:'CD', 100:'C', 90:'XC',
-                           50:'L', 40:'XL', 10:'X', 9:'IX', 5:'V', 4:'IV', 1:'I']
+    static def romanMap = [1000: 'M', 900: 'CM', 500: 'D', 400: 'CD', 100: 'C', 90: 'XC',
+                           50  : 'L', 40: 'XL', 10: 'X', 9: 'IX', 5: 'V', 4: 'IV', 1: 'I']
 
     static getRoman(Integer self) {
         def remains = self
         def text = ''
-        romanMap.keySet().sort().reverse().each{ key ->
+        romanMap.keySet().sort().reverse().each { key ->
             while (remains >= key) {
                 remains -= key
                 text += romanMap[key]
@@ -138,7 +139,7 @@ class IntegerCategory {
     static int parseRoman(Object self, String input) {
         def ustr = input.toUpperCase()
         int sum = 0
-        romanMap.keySet().sort().reverse().each{ key ->
+        romanMap.keySet().sort().reverse().each { key ->
             while (ustr.startsWith(romanMap[key])) {
                 sum += key
                 ustr -= romanMap[key]
@@ -161,14 +162,14 @@ use(IntegerCategory) {
 // @@PLEAC@@_2.7
 //----------------------------------------------------------------------------------
 random = new Random()
-100.times{
+100.times {
     next = random.nextInt(50) + 25
     assert next > 24
     assert next < 76
 }
 chars = []
-['A'..'Z','a'..'z','0'..'9',('!@$%^&*' as String[]).toList()].each{chars += it}
-password = (1..8).collect{ chars[random.nextInt(chars.size())] }.join()
+['A'..'Z', 'a'..'z', '0'..'9', ('!@$%^&*' as String[]).toList()].each { chars += it }
+password = (1..8).collect { chars[random.nextInt(chars.size())] }.join()
 assert password.size() == 8
 //----------------------------------------------------------------------------------
 
@@ -229,7 +230,9 @@ assert ac > 1.47 && ac < 1.48
 //----------------------------------------------------------------------------------
 assert Math.log(Math.E) == 1
 assert Math.log10(10000) == 4
-def logn(base, val) { Math.log(val)/Math.log(base) }
+
+def logn(base, val) { Math.log(val) / Math.log(base) }
+
 assert logn(2, 1024) == 10
 //----------------------------------------------------------------------------------
 
@@ -238,16 +241,17 @@ assert logn(2, 1024) == 10
 // there are several Java Matrix packages available, e.g.
 // http://math.nist.gov/javanumerics/jama
 //import Jama.Matrix
-class Matrix{}
+class Matrix {}
+
 matrix1 = new Matrix([
-   [3, 2, 3],
-   [5, 9, 8]
+    [3, 2, 3],
+    [5, 9, 8]
 ] as double[][])
 
 matrix2 = new Matrix([
-   [4, 7],
-   [9, 3],
-   [8, 1]
+    [4, 7],
+    [9, 3],
+    [8, 1]
 ] as double[][])
 
 expectedArray = [[54.0, 30.0], [165.0, 70.0]] as double[][]
@@ -263,10 +267,11 @@ for (i in 0..<productArray.size()) {
 // there are several Java Complex number packages, e.g.:
 // http://jakarta.apache.org/commons/math/userguide/complex.html
 //import org.apache.commons.math.complex.Complex
-class Complex{}
+class Complex {}
+
 a = new Complex(3, 5)  // 3 + 5i
 b = new Complex(2, -2) // 2 - 2i
-expected = new Complex (16, 4) // 16 + 4i
+expected = new Complex(16, 4) // 16 + 4i
 assert expected == a * b
 //----------------------------------------------------------------------------------
 
@@ -279,7 +284,7 @@ assert Integer.parseInt('077', 8) == 63
 print 'Gimme a number in decimal, octal, or hex: '
 reader = new BufferedReader(new InputStreamReader(System.in))
 input = reader.readLine().trim()
-switch(input) {
+switch (input) {
     case ~'^0x\\d+':
         number = Integer.parseInt(input.substring(2), 16); break
     case ~'^0\\d+':
@@ -305,6 +310,7 @@ assert nf.format(-1740525205) == '-1,740,525,205'
 // @@PLEAC@@_2.18
 //----------------------------------------------------------------------------------
 def timeMessage(hour) { 'It took ' + hour + ' hour' + (hour == 1 ? '' : 's') }
+
 assert 'It took 1 hour' == timeMessage(1)
 assert 'It took 2 hours' == timeMessage(2)
 

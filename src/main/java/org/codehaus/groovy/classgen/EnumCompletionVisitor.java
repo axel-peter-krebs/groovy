@@ -69,6 +69,47 @@ public class EnumCompletionVisitor extends ClassCodeVisitorSupport {
         sourceUnit = su;
     }
 
+    /**
+     * Add map and no-arg constructor or mirror those of the superclass (i.e. base enum).
+     */
+    private static void addImplicitConstructors(final ClassNode enumClass) {
+        if (EnumVisitor.isAnonymousInnerClass(enumClass)) {
+            List<ConstructorNode> superCtors = nonSyntheticConstructors(enumClass.getSuperClass());
+            if (!superCtors.isEmpty()) {
+                for (ConstructorNode ctor : superCtors) {
+                    addGeneratedConstructor(enumClass, ACC_PRIVATE, ctor.getParameters(), ClassNode.EMPTY_ARRAY, new BlockStatement());
+                }
+                return;
+            }
+        }
+        TupleConstructorASTTransformation.addSpecialMapConstructors(ACC_PRIVATE, enumClass, "One of the enum constants for enum " +
+            enumClass.getName() + " was initialized with null. Please use a non-null value or define your own constructor.", true);
+    }
+
+    /**
+     * Ensures the enum type {@code e} has an accessible constructor for its AIC
+     * constant class to call.  This constructor delegates to the enum's private
+     * constructor.
+     */
+    private static void makeBridgeConstructor(final ClassNode e, final Parameter[] p) {
+        Parameter[] newP = new Parameter[p.length + 1];
+        for (int i = 0; i < p.length; i += 1) {
+            newP[i] = new Parameter(p[i].getType(), "p" + i);
+        }
+        newP[p.length] = new Parameter(e.getPlainNodeReference(), "$anonymous");
+
+        if (e.getDeclaredConstructor(newP) == null) {
+            ArgumentListExpression args = new ArgumentListExpression();
+            for (int i = 0; i < p.length; i += 1) args.addExpression(new VariableExpression(newP[i]));
+            Statement thisCtorCall = new ExpressionStatement(new ConstructorCallExpression(ClassNode.THIS, args));
+            addGeneratedConstructor(e, ACC_SYNTHETIC, newP, ClassNode.EMPTY_ARRAY, thisCtorCall).setSynthetic(true);
+        }
+    }
+
+    private static List<ConstructorNode> nonSyntheticConstructors(final ClassNode cn) {
+        return cn.getDeclaredConstructors().stream().filter(c -> !c.isSynthetic()).collect(toList());
+    }
+
     @Override
     protected SourceUnit getSourceUnit() {
         return sourceUnit;
@@ -77,7 +118,7 @@ public class EnumCompletionVisitor extends ClassCodeVisitorSupport {
     @Override
     public void visitClass(final ClassNode node) {
         if (node.isEnum()
-                && !EnumVisitor.isAnonymousInnerClass(node)) {
+            && !EnumVisitor.isAnonymousInnerClass(node)) {
             node.getInnerClasses().forEachRemaining(innerClass -> {
                 // EnumConstantClassNode must be completed before its enum class
                 if (EnumVisitor.isAnonymousInnerClass(innerClass)) completeEnum(innerClass);
@@ -99,23 +140,6 @@ public class EnumCompletionVisitor extends ClassCodeVisitorSupport {
         if (outerClass != null && !isStaticallyCompiled(enumClass)) {
             addOuterClassDispatch((InnerClassNode) enumClass, outerClass);
         }
-    }
-
-    /**
-     * Add map and no-arg constructor or mirror those of the superclass (i.e. base enum).
-     */
-    private static void addImplicitConstructors(final ClassNode enumClass) {
-        if (EnumVisitor.isAnonymousInnerClass(enumClass)) {
-            List<ConstructorNode> superCtors = nonSyntheticConstructors(enumClass.getSuperClass());
-            if (!superCtors.isEmpty()) {
-                for (ConstructorNode ctor : superCtors) {
-                    addGeneratedConstructor(enumClass, ACC_PRIVATE, ctor.getParameters(), ClassNode.EMPTY_ARRAY, new BlockStatement());
-                }
-                return;
-            }
-        }
-        TupleConstructorASTTransformation.addSpecialMapConstructors(ACC_PRIVATE, enumClass, "One of the enum constants for enum " +
-                enumClass.getName() + " was initialized with null. Please use a non-null value or define your own constructor.", true);
     }
 
     /**
@@ -184,101 +208,77 @@ public class EnumCompletionVisitor extends ClassCodeVisitorSupport {
         return name;
     }
 
-    /**
-     * Ensures the enum type {@code e} has an accessible constructor for its AIC
-     * constant class to call.  This constructor delegates to the enum's private
-     * constructor.
-     */
-    private static void makeBridgeConstructor(final ClassNode e, final Parameter[] p) {
-        Parameter[] newP = new Parameter[p.length + 1];
-        for (int i = 0; i < p.length; i += 1) {
-            newP[i] = new Parameter(p[i].getType(), "p" + i);
-        }
-        newP[p.length] = new Parameter(e.getPlainNodeReference(), "$anonymous");
-
-        if (e.getDeclaredConstructor(newP) == null) {
-            ArgumentListExpression args = new ArgumentListExpression();
-            for (int i = 0; i < p.length; i += 1) args.addExpression(new VariableExpression(newP[i]));
-            Statement thisCtorCall = new ExpressionStatement(new ConstructorCallExpression(ClassNode.THIS, args));
-            addGeneratedConstructor(e, ACC_SYNTHETIC, newP, ClassNode.EMPTY_ARRAY, thisCtorCall).setSynthetic(true);
-        }
-    }
-
-    private static List<ConstructorNode> nonSyntheticConstructors(final ClassNode cn) {
-        return cn.getDeclaredConstructors().stream().filter(c -> !c.isSynthetic()).collect(toList());
-    }
-
     private void addOuterClassDispatch(final InnerClassNode innerClass, final ClassNode outerClass) {
         var visitor = new InnerClassCompletionVisitor(null, sourceUnit);
 
         visitor.addMissingHandler(
-                innerClass,
-                "methodMissing",
-                ACC_PUBLIC,
-                OBJECT_TYPE,
-                params(param(STRING_TYPE, "name"), param(OBJECT_TYPE, "args")),
-                (methodBody, parameters) -> {
-                    InnerClassVisitorHelper.setMethodDispatcherCode(methodBody, classX(outerClass), parameters);
-                }
+            innerClass,
+            "methodMissing",
+            ACC_PUBLIC,
+            OBJECT_TYPE,
+            params(param(STRING_TYPE, "name"), param(OBJECT_TYPE, "args")),
+            (methodBody, parameters) -> {
+                InnerClassVisitorHelper.setMethodDispatcherCode(methodBody, classX(outerClass), parameters);
+            }
         );
 
         visitor.addMissingHandler(
-                innerClass,
-                "$static_methodMissing",
-                ACC_PUBLIC | ACC_STATIC,
-                OBJECT_TYPE,
-                params(param(STRING_TYPE, "name"), param(OBJECT_TYPE, "args")),
-                (methodBody, parameters) -> {
-                    InnerClassVisitorHelper.setMethodDispatcherCode(methodBody, classX(outerClass), parameters);
-                }
-        );
-
-        //
-
-        visitor.addMissingHandler(
-                innerClass,
-                "propertyMissing",
-                ACC_PUBLIC,
-                OBJECT_TYPE,
-                params(param(STRING_TYPE, "name")),
-                (methodBody, parameters) -> {
-                    InnerClassVisitorHelper.setPropertyGetterDispatcher(methodBody, classX(outerClass), parameters);
-                }
-        );
-
-        visitor.addMissingHandler(
-                innerClass,
-                "$static_propertyMissing",
-                ACC_PUBLIC | ACC_STATIC,
-                OBJECT_TYPE,
-                params(param(STRING_TYPE, "name")),
-                (methodBody, parameters) -> {
-                    InnerClassVisitorHelper.setPropertyGetterDispatcher(methodBody, classX(outerClass), parameters);
-                }
+            innerClass,
+            "$static_methodMissing",
+            ACC_PUBLIC | ACC_STATIC,
+            OBJECT_TYPE,
+            params(param(STRING_TYPE, "name"), param(OBJECT_TYPE, "args")),
+            (methodBody, parameters) -> {
+                InnerClassVisitorHelper.setMethodDispatcherCode(methodBody, classX(outerClass), parameters);
+            }
         );
 
         //
 
         visitor.addMissingHandler(
-                innerClass,
-                "propertyMissing",
-                ACC_PUBLIC,
-                VOID_TYPE,
-                params(param(STRING_TYPE, "name"), param(OBJECT_TYPE, "value")),
-                (methodBody, parameters) -> {
-                    InnerClassVisitorHelper.setPropertySetterDispatcher(methodBody, classX(outerClass), parameters);
-                }
+            innerClass,
+            "propertyMissing",
+            ACC_PUBLIC,
+            OBJECT_TYPE,
+            params(param(STRING_TYPE, "name")),
+            (methodBody, parameters) -> {
+                InnerClassVisitorHelper.setPropertyGetterDispatcher(methodBody, classX(outerClass), parameters);
+            }
         );
 
         visitor.addMissingHandler(
-                innerClass,
-                "$static_propertyMissing",
-                ACC_PUBLIC | ACC_STATIC,
-                VOID_TYPE,
-                params(param(STRING_TYPE, "name"), param(OBJECT_TYPE, "value")),
-                (methodBody, parameters) -> {
-                    InnerClassVisitorHelper.setPropertySetterDispatcher(methodBody, classX(outerClass), parameters);
-                }
+            innerClass,
+            "$static_propertyMissing",
+            ACC_PUBLIC | ACC_STATIC,
+            OBJECT_TYPE,
+            params(param(STRING_TYPE, "name")),
+            (methodBody, parameters) -> {
+                InnerClassVisitorHelper.setPropertyGetterDispatcher(methodBody, classX(outerClass), parameters);
+            }
+        );
+
+        //
+
+        visitor.addMissingHandler(
+            innerClass,
+            "propertyMissing",
+            ACC_PUBLIC,
+            VOID_TYPE,
+            params(param(STRING_TYPE, "name"), param(OBJECT_TYPE, "value")),
+            (methodBody, parameters) -> {
+                InnerClassVisitorHelper.setPropertySetterDispatcher(methodBody, classX(outerClass), parameters);
+            }
+        );
+
+        visitor.addMissingHandler(
+            innerClass,
+            "$static_propertyMissing",
+            ACC_PUBLIC | ACC_STATIC,
+            VOID_TYPE,
+            params(param(STRING_TYPE, "name"), param(OBJECT_TYPE, "value")),
+            (methodBody, parameters) -> {
+                InnerClassVisitorHelper.setPropertySetterDispatcher(methodBody, classX(outerClass), parameters);
+            }
         );
     }
 }

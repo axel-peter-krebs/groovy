@@ -28,6 +28,9 @@ import java.util.logging.Logger;
 
 public class Dates {
 
+    public static final int JSON_TIME_LENGTH = "2013-12-14T01:55:33.412Z".length();
+    static final int SHORT_ISO_8601_TIME_LENGTH = "1994-11-05T08:15:30Z".length();
+    static final int LONG_ISO_8601_TIME_LENGTH = "1994-11-05T08:15:30-05:00".length();
     private static TimeZone UTC_TIME_ZONE = TimeZone.getTimeZone("UTC");
 
     public static long utc(long time) {
@@ -64,10 +67,6 @@ public class Dates {
                               int hour, int minute, int second, int miliseconds) {
         return internalDate(tz, year, month, day, hour, minute, second, miliseconds);
     }
-
-    static final int SHORT_ISO_8601_TIME_LENGTH = "1994-11-05T08:15:30Z".length();
-    static final int LONG_ISO_8601_TIME_LENGTH = "1994-11-05T08:15:30-05:00".length();
-    public static final int JSON_TIME_LENGTH = "2013-12-14T01:55:33.412Z".length();
 
     public static Date fromISO8601(char[] charArray, int from, int to) {
         try {
@@ -139,10 +138,10 @@ public class Dates {
         // "1 9 9 4 - 1 1 - 0 5 T 0 8 : 1 5 : 3 0 - 0 5 : 0 0
 
         valid &= (charArray[start + 4] == '-') &&
-                (charArray[start + 7] == '-') &&
-                (charArray[start + 10] == 'T') &&
-                (charArray[start + 13] == ':') &&
-                (charArray[start + 16] == ':');
+            (charArray[start + 7] == '-') &&
+            (charArray[start + 10] == 'T') &&
+            (charArray[start + 13] == ':') &&
+            (charArray[start + 16] == ':');
 
         return valid;
     }
@@ -152,7 +151,7 @@ public class Dates {
 
         try {
             return length == JSON_TIME_LENGTH || length == LONG_ISO_8601_TIME_LENGTH
-                    || length == SHORT_ISO_8601_TIME_LENGTH || (length >= 17 && (charArray[start + 16] == ':'));
+                || length == SHORT_ISO_8601_TIME_LENGTH || (length >= 17 && (charArray[start + 16] == ':'));
 
         } catch (Exception ex) {
             Logger logger = Logger.getLogger(Dates.class.getName());
@@ -178,10 +177,10 @@ public class Dates {
         }
 
         valid &= (charArray[start + 4] == '-') &&
-                (charArray[start + 7] == '-') &&
-                (charArray[start + 10] == 'T') &&
-                (charArray[start + 13] == ':') &&
-                (charArray[start + 16] == ':');
+            (charArray[start + 7] == '-') &&
+            (charArray[start + 10] == 'T') &&
+            (charArray[start + 13] == ':') &&
+            (charArray[start + 16] == ':');
 
         return valid;
     }

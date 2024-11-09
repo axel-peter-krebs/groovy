@@ -29,8 +29,8 @@ class JUnit5Test {
     @Test
     void streamSum() {
         assertTrue(Stream.of(1, 2, 3)
-                .mapToInt(i -> i)
-                .sum() > 5, () -> "Sum should be greater than 5")
+            .mapToInt(i -> i)
+            .sum() > 5, () -> "Sum should be greater than 5")
     }
 
     @RepeatedTest(value = 2, name = "{displayName} {currentRepetition}/{totalRepetitions}")
@@ -49,8 +49,8 @@ class JUnit5Test {
     @TestFactory
     def dynamicTestCollection() {
         [
-                dynamicTest("Add test") { -> assert 1 + 1 == 2 },
-                dynamicTest("Multiply Test", () -> { assert 2 * 3 == 6 })
+            dynamicTest("Add test") { -> assert 1 + 1 == 2 },
+            dynamicTest("Multiply Test", () -> { assert 2 * 3 == 6 })
         ]
     }
 }

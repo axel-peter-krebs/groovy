@@ -16,15 +16,15 @@ public class knucleotide {
         this.sequence = sequence;
     }
 
-    static ArrayList<Callable< Map<String, knucleotide> > > createFragmentTasks(final String sequence, int[] fragmentLengths) {
+    static ArrayList<Callable<Map<String, knucleotide>>> createFragmentTasks(final String sequence, int[] fragmentLengths) {
         ArrayList<Callable<Map<String, knucleotide>>> tasks = new ArrayList<Callable<Map<String, knucleotide>>>();
         for (int fragmentLength : fragmentLengths) {
-            for (int index=0; index<fragmentLength; index++) {
+            for (int index = 0; index < fragmentLength; index++) {
                 final int offset = index;
                 final int finalFragmentLength = fragmentLength;
                 tasks.add(new Callable<Map<String, knucleotide>>() {
                     public Map<String, knucleotide> call() {
-                    return createFragmentMap(sequence, offset, finalFragmentLength);
+                        return createFragmentMap(sequence, offset, finalFragmentLength);
                     }
                 });
             }
@@ -35,13 +35,13 @@ public class knucleotide {
     static Map<String, knucleotide> createFragmentMap(String sequence, int offset, int fragmentLength) {
         HashMap<String, knucleotide> map = new HashMap<String, knucleotide>();
         int lastIndex = sequence.length() - fragmentLength + 1;
-        for (int index=offset; index<lastIndex; index+=fragmentLength) {
+        for (int index = offset; index < lastIndex; index += fragmentLength) {
             String temp = sequence.substring(index, index + fragmentLength);
-            knucleotide fragment = (knucleotide)map.get(temp);
+            knucleotide fragment = (knucleotide) map.get(temp);
             if (fragment != null)
-            fragment.count++;
+                fragment.count++;
             else
-            map.put(temp, new knucleotide(temp));
+                map.put(temp, new knucleotide(temp));
         }
 
         return map;
@@ -50,11 +50,11 @@ public class knucleotide {
     // Destructive!
     static Map<String, knucleotide> sumTwoMaps(Map<String, knucleotide> map1, Map<String, knucleotide> map2) {
         for (Map.Entry<String, knucleotide> entry : map2.entrySet()) {
-            knucleotide sum = (knucleotide)map1.get(entry.getKey());
+            knucleotide sum = (knucleotide) map1.get(entry.getKey());
             if (sum != null)
-            sum.count += entry.getValue().count;
+                sum.count += entry.getValue().count;
             else
-            map1.put(entry.getKey(), entry.getValue());
+                map1.put(entry.getKey(), entry.getValue());
         }
         return map1;
     }
@@ -79,7 +79,7 @@ public class knucleotide {
 
         StringBuilder sb = new StringBuilder();
         for (knucleotide k : list)
-            sb.append(String.format("%s %.3f\n", k.sequence.toUpperCase(), (float)(k.count) * 100.0f / (double)sum));
+            sb.append(String.format("%s %.3f\n", k.sequence.toUpperCase(), (float) (k.count) * 100.0f / (double) sum));
 
         return sb.toString();
     }
@@ -94,7 +94,7 @@ public class knucleotide {
         return count + "\t" + nucleotideFragment.toUpperCase();
     }
 
-    public static void main (String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         String line;
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         while ((line = in.readLine()) != null) {
@@ -107,7 +107,7 @@ public class knucleotide {
         }
 
         ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        int[] fragmentLengths = { 1, 2, 3, 4, 6, 12, 18 };
+        int[] fragmentLengths = {1, 2, 3, 4, 6, 12, 18};
         List<Future<Map<String, knucleotide>>> futures = pool.invokeAll(createFragmentTasks(sbuilder.toString(), fragmentLengths));
         pool.shutdown();
 

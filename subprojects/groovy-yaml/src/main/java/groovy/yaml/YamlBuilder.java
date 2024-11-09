@@ -32,9 +32,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *  A builder for creating YAML payloads.
+ * A builder for creating YAML payloads.
  *
- *  @since 3.0.0
+ * @since 3.0.0
  */
 public class YamlBuilder extends GroovyObjectSupport implements Writable {
     private final JsonBuilder jsonBuilder;
@@ -136,8 +136,9 @@ public class YamlBuilder extends GroovyObjectSupport implements Writable {
      * - name: "Paul"
      * '''
      * </code></pre>
+     *
      * @param coll a collection
-     * @param c a closure used to convert the objects of coll
+     * @param c    a closure used to convert the objects of coll
      * @return a list of values
      */
     public Object call(Iterable coll, Closure c) {
@@ -146,6 +147,7 @@ public class YamlBuilder extends GroovyObjectSupport implements Writable {
 
     /**
      * Delegates to {@link #call(Iterable, Closure)}
+     *
      * @param coll
      * @param c
      */
@@ -204,7 +206,7 @@ public class YamlBuilder extends GroovyObjectSupport implements Writable {
      *   age: 33
      * '''
      * </code></pre>
-     *
+     * <p>
      * Or alternatively with a method call taking named arguments:
      * <pre><code class="groovyTestCase">
      * def yaml = new groovy.yaml.YamlBuilder()
@@ -216,7 +218,7 @@ public class YamlBuilder extends GroovyObjectSupport implements Writable {
      *   age: 33
      * '''
      * </code></pre>
-     *
+     * <p>
      * If you use named arguments and a closure as last argument,
      * the key/value pairs of the map (as named arguments)
      * and the key/value pairs represented in the closure
@@ -234,7 +236,7 @@ public class YamlBuilder extends GroovyObjectSupport implements Writable {
      *   town: "Paris"
      * '''
      * </code></pre>
-     *
+     * <p>
      * The empty args call will create a key whose value will be an empty YAML object:
      * <pre><code class="groovyTestCase">
      * def yaml = new groovy.yaml.YamlBuilder()

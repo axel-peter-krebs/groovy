@@ -27,8 +27,8 @@ class TapMethodTest extends GroovyTestCase {
 
     void testTapReturnsSelf() {
         def m1 = [:]
-        def m2 = m1.tap{
-            put("a",1)
+        def m2 = m1.tap {
+            put("a", 1)
         }
         assertSame("Outgoing object of tap is not the same as the ingoing", m1, m2)
         assertEquals("Outgoing object of tap is changed", m2, [a: 1])
@@ -57,8 +57,8 @@ class TapMethodTest extends GroovyTestCase {
         }
 
         assertEquals 'owner should have responded to method call',
-                     42,
-                     returnValue
+            42,
+            returnValue
     }
 
     void testCallingNonExistentMethod() {

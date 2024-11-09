@@ -28,7 +28,7 @@ import static groovy.NamedParameterHelper.myJavaMethod
 final class NamedParameterTest extends GroovyTestCase {
 
     void testPassingNamedParametersToMethod() {
-        someMethod(name:"gromit", eating:"nice cheese", times:2)
+        someMethod(name: "gromit", eating: "nice cheese", times: 2)
     }
 
     protected void someMethod(args) {
@@ -39,21 +39,21 @@ final class NamedParameterTest extends GroovyTestCase {
     }
 
     void testNamedParameterSpreadOnSeveralLines() {
-        someMethod( name:
-                    "gromit",
+        someMethod(name:
+            "gromit",
             eating:
-                    "nice cheese",
+                "nice cheese",
             times:
-                    2)
+                2)
     }
 
     void testNamedParameterSpreadOnSeveralLinesWithCommandExpressions() {
         someMethod name:
-                    "gromit",
+            "gromit",
             eating:
-                    "nice cheese",
+                "nice cheese",
             times:
-                    2
+                2
     }
 
     @TypeChecked
@@ -64,7 +64,7 @@ final class NamedParameterTest extends GroovyTestCase {
         assert myJavaMethod(foo: 'FOO', 142) == 'foo = FOO, bar = null, num = 142'
         assert myMethod(foo: 'FOO', bar: 'BAR') == 'foo = FOO, bar = BAR'
         assert myMethod(bar: 'BAR') == 'foo = null, bar = BAR'
-        assert myMethod(foo: 'FOO', bar: 35,242) == 'foo = FOO, bar = 35, num = 242'
+        assert myMethod(foo: 'FOO', bar: 35, 242) == 'foo = FOO, bar = 35, num = 242'
         assert myMethod(foo: 'FOO', 342) == 'foo = FOO, bar = null, num = 342'
         assertScript '''
             import groovy.transform.TypeChecked
@@ -174,15 +174,15 @@ final class NamedParameterTest extends GroovyTestCase {
     //--------------------------------------------------------------------------
 
     static String myMethod(@NamedParams([
-            @NamedParam(value = "foo"),
-            @NamedParam(value = "bar", type = String, required = true)
+        @NamedParam(value = "foo"),
+        @NamedParam(value = "bar", type = String, required = true)
     ]) Map params) {
         "foo = $params.foo, bar = $params.bar"
     }
 
     static String myMethod(@NamedParams([
-            @NamedParam(value = "foo", type = String, required = true),
-            @NamedParam(value = "bar", type = Integer)
+        @NamedParam(value = "foo", type = String, required = true),
+        @NamedParam(value = "bar", type = Integer)
     ]) Map params, int num) {
         "foo = $params.foo, bar = $params.bar, num = $num"
     }

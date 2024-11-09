@@ -47,8 +47,8 @@ public class RangeExpressionTransformer {
         for (ConstructorNode constructor : declaredConstructors) {
             final Parameter[] parameters = constructor.getParameters();
             if (parameters.length == 4
-                    && ClassHelper.isPrimitiveBoolean(parameters[0].getOriginType())
-                    && ClassHelper.isPrimitiveBoolean(parameters[1].getOriginType())) {
+                && ClassHelper.isPrimitiveBoolean(parameters[0].getOriginType())
+                && ClassHelper.isPrimitiveBoolean(parameters[1].getOriginType())) {
                 target = constructor;
                 break;
             }
@@ -64,7 +64,7 @@ public class RangeExpressionTransformer {
 
     public Expression transformRangeExpression(final RangeExpression range) {
         if (INTRANGE_TYPE.equals(range.getNodeMetaData(StaticTypesMarker.INFERRED_TYPE))) {
-            Expression inclLeft = constX(!range.isExclusiveLeft(),true), inclRight = constX(!range.isExclusiveRight(),true);
+            Expression inclLeft = constX(!range.isExclusiveLeft(), true), inclRight = constX(!range.isExclusiveRight(), true);
             Expression cce = ctorX(INTRANGE_TYPE, args(inclLeft, inclRight, range.getFrom(), range.getTo()));
             cce.putNodeMetaData(StaticTypesMarker.DIRECT_METHOD_CALL_TARGET, INTRANGE_CTOR);
             cce.putNodeMetaData(StaticTypesMarker.INFERRED_TYPE, INTRANGE_TYPE);

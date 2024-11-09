@@ -88,44 +88,6 @@ public class EnumVisitor extends ClassCodeVisitorSupport {
         sourceUnit = su;
     }
 
-    @Override
-    protected SourceUnit getSourceUnit() {
-        return sourceUnit;
-    }
-
-    @Override
-    public void visitClass(final ClassNode node) {
-        if (node.isEnum()) completeEnum(node);
-    }
-
-    private void completeEnum(final ClassNode enumClass) {
-        // create MIN_VALUE, MAX_VALUE and $VALUES fields
-        FieldNode minValue = null, maxValue = null, values = null;
-
-        boolean isAIC = isAnonymousInnerClass(enumClass);
-        if (!isAIC) {
-            ClassNode enumPlain = enumClass.getPlainNodeReference();
-            minValue = new FieldNode("MIN_VALUE", ACC_FINAL | ACC_PUBLIC | ACC_STATIC, enumPlain, enumClass, null);
-            maxValue = new FieldNode("MAX_VALUE", ACC_FINAL | ACC_PUBLIC | ACC_STATIC, enumPlain, enumClass, null);
-            values = new FieldNode("$VALUES", ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC, enumPlain.makeArray(), enumClass, null);
-            values.setSynthetic(true);
-
-            for (ConstructorNode ctor : enumClass.getDeclaredConstructors()) {
-                if (ctor.isSyntheticPublic()) {
-                    ctor.setSyntheticPublic(false);
-                    ctor.setModifiers((ctor.getModifiers() | ACC_PRIVATE) & ~ACC_PUBLIC);
-                } else if (!ctor.isPrivate()) {
-                    addError(ctor, "Illegal modifier for the enum constructor; only private is permitted.");
-                }
-            }
-
-            addMethods(enumClass, values, minValue, maxValue);
-            checkForAbstractMethods(enumClass);
-        }
-
-        addInit(enumClass, minValue, maxValue, values, isAIC);
-    }
-
     private static void checkForAbstractMethods(final ClassNode enumClass) {
         for (MethodNode method : enumClass.getMethods()) {
             if (method.isAbstract()) {
@@ -211,6 +173,49 @@ public class EnumVisitor extends ClassCodeVisitorSupport {
             valueOfMethod.setSynthetic(true);
             addGeneratedMethod(enumClass, valueOfMethod);
         }
+    }
+
+    static boolean isAnonymousInnerClass(final ClassNode enumClass) {
+        return enumClass instanceof EnumConstantClassNode
+            && ((EnumConstantClassNode) enumClass).getVariableScope() == null;
+    }
+
+    @Override
+    protected SourceUnit getSourceUnit() {
+        return sourceUnit;
+    }
+
+    @Override
+    public void visitClass(final ClassNode node) {
+        if (node.isEnum()) completeEnum(node);
+    }
+
+    private void completeEnum(final ClassNode enumClass) {
+        // create MIN_VALUE, MAX_VALUE and $VALUES fields
+        FieldNode minValue = null, maxValue = null, values = null;
+
+        boolean isAIC = isAnonymousInnerClass(enumClass);
+        if (!isAIC) {
+            ClassNode enumPlain = enumClass.getPlainNodeReference();
+            minValue = new FieldNode("MIN_VALUE", ACC_FINAL | ACC_PUBLIC | ACC_STATIC, enumPlain, enumClass, null);
+            maxValue = new FieldNode("MAX_VALUE", ACC_FINAL | ACC_PUBLIC | ACC_STATIC, enumPlain, enumClass, null);
+            values = new FieldNode("$VALUES", ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC, enumPlain.makeArray(), enumClass, null);
+            values.setSynthetic(true);
+
+            for (ConstructorNode ctor : enumClass.getDeclaredConstructors()) {
+                if (ctor.isSyntheticPublic()) {
+                    ctor.setSyntheticPublic(false);
+                    ctor.setModifiers((ctor.getModifiers() | ACC_PRIVATE) & ~ACC_PUBLIC);
+                } else if (!ctor.isPrivate()) {
+                    addError(ctor, "Illegal modifier for the enum constructor; only private is permitted.");
+                }
+            }
+
+            addMethods(enumClass, values, minValue, maxValue);
+            checkForAbstractMethods(enumClass);
+        }
+
+        addInit(enumClass, minValue, maxValue, values, isAIC);
     }
 
     private void addInit(final ClassNode enumClass, final FieldNode minValue, final FieldNode maxValue, final FieldNode values, final boolean isAIC) {
@@ -317,15 +322,10 @@ public class EnumVisitor extends ClassCodeVisitorSupport {
 
     private void addError(final AnnotatedNode exp, final String msg) {
         getSourceUnit().getErrorCollector().addErrorAndContinue(
-                new SyntaxErrorMessage(
-                        new SyntaxException(msg + '\n', exp),
-                        getSourceUnit()
-                )
+            new SyntaxErrorMessage(
+                new SyntaxException(msg + '\n', exp),
+                getSourceUnit()
+            )
         );
-    }
-
-    static boolean isAnonymousInnerClass(final ClassNode enumClass) {
-        return enumClass instanceof EnumConstantClassNode
-            && ((EnumConstantClassNode) enumClass).getVariableScope() == null;
     }
 }

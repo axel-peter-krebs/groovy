@@ -46,17 +46,17 @@ class MethodDispatchBug extends GroovyTestCase {
         assert "OO" == o.doit(9, 9);
     }
 
-    def methodWithDefaults(a,b,c=1000) {
-      a+b+c
+    def methodWithDefaults(a, b, c = 1000) {
+        a + b + c
     }
 
     void testListExpansion() {
-       // there was a bug discovered while looking at GROOVY-1803
-       // a list expansion was cached like 
-       // methodWithDefaults(List) -> methodWithDefaults(Object,Object,Object)
-       // but this cached version can't handle lists with an arbitrary length 
-       // of parameters, resulting in the second call here to fail
-       assert methodWithDefaults([1,10,100]) == 111
-       assert methodWithDefaults([1,10]) == 1011    
-    }    
+        // there was a bug discovered while looking at GROOVY-1803
+        // a list expansion was cached like
+        // methodWithDefaults(List) -> methodWithDefaults(Object,Object,Object)
+        // but this cached version can't handle lists with an arbitrary length
+        // of parameters, resulting in the second call here to fail
+        assert methodWithDefaults([1, 10, 100]) == 111
+        assert methodWithDefaults([1, 10]) == 1011
+    }
 }

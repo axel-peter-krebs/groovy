@@ -34,7 +34,7 @@ import org.codehaus.groovy.control.SourceUnit;
  */
 public class ThirdParam extends PickAnyArgumentHint {
     public ThirdParam() {
-        super(2,-1);
+        super(2, -1);
     }
 
     /**
@@ -45,7 +45,7 @@ public class ThirdParam extends PickAnyArgumentHint {
      */
     public static class FirstGenericType extends PickAnyArgumentHint {
         public FirstGenericType() {
-            super(2,0);
+            super(2, 0);
         }
     }
 
@@ -58,7 +58,7 @@ public class ThirdParam extends PickAnyArgumentHint {
      */
     public static class SecondGenericType extends PickAnyArgumentHint {
         public SecondGenericType() {
-            super(2,1);
+            super(2, 1);
         }
     }
 
@@ -70,7 +70,7 @@ public class ThirdParam extends PickAnyArgumentHint {
      */
     public static class ThirdGenericType extends PickAnyArgumentHint {
         public ThirdGenericType() {
-            super(2,2);
+            super(2, 2);
         }
     }
 

@@ -29,20 +29,40 @@ import java.util.logging.Logger;
 
 /**
  * A JUnit 3 {@link junit.framework.TestCase} base class in Groovy.
- *
+ * <p>
  * In case JUnit 4 is used, see {@link groovy.test.GroovyAssert}.
  *
  * @see groovy.test.GroovyAssert
  */
 public class GroovyTestCase extends TestCase {
 
-    protected static Logger log = Logger.getLogger(GroovyTestCase.class.getName());
-
-    private static final AtomicInteger scriptFileNameCounter = new AtomicInteger(0);
-
     public static final String TEST_SCRIPT_NAME_PREFIX = "TestScript";
-
+    private static final AtomicInteger scriptFileNameCounter = new AtomicInteger(0);
+    protected static Logger log = Logger.getLogger(GroovyTestCase.class.getName());
     private boolean useAgileDoxNaming = false;
+
+    /**
+     * see {@link groovy.test.GroovyAssert#notYetImplemented(java.lang.Object)}
+     */
+    public static boolean notYetImplemented(Object caller) {
+        return GroovyAssert.notYetImplemented(caller);
+    }
+
+    public static void assertEquals(String message, Object expected, Object actual) {
+        if (expected == null && actual == null)
+            return;
+        if (expected != null && DefaultTypeTransformation.compareEqual(expected, actual))
+            return;
+        TestCase.assertEquals(message, expected, actual);
+    }
+
+    public static void assertEquals(Object expected, Object actual) {
+        assertEquals(null, expected, actual);
+    }
+
+    public static void assertEquals(String expected, String actual) {
+        assertEquals(null, expected, actual);
+    }
 
     /**
      * Overload the getName() method to make the test cases look more like AgileDox
@@ -69,7 +89,7 @@ public class GroovyTestCase extends TestCase {
      */
     protected void assertArrayEquals(Object[] expected, Object[] value) {
         String message =
-                "expected array: " + FormatHelper.toString(expected) + " value array: " + FormatHelper.toString(value);
+            "expected array: " + FormatHelper.toString(expected) + " value array: " + FormatHelper.toString(value);
         assertNotNull(message + ": expected should not be null", expected);
         assertNotNull(message + ": value should not be null", value);
         assertEquals(message, expected.length, value.length);
@@ -246,13 +266,6 @@ public class GroovyTestCase extends TestCase {
     }
 
     /**
-     * see {@link groovy.test.GroovyAssert#notYetImplemented(java.lang.Object)}
-     */
-    public static boolean notYetImplemented(Object caller) {
-        return GroovyAssert.notYetImplemented(caller);
-    }
-
-    /**
      * Convenience method for subclasses of GroovyTestCase, identical to
      * <pre> GroovyTestCase.notYetImplemented(this); </pre>.
      *
@@ -261,21 +274,5 @@ public class GroovyTestCase extends TestCase {
      */
     public boolean notYetImplemented() {
         return notYetImplemented(this);
-    }
-
-    public static void assertEquals(String message, Object expected, Object actual) {
-        if (expected == null && actual == null)
-            return;
-        if (expected != null && DefaultTypeTransformation.compareEqual(expected, actual))
-            return;
-        TestCase.assertEquals(message, expected, actual);
-    }
-
-    public static void assertEquals(Object expected, Object actual) {
-        assertEquals(null, expected, actual);
-    }
-
-    public static void assertEquals(String expected, String actual) {
-        assertEquals(null, expected, actual);
     }
 }

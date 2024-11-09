@@ -83,7 +83,7 @@ class ASTMatcherTestingTest extends GroovyTestCase {
 @Retention(RetentionPolicy.SOURCE)
 @Target([ElementType.TYPE])
 @GroovyASTTransformationClass(["metaprogramming.TwiceASTTransformation"])
-@interface Twice { }
+@interface Twice {}
 
 // tag::twiceasttransformation[]
 @GroovyASTTransformation(phase = CompilePhase.INSTRUCTION_SELECTION)
@@ -103,8 +103,8 @@ class TwiceASTTransformation extends AbstractASTTransformation {
 
     BinaryExpression getSumExpression() {               // <2>
         return macro {
-            $v{ varX(VAR_X) } +
-            $v{ varX(VAR_X) }
+            $v { varX(VAR_X) } +
+                $v { varX(VAR_X) }
         }
     }
 

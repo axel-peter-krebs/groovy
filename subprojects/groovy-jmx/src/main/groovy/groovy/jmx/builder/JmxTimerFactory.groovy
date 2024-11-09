@@ -164,12 +164,12 @@ class JmxTimerFactory extends AbstractFactory {
         def server = (MBeanServer) metaMap.server
         def timer = metaMap.timer
         timer.addNotification(
-                metaMap.event,
-                metaMap.message,
-                metaMap.data,
-                metaMap.date,
-                metaMap.period,
-                metaMap.occurences)
+            metaMap.event,
+            metaMap.message,
+            metaMap.data,
+            metaMap.date,
+            metaMap.period,
+            metaMap.occurences)
 
         if (server.isRegistered(metaMap.name)) {
             server.unregisterMBean metaMap.name

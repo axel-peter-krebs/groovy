@@ -122,7 +122,7 @@ class MinusTest extends GroovyTestCase {
         assert x - x == [:]
         assert y - z == [1: 1]
 
-        assert x - [1.0: 1] == [1:1, 2:2, 3:3, 4:4]
-        assert x - [1: 1.0] == [2:2, 3:3, 4:4]
+        assert x - [1.0: 1] == [1: 1, 2: 2, 3: 3, 4: 4]
+        assert x - [1: 1.0] == [2: 2, 3: 3, 4: 4]
     }
 }

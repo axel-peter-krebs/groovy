@@ -123,74 +123,55 @@ import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
  */
 public class ClassNode extends AnnotatedNode {
 
-    private static class MapOfLists {
-        Map<Object, List<MethodNode>> map;
-
-        List<MethodNode> get(Object key) {
-            return Optional.ofNullable(map)
-                .map(m -> m.get(key)).orElseGet(Collections::emptyList);
-        }
-
-        void put(Object key, MethodNode value) {
-            if (map == null) map = new LinkedHashMap<>();
-            map.computeIfAbsent(key, k -> new ArrayList<>(2)).add(value);
-        }
-
-        void remove(Object key, MethodNode value) {
-            get(key).remove(value);
-        }
-    }
-
     public static final ClassNode[] EMPTY_ARRAY = new ClassNode[0];
     public static final ClassNode THIS = new ClassNode(Object.class);
     public static final ClassNode SUPER = new ClassNode(Object.class);
-
+    // use this to synchronize access for the lazy init
+    protected final Object lazyInitLock = new Object();
+    // TODO: initialize for primary nodes only!
+    private final MapOfLists methods = new MapOfLists();
+    protected boolean isPrimaryNode;
+    // if not null then this instance is resolved
+    protected Class<?> clazz;
     private String name;
     private int modifiers;
     private ClassNode[] interfaces;
     private MixinNode[] mixins;
     private List<Statement> objectInitializers;
     private List<ConstructorNode> constructors;
-    // TODO: initialize for primary nodes only!
-    private final MapOfLists methods = new MapOfLists();
     private List<MethodNode> methodsList = Collections.emptyList();
     private List<FieldNode> fields;
     private List<PropertyNode> properties;
     private Map<String, FieldNode> fieldIndex;
     private ClassNode superClass;
-    protected boolean isPrimaryNode;
     // TODO: initialize for primary nodes only!
     private List<ClassNode> permittedSubclasses = new ArrayList<>();
     private List<RecordComponentNode> recordComponents = Collections.emptyList();
-
-    // use this to synchronize access for the lazy init
-    protected  final  Object lazyInitLock = new Object();
     // only false when this instance is constructed from a Class
     private volatile boolean lazyInitDone = true;
-    /**
-     * Initializes the complete class structure.
-     */
-    private void lazyClassInit() {
-        if (lazyInitDone) return;
-        synchronized (lazyInitLock) {
-            if (redirect != null) {
-                throw new GroovyBugError("lazyClassInit called on a proxy ClassNode. " +
-                                         "A redirect() call is missing somewhere!");
-            }
-            if (lazyInitDone) return;
-            VMPluginFactory.getPlugin().configureClassNode(getCompileUnit(), this);
-            lazyInitDone = true;
-        }
-    }
-
-    // if not null then this instance is resolved
-    protected Class<?> clazz;
     // if not null then this instance is an array
     private ClassNode componentType;
     // if not null then this instance is handled as proxy for the redirect
     private ClassNode redirect;
+    private List<InnerClassNode> innerClasses;
+    private MethodNode enclosingMethod;
 
     //--------------------------------------------------------------------------
+    private GenericsType[] genericsTypes;
+    private boolean placeholder;
+    private boolean usesGenerics;
+    private boolean script;
+    private boolean scriptBody;
+
+    //--------------------------------------------------------------------------
+    private boolean staticClass;
+    private boolean syntheticPublic;
+    private boolean annotated;
+    private List<AnnotationNode> typeAnnotations = Collections.emptyList();
+    /**
+     * The AST Transformations to be applied during compilation.
+     */
+    private Map<CompilePhase, Map<Class<? extends ASTTransformation>, Set<ASTNode>>> transformInstances;
 
     /**
      * @param name       the fully-qualified name of the class
@@ -208,6 +189,8 @@ public class ClassNode extends AnnotatedNode {
         setInterfaces(interfaces);
         setMixins(mixins);
     }
+
+    //
 
     /**
      * @param name       the fully-qualified name of the class
@@ -241,12 +224,49 @@ public class ClassNode extends AnnotatedNode {
      */
     private ClassNode(final ClassNode componentType) {
         this(componentType.getName() + "[]", ACC_ABSTRACT | ACC_FINAL | ACC_PUBLIC, ClassHelper.OBJECT_TYPE,
-          new ClassNode[]{ClassHelper.CLONEABLE_TYPE, ClassHelper.SERIALIZABLE_TYPE}, MixinNode.EMPTY_ARRAY);
+            new ClassNode[]{ClassHelper.CLONEABLE_TYPE, ClassHelper.SERIALIZABLE_TYPE}, MixinNode.EMPTY_ARRAY);
         this.componentType = componentType.redirect();
         this.isPrimaryNode = false;
     }
 
-    //--------------------------------------------------------------------------
+    private static boolean hasExactMatchingCompatibleType(final MethodNode match, final MethodNode maybe, final int i) {
+        int lastParamIndex = maybe.getParameters().length - 1;
+        return (i <= lastParamIndex && match.getParameters()[i].getType().equals(maybe.getParameters()[i].getType()))
+            || (i >= lastParamIndex && isPotentialVarArg(maybe, lastParamIndex) && match.getParameters()[i].getType().equals(maybe.getParameters()[lastParamIndex].getType().getComponentType()));
+    }
+
+    private static boolean hasCompatibleType(final Expression arg, final MethodNode method, final int i) {
+        int lastParamIndex = method.getParameters().length - 1;
+        return (i <= lastParamIndex && arg.getType().isDerivedFrom(method.getParameters()[i].getType()))
+            || (i >= lastParamIndex && isPotentialVarArg(method, lastParamIndex) && arg.getType().isDerivedFrom(method.getParameters()[lastParamIndex].getType().getComponentType()));
+    }
+
+    private static boolean hasCompatibleNumberOfArgs(final MethodNode method, final int nArgs) {
+        int lastParamIndex = method.getParameters().length - 1;
+        return nArgs == method.getParameters().length || (nArgs >= lastParamIndex && isPotentialVarArg(method, lastParamIndex));
+    }
+
+    private static boolean isPotentialVarArg(final MethodNode method, final int lastParamIndex) {
+        return lastParamIndex >= 0 && method.getParameters()[lastParamIndex].getType().isArray();
+    }
+
+    //
+
+    /**
+     * Initializes the complete class structure.
+     */
+    private void lazyClassInit() {
+        if (lazyInitDone) return;
+        synchronized (lazyInitLock) {
+            if (redirect != null) {
+                throw new GroovyBugError("lazyClassInit called on a proxy ClassNode. " +
+                    "A redirect() call is missing somewhere!");
+            }
+            if (lazyInitDone) return;
+            VMPluginFactory.getPlugin().configureClassNode(getCompileUnit(), this);
+            lazyInitDone = true;
+        }
+    }
 
     /**
      * Returns the {@code ClassNode} this node is a proxy for or the node itself.
@@ -265,7 +285,8 @@ public class ClassNode extends AnnotatedNode {
      * @param node the class to redirect to; if {@code null} the redirect is removed
      */
     public void setRedirect(ClassNode node) {
-        if (isPrimaryNode) throw new GroovyBugError("tried to set a redirect for a primary ClassNode (" + getName() + "->" + node.getName() + ").");
+        if (isPrimaryNode)
+            throw new GroovyBugError("tried to set a redirect for a primary ClassNode (" + getName() + "->" + node.getName() + ").");
         if (node != null && !isGenericsPlaceHolder()) node = node.redirect();
         if (node == this) return;
         redirect = node;
@@ -282,6 +303,8 @@ public class ClassNode extends AnnotatedNode {
         return getPlainNodeReference(true);
     }
 
+    //--------------------------------------------------------------------------
+
     public ClassNode getPlainNodeReference(boolean skipPrimitives) {
         if (skipPrimitives && ClassHelper.isPrimitiveType(this)) return this;
         ClassNode n = new ClassNode(name, modifiers, superClass, null, null);
@@ -292,8 +315,6 @@ public class ClassNode extends AnnotatedNode {
         }
         return n;
     }
-
-    //
 
     public ModuleNode getModule() {
         return redirect().getNodeMetaData(ModuleNode.class);
@@ -318,7 +339,7 @@ public class ClassNode extends AnnotatedNode {
         return Optional.ofNullable(getModule()).map(ModuleNode::getPackage).orElse(null);
     }
 
-    public String  getPackageName() {
+    public String getPackageName() {
         int idx = getName().lastIndexOf('.');
         if (idx > 0) {
             return getName().substring(0, idx);
@@ -338,14 +359,16 @@ public class ClassNode extends AnnotatedNode {
         return getName();
     }
 
-    //
-
     public String getUnresolvedName() {
         return name;
     }
 
     public ClassNode getUnresolvedSuperClass() {
         return getUnresolvedSuperClass(true);
+    }
+
+    public void setUnresolvedSuperClass(final ClassNode superClass) {
+        this.superClass = superClass;
     }
 
     public ClassNode getUnresolvedSuperClass(final boolean deref) {
@@ -355,10 +378,6 @@ public class ClassNode extends AnnotatedNode {
             lazyClassInit();
         }
         return superClass;
-    }
-
-    public void setUnresolvedSuperClass(final ClassNode superClass) {
-        this.superClass = superClass;
     }
 
     public ClassNode[] getUnresolvedInterfaces() {
@@ -374,8 +393,6 @@ public class ClassNode extends AnnotatedNode {
         return interfaces;
     }
 
-    //--------------------------------------------------------------------------
-
     @Override
     public String getText() {
         return getName();
@@ -384,6 +401,8 @@ public class ClassNode extends AnnotatedNode {
     public String getName() {
         return redirect().name;
     }
+
+    //--------------------------------------------------------------------------
 
     public String setName(final String name) {
         return redirect != null ? redirect.setName(name) : (this.name = name);
@@ -435,20 +454,6 @@ public class ClassNode extends AnnotatedNode {
         return interfaces;
     }
 
-    public Set<ClassNode> getAllInterfaces() {
-        Set<ClassNode> result = new LinkedHashSet<>();
-        if (isInterface()) result.add(this);
-        getAllInterfaces(result);
-        return result;
-    }
-
-    private void getAllInterfaces(final Set<ClassNode> set) {
-        for (ClassNode face : getInterfaces()) {
-            if (set.add(face)) // GROOVY-11036
-                face.getAllInterfaces(set);
-        }
-    }
-
     public void setInterfaces(final ClassNode[] interfaces) {
         if (redirect != null) {
             redirect.setInterfaces(interfaces);
@@ -460,6 +465,20 @@ public class ClassNode extends AnnotatedNode {
                     usesGenerics |= anInterface.isUsingGenerics();
                 }
             }
+        }
+    }
+
+    public Set<ClassNode> getAllInterfaces() {
+        Set<ClassNode> result = new LinkedHashSet<>();
+        if (isInterface()) result.add(this);
+        getAllInterfaces(result);
+        return result;
+    }
+
+    private void getAllInterfaces(final Set<ClassNode> set) {
+        for (ClassNode face : getInterfaces()) {
+            if (set.add(face)) // GROOVY-11036
+                face.getAllInterfaces(set);
         }
     }
 
@@ -526,8 +545,6 @@ public class ClassNode extends AnnotatedNode {
         }
     }
 
-    //--------------------------------------------------------------------------
-
     public void addInterface(ClassNode node) {
         ClassNode[] interfaces = getInterfaces();
         for (ClassNode face : interfaces) {
@@ -561,6 +578,8 @@ public class ClassNode extends AnnotatedNode {
     public void addField(FieldNode node) {
         addField(node, true);
     }
+
+    //--------------------------------------------------------------------------
 
     private void addField(FieldNode node, boolean append) {
         ClassNode r = redirect();
@@ -710,7 +729,7 @@ public class ClassNode extends AnnotatedNode {
             for (ListIterator<Statement> it = blockStatements.listIterator(); it.hasNext(); ) {
                 Statement stmt = it.next();
                 if (stmt instanceof ExpressionStatement &&
-                        ((ExpressionStatement) stmt).getExpression() instanceof BinaryExpression) {
+                    ((ExpressionStatement) stmt).getExpression() instanceof BinaryExpression) {
                     BinaryExpression bExp = (BinaryExpression) ((ExpressionStatement) stmt).getExpression();
                     if (bExp.getLeftExpression() instanceof FieldExpression) {
                         FieldExpression fExp = (FieldExpression) bExp.getLeftExpression();
@@ -737,8 +756,6 @@ public class ClassNode extends AnnotatedNode {
         }
         return method;
     }
-
-    //--------------------------------------------------------------------------
 
     /**
      * @return the fields associated with this {@code ClassNode}
@@ -914,7 +931,7 @@ public class ClassNode extends AnnotatedNode {
         boolean zeroParameters = !ArrayGroovyMethods.asBoolean(parameters);
         for (MethodNode method : getDeclaredMethods(name)) {
             if (zeroParameters ? method.getParameters().length == 0
-                    : parametersEqual(method.getParameters(), parameters)) {
+                : parametersEqual(method.getParameters(), parameters)) {
                 return method;
             }
         }
@@ -948,8 +965,8 @@ public class ClassNode extends AnnotatedNode {
             return true;
         }
         if (this.isArray() && type.isArray()
-                && ClassHelper.isObjectType(type.getComponentType())
-                && !ClassHelper.isPrimitiveType(this.getComponentType())) {
+            && ClassHelper.isObjectType(type.getComponentType())
+            && !ClassHelper.isPrimitiveType(this.getComponentType())) {
             return true;
         }
         for (ClassNode node = this; node != null; node = node.getSuperClass()) {
@@ -980,6 +997,8 @@ public class ClassNode extends AnnotatedNode {
         return false;
     }
 
+    //--------------------------------------------------------------------------
+
     /**
      * @param classNode the class node for the interface
      * @return {@code true} if this type implements the given interface
@@ -998,7 +1017,6 @@ public class ClassNode extends AnnotatedNode {
     }
 
     /**
-     *
      * @param classNodes the class nodes for the interfaces
      * @return {@code true} if this type declares that it implements any of the
      * given interfaces or if one of its interfaces extends directly/indirectly
@@ -1017,11 +1035,10 @@ public class ClassNode extends AnnotatedNode {
      * @param classNode the class node for the interface
      * @return {@code true} if this class declares that it implements the given
      * interface or if one of its interfaces extends directly/indirectly the interface
-     *
+     * <p>
      * NOTE: Doesn't consider an interface to implement itself.
      * I think this is intended to be called on ClassNodes representing
      * classes, not interfaces.
-     *
      * @see org.codehaus.groovy.ast.tools.GeneralUtils#isOrImplements
      */
     public boolean declaresInterface(ClassNode classNode) {
@@ -1044,6 +1061,8 @@ public class ClassNode extends AnnotatedNode {
         return ParameterUtils.parametersEqual(a, b);
     }
 
+    //--------------------------------------------------------------------------
+
     public MethodNode getGetterMethod(String getterName) {
         return getGetterMethod(getterName, true);
     }
@@ -1052,7 +1071,7 @@ public class ClassNode extends AnnotatedNode {
         MethodNode getterMethod = null;
 
         java.util.function.Predicate<MethodNode> isNullOrSynthetic = (method) ->
-                (method == null || (method.getModifiers() & ACC_SYNTHETIC) != 0);
+            (method == null || (method.getModifiers() & ACC_SYNTHETIC) != 0);
 
         boolean booleanReturnOnly = getterName.startsWith("is");
         for (MethodNode method : getDeclaredMethods(getterName)) {
@@ -1109,8 +1128,8 @@ public class ClassNode extends AnnotatedNode {
     public MethodNode getSetterMethod(String setterName, boolean voidOnly) {
         for (MethodNode method : getDeclaredMethods(setterName)) {
             if (setterName.equals(method.getName())
-                    && method.getParameters().length == 1
-                    && (!voidOnly || method.isVoidMethod())) {
+                && method.getParameters().length == 1
+                && (!voidOnly || method.isVoidMethod())) {
                 return method;
             }
         }
@@ -1174,7 +1193,7 @@ public class ClassNode extends AnnotatedNode {
                         if (method == null) {
                             method = mn;
                         } else if (cn.equals(this)
-                                || method.getParameters().length != nArgs) {
+                            || method.getParameters().length != nArgs) {
                             return null;
                         } else {
                             for (int i = 0; i < nArgs; i += 1) {
@@ -1189,11 +1208,12 @@ public class ClassNode extends AnnotatedNode {
             }
         }
 
-faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { // GROOVY-11323
+        faces:
+        if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { // GROOVY-11323
             for (ClassNode cn : getAllInterfaces()) {
                 for (MethodNode mn : cn.getDeclaredMethods(name)) {
                     if (mn.isPublic() && !mn.isStatic() && hasCompatibleNumberOfArgs(mn, nArgs) && (nArgs == 0
-                            || IntStream.range(0,nArgs).allMatch(i -> hasCompatibleType(args.get(i),mn,i)))) {
+                        || IntStream.range(0, nArgs).allMatch(i -> hasCompatibleType(args.get(i), mn, i)))) {
                         method = mn;
                         break faces;
                     }
@@ -1204,26 +1224,7 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
         return method;
     }
 
-    private static boolean hasExactMatchingCompatibleType(final MethodNode match, final MethodNode maybe, final int i) {
-        int lastParamIndex = maybe.getParameters().length - 1;
-        return (i <= lastParamIndex && match.getParameters()[i].getType().equals(maybe.getParameters()[i].getType()))
-                || (i >= lastParamIndex && isPotentialVarArg(maybe, lastParamIndex) && match.getParameters()[i].getType().equals(maybe.getParameters()[lastParamIndex].getType().getComponentType()));
-    }
-
-    private static boolean hasCompatibleType(final Expression arg, final MethodNode method, final int i) {
-        int lastParamIndex = method.getParameters().length - 1;
-        return (i <= lastParamIndex && arg.getType().isDerivedFrom(method.getParameters()[i].getType()))
-                || (i >= lastParamIndex && isPotentialVarArg(method, lastParamIndex) && arg.getType().isDerivedFrom(method.getParameters()[lastParamIndex].getType().getComponentType()));
-    }
-
-    private static boolean hasCompatibleNumberOfArgs(final MethodNode method, final int nArgs) {
-        int lastParamIndex = method.getParameters().length - 1;
-        return nArgs == method.getParameters().length || (nArgs >= lastParamIndex && isPotentialVarArg(method, lastParamIndex));
-    }
-
-    private static boolean isPotentialVarArg(final MethodNode method, final int lastParamIndex) {
-        return lastParamIndex >= 0 && method.getParameters()[lastParamIndex].getType().isArray();
-    }
+    //--------------------------------------------------------------------------
 
     /**
      * Checks if the given method has a possibly matching static method with the
@@ -1236,8 +1237,6 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
     public boolean hasPossibleStaticMethod(final String name, final Expression arguments) {
         return ClassNodeUtils.hasPossibleStaticMethod(this, name, arguments, false);
     }
-
-    //--------------------------------------------------------------------------
 
     public void renameField(String oldName, String newName) {
         ClassNode r = redirect();
@@ -1265,8 +1264,6 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
         getDeclaredConstructors().remove(node);
     }
 
-    //--------------------------------------------------------------------------
-
     @Override
     public boolean equals(Object that) {
         if (that == this) return true;
@@ -1277,16 +1274,18 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
     }
 
     @Override
-    public     int hashCode() {
+    public int hashCode() {
         return (redirect != null ? redirect.hashCode() : getText().hashCode());
     }
 
     @Override
-    public  String toString() {
+    public String toString() {
         return toString(true);
     }
 
-    public  String toString(boolean showRedirect) {
+    //
+
+    public String toString(boolean showRedirect) {
         if (isArray()) {
             return getComponentType().toString(showRedirect) + "[]";
         }
@@ -1345,7 +1344,7 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
         }
     }
 
-    //--------------------------------------------------------------------------
+    //
 
     public boolean isAbstract() {
         return (getModifiers() & ACC_ABSTRACT) != 0;
@@ -1358,6 +1357,8 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
     public boolean isAnnotationDefinition() {
         return isInterface() && (getModifiers() & ACC_ANNOTATION) != 0;
     }
+
+    //
 
     public boolean isEnum() {
         return (getModifiers() & ACC_ENUM) != 0;
@@ -1386,6 +1387,8 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
         return !getAnnotations(ClassHelper.SEALED_TYPE).isEmpty() || !getPermittedSubclasses().isEmpty();
     }
 
+    //
+
     public boolean isResolved() {
         if (clazz != null) return true;
         if (redirect != null) return redirect.isResolved();
@@ -1397,6 +1400,7 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
      * is inherently unsafe as it may return null depending on the compile phase you are
      * using. AST transformations should never use this method directly, but rather obtain
      * a new class node using {@link #getPlainNodeReference()}.
+     *
      * @return the class this classnode relates to. May return null.
      */
     public Class getTypeClass() {
@@ -1410,11 +1414,11 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
         throw new GroovyBugError("ClassNode#getTypeClass for " + getName() + " called before the type class is set");
     }
 
-    //
-
     public boolean isArray() {
         return (componentType != null);
     }
+
+    //
 
     /**
      * Returns a {@code ClassNode} representing an array of the type represented
@@ -1439,8 +1443,6 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
         return componentType;
     }
 
-    //
-
     public ClassNode getOuterClass() {
         if (redirect != null) {
             return redirect.getOuterClass();
@@ -1461,6 +1463,8 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
         return result;
     }
 
+    //
+
     /**
      * @return the field on the outer class or {@code null} if this is not an inner class
      */
@@ -1470,10 +1474,6 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
         }
         return null;
     }
-
-    //
-
-    private List<InnerClassNode> innerClasses;
 
     void addInnerClass(InnerClassNode innerClass) {
         if (redirect != null) {
@@ -1495,8 +1495,6 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
 
     //
 
-    private MethodNode enclosingMethod;
-
     /**
      * The enclosing method of local inner class.
      */
@@ -1508,21 +1506,19 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
         this.enclosingMethod = enclosingMethod;
     }
 
-    //
-
-    private GenericsType[] genericsTypes;
-
     public GenericsType asGenericsType() {
         if (!isGenericsPlaceHolder()) {
             return new GenericsType(this);
         } else if (genericsTypes != null
-                && genericsTypes[0].getUpperBounds() != null) {
+            && genericsTypes[0].getUpperBounds() != null) {
             return genericsTypes[0];
         } else {
             ClassNode upper = (redirect != null ? redirect : this);
             return new GenericsType(this, new ClassNode[]{upper}, null);
         }
     }
+
+    //
 
     public GenericsType[] getGenericsTypes() {
         return genericsTypes;
@@ -1533,22 +1529,16 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
         this.genericsTypes = genericsTypes;
     }
 
-    //
-
-    private boolean placeholder;
-
     public boolean isGenericsPlaceHolder() {
         return placeholder;
     }
+
+    //
 
     public void setGenericsPlaceHolder(boolean placeholder) {
         usesGenerics = usesGenerics || placeholder;
         this.placeholder = placeholder;
     }
-
-    //
-
-    private boolean usesGenerics;
 
     public boolean isUsingGenerics() {
         return usesGenerics;
@@ -1560,8 +1550,6 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
 
     //
 
-    private boolean script;
-
     public boolean isScript() {
         return redirect().script || isDerivedFrom(ClassHelper.SCRIPT_TYPE);
     }
@@ -1570,10 +1558,6 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
         this.script = script;
     }
 
-    //
-
-    private boolean scriptBody;
-
     /**
      * @return {@code true} if this inner class or closure was declared inside a script body
      */
@@ -1581,13 +1565,11 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
         return redirect().scriptBody;
     }
 
+    //
+
     public void setScriptBody(boolean scriptBody) {
         this.scriptBody = scriptBody;
     }
-
-    //
-
-    private boolean staticClass;
 
     /**
      * Is this class declared in a static method (such as a closure / inner class declared in a static method)
@@ -1601,8 +1583,6 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
     }
 
     //
-
-    private boolean syntheticPublic;
 
     /**
      * Indicates that this class has been "promoted" to public by Groovy when in
@@ -1620,19 +1600,15 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
         this.syntheticPublic = syntheticPublic;
     }
 
-    //
-
-    private boolean annotated;
-
     public boolean isAnnotated() {
         return this.annotated;
     }
 
+    //
+
     public void setAnnotated(boolean annotated) {
         this.annotated = annotated;
     }
-
-    //
 
     @Override
     public List<AnnotationNode> getAnnotations() {
@@ -1642,6 +1618,8 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
         return super.getAnnotations();
     }
 
+    //
+
     @Override
     public List<AnnotationNode> getAnnotations(ClassNode type) {
         if (redirect != null)
@@ -1649,10 +1627,6 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
         lazyClassInit();
         return super.getAnnotations(type);
     }
-
-    //
-
-    private List<AnnotationNode> typeAnnotations = Collections.emptyList();
 
     public List<AnnotationNode> getTypeAnnotations() {
         return new ArrayList<>(typeAnnotations);
@@ -1700,11 +1674,6 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
         return getTransformInstances().get(phase);
     }
 
-    /**
-     * The AST Transformations to be applied during compilation.
-     */
-    private Map<CompilePhase, Map<Class<? extends ASTTransformation>, Set<ASTNode>>> transformInstances;
-
     private Map<CompilePhase, Map<Class<? extends ASTTransformation>, Set<ASTNode>>> getTransformInstances() {
         if (transformInstances == null) {
             transformInstances = new EnumMap<>(CompilePhase.class);
@@ -1713,5 +1682,23 @@ faces:  if (method == null && ArrayGroovyMethods.asBoolean(getInterfaces())) { /
             }
         }
         return transformInstances;
+    }
+
+    private static class MapOfLists {
+        Map<Object, List<MethodNode>> map;
+
+        List<MethodNode> get(Object key) {
+            return Optional.ofNullable(map)
+                .map(m -> m.get(key)).orElseGet(Collections::emptyList);
+        }
+
+        void put(Object key, MethodNode value) {
+            if (map == null) map = new LinkedHashMap<>();
+            map.computeIfAbsent(key, k -> new ArrayList<>(2)).add(value);
+        }
+
+        void remove(Object key, MethodNode value) {
+            get(key).remove(value);
+        }
     }
 }

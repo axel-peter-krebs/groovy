@@ -26,7 +26,7 @@ import org.junit.Test
 final class Groovy9666 {
     @Test
     void testCanIterateImportsWhileAdding() {
-        def mn = new ModuleNode((SourceUnit)null)
+        def mn = new ModuleNode((SourceUnit) null)
 
         mn.addImport('Integer', ClassHelper.Integer_TYPE)
         assert mn.imports.size() == 1
@@ -38,7 +38,7 @@ final class Groovy9666 {
 
     @Test
     void testSimulateImportCaseChangingTransform() {
-        def mn = new ModuleNode((SourceUnit)null)
+        def mn = new ModuleNode((SourceUnit) null)
 
         mn.addStarImport('foo.bar')
         assert mn.starImports.size() == 1

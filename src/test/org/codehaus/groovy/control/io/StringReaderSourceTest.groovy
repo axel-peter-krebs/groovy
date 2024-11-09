@@ -25,7 +25,7 @@ class StringReaderSourceTest extends GroovyTestCase {
 
     void testFileReaderCanNotBeReopened() {
         def dummyString = "return false"
-        def writer = new StringReaderSource( dummyString, CompilerConfiguration.DEFAULT )
+        def writer = new StringReaderSource(dummyString, CompilerConfiguration.DEFAULT)
         assert writer.canReopenSource()
     }
 }

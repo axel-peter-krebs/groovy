@@ -69,7 +69,7 @@ final class BinaryStreamsTest extends GroovyTestCase {
         dos.close()
 
         temp3.withInputStream { is ->
-            def data = new byte[4+5*2]
+            def data = new byte[4 + 5 * 2]
             is.read(data)
             byte[] expected = [0x77, 0x65, 0x43, 0x21, 0, 'M', 0, 'i', 0, 'l', 0, 'e', 0, 's']
             assert data as List == expected as List
@@ -90,7 +90,7 @@ final class BinaryStreamsTest extends GroovyTestCase {
         }
 
         temp4.withInputStream { is ->
-            def data = new byte[4+5*2]
+            def data = new byte[4 + 5 * 2]
             is.read(data)
             byte[] expected = [0x12, 0x34, 0x56, 0x78, 0, 'B', 0, 'u', 0, 'b', 0, 'b', 0, 'a']
             assert data as List == expected as List
@@ -106,7 +106,7 @@ final class BinaryStreamsTest extends GroovyTestCase {
     void manualTestRawSocketsProcessing() {
         def server
         def port = 999
-        Thread.start{
+        Thread.start {
             server = new ServerSocket(port)
             server.accept() { socket ->
                 socket.withStreams { input, output ->
@@ -123,7 +123,7 @@ final class BinaryStreamsTest extends GroovyTestCase {
 
         def result
         def client = new Socket("localhost", port)
-        client.withStreams{ input, output ->
+        client.withStreams { input, output ->
             def oos = new ObjectOutputStream(output)
             def ois = new ObjectInputStream(input)
             oos << 1000
@@ -140,7 +140,7 @@ final class BinaryStreamsTest extends GroovyTestCase {
     void manualTestObjectSocketsProcessing() {
         def server
         def port = 999
-        Thread.start{
+        Thread.start {
             server = new ServerSocket(port)
             server.accept() { socket ->
                 socket.withObjectStreams { ois, oos ->
@@ -153,7 +153,7 @@ final class BinaryStreamsTest extends GroovyTestCase {
 
         def result
         def client = new Socket("localhost", port)
-        client.withObjectStreams{ ois, oos ->
+        client.withObjectStreams { ois, oos ->
             oos << 1000
             oos << 24
             result = ois.readObject()

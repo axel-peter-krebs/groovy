@@ -48,7 +48,7 @@ public class NumberCachedClass extends CachedClass {
             || classToTransformFrom == Long.TYPE
             || classToTransformFrom == Float.TYPE
             || classToTransformFrom == Double.TYPE
-                ;
+            ;
     }
 
     private Object coerceNumber(Object argument) {

@@ -132,11 +132,13 @@ class JListElementsBinding extends AbstractSyntheticBinding implements ListDataL
 class JListSelectedElementBinding extends AbstractSyntheticBinding implements PropertyChangeListener, ListSelectionListener {
     private JList boundList
 
-    @Synchronized JList getBoundList() {
+    @Synchronized
+    JList getBoundList() {
         return boundList
     }
 
-    @Synchronized void setBoundList(JList boundList) {
+    @Synchronized
+    void setBoundList(JList boundList) {
         this.boundList = boundList
     }
 
@@ -144,13 +146,15 @@ class JListSelectedElementBinding extends AbstractSyntheticBinding implements Pr
         super(source, target, JList.class, propertyName)
     }
 
-    @Synchronized void syntheticBind() {
+    @Synchronized
+    void syntheticBind() {
         boundList = (JList) ((PropertyBinding) sourceBinding).getBean()
         boundList.addPropertyChangeListener("selectionModel", this)
         boundList.addListSelectionListener(this)
     }
 
-    @Synchronized void syntheticUnbind() {
+    @Synchronized
+    void syntheticUnbind() {
         boundList.removePropertyChangeListener("selectionModel", this)
         boundList.removeListSelectionListener(this)
         boundList = null

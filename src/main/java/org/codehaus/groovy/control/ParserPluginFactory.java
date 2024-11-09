@@ -25,8 +25,6 @@ import org.apache.groovy.parser.antlr4.Antlr4PluginFactory;
  */
 public abstract class ParserPluginFactory {
 
-    public abstract ParserPlugin createParserPlugin();
-
     /**
      * Creates the ANTLR 4 parser.
      *
@@ -45,4 +43,6 @@ public abstract class ParserPluginFactory {
     public static ParserPluginFactory antlr2() {
         throw new UnsupportedOperationException("Antlr2 is no longer supported");
     }
+
+    public abstract ParserPlugin createParserPlugin();
 }

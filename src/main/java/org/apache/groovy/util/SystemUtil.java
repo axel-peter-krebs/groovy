@@ -124,7 +124,7 @@ public class SystemUtil {
      * Retrieves an Integer System property
      *
      * @param name the name of the system property.
-     * @param def the default value
+     * @param def  the default value
      * @return value of the Integer system property or the default value
      */
     public static Integer getIntegerSafe(String name, Integer def) {
@@ -141,7 +141,7 @@ public class SystemUtil {
      * Retrieves a Long System property
      *
      * @param name the name of the system property.
-     * @param def the default value
+     * @param def  the default value
      * @return value of the Long system property or the default value
      */
     public static Long getLongSafe(String name, Long def) {

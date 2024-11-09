@@ -54,8 +54,7 @@ class HelpCommand extends CommandSupport {
 
         if (args.size() == 1) {
             help(args[0])
-        }
-        else {
+        } else {
             list()
         }
     }
@@ -96,7 +95,8 @@ class HelpCommand extends CommandSupport {
 
         io.out.println()
         io.out.println('For information about @|green Groovy|@, visit:') // TODO: i18n
-        io.out.println('    @|cyan http://groovy-lang.org|@ ') // FIXME: parsing freaks out if end tok is at the last char...
+        io.out.println('    @|cyan http://groovy-lang.org|@ ')
+        // FIXME: parsing freaks out if end tok is at the last char...
         io.out.println()
 
         // List the commands we know about

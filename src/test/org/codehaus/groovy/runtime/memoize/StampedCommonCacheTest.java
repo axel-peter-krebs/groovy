@@ -31,13 +31,13 @@ public class StampedCommonCacheTest {
     @Test
     public void get() {
         StampedCommonCache<String, String> sc =
-                new StampedCommonCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new StampedCommonCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
         Assert.assertEquals("Daniel", sc.get("name"));
         Assert.assertEquals("Male", sc.get("gender"));
@@ -61,9 +61,9 @@ public class StampedCommonCacheTest {
         StampedCommonCache<String, String> sc = new StampedCommonCache<>();
 
         EvictableCache.ValueProvider vp =
-                (EvictableCache.ValueProvider<String, String>) key -> "Chinese";
+            (EvictableCache.ValueProvider<String, String>) key -> "Chinese";
 
-        Assert.assertEquals("Chinese", sc.getAndPut("language", vp,false));
+        Assert.assertEquals("Chinese", sc.getAndPut("language", vp, false));
         Assert.assertNull(sc.get("language"));
 
         Assert.assertEquals("Chinese", sc.getAndPut("language", vp));
@@ -73,41 +73,41 @@ public class StampedCommonCacheTest {
     @Test
     public void values() {
         StampedCommonCache<String, String> sc =
-                new StampedCommonCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new StampedCommonCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
-        Assert.assertArrayEquals(new String[] {"Daniel", "Male", "Shanghai"}, sc.values().toArray(new String[0]));
+        Assert.assertArrayEquals(new String[]{"Daniel", "Male", "Shanghai"}, sc.values().toArray(new String[0]));
     }
 
     @Test
     public void keys() {
         StampedCommonCache<String, String> sc =
-                new StampedCommonCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new StampedCommonCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
-        Assert.assertArrayEquals(new String[] {"name", "gender", "city"}, sc.keys().toArray(new String[0]));
+        Assert.assertArrayEquals(new String[]{"name", "gender", "city"}, sc.keys().toArray(new String[0]));
     }
 
     @Test
     public void containsKey() {
         StampedCommonCache<String, String> sc =
-                new StampedCommonCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new StampedCommonCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
         Assert.assertTrue(sc.containsKey("name"));
     }
@@ -115,13 +115,13 @@ public class StampedCommonCacheTest {
     @Test
     public void size() {
         StampedCommonCache<String, String> sc =
-                new StampedCommonCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new StampedCommonCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
         Assert.assertEquals(3, sc.size());
     }
@@ -129,13 +129,13 @@ public class StampedCommonCacheTest {
     @Test
     public void remove() {
         StampedCommonCache<String, String> sc =
-                new StampedCommonCache<>(
-                        new HashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new StampedCommonCache<>(
+                new HashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
         Assert.assertEquals("Shanghai", sc.remove("city"));
         Assert.assertNull(sc.get("city"));
@@ -144,30 +144,30 @@ public class StampedCommonCacheTest {
     @Test
     public void clear() {
         StampedCommonCache<String, String> sc =
-                new StampedCommonCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", "Shanghai")
-                        )
-                );
+            new StampedCommonCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", "Shanghai")
+                )
+            );
 
-        Assert.assertArrayEquals(new String[] {"Daniel", "Male", "Shanghai"}, sc.clearAll().values().toArray(new String[0]));
+        Assert.assertArrayEquals(new String[]{"Daniel", "Male", "Shanghai"}, sc.clearAll().values().toArray(new String[0]));
     }
 
     @Test
     public void cleanUpNullReferences() {
         StampedCommonCache<String, String> sc =
-                new StampedCommonCache<>(
-                        new LinkedHashMap<>(
-                                Maps.of("name", "Daniel",
-                                        "gender", "Male",
-                                        "city", null)
-                        )
-                );
+            new StampedCommonCache<>(
+                new LinkedHashMap<>(
+                    Maps.of("name", "Daniel",
+                        "gender", "Male",
+                        "city", null)
+                )
+            );
 
         sc.cleanUpNullReferences();
-        Assert.assertArrayEquals(new String[] {"Daniel", "Male"}, sc.values().toArray(new String[0]));
+        Assert.assertArrayEquals(new String[]{"Daniel", "Male"}, sc.values().toArray(new String[0]));
     }
 
     @Test
@@ -192,7 +192,7 @@ public class StampedCommonCacheTest {
         sc.put("c", "3");
         sc.put("a", "4");
         sc.put("d", "5");
-        Assert.assertArrayEquals(new String[] {"b", "c", "d"}, sc.keys().toArray(new String[0]));
+        Assert.assertArrayEquals(new String[]{"b", "c", "d"}, sc.keys().toArray(new String[0]));
         Assert.assertEquals("2", sc.get("b"));
         Assert.assertEquals("3", sc.get("c"));
         Assert.assertEquals("5", sc.get("d"));

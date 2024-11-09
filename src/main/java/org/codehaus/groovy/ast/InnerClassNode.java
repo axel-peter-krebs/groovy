@@ -28,8 +28,8 @@ public class InnerClassNode extends ClassNode {
     private boolean anonymous;
 
     /**
-     * @param name is the full name of the class
-     * @param modifiers the modifiers, @see org.objectweb.asm.Opcodes
+     * @param name       is the full name of the class
+     * @param modifiers  the modifiers, @see org.objectweb.asm.Opcodes
      * @param superClass the base class name - use "java.lang.Object" if no direct base class
      */
     public InnerClassNode(ClassNode outerClass, String name, int modifiers, ClassNode superClass) {
@@ -37,8 +37,8 @@ public class InnerClassNode extends ClassNode {
     }
 
     /**
-     * @param name is the full name of the class
-     * @param modifiers the modifiers, @see org.objectweb.asm.Opcodes
+     * @param name       is the full name of the class
+     * @param modifiers  the modifiers, @see org.objectweb.asm.Opcodes
      * @param superClass the base class name - use "java.lang.Object" if no direct base class
      */
     public InnerClassNode(ClassNode outerClass, String name, int modifiers, ClassNode superClass, ClassNode[] interfaces, MixinNode[] mixins) {
@@ -54,7 +54,7 @@ public class InnerClassNode extends ClassNode {
 
     public ClassNode getOuterMostClass() {
         ClassNode outerClass = getOuterClass();
-        while (outerClass instanceof InnerClassNode)  {
+        while (outerClass instanceof InnerClassNode) {
             outerClass = outerClass.getOuterClass();
         }
         return outerClass;

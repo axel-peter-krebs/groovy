@@ -33,33 +33,33 @@ public class TimeDatumDependentDuration extends DatumDependentDuration {
     @Override
     public DatumDependentDuration plus(final Duration rhs) {
         return new TimeDatumDependentDuration(this.getYears(), this.getMonths(),
-                                              this.getDays() + rhs.getDays(), this.getHours() + rhs.getHours(),
-                                              this.getMinutes() + rhs.getMinutes(), this.getSeconds() + rhs.getSeconds(),
-                                              this.getMillis() + rhs.getMillis());
+            this.getDays() + rhs.getDays(), this.getHours() + rhs.getHours(),
+            this.getMinutes() + rhs.getMinutes(), this.getSeconds() + rhs.getSeconds(),
+            this.getMillis() + rhs.getMillis());
     }
 
     @Override
     public DatumDependentDuration plus(final DatumDependentDuration rhs) {
         return new TimeDatumDependentDuration(this.getYears() + rhs.getYears(), this.getMonths() + rhs.getMonths(),
-                                              this.getDays() + rhs.getDays(), this.getHours() + rhs.getHours(),
-                                              this.getMinutes() + rhs.getMinutes(), this.getSeconds() + rhs.getSeconds(),
-                                              this.getMillis() + rhs.getMillis());
+            this.getDays() + rhs.getDays(), this.getHours() + rhs.getHours(),
+            this.getMinutes() + rhs.getMinutes(), this.getSeconds() + rhs.getSeconds(),
+            this.getMillis() + rhs.getMillis());
     }
 
     @Override
     public DatumDependentDuration minus(final Duration rhs) {
         return new TimeDatumDependentDuration(this.getYears(), this.getMonths(),
-                                              this.getDays() - rhs.getDays(), this.getHours() - rhs.getHours(),
-                                              this.getMinutes() - rhs.getMinutes(), this.getSeconds() - rhs.getSeconds(),
-                                              this.getMillis() - rhs.getMillis());
+            this.getDays() - rhs.getDays(), this.getHours() - rhs.getHours(),
+            this.getMinutes() - rhs.getMinutes(), this.getSeconds() - rhs.getSeconds(),
+            this.getMillis() - rhs.getMillis());
     }
 
     @Override
     public DatumDependentDuration minus(final DatumDependentDuration rhs) {
         return new TimeDatumDependentDuration(this.getYears() - rhs.getYears(), this.getMonths() - rhs.getMonths(),
-                                              this.getDays() - rhs.getDays(), this.getHours() - rhs.getHours(),
-                                              this.getMinutes() - rhs.getMinutes(), this.getSeconds() - rhs.getSeconds(),
-                                              this.getMillis() - rhs.getMillis());
+            this.getDays() - rhs.getDays(), this.getHours() - rhs.getHours(),
+            this.getMinutes() - rhs.getMinutes(), this.getSeconds() - rhs.getSeconds(),
+            this.getMillis() - rhs.getMillis());
     }
 
     @Override
@@ -67,7 +67,7 @@ public class TimeDatumDependentDuration extends DatumDependentDuration {
         return new From() {
             @Override
             public Date getNow() {
-            final Calendar cal = Calendar.getInstance();
+                final Calendar cal = Calendar.getInstance();
 
                 cal.add(Calendar.YEAR, TimeDatumDependentDuration.this.getYears());
                 cal.add(Calendar.MONTH, TimeDatumDependentDuration.this.getMonths());

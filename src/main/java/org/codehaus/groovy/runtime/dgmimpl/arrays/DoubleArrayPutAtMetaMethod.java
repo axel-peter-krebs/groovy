@@ -68,7 +68,7 @@ public class DoubleArrayPutAtMetaMethod extends ArrayPutAtMetaMethod {
         @Override
         public Object call(Object receiver, Object[] args) throws Throwable {
             if ((receiver instanceof double[] && args[0] instanceof Integer && args[1] instanceof Double)
-                    && checkPojoMetaClass()) {
+                && checkPojoMetaClass()) {
                 final double[] objects = (double[]) receiver;
                 objects[normaliseIndex((Integer) args[0], objects.length)] = (Double) args[1];
                 return null;
@@ -83,8 +83,7 @@ public class DoubleArrayPutAtMetaMethod extends ArrayPutAtMetaMethod {
                     final double[] objects = (double[]) receiver;
                     objects[normaliseIndex((Integer) arg1, objects.length)] = (Double) arg2;
                     return null;
-                }
-                catch (ClassCastException e) {
+                } catch (ClassCastException e) {
                     if ((receiver instanceof double[]) && (arg1 instanceof Integer))
                         throw e;
                 }

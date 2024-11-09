@@ -26,7 +26,7 @@ class Bytecode5Bug extends GroovyTestCase {
 
     void testUsingLocalVar() {
         def c = 0
-        getCollection().each { c += it }       
+        getCollection().each { c += it }
         assert c == 10
     }
 

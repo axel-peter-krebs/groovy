@@ -45,7 +45,7 @@ public class ClosureMetaMethod extends MetaMethod implements ClosureInvokingMeth
     private final String name;
     private final Closure callable;
     private final CachedMethod doCall;
-    private final CachedClass  declaringClass;
+    private final CachedClass declaringClass;
 
     public ClosureMetaMethod(String name, Closure c, CachedMethod doCall) {
         this(name, c.getOwner().getClass(), c, doCall);
@@ -57,6 +57,47 @@ public class ClosureMetaMethod extends MetaMethod implements ClosureInvokingMeth
         this.callable = c;
         this.doCall = doCall;
         this.declaringClass = ReflectionCache.getCachedClass(declaringClass);
+    }
+
+    public static List<MetaMethod> createMethodList(final String name, final Class declaringClass, final Closure closure) {
+        List<MetaMethod> mms = new ArrayList<>();
+        if (closure instanceof MethodClosure) {
+            for (CachedMethod method : ReflectionCache.getCachedClass(((MethodClosure) closure).getOwnerClass()).getMethods()) {
+                if (method.getName().equals(((MethodClosure) closure).getMethod())) {
+                    MetaMethod metaMethod = new MethodClosureMetaMethod(name, declaringClass, closure, method);
+                    mms.add(adjustParamTypesForStdMethods(metaMethod, name));
+                }
+            }
+        } else if (closure instanceof GeneratedClosure) {
+            for (CachedMethod method : ReflectionCache.getCachedClass(closure.getClass()).getMethods()) {
+                if ("doCall".equals(method.getName())) {
+                    MetaMethod metaMethod = new ClosureMetaMethod(name, declaringClass, closure, method);
+                    mms.add(adjustParamTypesForStdMethods(metaMethod, name));
+                }
+            }
+        } else {
+            MetaMethod metaMethod = new AnonymousMetaMethod(closure, name, declaringClass);
+            mms.add(adjustParamTypesForStdMethods(metaMethod, name));
+        }
+        return mms;
+    }
+
+    private static MetaMethod adjustParamTypesForStdMethods(MetaMethod metaMethod, String methodName) {
+        Class[] nativeParamTypes = metaMethod.getNativeParameterTypes();
+        nativeParamTypes = (nativeParamTypes != null) ? nativeParamTypes : MetaClassHelper.EMPTY_TYPE_ARRAY;
+        // for methodMissing, first parameter should be String type - to allow overriding of this method without
+        // type String explicitly specified for first parameter (missing method name) - GROOVY-2951
+        if ("methodMissing".equals(methodName) && nativeParamTypes.length == 2 && nativeParamTypes[0] != String.class) {
+            nativeParamTypes[0] = String.class;
+        }
+        return metaMethod;
+    }
+
+    public static ClosureMetaMethod copy(ClosureMetaMethod closureMethod) {
+        if (closureMethod instanceof MethodClosureMetaMethod)
+            return new MethodClosureMetaMethod(closureMethod.getName(), closureMethod.getDeclaringClass().getTheClass(), closureMethod.getClosure(), closureMethod.getDoCall());
+        else
+            return new ClosureMetaMethod(closureMethod.getName(), closureMethod.getDeclaringClass().getTheClass(), closureMethod.getClosure(), closureMethod.getDoCall());
     }
 
     @Override
@@ -100,48 +141,8 @@ public class ClosureMetaMethod extends MetaMethod implements ClosureInvokingMeth
         return callable;
     }
 
-    public static List<MetaMethod> createMethodList(final String name, final Class declaringClass, final Closure closure) {
-        List<MetaMethod> mms = new ArrayList<>();
-        if (closure instanceof MethodClosure) {
-            for (CachedMethod method : ReflectionCache.getCachedClass(((MethodClosure) closure).getOwnerClass()).getMethods()) {
-                if (method.getName().equals(((MethodClosure) closure).getMethod())) {
-                    MetaMethod metaMethod = new MethodClosureMetaMethod(name, declaringClass, closure, method);
-                    mms.add(adjustParamTypesForStdMethods(metaMethod, name));
-                }
-            }
-        } else if (closure instanceof GeneratedClosure) {
-            for (CachedMethod method : ReflectionCache.getCachedClass(closure.getClass()).getMethods()) {
-                if ("doCall".equals(method.getName())) {
-                    MetaMethod metaMethod = new ClosureMetaMethod(name, declaringClass, closure, method);
-                    mms.add(adjustParamTypesForStdMethods(metaMethod, name));
-                }
-            }
-        } else {
-            MetaMethod metaMethod = new AnonymousMetaMethod(closure, name, declaringClass);
-            mms.add(adjustParamTypesForStdMethods(metaMethod, name));
-        }
-        return mms;
-    }
-
-    private static MetaMethod adjustParamTypesForStdMethods(MetaMethod metaMethod, String methodName) {
-        Class[] nativeParamTypes = metaMethod.getNativeParameterTypes();
-        nativeParamTypes = (nativeParamTypes != null) ? nativeParamTypes : MetaClassHelper.EMPTY_TYPE_ARRAY;
-        // for methodMissing, first parameter should be String type - to allow overriding of this method without
-        // type String explicitly specified for first parameter (missing method name) - GROOVY-2951
-        if("methodMissing".equals(methodName) && nativeParamTypes.length == 2 && nativeParamTypes[0] != String.class) {
-            nativeParamTypes[0] = String.class;
-        }
-        return metaMethod;
-    }
     public CachedMethod getDoCall() {
         return doCall;
-    }
-
-    public static ClosureMetaMethod copy(ClosureMetaMethod closureMethod) {
-        if (closureMethod instanceof MethodClosureMetaMethod)
-          return new MethodClosureMetaMethod(closureMethod.getName(), closureMethod.getDeclaringClass().getTheClass(), closureMethod.getClosure(), closureMethod.getDoCall());
-        else
-          return new ClosureMetaMethod(closureMethod.getName(), closureMethod.getDeclaringClass().getTheClass(), closureMethod.getClosure(), closureMethod.getDoCall());
     }
 
     private static class MethodClosureMetaMethod extends ClosureMetaMethod {

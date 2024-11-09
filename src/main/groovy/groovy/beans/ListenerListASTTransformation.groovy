@@ -123,8 +123,8 @@ class ListenerListASTTransformation implements ASTTransformation, Opcodes {
 
     private static addError(AnnotationNode node, SourceUnit source, String message) {
         source.errorCollector.addError(
-                new SyntaxErrorMessage(
-                        new SyntaxException(message, node.lineNumber, node.columnNumber), source))
+            new SyntaxErrorMessage(
+                new SyntaxException(message, node.lineNumber, node.columnNumber), source))
     }
 
     /**
@@ -155,15 +155,15 @@ class ListenerListASTTransformation implements ASTTransformation, Opcodes {
 
         BlockStatement block = new BlockStatement()
         block.addStatements([
-                ifS(
-                        equalsNullX(varX('listener')),
-                        RETURN_NULL_OR_VOID
-                ),
-                ifS(
-                        equalsNullX(varX(field.name)),
-                        assignS(varX(field.name), new ListExpression())
-                ),
-                stmt(callX(varX(field.name), constX('add'), args(varX('listener'))))
+            ifS(
+                equalsNullX(varX('listener')),
+                RETURN_NULL_OR_VOID
+            ),
+            ifS(
+                equalsNullX(varX(field.name)),
+                assignS(varX(field.name), new ListExpression())
+            ),
+            stmt(callX(varX(field.name), constX('add'), args(varX('listener'))))
         ])
         declaringClass.addMethod(new MethodNode(methodName, methodModifiers, methodReturnType, methodParameter, [] as ClassNode[], block))
     }
@@ -195,15 +195,15 @@ class ListenerListASTTransformation implements ASTTransformation, Opcodes {
 
         BlockStatement block = new BlockStatement()
         block.addStatements([
-                ifS(
-                        equalsNullX(varX('listener')),
-                        RETURN_NULL_OR_VOID
-                ),
-                ifS(
-                        equalsNullX(varX(field.name)),
-                        assignS(varX(field.name), new ListExpression())
-                ),
-                stmt(callX(varX(field.name), constX('remove'), args(varX('listener'))))
+            ifS(
+                equalsNullX(varX('listener')),
+                RETURN_NULL_OR_VOID
+            ),
+            ifS(
+                equalsNullX(varX(field.name)),
+                assignS(varX(field.name), new ListExpression())
+            ),
+            stmt(callX(varX(field.name), constX('remove'), args(varX('listener'))))
         ])
         declaringClass.addMethod(new MethodNode(methodName, methodModifiers, methodReturnType, methodParameter, [] as ClassNode[], block))
     }
@@ -232,12 +232,12 @@ class ListenerListASTTransformation implements ASTTransformation, Opcodes {
 
         BlockStatement block = new BlockStatement()
         block.addStatements([
-                declS(localVarX('__result', ClassHelper.dynamicType()), new ListExpression()),
-                ifS(
-                        notNullX(varX(field.name)),
-                        stmt(callX(varX('__result'), constX('addAll'), args(varX(field.name))))
-                ),
-                returnS(castX(methodReturnType, varX('__result')))
+            declS(localVarX('__result', ClassHelper.dynamicType()), new ListExpression()),
+            ifS(
+                notNullX(varX(field.name)),
+                stmt(callX(varX('__result'), constX('addAll'), args(varX(field.name))))
+            ),
+            returnS(castX(methodReturnType, varX('__result')))
         ])
         declaringClass.addMethod(new MethodNode(methodName, methodModifiers, methodReturnType, methodParameter, [] as ClassNode[], block))
     }
@@ -272,22 +272,22 @@ class ListenerListASTTransformation implements ASTTransformation, Opcodes {
         def listenerListType = ClassHelper.make(ArrayList).plainNodeReference
         listenerListType.genericsTypes = types
         block.addStatements([
-                ifS(
-                        notNullX(varX(field.name)),
+            ifS(
+                notNullX(varX(field.name)),
+                new BlockStatement([
+                    declS(
+                        localVarX('__list', listenerListType),
+                        ctorX(listenerListType, args(varX(field.name)))
+                    ),
+                    new ForStatement(
+                        param(ClassHelper.dynamicType(), 'listener'),
+                        varX('__list'),
                         new BlockStatement([
-                                declS(
-                                        localVarX('__list', listenerListType),
-                                        ctorX(listenerListType, args(varX(field.name)))
-                                ),
-                                new ForStatement(
-                                        param(ClassHelper.dynamicType(), 'listener'),
-                                        varX('__list'),
-                                        new BlockStatement([
-                                                stmt(callX(varX('listener'), method.name, methodArgs))
-                                        ], new VariableScope())
-                                )
+                            stmt(callX(varX('listener'), method.name, methodArgs))
                         ], new VariableScope())
-                )
+                    )
+                ], new VariableScope())
+            )
         ])
 
         def params = method.parameters.collect {

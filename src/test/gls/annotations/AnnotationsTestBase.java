@@ -37,6 +37,28 @@ public abstract class AnnotationsTestBase extends GroovyTestCase {
     List<String> annotations;
     String current = "";
 
+    public void setUp() {
+        loader = new MyLoader(this.getClass().getClassLoader());
+        annotations = new ArrayList<>();
+    }
+
+    public void createClassInfo(String script) {
+        loader.parseClass(script);
+    }
+
+    public List<String> getAnnotations() {
+        return annotations;
+    }
+
+    protected void shouldNotCompile(String script) {
+        try {
+            loader.parseClass(script);
+        } catch (CompilationFailedException cfe) {
+            return;
+        }
+        throw new AssertionError("compilation of script '" + script + "' should have failed, but did not.");
+    }
+
     private class MyLoader extends GroovyClassLoader {
         MyLoader(ClassLoader classLoader) {
             super(classLoader);
@@ -99,9 +121,9 @@ public abstract class AnnotationsTestBase extends GroovyTestCase {
             current = name;
         }
 
-        public AnnotationVisitor visitAnnotation(String desc, boolean visible){
+        public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
             annotations.add("visiting class " + current + " found annotation: desc=" + desc + ", visible=" + visible);
-            return super.visitAnnotation(desc,visible);
+            return super.visitAnnotation(desc, visible);
         }
 
         public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
@@ -111,27 +133,5 @@ public abstract class AnnotationsTestBase extends GroovyTestCase {
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             return new MethodAnnotationScanner(current + "#" + name);
         }
-    }
-
-    public void setUp() {
-        loader = new MyLoader(this.getClass().getClassLoader());
-        annotations = new ArrayList<>();
-    }
-
-    public void createClassInfo(String script) {
-        loader.parseClass(script);
-    }
-
-    public List<String> getAnnotations() {
-        return annotations;
-    }
-
-    protected void shouldNotCompile(String script) {
-        try {
-            loader.parseClass(script);
-        } catch (CompilationFailedException cfe) {
-            return;
-        }
-        throw new AssertionError("compilation of script '" + script + "' should have failed, but did not.");
     }
 }

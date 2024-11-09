@@ -19,6 +19,7 @@
 package typing;
 
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
 public class TypeCheckingJavaTest {
@@ -37,6 +38,7 @@ public class TypeCheckingJavaTest {
     public Integer compute(String str) {
         return str.length();
     }
+
     public String compute(Object o) {
         return "Nope";
     }

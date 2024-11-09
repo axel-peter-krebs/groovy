@@ -25,14 +25,9 @@ import static java.util.Objects.requireNonNull;
 
 public class Receiver<T> {
 
-    public static <T> Receiver<T> make(final ClassNode type) {
-        return new Receiver<>(type == null ? ClassHelper.OBJECT_TYPE.getPlainNodeReference() : type);
-    }
-
     private final ClassNode type;
     private final boolean object;
     private final T data;
-
     public Receiver(final ClassNode type) {
         this(type, true, null);
     }
@@ -45,6 +40,10 @@ public class Receiver<T> {
         this.type = requireNonNull(type);
         this.object = object;
         this.data = data;
+    }
+
+    public static <T> Receiver<T> make(final ClassNode type) {
+        return new Receiver<>(type == null ? ClassHelper.OBJECT_TYPE.getPlainNodeReference() : type);
     }
 
     //--------------------------------------------------------------------------

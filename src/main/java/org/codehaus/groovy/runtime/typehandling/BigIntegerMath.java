@@ -25,7 +25,8 @@ public final class BigIntegerMath extends NumberMath {
 
     public static final BigIntegerMath INSTANCE = new BigIntegerMath();
 
-    private BigIntegerMath() {}
+    private BigIntegerMath() {
+    }
 
     @Override
     public Number absImpl(Number number) {
@@ -36,6 +37,7 @@ public final class BigIntegerMath extends NumberMath {
     public Number addImpl(Number left, Number right) {
         return toBigInteger(left).add(toBigInteger(right));
     }
+
     @Override
     public Number subtractImpl(Number left, Number right) {
         return toBigInteger(left).subtract(toBigInteger(right));

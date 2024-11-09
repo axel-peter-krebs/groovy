@@ -23,17 +23,18 @@ public class Groovy7363Support {
         U getB();
     }
 
-    public static class ABC implements A<C, BC> {
-        public void setB(BC b) {}
+    public interface B<T> {
+        T getObject();
+    }
 
+    public static class ABC implements A<C, BC> {
         @Override
         public BC getB() {
             return new BC();
         }
-    }
 
-    public interface B<T> {
-        T getObject();
+        public void setB(BC b) {
+        }
     }
 
     public static class BC implements B<C> {

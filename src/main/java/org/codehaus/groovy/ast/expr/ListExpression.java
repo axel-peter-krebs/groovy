@@ -50,12 +50,12 @@ public class ListExpression extends Expression {
         return expressions;
     }
 
-    public void setWrapped(boolean value) {
-        wrapped = value;
-    }
-
     public boolean isWrapped() {
         return wrapped;
+    }
+
+    public void setWrapped(boolean value) {
+        wrapped = value;
     }
 
     @Override

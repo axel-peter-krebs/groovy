@@ -27,6 +27,7 @@ class LookAndFeelHelper {
 
     // protected so you can subclass and replace the singleton
     protected static LookAndFeelHelper instance;
+
     private LookAndFeelHelper() {
         // linux GTK bug : http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6389282
         UIManager.getInstalledLookAndFeels()
@@ -38,29 +39,29 @@ class LookAndFeelHelper {
 
     private final Map<String, String> lafCodeNames = [
         // stuff built into various JDKs
-        metal   : 'javax.swing.plaf.metal.MetalLookAndFeel',
-        nimbus  : getNimbusLAFName(),
-        mac     : getAquaLAFName(),
-        motif   : 'com.sun.java.swing.plaf.motif.MotifLookAndFeel',
-        windows : 'com.sun.java.swing.plaf.windows.WindowsLookAndFeel',
-        win2k   : 'com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel',
-        gtk     : 'com.sun.java.swing.plaf.gtk.GTKLookAndFeel',
-        synth   : 'javax.swing.plaf.synth.SynthLookAndFeel',
+        metal        : 'javax.swing.plaf.metal.MetalLookAndFeel',
+        nimbus       : getNimbusLAFName(),
+        mac          : getAquaLAFName(),
+        motif        : 'com.sun.java.swing.plaf.motif.MotifLookAndFeel',
+        windows      : 'com.sun.java.swing.plaf.windows.WindowsLookAndFeel',
+        win2k        : 'com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel',
+        gtk          : 'com.sun.java.swing.plaf.gtk.GTKLookAndFeel',
+        synth        : 'javax.swing.plaf.synth.SynthLookAndFeel',
 
         // generic aliases in UIManager
-        system        : UIManager.getSystemLookAndFeelClassName(),
-        crossPlatform : UIManager.getCrossPlatformLookAndFeelClassName(),
+        system       : UIManager.getSystemLookAndFeelClassName(),
+        crossPlatform: UIManager.getCrossPlatformLookAndFeelClassName(),
 
         // jgoodies, requires external library
-        plastic   : 'com.jgoodies.looks.plastic.PlasticLookAndFeel',
-        plastic3D : 'com.jgoodies.looks.plastic.Plastic3DLookAndFeel',
-        plasticXP : 'com.jgoodies.looks.plastic.PlasticXPLookAndFeel',
+        plastic      : 'com.jgoodies.looks.plastic.PlasticLookAndFeel',
+        plastic3D    : 'com.jgoodies.looks.plastic.Plastic3DLookAndFeel',
+        plasticXP    : 'com.jgoodies.looks.plastic.PlasticXPLookAndFeel',
 
         // substance, requires external library
-        substance : getSubstanceLAFName(),
+        substance    : getSubstanceLAFName(),
 
         // napkin, requires external library
-        napkin : 'net.sourceforge.napkinlaf.NapkinLookAndFeel'
+        napkin       : 'net.sourceforge.napkinlaf.NapkinLookAndFeel'
     ]
 
     String addLookAndFeelAlias(String alias, String className) {
@@ -69,7 +70,7 @@ class LookAndFeelHelper {
 
     private final Map extendedAttributes = [
         'javax.swing.plaf.metal.MetalLookAndFeel' : [
-            theme : { laf, theme ->
+            theme    : { laf, theme ->
                 if (!(theme instanceof MetalTheme)) {
                     if (theme == 'ocean') {
                         theme = Class.forName('javax.swing.plaf.metal.OceanTheme').newInstance()
@@ -81,14 +82,14 @@ class LookAndFeelHelper {
                 };
                 MetalLookAndFeel.currentTheme = theme
             },
-            boldFonts : { laf, bold -> UIManager.put('swing.boldMetal', bold as Boolean) },
-            noxp : { laf, xp -> UIManager.put('swing.noxp', bold as Boolean) },
+            boldFonts: { laf, bold -> UIManager.put('swing.boldMetal', bold as Boolean) },
+            noxp     : { laf, xp -> UIManager.put('swing.noxp', bold as Boolean) },
         ],
-        'org.jvnet.substance.SubstanceLookAndFeel' : [
+        'org.jvnet.substance.SubstanceLookAndFeel': [
             // use setters instead of properties to get multi-dispatch
-            theme: { laf, theme -> laf.setCurrentTheme(theme) },
-            skin: { laf, skin -> laf.setSkin(skin) },
-            watermark : { laf, watermark -> laf.setCurrentWatermark(watermark) },
+            theme    : { laf, theme -> laf.setCurrentTheme(theme) },
+            skin     : { laf, skin -> laf.setSkin(skin) },
+            watermark: { laf, watermark -> laf.setCurrentWatermark(watermark) },
         ],
     ]
 
@@ -129,7 +130,7 @@ class LookAndFeelHelper {
             // assume all configuration must be done prior to LAF being installed
             Map possibleAttributes = extendedAttributes[lafClassName] ?: [:]
 
-            attributes.each {k, v ->
+            attributes.each { k, v ->
                 if (possibleAttributes[k]) {
                     possibleAttributes[k](lafInstance, v)
                 } else {
@@ -193,5 +194,5 @@ class LookAndFeelHelper {
             }
         }
         return null
-   }
+    }
 }

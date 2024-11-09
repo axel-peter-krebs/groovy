@@ -32,10 +32,10 @@ public class ClosureUtils {
      * Converts a ClosureExpression into the String source.
      *
      * @param readerSource a source
-     * @param expression a closure. Can't be null
+     * @param expression   a closure. Can't be null
      * @return the source the closure was created from
      * @throws java.lang.IllegalArgumentException when expression is null
-     * @throws java.lang.Exception when closure can't be read from source
+     * @throws java.lang.Exception                when closure can't be read from source
      */
     public static String convertClosureToSource(final ReaderSource readerSource, final ClosureExpression expression) throws Exception {
         String source = GeneralUtils.convertASTToSource(readerSource, expression);
@@ -47,6 +47,7 @@ public class ClosureUtils {
 
     /**
      * Does the Closure have a single char-like (char or Character) argument.
+     *
      * @param c a Closure
      * @return true if it has exactly one argument and the type is char or Character
      */
@@ -58,6 +59,7 @@ public class ClosureUtils {
 
     /**
      * Does the Closure have a single String argument.
+     *
      * @param c a Closure
      * @return true if it has exactly one argument and the type is String
      */
@@ -85,7 +87,6 @@ public class ClosureUtils {
      * Returns the constant name associated with the given resolve strategy.
      *
      * @see {@link Closure#DELEGATE_FIRST}, et al.
-     *
      * @since 3.0.5
      */
     public static String getResolveStrategyName(final int resolveStrategy) {

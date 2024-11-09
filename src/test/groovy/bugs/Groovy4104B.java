@@ -18,4 +18,5 @@
  */
 package groovy.bugs;
 
-public class Groovy4104B extends Groovy4104A { }
+public class Groovy4104B extends Groovy4104A {
+}

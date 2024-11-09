@@ -104,7 +104,7 @@ import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
  * a class or a method can be statically compiled. It may also throw errors specific to static compilation which
  * are not considered as an error at the type check pass. For example, usage of spread operator is not allowed
  * in statically compiled portions of code, while it may be statically checked.
- *
+ * <p>
  * Static compilation relies on static type checking, which explains why this visitor extends the type checker
  * visitor.
  */
@@ -113,12 +113,213 @@ public class StaticCompilationVisitor extends StaticTypeCheckingVisitor {
     public static final ClassNode TYPECHECKED_CLASSNODE = ClassHelper.make(TypeChecked.class);
     public static final ClassNode COMPILESTATIC_CLASSNODE = ClassHelper.make(CompileStatic.class);
 
-    public static final ClassNode  ARRAYLIST_CLASSNODE = ClassHelper.makeWithoutCaching(ArrayList.class);
+    public static final ClassNode ARRAYLIST_CLASSNODE = ClassHelper.makeWithoutCaching(ArrayList.class);
     public static final MethodNode ARRAYLIST_ADD_METHOD = ARRAYLIST_CLASSNODE.getDeclaredMethod("add", new Parameter[]{new Parameter(ClassHelper.OBJECT_TYPE, "o")});
     public static final MethodNode ARRAYLIST_CONSTRUCTOR = ARRAYLIST_CLASSNODE.getDeclaredConstructor(Parameter.EMPTY_ARRAY);
 
     public StaticCompilationVisitor(final SourceUnit unit, final ClassNode node) {
         super(unit, node);
+    }
+
+    public static boolean isStaticallyCompiled(final AnnotatedNode node) {
+        if (node != null && node.getNodeMetaData(STATIC_COMPILE_NODE) != null) {
+            return Boolean.TRUE.equals(node.getNodeMetaData(STATIC_COMPILE_NODE));
+        }
+        if (node instanceof MethodNode) {
+            // GROOVY-6851, GROOVY-9151, GROOVY-10104
+            if (!Boolean.TRUE.equals(node.getNodeMetaData(DEFAULT_PARAMETER_GENERATED))) {
+                return isStaticallyCompiled(node.getDeclaringClass());
+            }
+        } else if (node instanceof ClassNode) {
+            return isStaticallyCompiled(((ClassNode) node).getOuterClass());
+        }
+        return false;
+    }
+
+    private static void addDynamicOuterClassAccessorsCallback(final ClassNode outer) {
+        if (outer != null) {
+            if (!isStaticallyCompiled(outer) && outer.getNodeMetaData(DYNAMIC_OUTER_NODE_CALLBACK) == null) {
+                outer.putNodeMetaData(DYNAMIC_OUTER_NODE_CALLBACK, (IPrimaryClassNodeOperation) (source, context, classNode) -> {
+                    if (classNode == outer) {
+                        addPrivateBridgeMethods(classNode);
+                        addPrivateFieldsAccessors(classNode);
+                    }
+                });
+            }
+            // GROOVY-9328: apply to outer classes
+            addDynamicOuterClassAccessorsCallback(outer.getOuterClass());
+        }
+    }
+
+    private static void addPrivateFieldAndMethodAccessors(final ClassNode node) {
+        addPrivateBridgeMethods(node);
+        addPrivateFieldsAccessors(node);
+        for (Iterator<InnerClassNode> it = node.getInnerClasses(); it.hasNext(); ) {
+            addPrivateFieldAndMethodAccessors(it.next());
+        }
+    }
+
+    /**
+     * Adds special accessors and mutators for private fields so that inner classes can get/set them.
+     */
+    @Deprecated(since = "5.0.0")
+    private static void addPrivateFieldsAccessors(final ClassNode node) {
+        Map<String, MethodNode> privateFieldAccessors = node.getNodeMetaData(PRIVATE_FIELDS_ACCESSORS);
+        Map<String, MethodNode> privateFieldMutators = node.getNodeMetaData(PRIVATE_FIELDS_MUTATORS);
+        if (privateFieldAccessors != null || privateFieldMutators != null) {
+            // already added
+            return;
+        }
+        Set<ASTNode> accessedFields = node.getNodeMetaData(PV_FIELDS_ACCESS);
+        Set<ASTNode> mutatedFields = node.getNodeMetaData(PV_FIELDS_MUTATION);
+        if (accessedFields == null && mutatedFields == null) return;
+        // GROOVY-9385: mutation includes access in case of compound assignment or pre/post-increment/decrement
+        if (mutatedFields != null) {
+            accessedFields = new HashSet<>(Optional.ofNullable(accessedFields).orElseGet(Collections::emptySet));
+            accessedFields.addAll(mutatedFields);
+        }
+
+        int acc = -1;
+        privateFieldAccessors = (accessedFields != null ? new HashMap<>() : null);
+        privateFieldMutators = (mutatedFields != null ? new HashMap<>() : null);
+        for (FieldNode fieldNode : node.getFields()) {
+            boolean generateAccessor = accessedFields != null && accessedFields.contains(fieldNode);
+            boolean generateMutator = mutatedFields != null && mutatedFields.contains(fieldNode);
+            if (generateAccessor) {
+                acc += 1;
+                Parameter param = new Parameter(node.getPlainNodeReference(), "$that");
+                Expression receiver = fieldNode.isStatic() ? classX(node) : varX(param);
+                Statement body = returnS(attrX(receiver, constX(fieldNode.getName())));
+                MethodNode accessor = node.addMethod("pfaccess$" + acc, ACC_STATIC | ACC_SYNTHETIC, fieldNode.getOriginType(), new Parameter[]{param}, ClassNode.EMPTY_ARRAY, body);
+                accessor.setNodeMetaData(STATIC_COMPILE_NODE, Boolean.TRUE);
+                privateFieldAccessors.put(fieldNode.getName(), accessor);
+            }
+            if (generateMutator) {
+                // increment acc if it hasn't been incremented in the current iteration
+                if (!generateAccessor) acc += 1;
+                Parameter param = new Parameter(node.getPlainNodeReference(), "$that");
+                Expression receiver = fieldNode.isStatic() ? classX(node) : varX(param);
+                Parameter value = new Parameter(fieldNode.getOriginType(), "$value");
+                Statement body = assignS(attrX(receiver, constX(fieldNode.getName())), varX(value));
+                MethodNode mutator = node.addMethod("pfaccess$0" + acc, ACC_STATIC | ACC_SYNTHETIC, fieldNode.getOriginType(), new Parameter[]{param, value}, ClassNode.EMPTY_ARRAY, body);
+                mutator.setNodeMetaData(STATIC_COMPILE_NODE, Boolean.TRUE);
+                privateFieldMutators.put(fieldNode.getName(), mutator);
+            }
+        }
+        if (privateFieldAccessors != null) {
+            node.setNodeMetaData(PRIVATE_FIELDS_ACCESSORS, privateFieldAccessors);
+        }
+        if (privateFieldMutators != null) {
+            node.setNodeMetaData(PRIVATE_FIELDS_MUTATORS, privateFieldMutators);
+        }
+    }
+
+    /**
+     * Adds bridge methods for private or protected methods of a class so that
+     * any nestmate is capable of calling them. It does basically the same job
+     * as access$000 like methods in Java.
+     */
+    private static void addPrivateBridgeMethods(final ClassNode node) {
+        Set<ASTNode> accessedMethods = node.getNodeMetaData(PV_METHODS_ACCESS);
+        if (accessedMethods == null) return;
+        List<MethodNode> methods = new ArrayList<>(node.getAllDeclaredMethods());
+        methods.addAll(node.getDeclaredConstructors());
+        Map<MethodNode, MethodNode> privateBridgeMethods = node.getNodeMetaData(PRIVATE_BRIDGE_METHODS);
+        if (privateBridgeMethods != null) {
+            // bridge methods already added
+            return;
+        }
+        privateBridgeMethods = new HashMap<>();
+        int i = -1;
+        for (MethodNode method : methods) {
+            if (accessedMethods.contains(method)) {
+                i += 1;
+                ClassNode declaringClass = method.getDeclaringClass();
+                Map<String, ClassNode> genericsSpec = createGenericsSpec(node);
+                genericsSpec = addMethodGenerics(method, genericsSpec);
+                extractSuperClassGenerics(node, declaringClass, genericsSpec);
+                List<String> methodSpecificGenerics = methodSpecificGenerics(method);
+                Parameter[] methodParameters = method.getParameters();
+                Parameter[] newParams = new Parameter[methodParameters.length + 1];
+                for (int j = 1; j < newParams.length; j += 1) {
+                    Parameter orig = methodParameters[j - 1];
+                    newParams[j] = new Parameter(
+                        correctToGenericsSpecRecurse(genericsSpec, orig.getOriginType(), methodSpecificGenerics),
+                        orig.getName()
+                    );
+                }
+                Expression arguments;
+                if (methodParameters.length == 0) {
+                    arguments = ArgumentListExpression.EMPTY_ARGUMENTS;
+                } else {
+                    List<Expression> args = new ArrayList<>();
+                    for (Parameter parameter : methodParameters) {
+                        args.add(varX(parameter));
+                    }
+                    arguments = args(args);
+                }
+
+                MethodNode bridge;
+                if (method instanceof ConstructorNode) {
+                    // create constructor with a nested class as the first parameter, creating one if necessary
+                    ClassNode thatType = null;
+                    Iterator<InnerClassNode> innerClasses = node.getInnerClasses();
+                    if (innerClasses.hasNext()) {
+                        thatType = innerClasses.next();
+                    } else {
+                        thatType = new InnerClassNode(node.redirect(), node.getName() + "$1", ACC_STATIC | ACC_SYNTHETIC, ClassHelper.OBJECT_TYPE);
+                        node.getModule().addClass(thatType);
+                    }
+                    newParams[0] = new Parameter(thatType.getPlainNodeReference(), "$that");
+                    Statement body = ctorThisS(arguments);
+
+                    bridge = node.addConstructor(ACC_SYNTHETIC, newParams, ClassNode.EMPTY_ARRAY, body);
+                } else {
+                    newParams[0] = new Parameter(node.getPlainNodeReference(), "$that");
+                    Expression receiver = method.isStatic() ? classX(node) : varX(newParams[0]);
+                    MethodCallExpression call = callX(receiver, method.getName(), arguments);
+                    call.setMethodTarget(method);
+                    ExpressionStatement body = new ExpressionStatement(call);
+
+                    bridge = node.addMethod(
+                        "access$" + i,
+                        ACC_STATIC | ACC_SYNTHETIC,
+                        correctToGenericsSpecRecurse(genericsSpec, method.getReturnType(), methodSpecificGenerics),
+                        newParams,
+                        method.getExceptions(),
+                        body);
+                }
+                GenericsType[] origGenericsTypes = method.getGenericsTypes();
+                if (origGenericsTypes != null) {
+                    bridge.setGenericsTypes(applyGenericsContextToPlaceHolders(genericsSpec, origGenericsTypes));
+                }
+                bridge.setNodeMetaData(STATIC_COMPILE_NODE, Boolean.TRUE);
+                privateBridgeMethods.put(method, bridge);
+            }
+        }
+        if (!privateBridgeMethods.isEmpty()) {
+            node.setNodeMetaData(PRIVATE_BRIDGE_METHODS, privateBridgeMethods);
+        }
+    }
+
+    private static List<String> methodSpecificGenerics(final MethodNode method) {
+        List<String> genericTypeNames = new ArrayList<>();
+        GenericsType[] genericsTypes = method.getGenericsTypes();
+        if (genericsTypes != null) {
+            for (GenericsType gt : genericsTypes) {
+                genericTypeNames.add(gt.getName());
+            }
+        }
+        return genericTypeNames;
+    }
+
+    private static void memorizeInitialExpressions(final MethodNode node) {
+        // add node metadata for default parameters because they are erased by the Verifier
+        if (node.getParameters() != null) {
+            for (Parameter parameter : node.getParameters()) {
+                parameter.putNodeMetaData(INITIAL_EXPRESSION, parameter.getInitialExpression());
+            }
+        }
     }
 
     @Override
@@ -175,8 +376,8 @@ public class StaticCompilationVisitor extends StaticTypeCheckingVisitor {
                 // purely static constructor, so it may fail if it encounters dynamic
                 // code here. Thus we make this kind of code fail.
                 if (!declaringClass.getFields().isEmpty()
-                        || !declaringClass.getProperties().isEmpty()
-                        || !declaringClass.getObjectInitializerStatements().isEmpty()) {
+                    || !declaringClass.getProperties().isEmpty()
+                    || !declaringClass.getObjectInitializerStatements().isEmpty()) {
                     addStaticTypeError("Cannot statically compile constructor implicitly including non-static elements from fields, properties or initializers", node);
                 }
             }
@@ -200,7 +401,7 @@ public class StaticCompilationVisitor extends StaticTypeCheckingVisitor {
     }
 
     private AnnotatedNode getEnclosingDeclaration() {
-        ClassNode  cn = typeCheckingContext.getEnclosingClassNode();
+        ClassNode cn = typeCheckingContext.getEnclosingClassNode();
         MethodNode mn = typeCheckingContext.getEnclosingMethod();
         if (cn != null && cn.getEnclosingMethod() == mn) {
             return cn;
@@ -208,6 +409,8 @@ public class StaticCompilationVisitor extends StaticTypeCheckingVisitor {
             return mn;
         }
     }
+
+    //--------------------------------------------------------------------------
 
     @Override
     public void visitMethodCallExpression(final MethodCallExpression call) {
@@ -241,7 +444,8 @@ public class StaticCompilationVisitor extends StaticTypeCheckingVisitor {
         MethodNode target = call.getNodeMetaData(DIRECT_METHOD_CALL_TARGET);
         if (target == null && call.getLineNumber() > 0) {
             addError("Target constructor for constructor call expression hasn't been set", call);
-        } else if (target == null) { assert call.isSpecialCall(); // try to find target constructor
+        } else if (target == null) {
+            assert call.isSpecialCall(); // try to find target constructor
             ClassNode enclosingClass = typeCheckingContext.getEnclosingMethod().getDeclaringClass();
             ClassNode[] args = getArgumentTypes(InvocationWriter.makeArgumentList(call.getArguments()));
             target = findMethodOrFail(call, call.isSuperCall() ? enclosingClass.getSuperClass() : enclosingClass, "<init>", args);
@@ -369,208 +573,5 @@ public class StaticCompilationVisitor extends StaticTypeCheckingVisitor {
             expr.putNodeMetaData(BINARY_EXP_TARGET, new Object[]{methodNode, name});
         }
         return methodNode;
-    }
-
-    //--------------------------------------------------------------------------
-
-    public static boolean isStaticallyCompiled(final AnnotatedNode node) {
-        if (node != null && node.getNodeMetaData(STATIC_COMPILE_NODE) != null) {
-            return Boolean.TRUE.equals(node.getNodeMetaData(STATIC_COMPILE_NODE));
-        }
-        if (node instanceof MethodNode) {
-            // GROOVY-6851, GROOVY-9151, GROOVY-10104
-            if (!Boolean.TRUE.equals(node.getNodeMetaData(DEFAULT_PARAMETER_GENERATED))) {
-                return isStaticallyCompiled(node.getDeclaringClass());
-            }
-        } else if (node instanceof ClassNode) {
-            return isStaticallyCompiled(((ClassNode) node).getOuterClass());
-        }
-        return false;
-    }
-
-    private static void addDynamicOuterClassAccessorsCallback(final ClassNode outer) {
-        if (outer != null) {
-            if (!isStaticallyCompiled(outer) && outer.getNodeMetaData(DYNAMIC_OUTER_NODE_CALLBACK) == null) {
-                outer.putNodeMetaData(DYNAMIC_OUTER_NODE_CALLBACK, (IPrimaryClassNodeOperation) (source, context, classNode) -> {
-                    if (classNode == outer) {
-                        addPrivateBridgeMethods(classNode);
-                        addPrivateFieldsAccessors(classNode);
-                    }
-                });
-            }
-            // GROOVY-9328: apply to outer classes
-            addDynamicOuterClassAccessorsCallback(outer.getOuterClass());
-        }
-    }
-
-    private static void addPrivateFieldAndMethodAccessors(final ClassNode node) {
-        addPrivateBridgeMethods(node);
-        addPrivateFieldsAccessors(node);
-        for (Iterator<InnerClassNode> it = node.getInnerClasses(); it.hasNext(); ) {
-            addPrivateFieldAndMethodAccessors(it.next());
-        }
-    }
-
-    /**
-     * Adds special accessors and mutators for private fields so that inner classes can get/set them.
-     */
-    @Deprecated(since = "5.0.0")
-    private static void addPrivateFieldsAccessors(final ClassNode node) {
-        Map<String, MethodNode> privateFieldAccessors = node.getNodeMetaData(PRIVATE_FIELDS_ACCESSORS);
-        Map<String, MethodNode> privateFieldMutators = node.getNodeMetaData(PRIVATE_FIELDS_MUTATORS);
-        if (privateFieldAccessors != null || privateFieldMutators != null) {
-            // already added
-            return;
-        }
-        Set<ASTNode> accessedFields = node.getNodeMetaData(PV_FIELDS_ACCESS);
-        Set<ASTNode> mutatedFields = node.getNodeMetaData(PV_FIELDS_MUTATION);
-        if (accessedFields == null && mutatedFields == null) return;
-        // GROOVY-9385: mutation includes access in case of compound assignment or pre/post-increment/decrement
-        if (mutatedFields != null) {
-            accessedFields = new HashSet<>(Optional.ofNullable(accessedFields).orElseGet(Collections::emptySet));
-            accessedFields.addAll(mutatedFields);
-        }
-
-        int acc = -1;
-        privateFieldAccessors = (accessedFields != null ? new HashMap<>() : null);
-        privateFieldMutators = (mutatedFields != null ? new HashMap<>() : null);
-        for (FieldNode fieldNode : node.getFields()) {
-            boolean generateAccessor = accessedFields != null && accessedFields.contains(fieldNode);
-            boolean generateMutator = mutatedFields != null && mutatedFields.contains(fieldNode);
-            if (generateAccessor) {
-                acc += 1;
-                Parameter param = new Parameter(node.getPlainNodeReference(), "$that");
-                Expression receiver = fieldNode.isStatic() ? classX(node) : varX(param);
-                Statement body = returnS(attrX(receiver, constX(fieldNode.getName())));
-                MethodNode accessor = node.addMethod("pfaccess$" + acc, ACC_STATIC | ACC_SYNTHETIC, fieldNode.getOriginType(), new Parameter[]{param}, ClassNode.EMPTY_ARRAY, body);
-                accessor.setNodeMetaData(STATIC_COMPILE_NODE, Boolean.TRUE);
-                privateFieldAccessors.put(fieldNode.getName(), accessor);
-            }
-            if (generateMutator) {
-                // increment acc if it hasn't been incremented in the current iteration
-                if (!generateAccessor) acc += 1;
-                Parameter param = new Parameter(node.getPlainNodeReference(), "$that");
-                Expression receiver = fieldNode.isStatic() ? classX(node) : varX(param);
-                Parameter value = new Parameter(fieldNode.getOriginType(), "$value");
-                Statement body = assignS(attrX(receiver, constX(fieldNode.getName())), varX(value));
-                MethodNode mutator = node.addMethod("pfaccess$0" + acc, ACC_STATIC | ACC_SYNTHETIC, fieldNode.getOriginType(), new Parameter[]{param, value}, ClassNode.EMPTY_ARRAY, body);
-                mutator.setNodeMetaData(STATIC_COMPILE_NODE, Boolean.TRUE);
-                privateFieldMutators.put(fieldNode.getName(), mutator);
-            }
-        }
-        if (privateFieldAccessors != null) {
-            node.setNodeMetaData(PRIVATE_FIELDS_ACCESSORS, privateFieldAccessors);
-        }
-        if (privateFieldMutators != null) {
-            node.setNodeMetaData(PRIVATE_FIELDS_MUTATORS, privateFieldMutators);
-        }
-    }
-
-    /**
-     * Adds bridge methods for private or protected methods of a class so that
-     * any nestmate is capable of calling them. It does basically the same job
-     * as access$000 like methods in Java.
-     */
-    private static void addPrivateBridgeMethods(final ClassNode node) {
-        Set<ASTNode> accessedMethods = node.getNodeMetaData(PV_METHODS_ACCESS);
-        if (accessedMethods == null) return;
-        List<MethodNode> methods = new ArrayList<>(node.getAllDeclaredMethods());
-        methods.addAll(node.getDeclaredConstructors());
-        Map<MethodNode, MethodNode> privateBridgeMethods = node.getNodeMetaData(PRIVATE_BRIDGE_METHODS);
-        if (privateBridgeMethods != null) {
-            // bridge methods already added
-            return;
-        }
-        privateBridgeMethods = new HashMap<>();
-        int i = -1;
-        for (MethodNode method : methods) {
-            if (accessedMethods.contains(method)) {
-                i += 1;
-                ClassNode declaringClass = method.getDeclaringClass();
-                Map<String, ClassNode> genericsSpec = createGenericsSpec(node);
-                genericsSpec = addMethodGenerics(method, genericsSpec);
-                extractSuperClassGenerics(node, declaringClass, genericsSpec);
-                List<String> methodSpecificGenerics = methodSpecificGenerics(method);
-                Parameter[] methodParameters = method.getParameters();
-                Parameter[] newParams = new Parameter[methodParameters.length + 1];
-                for (int j = 1; j < newParams.length; j += 1) {
-                    Parameter orig = methodParameters[j - 1];
-                    newParams[j] = new Parameter(
-                            correctToGenericsSpecRecurse(genericsSpec, orig.getOriginType(), methodSpecificGenerics),
-                            orig.getName()
-                    );
-                }
-                Expression arguments;
-                if (methodParameters.length == 0) {
-                    arguments = ArgumentListExpression.EMPTY_ARGUMENTS;
-                } else {
-                    List<Expression> args = new ArrayList<>();
-                    for (Parameter parameter : methodParameters) {
-                        args.add(varX(parameter));
-                    }
-                    arguments = args(args);
-                }
-
-                MethodNode bridge;
-                if (method instanceof ConstructorNode) {
-                    // create constructor with a nested class as the first parameter, creating one if necessary
-                    ClassNode thatType = null;
-                    Iterator<InnerClassNode> innerClasses = node.getInnerClasses();
-                    if (innerClasses.hasNext()) {
-                        thatType = innerClasses.next();
-                    } else {
-                        thatType = new InnerClassNode(node.redirect(), node.getName() + "$1", ACC_STATIC | ACC_SYNTHETIC, ClassHelper.OBJECT_TYPE);
-                        node.getModule().addClass(thatType);
-                    }
-                    newParams[0] = new Parameter(thatType.getPlainNodeReference(), "$that");
-                    Statement body = ctorThisS(arguments);
-
-                    bridge = node.addConstructor(ACC_SYNTHETIC, newParams, ClassNode.EMPTY_ARRAY, body);
-                } else {
-                    newParams[0] = new Parameter(node.getPlainNodeReference(), "$that");
-                    Expression receiver = method.isStatic() ? classX(node) : varX(newParams[0]);
-                    MethodCallExpression call = callX(receiver, method.getName(), arguments);
-                    call.setMethodTarget(method);
-                    ExpressionStatement body = new ExpressionStatement(call);
-
-                    bridge = node.addMethod(
-                            "access$" + i,
-                            ACC_STATIC | ACC_SYNTHETIC,
-                            correctToGenericsSpecRecurse(genericsSpec, method.getReturnType(), methodSpecificGenerics),
-                            newParams,
-                            method.getExceptions(),
-                            body);
-                }
-                GenericsType[] origGenericsTypes = method.getGenericsTypes();
-                if (origGenericsTypes != null) {
-                    bridge.setGenericsTypes(applyGenericsContextToPlaceHolders(genericsSpec, origGenericsTypes));
-                }
-                bridge.setNodeMetaData(STATIC_COMPILE_NODE, Boolean.TRUE);
-                privateBridgeMethods.put(method, bridge);
-            }
-        }
-        if (!privateBridgeMethods.isEmpty()) {
-            node.setNodeMetaData(PRIVATE_BRIDGE_METHODS, privateBridgeMethods);
-        }
-    }
-
-    private static List<String> methodSpecificGenerics(final MethodNode method) {
-        List<String> genericTypeNames = new ArrayList<>();
-        GenericsType[] genericsTypes = method.getGenericsTypes();
-        if (genericsTypes != null) {
-            for (GenericsType gt : genericsTypes) {
-                genericTypeNames.add(gt.getName());
-            }
-        }
-        return genericTypeNames;
-    }
-
-    private static void memorizeInitialExpressions(final MethodNode node) {
-        // add node metadata for default parameters because they are erased by the Verifier
-        if (node.getParameters() != null) {
-            for (Parameter parameter : node.getParameters()) {
-                parameter.putNodeMetaData(INITIAL_EXPRESSION, parameter.getInitialExpression());
-            }
-        }
     }
 }

@@ -68,19 +68,6 @@ import java.util.logging.Logger;
  */
 public class AntBuilder extends BuilderSupport {
 
-    private final Logger log = Logger.getLogger(getClass().getName());
-    private final Project project;
-    private final AntXMLContext antXmlContext;
-    private final ProjectHelper2.ElementHandler antElementHandler = new ProjectHelper2.ElementHandler();
-    private final ProjectHelper2.TargetHandler antTargetHandler = new ProjectHelper2.TargetHandler();
-    private final Target collectorTarget;
-    private final Target implicitTarget;
-    private Target definingTarget;
-    private Object lastCompletedNode;
-    // true when inside a task so special ant.target handling occurs just at top level
-    boolean insideTask;
-
-    private boolean saveStreams = true;
     private static Integer streamCount = 0;
     private static InputStream savedIn;
     private static PrintStream savedErr;
@@ -89,6 +76,18 @@ public class AntBuilder extends BuilderSupport {
     private static DemuxOutputStream demuxOutputStream;
     private static DemuxOutputStream demuxErrorStream;
     private static InputStream savedProjectInputStream;
+    private final Logger log = Logger.getLogger(getClass().getName());
+    private final Project project;
+    private final AntXMLContext antXmlContext;
+    private final ProjectHelper2.ElementHandler antElementHandler = new ProjectHelper2.ElementHandler();
+    private final ProjectHelper2.TargetHandler antTargetHandler = new ProjectHelper2.TargetHandler();
+    private final Target collectorTarget;
+    private final Target implicitTarget;
+    // true when inside a task so special ant.target handling occurs just at top level
+    boolean insideTask;
+    private Target definingTarget;
+    private Object lastCompletedNode;
+    private boolean saveStreams = true;
 
     public AntBuilder() {
         this(createProject());
@@ -142,6 +141,46 @@ public class AntBuilder extends BuilderSupport {
     }
 
     /**
+     * @return Factory method to create new Project instances
+     */
+    protected static Project createProject() {
+        final Project project = new Project();
+
+        final ProjectHelper helper = ProjectHelper.getProjectHelper();
+        project.addReference(MagicNames.REFID_PROJECT_HELPER, helper);
+        helper.getImportStack().addElement("AntBuilder"); // import checks that stack is not empty
+
+        final BuildLogger logger = new NoBannerLogger();
+
+        logger.setMessageOutputLevel(org.apache.tools.ant.Project.MSG_INFO);
+        logger.setOutputPrintStream(System.out);
+        logger.setErrorPrintStream(System.err);
+
+        project.addBuildListener(logger);
+
+        project.init();
+        project.getBaseDir();
+        return project;
+    }
+
+    /**
+     * Builds an {@link Attributes} from a {@link Map}
+     *
+     * @param attributes the attributes to wrap
+     * @return the wrapped attributes
+     */
+    protected static Attributes buildAttributes(final Map attributes) {
+        final AttributesImpl attr = new AttributesImpl();
+        for (Object o : attributes.entrySet()) {
+            final Map.Entry entry = (Map.Entry) o;
+            final String attributeName = (String) entry.getKey();
+            final String attributeValue = String.valueOf(entry.getValue());
+            attr.addAttribute(null, attributeName, attributeName, "CDATA", attributeValue);
+        }
+        return attr;
+    }
+
+    /**
      * #
      * Gets the Ant project in which the tasks are executed
      *
@@ -179,29 +218,6 @@ public class AntBuilder extends BuilderSupport {
      */
     public void setSaveStreams(boolean saveStreams) {
         this.saveStreams = saveStreams;
-    }
-
-    /**
-     * @return Factory method to create new Project instances
-     */
-    protected static Project createProject() {
-        final Project project = new Project();
-
-        final ProjectHelper helper = ProjectHelper.getProjectHelper();
-        project.addReference(MagicNames.REFID_PROJECT_HELPER, helper);
-        helper.getImportStack().addElement("AntBuilder"); // import checks that stack is not empty
-
-        final BuildLogger logger = new NoBannerLogger();
-
-        logger.setMessageOutputLevel(org.apache.tools.ant.Project.MSG_INFO);
-        logger.setOutputPrintStream(System.out);
-        logger.setErrorPrintStream(System.err);
-
-        project.addBuildListener(logger);
-
-        project.init();
-        project.getBaseDir();
-        return project;
     }
 
     @Override
@@ -320,13 +336,13 @@ public class AntBuilder extends BuilderSupport {
         }
     }
 
+    // Copied from org.apache.tools.ant.Task, since we need to get a real thing before it gets nulled in DispatchUtils.execute
+
     @SuppressFBWarnings(value = "DM_DEFAULT_ENCODING", justification = "We are only wrapping stdout/stderr which are likely created with default encoding")
     private PrintStream printStream(DemuxOutputStream outputStream) {
         // we could make a saveStreamEncoding but seems like a rare scenario
         return new PrintStream(outputStream);
     }
-
-    // Copied from org.apache.tools.ant.Task, since we need to get a real thing before it gets nulled in DispatchUtils.execute
 
     private Object performTask(Task task) {
 
@@ -391,23 +407,6 @@ public class AntBuilder extends BuilderSupport {
         Object task = createNode(name, attributes);
         setText(task, value.toString());
         return task;
-    }
-
-    /**
-     * Builds an {@link Attributes} from a {@link Map}
-     *
-     * @param attributes the attributes to wrap
-     * @return the wrapped attributes
-     */
-    protected static Attributes buildAttributes(final Map attributes) {
-        final AttributesImpl attr = new AttributesImpl();
-        for (Object o : attributes.entrySet()) {
-            final Map.Entry entry = (Map.Entry) o;
-            final String attributeName = (String) entry.getKey();
-            final String attributeValue = String.valueOf(entry.getValue());
-            attr.addAttribute(null, attributeName, attributeName, "CDATA", attributeValue);
-        }
-        return attr;
     }
 
     @Override

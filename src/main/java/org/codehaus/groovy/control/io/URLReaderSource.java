@@ -30,27 +30,28 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
- *  A ReaderSource for source files hosted at a URL.
+ * A ReaderSource for source files hosted at a URL.
  */
 public class URLReaderSource extends AbstractReaderSource {
     private final URL url;  // The URL from which we produce Readers.
 
-   /**
-    *  Creates the ReaderSource from a File descriptor.
-    * @param url url pointing to script source
-    * @param configuration configuration for compiling source
-    */
-    public URLReaderSource( URL url, CompilerConfiguration configuration ) {
-       super( configuration );
+    /**
+     * Creates the ReaderSource from a File descriptor.
+     *
+     * @param url           url pointing to script source
+     * @param configuration configuration for compiling source
+     */
+    public URLReaderSource(URL url, CompilerConfiguration configuration) {
+        super(configuration);
         this.url = url;
     }
 
-   /**
-    *  Returns a new Reader on the underlying source object.
-    */
+    /**
+     * Returns a new Reader on the underlying source object.
+     */
     @Override
     public Reader getReader() throws IOException {
-       return new InputStreamReader(URLStreams.openUncachedStream(url), configuration.getSourceEncoding() );
+        return new InputStreamReader(URLStreams.openUncachedStream(url), configuration.getSourceEncoding());
     }
 
     /**

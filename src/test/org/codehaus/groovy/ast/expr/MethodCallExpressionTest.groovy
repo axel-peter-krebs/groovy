@@ -28,9 +28,9 @@ final class MethodCallExpressionTest {
     @Test
     void testGetText1() {
         MethodCallExpression method = new MethodCallExpression(
-                new VariableExpression('foo'),
-                'bar',
-                new ArgumentListExpression(new ConstantExpression('baz'))
+            new VariableExpression('foo'),
+            'bar',
+            new ArgumentListExpression(new ConstantExpression('baz'))
         )
         assert method.text == 'foo.bar(baz)'
 
@@ -50,9 +50,9 @@ final class MethodCallExpressionTest {
     @Test
     void testGetText2() {
         MethodCallExpression method = new MethodCallExpression(
-                new VariableExpression('foo'),
-                new VariableExpression('bar'),
-                new ArgumentListExpression(new VariableExpression('baz'))
+            new VariableExpression('foo'),
+            new VariableExpression('bar'),
+            new ArgumentListExpression(new VariableExpression('baz'))
         )
         assert method.text == 'foo.(bar)(baz)'
     }
@@ -60,9 +60,9 @@ final class MethodCallExpressionTest {
     @Test
     void testGetText3() {
         MethodCallExpression method = new MethodCallExpression(
-                new VariableExpression('foo'),
-                new GStringExpression('$bar'),
-                new ArgumentListExpression(new VariableExpression('baz'))
+            new VariableExpression('foo'),
+            new GStringExpression('$bar'),
+            new ArgumentListExpression(new VariableExpression('baz'))
         )
         assert method.text == 'foo."$bar"(baz)'
     }
@@ -70,9 +70,9 @@ final class MethodCallExpressionTest {
     @Test
     void testGetText4() {
         MethodCallExpression method = new MethodCallExpression(
-                new VariableExpression('foo'),
-                new ConstantExpression(12345),
-                new ArgumentListExpression(new VariableExpression('baz'))
+            new VariableExpression('foo'),
+            new ConstantExpression(12345),
+            new ArgumentListExpression(new VariableExpression('baz'))
         )
         assert method.text == "foo.'12345'(baz)"
     }
@@ -80,13 +80,13 @@ final class MethodCallExpressionTest {
     @Test
     void testGetText5() {
         MethodCallExpression method = new MethodCallExpression(
-                new VariableExpression('foo'),
-                'bar',
-                new ArgumentListExpression(new VariableExpression('baz'))
+            new VariableExpression('foo'),
+            'bar',
+            new ArgumentListExpression(new VariableExpression('baz'))
         )
         method.setGenericsTypes(
-                STRING_TYPE.asGenericsType(),
-                OBJECT_TYPE.asGenericsType()
+            STRING_TYPE.asGenericsType(),
+            OBJECT_TYPE.asGenericsType()
         )
         assert method.text == "foo.<java.lang.String, java.lang.Object>bar(baz)"
     }

@@ -60,6 +60,107 @@ public class ParameterTypes {
         setParametersTypes(pt);
     }
 
+    /**
+     * this method is called when the number of arguments to a method is greater than 1
+     * and if the method is a vargs method. This method will then transform the given
+     * arguments to make the method callable
+     *
+     * @param arguments  the arguments used to call the method
+     * @param paramTypes the types of the parameters the method takes
+     */
+    private static Object[] fitToVargs(final Object[] arguments, final CachedClass[] paramTypes) {
+        int aCount = arguments.length, pCount = paramTypes.length;
+        var vaType = paramTypes[pCount - 1].getTheClass();
+        Object[] unwrappedArguments = arguments.clone();
+        MetaClassHelper.unwrap(unwrappedArguments);
+
+        // get type of each vargs element -- arguments are not primitive
+        vaType = TypeUtil.autoboxType(vaType.getComponentType());
+
+        if (aCount == pCount - 1) {
+            // one argument is missing, so fill it with an empty array
+            Object[] args = new Object[pCount];
+            System.arraycopy(unwrappedArguments, 0, args, 0, aCount);
+            args[aCount] = Array.newInstance(vaType, 0);
+            return args;
+        } else if (aCount == pCount) {
+            // the number of arguments is correct, but if the last argument
+            // is no array we have to wrap it in an array; if last argument
+            // is null, then we don't have to do anything
+            var lastArgument = getArgClass(arguments[aCount - 1]);
+            if (lastArgument != null && !lastArgument.isArray()) {
+                Object[] args = new Object[pCount];
+                System.arraycopy(unwrappedArguments, 0, args, 0, pCount - 1);
+                args[pCount - 1] = makeCommonArray(unwrappedArguments, pCount - 1, vaType);
+                return args;
+            } else {
+                // we may have to box the argument!
+                return unwrappedArguments;
+            }
+        } else if (aCount > pCount) {
+            // wrap tail arguments in an array
+            Object[] args = new Object[pCount];
+            System.arraycopy(unwrappedArguments, 0, args, 0, pCount - 1);
+            args[pCount - 1] = makeCommonArray(unwrappedArguments, pCount - 1, vaType);
+            return args;
+        } else {
+            throw new GroovyBugError("trying to call a vargs method without enough arguments");
+        }
+    }
+
+    private static Object makeCommonArray(Object[] arguments, int offset, Class<?> baseType) {
+        Object[] result = (Object[]) Array.newInstance(baseType, arguments.length - offset);
+        for (int i = offset; i != arguments.length; ++i) {
+            Object v = arguments[i];
+            v = DefaultTypeTransformation.castToType(v, baseType);
+            result[i - offset] = v;
+        }
+        return result;
+    }
+
+    private static boolean isValidExactMethod(Class[] arguments, CachedClass[] pt) {
+        // let's check the parameter types match
+        for (int i = 0; i != pt.length; ++i) {
+            if (!pt[i].isAssignableFrom(arguments[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean isValidVargsMethod(Class[] argumentTypes, CachedClass[] parameterTypes, int nthParameter) {
+        for (int i = 0; i < nthParameter; i += 1) {
+            if (!parameterTypes[i].isAssignableFrom(argumentTypes[i])) {
+                return false;
+            }
+        }
+
+        CachedClass arrayType = parameterTypes[nthParameter];
+        CachedClass componentType = ReflectionCache.getCachedClass(arrayType.getTheClass().getComponentType());
+
+        // check direct match
+        if (argumentTypes.length == parameterTypes.length) {
+            var argumentType = argumentTypes[nthParameter];
+            if (arrayType.isAssignableFrom(argumentType) || (argumentType.isArray()
+                && componentType.isAssignableFrom(argumentType.getComponentType()))) {
+                return true;
+            }
+        }
+
+        // check vararg match
+        for (int i = nthParameter; i < argumentTypes.length; i += 1) {
+            if (!componentType.isAssignableFrom(argumentTypes[i])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static Class<?> getArgClass(final Object arg) {
+        return arg == null ? null : (arg instanceof Wrapper ? ((Wrapper) arg).getType() : arg.getClass());
+    }
+
     protected final void setParametersTypes(CachedClass[] pt) {
         this.parameterTypes = pt;
         isVargsMethod = pt.length > 0 && pt[pt.length - 1].isArray;
@@ -126,12 +227,12 @@ public class ParameterTypes {
         if (isVargsMethod()) {
             int aCount = arguments.length;
             int pCount = parameterTypes.length;
-            if (aCount > pCount || aCount == pCount-1) { // too many or too few?
+            if (aCount > pCount || aCount == pCount - 1) { // too many or too few?
                 return true;
             }
             if (aCount == pCount) {
-                Object last = arguments[aCount-1]; // is null or different type?
-                return last == null || !getArgClass(last).equals(parameterTypes[pCount-1].getTheClass());
+                Object last = arguments[aCount - 1]; // is null or different type?
+                return last == null || !getArgClass(last).equals(parameterTypes[pCount - 1].getTheClass());
             }
         }
         return false;
@@ -172,64 +273,6 @@ public class ParameterTypes {
         return arguments;
     }
 
-    /**
-     * this method is called when the number of arguments to a method is greater than 1
-     * and if the method is a vargs method. This method will then transform the given
-     * arguments to make the method callable
-     *
-     * @param arguments the arguments used to call the method
-     * @param paramTypes        the types of the parameters the method takes
-     */
-    private static Object[] fitToVargs(final Object[] arguments, final CachedClass[] paramTypes) {
-        int aCount = arguments.length, pCount = paramTypes.length;
-        var vaType = paramTypes[pCount-1].getTheClass();
-        Object[] unwrappedArguments = arguments.clone();
-        MetaClassHelper.unwrap(unwrappedArguments);
-
-        // get type of each vargs element -- arguments are not primitive
-        vaType = TypeUtil.autoboxType(vaType.getComponentType());
-
-        if (aCount == pCount - 1) {
-            // one argument is missing, so fill it with an empty array
-            Object[] args = new Object[pCount];
-            System.arraycopy(unwrappedArguments, 0, args, 0, aCount);
-            args[aCount] = Array.newInstance(vaType, 0);
-            return args;
-        } else if (aCount == pCount) {
-            // the number of arguments is correct, but if the last argument
-            // is no array we have to wrap it in an array; if last argument
-            // is null, then we don't have to do anything
-            var lastArgument = getArgClass(arguments[aCount - 1]);
-            if (lastArgument != null && !lastArgument.isArray()) {
-                Object[] args = new Object[pCount];
-                System.arraycopy(unwrappedArguments, 0, args, 0, pCount - 1);
-                args[pCount-1] = makeCommonArray(unwrappedArguments, pCount - 1, vaType);
-                return args;
-            } else {
-                // we may have to box the argument!
-                return unwrappedArguments;
-            }
-        } else if (aCount > pCount) {
-            // wrap tail arguments in an array
-            Object[] args = new Object[pCount];
-            System.arraycopy(unwrappedArguments, 0, args, 0, pCount - 1);
-            args[pCount-1] = makeCommonArray(unwrappedArguments, pCount - 1, vaType);
-            return args;
-        } else {
-            throw new GroovyBugError("trying to call a vargs method without enough arguments");
-        }
-    }
-
-    private static Object makeCommonArray(Object[] arguments, int offset, Class<?> baseType) {
-        Object[] result = (Object[]) Array.newInstance(baseType, arguments.length - offset);
-        for (int i = offset; i != arguments.length; ++i) {
-            Object v = arguments[i];
-            v = DefaultTypeTransformation.castToType(v, baseType);
-            result[i - offset] = v;
-        }
-        return result;
-    }
-
     public boolean isValidMethod(Class[] argumentTypes) {
         if (argumentTypes == null) return true;
         CachedClass[] pt = getParameterTypes();
@@ -242,16 +285,6 @@ public class ParameterTypes {
         else if (nArguments == 0 && nParameters == 1 && !pt[0].isPrimitive)
             return true; // implicit null argument
         return false;
-    }
-
-    private static boolean isValidExactMethod(Class[] arguments, CachedClass[] pt) {
-        // let's check the parameter types match
-        for (int i = 0; i != pt.length; ++i) {
-            if (!pt[i].isAssignableFrom(arguments[i])) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public boolean isValidExactMethod(Object[] args) {
@@ -286,35 +319,6 @@ public class ParameterTypes {
         return true;
     }
 
-    private static boolean isValidVargsMethod(Class[] argumentTypes, CachedClass[] parameterTypes, int nthParameter) {
-        for (int i = 0; i < nthParameter; i += 1) {
-            if (!parameterTypes[i].isAssignableFrom(argumentTypes[i])) {
-                return false;
-            }
-        }
-
-        CachedClass arrayType = parameterTypes[nthParameter];
-        CachedClass componentType = ReflectionCache.getCachedClass(arrayType.getTheClass().getComponentType());
-
-        // check direct match
-        if (argumentTypes.length == parameterTypes.length) {
-            var argumentType = argumentTypes[nthParameter];
-            if (arrayType.isAssignableFrom(argumentType) || (argumentType.isArray()
-                    && componentType.isAssignableFrom(argumentType.getComponentType()))) {
-                return true;
-            }
-        }
-
-        // check vararg match
-        for (int i = nthParameter; i < argumentTypes.length; i += 1) {
-            if (!componentType.isAssignableFrom(argumentTypes[i])) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public boolean isValidMethod(Object[] arguments) {
         if (arguments == null) return true;
         final CachedClass[] parameterTypes = getParameterTypes();
@@ -332,7 +336,7 @@ public class ParameterTypes {
             if (nArguments == parameterTypes.length) {
                 var argumentType = getArgClass(arguments[nthParameter]);
                 if (arrayType.isAssignableFrom(argumentType) || (argumentType.isArray()
-                        && componentType.isAssignableFrom(argumentType.getComponentType()))) {
+                    && componentType.isAssignableFrom(argumentType.getComponentType()))) {
                     return true;
                 }
             }
@@ -354,9 +358,5 @@ public class ParameterTypes {
             return true; // implicit null argument
         }
         return false;
-    }
-
-    private static Class<?> getArgClass(final Object arg) {
-        return arg == null ? null : (arg instanceof Wrapper ? ((Wrapper) arg).getType() : arg.getClass());
     }
 }

@@ -25,7 +25,7 @@ import org.codehaus.groovy.classgen.asm.sc.StaticCompilationTestSupport
 
 class Groovy7075Bug extends StaticTypeCheckingTestCase implements StaticCompilationTestSupport {
     void testShouldNotLooseSafeNavigationFlag() {
-            assertScript '''interface Y extends YParent {}
+        assertScript '''interface Y extends YParent {}
 
 interface YParent {
     Integer getValue()

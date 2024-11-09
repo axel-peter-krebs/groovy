@@ -29,7 +29,7 @@ import java.util.Map;
 
 /**
  * Lazy evaluated representation of a GPath expression returning no children.
- *
+ * <p>
  * As this class represents a GPath expression with no results, all methods
  * are either NOPs or return an empty result.
  */
@@ -46,6 +46,7 @@ public class NoChildren extends GPathResult {
 
     /**
      * Returns <code>0</code>.
+     *
      * @return <code>0</code>
      */
     @Override
@@ -55,6 +56,7 @@ public class NoChildren extends GPathResult {
 
     /**
      * Returns an empty <code>String</code>.
+     *
      * @return an empty <code>String</code>
      */
     @Override
@@ -73,6 +75,7 @@ public class NoChildren extends GPathResult {
 
     /**
      * Returns an empty <code>Iterator</code>.
+     *
      * @return an empty <code>Iterator</code>
      */
     @Override
@@ -82,6 +85,7 @@ public class NoChildren extends GPathResult {
 
     /**
      * Returns an empty <code>Iterator</code>.
+     *
      * @return an empty <code>Iterator</code>
      */
     @Override
@@ -106,6 +110,7 @@ public class NoChildren extends GPathResult {
 
     /**
      * Returns <code>this</code>.
+     *
      * @return <code>this</code>
      */
     @Override
@@ -115,6 +120,7 @@ public class NoChildren extends GPathResult {
 
     /**
      * Returns <code>this</code>.
+     *
      * @return <code>this</code>
      */
     @Override
@@ -124,6 +130,7 @@ public class NoChildren extends GPathResult {
 
     /**
      * Returns an empty iterator.
+     *
      * @return an empty iterator
      */
     @Override
@@ -174,6 +181,7 @@ public class NoChildren extends GPathResult {
 
     /**
      * Returns <code>false</code>.
+     *
      * @return <code>false</code>
      */
     public boolean asBoolean() {

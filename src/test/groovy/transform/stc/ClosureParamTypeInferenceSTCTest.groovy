@@ -56,7 +56,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             }
             foo { Integer i -> println i }
         ''',
-        'Expected type java.lang.Number for closure parameter: i'
+            'Expected type java.lang.Number for closure parameter: i'
     }
 
     // GROOVY-6603
@@ -66,7 +66,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                 c.call("x")
             }
         ''',
-        'Cannot call closure that accepts [java.lang.Number] with [java.lang.String]'
+            'Cannot call closure that accepts [java.lang.Number] with [java.lang.String]'
     }
 
     void testFirstParam1() {
@@ -101,7 +101,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             void foo(@ClosureParams(value=FromString, options="java.lang.String") Closure c) { c.call('foo') }
             foo { Date str -> println str}
         ''',
-        'Expected type java.lang.String for closure parameter: str'
+            'Expected type java.lang.String for closure parameter: str'
     }
 
     void testFromStringWithGenericType() {
@@ -114,7 +114,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             void foo(@ClosureParams(value=FromString, options="java.util.List<java.lang.String>") Closure c) { c.call(['foo']) }
             foo { List<Date> d -> d.each { println it } }
         ''',
-        'Expected type java.util.List<java.lang.String> for closure parameter: d'
+            'Expected type java.util.List<java.lang.String> for closure parameter: d'
     }
 
     // GROOVY-9518
@@ -165,7 +165,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages foo + '''
             foo { one, two, xxx -> }
         ''',
-        'Incorrect number of parameters. Expected 1 or 2 but found 3'
+            'Incorrect number of parameters. Expected 1 or 2 but found 3'
     }
 
     // GROOVY-11090
@@ -364,7 +364,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                 o.each { x, y -> }
             }
         ''',
-        'Incorrect number of parameters. Expected 1 but found 2'
+            'Incorrect number of parameters. Expected 1 but found 2'
     }
 
     // GROOVY-6939
@@ -374,7 +374,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                 o.eachWithIndex { x, y, z -> }
             }
         ''',
-        'Incorrect number of parameters. Expected 2 but found 3'
+            'Incorrect number of parameters. Expected 2 but found 3'
     }
 
     // GROOVY-6939
@@ -384,7 +384,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                 o.eachWithIndex { print it }
             }
         ''',
-        'Incorrect number of parameters. Expected 2 but found 1'
+            'Incorrect number of parameters. Expected 2 but found 1'
     }
 
     // GROOVY-6939
@@ -394,7 +394,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                 array.each { x, y -> }
             }
         ''',
-        'Incorrect number of parameters. Expected 1 but found 2'
+            'Incorrect number of parameters. Expected 1 but found 2'
     }
 
     // GROOVY-6939
@@ -404,7 +404,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                 [:].each { -> }
             }
         ''',
-        'Incorrect number of parameters. Expected 1 or 2 but found 0'
+            'Incorrect number of parameters. Expected 1 or 2 but found 0'
     }
 
     // GROOVY-8499
@@ -427,7 +427,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                 [].each { -> }
             }
         ''',
-        'Incorrect number of parameters. Expected 1 but found 0'
+            'Incorrect number of parameters. Expected 1 but found 0'
     }
 
     // GROOVY-9854
@@ -435,7 +435,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             switch (42) { case { -> }: break; }
         ''',
-        'Incorrect number of parameters. Expected 1 but found 0'
+            'Incorrect number of parameters. Expected 1 but found 0'
     }
 
     // GROOVY-9854
@@ -443,7 +443,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             switch (42) { case { i, j -> }: break; }
         ''',
-        'Incorrect number of parameters. Expected 1 but found 2'
+            'Incorrect number of parameters. Expected 1 but found 2'
     }
 
     // GROOVY-11089
@@ -452,7 +452,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             def array = new String[]{'a','b'}
             array.with { a,b -> }
         ''',
-        'Incorrect number of parameters. Expected 1 but found 2'
+            'Incorrect number of parameters. Expected 1 but found 2'
     }
 
     // GROOVY-7141
@@ -665,7 +665,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             switch (42) { case { String s -> }: break; }
         ''',
-        'Expected type java.lang.Integer for closure parameter: s'
+            'Expected type java.lang.Integer for closure parameter: s'
     }
 
     void testGroovy9968() {
@@ -756,17 +756,17 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
     }
 
     void testGroovy10756() {
-        assertScript """import ${Pogo10756.name.replace('$','.')}
+        assertScript """import ${Pogo10756.name.replace('$', '.')}
             Pogo10756.files.collect { it.name }
             //                        ^^ File
         """
 
-        assertScript """import ${Pogo10756.name.replace('$','.')}
+        assertScript """import ${Pogo10756.name.replace('$', '.')}
             def file = Pogo10756.files[0]
             file?.name
         """
 
-        assertScript """import ${Pogo10756.name.replace('$','.')}
+        assertScript """import ${Pogo10756.name.replace('$', '.')}
             def files = Pogo10756.files
             files*.name
         """
@@ -785,16 +785,19 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert [a:10, b:1].any {it.key.length() == it.value }
         '''
     }
+
     void testDGM_anyOnIterable() {
         assertScript '''
             assert ['abc','de','f'].any { it.length() == 2 }
         '''
     }
+
     void testDGM_anyOnIterator() {
         assertScript '''
             assert ['abc','de','f'].iterator().any { it.length() == 2 }
         '''
     }
+
     void testDGM_anyOnArray() {
         assertScript '''
             String[] strings = ['abc','de','f']
@@ -809,8 +812,9 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             ['a','b'].collect { Date it -> it.toUpperCase() }
         ''',
-        'Expected type java.lang.String for closure parameter: it'
+            'Expected type java.lang.String for closure parameter: it'
     }
+
     void testDGM_collectImplicitIt() {
         assertScript '''
             ['a','b'].collect { it.toUpperCase() }
@@ -837,6 +841,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert [1234, 3.14].collect { it.intValue() } == [1234,3]
         '''
     }
+
     void testDGM_collectOnList() { // GROOVY-11090
         assertScript '''
             def list_of_tuple2 = ['a','b'].withIndex()
@@ -845,7 +850,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert list_of_string == ['a0','b1']
         '''
 
-        for (spec in ['s,i','String s,int i']) {
+        for (spec in ['s,i', 'String s,int i']) {
             assertScript """
                 def list_of_tuple2 = ['a','b'].withIndex()
                 def list_of_string = list_of_tuple2.collect { $spec -> s + i }
@@ -854,6 +859,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             """
         }
     }
+
     void testDGM_collectOnMap() {
         assertScript '''
             assert [a: 'foo',b:'bar'].collect { k,v -> k+v } == ['afoo','bbar']
@@ -873,21 +879,25 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert ['a','b','c'].collectEntries { [it, it.toUpperCase() ]} == [a:'A',b:'B',c:'C']
         '''
     }
+
     void testDGM_collectEntriesWithCollector() {
         assertScript '''
             assert ['a','b','c'].collectEntries([:]) { [it, it.toUpperCase() ]} == [a:'A',b:'B',c:'C']
         '''
     }
+
     void testDGM_collectEntriesIterator() {
         assertScript '''
             assert ['a','b','c'].iterator().collectEntries { [it, it.toUpperCase() ]} == [a:'A',b:'B',c:'C']
         '''
     }
+
     void testDGM_collectEntriesIteratorWithCollector() {
         assertScript '''
             assert ['a','b','c'].iterator().collectEntries([:]) { [it, it.toUpperCase() ]} == [a:'A',b:'B',c:'C']
         '''
     }
+
     void testDGM_collectEntriesOnMap() {
         assertScript '''
             assert [a:'a',b:'b',c:'c'].collectEntries { k,v -> [k+k, v.toUpperCase() ]} == [aa:'A',bb:'B',cc:'C']
@@ -895,6 +905,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert [a:'a',b:'b',c:'c'].collectEntries { [it.key+it.key, it.value.toUpperCase() ]} == [aa:'A',bb:'B',cc:'C']
         '''
     }
+
     void testDGM_collectEntriesOnMapWithCollector() {
         assertScript '''
             assert [a:'a',b:'b',c:'c'].collectEntries([:]) { k,v -> [k+k, v.toUpperCase() ]} == [aa:'A',bb:'B',cc:'C']
@@ -902,12 +913,14 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert [a:'a',b:'b',c:'c'].collectEntries([:]) { [it.key+it.key, it.value.toUpperCase() ]} == [aa:'A',bb:'B',cc:'C']
         '''
     }
+
     void testDGM_collectEntriesOnArray() {
         assertScript '''
             String[] array = ['a','b','c']
             assert array.collectEntries { [it, it.toUpperCase() ]} == [a:'A',b:'B',c:'C']
         '''
     }
+
     void testDGM_collectEntriesOnArrayWithCollector() {
         assertScript '''
             String[] array = ['a','b','c']
@@ -1033,12 +1046,14 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert ['Groovy','yvoorG'].iterator().countBy { it.length() } == [6:2]
         '''
     }
+
     void testDGM_countByArray() {
         assertScript '''
             String[] array = ['Groovy','yvoorG']
             assert array.countBy { it.length() } == [6:2]
         '''
     }
+
     void testDGM_countByMap() {
         assertScript '''
             assert [langs:['Groovy','Java']].countBy { k,v -> k.length() } == [5:1]
@@ -1244,6 +1259,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             [a:'A',bb:'B',ccc:'C'].eachWithIndex { k,v,i -> assert k.toUpperCase() == v*(1+i) }
         '''
     }
+
     void testDGM_eachWithIndexOnObject() {
         assertScript '''
             def foo(object) {
@@ -1253,16 +1269,19 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             foo([ [a:'A',bb:'B',ccc:'C'] ])
         '''
     }
+
     void testDGM_eachWithIndexOnIterable() {
         assertScript '''
             ['1','2','3'].eachWithIndex { e,i -> assert e.toUpperCase() == String.valueOf(1+i) }
         '''
     }
+
     void testDGM_eachWithIndexOnIterator() {
         assertScript '''
             ['1','2','3'].iterator().eachWithIndex { e,i -> assert e.toUpperCase() == String.valueOf(1+i) }
         '''
     }
+
     void testDGM_eachWithIndexOnRecursiveIterable() { // GROOVY-10651
         ['', '<?>'].each { args ->
             assertScript """
@@ -1282,6 +1301,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert ['foo','bar','baz'].every { it.length() == 3 }
         '''
     }
+
     void testDGM_everyOnIterator() {
         assertScript '''
             assert ['foo','bar','baz'].iterator().every { String it -> it.length() == 3 }
@@ -1289,6 +1309,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert ['foo','bar','baz'].iterator().every { it.length() == 3 }
         '''
     }
+
     void testDGM_everyOnArray() {
         assertScript '''
             String[] items = ['foo','bar','baz']
@@ -1296,6 +1317,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert items.every { String s -> s.length() == 3 }
         '''
     }
+
     void testDGM_everyOnMap() {
         assertScript '''
             assert [a:'A',b:'B',cc:'CC'].every { String k, String v -> k == v.toLowerCase() }
@@ -1345,6 +1367,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert ['a','bbb','ccc'].find { it.length() == 3 } == 'bbb'
         '''
     }
+
     void testDGM_findOnArray() {
         assertScript '''
             String[] arraylistOfStrings = ['a','bbb','ccc']
@@ -1353,6 +1376,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert arraylistOfStrings.find { it.length() == 3 } == 'bbb'
         '''
     }
+
     void testDGM_findOnMap() {
         assertScript '''
             assert [a:2,b:4,c:6].find { String k, int v -> k.toUpperCase()=='C' && 2*v==12 } instanceof Map.Entry
@@ -1361,6 +1385,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert [a:2,b:4,c:6].find { it.key.toUpperCase()=='C' && 2*it.value==12 } instanceof Map.Entry
         '''
     }
+
     void testDGM_findOnStr() { // GROOVY-11076, GROOVY-11089
         assertScript '''
             "75001 Paris".find(/(\\d{5})\\s(\\w+)/) { List<String> all_zip_city -> all_zip_city*.toUpperCase() }
@@ -1384,12 +1409,12 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             "75001 Paris".find(/(\\d{5})\\s(\\w+)/) { String all, Date zip, String city -> }
         ''',
-        'Expected type java.lang.String for closure parameter: zip'
+            'Expected type java.lang.String for closure parameter: zip'
 
         shouldFailWithMessages '''
             "75001 Paris".find(~/\\d{5}/) { Number zip -> zip }
         ''',
-        'Expected (java.util.List<java.lang.String>) or (java.lang.String) or (java.lang.String[]) but found (java.lang.Number)'
+            'Expected (java.util.List<java.lang.String>) or (java.lang.String) or (java.lang.String[]) but found (java.lang.Number)'
     }
 
     void testDGM_findAllOnCollection() {
@@ -1399,6 +1424,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert ['a','bbb','ccc'].findAll { it.length() == 3 } == ['bbb','ccc']
         '''
     }
+
     void testDGM_findAllOnArray() {
         assertScript '''
             String[] arraylistOfStrings = ['a','bbb','ccc']
@@ -1407,6 +1433,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert arraylistOfStrings.findAll { it.length() == 3 } == ['bbb','ccc']
         '''
     }
+
     void testDGM_findAllOnMap() {
         assertScript '''
             assert [a:2,b:4,c:6].findAll { String k, int v -> k.toUpperCase()=='C' && 2*v==12 } == [c:6]
@@ -1426,6 +1453,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert ['barbar','barbaz','foo'].findResult(-1) { it -> it.length() == 4?it.toUpperCase():null } == -1
         '''
     }
+
     void testDGM_findResultOnIterable() {
         assertScript '''
             assert (0..10).findResult { it== 3?2*it:null } == 6
@@ -1433,6 +1461,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert (0..10).findResult { it -> it==3?2*it:null } == 6
         '''
     }
+
     void testDGM_findResultOnMap() {
         assertScript '''
             assert [a:1, b:2, c:3].findResult { String k, int v -> "${k.toUpperCase()}$v"=='C3'?2*v:null } == 6
@@ -1446,6 +1475,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert [a:1, b:2, c:3].findResult('a') { "${it.key.toUpperCase()}$it.value"=='C4'?2*it.value:null } == 'a'
         '''
     }
+
     void testDGM_findResult() {
         assertScript '''
             String[] items1 = ['foo','bar','baz']
@@ -1463,6 +1493,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert (0..10).findResults { it -> it<3?2*it:null } == [0,2,4]
         '''
     }
+
     void testDGM_findResultsOnMap() {
         assertScript '''
             assert [a:1, b:2, c:3].findResults { String k, int v -> "${k.toUpperCase()}$v"=='C3'?2*v:null } == [6]
@@ -1471,6 +1502,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert [a:1, b:2, c:3].findResults { "${it.key.toUpperCase()}$it.value"=='C3'?2*it.value:null } == [6]
         '''
     }
+
     void testDGM_findResults() {
         assertScript '''
             String[] items1 = ['foo','bar','baz']
@@ -1486,12 +1518,14 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert ['a','bb','cc','d','eee'].groupBy { it.length() } == [1:['a','d'],2:['bb','cc'],3:['eee']]
         '''
     }
+
     void testDGM_groupByArray() {
         assertScript '''
             String[] array = ['a','bb','cc','d','eee']
             assert array.groupBy { it.length() } == [1:['a','d'],2:['bb','cc'],3:['eee']]
         '''
     }
+
     void testDGM_groupByMap() {
         assertScript '''
             assert [a:'1',b:'2',c:'C'].groupBy { e -> e.key.toUpperCase()==e.value?1:0 } == [0:[a:'1',b:'2'], 1:[c:'C']]
@@ -1522,6 +1556,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert value == 'aBBCCC'
         '''
     }
+
     @NotYetImplemented
     void testDGM_injectOnIterator() {
         assertScript '''
@@ -1531,6 +1566,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert value == 'aBBCCC'
         '''
     }
+
     void testDGM_injectOnArray() {
         assertScript '''
             def items = new String[]{'a','bb','ccc'}
@@ -1551,6 +1587,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert value == 6
         '''
     }
+
     void testDGM_injectOnIteratorWithInitialValue() {
         assertScript '''
             def items = ['a','bb','ccc'].iterator()
@@ -1558,6 +1595,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert value == 6
         '''
     }
+
     void testDGM_injectOnArrayWithInitialValue() {
         assertScript '''
             def items = new String[]{'a','bb','ccc'}
@@ -1565,6 +1603,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert value == 6
         '''
     }
+
     void testDGM_injectOnMapWithInitialValue() {
         assertScript '''
             def items = [a:1,b:2]
@@ -1644,6 +1683,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert list == ['groovy','java']
         '''
     }
+
     void testDGM_retainAllOnCollection() {
         assertScript '''
             def list = ['abc','a','groovy','java']
@@ -1657,11 +1697,13 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             ['a','b'].reverseEach { println it.toUpperCase() }
         '''
     }
+
     void testReverseEachOnArray() {
         assertScript '''
             (['a','b'] as String[]).reverseEach { println it.toUpperCase() }
         '''
     }
+
     void testReverseEachOnMap() {
         assertScript '''
             [a:1,b:2].reverseEach { k,v -> println ((k.toUpperCase())*v) }
@@ -1677,6 +1719,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert ["hi","hey","hello"] == ["hello","hi","hey"].sort { it.length() }
         '''
     }
+
     void testDGM_sortOnArray() {
         assertScript '''
             String[] array = ["hello","hi","hey"]
@@ -1685,6 +1728,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert ["hi","hey","hello"] == array.sort { it.length() }
         '''
     }
+
     void testDGM_sortOnIterator() {
         assertScript '''
             assert ["hi","hey","hello"] == ["hello","hi","hey"].iterator().sort { a,b -> a.length() <=> b.length() }.collect()
@@ -1692,6 +1736,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert ["hi","hey","hello"] == ["hello","hi","hey"].iterator().sort { it.length() }.collect()
         '''
     }
+
     void testDGM_sortOnIterable() {
         assertScript '''
             def foo(Iterable<String> iterable) {
@@ -1727,6 +1772,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert items.split { it.startsWith('ba') } == [['bar', 'baz'], ['foo']]
         '''
     }
+
     void testDGM_splitOnArray() {
         assertScript '''
             String[] items = ['foo','bar','baz']
@@ -1753,6 +1799,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert abc.takeWhile{ it <= 'b' } == ['a', 'b']
         '''
     }
+
     void testDGM_takeWhileOnIterator() {
         assertScript '''
             class AbcIterable implements Iterable<String>  {
@@ -1763,6 +1810,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert abc.iterator().takeWhile{ it <= 'b' }.collect() == ['a', 'b']
         '''
     }
+
     void testDGM_takeWhileOnList() {
         assertScript '''
             def abc = ['a','b','c']
@@ -1770,6 +1818,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert abc.iterator().takeWhile{ it <= 'b' }.collect() == ['a', 'b']
         '''
     }
+
     void testDGM_takeWhileOnArray() {
         assertScript '''
             String[] abc = ['a','b','c']
@@ -1777,6 +1826,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert abc.iterator().takeWhile{ it <= 'b' }.collect() == ['a', 'b']
         '''
     }
+
     void testDGM_takeWhileOnMap() {
         assertScript '''
             def shopping = [milk:1, bread:2, chocolate:3]
@@ -1809,6 +1859,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert uniq == [2, 3, 4]
         '''
     }
+
     void testDGM_uniqueOnCollection() {
         assertScript '''
             def orig = [1, 3, 4, 5]
@@ -1821,6 +1872,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             assert uniq == [2, 3, 4]
         '''
     }
+
     void testDGM_uniqueOnIterator() {
         assertScript '''
             def orig = [1, 3, 4, 5].iterator()
@@ -1846,6 +1898,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             }
         '''
     }
+
     void testDGM_with1() {
         assertScript '''
             "string".with { it.toUpperCase() }
@@ -1856,7 +1909,7 @@ class ClosureParamTypeInferenceSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             12345678.with { xxx -> xxx.toUpperCase() }
         ''',
-        'Cannot find matching method java.lang.Integer#toUpperCase()'
+            'Cannot find matching method java.lang.Integer#toUpperCase()'
     }
 
     void testDGM_withDefaultOnMap() {

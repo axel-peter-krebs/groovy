@@ -146,7 +146,8 @@ final class Groovy7996 {
         '''
     }
 
-    @Test // GROOVY-7687
+    @Test
+    // GROOVY-7687
     void testFieldAccessFromNestedClosure1() {
         assertScript '''
             @groovy.transform.CompileStatic
@@ -170,7 +171,8 @@ final class Groovy7996 {
         '''
     }
 
-    @Test // GROOVY-8073
+    @Test
+    // GROOVY-8073
     void testDelegatePropertyAccessFromClosure1() {
         assertScript '''
             @groovy.transform.CompileStatic

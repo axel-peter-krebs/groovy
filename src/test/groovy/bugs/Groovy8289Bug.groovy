@@ -32,13 +32,13 @@ class Groovy8289Bug extends AbstractBytecodeTestCase {
                     println c
                 }
             }
-        ''', method:'<init>'
+        ''', method: '<init>'
 
         assert bytecode.hasStrictSequence([
-                'L0',
-                'LINENUMBER 4 L0',
-                'ALOAD 0',
-                'INVOKESPECIAL java/lang/Object.<init> ()V'
+            'L0',
+            'LINENUMBER 4 L0',
+            'ALOAD 0',
+            'INVOKESPECIAL java/lang/Object.<init> ()V'
         ])
     }
 
@@ -54,13 +54,13 @@ class Groovy8289Bug extends AbstractBytecodeTestCase {
                     m(false)
                 }
             }
-        ''', method:'test'
+        ''', method: 'test'
 
         assert bytecode.hasStrictSequence([
-                'L0',
-                'LINENUMBER 5 L0',
-                'ALOAD 0',
-                'ICONST_1'
+            'L0',
+            'LINENUMBER 5 L0',
+            'ALOAD 0',
+            'ICONST_1'
         ])
     }
 }

@@ -91,6 +91,16 @@ public abstract class SimpleExtensionModule extends ExtensionModule {
         super(moduleName, moduleVersion);
     }
 
+    private static void createMetaMethods(final Class extensionClass, final List<MetaMethod> metaMethods, final boolean isStatic) {
+        CachedClass cachedClass = ReflectionCache.getCachedClass(extensionClass);
+        CachedMethod[] methods = cachedClass.getMethods();
+        for (CachedMethod method : methods) {
+            if (method.isStatic() && method.isPublic() && method.getParamsCount() > 0) {
+                // an extension method is found
+                metaMethods.add(isStatic ? new NewStaticMetaMethod(method) : new NewInstanceMetaMethod(method));
+            }
+        }
+    }
 
     @Override
     public List<MetaMethod> getMetaMethods() {
@@ -100,7 +110,7 @@ public abstract class SimpleExtensionModule extends ExtensionModule {
             try {
                 createMetaMethods(extensionClass, metaMethods, false);
             } catch (LinkageError e) {
-                LOG.warning("Module ["+getName()+"] - Unable to load extension class ["+extensionClass+"] due to ["+e.getMessage()+"]. Maybe this module is not supported by your JVM version.");
+                LOG.warning("Module [" + getName() + "] - Unable to load extension class [" + extensionClass + "] due to [" + e.getMessage() + "]. Maybe this module is not supported by your JVM version.");
             }
         }
         extensionClasses = getStaticMethodsExtensionClasses();
@@ -108,21 +118,10 @@ public abstract class SimpleExtensionModule extends ExtensionModule {
             try {
                 createMetaMethods(extensionClass, metaMethods, true);
             } catch (LinkageError e) {
-                LOG.warning("Module ["+getName()+"] - Unable to load extension class ["+extensionClass+"] due to ["+e.getMessage()+"]. Maybe this module is not supported by your JVM version.");
+                LOG.warning("Module [" + getName() + "] - Unable to load extension class [" + extensionClass + "] due to [" + e.getMessage() + "]. Maybe this module is not supported by your JVM version.");
             }
         }
         return metaMethods;
-    }
-
-    private static void createMetaMethods(final Class extensionClass, final List<MetaMethod> metaMethods, final boolean isStatic) {
-        CachedClass cachedClass = ReflectionCache.getCachedClass(extensionClass);
-        CachedMethod[] methods = cachedClass.getMethods();
-        for (CachedMethod method : methods) {
-            if (method.isStatic() && method.isPublic() && method.getParamsCount() > 0) {
-                // an extension method is found
-                metaMethods.add(isStatic?new NewStaticMetaMethod(method) : new NewInstanceMetaMethod(method));
-            }
-        }
     }
 
     /**

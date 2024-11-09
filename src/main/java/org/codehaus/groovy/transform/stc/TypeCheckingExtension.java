@@ -45,7 +45,7 @@ import java.util.List;
  * for developing DSLs, the Groovy language provides a lot of means to supply custom bindings or methods that are
  * not possible to find at compile time. However, it is still possible to help the compiler, for example by
  * telling it what is the type of an unresolved property.
- *
+ * <p>
  * For basic DSL type checking, implementing those methods would help the type checker and make it silent where it
  * normally throws errors.
  *
@@ -63,7 +63,8 @@ public class TypeCheckingExtension {
      * Subclasses should implement this method whenever they need to perform
      * special checks before the type checker starts working.
      */
-    public void setup() {}
+    public void setup() {
+    }
 
     /**
      * Subclasses should implement this method if they need to perform additional
@@ -71,7 +72,8 @@ public class TypeCheckingExtension {
      * useful for situations where you need multiple passes. Some checks in that
      * case may be deferred to the end, using this method.
      */
-    public void finish() {}
+    public void finish() {
+    }
 
     /**
      * This method is called by the type checker when a variable expression cannot
@@ -117,12 +119,11 @@ public class TypeCheckingExtension {
      * may override this method to handle missing methods and prevent the type checker from throwing an
      * error.
      *
-     *
-     * @param receiver the type of the receiver
-     * @param name the name of the called method
-     * @param argumentList the list of arguments of the call
+     * @param receiver      the type of the receiver
+     * @param name          the name of the called method
+     * @param argumentList  the list of arguments of the call
      * @param argumentTypes the types of the arguments of the call
-     * @param call the method call itself, if needed
+     * @param call          the method call itself, if needed
      * @return an empty list if the extension cannot resolve the method, or a list of potential
      * methods if the extension finds candidates. This method must not return null.
      */
@@ -135,8 +136,8 @@ public class TypeCheckingExtension {
      * Extensions may override this method to allow such assignments where the type checker normally disallows
      * them.
      *
-     * @param lhsType the type of the left hand side of the assignment, as found by the type checker
-     * @param rhsType the type of the right hand side of the assignment, as found by the type checker
+     * @param lhsType              the type of the left hand side of the assignment, as found by the type checker
+     * @param rhsType              the type of the right hand side of the assignment, as found by the type checker
      * @param assignmentExpression the assignment expression which triggered this call
      * @return <code>boolean</code> false if the extension does not handle this assignment, true otherwise
      */
@@ -150,10 +151,10 @@ public class TypeCheckingExtension {
      * parameter contains at least two methods. If the returned list still contains at least two methods, then the
      * type checker will throw an ambiguous method call error. If the returned method contains 1 element, then
      * the type checker will not throw any error.
-     *
+     * <p>
      * It is invalid to return an empty list.
      *
-     * @param nodes the list of ambiguous methods
+     * @param nodes  the list of ambiguous methods
      * @param origin the expression which originated the method selection process
      * @return a single element list of disambiguated selection, or more elements if still ambiguous. It is not allowed
      * to return an empty list.
@@ -167,6 +168,7 @@ public class TypeCheckingExtension {
      * Compared to a custom visitor, this method ensures that the node being visited is a node which would have
      * been visited by the type checker. This is in particular important for nodes which are marked with
      * {@link groovy.transform.TypeCheckingMode#SKIP}.
+     *
      * @param node a method node
      * @return false if the type checker should visit the node, or true if this extension replaces what the
      * type checker would do with the method.
@@ -180,6 +182,7 @@ public class TypeCheckingExtension {
      * Compared to a custom visitor, this method ensures that the node being visited is a node which would have
      * been visited by the type checker. This is in particular important for nodes which are marked with
      * {@link groovy.transform.TypeCheckingMode#SKIP}.
+     *
      * @param node a method node
      */
     public void afterVisitMethod(MethodNode node) {
@@ -190,6 +193,7 @@ public class TypeCheckingExtension {
      * Compared to a custom visitor, this method ensures that the node being visited is a node which would have
      * been visited by the type checker. This is in particular important for nodes which are marked with
      * {@link groovy.transform.TypeCheckingMode#SKIP}.
+     *
      * @param node a class node
      * @return false if the type checker should visit the node, or true if this extension replaces what the
      * type checker would do with the class.
@@ -203,6 +207,7 @@ public class TypeCheckingExtension {
      * Compared to a custom visitor, this method ensures that the node being visited is a node which would have
      * been visited by the type checker. This is in particular important for nodes which are marked with
      * {@link groovy.transform.TypeCheckingMode#SKIP}.
+     *
      * @param node a class node
      */
     public void afterVisitClass(ClassNode node) {
@@ -227,6 +232,7 @@ public class TypeCheckingExtension {
      * Compared to a custom visitor, this method ensures that the node being visited is a node which would have
      * been visited by the type checker. This is in particular important for nodes which are marked with
      * {@link groovy.transform.TypeCheckingMode#SKIP}.
+     *
      * @param call a method call, either a {@link org.codehaus.groovy.ast.expr.MethodCallExpression}, {@link org.codehaus.groovy.ast.expr.StaticMethodCallExpression}, or {@link org.codehaus.groovy.ast.expr.ConstructorCallExpression}
      */
     public void afterMethodCall(MethodCall call) {
@@ -236,8 +242,9 @@ public class TypeCheckingExtension {
      * Allows the extension to listen to method selection events. Given an expression, which may be a method
      * call expression, a static method call expression, a pre/postfix expression, ..., if a corresponding
      * method is found, this method is called.
+     *
      * @param expression the expression for which a corresponding method has been found
-     * @param target the method which has been chosen by the type checker
+     * @param target     the method which has been chosen by the type checker
      */
     public void onMethodSelection(Expression expression, MethodNode target) {
     }
@@ -247,7 +254,7 @@ public class TypeCheckingExtension {
      * checker finds that an inferred return type is incompatible with the declared return type of
      * a method.
      *
-     * @param returnStatement the statement that triggered the error
+     * @param returnStatement    the statement that triggered the error
      * @param inferredReturnType the inferred return type for this statement
      * @return false if the extension doesn't handle the error, true otherwise
      */
@@ -261,6 +268,7 @@ public class TypeCheckingExtension {
 
     /**
      * Returns the inferred type of an expression. Delegates to the type checker implementation.
+     *
      * @param exp the expression for which we want to find the inferred type
      * @return the inferred type of the expression, as found by the type checker
      */
@@ -270,7 +278,8 @@ public class TypeCheckingExtension {
 
     /**
      * Adds a type checking error, which will be displayed to the user during compilation.
-     * @param msg the message for the error
+     *
+     * @param msg  the message for the error
      * @param expr the expression which is the root cause of the error
      */
     public void addStaticTypeError(final String msg, final ASTNode expr) {
@@ -279,8 +288,9 @@ public class TypeCheckingExtension {
 
     /**
      * Stores an inferred type for an expression. Delegates to the type checker.
+     *
      * @param exp the expression for which we want to store an inferred type
-     * @param cn the type of the expression
+     * @param cn  the type of the expression
      */
     public void storeType(final Expression exp, final ClassNode cn) {
         typeCheckingVisitor.storeType(exp, cn);
@@ -337,8 +347,8 @@ public class TypeCheckingExtension {
                 throw new GroovyBugError("Expected number of generic type arguments for " + StaticTypeCheckingSupport.prettyPrintType(baseType) + " is " + expectedLength + " but you gave " + genericsTypeArguments.length);
             }
             result.setGenericsTypes(Arrays.stream(genericsTypeArguments)
-                    .map(StaticTypeCheckingVisitor::wrapTypeIfNecessary)
-                    .map(GenericsType::new).toArray(GenericsType[]::new)
+                .map(StaticTypeCheckingVisitor::wrapTypeIfNecessary)
+                .map(GenericsType::new).toArray(GenericsType[]::new)
             );
         }
         return result;
@@ -346,6 +356,7 @@ public class TypeCheckingExtension {
 
     /**
      * Builds a parametrized class node for List, to represent List&lt;X&gt;
+     *
      * @param componentType the classnode for the component type of the list
      * @return a classnode representing List&lt;componentType&gt;
      * @since 2.2.0
@@ -356,7 +367,8 @@ public class TypeCheckingExtension {
 
     /**
      * Builds a parametrized class node representing the Map&lt;keyType,valueType&gt; type.
-     * @param keyType the classnode type of the key
+     *
+     * @param keyType   the classnode type of the key
      * @param valueType the classnode type of the value
      * @return a class node for Map&lt;keyType,valueType&gt;
      * @since 2.2.0
@@ -370,6 +382,7 @@ public class TypeCheckingExtension {
      * class node for the receiver. For example, with the following code:
      * <code></code>Person.findAll { ... }</code>, it would return the class node for <i>Person</i>.
      * If it's not a static method call, returns null.
+     *
      * @param call a method call
      * @return null if it's not a static method call, or the class node for the receiver instead.
      */
@@ -380,7 +393,7 @@ public class TypeCheckingExtension {
             Expression objectExpr = ((MethodCallExpression) call).getObjectExpression();
             if (objectExpr instanceof ClassExpression && ClassHelper.CLASS_Type.equals(objectExpr.getType())) {
                 GenericsType[] genericsTypes = objectExpr.getType().getGenericsTypes();
-                if (genericsTypes!=null && genericsTypes.length==1) {
+                if (genericsTypes != null && genericsTypes.length == 1) {
                     return genericsTypes[0].getType();
                 }
             }
@@ -394,13 +407,14 @@ public class TypeCheckingExtension {
     /**
      * Given a method call, checks if it's a static method call and if it is, tells if the receiver matches
      * the one supplied as an argument.
-     * @param call a method call
+     *
+     * @param call     a method call
      * @param receiver a class node
      * @return true if the method call is a static method call on the receiver
      */
     public boolean isStaticMethodCallOnClass(MethodCall call, ClassNode receiver) {
         ClassNode staticReceiver = extractStaticReceiver(call);
-        return staticReceiver!=null && staticReceiver.equals(receiver);
+        return staticReceiver != null && staticReceiver.equals(receiver);
     }
 
 }

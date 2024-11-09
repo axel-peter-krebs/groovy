@@ -144,7 +144,9 @@ class RangeTest extends GroovyTestCase {
 
     enum NullableRomanNumber {
         I, II, III, IV
+
         def previous() { (ordinal() - 1).with { (it < 0) ? null : values()[it] } }
+
         def next() { (ordinal() + 1).with { (it >= values().size()) ? null : values()[it] } }
     }
 

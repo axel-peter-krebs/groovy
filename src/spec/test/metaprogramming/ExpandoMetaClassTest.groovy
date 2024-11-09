@@ -251,5 +251,4 @@ class ExpandoMetaClassTest extends GroovyTestCase {
     }
 
 
-
 }

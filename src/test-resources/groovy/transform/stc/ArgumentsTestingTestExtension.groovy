@@ -17,10 +17,10 @@
  *  under the License.
  */
 def expectations = [
-        concat: [String],
-        zero: [],
-        two: [String, Integer],
-        three: [String, Integer, Date]
+    concat: [String],
+    zero  : [],
+    two   : [String, Integer],
+    three : [String, Integer, Date]
 ]
 
 afterMethodCall { call ->

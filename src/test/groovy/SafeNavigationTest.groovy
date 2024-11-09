@@ -29,7 +29,7 @@ class SafeNavigationTest extends GroovyTestCase {
     }
 
     void testNormalPropertyNavigation() {
-        def x = ['a':456, 'foo':['bar':123, 'x':456], 'z':99]
+        def x = ['a': 456, 'foo': ['bar': 123, 'x': 456], 'z': 99]
         def y = x?.foo?.bar
         assert y == 123
     }
@@ -57,15 +57,15 @@ class SafeNavigationTest extends GroovyTestCase {
     }
 
     void testNewLine() {
-        def x = [ a:1, b:2 ]
+        def x = [a: 1, b: 2]
         def y = x
-                 .y
-                 ?.toString()
+            .y
+            ?.toString()
         assert y == null
         def m = 'toString'
         def z = x
-                 .a
-                 ?."$m"()
+            .a
+            ?."$m"()
         assert z == '1'
     }
 
@@ -76,8 +76,8 @@ class SafeNavigationTest extends GroovyTestCase {
     }
 
     void testCachedSafeNavigation() {
-        assert checkDouble(1234)!=null
-        assert checkDouble(null)==null
+        assert checkDouble(1234) != null
+        assert checkDouble(null) == null
     }
     // ------------------------------------
 

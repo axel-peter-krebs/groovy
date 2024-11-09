@@ -47,7 +47,7 @@ public class FromAbstractTypeMethods extends ClosureSignatureHint {
         List<ClassNode[]> signatures = new ArrayList<>();
         for (MethodNode method : classNode.getAbstractMethods()) {
             if (!method.isSynthetic() && !Traits.hasDefaultImplementation(method)
-                    && !ClassHelper.isGroovyObjectType(method.getDeclaringClass())) {
+                && !ClassHelper.isGroovyObjectType(method.getDeclaringClass())) {
                 signatures.add(Arrays.stream(method.getParameters()).map(Parameter::getOriginType).toArray(ClassNode[]::new));
             }
         }

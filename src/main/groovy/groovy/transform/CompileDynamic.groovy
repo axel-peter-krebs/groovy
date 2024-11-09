@@ -33,7 +33,7 @@ import java.lang.annotation.Target
 @AnnotationCollector(processor = 'org.codehaus.groovy.transform.CompileDynamicProcessor')
 @Retention(RetentionPolicy.SOURCE)
 @Target([ElementType.TYPE,
-         ElementType.METHOD,
-         ElementType.CONSTRUCTOR])
+    ElementType.METHOD,
+    ElementType.CONSTRUCTOR])
 @interface CompileDynamic {
 }

@@ -65,12 +65,13 @@ import static org.objectweb.asm.Opcodes.ACC_STATIC;
  */
 public class ModuleNode extends ASTNode {
 
-    private List<ClassNode> classes = new LinkedList<>();
     private final List<MethodNode> methods = new ArrayList<>();
     private final List<ImportNode> imports = new ArrayList<>();
     private final List<ImportNode> starImports = new ArrayList<>();
     private final Map<String, ImportNode> staticImports = new LinkedHashMap<>();
     private final Map<String, ImportNode> staticStarImports = new LinkedHashMap<>();
+    private final BlockStatement statementBlock = new BlockStatement();
+    private List<ClassNode> classes = new LinkedList<>();
     private CompileUnit unit;
     private PackageNode packageNode;
     private String description;
@@ -79,7 +80,6 @@ public class ModuleNode extends ASTNode {
     private boolean importsResolved;
     private ClassNode scriptDummy;
     private String mainClassName;
-    private final BlockStatement statementBlock = new BlockStatement();
 
     public ModuleNode(final SourceUnit context) {
         this.context = context;
@@ -87,6 +87,12 @@ public class ModuleNode extends ASTNode {
 
     public ModuleNode(final CompileUnit unit) {
         this.unit = unit;
+    }
+
+    private static Parameter[] finalParam(final ClassNode type, final String name) {
+        Parameter parameter = param(type, name);
+        parameter.setModifiers(ACC_FINAL);
+        return params(parameter);
     }
 
     public List<ClassNode> getClasses() {
@@ -188,7 +194,10 @@ public class ModuleNode extends ASTNode {
 
     public void addStaticImport(final ClassNode type, final String memberName, final String simpleName, final List<AnnotationNode> annotations) {
         ClassNode memberType = new ClassNode(type.getName() + '.' + memberName, 0, null) {
-            @Override public ClassNode getOuterClass() { return type; }
+            @Override
+            public ClassNode getOuterClass() {
+                return type;
+            }
         };
         memberType.setSourcePosition(type);
         checkUsage(simpleName, memberType);
@@ -271,24 +280,24 @@ public class ModuleNode extends ASTNode {
         return packageNode == null ? null : packageNode.getName();
     }
 
-    public PackageNode getPackage() {
-        return packageNode;
+    public void setPackageName(final String packageName) {
+        setPackage(new PackageNode(packageName));
     }
 
-    public boolean hasPackage() {
-        return (packageNode != null);
+    public PackageNode getPackage() {
+        return packageNode;
     }
 
     public void setPackage(final PackageNode packageNode) {
         this.packageNode = packageNode;
     }
 
-    public boolean hasPackageName() {
-        return (packageNode != null && packageNode.getName() != null);
+    public boolean hasPackage() {
+        return (packageNode != null);
     }
 
-    public void setPackageName(final String packageName) {
-        setPackage(new PackageNode(packageName));
+    public boolean hasPackageName() {
+        return (packageNode != null && packageNode.getName() != null);
     }
 
     /**
@@ -372,12 +381,6 @@ public class ModuleNode extends ASTNode {
         }
     }
 
-    private static Parameter[] finalParam(final ClassNode type, final String name) {
-        Parameter parameter = param(type, name);
-        parameter.setModifiers(ACC_FINAL);
-        return params(parameter);
-    }
-
     protected ClassNode createStatementsClass() {
         ClassNode classNode = getScriptClassDummy();
         if (classNode.getName().endsWith("package-info")) {
@@ -404,7 +407,7 @@ public class ModuleNode extends ASTNode {
             if (de.isMultipleAssignmentDeclaration()) {
                 List<Expression> variables = de.getTupleExpression().getExpressions();
                 if (!(de.getRightExpression() instanceof ListExpression)) break;
-                List<Expression> values = ((ListExpression)de.getRightExpression()).getExpressions();
+                List<Expression> values = ((ListExpression) de.getRightExpression()).getExpressions();
                 for (int i = 0; i < variables.size(); i++) {
                     VariableExpression var = (VariableExpression) variables.get(i);
                     Expression val = i >= values.size() ? null : values.get(i);
@@ -541,7 +544,8 @@ public class ModuleNode extends ASTNode {
             } else if (schemeSpecific != null && !schemeSpecific.isEmpty()) {
                 answer = schemeSpecific;
             }
-        } catch (URISyntaxException ignore) {}
+        } catch (URISyntaxException ignore) {
+        }
         // let's strip off everything after the last '.'
         int slashIdx = answer.lastIndexOf('/');
         int separatorIdx = answer.lastIndexOf(File.separatorChar);

@@ -30,6 +30,6 @@ class Groovy4043Bug extends CompilableTestSupport {
             class C4043 extends A4043 {
                 B4043 b
             }
-        """        
+        """
     }
 }

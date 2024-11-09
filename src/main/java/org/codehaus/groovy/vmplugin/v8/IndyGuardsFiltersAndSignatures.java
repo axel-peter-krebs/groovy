@@ -54,27 +54,27 @@ import static org.codehaus.groovy.vmplugin.v8.IndyInterface.LOOKUP;
  */
 public class IndyGuardsFiltersAndSignatures {
 
-    private static final MethodType
-            OBJECT_FILTER = MethodType.methodType(Object.class, Object.class),
-            OBJECT_GUARD = MethodType.methodType(boolean.class, Object.class),
-            INVOKER = MethodType.methodType(Object.class, Object.class, String.class, Object[].class);
-
     protected static final MethodHandle
-            SAME_CLASS, SAME_CLASSES, SAME_MC, IS_NULL, NON_NULL,
-            UNWRAP_METHOD, UNWRAP_EXCEPTION,
-            HAS_CATEGORY_IN_CURRENT_THREAD_GUARD,
-            META_METHOD_INVOKER, GROOVY_OBJECT_INVOKER, GROOVY_OBJECT_GET_PROPERTY,
-            META_CLASS_INVOKE_STATIC_METHOD,
-            BEAN_CONSTRUCTOR_PROPERTY_SETTER,
-            META_PROPERTY_GETTER,
-            SLOW_META_CLASS_FIND,
-            MOP_GET, MOP_INVOKE_CONSTRUCTOR, MOP_INVOKE_METHOD,
-            INTERCEPTABLE_INVOKER,
-            BOOLEAN_IDENTITY, CLASS_FOR_NAME,
-            DTT_CAST_TO_TYPE, SAM_CONVERSION,
-            HASHSET_CONSTRUCTOR, ARRAYLIST_CONSTRUCTOR,
-            GROOVY_CAST_EXCEPTION,
-            EQUALS;
+        SAME_CLASS, SAME_CLASSES, SAME_MC, IS_NULL, NON_NULL,
+        UNWRAP_METHOD, UNWRAP_EXCEPTION,
+        HAS_CATEGORY_IN_CURRENT_THREAD_GUARD,
+        META_METHOD_INVOKER, GROOVY_OBJECT_INVOKER, GROOVY_OBJECT_GET_PROPERTY,
+        META_CLASS_INVOKE_STATIC_METHOD,
+        BEAN_CONSTRUCTOR_PROPERTY_SETTER,
+        META_PROPERTY_GETTER,
+        SLOW_META_CLASS_FIND,
+        MOP_GET, MOP_INVOKE_CONSTRUCTOR, MOP_INVOKE_METHOD,
+        INTERCEPTABLE_INVOKER,
+        BOOLEAN_IDENTITY, CLASS_FOR_NAME,
+        DTT_CAST_TO_TYPE, SAM_CONVERSION,
+        HASHSET_CONSTRUCTOR, ARRAYLIST_CONSTRUCTOR,
+        GROOVY_CAST_EXCEPTION,
+        EQUALS;
+    protected static final MethodHandle NULL_REF = MethodHandles.constant(Object.class, null);
+    private static final MethodType
+        OBJECT_FILTER = MethodType.methodType(Object.class, Object.class),
+        OBJECT_GUARD = MethodType.methodType(boolean.class, Object.class),
+        INVOKER = MethodType.methodType(Object.class, Object.class, String.class, Object[].class);
 
     static {
         try {
@@ -111,8 +111,6 @@ public class IndyGuardsFiltersAndSignatures {
             throw new GroovyBugError(e);
         }
     }
-
-    protected static final MethodHandle NULL_REF = MethodHandles.constant(Object.class, null);
 
     /**
      * This method is called by the handle to realize the bean constructor

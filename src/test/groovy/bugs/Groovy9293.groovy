@@ -51,7 +51,8 @@ final class Groovy9293 {
         '''
     }
 
-    @Test // GROOVY-11356
+    @Test
+    // GROOVY-11356
     void 'test accessing a package-private super class field inside a closure - diff package'() {
         assertScript shell, '''
             package a
@@ -95,7 +96,8 @@ final class Groovy9293 {
         '''
     }
 
-    @Test // GROOVY-9293
+    @Test
+    // GROOVY-9293
     void 'test accessing a package-private super class field inside a closure - diff package, it qualifier'() {
         assertScript shell, '''
             package a
@@ -139,7 +141,8 @@ final class Groovy9293 {
         '''
     }
 
-    @Test // GROOVY-9293
+    @Test
+    // GROOVY-9293
     void 'test accessing a package-private super class field inside a closure - diff package, this qualifier'() {
         assertScript shell, '''
             package a
@@ -183,7 +186,8 @@ final class Groovy9293 {
         '''
     }
 
-    @Test // GROOVY-9293
+    @Test
+    // GROOVY-9293
     void 'test accessing a package-private super class field inside a closure - diff package, owner qualifier'() {
         assertScript shell, '''
             package a
@@ -227,7 +231,8 @@ final class Groovy9293 {
         '''
     }
 
-    @Test // GROOVY-9293
+    @Test
+    // GROOVY-9293
     void 'test accessing a package-private super class field inside a closure - diff package, delegate qualifier'() {
         assertScript shell, '''
             package a
@@ -271,7 +276,8 @@ final class Groovy9293 {
         '''
     }
 
-    @Test // GROOVY-9293
+    @Test
+    // GROOVY-9293
     void 'test accessing a package-private super class field inside a closure - diff package, thisObject qualifier'() {
         assertScript shell, '''
             package a

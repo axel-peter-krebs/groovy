@@ -27,7 +27,7 @@ import java.util.Properties;
 import static org.codehaus.groovy.runtime.DefaultGroovyMethodsSupport.closeQuietly;
 
 /**
- * Exposes the Groovy release information 
+ * Exposes the Groovy release information
  */
 public class ReleaseInfo {
     private static final Properties RELEASE_INFO = new Properties();

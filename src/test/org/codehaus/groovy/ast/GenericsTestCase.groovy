@@ -32,7 +32,7 @@ import org.codehaus.groovy.ast.expr.VariableExpression
 abstract class GenericsTestCase extends GroovyTestCase {
 
     def extractTypesFromCode(String string) {
-        def result = [generics:[], type:null]
+        def result = [generics: [], type: null]
         CompilerConfiguration config = new CompilerConfiguration()
         config.addCompilationCustomizers(new CompilationCustomizer(CompilePhase.CANONICALIZATION) {
             @Override
@@ -66,7 +66,7 @@ abstract class GenericsTestCase extends GroovyTestCase {
         @Override
         void visitVariableExpression(VariableExpression expression) {
             super.visitVariableExpression(expression)
-            if (expression.name=='type') {
+            if (expression.name == 'type') {
                 result.generics = expression.type.genericsTypes
                 result.type = expression.type
             }
@@ -75,7 +75,7 @@ abstract class GenericsTestCase extends GroovyTestCase {
         @Override
         void visitMethod(MethodNode node) {
             super.visitMethod(node)
-            if (node.name=='type') {
+            if (node.name == 'type') {
                 result.generics = node.genericsTypes
                 result.type = node.returnType
             }

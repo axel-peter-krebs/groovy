@@ -45,7 +45,7 @@ public class CachedClosureClass extends CachedClass {
             }
         }
         // this line should be useless, but well, just in case
-        maximumNumberOfParameters = Math.max(maximumNumberOfParameters,0);
+        maximumNumberOfParameters = Math.max(maximumNumberOfParameters, 0);
 
         this.maximumNumberOfParameters = maximumNumberOfParameters;
         this.parameterTypes = parameterTypes;

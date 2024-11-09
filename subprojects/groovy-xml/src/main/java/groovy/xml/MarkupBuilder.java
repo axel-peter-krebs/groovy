@@ -70,8 +70,6 @@ import static org.codehaus.groovy.vmplugin.v8.PluginDefaultGroovyMethods.orOptio
  * </ul>
  */
 public class MarkupBuilder extends BuilderSupport {
-    public enum CharFilter { XML_STRICT, XML_ALL, NONE }
-
     private IndentPrinter out;
     private boolean nospace;
     private int state;
@@ -82,39 +80,6 @@ public class MarkupBuilder extends BuilderSupport {
     private boolean expandEmptyElements = false;
     private boolean escapeAttributes = true;
     private List<Function<Character, Optional<String>>> additionalFilters = null;
-
-    public List<Function<Character, Optional<String>>> getAdditionalFilters() {
-        return additionalFilters;
-    }
-
-    public void setAdditionalFilters(List<Function<Character, Optional<String>>> additionalFilters) {
-        this.additionalFilters = additionalFilters;
-    }
-
-    /**
-     * Returns the escapeAttributes property value.
-     *
-     * @return the escapeAttributes property value
-     * @see #setEscapeAttributes(boolean)
-     */
-    public boolean isEscapeAttributes() {
-        return escapeAttributes;
-    }
-
-    /**
-     * Defaults to true.&#160;If set to false then you must escape any special
-     * characters within attribute values such as '&amp;', '&lt;', CR/LF, single
-     * and double quotes etc.&#160;manually as needed. The builder will not guard
-     * against producing invalid XML when in this mode and the output may not
-     * be able to be parsed/round-tripped but it does give you full control when
-     * producing for instance HTML output.
-     *
-     * @param escapeAttributes the new value
-     */
-    public void setEscapeAttributes(boolean escapeAttributes) {
-        this.escapeAttributes = escapeAttributes;
-    }
-
     /**
      * Prints markup to System.out
      *
@@ -154,6 +119,45 @@ public class MarkupBuilder extends BuilderSupport {
         this.out = out;
     }
 
+    private static Object getName(Object name) {
+        if (name instanceof QName) {
+            return ((QName) name).getQualifiedName();
+        }
+        return name;
+    }
+
+    public List<Function<Character, Optional<String>>> getAdditionalFilters() {
+        return additionalFilters;
+    }
+
+    public void setAdditionalFilters(List<Function<Character, Optional<String>>> additionalFilters) {
+        this.additionalFilters = additionalFilters;
+    }
+
+    /**
+     * Returns the escapeAttributes property value.
+     *
+     * @return the escapeAttributes property value
+     * @see #setEscapeAttributes(boolean)
+     */
+    public boolean isEscapeAttributes() {
+        return escapeAttributes;
+    }
+
+    /**
+     * Defaults to true.&#160;If set to false then you must escape any special
+     * characters within attribute values such as '&amp;', '&lt;', CR/LF, single
+     * and double quotes etc.&#160;manually as needed. The builder will not guard
+     * against producing invalid XML when in this mode and the output may not
+     * be able to be parsed/round-tripped but it does give you full control when
+     * producing for instance HTML output.
+     *
+     * @param escapeAttributes the new value
+     */
+    public void setEscapeAttributes(boolean escapeAttributes) {
+        this.escapeAttributes = escapeAttributes;
+    }
+
     /**
      * Returns <code>true</code> if attribute values are output with
      * double quotes; <code>false</code> if single quotes are used.
@@ -180,7 +184,7 @@ public class MarkupBuilder extends BuilderSupport {
      * Determine whether null attributes will appear in the produced markup.
      *
      * @return <code>true</code>, if null attributes will be
-     *         removed from the resulting markup.
+     * removed from the resulting markup.
      */
     public boolean isOmitNullAttributes() {
         return omitNullAttributes;
@@ -203,7 +207,7 @@ public class MarkupBuilder extends BuilderSupport {
      * Determine whether empty attributes will appear in the produced markup.
      *
      * @return <code>true</code>, if empty attributes will be
-     *         removed from the resulting markup.
+     * removed from the resulting markup.
      */
     public boolean isOmitEmptyAttributes() {
         return omitEmptyAttributes;
@@ -224,7 +228,7 @@ public class MarkupBuilder extends BuilderSupport {
      * Whether empty elements are expanded from &lt;tagName/&gt; to &lt;tagName&gt;&lt;/tagName&gt;.
      *
      * @return <code>true</code>, if empty elements will be represented by an opening tag
-     *                            followed immediately by a closing tag.
+     * followed immediately by a closing tag.
      */
     public boolean isExpandEmptyElements() {
         return expandEmptyElements;
@@ -327,7 +331,7 @@ public class MarkupBuilder extends BuilderSupport {
             Object attributeValue = entry.getValue();
             boolean skipNull = attributeValue == null && omitNullAttributes;
             boolean skipEmpty = attributeValue != null && omitEmptyAttributes &&
-                    attributeValue.toString().length() == 0;
+                attributeValue.toString().length() == 0;
             if (!skipNull && !skipEmpty) {
                 out.print(" ");
                 // Output the attribute name,
@@ -374,7 +378,7 @@ public class MarkupBuilder extends BuilderSupport {
      *
      * @param value The string to escape.
      * @return A new string in which all characters that require escaping
-     *         have been replaced with the corresponding XML entities.
+     * have been replaced with the corresponding XML entities.
      * @see #escapeXmlValue(String, boolean)
      */
     private String escapeAttributeValue(String value) {
@@ -387,7 +391,7 @@ public class MarkupBuilder extends BuilderSupport {
      *
      * @param value The string to escape.
      * @return A new string in which all characters that require escaping
-     *         have been replaced with the corresponding XML entities.
+     * have been replaced with the corresponding XML entities.
      * @see #escapeXmlValue(String, boolean)
      */
     private String escapeElementContent(String value) {
@@ -413,7 +417,7 @@ public class MarkupBuilder extends BuilderSupport {
      * @param isAttrValue <code>true</code> if the string is to be used
      *                    as an attribute value, otherwise <code>false</code>.
      * @return A new string in which all characters that require escaping
-     *         have been replaced with the corresponding XML entities.
+     * have been replaced with the corresponding XML entities.
      */
     private String escapeXmlValue(String value, boolean isAttrValue) {
         if (value == null) {
@@ -425,31 +429,6 @@ public class MarkupBuilder extends BuilderSupport {
             transforms.addAll(additionalFilters);
         }
         return StringGroovyMethods.collectReplacements(value, transforms);
-    }
-
-    public static class DefaultXmlEscapingFunction implements Function<Character, Optional<String>> {
-        private final boolean isAttrValue;
-
-        private final Function<Character, Optional<String>> stdFilter = new StandardXmlFilter();
-        private final Function<Character, Optional<String>> attrFilter = new StandardXmlAttributeFilter();
-        private final Function<Character, Optional<String>> quoteFilter;
-
-        public DefaultXmlEscapingFunction(boolean isAttrValue, boolean useDoubleQuotes) {
-            this.isAttrValue = isAttrValue;
-            this.quoteFilter = useDoubleQuotes ? new DoubleQuoteFilter() : new SingleQuoteFilter();
-        }
-
-        @Override
-        public Optional<String> apply(Character ch) {
-            return orOptional(stdFilter.apply(ch),
-                    () -> {
-                        if (isAttrValue) {
-                            return orOptional(attrFilter.apply(ch), () -> quoteFilter.apply(ch));
-                        }
-                        return Optional.empty();
-                    }
-            );
-        }
     }
 
     private void toState(int next, Object name) {
@@ -543,10 +522,30 @@ public class MarkupBuilder extends BuilderSupport {
         state = next;
     }
 
-    private static Object getName(Object name) {
-        if (name instanceof QName) {
-            return ((QName) name).getQualifiedName();
+    public enum CharFilter {XML_STRICT, XML_ALL, NONE}
+
+    public static class DefaultXmlEscapingFunction implements Function<Character, Optional<String>> {
+        private final boolean isAttrValue;
+
+        private final Function<Character, Optional<String>> stdFilter = new StandardXmlFilter();
+        private final Function<Character, Optional<String>> attrFilter = new StandardXmlAttributeFilter();
+        private final Function<Character, Optional<String>> quoteFilter;
+
+        public DefaultXmlEscapingFunction(boolean isAttrValue, boolean useDoubleQuotes) {
+            this.isAttrValue = isAttrValue;
+            this.quoteFilter = useDoubleQuotes ? new DoubleQuoteFilter() : new SingleQuoteFilter();
         }
-        return name;
+
+        @Override
+        public Optional<String> apply(Character ch) {
+            return orOptional(stdFilter.apply(ch),
+                () -> {
+                    if (isAttrValue) {
+                        return orOptional(attrFilter.apply(ch), () -> quoteFilter.apply(ch));
+                    }
+                    return Optional.empty();
+                }
+            );
+        }
     }
 }

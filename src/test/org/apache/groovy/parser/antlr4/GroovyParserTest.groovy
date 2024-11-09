@@ -52,25 +52,25 @@ final class GroovyParserTest {
         List<ClassNode> classes = new ArrayList<>(newAST.classes).sort { c1, c2 -> c1.name <=> c2.name }
         List<MethodNode> methods = new ArrayList<>(newAST.methods).sort { m1, m2 -> m1.name <=> m2.name }
 
-        assert  classes[0].groovydoc.content.replaceAll(/\r?\n/, '')            == '/** * test class Comments */'
-        assert  classes[0].fields[0].groovydoc.content.replaceAll(/\r?\n/, '')  == '/**     * test Comments.SOME_VAR     */'
-        assert  classes[0].fields[1].groovydoc.content.replaceAll(/\r?\n/, '')  == '/**     * test Comments.SOME_VAR2     */'
+        assert classes[0].groovydoc.content.replaceAll(/\r?\n/, '') == '/** * test class Comments */'
+        assert classes[0].fields[0].groovydoc.content.replaceAll(/\r?\n/, '') == '/**     * test Comments.SOME_VAR     */'
+        assert classes[0].fields[1].groovydoc.content.replaceAll(/\r?\n/, '') == '/**     * test Comments.SOME_VAR2     */'
         assert !classes[0].fields[2].groovydoc.isPresent()
         assert !classes[0].fields[3].groovydoc.isPresent()
-        assert  classes[0].declaredConstructors[0].groovydoc.content.replaceAll(/\r?\n/, '') == '/**     * test Comments.constructor1     */'
-        assert  classes[0].methods[0].groovydoc.content.replaceAll(/\r?\n/, '') == '/**     * test Comments.m1     */'
+        assert classes[0].declaredConstructors[0].groovydoc.content.replaceAll(/\r?\n/, '') == '/**     * test Comments.constructor1     */'
+        assert classes[0].methods[0].groovydoc.content.replaceAll(/\r?\n/, '') == '/**     * test Comments.m1     */'
         assert !classes[0].methods[1].groovydoc.isPresent()
-        assert  classes[0].methods[2].groovydoc.content.replaceAll(/\r?\n/, '') == '/**     * test Comments.m3     */'
+        assert classes[0].methods[2].groovydoc.content.replaceAll(/\r?\n/, '') == '/**     * test Comments.m3     */'
 
-        assert  classes[1].groovydoc.content.replaceAll(/\r?\n/, '')            == '/**     * test class InnerClazz     */'
-        assert  classes[1].fields[0].groovydoc.content.replaceAll(/\r?\n/, '')  == '/**         * test InnerClazz.SOME_VAR3         */'
-        assert  classes[1].fields[1].groovydoc.content.replaceAll(/\r?\n/, '')  == '/**         * test InnerClazz.SOME_VAR4         */'
-        assert  classes[1].methods[0].groovydoc.content.replaceAll(/\r?\n/, '') == '/**         * test Comments.m4         */'
-        assert  classes[1].methods[1].groovydoc.content.replaceAll(/\r?\n/, '') == '/**         * test Comments.m5         */'
+        assert classes[1].groovydoc.content.replaceAll(/\r?\n/, '') == '/**     * test class InnerClazz     */'
+        assert classes[1].fields[0].groovydoc.content.replaceAll(/\r?\n/, '') == '/**         * test InnerClazz.SOME_VAR3         */'
+        assert classes[1].fields[1].groovydoc.content.replaceAll(/\r?\n/, '') == '/**         * test InnerClazz.SOME_VAR4         */'
+        assert classes[1].methods[0].groovydoc.content.replaceAll(/\r?\n/, '') == '/**         * test Comments.m4         */'
+        assert classes[1].methods[1].groovydoc.content.replaceAll(/\r?\n/, '') == '/**         * test Comments.m5         */'
 
-        assert  classes[2].groovydoc.content.replaceAll(/\r?\n/, '')            == '/**     * test class InnerEnum     */'
-        assert  classes[2].fields[0].groovydoc.content.replaceAll(/\r?\n/, '')  == '/**         * InnerEnum.NEW         */'
-        assert  classes[2].fields[1].groovydoc.content.replaceAll(/\r?\n/, '')  == '/**         * InnerEnum.OLD         */'
+        assert classes[2].groovydoc.content.replaceAll(/\r?\n/, '') == '/**     * test class InnerEnum     */'
+        assert classes[2].fields[0].groovydoc.content.replaceAll(/\r?\n/, '') == '/**         * InnerEnum.NEW         */'
+        assert classes[2].fields[1].groovydoc.content.replaceAll(/\r?\n/, '') == '/**         * InnerEnum.OLD         */'
 
         assert !classes[3].groovydoc.isPresent()
 
@@ -78,7 +78,7 @@ final class GroovyParserTest {
 
         assert !classes[5].groovydoc.isPresent()
 
-        assert  methods[0].groovydoc.content.replaceAll(/\r?\n/, '') == '/** * test someScriptMethod1 */'
+        assert methods[0].groovydoc.content.replaceAll(/\r?\n/, '') == '/** * test someScriptMethod1 */'
         assert !methods[1].groovydoc.isPresent()
     }
 
@@ -87,7 +87,8 @@ final class GroovyParserTest {
         doRunAndTestAntlr4('core/Comments_03x.groovy')
     }
 
-    @Test // java.lang.ClassFormatError: Illegal method name "test IO stream/reader closed by the parser properly" when using Java9
+    @Test
+    // java.lang.ClassFormatError: Illegal method name "test IO stream/reader closed by the parser properly" when using Java9
     void 'IO reader closed by the parser properly'() {
         def f = File.createTempFile("Script${System.nanoTime()}", ".groovy")
         f.text = '''
@@ -100,7 +101,8 @@ final class GroovyParserTest {
         assert deleted: "Failed to delete file: ${f.getAbsolutePath()}"
     }
 
-    @Test // java.lang.ClassFormatError: Illegal method name "test IO stream/reader closed by the parser properly" when using Java9
+    @Test
+    // java.lang.ClassFormatError: Illegal method name "test IO stream/reader closed by the parser properly" when using Java9
     void 'reader closed by the compiler properly'() {
         def f = File.createTempFile("Script${System.nanoTime()}", ".groovy")
         f.text = '''
@@ -347,7 +349,8 @@ final class GroovyParserTest {
 
     @Test
     void 'groovy core - LocalVariableDeclaration'() {
-        doTest('core/LocalVariableDeclaration_01.groovy', [Token]) // [class org.codehaus.groovy.syntax.Token][startLine]:: 9 != 8
+        doTest('core/LocalVariableDeclaration_01.groovy', [Token])
+        // [class org.codehaus.groovy.syntax.Token][startLine]:: 9 != 8
         doRunAndTestAntlr4('core/LocalVariableDeclaration_02x.groovy')
     }
 
@@ -434,7 +437,8 @@ final class GroovyParserTest {
         doRunAndTestAntlr4('core/Command_07x.groovy')
     }
 
-    @Ignore @Test
+    @Ignore
+    @Test
     void 'groovy core - Unicode'() {
         doTest('core/Unicode_01.groovy')
     }

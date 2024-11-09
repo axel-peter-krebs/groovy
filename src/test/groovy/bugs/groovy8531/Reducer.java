@@ -19,31 +19,54 @@
 package groovy.bugs.groovy8531;
 
 interface Reducable {
-    class InterfaceContext {}
+    class InterfaceContext {
+    }
 }
 
 class BaseReducer {
-    public abstract class PublicBaseContext {}
-    protected abstract class ProtectedBaseContext {}
-    /*package*/ abstract class PackagePrivateBaseContext {}
+    public static abstract class PublicStaticBaseContext {
+    }
 
-    public static abstract class PublicStaticBaseContext {}
-    protected static abstract class ProtectedStaticBaseContext {}
-    /*package*/ static abstract class PackagePrivateStaticBaseContext {}
+    protected static abstract class ProtectedStaticBaseContext {
+    }
 
-    private abstract class PrivateBaseContext {}
+    /*package*/ static abstract class PackagePrivateStaticBaseContext {
+    }
+
+    public abstract class PublicBaseContext {
+    }
+
+    protected abstract class ProtectedBaseContext {
+    }
+
+    /*package*/ abstract class PackagePrivateBaseContext {
+    }
+
+    private abstract class PrivateBaseContext {
+    }
 }
 
 public class Reducer extends BaseReducer implements Reducable {
-    public abstract class PublicContext {}
-    protected abstract class ProtectedContext {}
-    /*package*/ abstract class PackagePrivateContext {}
+    public enum Type {DYNAMIC, STATIC}
 
-    public static abstract class PublicStaticContext {}
-    protected static abstract class ProtectedStaticContext {}
-    /*package*/ static abstract class PackagePrivateStaticContext {}
+    public static abstract class PublicStaticContext {
+    }
 
-    private abstract class PrivateContext {}
+    protected static abstract class ProtectedStaticContext {
+    }
 
-    public enum Type { DYNAMIC, STATIC }
+    /*package*/ static abstract class PackagePrivateStaticContext {
+    }
+
+    public abstract class PublicContext {
+    }
+
+    protected abstract class ProtectedContext {
+    }
+
+    /*package*/ abstract class PackagePrivateContext {
+    }
+
+    private abstract class PrivateContext {
+    }
 }

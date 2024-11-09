@@ -61,11 +61,11 @@ class SwingBuilderTest extends GroovySwingTestCase {
     void testNamedWidgetCreation() {
         testInEDT {
             def topLevelWidgets = [
-                    frame: [JFrame, true],
-                    dialog: [JDialog, true],
-                    window: [JWindow, false],
-                    fileChooser: [JFileChooser, false],
-                    optionPane: [JOptionPane, false]
+                frame      : [JFrame, true],
+                dialog     : [JDialog, true],
+                window     : [JWindow, false],
+                fileChooser: [JFileChooser, false],
+                optionPane : [JOptionPane, false]
             ]
             def swing = new SwingBuilder()
             topLevelWidgets.each { name, widgetInfo ->
@@ -84,12 +84,12 @@ class SwingBuilderTest extends GroovySwingTestCase {
         testInEDT {
 
             def layouts = [
-                    borderLayout: BorderLayout,
-                    cardLayout: CardLayout,
-                    flowLayout: FlowLayout,
-                    gridBagLayout: GridBagLayout,
-                    gridLayout: GridLayout,
-                    springLayout: SpringLayout
+                borderLayout : BorderLayout,
+                cardLayout   : CardLayout,
+                flowLayout   : FlowLayout,
+                gridBagLayout: GridBagLayout,
+                gridLayout   : GridLayout,
+                springLayout : SpringLayout
             ]
             def swing = new SwingBuilder()
             layouts.each { name, expectedLayoutClass ->
@@ -156,42 +156,42 @@ class SwingBuilderTest extends GroovySwingTestCase {
         testInEDT {
 
             def widgets = [
-                    button: JButton,
-                    checkBox: JCheckBox,
-                    checkBoxMenuItem: JCheckBoxMenuItem,
-                    colorChooser: JColorChooser,
-                    comboBox: JComboBox,
-                    desktopPane: JDesktopPane,
-                    editorPane: JEditorPane,
-                    formattedTextField: JFormattedTextField,
-                    internalFrame: JInternalFrame,
-                    label: JLabel,
-                    layeredPane: JLayeredPane,
-                    list: JList,
-                    menu: JMenu,
-                    menuBar: JMenuBar,
-                    menuItem: JMenuItem,
-                    panel: JPanel,
-                    passwordField: JPasswordField,
-                    popupMenu: JPopupMenu,
-                    progressBar: JProgressBar,
-                    radioButton: JRadioButton,
-                    radioButtonMenuItem: JRadioButtonMenuItem,
-                    scrollBar: JScrollBar,
-                    scrollPane: JScrollPane,
-                    separator: JSeparator,
-                    slider: JSlider,
-                    spinner: JSpinner,
-                    splitPane: JSplitPane,
-                    tabbedPane: JTabbedPane,
-                    table: JTable,
-                    textArea: JTextArea,
-                    textPane: JTextPane,
-                    textField: JTextField,
-                    toggleButton: JToggleButton,
-                    toolBar: JToolBar,
-                    tree: JTree,
-                    viewport: JViewport,
+                button             : JButton,
+                checkBox           : JCheckBox,
+                checkBoxMenuItem   : JCheckBoxMenuItem,
+                colorChooser       : JColorChooser,
+                comboBox           : JComboBox,
+                desktopPane        : JDesktopPane,
+                editorPane         : JEditorPane,
+                formattedTextField : JFormattedTextField,
+                internalFrame      : JInternalFrame,
+                label              : JLabel,
+                layeredPane        : JLayeredPane,
+                list               : JList,
+                menu               : JMenu,
+                menuBar            : JMenuBar,
+                menuItem           : JMenuItem,
+                panel              : JPanel,
+                passwordField      : JPasswordField,
+                popupMenu          : JPopupMenu,
+                progressBar        : JProgressBar,
+                radioButton        : JRadioButton,
+                radioButtonMenuItem: JRadioButtonMenuItem,
+                scrollBar          : JScrollBar,
+                scrollPane         : JScrollPane,
+                separator          : JSeparator,
+                slider             : JSlider,
+                spinner            : JSpinner,
+                splitPane          : JSplitPane,
+                tabbedPane         : JTabbedPane,
+                table              : JTable,
+                textArea           : JTextArea,
+                textPane           : JTextPane,
+                textField          : JTextField,
+                toggleButton       : JToggleButton,
+                toolBar            : JToolBar,
+                tree               : JTree,
+                viewport           : JViewport,
             ]
             def swing = new SwingBuilder()
             widgets.each { name, expectedLayoutClass ->
@@ -217,7 +217,7 @@ class SwingBuilderTest extends GroovySwingTestCase {
 
             }
 
-            def statusCBs = {[swing.cb1a.selected, swing.cb1b.selected, swing.cb2a.selected, swing.cb2b.selected]}
+            def statusCBs = { [swing.cb1a.selected, swing.cb1b.selected, swing.cb2a.selected, swing.cb2b.selected] }
 
             assert statusCBs() == [false, false, false, false]
 
@@ -466,7 +466,7 @@ class SwingBuilderTest extends GroovySwingTestCase {
             assert swing.list(listData: list).model.size == 3
             assert swing.list(listData: vector).model.size == 4
             assert swing.list(listData: "list").model.size == 4
-            assert swing.list(listData: [a: 1, b: 2].collect { k, v -> v}).model.size == 2
+            assert swing.list(listData: [a: 1, b: 2].collect { k, v -> v }).model.size == 2
             def theList = swing.list(items: list)
             list[1] = 'a'
             assert theList.model.getElementAt(1) == 'a'
@@ -482,7 +482,7 @@ class SwingBuilderTest extends GroovySwingTestCase {
             def swing = new SwingBuilder()
             // labels don't support actions; should be ignored
             swing.label {
-                action(id: 'actionId', Name: 'about', mnemonic: 'A', closure: {x -> x})
+                action(id: 'actionId', Name: 'about', mnemonic: 'A', closure: { x -> x })
                 map()
             }
             swing.panel {
@@ -521,7 +521,7 @@ class SwingBuilderTest extends GroovySwingTestCase {
                 button(id: 'buttonId') {
                     action(id: 'action1', keyStroke: 'ctrl W')
                     action(id: 'action2',
-                            keyStroke: KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, InputEvent.ALT_MASK))
+                        keyStroke: KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, InputEvent.ALT_MASK))
                     action(id: 'action3', keyStroke: "${'ctrl Z'}")
                 }
             }
@@ -547,10 +547,10 @@ class SwingBuilderTest extends GroovySwingTestCase {
             def swing = new SwingBuilder()
             def testTarget = 'blank'
             swing.actions {
-                action(id: 'a', closure: {testTarget = 'A'})
-                action(id: 'b') {testTarget = 'B' }
-                action(id: 'c', closure: {evt -> testTarget = 'C'})
-                action(id: 'd') {evt -> testTarget = 'D' }
+                action(id: 'a', closure: { testTarget = 'A' })
+                action(id: 'b') { testTarget = 'B' }
+                action(id: 'c', closure: { evt -> testTarget = 'C' })
+                action(id: 'd') { evt -> testTarget = 'D' }
             }
 
             ActionEvent evt = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "")
@@ -568,10 +568,10 @@ class SwingBuilderTest extends GroovySwingTestCase {
             swing.actions {
                 action(id: 'z')
                 shouldFail(RuntimeException) {
-                    action(id: 'y', closure: {testTarget = 'Y'}) {testTarget = 'YY'}
+                    action(id: 'y', closure: { testTarget = 'Y' }) { testTarget = 'YY' }
                 }
                 shouldFail(RuntimeException) {
-                    action([actionPerformed: {testTarget = 'X'}] as AbstractAction, id: 'x') { testTarget = 'XX'}
+                    action([actionPerformed: { testTarget = 'X' }] as AbstractAction, id: 'x') { testTarget = 'XX' }
                 }
             }
             shouldFail(NullPointerException) {
@@ -588,7 +588,7 @@ class SwingBuilderTest extends GroovySwingTestCase {
             def help = swing.action(accelerator: 'F1')
             def about = swing.action(accelerator: KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, InputEvent.CTRL_MASK))
             assert help.getValue(Action.ACCELERATOR_KEY).toString()
-                    .indexOf(KeyEvent.getKeyText(KeyEvent.VK_F1)) > -1
+                .indexOf(KeyEvent.getKeyText(KeyEvent.VK_F1)) > -1
             def aboutKeyStroke = about.getValue(Action.ACCELERATOR_KEY)
             assert aboutKeyStroke.keyCode == KeyEvent.VK_SPACE
             assert (aboutKeyStroke.modifiers & InputEvent.CTRL_MASK) != 0
@@ -624,14 +624,14 @@ class SwingBuilderTest extends GroovySwingTestCase {
 
             def swing = new SwingBuilder()
             swing.internalFrame(id: 'frameId',
-                    border: BorderFactory.createTitledBorder(BorderFactory.createLoweredBevelBorder())) {
+                border: BorderFactory.createTitledBorder(BorderFactory.createLoweredBevelBorder())) {
                 swing.frameId.contentPane.layout = new BorderLayout()
                 vbox(id: 'vboxId', constraints: BorderLayout.NORTH)
                 hbox(id: 'hboxId', constraints: BorderLayout.WEST)
                 rigidArea(id: 'area1', constraints: BorderLayout.EAST, size: [3, 4] as Dimension)
                 rigidArea(id: 'area2', constraints: BorderLayout.SOUTH, width: 30, height: 40)
                 scrollPane(id: 'scrollId', constraints: BorderLayout.CENTER,
-                        border: BorderFactory.createRaisedBevelBorder()) {
+                    border: BorderFactory.createRaisedBevelBorder()) {
                     panel() {
                         glue()
                         vglue()
@@ -677,14 +677,14 @@ class SwingBuilderTest extends GroovySwingTestCase {
             def swing = new SwingBuilder()
 
             def frame = swing.frame(
-                    size: [500, 500],
-                    locationRelativeTo: null
+                size: [500, 500],
+                locationRelativeTo: null
             )
             def locationFirst = frame.location
 
             frame = swing.frame(
-                    locationRelativeTo: null,
-                    size: [500, 500]
+                locationRelativeTo: null,
+                size: [500, 500]
             )
             def locationLast = frame.location
 
@@ -764,7 +764,7 @@ class SwingBuilderTest extends GroovySwingTestCase {
             }
 
             swing.registerFactory("nullWidget",
-                    [newInstance: {builder, name, value, props -> null}] as AbstractFactory)
+                [newInstance: { builder, name, value, props -> null }] as AbstractFactory)
             assert swing.nullWidget() == null
         }
     }
@@ -791,16 +791,16 @@ class SwingBuilderTest extends GroovySwingTestCase {
             def anAction = swing.action(name: "test action")
             def icon = new javax.swing.plaf.metal.MetalComboBoxIcon()
             def richActionItems = [
-                    'button',
-                    'checkBox',
-                    'radioButton',
-                    'toggleButton',
-                    'menuItem',
-                    'checkBoxMenuItem',
-                    'radioButtonMenuItem'
+                'button',
+                'checkBox',
+                'radioButton',
+                'toggleButton',
+                'menuItem',
+                'checkBoxMenuItem',
+                'radioButtonMenuItem'
             ]
 
-            richActionItems.each {name ->
+            richActionItems.each { name ->
                 swing."$name"(anAction, id: "${name}Action".toString())
                 swing."$name"(icon, id: "${name}Icon".toString())
                 swing."$name"("string", id: "${name}String".toString())
@@ -819,22 +819,22 @@ class SwingBuilderTest extends GroovySwingTestCase {
 
             // elements that take no value argument
             def noValueItems = [
-                    "actions",
-                    "boxLayout",
-                    "formattedTextField",
-                    "glue",
-                    "hbox",
-                    "hglue",
-                    "hstrut",
-                    "map",
-                    "rigidArea",
-                    "separator",
-                    "vbox",
-                    "vglue",
-                    "vstrut",
+                "actions",
+                "boxLayout",
+                "formattedTextField",
+                "glue",
+                "hbox",
+                "hglue",
+                "hstrut",
+                "map",
+                "rigidArea",
+                "separator",
+                "vbox",
+                "vglue",
+                "vstrut",
             ]
 
-            noValueItems.each {name ->
+            noValueItems.each { name ->
                 //println name
                 shouldFail {
                     swing.frame {
@@ -845,58 +845,58 @@ class SwingBuilderTest extends GroovySwingTestCase {
 
             // elements that only take their own type as a value argument
             def selfItems = [
-                    "action",
-                    "borderLayout",
-                    "boundedRangeModel",
-                    "box",
-                    "buttonGroup",
-                    "cardLayout",
-                    //"closureColumn",
-                    "colorChooser",
-                    "comboBox",
-                    //"container",
-                    "desktopPane",
-                    "dialog",
-                    "fileChooser",
-                    "flowLayout",
-                    "frame",
-                    "gbc",
-                    "gridBagConstraints",
-                    "gridBagLayout",
-                    "gridLayout",
-                    "internalFrame",
-                    "layeredPane",
-                    // "list", // list acceps JList, Vector, Object[], List
-                    "menuBar",
-                    "optionPane",
-                    //"overlayLayout",
-                    "panel",
-                    "popupMenu",
-                    "progressBar",
-                    //"propertyColumn",
-                    "scrollBar",
-                    "scrollPane",
-                    "slider",
-                    "spinner",
-                    "spinnerDateModel",
-                    "spinnerListModel",
-                    "spinnerNumberModel",
-                    "splitPane",
-                    "springLayout",
-                    "tabbedPane",
-                    "table",
-                    "tableColumn",
-                    "tableLayout",
-                    "tableModel",
-                    //"td",
-                    "toolBar",
-                    //"tr",
-                    "tree",
-                    "viewport",
-                    //"widget",
-                    "window",
+                "action",
+                "borderLayout",
+                "boundedRangeModel",
+                "box",
+                "buttonGroup",
+                "cardLayout",
+                //"closureColumn",
+                "colorChooser",
+                "comboBox",
+                //"container",
+                "desktopPane",
+                "dialog",
+                "fileChooser",
+                "flowLayout",
+                "frame",
+                "gbc",
+                "gridBagConstraints",
+                "gridBagLayout",
+                "gridLayout",
+                "internalFrame",
+                "layeredPane",
+                // "list", // list acceps JList, Vector, Object[], List
+                "menuBar",
+                "optionPane",
+                //"overlayLayout",
+                "panel",
+                "popupMenu",
+                "progressBar",
+                //"propertyColumn",
+                "scrollBar",
+                "scrollPane",
+                "slider",
+                "spinner",
+                "spinnerDateModel",
+                "spinnerListModel",
+                "spinnerNumberModel",
+                "splitPane",
+                "springLayout",
+                "tabbedPane",
+                "table",
+                "tableColumn",
+                "tableLayout",
+                "tableModel",
+                //"td",
+                "toolBar",
+                //"tr",
+                "tree",
+                "viewport",
+                //"widget",
+                "window",
             ]
-            selfItems.each {name ->
+            selfItems.each { name ->
                 //println name
                 swing.frame {
                     "$name"(swing."$name"(), id: "${name}Self".toString())
@@ -911,15 +911,15 @@ class SwingBuilderTest extends GroovySwingTestCase {
 
             // elements take their own type as a value argument or a [g]string as a text property
             def textItems = [
-                    "editorPane",
-                    "label",
-                    "menu",
-                    "passwordField",
-                    "textArea",
-                    "textField",
-                    "textPane",
+                "editorPane",
+                "label",
+                "menu",
+                "passwordField",
+                "textArea",
+                "textField",
+                "textPane",
             ]
-            textItems.each {name ->
+            textItems.each { name ->
                 swing.frame {
                     "$name"(swing."$name"(), id: "${name}Self".toString())
                     "$name"('text', id: "${name}Text".toString())
@@ -1005,7 +1005,7 @@ class SwingBuilderTest extends GroovySwingTestCase {
         def swing = new SwingBuilder()
 
         boolean pass = false
-        swing.doLater {sleep 100; pass = true }
+        swing.doLater { sleep 100; pass = true }
         assert !pass
         // check for pass changing up to 3 times, then call it a failed test
         int maxFailures = 3
@@ -1018,7 +1018,7 @@ class SwingBuilderTest extends GroovySwingTestCase {
 
         // doLater in the EDT is still a do later
         pass = false
-        swing.edt { swing.doLater {sleep 100; pass = true } }
+        swing.edt { swing.doLater { sleep 100; pass = true } }
         assert !pass
         // check for pass changing up to 3 times, then call it a failed test
         maxFailures = 3
@@ -1046,7 +1046,7 @@ class SwingBuilderTest extends GroovySwingTestCase {
             def swing = new SwingBuilder()
 
             boolean pass = false
-            swing.doOutside {sleep 100; pass = true }
+            swing.doOutside { sleep 100; pass = true }
             assert !pass
             // check for pass changing up to 3 times, then call it a failed test
             int maxFailures = 3
@@ -1059,7 +1059,7 @@ class SwingBuilderTest extends GroovySwingTestCase {
 
             pass = false
             swing.edt {
-                swing.doOutside {sleep 100; pass = true }
+                swing.doOutside { sleep 100; pass = true }
                 assert !pass
                 // check for pass changing up to 3 times, then call it a failed test
                 int myMaxFailures = 3
@@ -1088,7 +1088,7 @@ class SwingBuilderTest extends GroovySwingTestCase {
         if (HeadlessTestSupport.headless) return;
 
         def swing = new SwingBuilder()
-        Closure threadTest = {c ->
+        Closure threadTest = { c ->
             boolean notifyReached = false;
             Throwable caughtThrowable = null
             Thread t = Thread.start {
@@ -1098,10 +1098,14 @@ class SwingBuilderTest extends GroovySwingTestCase {
                     caughtThrowable = throwable
                 }
                 notifyReached = true
-                synchronized (swing) { swing.notifyAll() }
+                synchronized (swing) {
+                    swing.notifyAll()
+                }
             }
 
-            synchronized (swing) { swing.wait(2000); }
+            synchronized (swing) {
+                swing.wait(2000);
+            }
             if (!notifyReached && t.isAlive()) {
                 Thread.start {
                     sleep(1000)
@@ -1249,71 +1253,71 @@ class SwingBuilderTest extends GroovySwingTestCase {
             def swing = new SwingBuilder()
 
             def topLevel = [
-                    "window",
-                    "frame",
-                    "dialog",
-                    "internalFrame",
+                "window",
+                "frame",
+                "dialog",
+                "internalFrame",
             ]
 
             def containers = [
-                    "hbox",
-                    "box",
-                    "desktopPane",
-                    "layeredPane",
-                    "panel",
-                    "popupMenu",
-                    //"scrollPane",
-                    "splitPane",
-                    "tabbedPane",
-                    "toolBar",
-                    "viewport",
+                "hbox",
+                "box",
+                "desktopPane",
+                "layeredPane",
+                "panel",
+                "popupMenu",
+                //"scrollPane",
+                "splitPane",
+                "tabbedPane",
+                "toolBar",
+                "viewport",
             ]
 
             def components = [
-                    "comboBox",
-                    "formattedTextField",
-                    "glue",
-                    "hbox",
-                    "hglue",
-                    "hstrut",
-                    "rigidArea",
-                    "separator",
-                    "vbox",
-                    "vglue",
-                    "vstrut",
-                    "box",
-                    "colorChooser",
-                    "desktopPane",
-                    "fileChooser",
-                    "internalFrame",
-                    "layeredPane",
-                    "list",
-                    "menu",
-                    //"menuBar",
-                    "optionPane",
-                    "panel",
-                    //"popupMenu",
-                    "progressBar",
-                    "scrollBar",
-                    "scrollPane",
-                    "slider",
-                    "spinner",
-                    "splitPane",
-                    "tabbedPane",
-                    "table",
-                    "toolBar",
-                    "tree",
-                    "viewport",
-                    "editorPane",
-                    "label",
-                    "passwordField",
-                    "textArea",
-                    "textField",
-                    "textPane",
+                "comboBox",
+                "formattedTextField",
+                "glue",
+                "hbox",
+                "hglue",
+                "hstrut",
+                "rigidArea",
+                "separator",
+                "vbox",
+                "vglue",
+                "vstrut",
+                "box",
+                "colorChooser",
+                "desktopPane",
+                "fileChooser",
+                "internalFrame",
+                "layeredPane",
+                "list",
+                "menu",
+                //"menuBar",
+                "optionPane",
+                "panel",
+                //"popupMenu",
+                "progressBar",
+                "scrollBar",
+                "scrollPane",
+                "slider",
+                "spinner",
+                "splitPane",
+                "tabbedPane",
+                "table",
+                "toolBar",
+                "tree",
+                "viewport",
+                "editorPane",
+                "label",
+                "passwordField",
+                "textArea",
+                "textField",
+                "textPane",
             ]
 
 
-            topLevel.each {parentWidget ->
+            topLevel.each { parentWidget ->
                 components.each { childWidget ->
                     //println "$parentWidget / $childWidget"
                     def child
@@ -1322,7 +1326,7 @@ class SwingBuilderTest extends GroovySwingTestCase {
                 }
             }
 
-            containers.each {parentWidget ->
+            containers.each { parentWidget ->
                 components.each { childWidget ->
                     //println "$parentWidget / $childWidget"
                     def child
@@ -1658,25 +1662,25 @@ class SwingBuilderTest extends GroovySwingTestCase {
             // component as value
             def button = swing.button()
             swing.keyStrokeAction(button,
-                    actionKey: "asValue",
-                    keyStroke: "V",
-                    action: noop)
+                actionKey: "asValue",
+                keyStroke: "V",
+                action: noop)
             assert button.getInputMap(JComponent.WHEN_FOCUSED).get(KeyStroke.getKeyStroke("V")) == "asValue"
             assert button.actionMap.get("asValue") == noop
 
             // component as property
             swing.keyStrokeAction(component: button,
-                    actionKey: "asProperty",
-                    keyStroke: "P",
-                    action: noop)
+                actionKey: "asProperty",
+                keyStroke: "P",
+                action: noop)
             assert button.getInputMap(JComponent.WHEN_FOCUSED).get(KeyStroke.getKeyStroke("P")) == "asProperty"
             assert button.actionMap.get("asProperty") == noop
 
             // nested in component
             button = swing.button {
                 keyStrokeAction(actionKey: "nested",
-                        keyStroke: "N",
-                        action: noop)
+                    keyStroke: "N",
+                    action: noop)
             }
             assert button.getInputMap(JComponent.WHEN_FOCUSED).get(KeyStroke.getKeyStroke("N")) == "nested"
             assert button.actionMap.get("nested") == noop
@@ -1684,17 +1688,17 @@ class SwingBuilderTest extends GroovySwingTestCase {
             // nested in component + shortcut
             button = swing.button {
                 keyStrokeAction(actionKey: "nested_shortcut",
-                        keyStroke: shortcut("N"),
-                        action: noop)
+                    keyStroke: shortcut("N"),
+                    action: noop)
             }
             assert button.getInputMap(JComponent.WHEN_FOCUSED).get(swing.shortcut("N")) == "nested_shortcut"
             assert button.actionMap.get("nested_shortcut") == noop
 
             // kstroke as GString
             swing.keyStrokeAction(component: button,
-                    actionKey: "GringKeyStroke",
-                    keyStroke: "G",
-                    action: noop)
+                actionKey: "GringKeyStroke",
+                keyStroke: "G",
+                action: noop)
             assert button.getInputMap(JComponent.WHEN_FOCUSED).get(KeyStroke.getKeyStroke("G")) == "GringKeyStroke"
             assert button.actionMap.get("GringKeyStroke") == noop
 

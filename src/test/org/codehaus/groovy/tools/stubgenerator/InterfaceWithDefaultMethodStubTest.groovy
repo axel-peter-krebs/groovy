@@ -26,7 +26,7 @@ final class InterfaceWithDefaultMethodStubTest extends StringSourcesStubTestCase
     @Override
     Map<String, String> provideSources() {
         [
-            'Dummy.java': '''
+            'Dummy.java'        : '''
                 public class Dummy {
                 }
             ''',

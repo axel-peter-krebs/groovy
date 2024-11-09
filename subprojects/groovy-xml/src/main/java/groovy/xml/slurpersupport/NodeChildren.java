@@ -36,9 +36,9 @@ public class NodeChildren extends GPathResult {
     private int size = -1;
 
     /**
-     * @param parent the GPathResult prior to the application of the expression creating this GPathResult
-     * @param name if the GPathResult corresponds to something with a name, e.g. a node
-     * @param namespacePrefix the namespace prefix if any
+     * @param parent            the GPathResult prior to the application of the expression creating this GPathResult
+     * @param name              if the GPathResult corresponds to something with a name, e.g. a node
+     * @param namespacePrefix   the namespace prefix if any
      * @param namespaceTagHints the known tag to namespace mappings
      */
     public NodeChildren(final GPathResult parent, final String name, final String namespacePrefix, final Map<String, String> namespaceTagHints) {
@@ -46,8 +46,8 @@ public class NodeChildren extends GPathResult {
     }
 
     /**
-     * @param parent the GPathResult prior to the application of the expression creating this GPathResult
-     * @param name if the GPathResult corresponds to something with a name, e.g. a node
+     * @param parent            the GPathResult prior to the application of the expression creating this GPathResult
+     * @param name              if the GPathResult corresponds to something with a name, e.g. a node
      * @param namespaceTagHints the known tag to namespace mappings
      */
     public NodeChildren(final GPathResult parent, final String name, final Map<String, String> namespaceTagHints) {
@@ -55,7 +55,7 @@ public class NodeChildren extends GPathResult {
     }
 
     /**
-     * @param parent the GPathResult prior to the application of the expression creating this GPathResult
+     * @param parent            the GPathResult prior to the application of the expression creating this GPathResult
      * @param namespaceTagHints the known tag to namespace mappings
      */
     public NodeChildren(final GPathResult parent, final Map<String, String> namespaceTagHints) {
@@ -96,7 +96,7 @@ public class NodeChildren extends GPathResult {
 
             private Iterator nextChildIter() {
                 while (iter.hasNext()) {
-                    final Node node = (Node)iter.next();
+                    final Node node = (Node) iter.next();
                     final Iterator result = node.childNodes();
                     if (result.hasNext()) return result;
                 }
@@ -139,8 +139,8 @@ public class NodeChildren extends GPathResult {
                         final Node node = (Node) iter.next();
                         if (name.equals(node.name())) {
                             if ("*".equals(namespacePrefix) ||
-                                    ("".equals(namespacePrefix) && "".equals(node.namespaceURI())) ||
-                                    node.namespaceURI().equals(namespaceMap.get(namespacePrefix))) {
+                                ("".equals(namespacePrefix) && "".equals(node.namespaceURI())) ||
+                                node.namespaceURI().equals(namespaceMap.get(namespacePrefix))) {
                                 return node;
                             }
                         }
@@ -212,8 +212,8 @@ public class NodeChildren extends GPathResult {
     }
 
     /* (non-Javadoc)
-    * @see groovy.lang.Writable#writeTo(java.io.Writer)
-    */
+     * @see groovy.lang.Writable#writeTo(java.io.Writer)
+     */
     @Override
     public Writer writeTo(final Writer out) throws IOException {
         final Iterator iter = nodeIterator();

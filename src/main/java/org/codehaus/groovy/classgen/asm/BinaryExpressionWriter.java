@@ -47,6 +47,16 @@ import static org.objectweb.asm.Opcodes.IFNE;
  */
 public abstract class BinaryExpressionWriter {
 
+    protected static final int[] stdCompareCodes = {
+        IFEQ,      // COMPARE_NOT_EQUAL            120
+        IFNE,      // COMPARE_IDENTICAL            121
+        IFEQ,      // COMPARE_NOT_IDENTICAL        122
+        IFNE,      // COMPARE_EQUAL                123
+        IFGE,      // COMPARE_LESS_THAN            124
+        IFGT,      // COMPARE_LESS_THAN_EQUAL      125
+        IFLE,      // COMPARE_GREATER_THAN         126
+        IFLT,      // COMPARE_GREATER_THAN_EQUAL   127
+    };
     private final WriterController controller;
     private MethodCaller arraySet, arrayGet;
 
@@ -58,34 +68,25 @@ public abstract class BinaryExpressionWriter {
 
     /**
      * return writer controller
+     *
      * @since 2.5.0
      */
     public WriterController getController() {
         return controller;
     }
 
-    protected static final int[] stdCompareCodes = {
-        IFEQ,      // COMPARE_NOT_EQUAL            120
-        IFNE,      // COMPARE_IDENTICAL            121
-        IFEQ,      // COMPARE_NOT_IDENTICAL        122
-        IFNE,      // COMPARE_EQUAL                123
-        IFGE,      // COMPARE_LESS_THAN            124
-        IFGT,      // COMPARE_LESS_THAN_EQUAL      125
-        IFLE,      // COMPARE_GREATER_THAN         126
-        IFLT,      // COMPARE_GREATER_THAN_EQUAL   127
-    };
-
     protected abstract int getCompareCode();
 
     /**
      * writes some int standard operations for compares
+     *
      * @param type the token type
      * @return true if a successful std operator write
      */
     protected boolean writeStdCompare(int type, boolean simulate) {
-        type = type-COMPARE_NOT_EQUAL;
+        type = type - COMPARE_NOT_EQUAL;
         // look if really compare
-        if (type<0||type>7) return false;
+        if (type < 0 || type > 7) return false;
 
         if (!simulate) {
             MethodVisitor mv = controller.getMethodVisitor();
@@ -94,7 +95,7 @@ public abstract class BinaryExpressionWriter {
             int bytecode = stdCompareCodes[type];
             mv.visitInsn(getCompareCode());
             Label l1 = new Label();
-            mv.visitJumpInsn(bytecode,l1);
+            mv.visitJumpInsn(bytecode, l1);
             mv.visitInsn(ICONST_1);
             Label l2 = new Label();
             mv.visitJumpInsn(GOTO, l2);
@@ -107,6 +108,7 @@ public abstract class BinaryExpressionWriter {
     }
 
     protected abstract void doubleTwoOperands(MethodVisitor mv);
+
     protected abstract void removeTwoOperands(MethodVisitor mv);
 
     protected boolean writeSpaceship(int type, boolean simulate) {
@@ -153,7 +155,7 @@ public abstract class BinaryExpressionWriter {
           L3
               - jump from L1 branch to here (operands: -)
               ICONST_1      (operands: I)
-          L2  
+          L2
           - if jump from GOTO L2 we have LLI, but need only I
           - if from L3 branch we get only I
 
@@ -165,7 +167,7 @@ public abstract class BinaryExpressionWriter {
             DUP2_X1
             DUP2_X1
             POP2
-            DUP2_X1          
+            DUP2_X1
         */
         if (!simulate) {
             MethodVisitor mv = controller.getMethodVisitor();
@@ -174,7 +176,7 @@ public abstract class BinaryExpressionWriter {
 
             Label l1 = new Label();
             mv.visitInsn(getCompareCode());
-            mv.visitJumpInsn(IFGE,l1);
+            mv.visitJumpInsn(IFGE, l1);
             // no jump, so -1, need to pop off surplus LL
             removeTwoOperands(mv);
             mv.visitInsn(ICONST_M1);
@@ -184,9 +186,9 @@ public abstract class BinaryExpressionWriter {
             mv.visitLabel(l1);
             Label l3 = new Label();
             mv.visitInsn(getCompareCode());
-            mv.visitJumpInsn(IFNE,l3);
+            mv.visitJumpInsn(IFNE, l3);
             mv.visitInsn(ICONST_0);
-            mv.visitJumpInsn(GOTO,l2);
+            mv.visitJumpInsn(GOTO, l2);
 
             mv.visitLabel(l3);
             mv.visitInsn(ICONST_1);
@@ -197,11 +199,12 @@ public abstract class BinaryExpressionWriter {
     }
 
     protected abstract ClassNode getNormalOpResultType();
+
     protected abstract int getStandardOperationBytecode(int type);
 
     protected boolean writeStdOperators(int type, boolean simulate) {
-        type = type-PLUS;
-        if (type<0 || type>5 || type == 3 /*DIV*/) return false;
+        type = type - PLUS;
+        if (type < 0 || type > 5 || type == 3 /*DIV*/) return false;
 
         if (!simulate) {
             int bytecode = getStandardOperationBytecode(type);
@@ -230,14 +233,15 @@ public abstract class BinaryExpressionWriter {
     protected abstract int getBitwiseOperationBytecode(int type);
 
     /**
-     * writes some the bitwise operations. type is one of BITWISE_OR, 
+     * writes some the bitwise operations. type is one of BITWISE_OR,
      * BITWISE_AND, BITWISE_XOR
+     *
      * @param type the token type
      * @return true if a successful bitwise operation write
      */
     protected boolean writeBitwiseOp(int type, boolean simulate) {
-        type = type-BITWISE_OR;
-        if (type<0 || type>2) return false;
+        type = type - BITWISE_OR;
+        if (type < 0 || type > 2) return false;
 
         if (!simulate) {
             int bytecode = getBitwiseOperationBytecode(type);
@@ -269,18 +273,18 @@ public abstract class BinaryExpressionWriter {
     }
 
     public boolean write(int operation, boolean simulate) {
-        return  writeStdCompare(operation, simulate)         ||
-                writeSpaceship(operation, simulate)          ||
-                writeStdOperators(operation, simulate)       ||
-                writeBitwiseOp(operation, simulate)          ||
-                writeShiftOp(operation, simulate);
+        return writeStdCompare(operation, simulate) ||
+            writeSpaceship(operation, simulate) ||
+            writeStdOperators(operation, simulate) ||
+            writeBitwiseOp(operation, simulate) ||
+            writeShiftOp(operation, simulate);
     }
 
     protected MethodCaller getArrayGetCaller() {
         return arrayGet;
     }
 
-    protected ClassNode getArrayGetResultType(){
+    protected ClassNode getArrayGetResultType() {
         return getNormalOpResultType();
     }
 
@@ -294,7 +298,7 @@ public abstract class BinaryExpressionWriter {
     }
 
     public boolean arrayGet(int operation, boolean simulate) {
-        if (operation!=LEFT_SQUARE_BRACKET) return false;
+        if (operation != LEFT_SQUARE_BRACKET) return false;
 
         if (!simulate) {
             getArrayGetCaller().call(controller.getMethodVisitor());
@@ -302,7 +306,7 @@ public abstract class BinaryExpressionWriter {
         return true;
     }
 
-    public boolean arraySet(boolean simulate) {        
+    public boolean arraySet(boolean simulate) {
         if (!simulate) {
             getArraySetCaller().call(controller.getMethodVisitor());
         }
@@ -310,10 +314,10 @@ public abstract class BinaryExpressionWriter {
     }
 
     public boolean writePostOrPrefixMethod(int operation, boolean simulate) {
-        if (operation!=PLUS_PLUS && operation!=MINUS_MINUS) return false;
+        if (operation != PLUS_PLUS && operation != MINUS_MINUS) return false;
         if (!simulate) {
             MethodVisitor mv = controller.getMethodVisitor();
-            if (operation==PLUS_PLUS) {
+            if (operation == PLUS_PLUS) {
                 writePlusPlus(mv);
             } else {
                 writeMinusMinus(mv);
@@ -323,5 +327,6 @@ public abstract class BinaryExpressionWriter {
     }
 
     protected abstract void writePlusPlus(MethodVisitor mv);
+
     protected abstract void writeMinusMinus(MethodVisitor mv);
 }

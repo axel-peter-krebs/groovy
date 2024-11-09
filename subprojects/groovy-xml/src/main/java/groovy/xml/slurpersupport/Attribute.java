@@ -54,6 +54,7 @@ public class Attribute extends GPathResult {
 
     /**
      * Returns the size of this Attribute, which is always <code>1</code>.
+     *
      * @return <code>1</code>
      */
     @Override
@@ -63,6 +64,7 @@ public class Attribute extends GPathResult {
 
     /**
      * Returns the value of this Attribute.
+     *
      * @return the value of this Attribute
      */
     @Override
@@ -72,6 +74,7 @@ public class Attribute extends GPathResult {
 
     /**
      * Returns the URI of the namespace of this Attribute.
+     *
      * @return the namespace of this Attribute
      */
     public String namespaceURI() {

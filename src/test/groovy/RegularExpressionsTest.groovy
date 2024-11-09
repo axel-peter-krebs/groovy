@@ -36,7 +36,8 @@ final class RegularExpressionsTest {
         assert !("cheesecheese" ==~ "cheese")
     }
 
-    @Test // The find operator is: =~
+    @Test
+    // The find operator is: =~
     void testFindOperator() {
         assert "cheese" =~ "cheese"
 
@@ -68,7 +69,8 @@ final class RegularExpressionsTest {
         assert m.group() == "ee"
     }
 
-    @Test // From the javadoc of the getAt() method
+    @Test
+    // From the javadoc of the getAt() method
     void testMatcherWithIntIndex() {
         def p = /ab[d|f]/
         def m = "abcabdabeabf" =~ p
@@ -189,7 +191,8 @@ final class RegularExpressionsTest {
         assert [["chee", "ch"], ["se", "s"], [" ple", " pl"], ["ase", "as"]] == result
     }
 
-    @Test // Check consistency between each and collect
+    @Test
+    // Check consistency between each and collect
     void testMatcherEachVsCollect() {
         def matcher = "cheese cheese" =~ "e+"
         def result = []
@@ -582,11 +585,11 @@ final class RegularExpressionsTest {
     void testMatchesPartially() {
         def pattern = /\w+@\w+\.\w{2,}/
         def useCases = [
-                "glaforge@gmail.com": true,
-                "glaforge"          : true,
-                "!!!!"              : false,
-                "glaforge@"         : true,
-                "glaforge@@"        : false
+            "glaforge@gmail.com": true,
+            "glaforge"          : true,
+            "!!!!"              : false,
+            "glaforge@"         : true,
+            "glaforge@@"        : false
         ]
         useCases.each { String email, boolean bool ->
             def matcher = email =~ pattern

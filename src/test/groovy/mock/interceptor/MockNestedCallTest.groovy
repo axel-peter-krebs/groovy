@@ -24,10 +24,10 @@ class MockNestedCallTest extends GroovyTestCase {
 
     void testRestore() {
         def mockTail = new MockFor(Coin)
-        mockTail.demand.flip(0..9) {"tail"}
+        mockTail.demand.flip(0..9) { "tail" }
 
         def mockHead = new MockFor(Coin)
-        mockHead.demand.flip(0..9) {"head"}
+        mockHead.demand.flip(0..9) { "head" }
 
         def c = new Coin()
         assert c.flip() == "edge"

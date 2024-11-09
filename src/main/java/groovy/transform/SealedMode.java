@@ -21,8 +21,8 @@ package groovy.transform;
 /**
  * Intended mode to use for sealed classes when using the {@code @Sealed} annotation (or {@code sealed} keyword).
  *
- * @since 4.0.0
  * @see Sealed
+ * @since 4.0.0
  */
 public enum SealedMode {
     /**

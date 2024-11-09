@@ -37,7 +37,8 @@ public class RangeExpression extends Expression {
     }
 
     public RangeExpression(final Expression from, final Expression to, final boolean exclusiveLeft, final boolean exclusiveRight) {
-        this.from = from; this.to = to;
+        this.from = from;
+        this.to = to;
         this.exclusiveLeft = exclusiveLeft;
         this.exclusiveRight = exclusiveRight;
 
@@ -80,9 +81,9 @@ public class RangeExpression extends Expression {
     @Override
     public String getText() {
         return "(" + getFrom().getText() +
-                (isExclusiveLeft() ? "<" : "") +
-                ".." +
-                (isExclusiveRight() ? "<" : "") +
-                getTo().getText() + ")";
+            (isExclusiveLeft() ? "<" : "") +
+            ".." +
+            (isExclusiveRight() ? "<" : "") +
+            getTo().getText() + ")";
     }
 }

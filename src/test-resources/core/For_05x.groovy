@@ -29,12 +29,13 @@ def testCS() {
     result = 0;
     int i;
     int j;
-    for (i = 1, j = 5; i < j; i++, j--) {
+    for (i = 1, j = 5; i < j; i++ , j-- ) {
         result += i;
         result += j;
     }
     assert 12 == result
 }
+
 testCS();
 
 def test() {
@@ -47,10 +48,11 @@ def test() {
     result = 0;
     int i;
     int j;
-    for (i = 1, j = 5; i < j; i++, j--) {
+    for (i = 1, j = 5; i < j; i++ , j-- ) {
         result += i;
         result += j;
     }
     assert 12 == result
 }
+
 test();

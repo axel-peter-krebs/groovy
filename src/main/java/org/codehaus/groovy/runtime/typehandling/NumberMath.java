@@ -26,7 +26,7 @@ import java.math.BigInteger;
  * Instances are required so that polymorphic calls work properly, but each
  * subclass creates a singleton instance to minimize garbage.  All methods
  * must be thread-safe.
- *
+ * <p>
  * The design goals of this class are as follows:
  * <ol>
  * <li>Support a 'least surprising' math model to scripting language users.  This
@@ -184,7 +184,7 @@ public abstract class NumberMath {
         }
         try {
             return new BigDecimal(n.toString());
-        } catch(NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             return BigDecimal.valueOf(n.doubleValue());
         }
     }
@@ -213,14 +213,14 @@ public abstract class NumberMath {
      * the type promotion rules discussed in the documentation.  Note that by the time this method is
      * called, any Byte, Character or Short operands will have been promoted to Integer.  For reference,
      * here is the promotion matrix:
-     *    bD bI  D  F  L  I
+     * bD bI  D  F  L  I
      * bD bD bD  D  D bD bD
      * bI bD bI  D  D bI bI
-     *  D  D  D  D  D  D  D
-     *  F  D  D  D  D  D  D
-     *  L bD bI  D  D  L  L
-     *  I bD bI  D  D  L  I
-     *
+     * D  D  D  D  D  D  D
+     * F  D  D  D  D  D  D
+     * L bD bI  D  D  L  L
+     * I bD bI  D  D  L  I
+     * <p>
      * Note that for division, if either operand isFloatingPoint, the result will be floating.  Otherwise,
      * the result is BigDecimal
      */
@@ -248,7 +248,8 @@ public abstract class NumberMath {
         return BigDecimalMath.INSTANCE;
     }
 
-    /* package private */ static NumberMath getMath(Number number) {
+    /* package private */
+    static NumberMath getMath(Number number) {
         if (isLong(number)) {
             return LongMath.INSTANCE;
         }

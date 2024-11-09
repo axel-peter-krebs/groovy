@@ -19,6 +19,7 @@
 package org.codehaus.groovy.runtime
 
 import groovy.transform.stc.StaticTypeCheckingTestCase
+
 /**
  * STC Tests for ArrayGroovyMethods
  */
@@ -152,6 +153,7 @@ class ArrayGroovyMethodsSTCTest extends StaticTypeCheckingTestCase {
         '''
     }
 */
+
     void testEachWithIndexForBooleanArray() {
         assertScript '''
         boolean[] array = [false, true, false]

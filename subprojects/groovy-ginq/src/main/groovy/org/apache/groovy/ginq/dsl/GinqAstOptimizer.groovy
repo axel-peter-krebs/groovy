@@ -88,9 +88,9 @@ class GinqAstOptimizer extends GinqAstBaseVisitor {
         }
 
         final List<String> aliasesToOptimize =
-                (List<String>) dataSourcesToOptimize.stream()
-                        .map((DataSourceExpression e) -> e.aliasExpr.text)
-                        .collect(Collectors.toList())
+            (List<String>) dataSourcesToOptimize.stream()
+                .map((DataSourceExpression e) -> e.aliasExpr.text)
+                .collect(Collectors.toList())
 
         List<DataSourceExpression> allDataSourceList = [].tap {
             it << ginqExpression.fromExpression
@@ -98,9 +98,9 @@ class GinqAstOptimizer extends GinqAstBaseVisitor {
         }
 
         final List<String> allAliasList =
-                (List<String>) allDataSourceList.stream()
-                        .map((DataSourceExpression e) -> e.aliasExpr.text)
-                        .collect(Collectors.toList())
+            (List<String>) allDataSourceList.stream()
+                .map((DataSourceExpression e) -> e.aliasExpr.text)
+                .collect(Collectors.toList())
 
         WhereExpression whereExpression = ginqExpression.whereExpression
         if (whereExpression) {
@@ -151,7 +151,7 @@ class GinqAstOptimizer extends GinqAstBaseVisitor {
             if (e instanceof BinaryExpression && e.leftExpression instanceof ConstantExpression && e.rightExpression instanceof ConstantExpression) {
                 try {
                     def result = new GroovyShell().evaluate(
-                            "${constantLiteral((ConstantExpression) e.leftExpression)} $e.operation.text ${constantLiteral((ConstantExpression) e.rightExpression)}")
+                        "${constantLiteral((ConstantExpression) e.leftExpression)} $e.operation.text ${constantLiteral((ConstantExpression) e.rightExpression)}")
                     if (result) {
                         return false
                     }
@@ -216,6 +216,7 @@ class GinqAstOptimizer extends GinqAstBaseVisitor {
 
         return candidatesToOptimize
     }
+
     private static boolean isCandidate(Expression expression) {
         if (expression instanceof BinaryExpression && expression.operation.type in LOGICAL_OP_TYPE_LIST) {
             return false
@@ -227,38 +228,38 @@ class GinqAstOptimizer extends GinqAstBaseVisitor {
     private boolean transformFromClause(List<Expression> candidatesToOptimize, List<String> optimizingAliasList, List<String> allAliasList, List<DataSourceExpression> optimizingDataSourceExpressionList) {
         Map<String, List<Expression>> conditionsToOptimize = [:]
         candidatesToOptimize.stream()
-                .forEach(e ->
-                        collectConditionsToOptimize(e, allAliasList, optimizingAliasList, conditionsToOptimize))
+            .forEach(e ->
+                collectConditionsToOptimize(e, allAliasList, optimizingAliasList, conditionsToOptimize))
 
         boolean transformed = false
         conditionsToOptimize.forEach((String alias, List<Expression> conditions) -> {
             if (!optimizingAliasList.contains(alias)) return
 
             DataSourceExpression dataSourceExpression =
-                    optimizingDataSourceExpressionList.grep { DataSourceExpression e -> e.aliasExpr.text == alias }[0]
+                optimizingDataSourceExpressionList.grep { DataSourceExpression e -> e.aliasExpr.text == alias }[0]
 
             if (dataSourceExpression) {
                 GinqExpression contructedGinqExpression = new GinqExpression()
                 String constructedAlias = "alias${System.nanoTime()}"
 
                 List<Expression> transformedConditions =
-                        conditions.stream()
-                                .map(e -> correctVars(e, alias, constructedAlias))
-                                .collect(Collectors.toList())
+                    conditions.stream()
+                        .map(e -> correctVars(e, alias, constructedAlias))
+                        .collect(Collectors.toList())
 
                 if (transformedConditions) {
                     transformed = true
                 }
 
                 contructedGinqExpression.fromExpression =
-                        new FromExpression(new VariableExpression(constructedAlias), dataSourceExpression.dataSourceExpr)
+                    new FromExpression(new VariableExpression(constructedAlias), dataSourceExpression.dataSourceExpr)
                 contructedGinqExpression.whereExpression =
-                        new WhereExpression(constructFilterExpr(transformedConditions))
+                    new WhereExpression(constructFilterExpr(transformedConditions))
                 contructedGinqExpression.selectExpression =
-                        new SelectExpression(
-                                new ArgumentListExpression(
-                                        Collections.singletonList(
-                                                (Expression) new VariableExpression(constructedAlias))))
+                    new SelectExpression(
+                        new ArgumentListExpression(
+                            Collections.singletonList(
+                                (Expression) new VariableExpression(constructedAlias))))
 
                 dataSourceExpression.dataSourceExpr = contructedGinqExpression
             }

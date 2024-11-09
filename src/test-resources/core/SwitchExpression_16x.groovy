@@ -19,7 +19,7 @@
 
 def a = 6
 try {
-    switch(a) {
+    switch (a) {
         case 8 -> 'b'
         default -> throw new RuntimeException('z')
     }
@@ -27,7 +27,7 @@ try {
     assert 'z' == e.message
 }
 
-def r = switch(a) {
+def r = switch (a) {
     case 6 -> {
         def x = 'a'
         yield x

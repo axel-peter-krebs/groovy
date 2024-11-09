@@ -22,14 +22,13 @@
 */
 
 
-long start = System.currentTimeMillis ()
+long start = System.currentTimeMillis()
 def n = 7
 if (args.length > 0) {
     n = Integer.parseInt(args[0])
 }
 println("Pfannkuchen(" + n + ") = " + fannkuch(n))
-println "${System.currentTimeMillis () - start}ms"
-
+println "${System.currentTimeMillis() - start}ms"
 
 
 def fannkuch(int n) {
@@ -48,7 +47,7 @@ def fannkuch(int n) {
 
     while (true) {
         // write-out the first 30 permutations
-        if (check < 30){
+        if (check < 30) {
             for (i in 0..<n) {
                 print(perm1[i] + 1)
             }

@@ -38,10 +38,10 @@ try {
     pj = java.awt.print.PrinterJob.getPrinterJob()
     ps = pj.getPrintService()
     ps.getAttributes()
-    docFlav  = (ps.getSupportedDocFlavors() as List).find {it.mimeType == 'application/vnd.cups-postscript' }
+    docFlav = (ps.getSupportedDocFlavors() as List).find { it.mimeType == 'application/vnd.cups-postscript' }
     attrset = ps.getAttributes()
     orient = attrset.get(javax.print.attribute.standard.OrientationRequested) ?:
-             ps.getDefaultAttributeValue(javax.print.attribute.standard.OrientationRequested)
+        ps.getDefaultAttributeValue(javax.print.attribute.standard.OrientationRequested)
     ps.isAttributeValueSupported(orient, docFlav, attrset)
 } catch (NullPointerException npe) {
     //print will bomb out... replace with disabled print action

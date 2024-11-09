@@ -68,7 +68,7 @@ import java.lang.annotation.Target
  * but any existing annotation attributes within the explicit annotation take precedence. So, for example in this case here:
  * <pre>
  * {@code @Canonical}(includeNames=true, excludes='c')
- * {@code @}{@link ToString}(excludes='a,b')
+ * {@code @} {@link ToString}(excludes='a,b')
  * class MyClass { ... }
  * </pre>
  * The generated {@code toString} will include property names and exclude the {@code a} and {@code b} properties.
@@ -81,7 +81,7 @@ import java.lang.annotation.Target
  * See the GroovyDoc for the individual annotations for more details.
  * <p>
  * If you want similar functionality to what this annotation provides but also require immutability, see the
- * {@code @}{@link Immutable} annotation.
+ * {@code @} {@link Immutable} annotation.
  *
  * <p>More examples:</p>
  * <pre class="groovyTestCase">
@@ -127,13 +127,9 @@ import java.lang.annotation.Target
  * assert mrhaki.toString() == 'Person(mrhaki)'
  * </pre>
  *
- * @see groovy.transform.EqualsAndHashCode
- * @see groovy.transform.ToString
- * @see groovy.transform.TupleConstructor
- * @see groovy.transform.Immutable
- * @since 1.8.0
+ * @see groovy.transform.EqualsAndHashCode* @see groovy.transform.ToString* @see groovy.transform.TupleConstructor* @see groovy.transform.Immutable* @since 1.8.0
  */
-@AnnotationCollector(value=[ToString, TupleConstructor, EqualsAndHashCode], mode=AnnotationCollectorMode.PREFER_EXPLICIT_MERGED)
+@AnnotationCollector(value = [ToString, TupleConstructor, EqualsAndHashCode], mode = AnnotationCollectorMode.PREFER_EXPLICIT_MERGED)
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 @interface Canonical {

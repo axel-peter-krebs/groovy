@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpoofTaskContainer extends Task implements TaskContainer {
-    private List<Task> tasks = new ArrayList<Task>();
     static StringBuffer spoof = new StringBuffer();
+    private List<Task> tasks = new ArrayList<Task>();
 
     public SpoofTaskContainer() {
         super();

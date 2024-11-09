@@ -33,11 +33,11 @@ import static org.codehaus.groovy.transform.BuilderASTTransformation.BuilderStra
  * The {@code @Builder} AST transformation is used to help write classes that can be created using <em>fluent</em> api calls.<!-- -->
  * The transform supports multiple building strategies to cover a range of cases and there are a number
  * of configuration options to customize the building process.
- *
+ * <p>
  * In addition, a number of annotation attributes let you customise the building process. Not all annotation attributes
  * are supported by all strategies. See the individual strategy documentation for more details.
  * If you're an AST hacker, you can also define your own strategy class.
- *
+ * <p>
  * The following strategies are bundled with Groovy:
  * <ul>
  *     <li>{@link SimpleStrategy} for creating chained setters</li>
@@ -45,7 +45,7 @@ import static org.codehaus.groovy.transform.BuilderASTTransformation.BuilderStra
  *     <li>{@link DefaultStrategy} which creates a nested helper class for instance creation</li>
  *     <li>{@link InitializerStrategy} which creates a nested helper class for instance creation which when used with {@code @CompileStatic} allows type-safe object creation</li>
  * </ul>
- *
+ * <p>
  * Note that Groovy provides other built-in mechanisms for easy creation of objects, e.g. the named-args constructor:
  * <pre>
  * new Person(firstName: "Robert", lastName: "Lewandowski", age: 21)
@@ -67,7 +67,7 @@ import static org.codehaus.groovy.transform.BuilderASTTransformation.BuilderStra
  */
 @Documented
 @Retention(RetentionPolicy.SOURCE)
-@Target({ ElementType.TYPE, ElementType.CONSTRUCTOR, ElementType.METHOD})
+@Target({ElementType.TYPE, ElementType.CONSTRUCTOR, ElementType.METHOD})
 @GroovyASTTransformationClass("org.codehaus.groovy.transform.BuilderASTTransformation")
 public @interface Builder {
 

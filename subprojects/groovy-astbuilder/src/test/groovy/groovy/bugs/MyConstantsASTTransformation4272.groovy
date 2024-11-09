@@ -37,12 +37,12 @@ class MyConstantsASTTransformation4272 implements ASTTransformation, Opcodes {
         ClassNode classNode = nodes[1]
 
         classNode.addMethod(new MethodNode("willSucceed", ACC_PUBLIC, ClassHelper.boolean_TYPE,
-                [] as Parameter[], null, new AstBuilder().buildFromCode { return new Integer("1") }[0]))
+            [] as Parameter[], null, new AstBuilder().buildFromCode { return new Integer("1") }[0]))
 
         classNode.addMethod(new MethodNode("willNotFail", ACC_PUBLIC, ClassHelper.int_TYPE,
-                [] as Parameter[], null, new AstBuilder().buildFromCode { return 1 }[0]))
+            [] as Parameter[], null, new AstBuilder().buildFromCode { return 1 }[0]))
 
         classNode.addMethod(new MethodNode("willAlsoNotFail", ACC_PUBLIC, ClassHelper.boolean_TYPE,
-                [] as Parameter[], null, new AstBuilder().buildFromString("return 1")[0]))
+            [] as Parameter[], null, new AstBuilder().buildFromString("return 1")[0]))
     }
 }

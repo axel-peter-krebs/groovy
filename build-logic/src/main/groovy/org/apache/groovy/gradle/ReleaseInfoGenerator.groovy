@@ -36,22 +36,22 @@ class ReleaseInfoGenerator extends DefaultTask {
 
     @Input
     final Property<String> version = project.objects.property(String).convention(
-            project.providers.gradleProperty("groovyVersion")
+        project.providers.gradleProperty("groovyVersion")
     )
 
     @Input
     final Property<String> bundleVersion = project.objects.property(String).convention(
-            project.providers.gradleProperty("groovyBundleVersion")
+        project.providers.gradleProperty("groovyBundleVersion")
     )
 
     @Input
-    final Property<Date> buildDate  = project.objects.property(Date).convention(
-            project.rootProject.extensions.getByType(SharedConfiguration).buildDate
+    final Property<Date> buildDate = project.objects.property(Date).convention(
+        project.rootProject.extensions.getByType(SharedConfiguration).buildDate
     )
 
     @OutputFile
     final RegularFileProperty outputFile = project.objects.fileProperty().convention(
-            project.layout.buildDirectory.file("release-info/groovy-release-info.properties")
+        project.layout.buildDirectory.file("release-info/groovy-release-info.properties")
     )
 
     @TaskAction

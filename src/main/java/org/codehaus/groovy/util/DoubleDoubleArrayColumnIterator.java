@@ -38,7 +38,7 @@ public class DoubleDoubleArrayColumnIterator implements Iterator<double[]> {
         Objects.requireNonNull(array);
         this.array = array;
         numColumns = Integer.MAX_VALUE;
-        for (double[] row: array) {
+        for (double[] row : array) {
             if (row.length < numColumns) numColumns = row.length;
         }
         if (numColumns == Integer.MAX_VALUE) numColumns = 0;

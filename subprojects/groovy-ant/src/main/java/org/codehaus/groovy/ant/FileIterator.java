@@ -37,24 +37,18 @@ public class FileIterator implements Iterator<File> {
 
     /* The Ant project */
     private final Project project;
-
-    /* The directory scanner */
-    private DirectoryScanner ds;
-
-    /* The file names in the current FileSet scan */
-    private String[] files;
-
-    /* The current index into the file name array */
-    private int fileIndex = -1;
-
-    /* The next File object we'll iterate over */
-    private File nextFile;
-
-    /* Have we set a next object? */
-    private boolean nextObjectSet = false;
-
     /* Return only directories? */
     private final boolean iterateDirectories;
+    /* The directory scanner */
+    private DirectoryScanner ds;
+    /* The file names in the current FileSet scan */
+    private String[] files;
+    /* The current index into the file name array */
+    private int fileIndex = -1;
+    /* The next File object we'll iterate over */
+    private File nextFile;
+    /* Have we set a next object? */
+    private boolean nextObjectSet = false;
 
     public FileIterator(Project project, Iterator<FileSet> fileSetIterator) {
         this(project, fileSetIterator, false);

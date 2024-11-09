@@ -61,7 +61,7 @@ class MacroExpressionTest extends GroovyTestCase {
 @Retention(RetentionPolicy.SOURCE)
 @Target([ElementType.TYPE])
 @GroovyASTTransformationClass(["metaprogramming.AddGetTwoASTTransformation"])
-@interface AddGetTwo { }
+@interface AddGetTwo {}
 // end::addgettwoannotation[]
 
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC
@@ -81,13 +81,13 @@ class AddGetTwoASTTransformation extends AbstractASTTransformation {
         ReturnStatement returnStatement = GeneralUtils.returnS(expression) // <3>
 
         MethodNode methodNode =
-                new MethodNode("getTwo",
-                        ACC_PUBLIC,
-                        ClassHelper.Integer_TYPE,
-                        [] as Parameter[],
-                        [] as ClassNode[],
-                        returnStatement                                    // <4>
-                )
+            new MethodNode("getTwo",
+                ACC_PUBLIC,
+                ClassHelper.Integer_TYPE,
+                [] as Parameter[],
+                [] as ClassNode[],
+                returnStatement                                    // <4>
+            )
 
         classNode.addMethod(methodNode)                                    // <5>
     }

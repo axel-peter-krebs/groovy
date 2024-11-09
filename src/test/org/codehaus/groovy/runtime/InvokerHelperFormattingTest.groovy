@@ -159,13 +159,13 @@ class InvokerHelperFormattingTest extends GroovyTestCase {
 
     void testToStringMaps() {
         assert '[:]' == FormatHelper.toString([:])
-        assert "[a'b:1, 2:b'c]" == FormatHelper.toString(['a\'b':1, 2:'b\'c'])
+        assert "[a'b:1, 2:b'c]" == FormatHelper.toString(['a\'b': 1, 2: 'b\'c'])
     }
 
     void testFormatMaps() {
         assert '[:]' == FormatHelper.format([:], false)
-        assert "[a'b:1, 2:b'c]" == FormatHelper.format(['a\'b':1, 2:'b\'c'], false)
-        assert "['a\\'b':1, 2:'b\\'c']" == FormatHelper.format(['a\'b':1, 2:'b\'c'], true, -1, true)
+        assert "[a'b:1, 2:b'c]" == FormatHelper.format(['a\'b': 1, 2: 'b\'c'], false)
+        assert "['a\\'b':1, 2:'b\\'c']" == FormatHelper.format(['a\'b': 1, 2: 'b\'c'], true, -1, true)
 
         Object eObject = new ExceptionOnToString()
         shouldFail(UnsupportedOperationException) {
@@ -181,8 +181,8 @@ class InvokerHelperFormattingTest extends GroovyTestCase {
 
     void testToMapString() {
         assert '[:]' == FormatHelper.toMapString([:])
-        assert "[a'b:1, 2:b'c]" == FormatHelper.toMapString(['a\'b':1, 2:'b\'c'])
-        assert "[a'b:1, ...]" == FormatHelper.toMapString(['a\'b':1, 2:'b\'c'], 2)
+        assert "[a'b:1, 2:b'c]" == FormatHelper.toMapString(['a\'b': 1, 2: 'b\'c'])
+        assert "[a'b:1, ...]" == FormatHelper.toMapString(['a\'b': 1, 2: 'b\'c'], 2)
         Object eObject = new ExceptionOnToString()
         // no safe / verbose toMapString method provided
         shouldFail(UnsupportedOperationException) {
@@ -203,7 +203,7 @@ class InvokerHelperFormattingTest extends GroovyTestCase {
         list.add([10, 11] as int[])
         assert "[key:[[a'b:c'd], [e, f, g], 5..9, fog..fop, [h, i], [10, 11]]]" == FormatHelper.toString([key: list])
 
-        assert "['key':[['a\\'b':'c\\'d'], ['e', 'f', 'g'], 5..9, 'fog'..'fop', ['h', 'i'], [10, 11]]]" == FormatHelper.format([key:list], true, -1, false)
+        assert "['key':[['a\\'b':'c\\'d'], ['e', 'f', 'g'], 5..9, 'fog'..'fop', ['h', 'i'], [10, 11]]]" == FormatHelper.format([key: list], true, -1, false)
     }
 
     void testToStringSelfContained() {

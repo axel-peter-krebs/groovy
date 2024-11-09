@@ -29,7 +29,9 @@ import java.io.PrintWriter;
  */
 public class SimpleMessage extends Message {
 
-    /** used when {@link message} is an I18N identifier */
+    /**
+     * used when {@link message} is an I18N identifier
+     */
     protected Object data;
     protected String message;
     protected ProcessingUnit owner;

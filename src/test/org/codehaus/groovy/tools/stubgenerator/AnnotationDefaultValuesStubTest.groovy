@@ -25,7 +25,7 @@ final class AnnotationDefaultValuesStubTest extends StringSourcesStubTestCase {
 
     Map<String, String> provideSources() {
         [
-            'Tx.groovy': '''
+            'Tx.groovy'             : '''
                 import java.lang.annotation.*
                 @Retention(RetentionPolicy.RUNTIME)
                 @Target([ElementType.TYPE, ElementType.METHOD])
@@ -57,7 +57,7 @@ final class AnnotationDefaultValuesStubTest extends StringSourcesStubTestCase {
                 public class PersonServiceJava { }
             ''',
 
-            'Color.java': '''
+            'Color.java'            : '''
                 public enum Color {
                     RED, BLUE, GREEN;
                 }

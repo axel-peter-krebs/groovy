@@ -43,6 +43,7 @@ def safe() {
     sc?[1] = 'a';
     assert null == sc?[1];
 }
+
 safe();
 
 @CompileStatic
@@ -62,4 +63,5 @@ def csSafe() {
     sc?[1] = 'a';
     assert null == sc?[1];
 }
+
 csSafe();

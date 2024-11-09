@@ -32,8 +32,8 @@ final class Groovy7276 extends StaticTypeCheckingTestCase implements StaticCompi
                 }
                 assert new Foo().m() == 1
             """
-            String  closure = astTrees['Foo$_m_closure1'][1]
-            assert  closure.contains('GETFIELD Foo.i')
+            String closure = astTrees['Foo$_m_closure1'][1]
+            assert closure.contains('GETFIELD Foo.i')
             assert !closure.contains('pfaccess$')
         }
     }
@@ -50,8 +50,8 @@ final class Groovy7276 extends StaticTypeCheckingTestCase implements StaticCompi
                 }
                 assert new Bar().m() == 1
             """
-            String  closure = astTrees['Foo$_m_closure1'][1]
-            assert  closure.contains('GETFIELD Foo.i')
+            String closure = astTrees['Foo$_m_closure1'][1]
+            assert closure.contains('GETFIELD Foo.i')
             assert !closure.contains('pfaccess$')
         }
     }
@@ -65,8 +65,8 @@ final class Groovy7276 extends StaticTypeCheckingTestCase implements StaticCompi
                 }
                 assert new Foo().m() == 2
             """
-            String  closure = astTrees['Foo$_m_closure1'][1]
-            assert  closure.contains('GETFIELD Foo.i')
+            String closure = astTrees['Foo$_m_closure1'][1]
+            assert closure.contains('GETFIELD Foo.i')
             assert !closure.contains('pfaccess$')
         }
     }
@@ -83,8 +83,8 @@ final class Groovy7276 extends StaticTypeCheckingTestCase implements StaticCompi
                 }
                 assert new Bar().m() == 2
             """
-            String  closure = astTrees['Foo$_m_closure1'][1]
-            assert  closure.contains('GETFIELD Foo.i')
+            String closure = astTrees['Foo$_m_closure1'][1]
+            assert closure.contains('GETFIELD Foo.i')
             assert !closure.contains('pfaccess$')
         }
     }
@@ -99,8 +99,8 @@ final class Groovy7276 extends StaticTypeCheckingTestCase implements StaticCompi
             }
             assert new Foo().m() == 1
         '''
-        String  closure = astTrees['Foo$_m_closure1'][1]
-        assert  closure.contains('INVOKEVIRTUAL Foo.pvI ()I')
+        String closure = astTrees['Foo$_m_closure1'][1]
+        assert closure.contains('INVOKEVIRTUAL Foo.pvI ()I')
         assert !closure.contains('access$')
     }
 
@@ -116,8 +116,8 @@ final class Groovy7276 extends StaticTypeCheckingTestCase implements StaticCompi
             }
             assert new Bar().m() == 1
         '''
-        String  closure = astTrees['Foo$_m_closure1'][1]
-        assert  closure.contains('INVOKEVIRTUAL Foo.pvI ()I')
+        String closure = astTrees['Foo$_m_closure1'][1]
+        assert closure.contains('INVOKEVIRTUAL Foo.pvI ()I')
         assert !closure.contains('access$')
     }
 

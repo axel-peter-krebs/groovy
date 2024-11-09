@@ -37,7 +37,7 @@ public class CharacterCachedClass extends CachedClass {
     @Override
     public boolean isAssignableFrom(Class classToTransformFrom) {
         return (allowNull && classToTransformFrom == null)
-                || classToTransformFrom == Character.class
-                || classToTransformFrom == Character.TYPE;
+            || classToTransformFrom == Character.class
+            || classToTransformFrom == Character.TYPE;
     }
 }

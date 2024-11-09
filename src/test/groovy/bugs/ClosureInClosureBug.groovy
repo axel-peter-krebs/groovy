@@ -40,7 +40,7 @@ class ClosureInClosureBug extends GroovyTestCase {
 
         l.each {
             //println(text)
-            it.each{
+            it.each {
                 println(text)
             }
         }

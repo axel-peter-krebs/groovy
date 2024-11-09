@@ -128,7 +128,7 @@ import java.lang.annotation.Target;
  * <pre class="groovyTestCase">
  * //--------------------------------------------------------------------------
  * import groovy.transform.InheritConstructors
-
+ *
  * class Person {
  *     String name
  *

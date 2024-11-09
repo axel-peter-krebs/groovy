@@ -69,7 +69,9 @@ class CliBuilderTest extends GroovyTestCase {
         assert options.hasOption('help')
         assert options.h
         assert options.help
-        if (options.h) { cli.usage() }
+        if (options.h) {
+            cli.usage()
+        }
         def expectedUsage = """usage: $usageString
  -c,--encoding <charset>   character encoding
  -h,--help                 usage information
@@ -78,7 +80,9 @@ class CliBuilderTest extends GroovyTestCase {
         assertEquals(expectedUsage, stringWriter.toString().tokenize('\r\n').join('\n'))
         resetPrintWriter()
         cli.writer = printWriter
-        if (options.help) { cli.usage() }
+        if (options.help) {
+            cli.usage()
+        }
         assertEquals(expectedUsage, stringWriter.toString().tokenize('\r\n').join('\n'))
         assert options.hasOption('c')
         assert options.c
@@ -147,7 +151,7 @@ usage: groovy
         [new DefaultParser(), new GnuParser()].each { parser ->
             def cli = new CliBuilder(parser: parser)
             def anOption = builder().longOpt('anOption').hasArg().desc('An option.')
-                    .build()
+                .build()
             cli.options.addOption(anOption)
             def options = cli.parse(['-v', '--anOption', 'something'])
             // no options should be found
@@ -231,8 +235,9 @@ usage: groovy
             assertEquals(['1', '2', '3'], options.as)
             assertEquals('1', options.arg)
             assertEquals(['1', '2', '3'], options.args)
-            assertEquals([], options.arguments()) }
+            assertEquals([], options.arguments())
         }
+    }
 
     /*
     *  Behaviour with unrecognized options.
@@ -344,7 +349,7 @@ usage: groovy
     }
 
     void testArgumentFileExpansionTurnedOff() {
-        def cli = new CliBuilder(usage: 'test usage', expandArgumentFiles:false)
+        def cli = new CliBuilder(usage: 'test usage', expandArgumentFiles: false)
         cli.h(longOpt: 'help', 'usage information')
         cli.d(longOpt: 'debug', 'turn on debug info')
         def args = ['-h', '@temp.args', 'foo', '@@baz']
@@ -363,7 +368,7 @@ usage: groovy
         def ignore = false
         def longOptName = 'user'
         def cli = new CliBuilder(usage: 'blah')
-        cli.dbusername(longOpt:"$longOptName", args: 1, "Database username [default $user]")
+        cli.dbusername(longOpt: "$longOptName", args: 1, "Database username [default $user]")
         cli.dbpassword(args: 1, "Database password [default $pass]")
         cli.i("ignore case [default $ignore]")
         def args = ['-dbpassword', 'foo', '--user', 'bar', '-i']
@@ -394,8 +399,8 @@ usage: groovy
 
     void testDoubleHyphenLongOptions() {
         def cli = new CliBuilder()
-        cli._([longOpt:'alpha'], '')
-        cli._([longOpt:'beta'], '')
+        cli._([longOpt: 'alpha'], '')
+        cli._([longOpt: 'beta'], '')
         def options = cli.parse(['--alpha', '--', '--beta', 'foo'])
         assert options.alpha
         assert options.arguments() == ['--beta', 'foo']
@@ -403,7 +408,7 @@ usage: groovy
 
     void testMixedShortAndLongOptions() {
         def cli = new CliBuilder()
-        cli.a([longOpt:'alpha', args:1], '')
+        cli.a([longOpt: 'alpha', args: 1], '')
         cli.b([:], '')
         def options = cli.parse(['-b', '--alpha', 'param', 'foo'])
         assert options.a == 'param'
@@ -415,7 +420,7 @@ usage: groovy
         cli.a([:], '')
         cli.b([:], '')
         cli.c([:], '')
-        cli.d([longOpt:'abacus'], '')
+        cli.d([longOpt: 'abacus'], '')
         def options = cli.parse(['-abc', 'foo'])
         assert options.a
         assert options.b
@@ -430,19 +435,44 @@ usage: groovy
     }
 
     interface PersonI {
-        @Option String first()
-        @Option String last()
-        @Option boolean flag1()
-        @Option Boolean flag2()
-        @Option(longName = 'specialFlag') Boolean flag3()
-        @Option flag4()
-        @Option int age()
-        @Option Integer born()
-        @Option float discount()
-        @Option BigDecimal pi()
-        @Option File biography()
-        @Option RoundingMode roundingMode()
-        @Unparsed List remaining()
+        @Option
+        String first()
+
+        @Option
+        String last()
+
+        @Option
+        boolean flag1()
+
+        @Option
+        Boolean flag2()
+
+        @Option(longName = 'specialFlag')
+        Boolean flag3()
+
+        @Option
+        flag4()
+
+        @Option
+        int age()
+
+        @Option
+        Integer born()
+
+        @Option
+        float discount()
+
+        @Option
+        BigDecimal pi()
+
+        @Option
+        File biography()
+
+        @Option
+        RoundingMode roundingMode()
+
+        @Unparsed
+        List remaining()
     }
 
     def argz = "--first John --last Smith --flag1 --flag2 --specialFlag --age  21 --born 1980 --discount 3.5 --pi 3.14159 --biography cv.txt --roundingMode DOWN and some more".split()
@@ -465,11 +495,13 @@ usage: groovy
         assert p1.remaining() == ['and', 'some', 'more']
     }
 
-    @ToString(includeFields=true, includePackage=false)
+    @ToString(includeFields = true, includePackage = false)
     class PersonC {
-        @Option String first
+        @Option
+        String first
         private String last
-        @Option boolean flag1
+        @Option
+        boolean flag1
         private Boolean flag2
         private Boolean flag3
         private Boolean flag4
@@ -481,44 +513,69 @@ usage: groovy
         private RoundingMode roundingMode
         private List remaining
 
-        @Option void setLast(String last) {
+        @Option
+        void setLast(String last) {
             this.last = last
         }
-        @Option void setFlag2(boolean flag2) {
+
+        @Option
+        void setFlag2(boolean flag2) {
             this.flag2 = flag2
         }
-        @Option(longName = 'specialFlag') void setFlag3(boolean flag3) {
+
+        @Option(longName = 'specialFlag')
+        void setFlag3(boolean flag3) {
             this.flag3 = flag3
         }
-        @Option void setFlag4(boolean flag4) {
+
+        @Option
+        void setFlag4(boolean flag4) {
             this.flag4 = flag4
         }
-        @Option void setAge(int age) {
+
+        @Option
+        void setAge(int age) {
             this.age = age
         }
-        @Option void setBorn(Integer born) {
+
+        @Option
+        void setBorn(Integer born) {
             this.born = born
         }
-        @Option void setDiscount(float discount) {
+
+        @Option
+        void setDiscount(float discount) {
             this.discount = discount
         }
-        @Option void setPi(BigDecimal pi) {
+
+        @Option
+        void setPi(BigDecimal pi) {
             this.pi = pi
         }
-        @Option void setBiography(File biography) {
+
+        @Option
+        void setBiography(File biography) {
             this.biography = biography
         }
-        @Option void setRoundingMode(RoundingMode roundingMode) {
+
+        @Option
+        void setRoundingMode(RoundingMode roundingMode) {
             this.roundingMode = roundingMode
         }
-        @Unparsed void setRemaining(List remaining) {
+
+        @Unparsed
+        void setRemaining(List remaining) {
             this.remaining = remaining
         }
     }
+
     class DefaultValueC {
-        @Option(shortName='f', defaultValue='one') String from
-        @Option(shortName='t', defaultValue='35') int to
-        @Option(shortName='b') int by = 1
+        @Option(shortName = 'f', defaultValue = 'one')
+        String from
+        @Option(shortName = 't', defaultValue = '35')
+        int to
+        @Option(shortName = 'b')
+        int by = 1
     }
 
     void testDefaultValueClass() {
@@ -537,10 +594,14 @@ usage: groovy
     }
 
     class ValSepC {
-        @Option(numberOfArguments=2) String[] a
-        @Option(numberOfArgumentsString='2', valueSeparator=',') String[] b
-        @Option(numberOfArgumentsString='+', valueSeparator=',') String[] c
-        @Unparsed remaining
+        @Option(numberOfArguments = 2)
+        String[] a
+        @Option(numberOfArgumentsString = '2', valueSeparator = ',')
+        String[] b
+        @Option(numberOfArgumentsString = '+', valueSeparator = ',')
+        String[] c
+        @Unparsed
+            remaining
     }
 
     void testValSepClass() {
@@ -574,10 +635,14 @@ usage: groovy
     }
 
     class WithConvertC {
-        @Option(convert={ it.toLowerCase() }) String a
-        @Option(convert={ it.toUpperCase() }) String b
-        @Option(convert={ Date.parse("yyyy-MM-dd", it) }) Date d
-        @Unparsed List remaining
+        @Option(convert = { it.toLowerCase() })
+        String a
+        @Option(convert = { it.toUpperCase() })
+        String b
+        @Option(convert = { Date.parse("yyyy-MM-dd", it) })
+        Date d
+        @Unparsed
+        List remaining
     }
 
     void testConvertClass() {
@@ -593,9 +658,12 @@ usage: groovy
     }
 
     class TypeCheckedC {
-        @Option String name
-        @Option int age
-        @Unparsed List remaining
+        @Option
+        String name
+        @Option
+        int age
+        @Unparsed
+        List remaining
     }
 
     @TypeChecked
@@ -616,11 +684,12 @@ usage: groovy
         builder2.parseFromInstance(p2, argz)
         // properties show first in toString()
         assert p2.toString() == 'CliBuilderTest$PersonC(John, true, Smith, true, true, false, 21, 1980, 3.5, 3.14159,' +
-                ' cv.txt, DOWN, [and, some, more])'
+            ' cv.txt, DOWN, [and, some, more])'
     }
 
     interface RetTypeI {
-        @Unparsed Integer[] nums()
+        @Unparsed
+        Integer[] nums()
     }
 
     void testTypedUnparsedFromSpec() {
@@ -631,7 +700,8 @@ usage: groovy
     }
 
     class RetTypeC {
-        @Unparsed Integer[] nums
+        @Unparsed
+        Integer[] nums
     }
 
     void testTypedUnparsedFromInstance() {
@@ -643,17 +713,26 @@ usage: groovy
     }
 
     interface FlagEdgeCasesI {
-        @Option boolean abc()
-        @Option(numberOfArgumentsString='1') boolean efg()
-        @Option(numberOfArguments=1) ijk()
-        @Option(numberOfArguments=0) lmn()
-        @Unparsed List remaining()
+        @Option
+        boolean abc()
+
+        @Option(numberOfArgumentsString = '1')
+        boolean efg()
+
+        @Option(numberOfArguments = 1)
+        ijk()
+
+        @Option(numberOfArguments = 0)
+        lmn()
+
+        @Unparsed
+        List remaining()
     }
 
     // GROOVY-8607
     void testOptIgnoredWhenSupplyingMapOfArgs() {
         def builder = new CliBuilder()
-        def helpOpt = [opt:'h', longOpt: 'help']
+        def helpOpt = [opt: 'h', longOpt: 'help']
         builder."$helpOpt.opt"(helpOpt, 'help option').with {
             assert opt == 'h'
             assert longOpt == 'help'
@@ -661,8 +740,11 @@ usage: groovy
     }
 
     interface StringIntArray {
-        @Option(shortName='u') String user()
-        @Unparsed Integer[] nums()
+        @Option(shortName = 'u')
+        String user()
+
+        @Unparsed
+        Integer[] nums()
     }
 
     // GROOVY-8975
@@ -691,7 +773,7 @@ usage: groovy
         assert options.remaining() == ['bar', 'baz']
     }
 
-        void testParseScript() {
+    void testParseScript() {
         new GroovyShell().run('''
             import groovy.cli.OptionField
             import groovy.cli.UnparsedField

@@ -63,13 +63,13 @@ import java.util.Map;
 import java.util.Optional;
 
 public class GroovydocJavaVisitor extends VoidVisitorAdapter<Object> {
+    private static final String FS = "/";
     private final List<LinkArgument> links;
+    private final Map<String, String> aliases = new HashMap<>();
     private SimpleGroovyClassDoc currentClassDoc = null;
     private Map<String, GroovyClassDoc> classDocs = new HashMap<>();
     private String packagePath;
-    private final Map<String, String> aliases = new HashMap<>();
     private List<String> imports = new ArrayList<>();
-    private static final String FS = "/";
 
     public GroovydocJavaVisitor(String packagePath, List<LinkArgument> links) {
         this.packagePath = packagePath;
@@ -82,7 +82,7 @@ public class GroovydocJavaVisitor extends VoidVisitorAdapter<Object> {
         String qual = qualPath.map(value -> value.asString().replace('.', '/') + "/").orElse("");
         String id = n.getName().getIdentifier();
         String name = qual + id;
-        if (n.isAsterisk()) name +="/*";
+        if (n.isAsterisk()) name += "/*";
         imports.add(name);
         aliases.put(id, name);
         super.visit(n, arg);
@@ -119,7 +119,7 @@ public class GroovydocJavaVisitor extends VoidVisitorAdapter<Object> {
         currentClassDoc.addEnumConstant(enumConstantDoc);
         processAnnotations(enumConstantDoc, n);
         n.getJavadocComment().ifPresent(javadocComment ->
-                enumConstantDoc.setRawCommentText(javadocComment.getContent()));
+            enumConstantDoc.setRawCommentText(javadocComment.getContent()));
         super.visit(n, arg);
     }
 
@@ -146,7 +146,7 @@ public class GroovydocJavaVisitor extends VoidVisitorAdapter<Object> {
         processAnnotations(fieldDoc, n);
         currentClassDoc.add(fieldDoc);
         n.getJavadocComment().ifPresent(javadocComment ->
-                fieldDoc.setRawCommentText(javadocComment.getContent()));
+            fieldDoc.setRawCommentText(javadocComment.getContent()));
         n.getDefaultValue().ifPresent(defValue -> {
             fieldDoc.setRawCommentText(fieldDoc.getRawCommentText() + "\n* @default " + defValue.toString());
             fieldDoc.setConstantValueExpression(defValue.toString());
@@ -174,7 +174,7 @@ public class GroovydocJavaVisitor extends VoidVisitorAdapter<Object> {
         }
         currentClassDoc.setNameWithTypeArgs(currentClassDoc.name() + genericTypesAsString(n.getTypeParameters()));
         n.getImplementedTypes().forEach(classOrInterfaceType ->
-                currentClassDoc.addInterfaceName(fullName(classOrInterfaceType)));
+            currentClassDoc.addInterfaceName(fullName(classOrInterfaceType)));
         super.visit(n, arg);
         if (parent != null) {
             currentClassDoc = parent;
@@ -216,7 +216,7 @@ public class GroovydocJavaVisitor extends VoidVisitorAdapter<Object> {
         currentClassDoc.setFullPathName(withSlashes(packagePath + FS + name));
         classDocs.put(currentClassDoc.getFullPathName(), currentClassDoc);
         n.getJavadocComment().ifPresent(javadocComment ->
-                currentClassDoc.setRawCommentText(javadocComment.getContent()));
+            currentClassDoc.setRawCommentText(javadocComment.getContent()));
         return parent;
     }
 
@@ -288,7 +288,7 @@ public class GroovydocJavaVisitor extends VoidVisitorAdapter<Object> {
 
     private void setConstructorOrMethodCommon(CallableDeclaration<? extends CallableDeclaration<?>> n, SimpleGroovyExecutableMemberDoc methOrCons) {
         n.getJavadocComment().ifPresent(javadocComment ->
-                methOrCons.setRawCommentText(javadocComment.getContent()));
+            methOrCons.setRawCommentText(javadocComment.getContent()));
         NodeList<Modifier> mods = n.getModifiers();
         if (currentClassDoc.isInterface()) {
             mods.add(Modifier.publicModifier());
@@ -311,7 +311,7 @@ public class GroovydocJavaVisitor extends VoidVisitorAdapter<Object> {
         setModifiers(f.getModifiers(), field);
         processAnnotations(field, f);
         f.getJavadocComment().ifPresent(javadocComment ->
-                field.setRawCommentText(javadocComment.getContent()));
+            field.setRawCommentText(javadocComment.getContent()));
         currentClassDoc.add(field);
         super.visit(f, arg);
     }

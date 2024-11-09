@@ -81,6 +81,8 @@ import java.util.Set;
 public final class ASTTransformationVisitor extends ClassCodeVisitorSupport {
 
     private static final PriorityComparator priorityComparator = new PriorityComparator();
+    private static final Tuple3<String, String, String> COMPILEDYNAMIC_AND_COMPILESTATIC_AND_TYPECHECKED =
+        Tuple.tuple("groovy.transform.CompileDynamic", "groovy.transform.CompileStatic", "groovy.transform.TypeChecked");
     private final ASTTransformationsContext context;
     private final CompilePhase phase;
     private SourceUnit source;
@@ -90,128 +92,6 @@ public final class ASTTransformationVisitor extends ClassCodeVisitorSupport {
     private ASTTransformationVisitor(final CompilePhase phase, final ASTTransformationsContext context) {
         this.phase = phase;
         this.context = context;
-    }
-
-    @Override
-    protected SourceUnit getSourceUnit() {
-        return source;
-    }
-
-    /**
-     * Main loop entry.
-     * <p>
-     * First, it delegates to the super visitClass so we can collect the
-     * relevant annotations in an AST tree walk.
-     * <p>
-     * Second, it calls the visit method on the transformation for each relevant
-     * annotation found.
-     *
-     * @param classNode the class to visit
-     */
-    @Override
-    public void visitClass(ClassNode classNode) {
-        // only descend if we have annotations to look for
-        Map<Class<? extends ASTTransformation>, Set<ASTNode>> baseTransforms = classNode.getTransforms(phase);
-        if (!baseTransforms.isEmpty()) {
-            final Map<Class<? extends ASTTransformation>, ASTTransformation> transformInstances = new HashMap<Class<? extends ASTTransformation>, ASTTransformation>();
-            for (Class<? extends ASTTransformation> transformClass : baseTransforms.keySet()) {
-                try {
-                    transformInstances.put(transformClass, transformClass.getDeclaredConstructor().newInstance());
-                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                    source.getErrorCollector().addError(
-                            new SimpleMessage(
-                                    "Could not instantiate Transformation Processor " + transformClass
-                                    , //+ " declared by " + annotation.getClassNode().getName(),
-                                    source));
-                }
-            }
-
-            // invert the map, is now one to many
-            transforms = new HashMap<ASTNode, List<ASTTransformation>>();
-            for (Map.Entry<Class<? extends ASTTransformation>, Set<ASTNode>> entry : baseTransforms.entrySet()) {
-                for (ASTNode node : entry.getValue()) {
-                    List<ASTTransformation> list = transforms.computeIfAbsent(node, k -> new ArrayList<>());
-                    ASTTransformation aTransform = transformInstances.get(entry.getKey());
-                    if (aTransform != null) list.add(aTransform);
-                }
-            }
-
-            targetNodes = new LinkedList<ASTNode[]>();
-
-            // first pass, collect nodes
-            super.visitClass(classNode);
-
-            // second pass, call visit on all the collected nodes
-            List<Tuple2<ASTTransformation, ASTNode[]>> tuples = new ArrayList<>();
-            for (ASTNode[] node : targetNodes) {
-                for (ASTTransformation snt : transforms.get(node[0])) {
-                    tuples.add(new Tuple2<>(snt, node));
-                }
-            }
-            tuples.sort(priorityComparator);
-            for (Tuple2<ASTTransformation, ASTNode[]> tuple : tuples) {
-                if (tuple.getV1() instanceof CompilationUnitAware) {
-                    ((CompilationUnitAware)tuple.getV1()).setCompilationUnit(context.getCompilationUnit());
-                }
-                tuple.getV1().visit(tuple.getV2(), source);
-            }
-        }
-    }
-
-    /**
-     * Adds the annotation to the internal target list if a match is found.
-     *
-     * @param node the node to be processed
-     */
-    @Override
-    public void visitAnnotations(final AnnotatedNode node) {
-        super.visitAnnotations(node);
-        for (AnnotationNode annotation : distinctAnnotations(node)) {
-            if (transforms.containsKey(annotation)) {
-                targetNodes.add(new ASTNode[]{annotation, node});
-            }
-        }
-    }
-
-    private static final Tuple3<String, String, String> COMPILEDYNAMIC_AND_COMPILESTATIC_AND_TYPECHECKED =
-            Tuple.tuple("groovy.transform.CompileDynamic", "groovy.transform.CompileStatic", "groovy.transform.TypeChecked");
-
-    // GROOVY-9215
-    // `StaticTypeCheckingVisitor` visits multi-times because `node` has duplicated `CompileStatic` and `TypeChecked`
-    // If annotation with higher priority appears, annotation with lower priority will be ignored
-    // Priority: CompileDynamic > CompileStatic > TypeChecked
-    private List<AnnotationNode> distinctAnnotations(AnnotatedNode node) {
-        List<AnnotationNode> result = new LinkedList<>();
-        AnnotationNode resultAnnotationNode = null;
-        int resultIndex = -1;
-
-        for (AnnotationNode annotationNode : node.getAnnotations()) {
-            int index = COMPILEDYNAMIC_AND_COMPILESTATIC_AND_TYPECHECKED.indexOf(annotationNode.getClassNode().getName());
-            if (-1 != index) {
-                if (1 == index) { // CompileStatic
-                    Expression value = annotationNode.getMember("value");
-                    if (null != value && "groovy.transform.TypeCheckingMode.SKIP".equals(value.getText())) {
-                        index = 0; // `CompileStatic` with "SKIP" `value` is actually `CompileDynamic`
-                    }
-                }
-
-                if (null == resultAnnotationNode || index < resultIndex) {
-                    resultAnnotationNode = annotationNode;
-                    resultIndex = index;
-                }
-                continue;
-            }
-            result.add(annotationNode);
-        }
-
-        if (null != resultAnnotationNode) result.add(resultAnnotationNode);
-
-        return result;
-    }
-
-    @Override
-    public void visitProperty(PropertyNode node) {
-        // ignore: we'll already have allocated to field or accessor method by now
     }
 
     public static void addPhaseOperations(final CompilationUnit compilationUnit) {
@@ -286,8 +166,8 @@ public final class ASTTransformationVisitor extends ClassCodeVisitorSupport {
                         className = svcIn.readLine();
                     } catch (IOException ioe) {
                         compilationUnit.getErrorCollector().addError(new SimpleMessage(
-                                "IOException reading the service definition at "
-                                        + service.toExternalForm() + " because of exception " + ioe.toString(), null));
+                            "IOException reading the service definition at "
+                                + service.toExternalForm() + " because of exception " + ioe.toString(), null));
                         continue;
                     }
                     Set<String> disabledGlobalTransforms = compilationUnit.getConfiguration().getDisabledGlobalASTTransformations();
@@ -299,21 +179,21 @@ public final class ASTTransformationVisitor extends ClassCodeVisitorSupport {
                                     try {
                                         if (!service.toURI().equals(transformNames.get(className).toURI())) {
                                             compilationUnit.getErrorCollector().addWarning(
-                                                    WarningMessage.POSSIBLE_ERRORS,
-                                                    "The global transform for class " + className + " is defined in both "
-                                                            + transformNames.get(className).toExternalForm()
-                                                            + " and "
-                                                            + service.toExternalForm()
-                                                            + " - the former definition will be used and the latter ignored.",
-                                                    null,
-                                                    null);
+                                                WarningMessage.POSSIBLE_ERRORS,
+                                                "The global transform for class " + className + " is defined in both "
+                                                    + transformNames.get(className).toExternalForm()
+                                                    + " and "
+                                                    + service.toExternalForm()
+                                                    + " - the former definition will be used and the latter ignored.",
+                                                null,
+                                                null);
                                         }
                                     } catch (URISyntaxException e) {
                                         compilationUnit.getErrorCollector().addWarning(
-                                                WarningMessage.POSSIBLE_ERRORS,
-                                                "Failed to parse URL as URI because of exception " + e.toString(),
-                                                null,
-                                                null);
+                                            WarningMessage.POSSIBLE_ERRORS,
+                                            "Failed to parse URL as URI because of exception " + e.toString(),
+                                            null,
+                                            null);
                                     }
                                 } else {
                                     transformNames.put(className, service);
@@ -324,8 +204,8 @@ public final class ASTTransformationVisitor extends ClassCodeVisitorSupport {
                             className = svcIn.readLine();
                         } catch (IOException ioe) {
                             compilationUnit.getErrorCollector().addError(new SimpleMessage(
-                                    "IOException reading the service definition at "
-                                            + service.toExternalForm() + " because of exception " + ioe.toString(), null));
+                                "IOException reading the service definition at "
+                                    + service.toExternalForm() + " because of exception " + ioe.toString(), null));
                         }
                     }
                 }
@@ -361,8 +241,8 @@ public final class ASTTransformationVisitor extends ClassCodeVisitorSupport {
                     compilationUnit.getErrorCollector().addWarning(
                         WarningMessage.POSSIBLE_ERRORS,
                         "Transform Class " + entry.getKey() + " is specified as a global transform in " + entry.getValue().toExternalForm()
-                        + " but it is not annotated by " + GroovyASTTransformation.class.getName()
-                        + " the global transform associated with it may fail and cause the compilation to fail.",
+                            + " but it is not annotated by " + GroovyASTTransformation.class.getName()
+                            + " the global transform associated with it may fail and cause the compilation to fail.",
                         null,
                         null);
                     continue;
@@ -381,15 +261,135 @@ public final class ASTTransformationVisitor extends ClassCodeVisitorSupport {
                 } else {
                     compilationUnit.getErrorCollector().addError(new SimpleMessage(
                         "Transform Class " + entry.getKey() + " specified at "
-                        + entry.getValue().toExternalForm() + " is not an ASTTransformation.", null));
+                            + entry.getValue().toExternalForm() + " is not an ASTTransformation.", null));
                 }
             } catch (Exception e) {
                 Throwable t = e instanceof InvocationTargetException ? e.getCause() : e;
                 compilationUnit.getErrorCollector().addError(new SimpleMessage(
                     "Could not instantiate global transform class " + entry.getKey() + " specified at "
-                    + entry.getValue().toExternalForm() + "  because of exception " + t.toString(), null));
+                        + entry.getValue().toExternalForm() + "  because of exception " + t.toString(), null));
             }
         }
+    }
+
+    @Override
+    protected SourceUnit getSourceUnit() {
+        return source;
+    }
+
+    /**
+     * Main loop entry.
+     * <p>
+     * First, it delegates to the super visitClass so we can collect the
+     * relevant annotations in an AST tree walk.
+     * <p>
+     * Second, it calls the visit method on the transformation for each relevant
+     * annotation found.
+     *
+     * @param classNode the class to visit
+     */
+    @Override
+    public void visitClass(ClassNode classNode) {
+        // only descend if we have annotations to look for
+        Map<Class<? extends ASTTransformation>, Set<ASTNode>> baseTransforms = classNode.getTransforms(phase);
+        if (!baseTransforms.isEmpty()) {
+            final Map<Class<? extends ASTTransformation>, ASTTransformation> transformInstances = new HashMap<Class<? extends ASTTransformation>, ASTTransformation>();
+            for (Class<? extends ASTTransformation> transformClass : baseTransforms.keySet()) {
+                try {
+                    transformInstances.put(transformClass, transformClass.getDeclaredConstructor().newInstance());
+                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                         InvocationTargetException e) {
+                    source.getErrorCollector().addError(
+                        new SimpleMessage(
+                            "Could not instantiate Transformation Processor " + transformClass
+                            , //+ " declared by " + annotation.getClassNode().getName(),
+                            source));
+                }
+            }
+
+            // invert the map, is now one to many
+            transforms = new HashMap<ASTNode, List<ASTTransformation>>();
+            for (Map.Entry<Class<? extends ASTTransformation>, Set<ASTNode>> entry : baseTransforms.entrySet()) {
+                for (ASTNode node : entry.getValue()) {
+                    List<ASTTransformation> list = transforms.computeIfAbsent(node, k -> new ArrayList<>());
+                    ASTTransformation aTransform = transformInstances.get(entry.getKey());
+                    if (aTransform != null) list.add(aTransform);
+                }
+            }
+
+            targetNodes = new LinkedList<ASTNode[]>();
+
+            // first pass, collect nodes
+            super.visitClass(classNode);
+
+            // second pass, call visit on all the collected nodes
+            List<Tuple2<ASTTransformation, ASTNode[]>> tuples = new ArrayList<>();
+            for (ASTNode[] node : targetNodes) {
+                for (ASTTransformation snt : transforms.get(node[0])) {
+                    tuples.add(new Tuple2<>(snt, node));
+                }
+            }
+            tuples.sort(priorityComparator);
+            for (Tuple2<ASTTransformation, ASTNode[]> tuple : tuples) {
+                if (tuple.getV1() instanceof CompilationUnitAware) {
+                    ((CompilationUnitAware) tuple.getV1()).setCompilationUnit(context.getCompilationUnit());
+                }
+                tuple.getV1().visit(tuple.getV2(), source);
+            }
+        }
+    }
+
+    /**
+     * Adds the annotation to the internal target list if a match is found.
+     *
+     * @param node the node to be processed
+     */
+    @Override
+    public void visitAnnotations(final AnnotatedNode node) {
+        super.visitAnnotations(node);
+        for (AnnotationNode annotation : distinctAnnotations(node)) {
+            if (transforms.containsKey(annotation)) {
+                targetNodes.add(new ASTNode[]{annotation, node});
+            }
+        }
+    }
+
+    // GROOVY-9215
+    // `StaticTypeCheckingVisitor` visits multi-times because `node` has duplicated `CompileStatic` and `TypeChecked`
+    // If annotation with higher priority appears, annotation with lower priority will be ignored
+    // Priority: CompileDynamic > CompileStatic > TypeChecked
+    private List<AnnotationNode> distinctAnnotations(AnnotatedNode node) {
+        List<AnnotationNode> result = new LinkedList<>();
+        AnnotationNode resultAnnotationNode = null;
+        int resultIndex = -1;
+
+        for (AnnotationNode annotationNode : node.getAnnotations()) {
+            int index = COMPILEDYNAMIC_AND_COMPILESTATIC_AND_TYPECHECKED.indexOf(annotationNode.getClassNode().getName());
+            if (-1 != index) {
+                if (1 == index) { // CompileStatic
+                    Expression value = annotationNode.getMember("value");
+                    if (null != value && "groovy.transform.TypeCheckingMode.SKIP".equals(value.getText())) {
+                        index = 0; // `CompileStatic` with "SKIP" `value` is actually `CompileDynamic`
+                    }
+                }
+
+                if (null == resultAnnotationNode || index < resultIndex) {
+                    resultAnnotationNode = annotationNode;
+                    resultIndex = index;
+                }
+                continue;
+            }
+            result.add(annotationNode);
+        }
+
+        if (null != resultAnnotationNode) result.add(resultAnnotationNode);
+
+        return result;
+    }
+
+    @Override
+    public void visitProperty(PropertyNode node) {
+        // ignore: we'll already have allocated to field or accessor method by now
     }
 
     private static class PriorityComparator implements Comparator<Tuple2<ASTTransformation, ASTNode[]>> {

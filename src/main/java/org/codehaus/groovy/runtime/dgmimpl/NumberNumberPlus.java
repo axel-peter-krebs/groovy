@@ -24,16 +24,6 @@ import org.codehaus.groovy.runtime.callsite.CallSite;
 import org.codehaus.groovy.runtime.typehandling.NumberMath;
 
 public final class NumberNumberPlus extends NumberNumberMetaMethod {
-    @Override
-    public String getName() {
-        return "plus";
-    }
-
-    @Override
-    public Object invoke(Object object, Object[] arguments) {
-        return NumberMath.add((Number) object, (Number) arguments[0]);
-    }
-
     /**
      * Add two numbers and return the result.
      *
@@ -43,6 +33,16 @@ public final class NumberNumberPlus extends NumberNumberMetaMethod {
      */
     public static Number plus(Number left, Number right) {
         return NumberMath.add(left, right);
+    }
+
+    @Override
+    public String getName() {
+        return "plus";
+    }
+
+    @Override
+    public Object invoke(Object object, Object[] arguments) {
+        return NumberMath.add((Number) object, (Number) arguments[0]);
     }
 
     @Override
@@ -151,8 +151,7 @@ public final class NumberNumberPlus extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Double) receiver + (Double) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -169,8 +168,7 @@ public final class NumberNumberPlus extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Double) receiver + ((Float) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -187,8 +185,7 @@ public final class NumberNumberPlus extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Double) receiver + ((Long) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -205,8 +202,7 @@ public final class NumberNumberPlus extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Double) receiver + (Integer) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -223,8 +219,7 @@ public final class NumberNumberPlus extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Float) receiver).doubleValue() + (Double) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -241,8 +236,7 @@ public final class NumberNumberPlus extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Float) receiver).doubleValue() + ((Float) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -259,8 +253,7 @@ public final class NumberNumberPlus extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Float) receiver).doubleValue() + ((Long) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -277,8 +270,7 @@ public final class NumberNumberPlus extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Float) receiver).doubleValue() + ((Integer) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -295,8 +287,7 @@ public final class NumberNumberPlus extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Long) receiver).doubleValue() + (Double) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -313,8 +304,7 @@ public final class NumberNumberPlus extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Long) receiver).doubleValue() + ((Float) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -331,8 +321,7 @@ public final class NumberNumberPlus extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Long) receiver + (Long) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -349,8 +338,7 @@ public final class NumberNumberPlus extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Long) receiver + ((Integer) arg).longValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -367,8 +355,7 @@ public final class NumberNumberPlus extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Integer) receiver).doubleValue() + (Double) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -385,8 +372,7 @@ public final class NumberNumberPlus extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Integer) receiver).doubleValue() + ((Float) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -403,8 +389,7 @@ public final class NumberNumberPlus extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Integer) receiver).longValue() + (Long) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -421,8 +406,7 @@ public final class NumberNumberPlus extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Integer) receiver + (Integer) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }

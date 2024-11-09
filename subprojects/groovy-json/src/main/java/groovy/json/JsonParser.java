@@ -31,12 +31,20 @@ import java.io.Reader;
 public interface JsonParser {
 
     Object parse(String jsonString);
+
     Object parse(byte[] bytes);
+
     Object parse(byte[] bytes, String charset);
+
     Object parse(CharSequence charSequence);
+
     Object parse(char[] chars);
+
     Object parse(Reader reader);
+
     Object parse(InputStream input);
+
     Object parse(InputStream input, String charset);
+
     Object parse(File file, String charset);
 }

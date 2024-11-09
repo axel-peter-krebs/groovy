@@ -57,18 +57,20 @@ import static org.apache.groovy.parser.antlr4.GroovyLexer.SAFE_INDEX;
  * @since 3.0.0
  */
 public class MatchingHighlighter implements CaretListener {
+    private static final Map<String, Tuple3<Integer, List<Integer>, Boolean>> PAREN_MAP = Maps.of(
+        "(", tuple(LPAREN, Collections.singletonList(RPAREN), true),
+        ")", tuple(RPAREN, Collections.singletonList(LPAREN), false),
+        "?[", tuple(SAFE_INDEX, Collections.singletonList(RBRACK), true),
+        "[", tuple(LBRACK, Collections.singletonList(RBRACK), true),
+        "]", tuple(RBRACK, Arrays.asList(LBRACK, SAFE_INDEX), false),
+        "{", tuple(LBRACE, Collections.singletonList(RBRACE), true),
+        "}", tuple(RBRACE, Collections.singletonList(LBRACE), false)
+    );
     private final SmartDocumentFilter smartDocumentFilter;
     private final JTextPane textEditor;
     private final DefaultStyledDocument doc;
-    private static final Map<String, Tuple3<Integer, List<Integer>, Boolean>> PAREN_MAP = Maps.of(
-            "(", tuple(LPAREN, Collections.singletonList(RPAREN), true),
-            ")", tuple(RPAREN, Collections.singletonList(LPAREN), false),
-            "?[", tuple(SAFE_INDEX, Collections.singletonList(RBRACK), true),
-            "[", tuple(LBRACK, Collections.singletonList(RBRACK), true),
-            "]", tuple(RBRACK, Arrays.asList(LBRACK, SAFE_INDEX), false),
-            "{", tuple(LBRACE, Collections.singletonList(RBRACE), true),
-            "}", tuple(RBRACE, Collections.singletonList(LBRACE), false)
-    );
+    private final StyleContext styleContext = StyleContext.getDefaultStyleContext();
+    private final Style defaultStyle = styleContext.getStyle(StyleContext.DEFAULT_STYLE);
     private volatile List<Tuple3<Integer, Position, Integer>> highlightedTokenInfoList = Collections.emptyList();
 
     public MatchingHighlighter(SmartDocumentFilter smartDocumentFilter, JTextPane textEditor) {
@@ -77,6 +79,10 @@ public class MatchingHighlighter implements CaretListener {
         this.doc = (DefaultStyledDocument) textEditor.getStyledDocument();
 
         initStyles();
+    }
+
+    private static String highlightedStyleName(String p) {
+        return "highlighted" + p;
     }
 
     @Override
@@ -175,8 +181,8 @@ public class MatchingHighlighter implements CaretListener {
             highlightToken(p, matchedToken);
             try {
                 highlightedTokenInfoList = Arrays.asList(
-                        tuple(triggerToken.getType(), doc.createPosition(triggerToken.getStartIndex()), triggerToken.getText().length()),
-                        tuple(matchedToken.getType(), doc.createPosition(matchedToken.getStartIndex()), matchedToken.getText().length())
+                    tuple(triggerToken.getType(), doc.createPosition(triggerToken.getStartIndex()), triggerToken.getText().length()),
+                    tuple(matchedToken.getType(), doc.createPosition(matchedToken.getStartIndex()), matchedToken.getText().length())
                 );
             } catch (BadLocationException e) {
                 e.printStackTrace();
@@ -188,17 +194,10 @@ public class MatchingHighlighter implements CaretListener {
         PAREN_MAP.keySet().forEach(e -> createHighlightedStyleByParen(e));
     }
 
-    private final StyleContext styleContext = StyleContext.getDefaultStyleContext();
-    private final Style defaultStyle = styleContext.getStyle(StyleContext.DEFAULT_STYLE);
-
     private void createHighlightedStyleByParen(String p) {
         Style style = StyleContext.getDefaultStyleContext().addStyle(highlightedStyleName(p), findStyleByTokenType(PAREN_MAP.get(p).getV1()));
         StyleConstants.setForeground(style, Color.YELLOW.darker());
         StyleConstants.setBold(style, true);
-    }
-
-    private static String highlightedStyleName(String p) {
-        return "highlighted" + p;
     }
 
     private Style findHighlightedStyleByParen(String p) {
@@ -216,19 +215,19 @@ public class MatchingHighlighter implements CaretListener {
     private void highlightToken(String p, final Token tokenToHighlight) {
         Style style = findHighlightedStyleByParen(p);
         doc.setCharacterAttributes(tokenToHighlight.getStartIndex(),
-                tokenToHighlight.getText().length(),
-                style,
-                true);
+            tokenToHighlight.getText().length(),
+            style,
+            true);
     }
 
     private void clearHighlighted() {
         if (!highlightedTokenInfoList.isEmpty()) {
             for (Tuple3<Integer, Position, Integer> highlightedTokenInfo : highlightedTokenInfoList) {
                 doc.setCharacterAttributes(
-                        highlightedTokenInfo.getV2().getOffset(),
-                        highlightedTokenInfo.getV3(),
-                        findStyleByTokenType(highlightedTokenInfo.getV1()),
-                        true
+                    highlightedTokenInfo.getV2().getOffset(),
+                    highlightedTokenInfo.getV3(),
+                    findStyleByTokenType(highlightedTokenInfo.getV1()),
+                    true
                 );
             }
 

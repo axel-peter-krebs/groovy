@@ -421,6 +421,7 @@ final class ThreadInterruptTest {
 
 class CountingThread extends Thread {
     int interruptedCheckCount = 0
+
     @Override
     boolean isInterrupted() {
         interruptedCheckCount += 1

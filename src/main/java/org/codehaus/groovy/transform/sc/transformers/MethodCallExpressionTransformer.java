@@ -42,6 +42,42 @@ class MethodCallExpressionTransformer {
         this.scTransformer = scTransformer;
     }
 
+    private static boolean isIsExtension(final MethodNode node) {
+        return node instanceof ExtensionMethodNode // guards null
+            && "is".equals(node.getName())
+            && node.getParameters().length == 1
+            && DefaultGroovyMethods.class.getName().equals(
+            ((ExtensionMethodNode) node).getExtensionMethodNode().getDeclaringClass().getName());
+    }
+
+    //--------------------------------------------------------------------------
+
+    private static MethodCallExpression transformToMopSuperCall(final ClassNode superType, final MethodCallExpression expr) {
+        MethodNode mn = expr.getNodeMetaData(StaticTypesMarker.DIRECT_METHOD_CALL_TARGET);
+        String mopName = MopWriter.getMopMethodName(mn, false);
+        MethodNode direct = new MethodNode(
+            mopName,
+            ACC_PUBLIC | ACC_SYNTHETIC,
+            mn.getReturnType(),
+            mn.getParameters(),
+            mn.getExceptions(),
+            EmptyStatement.INSTANCE
+        );
+        direct.setDeclaringClass(superType);
+
+        MethodCallExpression result = new MethodCallExpression(
+            new VariableExpression("this"),
+            mopName,
+            expr.getArguments()
+        );
+        result.setImplicitThis(true);
+        result.setSpreadSafe(false);
+        result.setSafe(false);
+        result.setSourcePosition(expr);
+        result.setMethodTarget(direct);
+        return result;
+    }
+
     Expression transformMethodCallExpression(final MethodCallExpression mce) {
         Expression arguments = mce.getArguments();
 
@@ -71,41 +107,5 @@ class MethodCallExpressionTransformer {
         }
 
         return scTransformer.superTransform(mce);
-    }
-
-    //--------------------------------------------------------------------------
-
-    private static boolean isIsExtension(final MethodNode node) {
-        return node instanceof ExtensionMethodNode // guards null
-                && "is".equals(node.getName())
-                && node.getParameters().length == 1
-                && DefaultGroovyMethods.class.getName().equals(
-                    ((ExtensionMethodNode) node).getExtensionMethodNode().getDeclaringClass().getName());
-    }
-
-    private static MethodCallExpression transformToMopSuperCall(final ClassNode superType, final MethodCallExpression expr) {
-        MethodNode mn = expr.getNodeMetaData(StaticTypesMarker.DIRECT_METHOD_CALL_TARGET);
-        String mopName = MopWriter.getMopMethodName(mn, false);
-        MethodNode direct = new MethodNode(
-                mopName,
-                ACC_PUBLIC | ACC_SYNTHETIC,
-                mn.getReturnType(),
-                mn.getParameters(),
-                mn.getExceptions(),
-                EmptyStatement.INSTANCE
-        );
-        direct.setDeclaringClass(superType);
-
-        MethodCallExpression result = new MethodCallExpression(
-                new VariableExpression("this"),
-                mopName,
-                expr.getArguments()
-        );
-        result.setImplicitThis(true);
-        result.setSpreadSafe(false);
-        result.setSafe(false);
-        result.setSourcePosition(expr);
-        result.setMethodTarget(direct);
-        return result;
     }
 }

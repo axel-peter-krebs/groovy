@@ -54,6 +54,7 @@ def c() {
     int k = 1
     assert j === k
 }
+
 c()
 
 @CompileStatic
@@ -92,4 +93,5 @@ def c_cs() {
     int k = 1
     assert j === k
 }
+
 c_cs()

@@ -662,13 +662,13 @@ public class ResourceGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.8.1
      */
     public static String getText(
-            URL url,
-            @NamedParam(value = "connectTimeout", type = Integer.class)
-            @NamedParam(value = "readTimeout", type = Integer.class)
-            @NamedParam(value = "useCaches", type = Boolean.class)
-            @NamedParam(value = "allowUserInteraction", type = Boolean.class)
-            @NamedParam(value = "requestProperties", type = Map.class)
-            Map<String, ?> parameters
+        URL url,
+        @NamedParam(value = "connectTimeout", type = Integer.class)
+        @NamedParam(value = "readTimeout", type = Integer.class)
+        @NamedParam(value = "useCaches", type = Boolean.class)
+        @NamedParam(value = "allowUserInteraction", type = Boolean.class)
+        @NamedParam(value = "requestProperties", type = Map.class)
+        Map<String, ?> parameters
     ) throws IOException {
         return getText(url, parameters, CharsetToolkit.getDefaultSystemCharset().name());
     }
@@ -702,14 +702,14 @@ public class ResourceGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.8.1
      */
     public static String getText(
-            URL url,
-            @NamedParam(value = "connectTimeout", type = Integer.class)
-            @NamedParam(value = "readTimeout", type = Integer.class)
-            @NamedParam(value = "useCaches", type = Boolean.class)
-            @NamedParam(value = "allowUserInteraction", type = Boolean.class)
-            @NamedParam(value = "requestProperties", type = Map.class)
-            Map<String, ?> parameters,
-            String charset
+        URL url,
+        @NamedParam(value = "connectTimeout", type = Integer.class)
+        @NamedParam(value = "readTimeout", type = Integer.class)
+        @NamedParam(value = "useCaches", type = Boolean.class)
+        @NamedParam(value = "allowUserInteraction", type = Boolean.class)
+        @NamedParam(value = "requestProperties", type = Map.class)
+        Map<String, ?> parameters,
+        String charset
     ) throws IOException {
         BufferedReader reader = newReader(url, parameters, charset);
         return IOGroovyMethods.getText(reader);
@@ -758,13 +758,13 @@ public class ResourceGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 2.4.4
      */
     public static byte[] getBytes(
-            URL url,
-            @NamedParam(value = "connectTimeout", type = Integer.class)
-            @NamedParam(value = "readTimeout", type = Integer.class)
-            @NamedParam(value = "useCaches", type = Boolean.class)
-            @NamedParam(value = "allowUserInteraction", type = Boolean.class)
-            @NamedParam(value = "requestProperties", type = Map.class)
-            Map<String, ?> parameters
+        URL url,
+        @NamedParam(value = "connectTimeout", type = Integer.class)
+        @NamedParam(value = "readTimeout", type = Integer.class)
+        @NamedParam(value = "useCaches", type = Boolean.class)
+        @NamedParam(value = "allowUserInteraction", type = Boolean.class)
+        @NamedParam(value = "requestProperties", type = Map.class)
+        Map<String, ?> parameters
     ) throws IOException {
         return IOGroovyMethods.getBytes(configuredInputStream(parameters, url));
     }
@@ -1251,15 +1251,15 @@ public class ResourceGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.7.1
      */
     public static void eachFile(final File self, final FileType fileType, @ClosureParams(value = SimpleType.class, options = "java.io.File") final Closure closure)
-            throws FileNotFoundException, IllegalArgumentException {
+        throws FileNotFoundException, IllegalArgumentException {
         checkDir(self);
         final File[] files = self.listFiles();
         // null check because of http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4803836
         if (files == null) return;
         for (File file : files) {
             if (fileType == FileType.ANY ||
-                    (fileType != FileType.FILES && file.isDirectory()) ||
-                    (fileType != FileType.DIRECTORIES && file.isFile())) {
+                (fileType != FileType.FILES && file.isDirectory()) ||
+                (fileType != FileType.DIRECTORIES && file.isFile())) {
                 closure.call(file);
             }
         }
@@ -1312,7 +1312,7 @@ public class ResourceGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.7.1
      */
     public static void eachFileRecurse(final File self, final FileType fileType, @ClosureParams(value = SimpleType.class, options = "java.io.File") final Closure closure)
-            throws FileNotFoundException, IllegalArgumentException {
+        throws FileNotFoundException, IllegalArgumentException {
         checkDir(self);
         final File[] files = self.listFiles();
         // null check because of http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4803836
@@ -1387,22 +1387,20 @@ public class ResourceGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.7.1
      */
     public static void traverse(final File self,
-            @NamedParam(value = "type", type = FileType.class)
-            @NamedParam(value = "preDir", type = Closure.class)
-            @NamedParam(value = "preRoot", type = Boolean.class)
-            @NamedParam(value = "postDir", type = Closure.class)
-            @NamedParam(value = "postRoot", type = Boolean.class)
-            @NamedParam(value = "visitRoot", type = Boolean.class)
-            @NamedParam(value = "maxDepth", type = Integer.class)
-            @NamedParam(value = "filter")
-            @NamedParam(value = "nameFilter")
-            @NamedParam(value = "excludeFilter")
-            @NamedParam(value = "excludeNameFilter")
-            @NamedParam(value = "sort", type = Closure.class)
-            final Map<String, ?> options,
-            @ClosureParams(value = SimpleType.class, options = "java.io.File")
-            final Closure closure)
-                throws FileNotFoundException, IllegalArgumentException {
+                                @NamedParam(value = "type", type = FileType.class)
+                                @NamedParam(value = "preDir", type = Closure.class)
+                                @NamedParam(value = "preRoot", type = Boolean.class)
+                                @NamedParam(value = "postDir", type = Closure.class)
+                                @NamedParam(value = "postRoot", type = Boolean.class)
+                                @NamedParam(value = "visitRoot", type = Boolean.class)
+                                @NamedParam(value = "maxDepth", type = Integer.class)
+                                @NamedParam(value = "filter")
+                                @NamedParam(value = "nameFilter")
+                                @NamedParam(value = "excludeFilter")
+                                @NamedParam(value = "excludeNameFilter")
+                                @NamedParam(value = "sort", type = Closure.class) final Map<String, ?> options,
+                                @ClosureParams(value = SimpleType.class, options = "java.io.File") final Closure closure)
+        throws FileNotFoundException, IllegalArgumentException {
         final int maxDepth;
         final boolean preRoot;
         final boolean postRoot;
@@ -1432,7 +1430,7 @@ public class ResourceGroovyMethods extends DefaultGroovyMethodsSupport {
             preResult = pre.call(self);
         }
         if (preResult == FileVisitResult.TERMINATE ||
-                preResult == FileVisitResult.SKIP_SUBTREE) return;
+            preResult == FileVisitResult.SKIP_SUBTREE) return;
 
         FileVisitResult terminated = traverse(self, options, closure, maxDepth);
 
@@ -1491,7 +1489,7 @@ public class ResourceGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.7.1
      */
     public static void traverse(final File self, @ClosureParams(value = SimpleType.class, options = "java.io.File") final Closure closure)
-            throws FileNotFoundException, IllegalArgumentException {
+        throws FileNotFoundException, IllegalArgumentException {
         traverse(self, new HashMap<>(), closure);
     }
 
@@ -1509,26 +1507,25 @@ public class ResourceGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.7.1
      */
     public static void traverse(final File self,
-            @NamedParam(value = "type", type = FileType.class)
-            @NamedParam(value = "preDir", type = Closure.class)
-            @NamedParam(value = "preRoot", type = Boolean.class)
-            @NamedParam(value = "postDir", type = Closure.class)
-            @NamedParam(value = "postRoot", type = Boolean.class)
-            @NamedParam(value = "visitRoot", type = Boolean.class)
-            @NamedParam(value = "maxDepth", type = Integer.class)
-            @NamedParam(value = "filter")
-            @NamedParam(value = "nameFilter")
-            @NamedParam(value = "excludeFilter")
-            @NamedParam(value = "excludeNameFilter")
-            @NamedParam(value = "sort", type = Closure.class)
-            final Map<String, ?> options)
-                throws FileNotFoundException, IllegalArgumentException {
+                                @NamedParam(value = "type", type = FileType.class)
+                                @NamedParam(value = "preDir", type = Closure.class)
+                                @NamedParam(value = "preRoot", type = Boolean.class)
+                                @NamedParam(value = "postDir", type = Closure.class)
+                                @NamedParam(value = "postRoot", type = Boolean.class)
+                                @NamedParam(value = "visitRoot", type = Boolean.class)
+                                @NamedParam(value = "maxDepth", type = Integer.class)
+                                @NamedParam(value = "filter")
+                                @NamedParam(value = "nameFilter")
+                                @NamedParam(value = "excludeFilter")
+                                @NamedParam(value = "excludeNameFilter")
+                                @NamedParam(value = "sort", type = Closure.class) final Map<String, ?> options)
+        throws FileNotFoundException, IllegalArgumentException {
         final Closure visit = (Closure) options.remove("visit");
         traverse(self, options, visit);
     }
 
     private static FileVisitResult traverse(final File self, final Map<String, ?> options, final Closure closure, final int maxDepth)
-            throws FileNotFoundException, IllegalArgumentException {
+        throws FileNotFoundException, IllegalArgumentException {
         checkDir(self);
         final Closure pre = (Closure) options.get("preDir");
         final Closure post = (Closure) options.get("postDir");
@@ -1646,7 +1643,7 @@ public class ResourceGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.7.1
      */
     public static void eachFileMatch(final File self, final FileType fileType, final Object nameFilter, @ClosureParams(value = SimpleType.class, options = "java.io.File") final Closure closure)
-            throws FileNotFoundException, IllegalArgumentException {
+        throws FileNotFoundException, IllegalArgumentException {
         checkDir(self);
         final File[] files = self.listFiles();
         // null check because of http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4803836
@@ -1654,8 +1651,8 @@ public class ResourceGroovyMethods extends DefaultGroovyMethodsSupport {
         BooleanReturningMethodInvoker bmi = new BooleanReturningMethodInvoker("isCase");
         for (final File currentFile : files) {
             if (fileType == FileType.ANY ||
-                    (fileType != FileType.FILES && currentFile.isDirectory()) ||
-                    (fileType != FileType.DIRECTORIES && currentFile.isFile())) {
+                (fileType != FileType.FILES && currentFile.isDirectory()) ||
+                (fileType != FileType.DIRECTORIES && currentFile.isFile())) {
                 if (bmi.invoke(nameFilter, currentFile.getName()))
                     closure.call(currentFile);
             }
@@ -1677,7 +1674,7 @@ public class ResourceGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.5.0
      */
     public static void eachFileMatch(final File self, final Object nameFilter, @ClosureParams(value = SimpleType.class, options = "java.io.File") final Closure closure)
-            throws FileNotFoundException, IllegalArgumentException {
+        throws FileNotFoundException, IllegalArgumentException {
         eachFileMatch(self, FileType.ANY, nameFilter, closure);
     }
 
@@ -1870,7 +1867,7 @@ public class ResourceGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.0
      */
     public static BufferedReader newReader(File file, String charset)
-            throws FileNotFoundException, UnsupportedEncodingException {
+        throws FileNotFoundException, UnsupportedEncodingException {
         return new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
     }
 
@@ -2304,7 +2301,7 @@ public class ResourceGroovyMethods extends DefaultGroovyMethodsSupport {
      *
      * @param url a URL
      * @return a BufferedInputStream for the URL
-     * @throws IOException           if an I/O error occurs while creating the input stream
+     * @throws IOException if an I/O error occurs while creating the input stream
      * @since 1.5.2
      */
     public static BufferedInputStream newInputStream(URL url) throws IOException {
@@ -2326,17 +2323,17 @@ public class ResourceGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param url        a URL
      * @param parameters connection parameters
      * @return a BufferedInputStream for the URL
-     * @throws IOException           if an I/O error occurs while creating the input stream
+     * @throws IOException if an I/O error occurs while creating the input stream
      * @since 1.8.1
      */
     public static BufferedInputStream newInputStream(
-            URL url,
-            @NamedParam(value = "connectTimeout", type = Integer.class)
-            @NamedParam(value = "readTimeout", type = Integer.class)
-            @NamedParam(value = "useCaches", type = Boolean.class)
-            @NamedParam(value = "allowUserInteraction", type = Boolean.class)
-            @NamedParam(value = "requestProperties", type = Map.class)
-            Map<String, ?> parameters
+        URL url,
+        @NamedParam(value = "connectTimeout", type = Integer.class)
+        @NamedParam(value = "readTimeout", type = Integer.class)
+        @NamedParam(value = "useCaches", type = Boolean.class)
+        @NamedParam(value = "allowUserInteraction", type = Boolean.class)
+        @NamedParam(value = "requestProperties", type = Map.class)
+        Map<String, ?> parameters
     ) throws IOException {
         return new BufferedInputStream(configuredInputStream(parameters, url));
     }
@@ -2374,13 +2371,13 @@ public class ResourceGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.8.1
      */
     public static BufferedReader newReader(
-            URL url,
-            @NamedParam(value = "connectTimeout", type = Integer.class)
-            @NamedParam(value = "readTimeout", type = Integer.class)
-            @NamedParam(value = "useCaches", type = Boolean.class)
-            @NamedParam(value = "allowUserInteraction", type = Boolean.class)
-            @NamedParam(value = "requestProperties", type = Map.class)
-            Map<String, ?> parameters
+        URL url,
+        @NamedParam(value = "connectTimeout", type = Integer.class)
+        @NamedParam(value = "readTimeout", type = Integer.class)
+        @NamedParam(value = "useCaches", type = Boolean.class)
+        @NamedParam(value = "allowUserInteraction", type = Boolean.class)
+        @NamedParam(value = "requestProperties", type = Map.class)
+        Map<String, ?> parameters
     ) throws IOException {
         return IOGroovyMethods.newReader(configuredInputStream(parameters, url));
     }
@@ -2411,14 +2408,14 @@ public class ResourceGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.8.1
      */
     public static BufferedReader newReader(
-            URL url,
-            @NamedParam(value = "connectTimeout", type = Integer.class)
-            @NamedParam(value = "readTimeout", type = Integer.class)
-            @NamedParam(value = "useCaches", type = Boolean.class)
-            @NamedParam(value = "allowUserInteraction", type = Boolean.class)
-            @NamedParam(value = "requestProperties", type = Map.class)
-            Map<String, ?> parameters,
-            String charset
+        URL url,
+        @NamedParam(value = "connectTimeout", type = Integer.class)
+        @NamedParam(value = "readTimeout", type = Integer.class)
+        @NamedParam(value = "useCaches", type = Boolean.class)
+        @NamedParam(value = "allowUserInteraction", type = Boolean.class)
+        @NamedParam(value = "requestProperties", type = Map.class)
+        Map<String, ?> parameters,
+        String charset
     ) throws IOException {
         return new BufferedReader(new InputStreamReader(configuredInputStream(parameters, url), charset));
     }

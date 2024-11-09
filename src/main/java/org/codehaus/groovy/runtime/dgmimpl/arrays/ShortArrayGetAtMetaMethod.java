@@ -60,7 +60,7 @@ public class ShortArrayGetAtMetaMethod extends ArrayGetAtMetaMethod {
         @Override
         public Object call(Object receiver, Object arg) throws Throwable {
             if ((receiver instanceof short[] && arg instanceof Integer)
-                    && checkPojoMetaClass()) {
+                && checkPojoMetaClass()) {
                 final short[] objects = (short[]) receiver;
                 return objects[normaliseIndex((Integer) arg, objects.length)];
             } else

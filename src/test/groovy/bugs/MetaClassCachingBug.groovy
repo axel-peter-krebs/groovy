@@ -47,7 +47,7 @@ class MyCollaborator {
 
 class StringMocker {
     static mockString(String retval) {
-        String.metaClass.dummy = {->
+        String.metaClass.dummy = { ->
             return retval
         }
     }

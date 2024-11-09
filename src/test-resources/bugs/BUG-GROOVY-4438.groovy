@@ -16,10 +16,15 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 enum Outer {
     A, B
-    enum Inner{X, Y}
+
+    enum Inner {
+        X, Y
+    }
 }
+
 assert Outer.A instanceof Outer
 assert Outer.B instanceof Outer
 assert Outer.Inner.X instanceof Outer.Inner

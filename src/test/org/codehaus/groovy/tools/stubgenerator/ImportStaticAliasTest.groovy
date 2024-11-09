@@ -22,21 +22,21 @@ class ImportStaticAliasTest extends StringSourcesStubTestCase {
 
     Map<String, String> provideSources() {
         [
-                'Constants.java': '''
+            'Constants.java'    : '''
                     package test;
                     public class Constants {
                         public static final String C1 = "c1";
                     }
                 ''',
 
-                'MyAnnotation.java': '''
+            'MyAnnotation.java' : '''
                     package test;
                     public @interface MyAnnotation {
                         String value();
                     }
                 ''',
 
-                'Test.groovy': '''
+            'Test.groovy'       : '''
                     package test
                     import static test.Constants.C1 as C2
                     @MyAnnotation(C2)
@@ -48,7 +48,7 @@ class ImportStaticAliasTest extends StringSourcesStubTestCase {
                     }
                 ''',
 
-                'SomeJavaClass.java': '''
+            'SomeJavaClass.java': '''
                     package test;
                     public class SomeJavaClass {
                         Test test;

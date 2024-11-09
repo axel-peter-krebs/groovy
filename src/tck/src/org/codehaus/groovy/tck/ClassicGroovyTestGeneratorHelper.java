@@ -33,17 +33,25 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import groovy.lang.GroovyShell;
 import antlr.RecognitionException;
 
-/** Helper methods for generated TCK test case using new JSR parser and classic groovy AST and evaluation */
+/**
+ * Helper methods for generated TCK test case using new JSR parser and classic groovy AST and evaluation
+ */
 public class ClassicGroovyTestGeneratorHelper implements TestGeneratorHelper {
 
-    /** evaluate the source text against the classic AST with the JSR parser implementation*/
+    protected String lineSep = System.lineSeparator();
+
+    /**
+     * evaluate the source text against the classic AST with the JSR parser implementation
+     */
     public Object evaluate(String theSrcText, String testName) throws Exception {
         parse(theSrcText, testName); // fail early with a direct message if possible')
         GroovyShell groovy = new GroovyShell(new CompilerConfiguration());
         return groovy.run(theSrcText, "main", new ArrayList());
     }
 
-    /** run the JSR parser implementation over the supplied source text*/
+    /**
+     * run the JSR parser implementation over the supplied source text
+     */
     public void parse(String theSrcText, String testName) throws Exception {
         System.out.println("-------------------------------");
         System.out.println("  " + testName);
@@ -55,7 +63,7 @@ public class ClassicGroovyTestGeneratorHelper implements TestGeneratorHelper {
             System.out.println(decorateWithLineNumbers(theSrcText));
 
         } catch (RecognitionException parseException) {
-            System.out.println(decorateWithLineNumbersAndErrorMessage(theSrcText,parseException));
+            System.out.println(decorateWithLineNumbersAndErrorMessage(theSrcText, parseException));
             throw parseException;
         }
         System.out.println("-------------------------------");
@@ -68,7 +76,7 @@ public class ClassicGroovyTestGeneratorHelper implements TestGeneratorHelper {
             String line = null;
             StringBuilder numberedSrcTextBuffer = new StringBuilder();
             int lineNum = 1;
-            while ((line = reader.readLine() ) != null) {
+            while ((line = reader.readLine()) != null) {
                 numberedSrcTextBuffer.append(lineNum);
                 numberedSrcTextBuffer.append("\t");
                 numberedSrcTextBuffer.append(line);
@@ -77,7 +85,7 @@ public class ClassicGroovyTestGeneratorHelper implements TestGeneratorHelper {
                 if (parseException != null) {
                     if (lineNum == parseException.getLine()) {
                         StringBuilder padding = new StringBuilder("\t");
-                        for (int col=1; col<parseException.getColumn();col++) {
+                        for (int col = 1; col < parseException.getColumn(); col++) {
                             padding.append(" ");
                         }
                         numberedSrcTextBuffer.append(padding);
@@ -102,8 +110,6 @@ public class ClassicGroovyTestGeneratorHelper implements TestGeneratorHelper {
     }
 
     private String decorateWithLineNumbers(String theSrcText) {
-        return decorateWithLineNumbersAndErrorMessage(theSrcText,null);
+        return decorateWithLineNumbersAndErrorMessage(theSrcText, null);
     }
-
-    protected String lineSep = System.lineSeparator();
 }

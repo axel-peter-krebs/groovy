@@ -17,8 +17,9 @@
  *  under the License.
  */
 
-import org.apache.groovy.gradle.PerformanceTestsExtension
+
 import org.apache.groovy.gradle.PerformanceTestSummary
+import org.apache.groovy.gradle.PerformanceTestsExtension
 
 plugins {
     id 'groovy'

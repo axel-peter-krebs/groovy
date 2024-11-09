@@ -36,9 +36,8 @@ public class ValueContainer implements CharSequence, Value {
     public Object value;
 
     public Type type;
-    private boolean container;
-
     public boolean decodeStrings;
+    private boolean container;
 
     public ValueContainer(Object value, Type type, boolean decodeStrings) {
         this.value = value;

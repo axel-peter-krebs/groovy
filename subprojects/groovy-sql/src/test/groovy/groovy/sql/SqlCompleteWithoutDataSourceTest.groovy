@@ -23,12 +23,12 @@ import java.sql.DriverManager
 import static groovy.sql.SqlTestConstants.DB_DRIVER
 
 /**
- * Tests the use of the Sql class using just a Connection 
+ * Tests the use of the Sql class using just a Connection
  * rather than a DataSource
  */
 class SqlCompleteWithoutDataSourceTest extends SqlCompleteTest {
     protected Sql newSql(String uri) {
         Class.forName(DB_DRIVER.name)
-        return new Sql(DriverManager.getConnection(uri, [user:'sa', password:''] as Properties))
+        return new Sql(DriverManager.getConnection(uri, [user: 'sa', password: ''] as Properties))
     }
 }

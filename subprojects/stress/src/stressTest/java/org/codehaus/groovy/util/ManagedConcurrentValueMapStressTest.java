@@ -38,6 +38,12 @@ public class ManagedConcurrentValueMapStressTest {
 
     static final ReferenceBundle bundle = ReferenceBundle.getWeakBundle();
 
+    private static int size(ManagedConcurrentValueMap<String, Object> map) {
+        MetaClass metaClass = InvokerHelper.getMetaClass(map);
+        ConcurrentHashMap<String, Object> internalMap = (ConcurrentHashMap<String, Object>) metaClass.getProperty(map, "internalMap");
+        return internalMap.size();
+    }
+
     @Test
     public void testMapRemovesCollectedReferences() throws InterruptedException {
         ManagedConcurrentValueMap<String, Object> map = new ManagedConcurrentValueMap<String, Object>(bundle);
@@ -125,11 +131,5 @@ public class ManagedConcurrentValueMapStressTest {
             map.put("key" + i, val);
         }
         return elements;
-    }
-
-    private static int size(ManagedConcurrentValueMap<String, Object> map) {
-        MetaClass metaClass = InvokerHelper.getMetaClass(map);
-        ConcurrentHashMap<String, Object> internalMap = (ConcurrentHashMap<String, Object>)metaClass.getProperty(map, "internalMap");
-        return internalMap.size();
     }
 }

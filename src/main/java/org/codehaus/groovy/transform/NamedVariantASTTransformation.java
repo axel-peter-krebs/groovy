@@ -89,6 +89,129 @@ public class NamedVariantASTTransformation extends AbstractASTTransformation {
 
     private static final String NAMED_VARIANT = "@" + NAMED_VARIANT_TYPE.getNameWithoutPackage();
 
+    // for backwards compatibility
+    static boolean processImplicitNamedParam(final ErrorCollecting xform, final MethodNode mNode, final Parameter mapParam, final BlockStatement inner, final ArgumentListExpression args, final List<String> propNames, final Parameter fromParam, final boolean coerce) {
+        return processImplicitNamedParam(xform, mNode, mapParam, inner, args, propNames, fromParam, coerce, null);
+    }
+
+    static boolean processImplicitNamedParam(final ErrorCollecting xform, final MethodNode mNode, final Parameter mapParam, final BlockStatement inner, final ArgumentListExpression args, final List<String> propNames, final Parameter fromParam, final boolean coerce, Map<Parameter, Expression> seen) {
+        String name = fromParam.getName();
+        ClassNode type = fromParam.getType();
+        boolean required = !fromParam.hasInitialExpression();
+        if (hasDuplicates(xform, mNode, propNames, name)) return false;
+
+        AnnotationNode namedParam = new AnnotationNode(NAMED_PARAM_TYPE);
+        namedParam.addMember("value", constX(name));
+        namedParam.addMember("type", classX(type));
+        namedParam.addMember("required", constX(required, true));
+        mapParam.addAnnotation(namedParam);
+
+        if (required) {
+            inner.addStatement(new AssertStatement(boolX(containsKey(mapParam, name)),
+                plusX(constX("Missing required named argument '" + name + "'. Keys found: "), callX(varX(mapParam), "keySet"))));
+        }
+        Expression defValue = getDefaultValue(fromParam.getInitialExpression(), seen);
+        Expression initExpr = namedParamValue(mapParam, name, type, coerce, defValue);
+        if (seen != null) {
+            seen.put(fromParam, initExpr);
+        }
+        args.addExpression(initExpr);
+        return true;
+    }
+
+    private static boolean hasDuplicates(final ErrorCollecting xform, final MethodNode mNode, final List<String> propNames, final String next) {
+        if (propNames.contains(next)) {
+            xform.addError("Error during " + NAMED_VARIANT + " processing. Duplicate property '" + next + "' found.", mNode);
+            return true;
+        }
+        propNames.add(next);
+        return false;
+    }
+
+    static void createMapVariant(final ErrorCollecting xform, final MethodNode mNode, final AnnotationNode anno, final Parameter mapParam, final List<Parameter> genParams, final ClassNode cNode, final BlockStatement inner, final ArgumentListExpression args, final List<String> propNames) {
+        Parameter namedArgKey = param(STRING_TYPE, "namedArgKey");
+        if (!(mNode instanceof ConstructorNode)) {
+            inner.getStatements().add(0, ifS(isNullX(varX(mapParam)),
+                throwS(ctorX(ILLEGAL_ARGUMENT_TYPE, args(constX("Named parameter map cannot be null"))))));
+        }
+        inner.addStatement(
+            new ForStatement(
+                namedArgKey,
+                callX(varX(mapParam), "keySet"),
+                new AssertStatement(boolX(callX(list2args(propNames), "contains", varX(namedArgKey))), plusX(constX("Unrecognized namedArgKey: "), varX(namedArgKey)))
+            ));
+
+        Parameter[] genParamsArray = genParams.toArray(Parameter.EMPTY_ARRAY);
+        // TODO account for default params giving multiple signatures
+        if (cNode.hasMethod(mNode.getName(), genParamsArray)) {
+            xform.addError("Error during " + NAMED_VARIANT + " processing. Class " + cNode.getNameWithoutPackage() +
+                " already has a named-arg " + (mNode instanceof ConstructorNode ? "constructor" : "method") +
+                " of type " + genParams, mNode);
+            return;
+        }
+
+        BlockStatement body = new BlockStatement();
+        int modifiers = getVisibility(anno, mNode, mNode.getClass(), mNode.getModifiers());
+        if (mNode instanceof ConstructorNode) {
+            body.addStatement(stmt(ctorX(ClassNode.THIS, args)));
+            body.addStatement(inner);
+            addGeneratedConstructor(cNode,
+                modifiers,
+                genParamsArray,
+                mNode.getExceptions(),
+                body
+            );
+        } else {
+            body.addStatement(inner);
+            body.addStatement(stmt(callThisX(mNode.getName(), args)));
+            addGeneratedMethod(cNode,
+                mNode.getName(),
+                modifiers,
+                mNode.getReturnType(),
+                genParamsArray,
+                mNode.getExceptions(),
+                body
+            );
+        }
+    }
+
+    private static Expression getDefaultValue(final Expression defaultValue, final Map<Parameter, Expression> seen) {
+        if (defaultValue != null && seen != null && !seen.isEmpty()) { // GROOVY-10561, GROOVY-10889, GROOVY-11325
+            ExpressionTransformer variableTransformer = (expression) -> {
+                if (expression instanceof VariableExpression) { // maybe it's a reference to a previous parameter
+                    return seen.getOrDefault(((VariableExpression) expression).getAccessedVariable(), expression);
+                }
+                return expression;
+            };
+            return (defaultValue instanceof VariableExpression
+                ? variableTransformer.transform(defaultValue)
+                : defaultValue.transformExpression(variableTransformer));
+        }
+        return defaultValue;
+    }
+
+    private static Expression namedParamValue(final Parameter mapParam, final String name, final ClassNode type, final boolean coerce, Expression defaultValue) {
+        Expression value = propX(varX(mapParam), name); // TODO: "map.get(name)"
+        if (defaultValue == null && isPrimitiveType(type)) {
+            defaultValue = defaultValueX(type);
+        }
+        if (defaultValue != null) {
+            value = ternaryX(containsKey(mapParam, name), value, defaultValue);
+        }
+        return asType(value, type, coerce);
+    }
+
+    private static Expression containsKey(final Parameter mapParam, final String name) {
+        MethodCallExpression call = callX(varX(mapParam), "containsKey", constX(name));
+        call.setImplicitThis(false); // required for use before super ctor call
+        call.setMethodTarget(MAP_TYPE.getMethods("containsKey").get(0));
+        return call;
+    }
+
+    private static Expression asType(final Expression value, final ClassNode type, final boolean coerce) {
+        return coerce ? asX(type, value) : /*castX(*/value/*)*/;
+    }
+
     @Override
     public void visit(final ASTNode[] nodes, final SourceUnit source) {
         init(nodes, source);
@@ -127,9 +250,11 @@ public class NamedVariantASTTransformation extends AbstractASTTransformation {
             Map<Parameter, Expression> seen = new HashMap<>();
             for (Parameter mNodeParam : mNodeParams) {
                 if (!annoFound) {
-                    if (!processImplicitNamedParam(this, mNode, mapParam, inner, args, propNames, mNodeParam, coerce, seen)) return;
+                    if (!processImplicitNamedParam(this, mNode, mapParam, inner, args, propNames, mNodeParam, coerce, seen))
+                        return;
                 } else if (AnnotatedNodeUtils.hasAnnotation(mNodeParam, NAMED_PARAM_TYPE)) {
-                    if (!processExplicitNamedParam(mNode, mapParam, inner, args, propNames, mNodeParam, coerce, seen)) return;
+                    if (!processExplicitNamedParam(mNode, mapParam, inner, args, propNames, mNodeParam, coerce, seen))
+                        return;
                 } else if (AnnotatedNodeUtils.hasAnnotation(mNodeParam, NAMED_DELEGATE_TYPE)) {
                     if (!processDelegateParam(mNode, mapParam, args, propNames, mNodeParam, coerce)) return;
                 } else {
@@ -142,36 +267,6 @@ public class NamedVariantASTTransformation extends AbstractASTTransformation {
             }
         }
         createMapVariant(this, mNode, anno, mapParam, genParams, cNode, inner, args, propNames);
-    }
-
-    // for backwards compatibility
-    static boolean processImplicitNamedParam(final ErrorCollecting xform, final MethodNode mNode, final Parameter mapParam, final BlockStatement inner, final ArgumentListExpression args, final List<String> propNames, final Parameter fromParam, final boolean coerce) {
-        return processImplicitNamedParam(xform, mNode, mapParam, inner, args, propNames, fromParam, coerce, null);
-    }
-
-    static boolean processImplicitNamedParam(final ErrorCollecting xform, final MethodNode mNode, final Parameter mapParam, final BlockStatement inner, final ArgumentListExpression args, final List<String> propNames, final Parameter fromParam, final boolean coerce, Map<Parameter, Expression> seen) {
-        String name = fromParam.getName();
-        ClassNode type = fromParam.getType();
-        boolean required = !fromParam.hasInitialExpression();
-        if (hasDuplicates(xform, mNode, propNames, name)) return false;
-
-        AnnotationNode namedParam = new AnnotationNode(NAMED_PARAM_TYPE);
-        namedParam.addMember("value", constX(name));
-        namedParam.addMember("type", classX(type));
-        namedParam.addMember("required", constX(required, true));
-        mapParam.addAnnotation(namedParam);
-
-        if (required) {
-            inner.addStatement(new AssertStatement(boolX(containsKey(mapParam, name)),
-                    plusX(constX("Missing required named argument '" + name + "'. Keys found: "), callX(varX(mapParam), "keySet"))));
-        }
-        Expression defValue = getDefaultValue(fromParam.getInitialExpression(), seen);
-        Expression initExpr = namedParamValue(mapParam, name, type, coerce, defValue);
-        if (seen != null) {
-            seen.put(fromParam, initExpr);
-        }
-        args.addExpression(initExpr);
-        return true;
     }
 
     private boolean processExplicitNamedParam(final MethodNode mNode, final Parameter mapParam, final BlockStatement inner, final ArgumentListExpression args, final List<String> propNames, final Parameter fromParam, final boolean coerce, Map<Parameter, Expression> seen) {
@@ -199,7 +294,7 @@ public class NamedVariantASTTransformation extends AbstractASTTransformation {
                 return false;
             }
             inner.addStatement(new AssertStatement(boolX(containsKey(mapParam, name)),
-                    plusX(constX("Missing required named argument '" + name + "'. Keys found: "), callX(varX(mapParam), "keySet"))));
+                plusX(constX("Missing required named argument '" + name + "'. Keys found: "), callX(varX(mapParam), "keySet"))));
         }
         Expression defValue = getDefaultValue(fromParam.getInitialExpression(), seen);
         Expression initExpr = namedParamValue(mapParam, name, type, coerce, defValue);
@@ -233,98 +328,5 @@ public class NamedVariantASTTransformation extends AbstractASTTransformation {
         Expression delegateMap = callX(varX(mapParam), "subMap", args(subMapArgs));
         args.addExpression(castX(fromParam.getType(), delegateMap));
         return true;
-    }
-
-    private static boolean hasDuplicates(final ErrorCollecting xform, final MethodNode mNode, final List<String> propNames, final String next) {
-        if (propNames.contains(next)) {
-            xform.addError("Error during " + NAMED_VARIANT + " processing. Duplicate property '" + next + "' found.", mNode);
-            return true;
-        }
-        propNames.add(next);
-        return false;
-    }
-
-    static void createMapVariant(final ErrorCollecting xform, final MethodNode mNode, final AnnotationNode anno, final Parameter mapParam, final List<Parameter> genParams, final ClassNode cNode, final BlockStatement inner, final ArgumentListExpression args, final List<String> propNames) {
-        Parameter namedArgKey = param(STRING_TYPE, "namedArgKey");
-        if (!(mNode instanceof ConstructorNode)) {
-            inner.getStatements().add(0, ifS(isNullX(varX(mapParam)),
-                    throwS(ctorX(ILLEGAL_ARGUMENT_TYPE, args(constX("Named parameter map cannot be null"))))));
-        }
-        inner.addStatement(
-                new ForStatement(
-                        namedArgKey,
-                        callX(varX(mapParam), "keySet"),
-                        new AssertStatement(boolX(callX(list2args(propNames), "contains", varX(namedArgKey))), plusX(constX("Unrecognized namedArgKey: "), varX(namedArgKey)))
-                ));
-
-        Parameter[] genParamsArray = genParams.toArray(Parameter.EMPTY_ARRAY);
-        // TODO account for default params giving multiple signatures
-        if (cNode.hasMethod(mNode.getName(), genParamsArray)) {
-            xform.addError("Error during " + NAMED_VARIANT + " processing. Class " + cNode.getNameWithoutPackage() +
-                    " already has a named-arg " + (mNode instanceof ConstructorNode ? "constructor" : "method") +
-                    " of type " + genParams, mNode);
-            return;
-        }
-
-        BlockStatement body = new BlockStatement();
-        int modifiers = getVisibility(anno, mNode, mNode.getClass(), mNode.getModifiers());
-        if (mNode instanceof ConstructorNode) {
-            body.addStatement(stmt(ctorX(ClassNode.THIS, args)));
-            body.addStatement(inner);
-            addGeneratedConstructor(cNode,
-                    modifiers,
-                    genParamsArray,
-                    mNode.getExceptions(),
-                    body
-            );
-        } else {
-            body.addStatement(inner);
-            body.addStatement(stmt(callThisX(mNode.getName(), args)));
-            addGeneratedMethod(cNode,
-                    mNode.getName(),
-                    modifiers,
-                    mNode.getReturnType(),
-                    genParamsArray,
-                    mNode.getExceptions(),
-                    body
-            );
-        }
-    }
-
-    private static Expression getDefaultValue(final Expression defaultValue, final Map<Parameter, Expression> seen) {
-        if (defaultValue != null && seen != null && !seen.isEmpty()) { // GROOVY-10561, GROOVY-10889, GROOVY-11325
-            ExpressionTransformer variableTransformer = (expression) -> {
-                if (expression instanceof VariableExpression) { // maybe it's a reference to a previous parameter
-                    return seen.getOrDefault(((VariableExpression) expression).getAccessedVariable(), expression);
-                }
-                return expression;
-            };
-            return (defaultValue instanceof VariableExpression
-                    ? variableTransformer.transform(defaultValue)
-                    : defaultValue.transformExpression(variableTransformer));
-        }
-        return defaultValue;
-    }
-
-    private static Expression namedParamValue(final Parameter mapParam, final String name, final ClassNode type, final boolean coerce, Expression defaultValue) {
-        Expression value = propX(varX(mapParam), name); // TODO: "map.get(name)"
-        if (defaultValue == null && isPrimitiveType(type)) {
-            defaultValue = defaultValueX(type);
-        }
-        if (defaultValue != null) {
-            value = ternaryX(containsKey(mapParam, name), value, defaultValue);
-        }
-        return asType(value, type, coerce);
-    }
-
-    private static Expression containsKey(final Parameter mapParam, final String name) {
-        MethodCallExpression call = callX(varX(mapParam), "containsKey", constX(name));
-        call.setImplicitThis(false); // required for use before super ctor call
-        call.setMethodTarget(MAP_TYPE.getMethods("containsKey").get(0));
-        return call;
-    }
-
-    private static Expression asType(final Expression value, final ClassNode type, final boolean coerce) {
-        return coerce ? asX(type, value) : /*castX(*/value/*)*/;
     }
 }

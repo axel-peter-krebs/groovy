@@ -125,9 +125,9 @@ class GroovyLibraryExtension {
             it.createManifest = false
             it.includedResources = resources
             it.outputFile.set(layout.buildDirectory.file(
-                    tasks.named('jar', Jar).map { jar ->
-                        "libs/${jar.archiveBaseName.get()}-${jar.archiveVersion.get()}-grooid.jar"
-                    }
+                tasks.named('jar', Jar).map { jar ->
+                    "libs/${jar.archiveBaseName.get()}-${jar.archiveVersion.get()}-grooid.jar"
+                }
             ))
         }
         def androidRuntime = configurations.create("androidRuntimeElements") { Configuration it ->
@@ -200,21 +200,21 @@ class GroovyLibraryExtension {
         def groovyBundleVersion = sharedConfiguration.groovyBundleVersion.get()
         javaPluginExtension.manifest { Manifest mn ->
             mn.attributes(
-                    'Extension-Name': 'groovy',
-                    'Specification-Title': 'Groovy: a powerful, multi-faceted language for the JVM',
-                    'Specification-Version': groovyBundleVersion,
-                    'Specification-Vendor': 'The Apache Software Foundation',
-                    'Implementation-Title': 'Groovy: a powerful, multi-faceted language for the JVM',
-                    'Implementation-Version': groovyBundleVersion,
-                    'Implementation-Vendor': 'The Apache Software Foundation',
-                    'Bundle-ManifestVersion': '2',
-                    'Bundle-Description': 'Groovy Runtime',
-                    'Bundle-License': 'Apache-2.0',
-                    'Bundle-Version': groovyBundleVersion,
-                    'Bundle-Vendor': 'The Apache Software Foundation',
-                    'Bundle-ClassPath': '.',
-                    'Eclipse-BuddyPolicy': 'dependent',
-                    'DynamicImport-Package': '*')
+                'Extension-Name': 'groovy',
+                'Specification-Title': 'Groovy: a powerful, multi-faceted language for the JVM',
+                'Specification-Version': groovyBundleVersion,
+                'Specification-Vendor': 'The Apache Software Foundation',
+                'Implementation-Title': 'Groovy: a powerful, multi-faceted language for the JVM',
+                'Implementation-Version': groovyBundleVersion,
+                'Implementation-Vendor': 'The Apache Software Foundation',
+                'Bundle-ManifestVersion': '2',
+                'Bundle-Description': 'Groovy Runtime',
+                'Bundle-License': 'Apache-2.0',
+                'Bundle-Version': groovyBundleVersion,
+                'Bundle-Vendor': 'The Apache Software Foundation',
+                'Bundle-ClassPath': '.',
+                'Eclipse-BuddyPolicy': 'dependent',
+                'DynamicImport-Package': '*')
         }
 
     }

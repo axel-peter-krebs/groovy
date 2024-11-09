@@ -44,7 +44,7 @@ class ConfigSlurper {
     private Map bindingVars = [:]
 
     private final Map<String, String> conditionValues = [:]
-    private final Stack<Map<String, ConfigObject>> conditionalBlocks = new Stack<Map<String,ConfigObject>>()
+    private final Stack<Map<String, ConfigObject>> conditionalBlocks = new Stack<Map<String, ConfigObject>>()
 
     ConfigSlurper() {
         this('')
@@ -230,7 +230,7 @@ class ConfigSlurper {
                         currentConditionalBlock.pop()
                         for (entry in conditionalBlocks.pop().entrySet()) {
                             def c = stack.last.config
-                            (c != config? c : overrides).merge(entry.value)
+                            (c != config ? c : overrides).merge(entry.value)
                         }
                     }
                 } else if (currentConditionalBlock.size() > 0) {
@@ -266,7 +266,9 @@ class ConfigSlurper {
                     prefix = name + '.'
                     assignName.call(name, args[0])
                     args[1].call()
-                } finally { prefix = '' }
+                } finally {
+                    prefix = ''
+                }
             } else {
                 MetaMethod mm = mc.getMetaMethod(name, args)
                 if (mm) {
@@ -302,6 +304,7 @@ class ConfigSlurper {
  */
 class ConfigBinding extends Binding {
     def callable
+
     ConfigBinding(Closure c) {
         this.callable = c
     }

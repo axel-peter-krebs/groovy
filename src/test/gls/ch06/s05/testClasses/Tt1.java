@@ -20,6 +20,7 @@ package gls.ch06.s05.testClasses;
 
 public class Tt1 {
     public String x = "field";
+    private String p1 = "property";
 
     public String getX() {
         return this.p1;
@@ -32,7 +33,5 @@ public class Tt1 {
     public String x() {
         return "method";
     }
-
-    private String p1 = "property";
 }
 

@@ -43,6 +43,19 @@ import java.util.Map;
 public abstract class ClassCodeExpressionTransformer extends ClassCodeVisitorSupport implements ExpressionTransformer {
 
     /**
+     * Transfers the source position to target including its property expression if it has one.
+     *
+     * @param target resulting node
+     * @param source original node
+     */
+    protected static void setSourcePosition(final Expression target, final Expression source) {
+        target.setSourcePosition(source);
+        if (target instanceof PropertyExpression) {
+            ((PropertyExpression) target).getProperty().setSourcePosition(source);
+        }
+    }
+
+    /**
      * <strong>NOTE</strong>: This method does not visit Expressions within Closures,
      * for performance and historical reasons.
      * If you want those Expressions to be visited, you can do this:
@@ -103,14 +116,14 @@ public abstract class ClassCodeExpressionTransformer extends ClassCodeVisitorSup
         if (init != null) node.setInitialValueExpression(transform(init));
     }
 
+    // statements:
+
     @Override
     public void visitProperty(final PropertyNode node) {
         visitAnnotations(node);
         visitClassCodeContainer(node.getGetterBlock());
         visitClassCodeContainer(node.getSetterBlock());
     }
-
-    // statements:
 
     @Override
     public void visitAssertStatement(final AssertStatement stmt) {
@@ -178,18 +191,5 @@ public abstract class ClassCodeExpressionTransformer extends ClassCodeVisitorSup
     public void visitWhileLoop(final WhileStatement stmt) {
         stmt.setBooleanExpression((BooleanExpression) transform(stmt.getBooleanExpression()));
         stmt.getLoopBlock().visit(this);
-    }
-
-    /**
-     * Transfers the source position to target including its property expression if it has one.
-     *
-     * @param target resulting node
-     * @param source original node
-     */
-    protected static void setSourcePosition(final Expression target, final Expression source) {
-        target.setSourcePosition(source);
-        if (target instanceof PropertyExpression) {
-            ((PropertyExpression) target).getProperty().setSourcePosition(source);
-        }
     }
 }

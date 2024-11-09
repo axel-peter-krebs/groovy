@@ -63,7 +63,7 @@ public class SwitchStatement extends Statement {
     }
 
     public void setExpression(Expression e) {
-        expression=e;
+        expression = e;
     }
 
     public Statement getDefaultStatement() {

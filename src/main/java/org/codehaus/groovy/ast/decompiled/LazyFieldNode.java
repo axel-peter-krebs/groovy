@@ -41,10 +41,8 @@ import java.util.function.Supplier;
  */
 class LazyFieldNode extends FieldNode implements LazyInitializable {
     private final Supplier<FieldNode> fieldNodeSupplier;
-    private FieldNode delegate;
-
     private final String name;
-
+    private FieldNode delegate;
     private volatile boolean initialized;
 
     public LazyFieldNode(Supplier<FieldNode> fieldNodeSupplier, String name) {
@@ -62,10 +60,12 @@ class LazyFieldNode extends FieldNode implements LazyInitializable {
         ClassNode owner = super.getOwner();
         if (null != owner) delegate.setOwner(owner);
     }
+
     @Override
     public boolean isInitialized() {
         return initialized;
     }
+
     @Override
     public void setInitialized(boolean initialized) {
         this.initialized = initialized;
@@ -81,6 +81,12 @@ class LazyFieldNode extends FieldNode implements LazyInitializable {
     public int getModifiers() {
         lazyInit();
         return delegate.getModifiers();
+    }
+
+    @Override
+    public void setModifiers(int modifiers) {
+        lazyInit();
+        delegate.setModifiers(modifiers);
     }
 
     @Override
@@ -107,6 +113,11 @@ class LazyFieldNode extends FieldNode implements LazyInitializable {
     }
 
     @Override
+    public void setOwner(ClassNode owner) {
+        super.setOwner(owner);
+    }
+
+    @Override
     public boolean isHolder() {
         lazyInit();
         return delegate.isHolder();
@@ -122,17 +133,6 @@ class LazyFieldNode extends FieldNode implements LazyInitializable {
     public boolean isDynamicTyped() {
         lazyInit();
         return delegate.isDynamicTyped();
-    }
-
-    @Override
-    public void setModifiers(int modifiers) {
-        lazyInit();
-        delegate.setModifiers(modifiers);
-    }
-
-    @Override
-    public void setOwner(ClassNode owner) {
-        super.setOwner(owner);
     }
 
     @Override

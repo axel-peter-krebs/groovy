@@ -60,12 +60,12 @@ public class ReflectionMetaMethod extends MetaMethod {
         } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new InvokerInvocationException(e);
         } catch (InvocationTargetException e) {
-            throw e.getCause() instanceof RuntimeException ? (RuntimeException)e.getCause() : new InvokerInvocationException(e);
+            throw e.getCause() instanceof RuntimeException ? (RuntimeException) e.getCause() : new InvokerInvocationException(e);
         }
     }
 
     @Override
-    public String toString () {
+    public String toString() {
         return method.toString();
     }
 

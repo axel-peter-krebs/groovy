@@ -53,21 +53,21 @@ final class EvaluationTest extends GroovyTestCase {
 
     void testMultiLineAsserts() {
         assert 2 *
-3 ==
+            3 ==
 
-                      6
+            6
 
         fails {
             assert 2 *
-3 ==
+                3 ==
 
-                      7
+                7
         }
     }
 
     void testMethodCallExpression() {
-        assert [1,2,3].size() == 3
-        assert [1,2,3].getClass().getMethod("size", null).getParameterTypes().length == 0
+        assert [1, 2, 3].size() == 3
+        assert [1, 2, 3].getClass().getMethod("size", null).getParameterTypes().length == 0
         assert Integer.valueOf(String.valueOf(10)) == 10
     }
 
@@ -81,8 +81,8 @@ final class EvaluationTest extends GroovyTestCase {
     }
 
     void testStaticMethodCallExpression() {
-        assert max(1,2) == 2
-        assert max(min(1,2),3) == 3
+        assert max(1, 2) == 2
+        assert max(min(1, 2), 3) == 3
     }
 
     void testConstructorCallExpression() {
@@ -104,7 +104,7 @@ final class EvaluationTest extends GroovyTestCase {
     void testBinaryExpression() {
         assert 1 == 1
         assert 2 > 1 && 1 < 2
-        assert 1 * 1 / 1 + 1 - 1 ** 1 == 1
+        assert 1 * 1 / 1 + 1 - 1**1 == 1
         assert 1 == [[[[[1]]]]][0][0][0][0][0]
     }
 
@@ -125,7 +125,7 @@ final class EvaluationTest extends GroovyTestCase {
     void testBooleanExpression() {
         assert 1
         assert "abc"
-        assert [1,2,3]
+        assert [1, 2, 3]
         assert 1 + 2 + 3
     }
 
@@ -145,12 +145,12 @@ final class EvaluationTest extends GroovyTestCase {
 
     void testMapExpression() {
         assert ![:]
-        assert [a:1] + [b:2] == [a:1,b:2]
+        assert [a: 1] + [b: 2] == [a: 1, b: 2]
     }
 
     void testListExpression() {
-        assert [1,2,3].size() == 3
-        assert [] + [1] + [2,3] == [1,2,3]
+        assert [1, 2, 3].size() == 3
+        assert [] + [1] + [2, 3] == [1, 2, 3]
     }
 
     void testRangeExpression() {
@@ -177,7 +177,7 @@ final class EvaluationTest extends GroovyTestCase {
     void testMethodPointerExpression() {
         def pointers = new MethodPointers()
         assert pointers.&inc
-        assert [1,2,3].collect(pointers.&inc) == [2,3,4]
+        assert [1, 2, 3].collect(pointers.&inc) == [2, 3, 4]
     }
 
     void testConstantExpression() {
@@ -196,7 +196,7 @@ final class EvaluationTest extends GroovyTestCase {
         def y = 2
         assert x < y
         assert x + y == 2 * y - x
-        assert Math.max(x,y) == 2
+        assert Math.max(x, y) == 2
     }
 
     void testRegexExpression() {
@@ -206,26 +206,26 @@ final class EvaluationTest extends GroovyTestCase {
 
     void testGStringExpression() {
         def x = 1
-        def y = [1,2,3]
+        def y = [1, 2, 3]
         assert "$x and ${y.size()}" == "1 and 3"
     }
 
     void testArrayExpression() {
-        assert ([1,2,3] as int[]).size() == 3
+        assert ([1, 2, 3] as int[]).size() == 3
     }
 
     private add(x, y) { x + y }
 
     void testSpreadExpression() {
-        assert add(*[1,2]) == 3
-        assert [1,*[2,*[3,*[4]]]] == [1,2,3,4]
+        assert add(*[1, 2]) == 3
+        assert [1, *[2, *[3, *[4]]]] == [1, 2, 3, 4]
     }
 
     private sub(args) { args.x - args.y }
 
     void testSpreadMapExpression() {
-        assert sub(*:[y:1,x:2]) == 1
-        assert [a:1,b:2,c:3] == [c:3, *:[b:2,a:1]]
+        assert sub(*: [y: 1, x: 2]) == 1
+        assert [a: 1, b: 2, c: 3] == [c: 3, *: [b: 2, a: 1]]
     }
 
     void testNotExpression() {
@@ -250,13 +250,13 @@ final class EvaluationTest extends GroovyTestCase {
     }
 
     void testCastExpression() {
-        assert (List)[1,2,3]
-        assert ([1,2,3] as int[]).getClass().isArray()
+        assert (List) [1, 2, 3]
+        assert ([1, 2, 3] as int[]).getClass().isArray()
     }
 
     void testArgumentListExpression() {
         assert 3.toString() == "3"
-        assert Arrays.asList(1,2,3) == [1,2,3]
+        assert Arrays.asList(1, 2, 3) == [1, 2, 3]
     }
 
     /*
@@ -286,16 +286,19 @@ final class EvaluationTest extends GroovyTestCase {
     */
 }
 
-@groovy.transform.PackageScope class Properties {
+@groovy.transform.PackageScope
+class Properties {
     def getNext() { this }
     def x
 }
 
-@groovy.transform.PackageScope class Attributes {
+@groovy.transform.PackageScope
+class Attributes {
     def x
     def y
 }
 
-@groovy.transform.PackageScope class MethodPointers {
+@groovy.transform.PackageScope
+class MethodPointers {
     def inc(x) { x + 1 }
 }

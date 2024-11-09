@@ -126,18 +126,18 @@ class IntegerOperatorsTest extends GroovyTestCase {
 
     void testDivide() {
         x = 80 / 4
-        assert x == 20.0 , "x = " + x
+        assert x == 20.0, "x = " + x
 
         y = x / 2
-        assert y == 10.0 , "y = " + y
+        assert y == 10.0, "y = " + y
     }
 
     void testIntegerDivide() {
         x = 52.intdiv(3)
-        assert x == 17 , "x = " + x
+        assert x == 17, "x = " + x
 
         y = x.intdiv(2)
-        assert y == 8 , "y = " + y
+        assert y == 8, "y = " + y
 
         y = 11
         y = y.intdiv(3)
@@ -180,22 +180,22 @@ class IntegerOperatorsTest extends GroovyTestCase {
         assert x == 1
     }
 
-     void testOr() {
-         x = 1 | 3
+    void testOr() {
+        x = 1 | 3
 
-         assert x == 3
+        assert x == 3
 
-         x = 1 | 4
+        x = 1 | 4
 
-         assert x == 5
+        assert x == 5
 
-         x = 1.or(3)
+        x = 1.or(3)
 
-         assert x == 3
+        assert x == 3
 
-         x = 1.or(4)
+        x = 1.or(4)
 
-         assert x ==5
+        assert x == 5
     }
 
     void testShiftOperators() {

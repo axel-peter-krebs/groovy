@@ -53,9 +53,9 @@ class WorkingWithDateTimeTypesTest extends GroovyTestCase {
 
         def dateTime = ZonedDateTime.parse('2017/07/11 9:47PM Pacific Standard Time', 'yyyy/MM/dd h:mma zzzz')
         assert dateTime == ZonedDateTime.of(
-                LocalDate.of(2017, 7, 11),
-                LocalTime.of(21, 47, 0),
-                ZoneId.of('America/Los_Angeles')
+            LocalDate.of(2017, 7, 11),
+            LocalTime.of(21, 47, 0),
+            ZoneId.of('America/Los_Angeles')
         )
         // end::static_parsing[]
     }

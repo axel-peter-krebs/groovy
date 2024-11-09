@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A closure which stores calls in a List so that method calls 
+ * A closure which stores calls in a List so that method calls
  * can be iterated over in a 'yield' style way
  */
 public class IteratorClosureAdapter<T> extends Closure {

@@ -54,6 +54,9 @@ public class SemanticPredicates {
     private static final Pattern NONSURROGATE_PATTERN = Pattern.compile("[^\u0000-\u007F\uD800-\uDBFF]");
     private static final Pattern SURROGATE_PAIR1_PATTERN = Pattern.compile("[\uD800-\uDBFF]");
     private static final Pattern SURROGATE_PAIR2_PATTERN = Pattern.compile("[\uDC00-\uDFFF]");
+    private static final int[] MODIFIER_ARRAY =
+        ModifierNode.MODIFIER_OPCODE_MAP.keySet().stream()
+            .mapToInt(Integer::intValue).sorted().toArray();
 
     public static boolean isFollowedByWhiteSpaces(CharStream cs) {
         for (int index = 1, c = cs.LA(index); !('\r' == c || '\n' == c || CharStream.EOF == c); index++, c = cs.LA(index)) {
@@ -91,7 +94,7 @@ public class SemanticPredicates {
         }
 
         if (matches(str1, NONSURROGATE_PATTERN)
-                && Character.isJavaIdentifierPart(c1)) {
+            && Character.isJavaIdentifierPart(c1)) {
             return true;
         }
 
@@ -99,8 +102,8 @@ public class SemanticPredicates {
         String str2 = String.valueOf((char) c2);
 
         if (matches(str1, SURROGATE_PAIR1_PATTERN)
-                && matches(str2, SURROGATE_PAIR2_PATTERN)
-                && Character.isJavaIdentifierPart(Character.toCodePoint((char) c1, (char) c2))) {
+            && matches(str2, SURROGATE_PAIR2_PATTERN)
+            && Character.isJavaIdentifierPart(Character.toCodePoint((char) c1, (char) c2))) {
 
             return true;
         }
@@ -120,7 +123,7 @@ public class SemanticPredicates {
 
             try {
                 ParseTree peacChild = peacChildren.get(0);
-                List<ParseTree>  pecChildren = ((PostfixExpressionContext) peacChild).children;
+                List<ParseTree> pecChildren = ((PostfixExpressionContext) peacChild).children;
 
                 ParseTree pecChild = pecChildren.get(0);
                 PathExpressionContext pec = (PathExpressionContext) pecChild;
@@ -143,12 +146,9 @@ public class SemanticPredicates {
         int tokenType = ts.LT(1).getType();
 
         return (Identifier == tokenType || CapitalizedIdentifier == tokenType || StringLiteral == tokenType || YIELD == tokenType)
-                && LPAREN == (ts.LT(2).getType());
+            && LPAREN == (ts.LT(2).getType());
     }
 
-    private static final int[] MODIFIER_ARRAY =
-            ModifierNode.MODIFIER_OPCODE_MAP.keySet().stream()
-                    .mapToInt(Integer::intValue).sorted().toArray();
     /**
      * Distinguish between local variable declaration and method call, e.g. `a b`
      */
@@ -183,10 +183,10 @@ public class SemanticPredicates {
         int nextCodePoint = token.getText().codePointAt(0);
 
         return // VOID == tokenType ||
-                !(BuiltInPrimitiveType == tokenType || Arrays.binarySearch(MODIFIER_ARRAY, tokenType) >= 0)
-                        && !Character.isUpperCase(nextCodePoint)
-                        && nextCodePoint != '@'
-                        && !(ASSIGN == tokenType3 || (LT == tokenType2 || LBRACK == tokenType2));
+            !(BuiltInPrimitiveType == tokenType || Arrays.binarySearch(MODIFIER_ARRAY, tokenType) >= 0)
+                && !Character.isUpperCase(nextCodePoint)
+                && nextCodePoint != '@'
+                && !(ASSIGN == tokenType3 || (LT == tokenType2 || LBRACK == tokenType2));
 
     }
 

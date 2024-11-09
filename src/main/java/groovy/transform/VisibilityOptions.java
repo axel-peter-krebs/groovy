@@ -36,9 +36,13 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.CONSTRUCTOR, ElementType.METHOD})
 public @interface VisibilityOptions {
     Visibility value() default Visibility.UNDEFINED;
+
     String id() default Undefined.STRING;
+
     Visibility type() default Visibility.UNDEFINED;
+
     Visibility method() default Visibility.UNDEFINED;
+
     Visibility constructor() default Visibility.UNDEFINED;
 //    Visibility field() default Visibility.UNDEFINED;
 }

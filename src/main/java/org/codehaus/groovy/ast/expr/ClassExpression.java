@@ -48,6 +48,6 @@ public class ClassExpression extends Expression {
 
     @Override
     public String toString() {
-       return super.toString() + "[type: " + getType().getName() + "]";
+        return super.toString() + "[type: " + getType().getName() + "]";
     }
 }

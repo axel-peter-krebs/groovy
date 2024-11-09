@@ -25,9 +25,9 @@ public class GroovyCastException extends ClassCastException {
     private static final long serialVersionUID = 6859089155641797356L;
 
     /**
-     * @param objectToCast object we tried to cast
+     * @param objectToCast  object we tried to cast
      * @param classToCastTo class we tried to cast to
-     * @param cause not kept but we pass on message from this Exception if any
+     * @param cause         not kept but we pass on message from this Exception if any
      */
     public GroovyCastException(final Object objectToCast, final Class classToCastTo, final Exception cause) {
         super(makeMessage(objectToCast, classToCastTo) +
@@ -35,7 +35,7 @@ public class GroovyCastException extends ClassCastException {
     }
 
     /**
-     * @param objectToCast object we tried to cast
+     * @param objectToCast  object we tried to cast
      * @param classToCastTo class we tried to cast to
      */
     public GroovyCastException(final Object objectToCast, final Class classToCastTo) {
@@ -60,14 +60,22 @@ public class GroovyCastException extends ClassCastException {
 
     private static String getWrapper(final Class<?> cls) {
         Class<?> ncls = cls;
-        if (cls==byte.class)        {ncls=Byte.class;}
-        else if (cls==short.class)  {ncls=Short.class;}
-        else if (cls==char.class)   {ncls=Character.class;}
-        else if (cls==int.class)    {ncls=Integer.class;}
-        else if (cls==long.class)   {ncls=Long.class;}
-        else if (cls==float.class)  {ncls=Float.class;}
-        else if (cls==double.class) {ncls=Double.class;}
-        if (cls!=null && ncls!=cls) {
+        if (cls == byte.class) {
+            ncls = Byte.class;
+        } else if (cls == short.class) {
+            ncls = Short.class;
+        } else if (cls == char.class) {
+            ncls = Character.class;
+        } else if (cls == int.class) {
+            ncls = Integer.class;
+        } else if (cls == long.class) {
+            ncls = Long.class;
+        } else if (cls == float.class) {
+            ncls = Float.class;
+        } else if (cls == double.class) {
+            ncls = Double.class;
+        }
+        if (cls != null && ncls != cls) {
             String msg = ". Try '" + ncls.getName() + "' instead";
             return msg;
         }

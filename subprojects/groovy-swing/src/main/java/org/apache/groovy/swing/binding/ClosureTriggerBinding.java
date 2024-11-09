@@ -41,6 +41,11 @@ public class ClosureTriggerBinding implements TriggerBinding, SourceBinding {
         this.syntheticBindings = syntheticBindings;
     }
 
+    @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
+    private static <T> T doPrivileged(PrivilegedAction<T> action) {
+        return java.security.AccessController.doPrivileged(action);
+    }
+
     public Closure getClosure() {
         return closure;
     }
@@ -87,16 +92,20 @@ public class ClosureTriggerBinding implements TriggerBinding, SourceBinding {
                         boolean acc = isAccessible(constructor);
                         ReflectionUtils.trySetAccessible(constructor);
                         Closure localCopy = (Closure) constructor.newInstance(args);
-                        if (!acc) { constructor.setAccessible(false); }
+                        if (!acc) {
+                            constructor.setAccessible(false);
+                        }
                         localCopy.setResolveStrategy(Closure.DELEGATE_ONLY);
-                        for (Field f:closureClass.getDeclaredFields()) {
+                        for (Field f : closureClass.getDeclaredFields()) {
                             acc = isAccessible(f);
                             ReflectionUtils.trySetAccessible(f);
                             if (f.getType() == Reference.class) {
                                 delegate.fields.put(f.getName(),
-                                        (BindPathSnooper) ((Reference) f.get(localCopy)).get());
+                                    (BindPathSnooper) ((Reference) f.get(localCopy)).get());
                             }
-                            if (!acc) { f.setAccessible(false); }
+                            if (!acc) {
+                                f.setAccessible(false);
+                            }
                         }
                         return localCopy;
                     } catch (Exception e) {
@@ -120,7 +129,7 @@ public class ClosureTriggerBinding implements TriggerBinding, SourceBinding {
         }
         List<BindPath> rootPaths = new ArrayList<>();
         for (Map.Entry<String, BindPathSnooper> entry : delegate.fields.entrySet()) {
-            BindPath bp =createBindPath(entry.getKey(), entry.getValue());
+            BindPath bp = createBindPath(entry.getKey(), entry.getValue());
             bp.currentObject = closure;
             rootPaths.add(bp);
         }
@@ -130,12 +139,6 @@ public class ClosureTriggerBinding implements TriggerBinding, SourceBinding {
         fb.bindPaths = rootPaths.toArray(EMPTY_BINDPATH_ARRAY);
         return fb;
     }
-
-    @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
-    private static <T> T doPrivileged(PrivilegedAction<T> action) {
-        return java.security.AccessController.doPrivileged(action);
-    }
-
 
     // TODO when JDK9+ is minimum, use canAccess and remove suppression
     @SuppressWarnings("deprecation")
@@ -150,13 +153,16 @@ public class ClosureTriggerBinding implements TriggerBinding, SourceBinding {
 }
 
 class DeadEndException extends RuntimeException {
-    DeadEndException(String message) { super(message); }
+    DeadEndException(String message) {
+        super(message);
+    }
 }
 
 class DeadEndObject {
     public Object getProperty(String property) {
         throw new DeadEndException("Cannot bind to a property on the return value of a method call");
     }
+
     public Object invokeMethod(String name, Object args) {
         return this;
     }

@@ -24,7 +24,9 @@ class Groovy5101Test extends GroovyTestCase {
 
     static class ClassA {
         Runnable r
+
         ClassA(Runnable r) { this.r = r }
+
         void run() { "hello" }
     }
 
@@ -32,11 +34,13 @@ class Groovy5101Test extends GroovyTestCase {
         void getClassA1(Runnable r) {
             new ClassA(r) // OK
         }
+
         void getClassA2(Runnable r) {
             new ClassA(r) {
                 void run() { "a fixed message" } // OK
             }
         }
+
         void getClassA3(Runnable r) {
             new ClassA(r) {
                 void run() { r } // NG

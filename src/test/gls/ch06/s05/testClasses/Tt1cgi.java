@@ -31,16 +31,16 @@ public class Tt1cgi extends Tt1c implements GroovyObject {
         return this.metaClass;
     }
 
+    public void setMetaClass(final MetaClass metaClass) {
+        this.metaClass = metaClass;
+    }
+
     public Object getProperty(final String property) {
         return this.metaClass.getProperty(this, property);
     }
 
     public Object invokeMethod(final String name, final Object args) {
         return this.metaClass.invokeMethod(this, name, args);
-    }
-
-    public void setMetaClass(final MetaClass metaClass) {
-        this.metaClass = metaClass;
     }
 
     public void setProperty(final String property, final Object newValue) {

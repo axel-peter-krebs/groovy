@@ -71,8 +71,7 @@ public class TupleListTest extends TestSupport {
 
         try {
             InvokerHelper.invokeMethod(bean, methodName, null);
-        }
-        catch (InvokerInvocationException e) {
+        } catch (InvokerInvocationException e) {
             System.out.println("Caught: " + e.getCause());
             e.getCause().printStackTrace();
             fail("Should not have thrown an exception");

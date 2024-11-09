@@ -70,7 +70,7 @@ class ForLoopTest extends gls.CompilableTestSupport {
     void testRangeWithJdk15StyleAndType() {
         x = 0
 
-        for (Integer i: 0..9) {
+        for (Integer i : 0..9) {
             assert i.getClass() == Integer
             x = x + i
         }
@@ -196,7 +196,7 @@ class ForLoopTest extends gls.CompilableTestSupport {
 
     void testClassicForWithEverythingInitCondNextExpressionsEmpty() {
         int counter = 0
-        for (;;) {
+        for (; ;) {
             counter++
             if (counter == 10) break
         }

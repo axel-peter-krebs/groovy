@@ -23,7 +23,7 @@ import groovy.lang.Closure;
 /**
  * @since Groovy 1.1
  */
-public abstract class AbstractFullBinding  implements FullBinding {
+public abstract class AbstractFullBinding implements FullBinding {
 
     protected SourceBinding sourceBinding;
     protected TargetBinding targetBinding;
@@ -40,8 +40,7 @@ public abstract class AbstractFullBinding  implements FullBinding {
         if (getValidator() != null) {
             Object validation = getValidator().call(result);
             if ((validation == null)
-                || ((validation instanceof Boolean) && !(Boolean) validation))
-            {
+                || ((validation instanceof Boolean) && !(Boolean) validation)) {
                 // should we throw a validation failed exception?  or fail quietly?
                 return;
             }
@@ -61,11 +60,11 @@ public abstract class AbstractFullBinding  implements FullBinding {
         if (!(sourceBinding instanceof TargetBinding) || !(targetBinding instanceof SourceBinding)) {
             throw new RuntimeException("Binding Instance is not reversable");
         }
-        Object result = ((SourceBinding)targetBinding).getSourceValue();
+        Object result = ((SourceBinding) targetBinding).getSourceValue();
         if (getReverseConverter() != null) {
             result = getReverseConverter().call(result);
         }
-        ((TargetBinding)sourceBinding).updateTargetValue(result);
+        ((TargetBinding) sourceBinding).updateTargetValue(result);
     }
 
     @Override

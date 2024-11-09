@@ -39,6 +39,7 @@ println 'Today is day ' + cal.get(Calendar.DAY_OF_YEAR) + ' of the current year.
 //----------------------------------------------------------------------------------
 import static java.util.Calendar.*
 import java.time.*
+
 println "Today is day ${cal[DAY_OF_YEAR]} of the current year."
 println LocalDateTime.now()
 // => 2022-08-24T17:59:41.359654800
@@ -91,6 +92,7 @@ println "Dateline: ${cal[HOUR_OF_DAY]}:${cal[MINUTE]}:${cal[SECOND]}-${cal[YEAR]
 // @@PLEAC@@_3.4
 //----------------------------------------------------------------------------------
 import java.text.SimpleDateFormat
+
 long difference = 100
 long after = time + difference
 long before = time - difference
@@ -98,7 +100,7 @@ long before = time - difference
 // any field of a calendar is incrementable via add() and roll() methods
 cal = instance
 df = new SimpleDateFormat()
-printCal = {cal -> df.format(cal.time)}
+printCal = { cal -> df.format(cal.time) }
 cal.set(2000, 0, 1, 00, 01, 0)
 assert printCal(cal) == '1/01/00 00:01'
 // roll minute back by 2 but don't adjust other fields
@@ -120,9 +122,9 @@ assert printCal(cal) == '14/03/73 16:02'
 // alternatively, work with epoch times
 long birthTime = 96176750359       // 18/Jan/1973, 3:45:50 am
 long interval = 5 +                // 5 second
-                17 * 60 +          // 17 minute
-                2  * 60 * 60 +     // 2 hour
-                55 * 60 * 60 * 24  // and 55 day
+    17 * 60 +          // 17 minute
+    2 * 60 * 60 +     // 2 hour
+    55 * 60 * 60 * 24  // and 55 day
 then = new Date(birthTime + interval * 1000)
 assert df.format(then) == '14/03/73 16:02'
 
@@ -135,18 +137,18 @@ assert df.format(then) == '14/03/73 16:02'
 // @@PLEAC@@_3.5
 //----------------------------------------------------------------------------------
 bree = 361535725  // 16 Jun 1981, 4:35:25
-nat  =  96201950  // 18 Jan 1973, 3:45:50
+nat = 96201950  // 18 Jan 1973, 3:45:50
 difference = bree - nat
 println "There were $difference seconds between Nat and Bree"
 // => There were 265333775 seconds between Nat and Bree
-seconds    =  difference % 60
+seconds = difference % 60
 difference = (difference - seconds) / 60
-minutes    =  difference % 60
+minutes = difference % 60
 difference = (difference - minutes) / 60
-hours      =  difference % 24
-difference = (difference - hours)   / 24
-days       =  difference % 7
-weeks      = (difference - days)    /  7
+hours = difference % 24
+difference = (difference - hours) / 24
+days = difference % 7
+weeks = (difference - days) / 7
 println "($weeks weeks, $days days, $hours:$minutes:$seconds)"
 // => (438 weeks, 4 days, 23:49:35)
 //----------------------------------------------------------------------------------
@@ -188,6 +190,7 @@ println 'Date was ' + df2.format(date)
 // @@PLEAC@@_3.8
 //----------------------------------------------------------------------------------
 import java.text.DateFormat
+
 df = new SimpleDateFormat('E M d hh:mm:ss z yyyy')
 cal.set(2007, 0, 1)
 println 'Customized format gives: ' + df.format(cal.time)
@@ -212,7 +215,7 @@ println "You took $elapsed seconds."
 size = 500; number = 100; total = 0
 for (i in 0..<number) {
     array = []
-    size.times{ array << Math.random() }
+    size.times { array << Math.random() }
     doubles = array as double[]
     // sort it
     long t0 = System.currentTimeMillis()
@@ -273,7 +276,7 @@ I really like that description of PLEAC.
 '''
 expected = '''
 Sender                    Recipient                 Time              Delta
-<origin>                  somewhere.com             01:14:57 06/12/31 
+<origin>                  somewhere.com             01:14:57 06/12/31
 win2K001                  omta05ps.mx.bigpond.com   01:14:57 06/12/31 1m 14s
 omta05ps.mx.bigpond.com   mail.sourceforge.net      01:16:11 06/12/31 8s
 sc8-sf-mx1-b.sourceforge. sc8-sf-list2-new.sourcefo 01:16:19 06/12/31 1s
@@ -296,13 +299,16 @@ class MailHopDelta {
     def parseDate(date) {
         try {
             return new SimpleDateFormat('EEE, dd MMM yyyy hh:mm:ss Z').parse(date)
-        } catch(java.text.ParseException ex) {}
+        } catch (java.text.ParseException ex) {
+        }
         try {
             return new SimpleDateFormat('dd MMM yyyy hh:mm:ss Z').parse(date)
-        } catch(java.text.ParseException ex) {}
+        } catch (java.text.ParseException ex) {
+        }
         try {
             return DateFormat.getDateInstance(DateFormat.FULL).parse(date)
-        } catch(java.text.ParseException ex) {}
+        } catch (java.text.ParseException ex) {
+        }
         DateFormat.getDateInstance(DateFormat.LONG).parse(date)
     }
 
@@ -310,9 +316,9 @@ class MailHopDelta {
         headers = []
         def isHeader = true
         def currentHeader = ''
-        mail.split('\n').each{ line ->
+        mail.split('\n').each { line ->
             if (!isHeader) return
-            switch(line) {
+            switch (line) {
                 case ~/^\s*$/:
                     isHeader = false
                     if (currentHeader) headers << currentHeader
@@ -327,8 +333,8 @@ class MailHopDelta {
     }
 
     def out(line) {
-        out << line[0][0..<[25,line[0].size()].min()].padRight(26)
-        out << line[1][0..<[25,line[1].size()].min()].padRight(26)
+        out << line[0][0..<[25, line[0].size()].min()].padRight(26)
+        out << line[1][0..<[25, line[1].size()].min()].padRight(26)
         out << line[2].padRight(17) + ' '
         out << line[3] + '\n'
     }
@@ -340,10 +346,10 @@ class MailHopDelta {
     def process() {
         out(['<origin>', firstSender, prettyDate(firstDate), ''])
         def prevDate = firstDate
-        headers.grep(~/^Received:\sfrom.*/).reverseEach{ hop ->
+        headers.grep(~/^Received:\sfrom.*/).reverseEach { hop ->
             def from = (hop =~ /from\s+(\S+)|\((.*?)\)/)[0][1]
-            def by   = (hop =~ /by\s+(\S+\.\S+)/)[0][1]
-            def hopDate = parseDate(hop[hop.lastIndexOf(';')+2..-1])
+            def by = (hop =~ /by\s+(\S+\.\S+)/)[0][1]
+            def hopDate = parseDate(hop[hop.lastIndexOf(';') + 2..-1])
             out([from, by, prettyDate(prevDate), prettyDelta(hopDate.time - prevDate.time)])
             prevDate = hopDate
         }
@@ -351,7 +357,7 @@ class MailHopDelta {
     }
 
     def prettyField(secs, sign, ch, multiplier, sb) {
-        def whole = (int)(secs / multiplier)
+        def whole = (int) (secs / multiplier)
         if (!whole) return 0
         sb << '' + (sign * whole) + ch + ' '
         return whole * multiplier
@@ -359,7 +365,7 @@ class MailHopDelta {
 
     def prettyDelta(millis) {
         def sign = millis < 0 ? -1 : 1
-        def secs = (int)Math.abs(millis/1000)
+        def secs = (int) Math.abs(millis / 1000)
         def sb = new StringBuffer()
         secs -= prettyField(secs, sign, 'd', 60 * 60 * 24, sb)
         secs -= prettyField(secs, sign, 'h', 60 * 60, sb)

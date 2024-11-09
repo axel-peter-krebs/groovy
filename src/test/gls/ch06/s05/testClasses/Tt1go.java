@@ -22,6 +22,7 @@ import groovy.lang.GroovyObjectSupport;
 
 public class Tt1go extends GroovyObjectSupport {
     public String x = "field";
+    public String p1 = "property";
 
     public String getX() {
         return this.p1;
@@ -34,6 +35,4 @@ public class Tt1go extends GroovyObjectSupport {
     public String x() {
         return "method";
     }
-
-    public String p1 = "property";
 }

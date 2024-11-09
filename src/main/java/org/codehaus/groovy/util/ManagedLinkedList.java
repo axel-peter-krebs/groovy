@@ -33,6 +33,61 @@ import java.util.List;
 @Deprecated
 public class ManagedLinkedList<T> {
 
+    private final ReferenceBundle bundle;
+    private Element<T> tail;
+    private Element<T> head;
+    public ManagedLinkedList(ReferenceBundle bundle) {
+        this.bundle = bundle;
+    }
+
+    /**
+     * adds a value to the list
+     *
+     * @param value the value
+     */
+    public void add(T value) {
+        Element<T> element = new Element<T>(bundle, value);
+        element.previous = tail;
+        if (tail != null) tail.next = element;
+        tail = element;
+        if (head == null) head = element;
+    }
+
+    /**
+     * returns an iterator, which allows the removal of elements.
+     * The next() method of the iterator may return null values. This
+     * is especially the case if the value was removed.
+     *
+     * @return the Iterator
+     */
+    public Iterator<T> iterator() {
+        return new Iter();
+    }
+
+    /**
+     * Returns an array of non-null elements from the source array.
+     *
+     * @param tArray the source array
+     * @return the array
+     */
+    public T[] toArray(T[] tArray) {
+        List<T> array = new ArrayList<T>(100);
+        for (Iterator<T> it = iterator(); it.hasNext(); ) {
+            T val = it.next();
+            if (val != null) array.add(val);
+        }
+        return array.toArray(tArray);
+    }
+
+    /**
+     * returns if the list is empty
+     *
+     * @return true if the list is empty
+     */
+    public boolean isEmpty() {
+        return head == null;
+    }
+
     private final class Element<V> extends ManagedReference<V> {
         Element next;
         Element previous;
@@ -87,61 +142,5 @@ public class ManagedLinkedList<T> {
         public void remove() {
             if (current != null) current.finalizeReference();
         }
-    }
-
-    private Element<T> tail;
-    private Element<T> head;
-    private final ReferenceBundle bundle;
-
-    public ManagedLinkedList(ReferenceBundle bundle) {
-        this.bundle = bundle;
-    }
-
-    /**
-     * adds a value to the list
-     *
-     * @param value the value
-     */
-    public void add(T value) {
-        Element<T> element = new Element<T>(bundle, value);
-        element.previous = tail;
-        if (tail != null) tail.next = element;
-        tail = element;
-        if (head == null) head = element;
-    }
-
-    /**
-     * returns an iterator, which allows the removal of elements.
-     * The next() method of the iterator may return null values. This
-     * is especially the case if the value was removed.
-     *
-     * @return the Iterator
-     */
-    public Iterator<T> iterator() {
-        return new Iter();
-    }
-
-    /**
-     * Returns an array of non-null elements from the source array.
-     *
-     * @param tArray the source array
-     * @return the array
-     */
-    public T[] toArray(T[] tArray) {
-        List<T> array = new ArrayList<T>(100);
-        for (Iterator<T> it = iterator(); it.hasNext();) {
-            T val = it.next();
-            if (val != null) array.add(val);
-        }
-        return array.toArray(tArray);
-    }
-
-    /**
-     * returns if the list is empty
-     *
-     * @return true if the list is empty
-     */
-    public boolean isEmpty() {
-        return head == null;
     }
 }

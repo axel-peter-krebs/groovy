@@ -13,7 +13,7 @@ public class matrix {
         int m1[][] = mkmatrix(SIZE, SIZE);
         int m2[][] = mkmatrix(SIZE, SIZE);
         int mm[][] = new int[SIZE][SIZE];
-        for (int i=0; i<n; i++) {
+        for (int i = 0; i < n; i++) {
             mmult(SIZE, SIZE, m1, m2, mm);
         }
         System.out.print(mm[0][0]);
@@ -25,23 +25,23 @@ public class matrix {
         System.out.println(mm[4][4]);
     }
 
-    public static int[][] mkmatrix (int rows, int cols) {
+    public static int[][] mkmatrix(int rows, int cols) {
         int count = 1;
         int m[][] = new int[rows][cols];
-        for (int i=0; i<rows; i++) {
-            for (int j=0; j<cols; j++) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
                 m[i][j] = count++;
             }
         }
-        return(m);
+        return (m);
     }
 
-    public static void mmult (int rows, int cols, 
-                          int[][] m1, int[][] m2, int[][] m3) {
-        for (int i=0; i<rows; i++) {
-            for (int j=0; j<cols; j++) {
+    public static void mmult(int rows, int cols,
+                             int[][] m1, int[][] m2, int[][] m3) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
                 int val = 0;
-                for (int k=0; k<cols; k++) {
+                for (int k = 0; k < cols; k++) {
                     val += m1[i][k] * m2[k][j];
                 }
                 m3[i][j] = val;

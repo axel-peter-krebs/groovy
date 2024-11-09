@@ -59,8 +59,8 @@ class SetCommand extends CommandSupport {
         }
 
         return [
-                new SimpleCompleter(loader),
-                null
+            new SimpleCompleter(loader),
+            null
         ]
     }
 

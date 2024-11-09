@@ -34,7 +34,7 @@ final class Groovy11226 extends StringSourcesStubTestCase {
                 }
             ''',
 
-            'Pogo.groovy': '''import foo.*
+            'Pogo.groovy' : '''import foo.*
                 //@groovy.transform.TupleConstructor
                 class Pogo implements Baz {
                     final Bar bar
@@ -44,7 +44,7 @@ final class Groovy11226 extends StringSourcesStubTestCase {
                 }
             ''',
 
-            'Main.java': '''
+            'Main.java'   : '''
                 public class Main {
                     public static void main(String[] args) {
                         assert new Pogo(new foo.Bar()).getBar() != null;

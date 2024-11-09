@@ -52,7 +52,7 @@ public class GroovyDocParser implements GroovyDocParserI {
 
     @Override
     public Map<String, GroovyClassDoc> getClassDocsFromSingleSource(String packagePath, String file, String src)
-            throws RuntimeException {
+        throws RuntimeException {
         if (file.indexOf(".java") > 0) { // simple (for now) decision on java or groovy
             // java
             return parseJava(packagePath, file, src);
@@ -68,7 +68,7 @@ public class GroovyDocParser implements GroovyDocParserI {
         GroovydocJavaVisitor visitor = new GroovydocJavaVisitor(packagePath, links);
         try {
             visitor.visit(StaticJavaParser.parse(src), null);
-        } catch(Throwable t) {
+        } catch (Throwable t) {
             System.err.println("Attempting to ignore error parsing Java source file: " + packagePath + "/" + file);
             System.err.println("Consider reporting the error to the Groovy project: https://issues.apache.org/jira/browse/GROOVY");
             System.err.println("... or directly to the JavaParser project: https://github.com/javaparser/javaparser/issues");
@@ -88,15 +88,25 @@ public class GroovyDocParser implements GroovyDocParserI {
             String raw = properties.getProperty("phaseOverride");
             try {
                 phase = Integer.parseInt(raw);
-            } catch(NumberFormatException ignore) {
+            } catch (NumberFormatException ignore) {
                 raw = raw.toUpperCase();
-                switch(raw) {
+                switch (raw) {
                     // some dup here but kept simple since we may swap Phases to an enum
-                    case "CONVERSION": phase = 3; break;
-                    case "SEMANTIC_ANALYSIS": phase = 4; break;
-                    case "CANONICALIZATION": phase = 5; break;
-                    case "INSTRUCTION_SELECTION": phase = 6; break;
-                    case "CLASS_GENERATION": phase = 7; break;
+                    case "CONVERSION":
+                        phase = 3;
+                        break;
+                    case "SEMANTIC_ANALYSIS":
+                        phase = 4;
+                        break;
+                    case "CANONICALIZATION":
+                        phase = 5;
+                        break;
+                    case "INSTRUCTION_SELECTION":
+                        phase = 6;
+                        break;
+                    case "CLASS_GENERATION":
+                        phase = 7;
+                        break;
                     default:
                         System.err.println("Ignoring unrecognised or unsuitable phase and keeping default");
                 }

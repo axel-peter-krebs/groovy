@@ -18,7 +18,7 @@
  */
 a =~ /abc/
 a =~
-        /abc/
+    /abc/
 b ==~ /abc/
 b ==~
-        /abc/
+    /abc/

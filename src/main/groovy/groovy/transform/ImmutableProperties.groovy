@@ -28,8 +28,7 @@ import java.lang.annotation.Target
 /**
  * Meta annotation used when just the immutable properties part of {@code @Immutable} is desired.
  *
- * @see Immutable
- * @since 4.0.0
+ * @see Immutable* @since 4.0.0
  */
 @ImmutableOptions
 @PropertyOptions(propertyHandler = ImmutablePropertyHandler)

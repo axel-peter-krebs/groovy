@@ -79,9 +79,7 @@ import java.util.concurrent.TimeoutException
  * </pre>
  * See the unit test for this class for additional examples.
  *
- * @see ThreadInterrupt
- * @see ConditionalInterrupt
- * @since 1.8.0
+ * @see ThreadInterrupt* @see ConditionalInterrupt* @since 1.8.0
  */
 @Documented
 @Retention(RetentionPolicy.SOURCE)

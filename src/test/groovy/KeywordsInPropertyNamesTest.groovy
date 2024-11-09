@@ -24,7 +24,7 @@ class KeywordsInPropertyNamesTest extends GroovyTestCase {
 
     void testKeywords() {
         def value = "returnValue"
-        StaticAndDefaultClass.metaClass.static.dynStaticMethod = {-> value }
+        StaticAndDefaultClass.metaClass.static.dynStaticMethod = { -> value }
         assert value == StaticAndDefaultClass.dynStaticMethod()
 
         StaticAndDefaultClass.metaClass.default = value
@@ -36,14 +36,14 @@ class KeywordsInPropertyNamesTest extends GroovyTestCase {
 
     void testModifierKeywordsAsMapKeys() {
         def map = [
-                private: 1, public: 2, protected: 3, static: 4,
-                transient: 5, final: 6, abstract: 7, native: 8,
-                threadsafe: 9, synchronized: 10, volatile: 11, strictfp: 12
+            private   : 1, public: 2, protected: 3, static: 4,
+            transient : 5, final: 6, abstract: 7, native: 8,
+            threadsafe: 9, synchronized: 10, volatile: 11, strictfp: 12
         ]
         assert 1..12 == [
-                map.private, map.public, map.protected, map.static,
-                map.transient, map.final, map.abstract, map.native,
-                map.threadsafe, map.synchronized, map.volatile, map.strictfp
+            map.private, map.public, map.protected, map.static,
+            map.transient, map.final, map.abstract, map.native,
+            map.threadsafe, map.synchronized, map.volatile, map.strictfp
         ]
     }
 
@@ -53,54 +53,54 @@ class KeywordsInPropertyNamesTest extends GroovyTestCase {
         e.long = 8
         e.double = 9
         assert 1..9 == [
-                e.void, e.boolean, e.byte,
-                e.char, e.short, e.int,
-                e.float, e.long, e.double
+            e.void, e.boolean, e.byte,
+            e.char, e.short, e.int,
+            e.float, e.long, e.double
         ]
     }
 
     void testMapWithKeywords() {
         def d = new Date()
         def map = [
-                (d): 'foo',
-                null: 'bar',
-                (null): 'baz',
+            (d)       : 'foo',
+            null      : 'bar',
+            (null)    : 'baz',
 
-                as: 'shown',
-                assert: 'true',
-                break: 'free',
-                case: 'tool',
-                catch: 'cold',
-                class: 'action',
-                const: 'flux',
-                continue: 'on',
-                def: 'leppard',
-                default: 'loan',
-                do: 'nothing',
-                else: 'where',
-                enum: 'erate',
-                extends: 'over',
-                false: 'start',
-                finally: 'finished',
-                for: 'ever',
-                goto: 'jail',
-                if: 'then',
-                implements: 'interface',
-                import: 'tax',
-                in: 'trouble',
-                instanceof: 'abuse',
-                interface: 'with',
-                new: 'car',
-                package: 'wrapped',
-                return: 'home',
-                super: 'duper',
-                switch: 'off',
-                this: 'time',
-                throw: 'away',
-                throws: 'up',
-                true: 'love',
-                try: 'again',
-                while: 'away',
+            as        : 'shown',
+            assert    : 'true',
+            break     : 'free',
+            case      : 'tool',
+            catch     : 'cold',
+            class     : 'action',
+            const     : 'flux',
+            continue  : 'on',
+            def       : 'leppard',
+            default   : 'loan',
+            do        : 'nothing',
+            else      : 'where',
+            enum      : 'erate',
+            extends   : 'over',
+            false     : 'start',
+            finally   : 'finished',
+            for       : 'ever',
+            goto      : 'jail',
+            if        : 'then',
+            implements: 'interface',
+            import    : 'tax',
+            in        : 'trouble',
+            instanceof: 'abuse',
+            interface : 'with',
+            new       : 'car',
+            package   : 'wrapped',
+            return    : 'home',
+            super     : 'duper',
+            switch    : 'off',
+            this      : 'time',
+            throw     : 'away',
+            throws    : 'up',
+            true      : 'love',
+            try       : 'again',
+            while     : 'away',
         ]
         assert map[d] == 'foo'
         assert map.null == 'bar'

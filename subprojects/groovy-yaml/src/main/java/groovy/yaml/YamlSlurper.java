@@ -30,9 +30,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- *  Represents a YAML parser
+ * Represents a YAML parser
  *
- *  @since 3.0.0
+ * @since 3.0.0
  */
 public class YamlSlurper {
     private final JsonSlurper jsonSlurper;

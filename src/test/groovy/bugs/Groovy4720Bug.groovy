@@ -36,8 +36,9 @@ class Groovy4720Bug extends GroovyTestCase {
                 if (parameterTypes) {
                     "$methodName"(new Closure(this) {
                         def call(Object[] args) {
-                            apiInstance."$methodName"(* args)
+                            apiInstance."$methodName"(*args)
                         }
+
                         Class[] getParameterTypes() { parameterTypes }
                     })
                 }

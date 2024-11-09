@@ -43,6 +43,7 @@ public class GroovyRunnerRegistryBench {
 
     static List<Object> control = new ArrayList<>();
     static GroovyRunnerRegistry registry = GroovyRunnerRegistry.getInstance();
+
     static {
         control.add(new Object());
         control.add(new Object());

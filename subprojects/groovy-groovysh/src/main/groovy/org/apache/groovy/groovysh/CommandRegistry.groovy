@@ -23,8 +23,7 @@ import org.codehaus.groovy.tools.shell.util.Logger
 /**
  * A registry of shell {@link Command} instances which may be executed.
  */
-class CommandRegistry
-{
+class CommandRegistry {
     protected final Logger log = Logger.create(CommandRegistry)
 
     //
@@ -41,10 +40,10 @@ class CommandRegistry
         assert command
 
         // Make sure that the command name and shortcut are unique
-        assert !names.contains(command.name) : "Duplicate command name: $command.name"
+        assert !names.contains(command.name): "Duplicate command name: $command.name"
         names << command.name
 
-        assert !names.contains(command.shortcut) : "Duplicate command shortcut: $command.shortcut"
+        assert !names.contains(command.shortcut): "Duplicate command shortcut: $command.shortcut"
         names << command.shortcut
 
         // Hold on to the command in order
@@ -56,7 +55,7 @@ class CommandRegistry
         }
 
         // Add any standard aliases for the command if any
-        command.aliases?.each {Command it -> this.register(it) }
+        command.aliases?.each { Command it -> this.register(it) }
 
         if (log.debugEnabled) {
             log.debug("Registered command: $command.name")
@@ -69,7 +68,7 @@ class CommandRegistry
         assert name
 
         for (c in commandList) {
-            if (name in [ c.name, c.shortcut ]) {
+            if (name in [c.name, c.shortcut]) {
                 return c
             }
             // also allow :import

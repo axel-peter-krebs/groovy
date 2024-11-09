@@ -24,5 +24,5 @@
 
 // this is a line comment
 
-println /* method name */ 1 /* one */ /* followed by plus */ + /* plus */ 2 /* two */
+println /* method name */ 1 /* one */ /* followed by plus */ + /* plus */2 /* two */
 +3

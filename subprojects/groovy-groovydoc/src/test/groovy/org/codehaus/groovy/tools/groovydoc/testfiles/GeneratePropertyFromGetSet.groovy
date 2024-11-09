@@ -73,7 +73,7 @@ public class GeneratePropertyFromGetSet {
     public boolean isTestBoolean2() {
     }
 
-    public void setTestBoolean2(boolean a){
+    public void setTestBoolean2(boolean a) {
     }
 
     public void set(String prop) {

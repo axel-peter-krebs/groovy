@@ -49,7 +49,7 @@ public class GetEffectivePogoFieldSite extends AbstractCallSite {
     }
 
     @Override
-    public final Object callGroovyObjectGetProperty (final Object receiver) throws Throwable {
+    public final Object callGroovyObjectGetProperty(final Object receiver) throws Throwable {
         return isEffective(receiver) ? getProperty(receiver) : createGroovyObjectGetPropertySite(receiver).getProperty(receiver);
     }
 

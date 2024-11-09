@@ -24,9 +24,9 @@ class SetTest extends GroovyTestCase {
 
     void testSetPlus() {
         Set s1 = [6, 4, 5, 1, 7, 2]
-        def s2 = [6, 4, 5, 1, 7, [4,5]]
+        def s2 = [6, 4, 5, 1, 7, [4, 5]]
         def s3 = s1 + s2
-        assert s3 == [1, 2, 4, 5, 6, 7, [4,5]] as Set
+        assert s3 == [1, 2, 4, 5, 6, 7, [4, 5]] as Set
     }
 
     void testSetSimpleMinus() {
@@ -45,11 +45,11 @@ class SetTest extends GroovyTestCase {
     }
 
     void testFlattenSetOfMapsWithClosure() {
-        Set orig = [[a:1, b:2], [c:3, d:4]] as Set
-        def flat = orig.flatten{ it instanceof Map ? it.values() : it }
+        Set orig = [[a: 1, b: 2], [c: 3, d: 4]] as Set
+        def flat = orig.flatten { it instanceof Map ? it.values() : it }
         assert flat instanceof Set
-        assert flat == [1, 2, 3 ,4] as Set
-        flat = orig.flatten{ it instanceof Map ? it.keySet() : it }
+        assert flat == [1, 2, 3, 4] as Set
+        flat = orig.flatten { it instanceof Map ? it.keySet() : it }
         assert flat == ["a", "b", "c", "d"] as Set
     }
 

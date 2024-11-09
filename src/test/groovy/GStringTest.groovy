@@ -163,7 +163,7 @@ class GStringTest extends GroovyTestCase {
     void testCoerce() {
         def enc = "US-ASCII"
         def value = "test".getBytes("${enc}")
-         assert value == [116, 101, 115, 116]
+        assert value == [116, 101, 115, 116]
     }
 
     void testGroovy441() {
@@ -195,7 +195,7 @@ class GStringTest extends GroovyTestCase {
         assert b == "--- :<< [[---]] >>: ---"
     }
 
-     // Test case for GROOVY-599
+    // Test case for GROOVY-599
     void testGStringInStaticMethod() {
         int value = 2
         String str = "1${value}3"
@@ -215,9 +215,9 @@ class GStringTest extends GroovyTestCase {
     }
 
     void testEmbeddedClosures() {
-        def c1 = {-> "hello"}
-        def c2 = {out -> out << "world"}
-        def c3 = {a, b -> b << a}
+        def c1 = { -> "hello" }
+        def c2 = { out -> out << "world" }
+        def c3 = { a, b -> b << a }
         def c4 = c3.curry(5)
 
         def g1 = "${-> "hello"} ${out -> out << "world"}"
@@ -440,7 +440,7 @@ class GStringTest extends GroovyTestCase {
      */
     void testClosureInString() {
         def i = 1
-        def closure = {i};
+        def closure = { i };
         def str = "<${closure()}>"
         assertEquals('closure replacement ok', '<1>', str)
 
@@ -502,8 +502,7 @@ class GStringTest extends GroovyTestCase {
     /**
      * Void method
      */
-    void doNothing()
-    {
+    void doNothing() {
     }
 
     /**
@@ -557,7 +556,8 @@ class GStringTest extends GroovyTestCase {
         assert gs.split('o') == ['The quick br', 'wn f', 'x'] as String[]
     }
 
-    def foo(String s) {1}
+    def foo(String s) { 1 }
+
     void testGStringArgumentForStringParameter() {
         def a = 1
         def b = "$a"
@@ -573,7 +573,7 @@ class GStringTest extends GroovyTestCase {
         GString gstring = "Hello ${world}"
 
         assert gstring.bytes == string.bytes
-        assert gstring.getBytes('UTF-8') ==  string.getBytes('UTF-8')
+        assert gstring.getBytes('UTF-8') == string.getBytes('UTF-8')
     }
 
     /**
@@ -712,17 +712,20 @@ class GStringTest extends GroovyTestCase {
     @groovy.transform.Immutable
     static class GroovyImmutableValue {
         private final String v = '123'
+
         String toString() { v }
     }
 
     @net.jcip.annotations.Immutable
     static final class JcipImmutableValue {
         private final String v = '234'
+
         String toString() { v }
     }
 
     static final class PureValue {
         private final String v = '345'
+
         @Pure
         String toString() { v }
     }

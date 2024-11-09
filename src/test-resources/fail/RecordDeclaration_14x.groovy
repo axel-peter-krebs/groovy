@@ -19,4 +19,4 @@
 package core
 
 // C-style array declarations not allowed in record components as per JLS
-record R1(int x[]) { }
+record R1(int x [ ]) {}

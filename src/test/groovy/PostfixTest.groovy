@@ -43,14 +43,14 @@ class PostfixTest extends GroovyTestCase {
         assert x == 3.2
     }
 
-     void testStringPostfix() {
-         def x = "bbc"
-         x++
+    void testStringPostfix() {
+        def x = "bbc"
+        x++
 
-         assert x == "bbd"
+        assert x == "bbd"
 
-         def y = "bbc"++
-         assert y == "bbc"
+        def y = "bbc"++
+        assert y == "bbc"
     }
 
 
@@ -79,8 +79,8 @@ class PostfixTest extends GroovyTestCase {
     void testPrefixAndPostfix() {
         def u = 0
 
-        assert -1 == -- u --
-        assert 0 == ++ u ++
+        assert -1 == --u--
+        assert 0 == ++u++
         assert 0 == u
         assert 0 == (u++)++
         assert 1 == u

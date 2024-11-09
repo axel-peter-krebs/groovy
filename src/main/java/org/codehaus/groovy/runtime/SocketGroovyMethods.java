@@ -58,7 +58,7 @@ public class SocketGroovyMethods extends DefaultGroovyMethodsSupport {
      * @throws IOException if an IOException occurs.
      * @since 1.5.2
      */
-    public static <T> T withStreams(Socket socket, @ClosureParams(value=SimpleType.class, options={"java.io.InputStream","java.io.OutputStream"}) Closure<T> closure) throws IOException {
+    public static <T> T withStreams(Socket socket, @ClosureParams(value = SimpleType.class, options = {"java.io.InputStream", "java.io.OutputStream"}) Closure<T> closure) throws IOException {
         InputStream input = socket.getInputStream();
         OutputStream output = socket.getOutputStream();
         try {
@@ -89,7 +89,7 @@ public class SocketGroovyMethods extends DefaultGroovyMethodsSupport {
      * @throws IOException if an IOException occurs.
      * @since 1.5.0
      */
-    public static <T> T withObjectStreams(Socket socket, @ClosureParams(value=SimpleType.class, options={"java.io.ObjectInputStream","java.io.ObjectOutputStream"}) Closure<T> closure) throws IOException {
+    public static <T> T withObjectStreams(Socket socket, @ClosureParams(value = SimpleType.class, options = {"java.io.ObjectInputStream", "java.io.ObjectOutputStream"}) Closure<T> closure) throws IOException {
         InputStream input = socket.getInputStream();
         OutputStream output = socket.getOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(output);
@@ -158,7 +158,7 @@ public class SocketGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see java.net.ServerSocket#accept()
      * @since 1.0
      */
-    public static Socket accept(ServerSocket serverSocket, @ClosureParams(value=SimpleType.class, options="java.net.Socket") final Closure closure) throws IOException {
+    public static Socket accept(ServerSocket serverSocket, @ClosureParams(value = SimpleType.class, options = "java.net.Socket") final Closure closure) throws IOException {
         return accept(serverSocket, true, closure);
     }
 
@@ -175,7 +175,7 @@ public class SocketGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.7.6
      */
     public static Socket accept(ServerSocket serverSocket, final boolean runInANewThread,
-                                @ClosureParams(value=SimpleType.class, options="java.net.Socket") final Closure closure) throws IOException {
+                                @ClosureParams(value = SimpleType.class, options = "java.net.Socket") final Closure closure) throws IOException {
         final Socket socket = serverSocket.accept();
         if (runInANewThread) {
             new Thread(() -> invokeClosureWithSocket(socket, closure)).start();

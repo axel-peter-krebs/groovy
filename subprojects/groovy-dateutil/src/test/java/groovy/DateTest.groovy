@@ -47,7 +47,7 @@ class DateTest extends GroovyTestCase {
         assert formatter.format(c.previous().time) == '01-Feb-2002'
         assert formatter.format(c.time) == '02-Feb-2002'
         assert formatter.format(c.next().time) == '03-Feb-2002'
-        def dates = (c.previous()..c.next()).collect{ formatter.format(it.time) }
+        def dates = (c.previous()..c.next()).collect { formatter.format(it.time) }
         assert dates == ['01-Feb-2002', '02-Feb-2002', '03-Feb-2002']
     }
 
@@ -239,7 +239,7 @@ class DateTest extends GroovyTestCase {
 
         List actualResults = []
 
-        startDate.upto(startDate + 2){
+        startDate.upto(startDate + 2) {
             actualResults << it
         }
 
@@ -251,7 +251,7 @@ class DateTest extends GroovyTestCase {
         Date toDate = new Date(startDate.getTime() - 1L)
 
         shouldFail(GroovyRuntimeException) {
-            startDate.upto(toDate){}
+            startDate.upto(toDate) {}
         }
     }
 
@@ -260,7 +260,7 @@ class DateTest extends GroovyTestCase {
         List expectedResults = [startDate, startDate - 1, startDate - 2]
 
         List actualResults = []
-        startDate.downto(startDate - 2){
+        startDate.downto(startDate - 2) {
             actualResults << it
         }
 
@@ -272,7 +272,7 @@ class DateTest extends GroovyTestCase {
         Date toDate = new Date(startDate.getTime() + 1L)
 
         shouldFail(GroovyRuntimeException) {
-            startDate.downto(toDate){}
+            startDate.downto(toDate) {}
         }
     }
 
@@ -283,7 +283,7 @@ class DateTest extends GroovyTestCase {
         List expectedResults = [startDate, toDate]
 
         List actualResults = []
-        startDate.upto(toDate){
+        startDate.upto(toDate) {
             actualResults << it
         }
 
@@ -296,7 +296,7 @@ class DateTest extends GroovyTestCase {
         toDate.add(Calendar.MILLISECOND, -1)
 
         shouldFail(GroovyRuntimeException) {
-            startDate.upto(toDate){}
+            startDate.upto(toDate) {}
         }
     }
 
@@ -307,7 +307,7 @@ class DateTest extends GroovyTestCase {
         List expectedResults = [startDate, toDate]
 
         List actualResults = []
-        startDate.downto(toDate){
+        startDate.downto(toDate) {
             actualResults << it
         }
 
@@ -320,7 +320,7 @@ class DateTest extends GroovyTestCase {
         toDate.add(Calendar.MILLISECOND, 1)
 
         shouldFail(GroovyRuntimeException) {
-            startDate.downto(toDate){}
+            startDate.downto(toDate) {}
         }
     }
 

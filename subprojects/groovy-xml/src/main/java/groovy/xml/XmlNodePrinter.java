@@ -83,6 +83,16 @@ public class XmlNodePrinter {
         this(new PrintWriter(new OutputStreamWriter(System.out)));
     }
 
+    private static boolean isEmptyElement(Node node) {
+        if (node == null) {
+            throw new IllegalArgumentException("Node must not be null!");
+        }
+        if (!node.children().isEmpty()) {
+            return false;
+        }
+        return node.text().length() == 0;
+    }
+
     public void print(Node node) {
         print(node, new NamespaceContext());
     }
@@ -147,7 +157,7 @@ public class XmlNodePrinter {
      * Whether empty elements are expanded from &lt;tagName/&gt; to &lt;tagName&gt;&lt;/tagName&gt;.
      *
      * @return <code>true</code>, if empty elements will be represented by an opening tag
-     *                            followed immediately by a closing tag.
+     * followed immediately by a closing tag.
      */
     public boolean isExpandEmptyElements() {
         return expandEmptyElements;
@@ -335,16 +345,6 @@ public class XmlNodePrinter {
             out.print(quote);
             printNamespace(entry.getKey(), ctx);
         }
-    }
-
-    private static boolean isEmptyElement(Node node) {
-        if (node == null) {
-            throw new IllegalArgumentException("Node must not be null!");
-        }
-        if (!node.children().isEmpty()) {
-            return false;
-        }
-        return node.text().length() == 0;
     }
 
     protected String getName(Object object) {

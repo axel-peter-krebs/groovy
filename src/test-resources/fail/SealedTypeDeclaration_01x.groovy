@@ -17,5 +17,7 @@
  *  under the License.
  */
 
-sealed @interface ShapeI permits Circle, Rectangle { }
+sealed @interface ShapeI
+
+permits Circle, Rectangle {}
 

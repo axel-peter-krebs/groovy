@@ -29,27 +29,27 @@ class GenericsGenTest extends GroovyTestCase {
         assertNotNull dir
 
         def fileList = [
-                "JavaClass.java": """
+            "JavaClass.java"        : """
          import java.util.*;
 
          public abstract class JavaClass<T> implements GroovyInterface<T> {
          }
     """,
 
-                "JavaInterface.java": """
+            "JavaInterface.java"    : """
          public interface JavaInterface<X,Y> {
              public X getKey ();
              public Y getValue ();
          }
     """,
 
-                "GroovyInterface.groovy": """
+            "GroovyInterface.groovy": """
          interface GroovyInterface<X> {
              X method ();
          }
     """,
 
-                "GroovyClass.groovy": """
+            "GroovyClass.groovy"    : """
            class GroovyClass extends JavaClass<String> implements JavaInterface<Long,Boolean> {
                String method() {}
                Long getKey(){}
@@ -58,17 +58,17 @@ class GenericsGenTest extends GroovyTestCase {
       """
         ].collect {
             name, text ->
-            File file = new File(dir, name)
-            file.write text
-            file
+                File file = new File(dir, name)
+                file.write text
+                file
         }
 
         CompilerConfiguration config = new CompilerConfiguration()
         config.targetDirectory = createTempDir("groovy-target-", "-target")
         config.jointCompilationOptions = [
-                "stubDir": createTempDir("groovy-stub-", "-stub"),
-                // source version 7 and target version 7 are no longer supported since JDK20. Use 8+
-                "namedValues": ["target", "1.8", "source", "1.8"] as String[]
+            "stubDir"    : createTempDir("groovy-stub-", "-stub"),
+            // source version 7 and target version 7 are no longer supported since JDK20. Use 8+
+            "namedValues": ["target", "1.8", "source", "1.8"] as String[]
         ]
         config.classpath = "build/classes"
         FileSystemCompiler compiler = new FileSystemCompiler(config)
@@ -78,7 +78,7 @@ class GenericsGenTest extends GroovyTestCase {
     private filesToDelete = []
 
     void tearDown() {
-        filesToDelete.each {file ->
+        filesToDelete.each { file ->
             if (file instanceof File) {
                 // remember: null instanceof anything is false
                 FileSystemCompiler.deleteRecursive file

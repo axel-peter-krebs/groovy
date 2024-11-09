@@ -30,9 +30,9 @@ f.entries = [ new Expando(title:'one',summary:'first post'), new Expando(title:'
 
 f = new Feed()
 
-f.author = new Person(name:'Ted Leung',url:'http://www.sauria.com/blog', email:'twl@sauria.com')
+f.author = new Person(name: 'Ted Leung', url: 'http://www.sauria.com/blog', email: 'twl@sauria.com')
 
-f.entries = [ new Entry(title:'one',summary:'first post'), new Entry(title:'two',summary:'the second post'), new Entry(title:'three', summary:'post the third'), new Entry(title:'four',summary:'the ponderous fourth post') ]
+f.entries = [new Entry(title: 'one', summary: 'first post'), new Entry(title: 'two', summary: 'the second post'), new Entry(title: 'three', summary: 'post the third'), new Entry(title: 'four', summary: 'the ponderous fourth post')]
 
 f.entries.each { println it.title }
 println f.author.name
@@ -40,22 +40,22 @@ println f.author.name
 xml = new MarkupBuilder()
 
 atom = xml.atom {
-  title("Ted Leung off the air")
-  link("http://www.sauria.com/noblog")
-  author {
-    person {
-      name(f.author.name)
-      url(f.author.url)
-      email(f.author.email)
+    title("Ted Leung off the air")
+    link("http://www.sauria.com/noblog")
+    author {
+        person {
+            name(f.author.name)
+            url(f.author.url)
+            email(f.author.email)
+        }
     }
-  }
 
-  for (e in f.entries) {
-    entry {
-      title(e.title)
-      summary(e.summary)
+    for (e in f.entries) {
+        entry {
+            title(e.title)
+            summary(e.summary)
+        }
     }
-  }
 }
 
 

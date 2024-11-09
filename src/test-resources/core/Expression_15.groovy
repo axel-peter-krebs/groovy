@@ -59,20 +59,20 @@ a[1, *[2, 3]]*.b
 a[*[2, 3]]*.b
 
 person
-*.
-child
-*.
-@child
-?.
-child
-?.
-@child
-.
-child
-        .
-@name
-.&
-length
+    *.
+        child
+    *.
+    @child
+    ?.
+        child
+    ?.
+    @child
+    .
+        child
+    .
+    @name
+    .&
+    length
 
 a.b()
 a.'b'()
@@ -101,26 +101,26 @@ a?.@b(1, 2, 3)
 a*.@b()
 a*.@b(1, 2, 3)
 
-a.<Integer>b(1, 2)
+a.<Integer> b(1, 2)
 
 a
-        .
-<Integer>b(1, 2)
+    .
+        <Integer> b(1, 2)
 
-a.<Integer, String>b(1, '2')
-a?.<Integer, String>b(1, '2')
-a*.<Integer, String>b(1, '2')
+a.<Integer, String> b(1, '2')
+a?.<Integer, String> b(1, '2')
+a*.<Integer, String> b(1, '2')
 obj?.a*.<
-        Integer,
-        String
-        >b(1, '2')
+    Integer,
+    String
+    > b(1, '2')
 
 String[] codes = [
-        className + '.' + propertyName + '.typeMismatch.error',
-        className + '.' + propertyName + '.typeMismatch',
-        classAsPropertyName + '.' + propertyName + '.typeMismatch.error',
-        classAsPropertyName + '.' + propertyName + '.typeMismatch',
-        bindingResult.resolveMessageCodes('typeMismatch', propertyName)
+    className + '.' + propertyName + '.typeMismatch.error',
+    className + '.' + propertyName + '.typeMismatch',
+    classAsPropertyName + '.' + propertyName + '.typeMismatch.error',
+    classAsPropertyName + '.' + propertyName + '.typeMismatch',
+    bindingResult.resolveMessageCodes('typeMismatch', propertyName)
 ].flatten() as String[]
 
 
@@ -133,13 +133,13 @@ person*.child[1, 2 + 6, *[3, 4]]*.@child*.@child()?.@child().@child()?.child?.@c
 
 static.unused = { -> }
 
-ResolveOptions resolveOptions = new ResolveOptions()\
-            .setConfs(['default'] as String[])\
-            .setOutputReport(false)\
+ResolveOptions resolveOptions = new ResolveOptions() \
+            .setConfs(['default'] as String[]) \
+            .setOutputReport(false) \
             .setValidate(args.containsKey('validate') ? args.validate : false)
 
 new A("b") C.d()
 
 m()()
 
-a = {a,b-> }()
+a = { a, b -> }()

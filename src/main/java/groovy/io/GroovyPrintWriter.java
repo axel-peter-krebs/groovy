@@ -40,7 +40,7 @@ public class GroovyPrintWriter extends PrintWriter {
     }
 
     public GroovyPrintWriter(File file, String csn)
-            throws FileNotFoundException, UnsupportedEncodingException {
+        throws FileNotFoundException, UnsupportedEncodingException {
         super(file, csn);
     }
 
@@ -65,7 +65,7 @@ public class GroovyPrintWriter extends PrintWriter {
     }
 
     public GroovyPrintWriter(String filename, String csn)
-            throws FileNotFoundException, UnsupportedEncodingException {
+        throws FileNotFoundException, UnsupportedEncodingException {
         super(filename, csn);
     }
 

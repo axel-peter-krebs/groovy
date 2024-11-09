@@ -102,9 +102,9 @@ class StaticCompileConstructorsTest extends ConstructorsSTCTest implements Stati
     @Override
     void testMapStyleConstructorWithOverloadedSetterName() {
         super.testMapStyleConstructorWithOverloadedSetterName()
-        String  asserts = astTrees.find{ it.key != 'C' }.value[1]
-        assert  asserts.contains('INVOKEVIRTUAL C.setP (Ljava/lang/String;)V')
-        assert  asserts.contains('INVOKEVIRTUAL C.setP (Ljava/util/regex/Pattern;)V')
+        String asserts = astTrees.find { it.key != 'C' }.value[1]
+        assert asserts.contains('INVOKEVIRTUAL C.setP (Ljava/lang/String;)V')
+        assert asserts.contains('INVOKEVIRTUAL C.setP (Ljava/util/regex/Pattern;)V')
         assert !asserts.contains('INVOKESTATIC org/codehaus/groovy/runtime/ScriptBytecodeAdapter.setGroovyObjectProperty')
     }
 }

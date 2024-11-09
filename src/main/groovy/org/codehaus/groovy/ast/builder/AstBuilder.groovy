@@ -71,8 +71,7 @@ class AstBuilder {
      * @param block
      *      the code that will be converted
      * @returns a List of {@link ASTNode}
-     * @throws IllegalStateException
-     * this method may not be invoked at runtime. It works via a compile-time transformation
+     * @throws IllegalStateException* this method may not be invoked at runtime. It works via a compile-time transformation
      * of the closure source code into a String, which is sent to the {@link AstBuilder#buildFromString(CompilePhase, boolean, String)}
      * method. The buildFromCode() method must be invoked against a strongly typed AstBuilder.
      */
@@ -92,8 +91,7 @@ Are you sure you are using it correctly?''')
      * @param source
      *      The source code String that will be compiled.
      * @returns a List of  {@link ASTNode} .
-     * @throws IllegalArgumentException
-     *      if source is null or empty
+     * @throws IllegalArgumentException*      if source is null or empty
      */
     List<ASTNode> buildFromString(CompilePhase phase = CompilePhase.CLASS_GENERATION, boolean statementsOnly = true, String source) {
         if (!source || '' == source.trim()) throw new IllegalArgumentException('A source must be specified')

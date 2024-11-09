@@ -68,13 +68,42 @@ import static org.objectweb.asm.Opcodes.RETURN;
  * use this class in your code
  */
 public class CallSiteWriter {
+    public static final String CONSTRUCTOR = "<$constructor$>";
     private static final int SIG_ARRAY_LENGTH = 255;
-    private static String [] sig = new String [SIG_ARRAY_LENGTH];
+    private static final int
+        MOD_PRIVSS = ACC_PRIVATE + ACC_STATIC + ACC_SYNTHETIC,
+        MOD_PUBSS = ACC_PUBLIC + ACC_STATIC + ACC_SYNTHETIC;
+    private static final ClassNode CALLSITE_ARRAY_TYPE = ClassHelper.make(CallSite[].class);
+    private static final String
+        GET_CALLSITE_METHOD = "$getCallSiteArray",
+        CALLSITE_CLASS = "org/codehaus/groovy/runtime/callsite/CallSite",
+        CALLSITE_DESC = "[Lorg/codehaus/groovy/runtime/callsite/CallSite;",
+        GET_CALLSITE_DESC = "()" + CALLSITE_DESC,
+        CALLSITE_ARRAY_CLASS = "org/codehaus/groovy/runtime/callsite/CallSiteArray",
+        GET_CALLSITEARRAY_DESC = "()Lorg/codehaus/groovy/runtime/callsite/CallSiteArray;",
+        CALLSITE_FIELD = "$callSiteArray",
+        REF_CLASS = "java/lang/ref/SoftReference",
+        REF_DESC = "L" + REF_CLASS + ";",
+        METHOD_OO_DESC = "(Ljava/lang/Object;)Ljava/lang/Object;",
+        CREATE_CSA_METHOD = "$createCallSiteArray";
+    private static String[] sig = new String[SIG_ARRAY_LENGTH];
+    private final List<String> callSites = new ArrayList<String>(32);
+    private final WriterController controller;
+    private int callSiteArrayVarIndex = -1;
+    public CallSiteWriter(WriterController wc) {
+        this.controller = wc;
+        ClassNode node = controller.getClassNode();
+        if (node instanceof InterfaceHelperClassNode) {
+            InterfaceHelperClassNode ihcn = (InterfaceHelperClassNode) node;
+            callSites.addAll(ihcn.getCallSites());
+        }
+    }
+
     private static String getCreateArraySignature(int numberOfArguments) {
         if (numberOfArguments >= SIG_ARRAY_LENGTH) {
             throw new IllegalArgumentException(String.format(
-                      "The max number of supported arguments is %s, but found %s",
-                        SIG_ARRAY_LENGTH, numberOfArguments));
+                "The max number of supported arguments is %s, but found %s",
+                SIG_ARRAY_LENGTH, numberOfArguments));
         }
         if (sig[numberOfArguments] == null) {
             StringBuilder sb = new StringBuilder("(");
@@ -85,35 +114,6 @@ public class CallSiteWriter {
             sig[numberOfArguments] = sb.toString();
         }
         return sig[numberOfArguments];
-    }
-    private static final int
-        MOD_PRIVSS = ACC_PRIVATE+ACC_STATIC+ACC_SYNTHETIC,
-        MOD_PUBSS  = ACC_PUBLIC+ACC_STATIC+ACC_SYNTHETIC;
-    private static final ClassNode CALLSITE_ARRAY_TYPE = ClassHelper.make(CallSite[].class);
-    private static final String
-        GET_CALLSITE_METHOD     = "$getCallSiteArray",
-        CALLSITE_CLASS          = "org/codehaus/groovy/runtime/callsite/CallSite",
-        CALLSITE_DESC           = "[Lorg/codehaus/groovy/runtime/callsite/CallSite;",
-        GET_CALLSITE_DESC       = "()"+CALLSITE_DESC,
-        CALLSITE_ARRAY_CLASS    = "org/codehaus/groovy/runtime/callsite/CallSiteArray",
-        GET_CALLSITEARRAY_DESC  = "()Lorg/codehaus/groovy/runtime/callsite/CallSiteArray;",
-        CALLSITE_FIELD          = "$callSiteArray",
-        REF_CLASS               = "java/lang/ref/SoftReference",
-        REF_DESC                = "L"+REF_CLASS+";",
-        METHOD_OO_DESC          = "(Ljava/lang/Object;)Ljava/lang/Object;",
-        CREATE_CSA_METHOD       = "$createCallSiteArray";
-    public static final String CONSTRUCTOR = "<$constructor$>";
-    private final List<String> callSites = new ArrayList<String>(32);
-    private int callSiteArrayVarIndex = -1;
-    private final WriterController controller;
-
-    public CallSiteWriter(WriterController wc) {
-        this.controller = wc;
-        ClassNode node = controller.getClassNode();
-        if(node instanceof InterfaceHelperClassNode) {
-            InterfaceHelperClassNode ihcn = (InterfaceHelperClassNode) node;
-            callSites.addAll(ihcn.getCallSites());
-        }
     }
 
     public void makeSiteEntry() {
@@ -220,7 +220,7 @@ public class CallSiteWriter {
 
     private int allocateIndex(String name) {
         callSites.add(name);
-        return callSites.size()-1;
+        return callSites.size() - 1;
     }
 
     private void invokeSafe(boolean safe, String unsafeMethod, String safeMethod) {
@@ -281,7 +281,7 @@ public class CallSiteWriter {
         visitBoxedArgument(arguments);
         int m2 = operandStack.getStackLength();
         controller.getMethodVisitor().visitMethodInsn(INVOKEINTERFACE, "org/codehaus/groovy/runtime/callsite/CallSite", safe ? "callSafe" : "call", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true);
-        operandStack.replace(ClassHelper.OBJECT_TYPE, m2-m1);
+        operandStack.replace(ClassHelper.OBJECT_TYPE, m2 - m1);
     }
 
     public void makeGroovyObjectGetPropertySite(Expression receiver, String methodName, boolean safe, boolean implicitThis) {
@@ -295,7 +295,7 @@ public class CallSiteWriter {
     }
 
     public void makeCallSite(final Expression receiver, final String message, final Expression arguments,
-            final boolean safe, final boolean implicitThis, final boolean callCurrent, final boolean callStatic) {
+                             final boolean safe, final boolean implicitThis, final boolean callCurrent, final boolean callStatic) {
         prepareSiteAndReceiver(receiver, message, implicitThis);
 
         AsmClassGenerator acg = controller.getAcg();
@@ -333,22 +333,27 @@ public class CallSiteWriter {
 
         String desc;
         switch (numberOfArguments) {
-        case 0:
-            desc = ")Ljava/lang/Object;"; break;
-        case 1:
-            desc = "Ljava/lang/Object;)Ljava/lang/Object;"; break;
-        case 2:
-            desc = "Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"; break;
-        case 3:
-            desc = "Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"; break;
-        case 4:
-            desc = "Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"; break;
-        default:
-            mv.visitMethodInsn(INVOKESTATIC, "org/codehaus/groovy/runtime/ArrayUtil", "createArray", getCreateArraySignature(numberOfArguments), false);
-            os.replace(ClassHelper.OBJECT_TYPE.makeArray(), numberOfArguments);
-            operandsToReplace = operandsToReplace - numberOfArguments + 1;
-        case -1: // spread expression case produces Object[]
-            desc = "[Ljava/lang/Object;)Ljava/lang/Object;";
+            case 0:
+                desc = ")Ljava/lang/Object;";
+                break;
+            case 1:
+                desc = "Ljava/lang/Object;)Ljava/lang/Object;";
+                break;
+            case 2:
+                desc = "Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;";
+                break;
+            case 3:
+                desc = "Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;";
+                break;
+            case 4:
+                desc = "Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;";
+                break;
+            default:
+                mv.visitMethodInsn(INVOKESTATIC, "org/codehaus/groovy/runtime/ArrayUtil", "createArray", getCreateArraySignature(numberOfArguments), false);
+                os.replace(ClassHelper.OBJECT_TYPE.makeArray(), numberOfArguments);
+                operandsToReplace = operandsToReplace - numberOfArguments + 1;
+            case -1: // spread expression case produces Object[]
+                desc = "[Ljava/lang/Object;)Ljava/lang/Object;";
         }
 
         if (callStatic) {
@@ -378,17 +383,17 @@ public class CallSiteWriter {
     }
 
     public boolean hasCallSiteUse() {
-        return callSiteArrayVarIndex>=0;
+        return callSiteArrayVarIndex >= 0;
     }
 
     public void fallbackAttributeOrPropertySite(PropertyExpression expression, Expression objectExpression, String name, MethodCallerMultiAdapter adapter) {
         if (controller.getCompileStack().isLHS()) controller.getOperandStack().box();
         controller.getInvocationWriter().makeCall(
-                expression,
-                objectExpression, // receiver
-                new CastExpression(ClassHelper.STRING_TYPE, expression.getProperty()), // messageName
-                MethodCallExpression.NO_ARGUMENTS, adapter,
-                expression.isSafe(), expression.isSpreadSafe(), expression.isImplicitThis()
+            expression,
+            objectExpression, // receiver
+            new CastExpression(ClassHelper.STRING_TYPE, expression.getProperty()), // messageName
+            MethodCallExpression.NO_ARGUMENTS, adapter,
+            expression.isSafe(), expression.isSpreadSafe(), expression.isImplicitThis()
         );
     }
 }

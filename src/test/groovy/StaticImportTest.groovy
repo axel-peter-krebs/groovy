@@ -497,7 +497,7 @@ final class StaticImportTest extends groovy.test.GroovyTestCase {
 
     // GROOVY-8145
     void testStaticImportAnyVsGeneratedField() {
-        for (what in ['*','log']) {
+        for (what in ['*', 'log']) {
             assertScript """
                 import static Foo.$what
                 class Foo {
@@ -512,7 +512,7 @@ final class StaticImportTest extends groovy.test.GroovyTestCase {
                 assert new Bar().test() == null // return from logger
             """
         }
-        for (which in ['public','protected','@groovy.transform.PackageScope']) {
+        for (which in ['public', 'protected', '@groovy.transform.PackageScope']) {
             assertScript """
                 import static Foo.*
                 class Foo {
@@ -546,7 +546,8 @@ final class StaticImportTest extends groovy.test.GroovyTestCase {
         try {
             this.z()
             fail()
-        } catch (MissingMethodException expected) {}
+        } catch (MissingMethodException expected) {
+        }
     }
 
     void testMethodCallWithSuperTargetIsNotResolvedToStaticallyImportedMethod() {
@@ -554,7 +555,8 @@ final class StaticImportTest extends groovy.test.GroovyTestCase {
         try {
             super.z()
             fail()
-        } catch (MissingMethodException expected) {}
+        } catch (MissingMethodException expected) {
+        }
     }
 
     // GROOVY-3945, GROOVY-10329, GROOVY-11056
@@ -715,7 +717,7 @@ final class StaticImportTest extends groovy.test.GroovyTestCase {
     }
 
     void testMethodParamInLeftExpressionOfEquals() {
-        holder = [[a:1, b:2], [c:3]]
+        holder = [[a: 1, b: 2], [c: 3]]
         DGM.find(holder) { it.size() == 2 }.a = 4
         assert holder[0].a == 4
         dgmFind(holder) { it.size() == 1 }.c = 7
@@ -741,11 +743,13 @@ class API {
 
 class StaticImportParent {
     static pfield = 42
+
     static pmethod() { 'hello from parent' }
 }
 
 class StaticImportChild extends StaticImportParent {
     static cfield = 21
+
     static cmethod() { 'hello from child' }
 }
 
@@ -768,6 +772,7 @@ class Bar4964 {
      The following `run` method is invoked by `testExplicitStaticMethodCallHasPrecedenceOverStaticImport`
      As the method name shows, "ExplicitStaticMethodCall Has Precedence Over StaticImport", but the original test code does not conform to the intention
      */
+
     static run() {
 //        The original test code is commented as follows:
 //        assert doIt().k == 'foo'
@@ -799,6 +804,7 @@ class HolderWrapper {
 
 class Extension10396 {
     static final List<String> strings = []
+
     static void println(String s) {
         strings << s
     }

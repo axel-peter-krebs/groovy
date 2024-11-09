@@ -445,7 +445,7 @@ final class GinqErrorTest {
 
     @Test
     void "testGinq - window - 0"() {
-        def err = shouldFail  '''\
+        def err = shouldFail '''\
             GQ {
                 from n in [2, 1, 3]
                 select n, (xxx(n) over(orderby n))

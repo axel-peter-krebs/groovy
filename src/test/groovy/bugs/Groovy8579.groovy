@@ -57,7 +57,8 @@ final class Groovy8579 {
         }
     }
 
-    @Test // GROOVY-10592
+    @Test
+    // GROOVY-10592
     void testCallToStaticInterfaceMethod3() {
         ['CompileDynamic', 'CompileStatic', 'TypeChecked'].each { mode ->
             def sourceDir = File.createTempDir()
@@ -101,7 +102,8 @@ final class Groovy8579 {
         }
     }
 
-    @Test // GROOVY-10592
+    @Test
+    // GROOVY-10592
     void testCallToStaticInterfaceMethod4() {
         ['CompileStatic', 'TypeChecked'].each { mode ->
             def sourceDir = File.createTempDir()

@@ -86,7 +86,8 @@ final class MixinAnnotationTest {
         '''
     }
 
-    @Test // GROOVY-4801
+    @Test
+    // GROOVY-4801
     void testMixinWithTryCatchClause() {
         assertScript '''
             class ExceptionHandler {
@@ -108,7 +109,8 @@ final class MixinAnnotationTest {
         '''
     }
 
-    @Test // GROOVY-10200
+    @Test
+    // GROOVY-10200
     void testStaticInnerMixinAnnotation() {
         assertScript '''
             class A {

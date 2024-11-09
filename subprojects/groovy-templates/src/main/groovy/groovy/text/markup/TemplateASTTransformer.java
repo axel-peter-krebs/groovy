@@ -82,17 +82,17 @@ class TemplateASTTransformer extends CompilationCustomizer {
 
     private void createConstructor(final ClassNode classNode) {
         Parameter[] params = new Parameter[]{
-                new Parameter(MarkupTemplateEngine.MARKUPTEMPLATEENGINE_CLASSNODE, "engine"),
-                new Parameter(ClassHelper.MAP_TYPE.getPlainNodeReference(), "model"),
-                new Parameter(ClassHelper.MAP_TYPE.getPlainNodeReference(), "modelTypes"),
-                new Parameter(TEMPLATECONFIG_CLASSNODE, "tplConfig")
+            new Parameter(MarkupTemplateEngine.MARKUPTEMPLATEENGINE_CLASSNODE, "engine"),
+            new Parameter(ClassHelper.MAP_TYPE.getPlainNodeReference(), "model"),
+            new Parameter(ClassHelper.MAP_TYPE.getPlainNodeReference(), "modelTypes"),
+            new Parameter(TEMPLATECONFIG_CLASSNODE, "tplConfig")
         };
         List<Expression> vars = new LinkedList<Expression>();
         for (Parameter param : params) {
             vars.add(new VariableExpression(param));
         }
         ExpressionStatement body = new ExpressionStatement(
-                new ConstructorCallExpression(ClassNode.SUPER, new ArgumentListExpression(vars)));
+            new ConstructorCallExpression(ClassNode.SUPER, new ArgumentListExpression(vars)));
         ConstructorNode ctor = new ConstructorNode(Opcodes.ACC_PUBLIC, params, ClassNode.EMPTY_ARRAY, body);
         classNode.addConstructor(ctor);
     }

@@ -48,7 +48,7 @@ outputWindow = frame(visible: false, defaultCloseOperation: WindowConstants.HIDE
     blank.preferredSize = [0, 0] as Dimension
 }
 splitPane = splitPane(resizeWeight: 0.5, orientation:
-        prefs.getBoolean('orientationVertical', true) ? VERTICAL_SPLIT : HORIZONTAL_SPLIT) {
+    prefs.getBoolean('orientationVertical', true) ? VERTICAL_SPLIT : HORIZONTAL_SPLIT) {
     def editor = new ConsoleTextEditor()
     boolean smartHighlighterEnabled = Console.smartHighlighter
     if (smartHighlighterEnabled) {
@@ -61,12 +61,12 @@ splitPane = splitPane(resizeWeight: 0.5, orientation:
 private def buildOutputArea(prefs) {
     scrollArea = scrollPane(border: emptyBorder(0)) {
         outputArea = textPane(
-                editable: false,
-                name: 'outputArea',
-                contentType: 'text/html',
-                background: new Color(255, 255, 218),
-                font: new Font('Monospaced', Font.PLAIN, prefs.getInt('fontSize', 12)),
-                border: emptyBorder(4)
+            editable: false,
+            name: 'outputArea',
+            contentType: 'text/html',
+            background: new Color(255, 255, 218),
+            font: new Font('Monospaced', Font.PLAIN, prefs.getInt('fontSize', 12)),
+            border: emptyBorder(4)
         )
     }
 }
@@ -139,13 +139,13 @@ Graphics g = GraphicsEnvironment.localGraphicsEnvironment.createGraphics(new Buf
 FontMetrics fm = g.getFontMetrics(outputArea.font)
 
 outputArea.preferredSize = [
-        prefs.getInt('outputAreaWidth', fm.charWidth(0x77) * 81),
-        prefs.getInt('outputAreaHeight', (fm.getHeight() + fm.getLeading()) * 12)
+    prefs.getInt('outputAreaWidth', fm.charWidth(0x77) * 81),
+    prefs.getInt('outputAreaHeight', (fm.getHeight() + fm.getLeading()) * 12)
 ] as Dimension
 
 inputEditor.preferredSize = [
-        prefs.getInt('inputAreaWidth', fm.charWidth(0x77) * 81),
-        prefs.getInt('inputAreaHeight', (fm.getHeight() + fm.getLeading()) * 12)
+    prefs.getInt('inputAreaWidth', fm.charWidth(0x77) * 81),
+    prefs.getInt('inputAreaHeight', (fm.getHeight() + fm.getLeading()) * 12)
 ] as Dimension
 
 origDividerSize = -1

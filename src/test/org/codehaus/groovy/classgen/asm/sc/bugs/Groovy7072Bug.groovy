@@ -18,8 +18,6 @@
  */
 
 
-
-
 package org.codehaus.groovy.classgen.asm.sc.bugs
 
 import groovy.transform.stc.StaticTypeCheckingTestCase
@@ -27,7 +25,7 @@ import org.codehaus.groovy.classgen.asm.sc.StaticCompilationTestSupport
 
 class Groovy7072Bug extends StaticTypeCheckingTestCase implements StaticCompilationTestSupport {
     void testSpreadSafeOperatorOnArray() {
-            assertScript '''
+        assertScript '''
                 new File(System.getProperty('java.io.tmpdir','/tmp')).listFiles()*.name
         '''
     }

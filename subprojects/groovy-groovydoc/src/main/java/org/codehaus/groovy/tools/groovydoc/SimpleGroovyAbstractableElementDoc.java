@@ -25,11 +25,11 @@ public class SimpleGroovyAbstractableElementDoc extends SimpleGroovyProgramEleme
         super(name);
     }
 
-    public void setAbstract(boolean b) {
-        abstractElement = b;
-    }
-
     public boolean isAbstract() {
         return abstractElement;
+    }
+
+    public void setAbstract(boolean b) {
+        abstractElement = b;
     }
 }

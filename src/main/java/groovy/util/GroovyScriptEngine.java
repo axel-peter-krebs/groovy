@@ -60,17 +60,74 @@ import java.util.concurrent.ConcurrentHashMap;
  * with dependent scripts.
  */
 public class GroovyScriptEngine implements ResourceConnector {
-    private static final ClassLoader CL_STUB = doPrivileged((PrivilegedAction<ClassLoader>) () -> new ClassLoader() {});
+    private static final ClassLoader CL_STUB = doPrivileged((PrivilegedAction<ClassLoader>) () -> new ClassLoader() {
+    });
 
     private static final URL[] EMPTY_URL_ARRAY = new URL[0];
+    private static WeakReference<ThreadLocal<LocalData>> localData = new WeakReference<>(null);
+    private final URL[] roots;
+    private final ResourceConnector rc;
+    private final ClassLoader parentLoader;
+    private final Map<String, ScriptCacheEntry> scriptCache = new ConcurrentHashMap<>();
+    private GroovyClassLoader groovyLoader;
+    private CompilerConfiguration config;
 
-    private static class LocalData {
-        CompilationUnit cu;
-        final StringSetMap dependencyCache = new StringSetMap();
-        final Map<String, String> precompiledEntries = new HashMap<>();
+    {
+        config = new CompilerConfiguration(CompilerConfiguration.DEFAULT);
+        config.setSourceEncoding(CompilerConfiguration.DEFAULT_SOURCE_ENCODING);
+    }
+    /**
+     * The groovy script engine will run groovy scripts and reload them and
+     * their dependencies when they are modified. This is useful for embedding
+     * groovy in other containers like games and application servers.
+     *
+     * @param roots This an array of URLs where Groovy scripts will be stored. They should
+     *              be laid out using their package structure like Java classes
+     */
+    private GroovyScriptEngine(URL[] roots, ClassLoader parent, ResourceConnector rc) {
+        if (roots == null) roots = EMPTY_URL_ARRAY;
+        this.roots = roots;
+        if (rc == null) rc = this;
+        this.rc = rc;
+        if (parent == CL_STUB) parent = this.getClass().getClassLoader();
+        this.parentLoader = parent;
+        this.groovyLoader = initGroovyLoader();
     }
 
-    private static WeakReference<ThreadLocal<LocalData>> localData = new WeakReference<>(null);
+    public GroovyScriptEngine(URL[] roots) {
+        this(roots, CL_STUB, null);
+    }
+
+
+    //TODO: more finals?
+
+    public GroovyScriptEngine(URL[] roots, ClassLoader parentClassLoader) {
+        this(roots, parentClassLoader, null);
+    }
+
+    public GroovyScriptEngine(String[] urls) throws IOException {
+        this(createRoots(urls), CL_STUB, null);
+    }
+
+    public GroovyScriptEngine(String[] urls, ClassLoader parentClassLoader) throws IOException {
+        this(createRoots(urls), parentClassLoader, null);
+    }
+
+    public GroovyScriptEngine(String url) throws IOException {
+        this(new String[]{url});
+    }
+
+    public GroovyScriptEngine(String url, ClassLoader parentClassLoader) throws IOException {
+        this(new String[]{url}, parentClassLoader);
+    }
+
+    public GroovyScriptEngine(ResourceConnector rc) {
+        this(null, CL_STUB, rc);
+    }
+
+    public GroovyScriptEngine(ResourceConnector rc, ClassLoader parentClassLoader) {
+        this(null, parentClassLoader, rc);
+    }
 
     private static synchronized ThreadLocal<LocalData> getLocalData() {
         ThreadLocal<LocalData> local = localData.get();
@@ -78,232 +135,6 @@ public class GroovyScriptEngine implements ResourceConnector {
         local = new ThreadLocal<>();
         localData = new WeakReference<>(local);
         return local;
-    }
-
-    private final URL[] roots;
-    private final ResourceConnector rc;
-    private final ClassLoader parentLoader;
-    private GroovyClassLoader groovyLoader;
-    private final Map<String, ScriptCacheEntry> scriptCache = new ConcurrentHashMap<>();
-    private CompilerConfiguration config;
-
-    {
-        config = new CompilerConfiguration(CompilerConfiguration.DEFAULT);
-        config.setSourceEncoding(CompilerConfiguration.DEFAULT_SOURCE_ENCODING);
-    }
-
-
-    //TODO: more finals?
-
-    private static class ScriptCacheEntry {
-        private final Class scriptClass;
-        private final long lastModified, lastCheck;
-        private final Set<String> dependencies;
-        private final boolean sourceNewer;
-
-        public ScriptCacheEntry(Class clazz, long modified, long lastCheck, Set<String> depend, boolean sourceNewer) {
-            this.scriptClass = clazz;
-            this.lastModified = modified;
-            this.lastCheck = lastCheck;
-            this.dependencies = depend;
-            this.sourceNewer = sourceNewer;
-        }
-
-        public ScriptCacheEntry(ScriptCacheEntry old, long lastCheck, boolean sourceNewer) {
-            this(old.scriptClass, old.lastModified, lastCheck, old.dependencies, sourceNewer);
-        }
-    }
-
-    private class ScriptClassLoader extends GroovyClassLoader {
-
-
-        public ScriptClassLoader(GroovyClassLoader loader) {
-            super(loader);
-        }
-
-        public ScriptClassLoader(ClassLoader loader, CompilerConfiguration config) {
-            super(loader, config, false);
-            setResLoader();
-        }
-
-        private void setResLoader() {
-            final GroovyResourceLoader rl = getResourceLoader();
-            setResourceLoader(className -> {
-                String filename;
-                for (String extension : getConfig().getScriptExtensions()) {
-                    filename = className.replace('.', File.separatorChar) + "." + extension;
-                    try {
-                        URLConnection dependentScriptConn = rc.getResourceConnection(filename);
-                        return dependentScriptConn.getURL();
-                    } catch (ResourceException e) {
-                        //TODO: maybe do something here?
-                    }
-                }
-                return rl.loadGroovySource(className);
-            });
-        }
-
-        @Override
-        protected CompilationUnit createCompilationUnit(CompilerConfiguration configuration, CodeSource source) {
-            CompilationUnit cu = super.createCompilationUnit(configuration, source);
-            LocalData local = getLocalData().get();
-            local.cu = cu;
-            final StringSetMap cache = local.dependencyCache;
-            final Map<String, String> precompiledEntries = local.precompiledEntries;
-
-            // "." is used to transfer compilation dependencies, which will be
-            // recollected later during compilation
-            for (String depSourcePath : cache.get(".")) {
-                try {
-                    cache.get(depSourcePath);
-                    cu.addSource(getResourceConnection(depSourcePath).getURL());
-                } catch (ResourceException e) {
-                    /* ignore */
-                }
-            }
-
-            // remove all old entries including the "." entry
-            cache.clear();
-
-            cu.addPhaseOperation((final SourceUnit sourceUnit, final GeneratorContext context, final ClassNode classNode) -> {
-               // GROOVY-4013: If it is an inner class, tracking its dependencies doesn't really
-               // serve any purpose and also interferes with the caching done to track dependencies
-               if (classNode.getOuterClass() != null) return;
-               DependencyTracker dt = new DependencyTracker(sourceUnit, cache, precompiledEntries);
-               dt.visitClass(classNode);
-            }, Phases.CLASS_GENERATION);
-
-            cu.setClassNodeResolver(new ClassNodeResolver() {
-                @Override
-                public LookupResult findClassNode(String origName, CompilationUnit compilationUnit) {
-                    CompilerConfiguration cc = compilationUnit.getConfiguration();
-                    String name = origName.replace('.', '/');
-                    for (String ext : cc.getScriptExtensions()) {
-                        try {
-                            String finalName = name + "." + ext;
-                            URLConnection conn = rc.getResourceConnection(finalName);
-                            URL url = conn.getURL();
-                            String path = url.toExternalForm();
-                            ScriptCacheEntry entry = scriptCache.get(path);
-                            Class clazz = null;
-                            if (entry != null) clazz = entry.scriptClass;
-                            if (GroovyScriptEngine.this.isSourceNewer(entry)) {
-                                try {
-                                    SourceUnit su = compilationUnit.addSource(url);
-                                    return new LookupResult(su, null);
-                                } finally {
-                                    forceClose(conn);
-                                }
-                            } else {
-                                precompiledEntries.put(origName, path);
-                            }
-                            if (clazz != null) {
-                                ClassNode cn = ClassHelper.make(clazz);
-                                return new LookupResult(null, cn);
-                            }
-                        } catch (ResourceException re) {
-                            // skip
-                        }
-                    }
-                    return super.findClassNode(origName, compilationUnit);
-                }
-            });
-
-            return cu;
-        }
-
-        @Override
-        public Class parseClass(GroovyCodeSource codeSource, boolean shouldCacheSource) throws CompilationFailedException {
-            synchronized (sourceCache) {
-                return doParseClass(codeSource);
-            }
-        }
-
-        private Class<?> doParseClass(GroovyCodeSource codeSource) {
-            // local is kept as hard reference to avoid garbage collection
-            ThreadLocal<LocalData> localTh = getLocalData();
-            LocalData localData = new LocalData();
-            localTh.set(localData);
-            StringSetMap cache = localData.dependencyCache;
-            Class<?> answer = null;
-            try {
-                updateLocalDependencyCache(codeSource, localData);
-                answer = super.parseClass(codeSource, false);
-                updateScriptCache(localData);
-            } finally {
-                cache.clear();
-                localTh.remove();
-            }
-            return answer;
-        }
-
-        private void updateLocalDependencyCache(GroovyCodeSource codeSource, LocalData localData) {
-            // we put the old dependencies into local cache so createCompilationUnit
-            // can pick it up. We put that entry under the name "."
-            ScriptCacheEntry origEntry = scriptCache.get(codeSource.getName());
-            Set<String> origDep = null;
-            if (origEntry != null) origDep = origEntry.dependencies;
-            if (origDep != null) {
-                Set<String> newDep = new HashSet<>(origDep.size());
-                for (String depName : origDep) {
-                    ScriptCacheEntry dep = scriptCache.get(depName);
-                    if (origEntry == dep || GroovyScriptEngine.this.isSourceNewer(dep)) {
-                        newDep.add(depName);
-                    }
-                }
-                StringSetMap cache = localData.dependencyCache;
-                cache.put(".", newDep);
-            }
-        }
-
-        private void updateScriptCache(LocalData localData) {
-            StringSetMap cache = localData.dependencyCache;
-            cache.makeTransitiveHull();
-            long time = getCurrentTime();
-            Set<String> entryNames = new HashSet<>();
-            for (Map.Entry<String, Set<String>> entry : cache.entrySet()) {
-                String className = entry.getKey();
-                Class clazz = getClassCacheEntry(className);
-                if (clazz == null) continue;
-
-                String entryName = getPath(clazz, localData.precompiledEntries);
-                if (entryNames.contains(entryName)) continue;
-                entryNames.add(entryName);
-                Set<String> value = convertToPaths(entry.getValue(), localData.precompiledEntries);
-                long lastModified;
-                try {
-                    lastModified = getLastModified(entryName);
-                } catch (ResourceException e) {
-                    lastModified = time;
-                }
-                ScriptCacheEntry cacheEntry = new ScriptCacheEntry(clazz, lastModified, time, value, false);
-                scriptCache.put(entryName, cacheEntry);
-            }
-        }
-
-        private String getPath(Class clazz, Map<String, String> precompiledEntries) {
-            CompilationUnit cu = getLocalData().get().cu;
-            String name = clazz.getName();
-            ClassNode classNode = cu.getClassNode(name);
-            if (classNode == null) {
-                // this is a precompiled class!
-                String path = precompiledEntries.get(name);
-                if (path == null) throw new GroovyBugError("Precompiled class " + name + " should be available in precompiled entries map, but was not.");
-                return path;
-            } else {
-                return classNode.getModule().getContext().getName();
-            }
-        }
-
-        private Set<String> convertToPaths(Set<String> orig, Map<String, String> precompiledEntries) {
-            Set<String> ret = new HashSet<>();
-            for (String className : orig) {
-                Class clazz = getClassCacheEntry(className);
-                if (clazz == null) continue;
-                ret.add(getPath(clazz, precompiledEntries));
-            }
-            return ret;
-        }
     }
 
     /**
@@ -330,6 +161,61 @@ public class GroovyScriptEngine implements ResourceConnector {
         }
     }
 
+    @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
+    private static <T> T doPrivileged(PrivilegedAction<T> action) {
+        return java.security.AccessController.doPrivileged(action);
+    }
+
+    private static URLConnection openConnection(URL scriptURL) throws IOException {
+        URLConnection urlConnection = scriptURL.openConnection();
+        verifyInputStream(urlConnection);
+
+        return scriptURL.openConnection();
+    }
+
+    /**
+     * This method closes a {@link URLConnection} by getting its {@link InputStream} and calling the
+     * {@link InputStream#close()} method on it. The {@link URLConnection} doesn't have a close() method
+     * and relies on garbage collection to close the underlying connection to the file.
+     * Relying on garbage collection could lead to the application exhausting the number of files the
+     * user is allowed to have open at any one point in time and cause the application to crash
+     * ({@link java.io.FileNotFoundException} (Too many open files)).
+     * Hence the need for this method to explicitly close the underlying connection to the file.
+     *
+     * @param urlConnection the {@link URLConnection} to be "closed" to close the underlying file descriptors.
+     */
+    private static void forceClose(URLConnection urlConnection) {
+        if (urlConnection != null) {
+            // We need to get the input stream and close it to force the open
+            // file descriptor to be released. Otherwise, we will reach the limit
+            // for number of files open at one time.
+
+            try {
+                verifyInputStream(urlConnection);
+            } catch (Exception e) {
+                // Do nothing: We were not going to use it anyway.
+            }
+        }
+    }
+
+    private static void verifyInputStream(URLConnection urlConnection) throws IOException {
+        try (InputStream in = urlConnection.getInputStream()) {
+        }
+    }
+
+    private static URL[] createRoots(String[] urls) throws MalformedURLException {
+        if (urls == null) return null;
+        URL[] roots = new URL[urls.length];
+        for (int i = 0; i < roots.length; i++) {
+            if (urls[i].contains("://")) {
+                roots[i] = new URL(urls[i]);
+            } else {
+                roots[i] = new File(urls[i]).toURI().toURL();
+            }
+        }
+        return roots;
+    }
+
     /**
      * Initialize a new GroovyClassLoader with a default or
      * constructor-supplied parentClassLoader.
@@ -338,20 +224,15 @@ public class GroovyScriptEngine implements ResourceConnector {
      */
     private GroovyClassLoader initGroovyLoader() {
         GroovyClassLoader groovyClassLoader =
-                doPrivileged((PrivilegedAction<ScriptClassLoader>) () -> {
-                    if (parentLoader instanceof GroovyClassLoader) {
-                        return new ScriptClassLoader((GroovyClassLoader) parentLoader);
-                    } else {
-                        return new ScriptClassLoader(parentLoader, config);
-                    }
-                });
+            doPrivileged((PrivilegedAction<ScriptClassLoader>) () -> {
+                if (parentLoader instanceof GroovyClassLoader) {
+                    return new ScriptClassLoader((GroovyClassLoader) parentLoader);
+                } else {
+                    return new ScriptClassLoader(parentLoader, config);
+                }
+            });
         for (URL root : roots) groovyClassLoader.addURL(root);
         return groovyClassLoader;
-    }
-
-    @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
-    private static <T> T doPrivileged(PrivilegedAction<T> action) {
-        return java.security.AccessController.doPrivileged(action);
     }
 
     /**
@@ -398,106 +279,6 @@ public class GroovyScriptEngine implements ResourceConnector {
         // If we didn't find anything, report on all the exceptions that occurred.
         if (groovyScriptConn == null) throw se;
         return groovyScriptConn;
-    }
-
-    private static URLConnection openConnection(URL scriptURL) throws IOException {
-        URLConnection urlConnection = scriptURL.openConnection();
-        verifyInputStream(urlConnection);
-
-        return scriptURL.openConnection();
-    }
-
-    /**
-     * This method closes a {@link URLConnection} by getting its {@link InputStream} and calling the
-     * {@link InputStream#close()} method on it. The {@link URLConnection} doesn't have a close() method
-     * and relies on garbage collection to close the underlying connection to the file.
-     * Relying on garbage collection could lead to the application exhausting the number of files the
-     * user is allowed to have open at any one point in time and cause the application to crash
-     * ({@link java.io.FileNotFoundException} (Too many open files)).
-     * Hence the need for this method to explicitly close the underlying connection to the file.
-     *
-     * @param urlConnection the {@link URLConnection} to be "closed" to close the underlying file descriptors.
-     */
-    private static void forceClose(URLConnection urlConnection) {
-        if (urlConnection != null) {
-            // We need to get the input stream and close it to force the open
-            // file descriptor to be released. Otherwise, we will reach the limit
-            // for number of files open at one time.
-
-            try {
-                verifyInputStream(urlConnection);
-            } catch (Exception e) {
-                // Do nothing: We were not going to use it anyway.
-            }
-        }
-    }
-
-    private static void verifyInputStream(URLConnection urlConnection) throws IOException {
-        try (InputStream in = urlConnection.getInputStream()) {
-        }
-    }
-
-    /**
-     * The groovy script engine will run groovy scripts and reload them and
-     * their dependencies when they are modified. This is useful for embedding
-     * groovy in other containers like games and application servers.
-     *
-     * @param roots This an array of URLs where Groovy scripts will be stored. They should
-     *              be laid out using their package structure like Java classes
-     */
-    private GroovyScriptEngine(URL[] roots, ClassLoader parent, ResourceConnector rc) {
-        if (roots == null) roots = EMPTY_URL_ARRAY;
-        this.roots = roots;
-        if (rc == null) rc = this;
-        this.rc = rc;
-        if (parent == CL_STUB) parent = this.getClass().getClassLoader();
-        this.parentLoader = parent;
-        this.groovyLoader = initGroovyLoader();
-    }
-
-    public GroovyScriptEngine(URL[] roots) {
-        this(roots, CL_STUB, null);
-    }
-
-    public GroovyScriptEngine(URL[] roots, ClassLoader parentClassLoader) {
-        this(roots, parentClassLoader, null);
-    }
-
-    public GroovyScriptEngine(String[] urls) throws IOException {
-        this(createRoots(urls), CL_STUB, null);
-    }
-
-    private static URL[] createRoots(String[] urls) throws MalformedURLException {
-        if (urls == null) return null;
-        URL[] roots = new URL[urls.length];
-        for (int i = 0; i < roots.length; i++) {
-            if (urls[i].contains("://")) {
-                roots[i] = new URL(urls[i]);
-            } else {
-                roots[i] = new File(urls[i]).toURI().toURL();
-            }
-        }
-        return roots;
-    }
-
-    public GroovyScriptEngine(String[] urls, ClassLoader parentClassLoader) throws IOException {
-        this(createRoots(urls), parentClassLoader, null);
-    }
-
-    public GroovyScriptEngine(String url) throws IOException {
-        this(new String[]{url});
-    }
-
-    public GroovyScriptEngine(String url, ClassLoader parentClassLoader) throws IOException {
-        this(new String[]{url}, parentClassLoader);
-    }
-
-    public GroovyScriptEngine(ResourceConnector rc) {
-        this(null, CL_STUB, rc);
-    }
-
-    public GroovyScriptEngine(ResourceConnector rc, ClassLoader parentClassLoader) {
-        this(null, parentClassLoader, rc);
     }
 
     /**
@@ -673,5 +454,223 @@ public class GroovyScriptEngine implements ResourceConnector {
 
     protected long getCurrentTime() {
         return System.currentTimeMillis();
+    }
+
+    private static class LocalData {
+        final StringSetMap dependencyCache = new StringSetMap();
+        final Map<String, String> precompiledEntries = new HashMap<>();
+        CompilationUnit cu;
+    }
+
+    private static class ScriptCacheEntry {
+        private final Class scriptClass;
+        private final long lastModified, lastCheck;
+        private final Set<String> dependencies;
+        private final boolean sourceNewer;
+
+        public ScriptCacheEntry(Class clazz, long modified, long lastCheck, Set<String> depend, boolean sourceNewer) {
+            this.scriptClass = clazz;
+            this.lastModified = modified;
+            this.lastCheck = lastCheck;
+            this.dependencies = depend;
+            this.sourceNewer = sourceNewer;
+        }
+
+        public ScriptCacheEntry(ScriptCacheEntry old, long lastCheck, boolean sourceNewer) {
+            this(old.scriptClass, old.lastModified, lastCheck, old.dependencies, sourceNewer);
+        }
+    }
+
+    private class ScriptClassLoader extends GroovyClassLoader {
+
+
+        public ScriptClassLoader(GroovyClassLoader loader) {
+            super(loader);
+        }
+
+        public ScriptClassLoader(ClassLoader loader, CompilerConfiguration config) {
+            super(loader, config, false);
+            setResLoader();
+        }
+
+        private void setResLoader() {
+            final GroovyResourceLoader rl = getResourceLoader();
+            setResourceLoader(className -> {
+                String filename;
+                for (String extension : getConfig().getScriptExtensions()) {
+                    filename = className.replace('.', File.separatorChar) + "." + extension;
+                    try {
+                        URLConnection dependentScriptConn = rc.getResourceConnection(filename);
+                        return dependentScriptConn.getURL();
+                    } catch (ResourceException e) {
+                        //TODO: maybe do something here?
+                    }
+                }
+                return rl.loadGroovySource(className);
+            });
+        }
+
+        @Override
+        protected CompilationUnit createCompilationUnit(CompilerConfiguration configuration, CodeSource source) {
+            CompilationUnit cu = super.createCompilationUnit(configuration, source);
+            LocalData local = getLocalData().get();
+            local.cu = cu;
+            final StringSetMap cache = local.dependencyCache;
+            final Map<String, String> precompiledEntries = local.precompiledEntries;
+
+            // "." is used to transfer compilation dependencies, which will be
+            // recollected later during compilation
+            for (String depSourcePath : cache.get(".")) {
+                try {
+                    cache.get(depSourcePath);
+                    cu.addSource(getResourceConnection(depSourcePath).getURL());
+                } catch (ResourceException e) {
+                    /* ignore */
+                }
+            }
+
+            // remove all old entries including the "." entry
+            cache.clear();
+
+            cu.addPhaseOperation((final SourceUnit sourceUnit, final GeneratorContext context, final ClassNode classNode) -> {
+                // GROOVY-4013: If it is an inner class, tracking its dependencies doesn't really
+                // serve any purpose and also interferes with the caching done to track dependencies
+                if (classNode.getOuterClass() != null) return;
+                DependencyTracker dt = new DependencyTracker(sourceUnit, cache, precompiledEntries);
+                dt.visitClass(classNode);
+            }, Phases.CLASS_GENERATION);
+
+            cu.setClassNodeResolver(new ClassNodeResolver() {
+                @Override
+                public LookupResult findClassNode(String origName, CompilationUnit compilationUnit) {
+                    CompilerConfiguration cc = compilationUnit.getConfiguration();
+                    String name = origName.replace('.', '/');
+                    for (String ext : cc.getScriptExtensions()) {
+                        try {
+                            String finalName = name + "." + ext;
+                            URLConnection conn = rc.getResourceConnection(finalName);
+                            URL url = conn.getURL();
+                            String path = url.toExternalForm();
+                            ScriptCacheEntry entry = scriptCache.get(path);
+                            Class clazz = null;
+                            if (entry != null) clazz = entry.scriptClass;
+                            if (GroovyScriptEngine.this.isSourceNewer(entry)) {
+                                try {
+                                    SourceUnit su = compilationUnit.addSource(url);
+                                    return new LookupResult(su, null);
+                                } finally {
+                                    forceClose(conn);
+                                }
+                            } else {
+                                precompiledEntries.put(origName, path);
+                            }
+                            if (clazz != null) {
+                                ClassNode cn = ClassHelper.make(clazz);
+                                return new LookupResult(null, cn);
+                            }
+                        } catch (ResourceException re) {
+                            // skip
+                        }
+                    }
+                    return super.findClassNode(origName, compilationUnit);
+                }
+            });
+
+            return cu;
+        }
+
+        @Override
+        public Class parseClass(GroovyCodeSource codeSource, boolean shouldCacheSource) throws CompilationFailedException {
+            synchronized (sourceCache) {
+                return doParseClass(codeSource);
+            }
+        }
+
+        private Class<?> doParseClass(GroovyCodeSource codeSource) {
+            // local is kept as hard reference to avoid garbage collection
+            ThreadLocal<LocalData> localTh = getLocalData();
+            LocalData localData = new LocalData();
+            localTh.set(localData);
+            StringSetMap cache = localData.dependencyCache;
+            Class<?> answer = null;
+            try {
+                updateLocalDependencyCache(codeSource, localData);
+                answer = super.parseClass(codeSource, false);
+                updateScriptCache(localData);
+            } finally {
+                cache.clear();
+                localTh.remove();
+            }
+            return answer;
+        }
+
+        private void updateLocalDependencyCache(GroovyCodeSource codeSource, LocalData localData) {
+            // we put the old dependencies into local cache so createCompilationUnit
+            // can pick it up. We put that entry under the name "."
+            ScriptCacheEntry origEntry = scriptCache.get(codeSource.getName());
+            Set<String> origDep = null;
+            if (origEntry != null) origDep = origEntry.dependencies;
+            if (origDep != null) {
+                Set<String> newDep = new HashSet<>(origDep.size());
+                for (String depName : origDep) {
+                    ScriptCacheEntry dep = scriptCache.get(depName);
+                    if (origEntry == dep || GroovyScriptEngine.this.isSourceNewer(dep)) {
+                        newDep.add(depName);
+                    }
+                }
+                StringSetMap cache = localData.dependencyCache;
+                cache.put(".", newDep);
+            }
+        }
+
+        private void updateScriptCache(LocalData localData) {
+            StringSetMap cache = localData.dependencyCache;
+            cache.makeTransitiveHull();
+            long time = getCurrentTime();
+            Set<String> entryNames = new HashSet<>();
+            for (Map.Entry<String, Set<String>> entry : cache.entrySet()) {
+                String className = entry.getKey();
+                Class clazz = getClassCacheEntry(className);
+                if (clazz == null) continue;
+
+                String entryName = getPath(clazz, localData.precompiledEntries);
+                if (entryNames.contains(entryName)) continue;
+                entryNames.add(entryName);
+                Set<String> value = convertToPaths(entry.getValue(), localData.precompiledEntries);
+                long lastModified;
+                try {
+                    lastModified = getLastModified(entryName);
+                } catch (ResourceException e) {
+                    lastModified = time;
+                }
+                ScriptCacheEntry cacheEntry = new ScriptCacheEntry(clazz, lastModified, time, value, false);
+                scriptCache.put(entryName, cacheEntry);
+            }
+        }
+
+        private String getPath(Class clazz, Map<String, String> precompiledEntries) {
+            CompilationUnit cu = getLocalData().get().cu;
+            String name = clazz.getName();
+            ClassNode classNode = cu.getClassNode(name);
+            if (classNode == null) {
+                // this is a precompiled class!
+                String path = precompiledEntries.get(name);
+                if (path == null)
+                    throw new GroovyBugError("Precompiled class " + name + " should be available in precompiled entries map, but was not.");
+                return path;
+            } else {
+                return classNode.getModule().getContext().getName();
+            }
+        }
+
+        private Set<String> convertToPaths(Set<String> orig, Map<String, String> precompiledEntries) {
+            Set<String> ret = new HashSet<>();
+            for (String className : orig) {
+                Class clazz = getClassCacheEntry(className);
+                if (clazz == null) continue;
+                ret.add(getPath(clazz, precompiledEntries));
+            }
+            return ret;
+        }
     }
 }

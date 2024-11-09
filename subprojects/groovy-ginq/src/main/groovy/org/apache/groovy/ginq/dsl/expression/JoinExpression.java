@@ -32,11 +32,11 @@ public class JoinExpression extends DataSourceExpression implements DataSourceHo
     public static final String SMART_INNER_JOIN = "join";
     public static final String INNER_JOIN = "innerjoin";
     public static final String INNER_HASH_JOIN = "innerhashjoin";
-    private static final String LEFT_JOIN = "leftjoin";
     public static final String LEFT_HASH_JOIN = "lefthashjoin";
+    private static final String LEFT_JOIN = "leftjoin";
     private static final String CROSS_JOIN = "crossjoin";
     public static final List<String> JOIN_NAME_LIST =
-            List.of(SMART_INNER_JOIN, INNER_JOIN, INNER_HASH_JOIN, LEFT_JOIN, LEFT_HASH_JOIN, "rightjoin", "righthashjoin", "fulljoin", "fullhashjoin", CROSS_JOIN);
+        List.of(SMART_INNER_JOIN, INNER_JOIN, INNER_HASH_JOIN, LEFT_JOIN, LEFT_HASH_JOIN, "rightjoin", "righthashjoin", "fulljoin", "fullhashjoin", CROSS_JOIN);
 
     private final String joinName;
     private OnExpression onExpression;
@@ -105,8 +105,8 @@ public class JoinExpression extends DataSourceExpression implements DataSourceHo
     @Override
     public String getText() {
         return joinName + " " + aliasExpr.getText()
-                + " in " + (dataSourceExpr instanceof GinqExpression ? "(" + dataSourceExpr.getText() + ")" : dataSourceExpr.getText())
-                + (null == onExpression ? "" : " " + onExpression.getText());
+            + " in " + (dataSourceExpr instanceof GinqExpression ? "(" + dataSourceExpr.getText() + ")" : dataSourceExpr.getText())
+            + (null == onExpression ? "" : " " + onExpression.getText());
     }
 
     @Override

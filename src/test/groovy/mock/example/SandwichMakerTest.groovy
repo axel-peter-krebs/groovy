@@ -23,7 +23,7 @@ import groovy.test.GroovyTestCase
 
 class SandwichMakerTest extends GroovyTestCase {
 
-    void testStuff(){
+    void testStuff() {
 
         def mocker = new MockFor(CheeseSlicer.class)
 

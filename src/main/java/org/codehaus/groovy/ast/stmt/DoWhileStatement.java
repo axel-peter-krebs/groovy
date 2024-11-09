@@ -44,12 +44,13 @@ public class DoWhileStatement extends Statement implements LoopingStatement {
         return booleanExpression;
     }
 
+    public void setBooleanExpression(BooleanExpression booleanExpression) {
+        this.booleanExpression = booleanExpression;
+    }
+
     @Override
     public Statement getLoopBlock() {
         return loopBlock;
-    }
-    public void setBooleanExpression(BooleanExpression booleanExpression) {
-        this.booleanExpression = booleanExpression;
     }
 
     @Override

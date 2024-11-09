@@ -30,10 +30,6 @@ import java.io.Reader;
  */
 public interface ParserPlugin {
 
-    Reduction parseCST(SourceUnit sourceUnit, Reader reader) throws CompilationFailedException;
-
-    ModuleNode buildAST(SourceUnit sourceUnit, ClassLoader classLoader, Reduction cst) throws ParserException;
-
     static ModuleNode buildAST(CharSequence sourceText, CompilerConfiguration config, GroovyClassLoader loader, ErrorCollector errors) throws CompilationFailedException {
         SourceUnit sourceUnit = new SourceUnit("Script" + System.nanoTime() + ".groovy", sourceText.toString(), config, loader, errors);
         sourceUnit.parse();
@@ -42,4 +38,8 @@ public interface ParserPlugin {
         sourceUnit.convert();
         return sourceUnit.getAST();
     }
+
+    Reduction parseCST(SourceUnit sourceUnit, Reader reader) throws CompilationFailedException;
+
+    ModuleNode buildAST(SourceUnit sourceUnit, ClassLoader classLoader, Reduction cst) throws ParserException;
 }

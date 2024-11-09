@@ -63,7 +63,7 @@ public class DescriptiveErrorStrategy extends BailErrorStrategy {
 
     @Override
     public Token recoverInline(Parser recognizer)
-            throws RecognitionException {
+        throws RecognitionException {
 
         this.recover(recognizer, new InputMismatchException(recognizer)); // stop parsing
         return null;

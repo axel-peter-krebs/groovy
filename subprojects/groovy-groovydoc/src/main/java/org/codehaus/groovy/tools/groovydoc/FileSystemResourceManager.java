@@ -25,8 +25,8 @@ import java.io.IOException;
 import java.io.Reader;
 
 public class FileSystemResourceManager implements ResourceManager {
-    private final String basedir;
     private static final String FS = "/";
+    private final String basedir;
 
     public FileSystemResourceManager() {
         basedir = "";

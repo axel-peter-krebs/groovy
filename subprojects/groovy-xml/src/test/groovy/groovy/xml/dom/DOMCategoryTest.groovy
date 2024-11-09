@@ -34,7 +34,7 @@ class DOMCategoryTest extends GroovyTestCase {
 
     def getRoot = { xml ->
         def reader = new StringReader(xml)
-        def doc    = DOMBuilder.parse(reader)
+        def doc = DOMBuilder.parse(reader)
         doc.documentElement
     }
 

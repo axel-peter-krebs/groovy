@@ -22,8 +22,8 @@ methodNotFound { receiver, name, argumentList, argTypes, call ->
     def result = null
     withTypeChecker {
         def candidates = findMethod(receiver, name.toLowerCase(), argTypes)
-        if (candidates && candidates.size()==1) {
-            result= candidates[0]
+        if (candidates && candidates.size() == 1) {
+            result = candidates[0]
         }
     }
     result

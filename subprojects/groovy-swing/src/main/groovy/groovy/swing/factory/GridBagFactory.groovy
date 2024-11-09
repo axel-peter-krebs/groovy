@@ -32,7 +32,6 @@ public class GridBagFactory extends LayoutFactory {
     }
 
 
-
     public static void processGridBagConstraintsAttributes(FactoryBuilderSupport builder, Object node, Map attributes) {
         // if we are not a component, don't do anything
         if (!(node instanceof Component)) {
@@ -52,11 +51,11 @@ public class GridBagFactory extends LayoutFactory {
         // next, check to be sure we are in an appropriate container
         Object parent = builder.getCurrent()
         if (parent instanceof RootPaneContainer) {
-            if (!(((RootPaneContainer)parent).getContentPane().getLayout() instanceof GridBagLayout)) {
+            if (!(((RootPaneContainer) parent).getContentPane().getLayout() instanceof GridBagLayout)) {
                 return
             }
         } else if (parent instanceof Container) {
-            if (!(((Container)parent).getLayout() instanceof GridBagLayout)) {
+            if (!(((Container) parent).getLayout() instanceof GridBagLayout)) {
                 return
             }
         } else {

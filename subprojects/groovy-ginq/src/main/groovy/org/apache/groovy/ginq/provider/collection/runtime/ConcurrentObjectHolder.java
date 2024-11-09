@@ -27,8 +27,8 @@ import org.apache.groovy.internal.util.Supplier;
  * @since 4.0.0
  */
 class ConcurrentObjectHolder<T> {
-    private volatile T object;
     private final Supplier<T> supplier;
+    private volatile T object;
 
     ConcurrentObjectHolder(Supplier<T> supplier) {
         this.supplier = supplier;
@@ -37,7 +37,7 @@ class ConcurrentObjectHolder<T> {
     public T getObject() {
         if (null != object) return object;
 
-        synchronized(this) {
+        synchronized (this) {
             if (null == object) {
                 object = supplier.get();
             }

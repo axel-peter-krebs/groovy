@@ -56,7 +56,7 @@ class JmxClientConnectorFactory extends AbstractFactory {
         }
         if (!SUPPORTED_PROTOCOLS.contains(protocol)) {
             throw new JmxBuilderException("Connector protocol '${protocol} is not supported at this time. " +
-                    "Supported protocols are ${SUPPORTED_PROTOCOLS}.")
+                "Supported protocols are ${SUPPORTED_PROTOCOLS}.")
         }
 
         JMXServiceURL serviceUrl = (url) ? new JMXServiceURL(url) : generateServiceUrl(protocol, host, port)

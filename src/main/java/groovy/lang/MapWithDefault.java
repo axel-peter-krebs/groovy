@@ -94,7 +94,7 @@ public final class MapWithDefault<K, V> implements Map<K, V> {
      * Returns the value to which the specified key is mapped,
      * or the default value as specified by the initializing closure
      * if this map contains no mapping for the key.
-     *
+     * <p>
      * If <code>autoGrow</code> is true and the initializing closure is called,
      * the map is modified to contain the new key and value so that the calculated
      * value is effectively cached if needed again.
@@ -107,7 +107,7 @@ public final class MapWithDefault<K, V> implements Map<K, V> {
         }
         V value = getDefaultValue(key);
         if (autoGrow) {
-            delegate.put((K)key, value);
+            delegate.put((K) key, value);
         }
         return value;
     }
@@ -118,7 +118,7 @@ public final class MapWithDefault<K, V> implements Map<K, V> {
 
     /**
      * Associates the specified value with the specified key in this map.
-     *
+     * <p>
      * If <code>autoShrink</code> is true, the initializing closure is called
      * and if it evaluates to the value being stored, the value will not be stored
      * and indeed any existing value will be removed. This can be useful when trying

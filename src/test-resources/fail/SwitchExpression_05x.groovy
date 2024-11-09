@@ -18,7 +18,7 @@
  */
 
 def a = 6
-def r = switch(a) {
-    case 6 : 'a'
-    default : 'c'
+def r = switch (a) {
+    case 6: 'a'
+    default: 'c'
 }

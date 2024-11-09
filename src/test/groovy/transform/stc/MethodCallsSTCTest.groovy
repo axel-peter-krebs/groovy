@@ -58,7 +58,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             A a = new A()
             assert a.foo(1,1)==2
         ''',
-        'Cannot find matching method'
+            'Cannot find matching method'
     }
 
     void testMethodCallOnInstanceWithVarArgs() {
@@ -87,7 +87,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             A.missing 'echo'
         ''',
-        'Cannot find matching method'
+            'Cannot find matching method'
     }
 
     void testStaticMethodWithVarArgs() {
@@ -210,7 +210,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             String[] args = ['a','b','c']
             assert c.identity(args) == args
         ''',
-        'Cannot call groovy.transform.stc.MethodCallsSTCTest$MyMethodCallTestClass2#identity(java.lang.Integer[]) with arguments [java.lang.String[]]'
+            'Cannot call groovy.transform.stc.MethodCallsSTCTest$MyMethodCallTestClass2#identity(java.lang.Integer[]) with arguments [java.lang.String[]]'
     }
 
     // GROOVY-8909
@@ -227,7 +227,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             }
             m([1,2,3,3])
         ''',
-        'Cannot find matching method','m(java.util.ArrayList<java.lang.Integer>). Please check if the declared type is correct and if the method exists.'
+            'Cannot find matching method', 'm(java.util.ArrayList<java.lang.Integer>). Please check if the declared type is correct and if the method exists.'
     }
 
     // GROOVY-7106, GROOVY-7274, GROOVY-9844
@@ -328,7 +328,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
                 }
             }
         ''',
-        'Default method m(T) requires qualified super'
+            'Default method m(T) requires qualified super'
     }
 
     // GROOVY-10922
@@ -440,7 +440,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
                 def foo() { new Main() }
             }
         ''',
-        'Cannot find matching constructor Main()'
+            'Cannot find matching constructor Main()'
     }
 
     // GROOVY-8509
@@ -569,7 +569,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
                 }
             }
         ''',
-        'Reference to method is ambiguous'
+            'Reference to method is ambiguous'
     }
 
     // GROOVY-5175
@@ -630,7 +630,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             }
             ['foo',123,true].each { foo(it) }
         ''',
-        'Cannot find matching method'
+            'Cannot find matching method'
     }
 
     void testShouldNotFailThanksToInstanceOfChecks() {
@@ -719,7 +719,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
                 }
             }
         ''',
-        'Reference to method is ambiguous'
+            'Reference to method is ambiguous'
     }
 
     void testShouldFailWithMultiplePossibleMethods2() {
@@ -739,7 +739,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
                 }
             }
         ''',
-        'Reference to method is ambiguous'
+            'Reference to method is ambiguous'
     }
 
     // GROOVY-5703
@@ -778,7 +778,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             }
             test(new Integer[1]) // cannot convert null
         ''',
-        'Cannot find matching method','test(java.lang.Integer[])'
+            'Cannot find matching method', 'test(java.lang.Integer[])'
     }
 
     void testInstanceOfOnExplicitParameter() {
@@ -850,7 +850,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
                 foo(it)
             }
         ''',
-        'Cannot find matching method','#foo(java.util.Date)'
+            'Cannot find matching method', '#foo(java.util.Date)'
 
         shouldFailWithMessages foo + '''
             def bar(CharSequence cs) { }
@@ -863,8 +863,8 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
                 bar(it) // it is CharSequence or Date
             }
         ''',
-        'Cannot find matching method','#foo(java.util.Date)',
-        'Cannot find matching method','#bar(java.util.Date)'
+            'Cannot find matching method', '#foo(java.util.Date)',
+            'Cannot find matching method', '#bar(java.util.Date)'
     }
 
     // GROOVY-5226, GROOVY-11290
@@ -938,7 +938,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             }
             assert m(123) == 'HELLO'
         ''',
-        '#m(int)'
+            '#m(int)'
     }
 
     void testOneDefaultParamAndOneWithout() {
@@ -958,7 +958,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             }
             m('test', new Object())
         ''',
-        'm(java.lang.String, java.lang.Object)'
+            'm(java.lang.String, java.lang.Object)'
     }
 
     void testMultipleDefaultArgs() {
@@ -988,7 +988,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             }
             m('f',123,'s', 'too many args')
         ''',
-        '#m(java.lang.String, int, java.lang.String, java.lang.String)'
+            '#m(java.lang.String, int, java.lang.String, java.lang.String)'
     }
 
     void testMultipleDefaultArgsWithMixedTypesAndWrongType() {
@@ -998,7 +998,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             }
             m('hello') // no value set for "second"
         ''',
-        '#m(java.lang.String)'
+            '#m(java.lang.String)'
     }
 
     void testShouldNotFailWithAmbiguousMethodSelection() {
@@ -1048,7 +1048,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             float square(float x) { x*x }
             assert square(2.0d) == 4.0d
         ''',
-        '#square(double)'
+            '#square(double)'
     }
 
     void testShouldNotBeAbleToCallMethodUsingLongWithFloatOrDouble() {
@@ -1057,7 +1057,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             assert square(2.0d) == 4.0d
             assert square(2.0f) == 4.0d
         ''',
-        '#square(double)', '#square(float)'
+            '#square(double)', '#square(float)'
     }
 
     void testShouldNotAllowMethodCallFromStaticInitializer() {
@@ -1070,7 +1070,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             }
             new Foo()
         ''',
-        'Non-static method Foo#instanceMethod cannot be called from static context'
+            'Non-static method Foo#instanceMethod cannot be called from static context'
     }
 
     void testShouldNotAllowMethodCallFromStaticMethod() {
@@ -1083,7 +1083,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             }
             Foo.staticMethod()
         ''',
-        'Non-static method Foo#instanceMethod cannot be called from static context'
+            'Non-static method Foo#instanceMethod cannot be called from static context'
     }
 
     void testShouldNotAllowMethodCallFromStaticField() {
@@ -1094,7 +1094,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             }
             new Foo()
         ''',
-        'Non-static method Foo#instanceMethod cannot be called from static context'
+            'Non-static method Foo#instanceMethod cannot be called from static context'
     }
 
     // GROOVY-5495
@@ -1301,7 +1301,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
                 foo(*strings)
             }
         ''',
-        'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time'
+            'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time'
 
         shouldFailWithMessages '''
             def foo(String a, String b, int c, double d, double e) {
@@ -1310,9 +1310,9 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
                 foo(*strings, i, *numbers)
             }
         ''',
-        'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time',
-        'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time',
-        'Cannot find matching method '
+            'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time',
+            'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time',
+            'Cannot find matching method '
     }
 
     void testSpreadArgsRestrictedInStaticMethodCall() {
@@ -1332,7 +1332,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
                 foo(*strings)
             }
         ''',
-        'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time'
+            'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time'
 
         shouldFailWithMessages '''
             static foo(String a, String b, int c, double d, double e) {
@@ -1341,9 +1341,9 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
                 foo(*strings, i, *numbers)
             }
         ''',
-        'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time',
-        'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time',
-        'Cannot find matching method '
+            'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time',
+            'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time',
+            'Cannot find matching method '
     }
 
     void testSpreadArgsRestrictedInConstructorCall() {
@@ -1365,7 +1365,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             }
             new Foo(*['A','B'])
         ''',
-        'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time'
+            'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time'
 
         shouldFailWithMessages '''
             class Foo {
@@ -1374,8 +1374,8 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             }
             new Foo(*['A','B'])
         ''',
-        'Cannot find matching constructor Foo(',
-        'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time'
+            'Cannot find matching constructor Foo(',
+            'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time'
     }
 
     void testSpreadArgsRestrictedInClosureCall() {
@@ -1393,15 +1393,15 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             def strings = ['A','B','C']
             closure(*strings)
         ''',
-        'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time'
+            'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time'
 
         shouldFailWithMessages '''
             def closure = { String a, String b, String c -> }
             def strings = ['A','B','C']
             closure(*strings)
         ''',
-        'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time',
-        'Cannot call closure that accepts [java.lang.String, java.lang.String, java.lang.String] with '
+            'The spread operator cannot be used as argument of method or closure calls with static type checking because the number of arguments cannot be determined at compile time',
+            'Cannot call closure that accepts [java.lang.String, java.lang.String, java.lang.String] with '
     }
 
     // GROOVY-8488
@@ -1423,8 +1423,8 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
                 }
             }
         ''',
-        'Cannot find matching method Foo#m1(java.math.BigDecimal)',
-        'Cannot find matching method Foo#m2(java.math.BigDecimal)'
+            'Cannot find matching method Foo#m1(java.math.BigDecimal)',
+            'Cannot find matching method Foo#m2(java.math.BigDecimal)'
 
         shouldFailWithMessages '''
             class Foo {
@@ -1436,8 +1436,8 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
                 }
             }
         ''',
-        'Cannot find matching method Foo#m1(java.math.BigInteger)',
-        'Cannot find matching method Foo#m2(java.math.BigInteger)'
+            'Cannot find matching method Foo#m1(java.math.BigInteger)',
+            'Cannot find matching method Foo#m2(java.math.BigInteger)'
     }
 
     void testBoxingShouldCostMore() {
@@ -1793,7 +1793,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
                 }
             }
         ''',
-        'Abstract method m() cannot be called directly'
+            'Abstract method m() cannot be called directly'
     }
 
     // GROOVY-5810
@@ -1887,12 +1887,12 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             Double.isFiniteMissing(2.0d)
         ''',
-        'Cannot find ',' static method java.lang.Double#isFiniteMissing(double)'
+            'Cannot find ', ' static method java.lang.Double#isFiniteMissing(double)'
 
         shouldFailWithMessages '''
             String.doSomething()
         ''',
-        'Cannot find ',' static method java.lang.String#doSomething()'
+            'Cannot find ', ' static method java.lang.String#doSomething()'
     }
 
     // GROOVY-6776
@@ -1904,7 +1904,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             }
             bar()
         ''',
-        '#foo(int) with arguments [<unknown parameter type>]'
+            '#foo(int) with arguments [<unknown parameter type>]'
     }
 
     // GROOVY-6751
@@ -1981,7 +1981,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
             }
             Foo.m()
         ''',
-        'Non-static method Foo#m cannot be called from static context'
+            'Non-static method Foo#m cannot be called from static context'
     }
 
     // GROOVY-7813
@@ -1994,7 +1994,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
                 }
             }
         ''',
-        'Cannot find matching method Foo$Bar#m()'
+            'Cannot find matching method Foo$Bar#m()'
     }
 
     void testStaticOuterMethodCanBeCalledFromStaticClass() {
@@ -2045,13 +2045,16 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
         static String echo(String msg) {
             msg
         }
-        static int mul(int... ints) {
-            ints.toList().inject(1) { x,y -> x*y }
+
+        static int mul(int ... ints) {
+            ints.toList().inject(1) { x, y -> x * y }
         }
 
-        int add(int x, int y) { x+y }
-        int add(double x, double y) { 2*x+y }
-        int sum(int... args) { args.toList().sum() }
+        int add(int x, int y) { x + y }
+
+        int add(double x, double y) { 2 * x + y }
+
+        int sum(int ... args) { args.toList().sum() }
     }
 
     static class MyMethodCallTestClass2<T> extends MyMethodCallTestClass {
@@ -2062,6 +2065,7 @@ class MethodCallsSTCTest extends StaticTypeCheckingTestCase {
 
     static class GroovyPage {
         final void printHtmlPart(int partNumber) {}
+
         final void createTagBody(int bodyClosureIndex, Closure<?> bodyClosure) {}
     }
 

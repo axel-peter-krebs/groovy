@@ -96,82 +96,13 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 @GroovyASTTransformation(phase = CompilePhase.CANONICALIZATION)
 public class TupleConstructorASTTransformation extends AbstractASTTransformation implements CompilationUnitAware, TransformWithPriority {
 
-    private CompilationUnit compilationUnit;
-
     static final Class<?> MY_CLASS = TupleConstructor.class;
     static final ClassNode MY_TYPE = ClassHelper.make(MY_CLASS);
     static final String MY_TYPE_NAME = "@" + MY_TYPE.getNameWithoutPackage();
-
     private static final String NAMED_ARGS = "__namedArgs";
     private static final ClassNode LHMAP_TYPE = ClassHelper.makeWithoutCaching(LinkedHashMap.class, false);
     private static final ClassNode POJO_TYPE = ClassHelper.make(POJO.class);
-
-    @Override
-    public int priority() {
-        return 5;
-    }
-
-    @Override
-    public String getAnnotationName() {
-        return MY_TYPE_NAME;
-    }
-
-    @Override
-    public void setCompilationUnit(final CompilationUnit unit) {
-        compilationUnit = unit;
-    }
-
-    @Override
-    public void visit(final ASTNode[] nodes, final SourceUnit source) {
-        init(nodes, source);
-        AnnotatedNode parent = (AnnotatedNode) nodes[1];
-        AnnotationNode anno = (AnnotationNode) nodes[0];
-        if (!MY_TYPE.equals(anno.getClassNode())) return;
-
-        if (parent instanceof ClassNode) {
-            ClassNode cNode = (ClassNode) parent;
-            if (!checkNotInterface(cNode, MY_TYPE_NAME)) return;
-            boolean includeFields = memberHasValue(anno, "includeFields", Boolean.TRUE);
-            boolean includeProperties = !memberHasValue(anno, "includeProperties", Boolean.FALSE);
-            boolean includeSuperFields = memberHasValue(anno, "includeSuperFields", Boolean.TRUE);
-            boolean includeSuperProperties = memberHasValue(anno, "includeSuperProperties", Boolean.TRUE);
-            boolean allProperties = memberHasValue(anno, "allProperties", Boolean.TRUE);
-            List<String> excludes = getMemberStringList(anno, "excludes");
-            List<String> includes = getMemberStringList(anno, "includes");
-            boolean allNames = memberHasValue(anno, "allNames", Boolean.TRUE);
-            if (!checkIncludeExcludeUndefinedAware(anno, excludes, includes, MY_TYPE_NAME)) return;
-            if (!checkPropertyList(cNode, includes, "includes", anno, MY_TYPE_NAME, includeFields, includeSuperProperties, allProperties, includeSuperFields, false))
-                return;
-            if (!checkPropertyList(cNode, excludes, "excludes", anno, MY_TYPE_NAME, includeFields, includeSuperProperties, allProperties, includeSuperFields, false))
-                return;
-            GroovyClassLoader classLoader = compilationUnit != null ? compilationUnit.getTransformLoader() : source.getClassLoader();
-            PropertyHandler handler = PropertyHandler.createPropertyHandler(this, classLoader, cNode);
-            if (handler == null || !handler.validateAttributes(this, anno))
-                return;
-
-            Expression pre = anno.getMember("pre");
-            if (pre != null && !(pre instanceof ClosureExpression)) {
-                addError("Expected closure value for annotation parameter 'pre'. Found " + pre, cNode);
-                return;
-            }
-            Expression post = anno.getMember("post");
-            if (post != null && !(post instanceof ClosureExpression)) {
-                addError("Expected closure value for annotation parameter 'post'. Found " + post, cNode);
-                return;
-            }
-
-            createConstructor(this, anno, cNode, includeFields, includeProperties, includeSuperFields, includeSuperProperties,
-                    excludes, includes, allNames, allProperties,
-                    sourceUnit, handler, (ClosureExpression) pre, (ClosureExpression) post);
-
-            if (pre != null) {
-                anno.setMember("pre", new ClosureExpression(Parameter.EMPTY_ARRAY, EmptyStatement.INSTANCE));
-            }
-            if (post != null) {
-                anno.setMember("post", new ClosureExpression(Parameter.EMPTY_ARRAY, EmptyStatement.INSTANCE));
-            }
-        }
-    }
+    private CompilationUnit compilationUnit;
 
     private static void createConstructor(final AbstractASTTransformation xform, final AnnotationNode anno, final ClassNode cNode, final boolean includeFields,
                                           final boolean includeProperties, final boolean includeSuperFields, final boolean includeSuperProperties,
@@ -182,7 +113,7 @@ public class TupleConstructorASTTransformation extends AbstractASTTransformation
         DefaultsMode defaultsMode = maybeDefaultsMode(anno, "defaultsMode");
         if (defaultsMode == null) {
             boolean defaults = anno.getMember("defaults") == null
-                    || !xform.memberHasValue(anno, "defaults", Boolean.FALSE);
+                || !xform.memberHasValue(anno, "defaults", Boolean.FALSE);
             defaultsMode = defaults ? ON : OFF;
         }
         boolean force = xform.memberHasValue(anno, "force", Boolean.TRUE);
@@ -209,7 +140,7 @@ public class TupleConstructorASTTransformation extends AbstractASTTransformation
             superInPre = copyStatementsWithSuperAdjustment(pre, preBody);
             if (superInPre && callSuper) {
                 xform.addError("Error during " + MY_TYPE_NAME + " processing, can't have a super call in 'pre' " +
-                        "closure and also 'callSuper' enabled", cNode);
+                    "closure and also 'callSuper' enabled", cNode);
             }
         }
 
@@ -220,7 +151,7 @@ public class TupleConstructorASTTransformation extends AbstractASTTransformation
         }
 
         boolean specialNamedArgCase = (superList.isEmpty() && ImmutableASTTransformation.isSpecialNamedArgCase(list, defaultsMode == OFF))
-                || (list.isEmpty() && ImmutableASTTransformation.isSpecialNamedArgCase(superList, defaultsMode == OFF));
+            || (list.isEmpty() && ImmutableASTTransformation.isSpecialNamedArgCase(superList, defaultsMode == OFF));
 
         for (PropertyNode pNode : superList) {
             String name = pNode.getName();
@@ -293,7 +224,8 @@ public class TupleConstructorASTTransformation extends AbstractASTTransformation
                 List<String> propNames = new ArrayList<>();
                 Map<Parameter, Expression> seen = new HashMap<>();
                 for (Parameter p : params) {
-                    if (!processImplicitNamedParam(xform, tupleCtor, mapParam, inner, args, propNames, p, false, seen)) return;
+                    if (!processImplicitNamedParam(xform, tupleCtor, mapParam, inner, args, propNames, p, false, seen))
+                        return;
                 }
                 NamedVariantASTTransformation.createMapVariant(xform, tupleCtor, anno, mapParam, genParams, cNode, inner, args, propNames);
             }
@@ -311,7 +243,7 @@ public class TupleConstructorASTTransformation extends AbstractASTTransformation
         // or if there is only one Map property (for backwards compatibility)
         // or if there is already a @MapConstructor annotation
         if (!params.isEmpty() && defaultsMode != OFF && specialNamedArgCase
-                && !AnnotatedNodeUtils.hasAnnotation(cNode, MapConstructorASTTransformation.MY_TYPE)) {
+            && !AnnotatedNodeUtils.hasAnnotation(cNode, MapConstructorASTTransformation.MY_TYPE)) {
             ClassNode firstParamType = params.get(0).getType();
             if (params.size() > 1 || ClassHelper.isObjectType(firstParamType)) {
                 String message = "The class " + cNode.getName() + " was incorrectly initialized via the map constructor with null.";
@@ -329,19 +261,19 @@ public class TupleConstructorASTTransformation extends AbstractASTTransformation
         Expression init = fNode.getInitialExpression();
         Parameter param = new Parameter(type, name);
         switch (defaultsMode) {
-          case ON:
-              if (init == null || (ClassHelper.isPrimitiveType(fType) && ExpressionUtils.isNullConstant(init)))
-                  init = defaultValueX(fType);
-              // falls through
-          case AUTO:
-              if (init != null) {
-                  param.setInitialExpression(init);
-              }
-            break;
-          default:
-            if (init != null && !makeImmutable) {
-                xform.addError("Error during " + MY_TYPE_NAME + " processing, default value processing disabled but default value found for '" + fNode.getName() + "'", fNode);
-            }
+            case ON:
+                if (init == null || (ClassHelper.isPrimitiveType(fType) && ExpressionUtils.isNullConstant(init)))
+                    init = defaultValueX(fType);
+                // falls through
+            case AUTO:
+                if (init != null) {
+                    param.setInitialExpression(init);
+                }
+                break;
+            default:
+                if (init != null && !makeImmutable) {
+                    xform.addError("Error during " + MY_TYPE_NAME + " processing, default value processing disabled but default value found for '" + fNode.getName() + "'", fNode);
+                }
         }
         return param;
     }
@@ -352,8 +284,8 @@ public class TupleConstructorASTTransformation extends AbstractASTTransformation
         VariableExpression namedArgs = varX(NAMED_ARGS);
         namedArgs.setAccessedVariable(parameters[0]);
         code.addStatement(ifElseS(equalsNullX(namedArgs),
-                throwS(ctorX(ClassHelper.make(IllegalArgumentException.class), args(constX(message)))),
-                processNamedArgs(cNode, namedArgs)));
+            throwS(ctorX(ClassHelper.make(IllegalArgumentException.class), args(constX(message)))),
+            processNamedArgs(cNode, namedArgs)));
         addGeneratedConstructor(cNode, modifiers, parameters, ClassNode.EMPTY_ARRAY, code);
         // potentially add a no-arg constructor too
         if (addNoArg) {
@@ -400,5 +332,72 @@ public class TupleConstructorASTTransformation extends AbstractASTTransformation
             }
         }
         return null;
+    }
+
+    @Override
+    public int priority() {
+        return 5;
+    }
+
+    @Override
+    public String getAnnotationName() {
+        return MY_TYPE_NAME;
+    }
+
+    @Override
+    public void setCompilationUnit(final CompilationUnit unit) {
+        compilationUnit = unit;
+    }
+
+    @Override
+    public void visit(final ASTNode[] nodes, final SourceUnit source) {
+        init(nodes, source);
+        AnnotatedNode parent = (AnnotatedNode) nodes[1];
+        AnnotationNode anno = (AnnotationNode) nodes[0];
+        if (!MY_TYPE.equals(anno.getClassNode())) return;
+
+        if (parent instanceof ClassNode) {
+            ClassNode cNode = (ClassNode) parent;
+            if (!checkNotInterface(cNode, MY_TYPE_NAME)) return;
+            boolean includeFields = memberHasValue(anno, "includeFields", Boolean.TRUE);
+            boolean includeProperties = !memberHasValue(anno, "includeProperties", Boolean.FALSE);
+            boolean includeSuperFields = memberHasValue(anno, "includeSuperFields", Boolean.TRUE);
+            boolean includeSuperProperties = memberHasValue(anno, "includeSuperProperties", Boolean.TRUE);
+            boolean allProperties = memberHasValue(anno, "allProperties", Boolean.TRUE);
+            List<String> excludes = getMemberStringList(anno, "excludes");
+            List<String> includes = getMemberStringList(anno, "includes");
+            boolean allNames = memberHasValue(anno, "allNames", Boolean.TRUE);
+            if (!checkIncludeExcludeUndefinedAware(anno, excludes, includes, MY_TYPE_NAME)) return;
+            if (!checkPropertyList(cNode, includes, "includes", anno, MY_TYPE_NAME, includeFields, includeSuperProperties, allProperties, includeSuperFields, false))
+                return;
+            if (!checkPropertyList(cNode, excludes, "excludes", anno, MY_TYPE_NAME, includeFields, includeSuperProperties, allProperties, includeSuperFields, false))
+                return;
+            GroovyClassLoader classLoader = compilationUnit != null ? compilationUnit.getTransformLoader() : source.getClassLoader();
+            PropertyHandler handler = PropertyHandler.createPropertyHandler(this, classLoader, cNode);
+            if (handler == null || !handler.validateAttributes(this, anno))
+                return;
+
+            Expression pre = anno.getMember("pre");
+            if (pre != null && !(pre instanceof ClosureExpression)) {
+                addError("Expected closure value for annotation parameter 'pre'. Found " + pre, cNode);
+                return;
+            }
+            Expression post = anno.getMember("post");
+            if (post != null && !(post instanceof ClosureExpression)) {
+                addError("Expected closure value for annotation parameter 'post'. Found " + post, cNode);
+                return;
+            }
+
+            createConstructor(this, anno, cNode, includeFields, includeProperties, includeSuperFields, includeSuperProperties,
+                excludes, includes, allNames, allProperties,
+                sourceUnit, handler, (ClosureExpression) pre, (ClosureExpression) post);
+
+            if (pre != null) {
+                anno.setMember("pre", new ClosureExpression(Parameter.EMPTY_ARRAY, EmptyStatement.INSTANCE));
+            }
+            if (post != null) {
+                anno.setMember("post", new ClosureExpression(Parameter.EMPTY_ARRAY, EmptyStatement.INSTANCE));
+            }
+        }
     }
 }

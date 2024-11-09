@@ -24,8 +24,8 @@ package org.apache.groovy.ginq.provider.collection.runtime;
  * @since 4.0.0
  */
 public class RowBound extends AbstractBound<Long, Long> {
-    private static final long serialVersionUID = 5774234311203836615L;
     public static final RowBound DEFAULT = new RowBound(Long.MIN_VALUE, Long.MAX_VALUE);
+    private static final long serialVersionUID = 5774234311203836615L;
 
     /**
      * Construct a new RowBound instance with lower and upper frame bounds

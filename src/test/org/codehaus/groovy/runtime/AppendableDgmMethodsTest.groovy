@@ -26,20 +26,22 @@ import groovy.test.GroovyTestCase
 class AppendableDgmMethodsTest extends GroovyTestCase {
     List<String> store = []
     Appendable app = new Appendable() {
-        Appendable append(char c) { store+="$c"; this }
+        Appendable append(char c) { store += "$c"; this }
+
         Appendable append(CharSequence cs) { store += cs; this }
-        Appendable append(CharSequence cs, int i1, int i2) { store += cs.subSequence(i1,i2); this }
+
+        Appendable append(CharSequence cs, int i1, int i2) { store += cs.subSequence(i1, i2); this }
     }
 
     void testFoo() {
         app << "hello "
-        app << [a:1, b:2]
+        app << [a: 1, b: 2]
         app.withFormatter { Formatter f ->
             f.format(" %tY", Date.parse('dd MM yyyy', '01 01 2001'))
             f.format(Locale.FRANCE, " e = %+10.4f", Math.E)
         }
         assert store.join('') in ['hello [a:1, b:2] 2001 e =    +2,7183',
                                   'hello [a:1, b:2] 2001 e =    +2.7183' // for JDK 23
-                                 ]
+        ]
     }
 }

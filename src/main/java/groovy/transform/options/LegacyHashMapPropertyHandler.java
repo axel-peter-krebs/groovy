@@ -73,15 +73,15 @@ public class LegacyHashMapPropertyHandler extends ImmutablePropertyHandler {
         Expression namedArgs = findArg(fNode.getName());
         Expression baseArgs = varX("args");
         Statement assignStmt = ifElseS(
-                equalsNullX(namedArgs),
-                ifElseS(
-                        isTrueX(callX(baseArgs, "containsKey", constX(fNode.getName()))),
-                        assignS(fieldExpr, namedArgs),
-                        assignS(fieldExpr, cloneCollectionExpr(baseArgs, fieldType))),
-                ifElseS(
-                        isOneX(callX(baseArgs, "size")),
-                        assignS(fieldExpr, cloneCollectionExpr(namedArgs, fieldType)),
-                        assignS(fieldExpr, cloneCollectionExpr(baseArgs, fieldType)))
+            equalsNullX(namedArgs),
+            ifElseS(
+                isTrueX(callX(baseArgs, "containsKey", constX(fNode.getName()))),
+                assignS(fieldExpr, namedArgs),
+                assignS(fieldExpr, cloneCollectionExpr(baseArgs, fieldType))),
+            ifElseS(
+                isOneX(callX(baseArgs, "size")),
+                assignS(fieldExpr, cloneCollectionExpr(namedArgs, fieldType)),
+                assignS(fieldExpr, cloneCollectionExpr(baseArgs, fieldType)))
         );
         return ifElseS(equalsNullX(baseArgs), assignInit, assignStmt);
     }

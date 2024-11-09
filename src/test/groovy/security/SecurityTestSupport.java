@@ -61,6 +61,15 @@ public abstract class SecurityTestSupport extends GroovyTestCase {
         }
     }
 
+    protected GroovyClassLoader loader = doPrivileged((PrivilegedAction<GroovyClassLoader>) () ->
+        new GroovyClassLoader(SecurityTestSupport.class.getClassLoader()));
+    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager
+    private SecurityManager securityManager;
+    private ClassLoader currentClassLoader;
+
+    public SecurityTestSupport() {
+    }
+
     public static boolean isSecurityAvailable() {
         return securityAvailable;
     }
@@ -75,40 +84,21 @@ public abstract class SecurityTestSupport extends GroovyTestCase {
         java.security.Policy.getPolicy().refresh();
     }
 
-    protected class SecurityTestResultPrinter extends ResultPrinter {
-
-        public SecurityTestResultPrinter(PrintStream stream) {
-            super(stream);
-        }
-
-        public void print(TestResult result) {
-            getWriter().println("Security testing on a groovy test failed:");
-            printErrors(result);
-            printFailures(result);
-            printFooter(result);
-        }
-    }
-
-    protected GroovyClassLoader loader = doPrivileged((PrivilegedAction<GroovyClassLoader>) () ->
-            new GroovyClassLoader(SecurityTestSupport.class.getClassLoader()));
-
-    @SuppressWarnings("removal") // TODO in a future Groovy version remove reference to SecurityManager
-    private SecurityManager securityManager;
-    private ClassLoader currentClassLoader;
-
-    public SecurityTestSupport() {
+    @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
+    private static <T> T doPrivileged(PrivilegedAction<T> action) {
+        return java.security.AccessController.doPrivileged(action);
     }
 
     /*
-      * Check SecuritySupport to see if security is properly configured.  If not, fail the first
-      * test that runs.  All remaining tests will run, but not do any security checking.
-      */
+     * Check SecuritySupport to see if security is properly configured.  If not, fail the first
+     * test that runs.  All remaining tests will run, but not do any security checking.
+     */
     private boolean checkSecurity() {
         if (!securityChecked) {
             securityChecked = true;
             if (!isSecurityAvailable()) {
                 fail("Security is not available - skipping security tests.  Ensure that "
-                        + POLICY_FILE + " is available from the current execution directory.");
+                    + POLICY_FILE + " is available from the current execution directory.");
             }
         }
         return isSecurityAvailable();
@@ -151,20 +141,15 @@ public abstract class SecurityTestSupport extends GroovyTestCase {
         });
     }
 
-    @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
-    private static <T> T doPrivileged(PrivilegedAction<T> action) {
-        return java.security.AccessController.doPrivileged(action);
-    }
-
     protected synchronized String generateClassName() {
         return "testSecurity" + (++counter);
     }
 
     /*
-      * Execute the groovy script contained in file.  If missingPermission
-      * is non-null, then this invocation expects an AccessControlException with missingPermission
-      * as the reason.  If missingPermission is null, the script is expected to execute successfully.
-      */
+     * Execute the groovy script contained in file.  If missingPermission
+     * is non-null, then this invocation expects an AccessControlException with missingPermission
+     * as the reason.  If missingPermission is null, the script is expected to execute successfully.
+     */
     protected Class parseClass(File file) {
         GroovyCodeSource gcs = null;
         try {
@@ -190,11 +175,11 @@ public abstract class SecurityTestSupport extends GroovyTestCase {
     }
 
     /*
-      * Parse the script contained in the GroovyCodeSource as a privileged operation (i.e. do not
-      * require the code source to have specific compile time permissions).  If the class produced is a
-      * TestCase, run the test in a suite and evaluate against the missingPermission.
-      * Otherwise, run the class as a groovy script and evaluate against the missingPermission.
-      */
+     * Parse the script contained in the GroovyCodeSource as a privileged operation (i.e. do not
+     * require the code source to have specific compile time permissions).  If the class produced is a
+     * TestCase, run the test in a suite and evaluate against the missingPermission.
+     * Otherwise, run the class as a groovy script and evaluate against the missingPermission.
+     */
     private void parseAndExecute(final GroovyCodeSource gcs, Permission missingPermission) {
         Class clazz = null;
         try {
@@ -228,7 +213,7 @@ public abstract class SecurityTestSupport extends GroovyTestCase {
             } else {
                 //There may be more than 1 failure:  iterate to ensure that they all match the missingPermission.
                 boolean otherFailure = false;
-                for (Enumeration e = result.errors(); e.hasMoreElements();) {
+                for (Enumeration e = result.errors(); e.hasMoreElements(); ) {
                     TestFailure failure = (TestFailure) e.nextElement();
                     if (failure.thrownException() instanceof java.security.AccessControlException) {
                         java.security.AccessControlException ace = (java.security.AccessControlException) failure.thrownException();
@@ -266,10 +251,10 @@ public abstract class SecurityTestSupport extends GroovyTestCase {
     }
 
     /*
-      * Execute the groovy script contained in file.  If missingPermission
-      * is non-null, then this invocation expects an AccessControlException with missingPermission
-      * as the reason.  If missingPermission is null, the script is expected to execute successfully.
-      */
+     * Execute the groovy script contained in file.  If missingPermission
+     * is non-null, then this invocation expects an AccessControlException with missingPermission
+     * as the reason.  If missingPermission is null, the script is expected to execute successfully.
+     */
     protected void assertExecute(final File file, final Permission missingPermission) {
         if (!isSecurityAvailable()) {
             return;
@@ -290,10 +275,10 @@ public abstract class SecurityTestSupport extends GroovyTestCase {
     }
 
     /*
-      * Execute the script represented by scriptStr using the supplied codebase.  If missingPermission
-      * is non-null, then this invocation expects an AccessControlException with missingPermission
-      * as the reason.  If missingPermission is null, the script is expected to execute successfully.
-      */
+     * Execute the script represented by scriptStr using the supplied codebase.  If missingPermission
+     * is non-null, then this invocation expects an AccessControlException with missingPermission
+     * as the reason.  If missingPermission is null, the script is expected to execute successfully.
+     */
     protected void assertExecute(final String scriptStr, String codeBase, final Permission missingPermission) {
         if (!isSecurityAvailable()) {
             return;
@@ -306,5 +291,19 @@ public abstract class SecurityTestSupport extends GroovyTestCase {
             parseAndExecute(new GroovyCodeSource(scriptStr, generateClassName(), effectiveCodeBase), missingPermission);
             return null;
         });
+    }
+
+    protected class SecurityTestResultPrinter extends ResultPrinter {
+
+        public SecurityTestResultPrinter(PrintStream stream) {
+            super(stream);
+        }
+
+        public void print(TestResult result) {
+            getWriter().println("Security testing on a groovy test failed:");
+            printErrors(result);
+            printFailures(result);
+            printFooter(result);
+        }
     }
 }

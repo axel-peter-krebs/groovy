@@ -19,46 +19,46 @@
 
 try {
     def a = 6
-    def result = switch(a) {
-        case 6 : throw new RuntimeException('a')
+    def result = switch (a) {
+        case 6: throw new RuntimeException('a')
     }
 } catch (e) {
     assert 'a' == e.message
 }
 
 a = 6
-result = switch(a) {
-    case 6 : yield 'a'
+result = switch (a) {
+    case 6: yield 'a'
 }
 assert 'a' == result
 
 a = 8
-result = switch(a) {
-    case 6 : yield 'a'
+result = switch (a) {
+    case 6: yield 'a'
     default: yield 'b'
 }
 assert 'b' == result
 
 a = 9
-result = switch(a) {
-    case 6, 9 : yield 'a'
+result = switch (a) {
+    case 6, 9: yield 'a'
     default: yield 'b'
 }
 assert 'a' == result
 
 a = 7
-result = switch(a) {
+result = switch (a) {
     case 7:
-    case 6, 9 : yield 'a'
+    case 6, 9: yield 'a'
     default: yield 'b'
 }
 assert 'a' == result
 
 
 a = 10
-result = switch(a) {
+result = switch (a) {
     case 7:
-    case 6, 9 : yield 'a'
+    case 6, 9: yield 'a'
     case 10:
     case 11: yield 'c'
     default: yield 'b'
@@ -66,46 +66,50 @@ result = switch(a) {
 assert 'c' == result
 
 a = 10
-result = switch(a) {
+result = switch (a) {
     case 7:
-    case 6, 9 : yield 'a'
+    case 6, 9: yield 'a'
     case 10:
     case 11: {
-            def x = 1
-            yield 'c' + x
-        }
+        def x = 1
+        yield 'c' + x
+    }
     default: yield 'b'
 }
 assert 'c1' == result
 
 
 a = 6
-result = switch(a) {
-    case 6 : yield 'a'
+result = switch (a) {
+    case 6: yield 'a'
 }
 assert 'a' == result
 
 a = 6
-result = switch(a) {
-    default : yield 'b'
+result = switch (a) {
+    default: yield 'b'
 }
 assert 'b' == result
 
 a = 6
-result = switch(a) {
-    case 6 : { yield 'a' }
+result = switch (a) {
+    case 6: {
+        yield 'a'
+    }
 }
 assert 'a' == result
 
 a = 6
-result = switch(a) {
-    default : { yield 'b' }
+result = switch (a) {
+    default: {
+        yield 'b'
+    }
 }
 assert 'b' == result
 
 a = 6
-result = switch(a) {
-    case 6  : yield 'a'
-    default : yield 'b'
+result = switch (a) {
+    case 6: yield 'a'
+    default: yield 'b'
 }
 assert 'a' == result

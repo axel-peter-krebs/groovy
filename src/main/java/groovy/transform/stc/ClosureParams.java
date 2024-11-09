@@ -61,6 +61,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ClosureParams {
     Class<? extends ClosureSignatureHint> value();
+
     Class<? extends ClosureSignatureConflictResolver> conflictResolutionStrategy() default ClosureSignatureConflictResolver.class;
+
     String[] options() default {};
 }

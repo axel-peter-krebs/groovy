@@ -27,21 +27,35 @@ import org.codehaus.groovy.runtime.ScriptBytecodeAdapter;
 
 /**
  * POJO call site
- *   metaclass - cached
- *   method - cached
-*/
+ * metaclass - cached
+ * method - cached
+ */
 public class StaticMetaMethodSite extends MetaMethodSite {
     private final int version;
 
     public StaticMetaMethodSite(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params) {
         super(site, metaClass, metaMethod, params);
-        version = metaClass.getVersion ();
+        version = metaClass.getVersion();
+    }
+
+    public static CallSite createStaticMetaMethodSite(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object[] args) {
+        if (metaMethod.correctArguments(args) == args) {
+            if (noWrappers(args)) {
+                if (noCoerce(metaMethod, args))
+                    return new StaticMetaMethodSiteNoUnwrap(site, metaClass, metaMethod, params);
+                else if (metaMethod.getClass() == CachedMethod.class)
+                    return ((CachedMethod) metaMethod).createStaticMetaMethodSite(site, metaClass, params);
+                else
+                    return new StaticMetaMethodSiteNoUnwrapNoCoerce(site, metaClass, metaMethod, params);
+            }
+        }
+        return new StaticMetaMethodSite(site, metaClass, metaMethod, params);
     }
 
     public Object invoke(Object receiver, Object[] args) throws Throwable {
         MetaClassHelper.unwrap(args);
         try {
-            return metaMethod.doMethodInvoke(receiver,  args);
+            return metaMethod.doMethodInvoke(receiver, args);
         } catch (GroovyRuntimeException gre) {
             throw ScriptBytecodeAdapter.unwrap(gre);
         }
@@ -49,74 +63,59 @@ public class StaticMetaMethodSite extends MetaMethodSite {
 
     protected final boolean checkCall(Object receiver, Object[] args) {
         return receiver == metaClass.getTheClass() // metaclass match receiver
-           && ((MetaClassImpl)metaClass).getVersion() == version // metaClass still be valid
-           && MetaClassHelper.sameClasses(params, args);
+            && ((MetaClassImpl) metaClass).getVersion() == version // metaClass still be valid
+            && MetaClassHelper.sameClasses(params, args);
     }
 
     protected final boolean checkCall(Object receiver) {
         return receiver == metaClass.getTheClass() // metaclass match receiver
-           && ((MetaClassImpl)metaClass).getVersion() == version // metaClass still be valid
-           && MetaClassHelper.sameClasses(params);
+            && ((MetaClassImpl) metaClass).getVersion() == version // metaClass still be valid
+            && MetaClassHelper.sameClasses(params);
     }
 
     protected final boolean checkCall(Object receiver, Object arg1) {
         return receiver == metaClass.getTheClass() // metaclass match receiver
-           && ((MetaClassImpl)metaClass).getVersion() == version // metaClass still be valid
-           && MetaClassHelper.sameClasses(params, arg1);
+            && ((MetaClassImpl) metaClass).getVersion() == version // metaClass still be valid
+            && MetaClassHelper.sameClasses(params, arg1);
     }
 
     protected final boolean checkCall(Object receiver, Object arg1, Object arg2) {
         return receiver == metaClass.getTheClass() // metaclass match receiver
-           && ((MetaClassImpl)metaClass).getVersion() == version // metaClass still be valid
-           && MetaClassHelper.sameClasses(params, arg1, arg2);
+            && ((MetaClassImpl) metaClass).getVersion() == version // metaClass still be valid
+            && MetaClassHelper.sameClasses(params, arg1, arg2);
     }
 
     protected final boolean checkCall(Object receiver, Object arg1, Object arg2, Object arg3) {
         return receiver == metaClass.getTheClass() // metaclass match receiver
-           && ((MetaClassImpl)metaClass).getVersion() == version // metaClass still be valid
-           && MetaClassHelper.sameClasses(params, arg1, arg2, arg3);
+            && ((MetaClassImpl) metaClass).getVersion() == version // metaClass still be valid
+            && MetaClassHelper.sameClasses(params, arg1, arg2, arg3);
     }
 
     protected final boolean checkCall(Object receiver, Object arg1, Object arg2, Object arg3, Object arg4) {
         return receiver == metaClass.getTheClass() // metaclass match receiver
-           && ((MetaClassImpl)metaClass).getVersion() == version // metaClass still be valid
-           && MetaClassHelper.sameClasses(params, arg1, arg2, arg3, arg4);
+            && ((MetaClassImpl) metaClass).getVersion() == version // metaClass still be valid
+            && MetaClassHelper.sameClasses(params, arg1, arg2, arg3, arg4);
     }
 
     @Override
     public Object call(Object receiver, Object[] args) throws Throwable {
-        if(checkCall(receiver, args)) {
+        if (checkCall(receiver, args)) {
             try {
                 return invoke(receiver, args);
             } catch (GroovyRuntimeException gre) {
                 throw ScriptBytecodeAdapter.unwrap(gre);
             }
         } else {
-          return CallSiteArray.defaultCall(this, receiver, args);
+            return CallSiteArray.defaultCall(this, receiver, args);
         }
     }
 
     @Override
     public Object callStatic(Class receiver, Object[] args) throws Throwable {
-        if(checkCall(receiver, args))
-          return invoke(receiver, args);
+        if (checkCall(receiver, args))
+            return invoke(receiver, args);
         else
-          return CallSiteArray.defaultCallStatic(this, receiver, args);
-    }
-
-    public static CallSite createStaticMetaMethodSite(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object[] args) {
-        if (metaMethod.correctArguments(args) == args) {
-            if (noWrappers(args)) {
-                if (noCoerce(metaMethod,args))
-                    return new StaticMetaMethodSiteNoUnwrap(site, metaClass, metaMethod, params);
-                else
-                    if (metaMethod.getClass() == CachedMethod.class)
-                      return ((CachedMethod)metaMethod).createStaticMetaMethodSite(site, metaClass, params);
-                    else
-                      return new StaticMetaMethodSiteNoUnwrapNoCoerce (site, metaClass, metaMethod, params);
-            }
-        }
-        return new StaticMetaMethodSite(site, metaClass, metaMethod, params);
+            return CallSiteArray.defaultCallStatic(this, receiver, args);
     }
 
     /**
@@ -131,7 +130,7 @@ public class StaticMetaMethodSite extends MetaMethodSite {
         @Override
         public final Object invoke(Object receiver, Object[] args) throws Throwable {
             try {
-                return metaMethod.doMethodInvoke(receiver,  args);
+                return metaMethod.doMethodInvoke(receiver, args);
             } catch (GroovyRuntimeException gre) {
                 throw ScriptBytecodeAdapter.unwrap(gre);
             }
@@ -150,7 +149,7 @@ public class StaticMetaMethodSite extends MetaMethodSite {
         @Override
         public final Object invoke(Object receiver, Object[] args) throws Throwable {
             try {
-                return metaMethod.invoke(receiver,  args);
+                return metaMethod.invoke(receiver, args);
             } catch (GroovyRuntimeException gre) {
                 throw ScriptBytecodeAdapter.unwrap(gre);
             }

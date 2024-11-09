@@ -34,7 +34,8 @@ final class GroovyScriptEngineTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder()
 
-    @Test @Ignore('current xstream causes illegal access errors on JDK9+ - skip on those JDK versions, get coverage on older versions')
+    @Test
+    @Ignore('current xstream causes illegal access errors on JDK9+ - skip on those JDK versions, get coverage on older versions')
     void createASTDumpWhenScriptIsLoadedByName() {
         def scriptFile = temporaryFolder.newFile('Script1.groovy')
         scriptFile << "assert 1 + 1 == 2" // the script just has to have _some_ content

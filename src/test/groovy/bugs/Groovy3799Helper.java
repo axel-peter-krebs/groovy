@@ -18,6 +18,9 @@
  */
 package groovy.bugs;
 
+interface Foo3799 {
+}
+
 public class Groovy3799Helper {
     private final Foo3799[] foos;
 
@@ -32,9 +35,6 @@ public class Groovy3799Helper {
     public Foo3799[] getFoos() {
         return foos;
     }
-}
-
-interface Foo3799 {
 }
 
 class AbstractFoo3799 implements Foo3799 {

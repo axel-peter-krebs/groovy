@@ -20,9 +20,9 @@ package groovy.bugs
 
 import groovy.test.GroovyTestCase
 
-class Groovy7995Bug extends GroovyTestCase{
+class Groovy7995Bug extends GroovyTestCase {
 
-    void testClosureShortSyntaxCallFromOtherClosure(){
+    void testClosureShortSyntaxCallFromOtherClosure() {
         assertScript('''
             @groovy.transform.CompileStatic
             class Foo {

@@ -43,7 +43,7 @@ public class MixinInMetaClass {
     final CachedClass mixinClass;
     final CachedConstructor constructor;
     private final ManagedIdentityConcurrentMap managedIdentityConcurrentMap =
-            new ManagedIdentityConcurrentMap(ManagedIdentityConcurrentMap.ReferenceType.SOFT);
+        new ManagedIdentityConcurrentMap(ManagedIdentityConcurrentMap.ReferenceType.SOFT);
 
     public MixinInMetaClass(ExpandoMetaClass emc, CachedClass mixinClass) {
         this.emc = emc;
@@ -64,32 +64,6 @@ public class MixinInMetaClass {
         }
 
         throw new GroovyRuntimeException("No default constructor for class " + mixinClass.getName() + "! Can't be mixed in.");
-    }
-
-    public synchronized Object getMixinInstance(Object object) {
-        Object mixinInstance = managedIdentityConcurrentMap.get(object);
-        if (mixinInstance == null) {
-            mixinInstance = constructor.invoke(MetaClassHelper.EMPTY_ARRAY);
-            new MixedInMetaClass(mixinInstance, object);
-            managedIdentityConcurrentMap.put(object, mixinInstance);
-        }
-        return mixinInstance;
-    }
-
-    public synchronized void setMixinInstance(Object object, Object mixinInstance) {
-        if (mixinInstance == null) {
-            managedIdentityConcurrentMap.remove(object);
-        } else {
-            managedIdentityConcurrentMap.put(object, mixinInstance);
-        }
-    }
-
-    public CachedClass getInstanceClass() {
-        return emc.getTheCachedClass();
-    }
-
-    public CachedClass getMixinClass() {
-        return mixinClass;
     }
 
     public static void mixinClassesToMetaClass(MetaClass self, List<Class> categoryClasses) {
@@ -141,9 +115,9 @@ public class MixinInMetaClass {
                     if (method instanceof CachedMethod)
                         staticMethod(self, arr, (CachedMethod) method);
                 } else if (method.getDeclaringClass().getTheClass() != Object.class || "toString".equals(method.getName())) {
-                  //if (self.pickMethod(method.getName(), method.getNativeParameterTypes()) == null) {
-                        arr.add(new MixinInstanceMetaMethod(method, mixin));
-                  //}
+                    //if (self.pickMethod(method.getName(), method.getNativeParameterTypes()) == null) {
+                    arr.add(new MixinInstanceMetaMethod(method, mixin));
+                    //}
                 }
             }
         }
@@ -186,6 +160,32 @@ public class MixinInMetaClass {
                 arr.add(metaMethod);
             }
         }
+    }
+
+    public synchronized Object getMixinInstance(Object object) {
+        Object mixinInstance = managedIdentityConcurrentMap.get(object);
+        if (mixinInstance == null) {
+            mixinInstance = constructor.invoke(MetaClassHelper.EMPTY_ARRAY);
+            new MixedInMetaClass(mixinInstance, object);
+            managedIdentityConcurrentMap.put(object, mixinInstance);
+        }
+        return mixinInstance;
+    }
+
+    public synchronized void setMixinInstance(Object object, Object mixinInstance) {
+        if (mixinInstance == null) {
+            managedIdentityConcurrentMap.remove(object);
+        } else {
+            managedIdentityConcurrentMap.put(object, mixinInstance);
+        }
+    }
+
+    public CachedClass getInstanceClass() {
+        return emc.getTheCachedClass();
+    }
+
+    public CachedClass getMixinClass() {
+        return mixinClass;
     }
 
     @Override

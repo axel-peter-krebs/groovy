@@ -58,7 +58,7 @@ import java.util.List;
  * A factory class conforming to JSR-223 which is used to instantiate
  * Groovy <code>ScriptEngines</code> and also exposes metadata describing
  * Groovy's engine class.
- *
+ * <p>
  * Adapted from original by Mike Grogan and A. Sundararajan
  */
 public class GroovyScriptEngineFactory implements ScriptEngineFactory {
@@ -68,6 +68,24 @@ public class GroovyScriptEngineFactory implements ScriptEngineFactory {
     private static final String SHORT_NAME = "groovy";
 
     private static final String LANGUAGE_NAME = "Groovy";
+    private static final List<String> NAMES;
+    private static final List<String> EXTENSIONS;
+    private static final List<String> MIME_TYPES;
+
+    static {
+        List<String> n = new ArrayList<String>(2);
+        n.add(SHORT_NAME);
+        n.add(LANGUAGE_NAME);
+        NAMES = Collections.unmodifiableList(n);
+
+        n = new ArrayList<String>(1);
+        n.add("groovy");
+        EXTENSIONS = Collections.unmodifiableList(n);
+
+        n = new ArrayList<String>(1);
+        n.add("application/x-groovy");
+        MIME_TYPES = Collections.unmodifiableList(n);
+    }
 
     @Override
     public String getEngineName() {
@@ -192,24 +210,5 @@ public class GroovyScriptEngineFactory implements ScriptEngineFactory {
             ret.append(statement).append('\n');
         }
         return ret.toString();
-    }
-
-    private static final List<String> NAMES;
-    private static final List<String> EXTENSIONS;
-    private static final List<String> MIME_TYPES;
-
-    static {
-        List<String> n = new ArrayList<String>(2);
-        n.add(SHORT_NAME);
-        n.add(LANGUAGE_NAME);
-        NAMES = Collections.unmodifiableList(n);
-
-        n = new ArrayList<String>(1);
-        n.add("groovy");
-        EXTENSIONS = Collections.unmodifiableList(n);
-
-        n = new ArrayList<String>(1);
-        n.add("application/x-groovy");
-        MIME_TYPES = Collections.unmodifiableList(n);
     }
 }

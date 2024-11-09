@@ -20,6 +20,7 @@ package core
 
 class À {
     public À f
-           À p
+    À p
+
     static À m() {}
 }

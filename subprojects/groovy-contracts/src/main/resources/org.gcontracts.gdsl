@@ -20,13 +20,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
 
-PsiMethod findParentMethod(PsiElement start)  {
+PsiMethod findParentMethod(PsiElement start) {
     def psiElement = start
     while (!(psiElement instanceof PsiMethod) && psiElement != null) psiElement = psiElement.parent
     psiElement
 }
 
-contributor(scope: closureScope(annotationName: 'groovy.contracts.Ensures'))  {
+contributor(scope: closureScope(annotationName: 'groovy.contracts.Ensures')) {
     variable(name: 'old', type: 'Map')
 
     PsiMethod method = findParentMethod(place)

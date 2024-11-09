@@ -26,7 +26,7 @@ final class DelegatingScriptTest {
 
     @Test
     void testDelegatingScript() {
-        def sh = new GroovyShell(new Binding(), new CompilerConfiguration().tap{
+        def sh = new GroovyShell(new Binding(), new CompilerConfiguration().tap {
             scriptBaseClass = DelegatingScript.name
         })
         def script = (DelegatingScript) sh.parse('''
@@ -43,7 +43,7 @@ final class DelegatingScriptTest {
 
     @Test
     void testUseMarkupBuilderAsDelegate() {
-        def sh = new GroovyShell(new Binding(), new CompilerConfiguration().tap{
+        def sh = new GroovyShell(new Binding(), new CompilerConfiguration().tap {
             scriptBaseClass = DelegatingScript.name
         })
         def script = sh.parse('''

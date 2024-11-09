@@ -48,13 +48,15 @@ public class ReflectionUtils {
 
     private static final Class<?>[] EMPTY_CLASS_ARRAY = {};
 
-    /** The packages in the call stack that are only part of the Groovy MOP. */
+    /**
+     * The packages in the call stack that are only part of the Groovy MOP.
+     */
     private static final Set<String> IGNORED_PACKAGES = Set.of(
         "groovy.lang",
         "sun.reflect",
         "java.security",
         "java.lang.invoke",
-      //"java.lang.reflect",
+        //"java.lang.reflect",
         "org.codehaus.groovy.reflection",
         "org.codehaus.groovy.runtime",
         "org.codehaus.groovy.runtime.callsite",
@@ -72,6 +74,24 @@ public class ReflectionUtils {
 
     private static final StackWalker STACK_WALKER =
         StackWalker.getInstance(Set.of(StackWalker.Option.RETAIN_CLASS_REFERENCE)); // StackWalker is thread-safe
+    private static final MethodHandle IS_SEALED_METHODHANDLE;
+    private static final MethodHandle GET_PERMITTED_SUBCLASSES_METHODHANDLE;
+
+    static {
+        MethodHandle isSealedMethodHandle = null;
+        try {
+            isSealedMethodHandle = MethodHandles.lookup().findVirtual(Class.class, "isSealed", MethodType.methodType(boolean.class, new Class[0]));
+        } catch (NoSuchMethodException | IllegalAccessException ignored) {
+        }
+        IS_SEALED_METHODHANDLE = isSealedMethodHandle;
+
+        MethodHandle getPermittedSubclassesMethodHandle = null;
+        try {
+            getPermittedSubclassesMethodHandle = MethodHandles.lookup().findVirtual(Class.class, "getPermittedSubclasses", MethodType.methodType(Class[].class, new Class[0]));
+        } catch (NoSuchMethodException | IllegalAccessException ignored) {
+        }
+        GET_PERMITTED_SUBCLASSES_METHODHANDLE = getPermittedSubclassesMethodHandle;
+    }
 
     /**
      * Determines whether the getCallingClass methods will return
@@ -80,7 +100,7 @@ public class ReflectionUtils {
      * all getCallingClass methods will return null.
      *
      * @return true if getCallingClass can return anything but null, false if
-     *         it will only return null.
+     * it will only return null.
      */
     public static boolean isCallingClassReflectionAvailable() {
         return true;
@@ -102,7 +122,7 @@ public class ReflectionUtils {
      * @param matchLevel how may call stacks down to look.
      *                   If it is less than 1 it is treated as though it was 1.
      * @return The Class of the matched caller, or null if there aren't
-     *         enough stackframes to satisfy matchLevel
+     * enough stackframes to satisfy matchLevel
      */
     public static Class getCallingClass(final int matchLevel) {
         return getCallingClass(matchLevel, Collections.emptySet());
@@ -117,14 +137,14 @@ public class ReflectionUtils {
      * @param extraIgnoredPackages A collection of string names of packages to exclude
      *                             in addition to the MOP packages when counting stack frames.
      * @return The Class of the matched caller, or null if there aren't
-     *         enough stackframes to satisfy matchLevel
+     * enough stackframes to satisfy matchLevel
      */
     public static Class getCallingClass(final int matchLevel, final Collection<String> extraIgnoredPackages) {
         try {
             Class result = STACK_WALKER
-                            .walk(s -> s.map(StackWalker.StackFrame::getDeclaringClass)
-                                        .filter(c -> !classShouldBeIgnored(c, extraIgnoredPackages))
-                                        .skip(Math.max(0, matchLevel)).limit(1).findFirst().orElse(null));
+                .walk(s -> s.map(StackWalker.StackFrame::getDeclaringClass)
+                    .filter(c -> !classShouldBeIgnored(c, extraIgnoredPackages))
+                    .skip(Math.max(0, matchLevel)).limit(1).findFirst().orElse(null));
             return result;
         } catch (Throwable ignore) {
             return null;
@@ -260,27 +280,9 @@ public class ReflectionUtils {
 
     private static boolean classShouldBeIgnored(final Class c, final Collection<String> extraIgnoredPackages) {
         return (c != null
-                && (c.isSynthetic()
-                    || (c.getPackage() != null
-                        && (IGNORED_PACKAGES.contains(c.getPackage().getName())
-                          || extraIgnoredPackages.contains(c.getPackage().getName())))));
-    }
-
-    private static final MethodHandle IS_SEALED_METHODHANDLE;
-    private static final MethodHandle GET_PERMITTED_SUBCLASSES_METHODHANDLE;
-    static {
-        MethodHandle isSealedMethodHandle = null;
-        try {
-            isSealedMethodHandle = MethodHandles.lookup().findVirtual(Class.class, "isSealed", MethodType.methodType(boolean.class, new Class[0]));
-        } catch (NoSuchMethodException | IllegalAccessException ignored) {
-        }
-        IS_SEALED_METHODHANDLE = isSealedMethodHandle;
-
-        MethodHandle getPermittedSubclassesMethodHandle = null;
-        try {
-            getPermittedSubclassesMethodHandle = MethodHandles.lookup().findVirtual(Class.class, "getPermittedSubclasses", MethodType.methodType(Class[].class, new Class[0]));
-        } catch (NoSuchMethodException | IllegalAccessException ignored) {
-        }
-        GET_PERMITTED_SUBCLASSES_METHODHANDLE = getPermittedSubclassesMethodHandle;
+            && (c.isSynthetic()
+            || (c.getPackage() != null
+            && (IGNORED_PACKAGES.contains(c.getPackage().getName())
+            || extraIgnoredPackages.contains(c.getPackage().getName())))));
     }
 }

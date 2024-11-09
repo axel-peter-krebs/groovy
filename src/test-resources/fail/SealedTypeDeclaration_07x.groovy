@@ -17,5 +17,5 @@
  *  under the License.
  */
 
-sealed non-sealed interface ShapeI permits Circle, Rectangle { }
+sealed non-sealed interface ShapeI permits Circle, Rectangle {}
 

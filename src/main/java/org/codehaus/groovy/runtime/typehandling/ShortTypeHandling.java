@@ -30,7 +30,7 @@ import java.util.Arrays;
 public class ShortTypeHandling {
 
     public static Class castToClass(Object object) {
-        if (object==null) return null;
+        if (object == null) return null;
         if (object instanceof Class) return (Class) object;
         try {
             return Class.forName(object.toString());
@@ -40,27 +40,27 @@ public class ShortTypeHandling {
     }
 
     public static String castToString(Object object) {
-        if (object==null) return null;
+        if (object == null) return null;
         if (object.getClass().isArray()) {
-            if (object instanceof boolean[]) return Arrays.toString((boolean[])object);
-            if (object instanceof byte[]) return Arrays.toString((byte[])object);
-            if (object instanceof char[]) return new String((char[])object);
-            if (object instanceof double[]) return Arrays.toString((double[])object);
-            if (object instanceof float[]) return Arrays.toString((float[])object);
-            if (object instanceof int[]) return Arrays.toString((int[])object);
-            if (object instanceof long[]) return Arrays.toString((long[])object);
-            if (object instanceof short[]) return Arrays.toString((short[])object);
-            return Arrays.toString((Object[])object);
+            if (object instanceof boolean[]) return Arrays.toString((boolean[]) object);
+            if (object instanceof byte[]) return Arrays.toString((byte[]) object);
+            if (object instanceof char[]) return new String((char[]) object);
+            if (object instanceof double[]) return Arrays.toString((double[]) object);
+            if (object instanceof float[]) return Arrays.toString((float[]) object);
+            if (object instanceof int[]) return Arrays.toString((int[]) object);
+            if (object instanceof long[]) return Arrays.toString((long[]) object);
+            if (object instanceof short[]) return Arrays.toString((short[]) object);
+            return Arrays.toString((Object[]) object);
         }
         return object.toString();
     }
 
     /**
-     * this class requires that the supplied enum is not fitting a 
+     * this class requires that the supplied enum is not fitting a
      * Collection case for casting
      */
     public static Enum castToEnum(Object object, Class<? extends Enum> type) {
-        if (object==null) return null;
+        if (object == null) return null;
         if (type.isInstance(object)) return (Enum) object;
         if (object instanceof String || object instanceof GString) {
             return Enum.valueOf(type, object.toString());
@@ -69,7 +69,7 @@ public class ShortTypeHandling {
     }
 
     public static Character castToChar(Object object) {
-        if (object==null) return null;
+        if (object == null) return null;
         if (object instanceof Character) {
             return (Character) object;
         } else if (object instanceof Number) {
@@ -80,7 +80,7 @@ public class ShortTypeHandling {
         if (text.length() == 1) {
             return text.charAt(0);
         } else {
-            throw new GroovyCastException(text,char.class);
+            throw new GroovyCastException(text, char.class);
         }
     }
 }

@@ -19,6 +19,7 @@
 package core
 
 class B<T> {}
+
 B b
 b = new B()
 assert b instanceof B

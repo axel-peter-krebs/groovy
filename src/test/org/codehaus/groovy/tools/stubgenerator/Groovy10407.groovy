@@ -34,7 +34,7 @@ final class Groovy10407 extends StringSourcesStubTestCase {
                     }
                 }
             ''',
-            'Main.java': '''
+            'Main.java'  : '''
                 public class Main { Foo foo; }
             ''',
         ]

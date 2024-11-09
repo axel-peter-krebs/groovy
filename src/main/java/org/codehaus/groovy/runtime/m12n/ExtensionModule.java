@@ -51,8 +51,8 @@ public abstract class ExtensionModule {
     @Override
     public String toString() {
         String sb = "ExtensionModule{" + "name='" + name + '\'' +
-                ", version='" + version + '\'' +
-                '}';
+            ", version='" + version + '\'' +
+            '}';
         return sb;
     }
 }

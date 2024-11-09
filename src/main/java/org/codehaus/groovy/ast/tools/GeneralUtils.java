@@ -95,20 +95,20 @@ import static org.codehaus.groovy.antlr.PrimitiveHelper.getDefaultValueForPrimit
  */
 public class GeneralUtils {
 
-    public  static final Token ASSIGN        = Token.newSymbol(Types.ASSIGN                    , -1, -1);
-    public  static final Token CMP           = Token.newSymbol(Types.COMPARE_TO                , -1, -1);
-    public  static final Token EQ            = Token.newSymbol(Types.COMPARE_EQUAL             , -1, -1);
-    public  static final Token NE            = Token.newSymbol(Types.COMPARE_NOT_EQUAL         , -1, -1);
-    public  static final Token NOT_IDENTICAL = Token.newSymbol(Types.COMPARE_NOT_IDENTICAL     , -1, -1);
-    public  static final Token GE            = Token.newSymbol(Types.COMPARE_GREATER_THAN_EQUAL, -1, -1);
-    public  static final Token GT            = Token.newSymbol(Types.COMPARE_GREATER_THAN      , -1, -1);
-    public  static final Token LE            = Token.newSymbol(Types.COMPARE_LESS_THAN_EQUAL   , -1, -1);
-    public  static final Token LT            = Token.newSymbol(Types.COMPARE_LESS_THAN         , -1, -1);
-    public  static final Token AND           = Token.newSymbol(Types.LOGICAL_AND               , -1, -1);
-    public  static final Token OR            = Token.newSymbol(Types.LOGICAL_OR                , -1, -1);
-    public  static final Token INSTANCEOF    = Token.newSymbol(Types.KEYWORD_INSTANCEOF        , -1, -1);
-    public  static final Token MINUS         = Token.newSymbol(Types.MINUS                     , -1, -1);
-    public  static final Token PLUS          = Token.newSymbol(Types.PLUS                      , -1, -1);
+    public static final Token ASSIGN = Token.newSymbol(Types.ASSIGN, -1, -1);
+    public static final Token CMP = Token.newSymbol(Types.COMPARE_TO, -1, -1);
+    public static final Token EQ = Token.newSymbol(Types.COMPARE_EQUAL, -1, -1);
+    public static final Token NE = Token.newSymbol(Types.COMPARE_NOT_EQUAL, -1, -1);
+    public static final Token NOT_IDENTICAL = Token.newSymbol(Types.COMPARE_NOT_IDENTICAL, -1, -1);
+    public static final Token GE = Token.newSymbol(Types.COMPARE_GREATER_THAN_EQUAL, -1, -1);
+    public static final Token GT = Token.newSymbol(Types.COMPARE_GREATER_THAN, -1, -1);
+    public static final Token LE = Token.newSymbol(Types.COMPARE_LESS_THAN_EQUAL, -1, -1);
+    public static final Token LT = Token.newSymbol(Types.COMPARE_LESS_THAN, -1, -1);
+    public static final Token AND = Token.newSymbol(Types.LOGICAL_AND, -1, -1);
+    public static final Token OR = Token.newSymbol(Types.LOGICAL_OR, -1, -1);
+    public static final Token INSTANCEOF = Token.newSymbol(Types.KEYWORD_INSTANCEOF, -1, -1);
+    public static final Token MINUS = Token.newSymbol(Types.MINUS, -1, -1);
+    public static final Token PLUS = Token.newSymbol(Types.PLUS, -1, -1);
 
     public static BinaryExpression andX(final Expression lhv, final Expression rhv) {
         return binX(lhv, AND, rhv);
@@ -168,7 +168,7 @@ public class GeneralUtils {
     }
 
     @Deprecated
-    public static Expression  attrX$$bridge(final Expression owner, final Expression attribute) {
+    public static Expression attrX$$bridge(final Expression owner, final Expression attribute) {
         return new AttributeExpression(owner, attribute);
     }
 
@@ -293,7 +293,7 @@ public class GeneralUtils {
      * Builds a lambda expression
      *
      * @param params lambda parameters
-     * @param code lambda code
+     * @param code   lambda code
      * @return the lambda expression
      */
     public static LambdaExpression lambdaX(final Parameter[] params, final Statement code) {
@@ -490,7 +490,7 @@ public class GeneralUtils {
     private static void addAllInterfaces(final Set<ClassNode> result, final ClassNode source) {
         for (ClassNode in : source.getInterfaces()) {
             in = GenericsUtils.parameterizeType(source, in);
-            if(result.add(in)) addAllInterfaces(result, in);
+            if (result.add(in)) addAllInterfaces(result, in);
         }
         ClassNode sc = source.redirect().getUnresolvedSuperClass(false);
         if (sc != null && !ClassHelper.isObjectType(sc)) {
@@ -593,8 +593,9 @@ public class GeneralUtils {
      * This method is similar to {@link #propX(Expression, Expression)} but will make sure that if the property
      * being accessed is defined inside the classnode provided as a parameter, then a getter call is generated
      * instead of a field access.
+     *
      * @param annotatedNode the class node where the property node is accessed from
-     * @param pNode the property being accessed
+     * @param pNode         the property being accessed
      * @return a method call expression or a property expression
      */
     public static Expression getterThisX(final ClassNode annotatedNode, final PropertyNode pNode) {
@@ -609,9 +610,10 @@ public class GeneralUtils {
      * This method is similar to {@link #propX(Expression, Expression)} but will make sure that if the property
      * being accessed is defined inside the classnode provided as a parameter, then a getter call is generated
      * instead of a field access.
+     *
      * @param annotatedNode the class node where the property node is accessed from
-     * @param receiver the object having the property
-     * @param pNode the property being accessed
+     * @param receiver      the object having the property
+     * @param pNode         the property being accessed
      * @return a method call expression or a property expression
      */
     public static Expression getterX(final ClassNode annotatedNode, final Expression receiver, final PropertyNode pNode) {
@@ -664,9 +666,9 @@ public class GeneralUtils {
 
     public static IfStatement ifElseS(final Expression cond, final Statement thenStmt, final Statement elseStmt) {
         return new IfStatement(
-                cond instanceof BooleanExpression ? (BooleanExpression) cond : boolX(cond),
-                thenStmt,
-                elseStmt
+            cond instanceof BooleanExpression ? (BooleanExpression) cond : boolX(cond),
+            thenStmt,
+            elseStmt
         );
     }
 
@@ -882,9 +884,9 @@ public class GeneralUtils {
 
     public static TernaryExpression ternaryX(final Expression cond, final Expression trueExpr, final Expression elseExpr) {
         return new TernaryExpression(
-                cond instanceof BooleanExpression ? (BooleanExpression) cond : boolX(cond),
-                trueExpr,
-                elseExpr);
+            cond instanceof BooleanExpression ? (BooleanExpression) cond : boolX(cond),
+            trueExpr,
+            elseExpr);
     }
 
     public static PropertyExpression thisPropX(final boolean implicit, final String property) {
@@ -951,7 +953,7 @@ public class GeneralUtils {
      */
     public static void copyAnnotatedNodeAnnotations(final AnnotatedNode annotatedNode, final List<AnnotationNode> copied, final List<AnnotationNode> notCopied, final boolean includeGenerated) {
         List<AnnotationNode> annotationList = annotatedNode.getAnnotations();
-        for (AnnotationNode annotation : annotationList)  {
+        for (AnnotationNode annotation : annotationList) {
             List<AnnotationNode> annotations = annotation.getClassNode().getAnnotations(AbstractASTTransformation.RETENTION_CLASSNODE);
             if (annotations.isEmpty()) continue;
 
@@ -970,11 +972,11 @@ public class GeneralUtils {
 
             PropertyExpression propertyExpression = (PropertyExpression) valueExpression;
             boolean processAnnotation = propertyExpression.getProperty() instanceof ConstantExpression
-                    && ("RUNTIME".equals(((ConstantExpression) (propertyExpression.getProperty())).getValue())
-                        || "CLASS".equals(((ConstantExpression) (propertyExpression.getProperty())).getValue()));
-            if (processAnnotation)  {
+                && ("RUNTIME".equals(((ConstantExpression) (propertyExpression.getProperty())).getValue())
+                || "CLASS".equals(((ConstantExpression) (propertyExpression.getProperty())).getValue()));
+            if (processAnnotation) {
                 AnnotationNode newAnnotation = new AnnotationNode(annotation.getClassNode());
-                for (Map.Entry<String, Expression> member : annotation.getMembers().entrySet())  {
+                for (Map.Entry<String, Expression> member : annotation.getMembers().entrySet()) {
                     newAnnotation.addMember(member.getKey(), member.getValue());
                 }
                 newAnnotation.setSourcePosition(annotatedNode);
@@ -1037,10 +1039,10 @@ public class GeneralUtils {
      * support this.
      *
      * @param readerSource a source
-     * @param expression an expression. Can't be null
+     * @param expression   an expression. Can't be null
      * @return the source the closure was created from
      * @throws java.lang.IllegalArgumentException when expression is null
-     * @throws java.lang.Exception when closure can't be read from source
+     * @throws java.lang.Exception                when closure can't be read from source
      */
     public static String convertASTToSource(final ReaderSource readerSource, final ASTNode expression) throws Exception {
         if (expression == null) throw new IllegalArgumentException("Null: expression");
@@ -1050,7 +1052,7 @@ public class GeneralUtils {
             String line = readerSource.getLine(x, null);
             if (line == null) {
                 throw new Exception(
-                        "Error calculating source code for expression. Trying to read line " + x + " from " + readerSource.getClass()
+                    "Error calculating source code for expression. Trying to read line " + x + " from " + readerSource.getClass()
                 );
             }
             if (x == expression.getLastLineNumber()) {
@@ -1097,10 +1099,10 @@ public class GeneralUtils {
 
     private static boolean hasClosureMember(final AnnotationNode annotation) {
         Map<String, Expression> members = annotation.getMembers();
-        for (Map.Entry<String, Expression> member : members.entrySet())  {
+        for (Map.Entry<String, Expression> member : members.entrySet()) {
             if (member.getValue() instanceof ClosureExpression) return true;
 
-            if (member.getValue() instanceof ClassExpression)  {
+            if (member.getValue() instanceof ClassExpression) {
                 ClassExpression classExpression = (ClassExpression) member.getValue();
                 Class<?> typeClass = classExpression.getType().isResolved() ? classExpression.getType().redirect().getTypeClass() : null;
                 if (typeClass != null && GeneratedClosure.class.isAssignableFrom(typeClass)) return true;
@@ -1136,10 +1138,10 @@ public class GeneralUtils {
         return Objects.equals(first.getPackageName(), second.getPackageName());
     }
 
-    public static boolean inSamePackage(final Class<?>  first, final Class<?>  second) {
+    public static boolean inSamePackage(final Class<?> first, final Class<?> second) {
         Package firstPackage = first.getPackage(), secondPackage = second.getPackage();
         return (firstPackage == secondPackage || (firstPackage != null && secondPackage != null
-                                                  && firstPackage.getName().equals(secondPackage.getName())));
+            && firstPackage.getName().equals(secondPackage.getName())));
     }
 
     public static boolean isDefaultVisibility(final int modifiers) {

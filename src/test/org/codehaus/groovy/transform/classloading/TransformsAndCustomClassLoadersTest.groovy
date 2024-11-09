@@ -100,7 +100,7 @@ final class TransformsAndCustomClassLoadersTest {
         try (def transformLoader = new GlobalTestTransformClassLoader(transformLoader, FailingWithMeaningfulMessageTransformation)) {
             compileAndLoadClass('class Foo {}', dependencyLoader, transformLoader)
             Assert.fail('Excepted MultipleCompilationErrorsException not thrown')
-        } catch(MultipleCompilationErrorsException e) {
+        } catch (MultipleCompilationErrorsException e) {
             assert e.message.contains('FailingWithMeaningfulMessageTransformation')
             assert e.message.contains('FileSystemNotFoundException')
             assert e.message.contains('meaningful error message')
@@ -142,9 +142,9 @@ final class TransformsAndCustomClassLoadersTest {
                 throw new ClassNotFoundException(name)
             }
             if (name.startsWith('java.')
-                    || name.startsWith('groovy.')
-                    || name.startsWith('org.apache.groovy.')
-                    || name.startsWith('org.codehaus.groovy.')) {
+                || name.startsWith('groovy.')
+                || name.startsWith('org.apache.groovy.')
+                || name.startsWith('org.codehaus.groovy.')) {
                 def loader = this.class.classLoader
                 def result = loader.loadClass(name)
                 if (resolve) loader.resolveClass(result)
@@ -193,6 +193,7 @@ class FailingWithMeaningfulMessageTransformation implements ASTTransformation {
     FailingWithMeaningfulMessageTransformation() {
         throw new FileSystemNotFoundException('Custom exception with meaningful error message')
     }
+
     @Override
     void visit(ASTNode[] nodes, SourceUnit source) {
     }

@@ -54,7 +54,7 @@ import static org.codehaus.groovy.ast.tools.WideningCategories.LowestUpperBoundC
  * we enter a section like :
  * <pre>if (x instanceof A || x instanceof B)</pre>
  * where the type of <i>x</i> can be represented as one of <i>A</i> or <i>B</i>.
- *
+ * <p>
  * This class node type should never leak outside of the type checker. More precisely, it should
  * only be used to check method call arguments, and nothing more.
  */
@@ -271,6 +271,11 @@ class UnionTypeClassNode extends ClassNode {
     }
 
     @Override
+    public void setEnclosingMethod(final MethodNode enclosingMethod) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public FieldNode getField(final String name) {
         for (ClassNode delegate : delegates) {
             FieldNode field = delegate.getField(name);
@@ -299,12 +304,22 @@ class UnionTypeClassNode extends ClassNode {
         Set<ClassNode> answer = new LinkedHashSet<>();
         for (ClassNode delegate : delegates) {
             if (delegate.isInterface()) {
-                answer.remove(delegate); answer.add(delegate);
+                answer.remove(delegate);
+                answer.add(delegate);
             } else {
                 answer.addAll(Arrays.asList(delegate.getInterfaces()));
             }
         }
         return answer.toArray(ClassNode.EMPTY_ARRAY);
+    }
+
+    @Override
+    public void setInterfaces(final ClassNode[] interfaces) {
+        if (isPrimaryNode) {
+            super.setInterfaces(interfaces);
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     @Override
@@ -319,7 +334,8 @@ class UnionTypeClassNode extends ClassNode {
 
     @Override
     public ClassNode getPlainNodeReference(final boolean skipPrimitives) {
-        int n = delegates.length; ClassNode[] plainNodes = new ClassNode[n];
+        int n = delegates.length;
+        ClassNode[] plainNodes = new ClassNode[n];
         for (int i = 0; i < n; i += 1) {
             plainNodes[i] = delegates[i].getPlainNodeReference(skipPrimitives);
         }
@@ -383,6 +399,11 @@ class UnionTypeClassNode extends ClassNode {
     }
 
     @Override
+    public void setAnnotated(final boolean flag) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean isDerivedFrom(final ClassNode type) {
         for (ClassNode delegate : delegates) {
             if (delegate.isDerivedFrom(type)) return true;
@@ -409,16 +430,6 @@ class UnionTypeClassNode extends ClassNode {
     }
 
     @Override
-    public void setAnnotated(final boolean flag) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setEnclosingMethod(final MethodNode enclosingMethod) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void setGenericsPlaceHolder(final boolean b) {
         throw new UnsupportedOperationException();
     }
@@ -426,15 +437,6 @@ class UnionTypeClassNode extends ClassNode {
     @Override
     public void setGenericsTypes(final GenericsType[] genericsTypes) {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setInterfaces(final ClassNode[] interfaces) {
-        if (isPrimaryNode) {
-            super.setInterfaces(interfaces);
-        } else {
-            throw new UnsupportedOperationException();
-        }
     }
 
     @Override

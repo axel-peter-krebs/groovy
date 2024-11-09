@@ -48,12 +48,9 @@ public class DeclarationExpression extends BinaryExpression {
     /**
      * Creates a declaration like "def v" or "int w = 0".
      *
-     * @param left
-     *      the left hand side of a variable declaration
-     * @param operation
-     *      the operation, assumed to be assignment operator
-     * @param right
-     *      the right hand side of a declaration; {@link EmptyExpression} for no initial value
+     * @param left      the left hand side of a variable declaration
+     * @param operation the operation, assumed to be assignment operator
+     * @param right     the right hand side of a declaration; {@link EmptyExpression} for no initial value
      */
     public DeclarationExpression(final VariableExpression left, final Token operation, final Expression right) {
         this((Expression) left, operation, right);
@@ -62,13 +59,10 @@ public class DeclarationExpression extends BinaryExpression {
     /**
      * Creates a declaration like "def v" or "int w = 0" or "def (x, y) = [1, 2]".
      *
-     * @param left
-     *      the left hand side of a declaration -- either a {@link VariableExpression} or
-     *      a {@link TupleExpression} with at least one element
-     * @param operation
-     *       the operation, assumed to be assignment operator
-     * @param right
-     *       the right hand side of a declaration
+     * @param left      the left hand side of a declaration -- either a {@link VariableExpression} or
+     *                  a {@link TupleExpression} with at least one element
+     * @param operation the operation, assumed to be assignment operator
+     * @param right     the right hand side of a declaration
      */
     public DeclarationExpression(final Expression left, final Token operation, final Expression right) {
         super(left, Token.newSymbol("=", operation.getStartLine(), operation.getStartColumn()), right);
@@ -106,8 +100,8 @@ public class DeclarationExpression extends BinaryExpression {
         Expression leftExpression = this.getLeftExpression();
 
         return leftExpression instanceof VariableExpression
-                    ? (VariableExpression) leftExpression
-                    : null;
+            ? (VariableExpression) leftExpression
+            : null;
     }
 
     /**
@@ -116,18 +110,16 @@ public class DeclarationExpression extends BinaryExpression {
      * be a VariableExpression and a ClassCastException will occur. If you invoke this method then
      * be sure to invoke isMultipleAssignmentDeclaration() first to check that it is safe to do so.
      * If that method returns true then this method is safe to call.
-     * @return
-     *      left hand side of multiple assignment declarations
-     * @throws ClassCastException
-     *      if the left hand side is not a TupleExpression (and is probably a VariableExpression).
      *
+     * @return left hand side of multiple assignment declarations
+     * @throws ClassCastException if the left hand side is not a TupleExpression (and is probably a VariableExpression).
      */
     public TupleExpression getTupleExpression() {
         Expression leftExpression = this.getLeftExpression();
 
         return leftExpression instanceof TupleExpression
-                    ? (TupleExpression) leftExpression
-                    : null;
+            ? (TupleExpression) leftExpression
+            : null;
     }
 
     @Override
@@ -171,8 +163,8 @@ public class DeclarationExpression extends BinaryExpression {
     /**
      * This method sets the leftExpression for this BinaryExpression. The parameter must be
      * either a VariableExpression or a TupleExpression with one or more elements.
-     * @param leftExpression
-     *      either a VariableExpression or a TupleExpression with one or more elements.
+     *
+     * @param leftExpression either a VariableExpression or a TupleExpression with one or more elements.
      */
     @Override
     public void setLeftExpression(Expression leftExpression) {
@@ -188,7 +180,7 @@ public class DeclarationExpression extends BinaryExpression {
     @Override
     public Expression transformExpression(ExpressionTransformer transformer) {
         Expression ret = new DeclarationExpression(transformer.transform(getLeftExpression()),
-                getOperation(), transformer.transform(getRightExpression()));
+            getOperation(), transformer.transform(getRightExpression()));
         ret.setSourcePosition(this);
         ret.addAnnotations(getAnnotations());
         ret.setDeclaringClass(getDeclaringClass());
@@ -201,9 +193,9 @@ public class DeclarationExpression extends BinaryExpression {
      * has the form "def (x, y) = ..." in Groovy. If this method returns true, then the left
      * hand side is an ArgumentListExpression. Do not call "getVariableExpression()" on this
      * object if this method returns true, instead use "getLeftExpression()".
-     * @return
-     *      true if this declaration is a multiple assignment declaration, which means the
-     *      left hand side is an ArgumentListExpression.
+     *
+     * @return true if this declaration is a multiple assignment declaration, which means the
+     * left hand side is an ArgumentListExpression.
      */
     public boolean isMultipleAssignmentDeclaration() {
         return getLeftExpression() instanceof TupleExpression;

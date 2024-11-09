@@ -146,6 +146,7 @@ ghi"""
             assert 'foobarbaz'.replaceAll('b(ar|az)') { full, sub -> full.toUpperCase() } == 'fooBARBAZ'
         '''
     }
+
     void testReplaceAllWithPattern() {
         assertScript '''
             assert 'foobarbaz'.replaceAll(~'b(ar|az)') { List<String> it -> it[1].toUpperCase() } == 'fooARAZ\'
@@ -159,6 +160,7 @@ ghi"""
             assert 'foobarbaz'.replaceFirst('b(ar|az)') { full, sub -> full.toUpperCase() } == 'fooBARbaz'
         '''
     }
+
     void testReplaceFirstWithPattern() {
         assertScript '''
             assert 'foobarbaz'.replaceFirst(~'b(ar|az)') { List<String> it -> it[1].toUpperCase() } == 'fooARbaz'

@@ -25,7 +25,7 @@ class Groovy4585Bug extends GroovyTestCase {
         def engineForBuildXml = new groovy.text.SimpleTemplateEngine(false)
         engineForBuildXml.setEscapeBackslash(true)
         def templateForBuildXml = engineForBuildXml.createTemplate(this.getClass().getResource("/bugs/groovy4585/groovy4585.xml").text)
-        String buildXmlContent = templateForBuildXml.make([names:['a', 'b', 'c']]).toString()
+        String buildXmlContent = templateForBuildXml.make([names: ['a', 'b', 'c']]).toString()
 
         assert buildXmlContent.contains('<property name="drive" value="d:\\" />')
         assert buildXmlContent.contains('<exec dir="${drive}" executable="echo">')

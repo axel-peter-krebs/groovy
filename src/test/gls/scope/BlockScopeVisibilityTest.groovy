@@ -44,7 +44,7 @@ class BlockScopeVisibilityTest extends CompilableTestSupport {
     }
 
     void testInnerClosureCanAccessImplicitItOfOuterClosure() {
-        def c = { {-> it}}
+        def c = { { -> it } }
         assert c(1)() == 1
     }
 
@@ -52,9 +52,9 @@ class BlockScopeVisibilityTest extends CompilableTestSupport {
         // this example requires not to put the declaration
         // into a block !
         if (false)
-        int number = 1
+            int number = 1
 
-        shouldFail{ number }
+        shouldFail { number }
     }
 
 }

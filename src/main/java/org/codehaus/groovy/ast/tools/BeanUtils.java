@@ -35,20 +35,20 @@ import static org.apache.groovy.util.BeanUtils.decapitalize;
 import static org.codehaus.groovy.ast.ClassHelper.isPrimitiveBoolean;
 
 public class BeanUtils {
-    private BeanUtils() {}
-
     static final String GET_PREFIX = "get";
     static final String SET_PREFIX = "set";
     static final String IS_PREFIX = "is";
     private static final ClassNode INTERNAL_TYPE = ClassHelper.make(Internal.class);
+    private BeanUtils() {
+    }
 
     /**
      * Get all properties including JavaBean pseudo properties matching getter conventions.
      *
-     * @param type the ClassNode
+     * @param type                   the ClassNode
      * @param includeSuperProperties whether to include super properties
-     * @param includeStatic whether to include static properties
-     * @param includePseudoGetters whether to include JavaBean pseudo (getXXX/isYYY) properties with no corresponding field
+     * @param includeStatic          whether to include static properties
+     * @param includePseudoGetters   whether to include JavaBean pseudo (getXXX/isYYY) properties with no corresponding field
      * @return the list of found property nodes
      */
     public static List<PropertyNode> getAllProperties(ClassNode type, boolean includeSuperProperties, boolean includeStatic, boolean includePseudoGetters) {
@@ -58,12 +58,12 @@ public class BeanUtils {
     /**
      * Get all properties including JavaBean pseudo properties matching JavaBean getter or setter conventions.
      *
-     * @param type the ClassNode
+     * @param type                   the ClassNode
      * @param includeSuperProperties whether to include super properties
-     * @param includeStatic whether to include static properties
-     * @param includePseudoGetters whether to include JavaBean pseudo (getXXX/isYYY) properties with no corresponding field
-     * @param includePseudoSetters whether to include JavaBean pseudo (setXXX) properties with no corresponding field
-     * @param superFirst are properties gathered first from parent classes
+     * @param includeStatic          whether to include static properties
+     * @param includePseudoGetters   whether to include JavaBean pseudo (getXXX/isYYY) properties with no corresponding field
+     * @param includePseudoSetters   whether to include JavaBean pseudo (setXXX) properties with no corresponding field
+     * @param superFirst             are properties gathered first from parent classes
      * @return the list of found property nodes
      */
     public static List<PropertyNode> getAllProperties(ClassNode type, boolean includeSuperProperties, boolean includeStatic, boolean includePseudoGetters, boolean includePseudoSetters, boolean superFirst) {
@@ -105,8 +105,8 @@ public class BeanUtils {
     public static void addPseudoProperties(ClassNode origType, ClassNode cNode, List<PropertyNode> result, Set<String> names, boolean includeStatic, boolean includePseudoGetters, boolean includePseudoSetters, boolean traverseSuperClasses) {
         if (!includePseudoGetters && !includePseudoSetters) return;
         List<MethodNode> methods = traverseSuperClasses ?
-                cNode.getAllDeclaredMethods() :
-                cNode.getMethods();
+            cNode.getAllDeclaredMethods() :
+            cNode.getMethods();
         for (MethodNode mNode : methods) {
             if (!includeStatic && mNode.isStatic()) continue;
             if (hasAnnotation(mNode, INTERNAL_TYPE)) continue;

@@ -59,6 +59,7 @@ class Groovy3426ClassProxyMetaClass extends ProxyMetaClass {
     Groovy3426ClassProxyMetaClass(MetaClassRegistry metaClassRegistry, Class aClass, MetaClass adaptee) {
         super(metaClassRegistry, aClass, adaptee)
     }
+
     public Object invokeStaticMethod(final Object aClass, final String method, final Object[] arguments) {
         'static'
     }

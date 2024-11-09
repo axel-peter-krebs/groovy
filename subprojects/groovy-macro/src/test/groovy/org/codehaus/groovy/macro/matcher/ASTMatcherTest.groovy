@@ -29,6 +29,7 @@ class ASTMatcherTest extends GroovyTestCase {
         assert ASTMatcher.matches(ast, ast)
         '''
     }
+
     void testMatchesSimpleVarNeg() {
         assertScript '''
         import org.codehaus.groovy.macro.matcher.ASTMatcher
@@ -612,6 +613,7 @@ class ASTMatcherTest extends GroovyTestCase {
         assert !ASTMatcher.matches(ast8, ast9)
         '''
     }
+
     void testFieldComparison() {
         assertScript '''
         import org.codehaus.groovy.ast.ClassNode

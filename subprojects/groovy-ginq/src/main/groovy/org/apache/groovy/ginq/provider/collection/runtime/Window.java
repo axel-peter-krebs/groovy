@@ -40,11 +40,11 @@ public interface Window<T> extends Queryable<T> {
     /**
      * Factory method to create {@link Window} instance
      *
-     * @param currentRecord current record
-     * @param partition the partition where the window is constructed
+     * @param currentRecord    current record
+     * @param partition        the partition where the window is constructed
      * @param windowDefinition window definition
-     * @param <T> the type of {@link Window} element
-     * @param <U> the type of field to sort
+     * @param <T>              the type of {@link Window} element
+     * @param <U>              the type of field to sort
      * @return the {@link Window} instance
      * @since 4.0.0
      */
@@ -60,16 +60,16 @@ public interface Window<T> extends Queryable<T> {
         List<Tuple2<T, Long>> listWithIndex = partition.toList();
 
         int tmpIndex = null == orderList || orderList.isEmpty()
-                ? binarySearch(listWithIndex, currentRecord, comparing(Tuple2::getV2))
-                : binarySearch(listWithIndex, currentRecord, WindowImpl.makeComparator(WindowImpl.composeOrders(orderList)).thenComparing(Tuple2::getV2));
+            ? binarySearch(listWithIndex, currentRecord, comparing(Tuple2::getV2))
+            : binarySearch(listWithIndex, currentRecord, WindowImpl.makeComparator(WindowImpl.composeOrders(orderList)).thenComparing(Tuple2::getV2));
         int index = tmpIndex >= 0 ? tmpIndex : -tmpIndex - 1;
         U value = null == order ? null : order.getKeyExtractor().apply(currentRecord.getV1());
 
         RowBound validRowBound = WindowImpl.getValidRowBound(windowDefinition, index, value, listWithIndex);
         List<T> list = null == validRowBound ? Collections.emptyList()
-                : from(listWithIndex.stream().map(Tuple2::getV1).collect(Collectors.toList()))
-                .limit(validRowBound.getLower(), validRowBound.getUpper() - validRowBound.getLower() + 1)
-                .toList();
+            : from(listWithIndex.stream().map(Tuple2::getV1).collect(Collectors.toList()))
+            .limit(validRowBound.getLower(), validRowBound.getUpper() - validRowBound.getLower() + 1)
+            .toList();
 
         return new WindowImpl<>(currentRecord, index, value, list, order);
     }
@@ -86,7 +86,7 @@ public interface Window<T> extends Queryable<T> {
      * Returns the next value in the window, similar to SQL's {@code lead()}
      *
      * @param extractor field extractor
-     * @param <V> the type of field
+     * @param <V>       the type of field
      * @return the next value
      * @since 4.0.0
      */
@@ -98,8 +98,8 @@ public interface Window<T> extends Queryable<T> {
      * Returns the next value in the window, similar to SQL's {@code lead()}
      *
      * @param extractor field extractor
-     * @param lead the offset
-     * @param <V> the type of field
+     * @param lead      the offset
+     * @param <V>       the type of field
      * @return the next value
      * @since 4.0.0
      */
@@ -110,10 +110,10 @@ public interface Window<T> extends Queryable<T> {
     /**
      * Returns the next value by {@code lead} in the window, similar to SQL's {@code lead()}
      *
-     * @param <V> the type of field
+     * @param <V>       the type of field
      * @param extractor field extractor
-     * @param lead the offset
-     * @param def the default value
+     * @param lead      the offset
+     * @param def       the default value
      * @return the next value by {@code lead}
      * @since 4.0.0
      */
@@ -123,7 +123,7 @@ public interface Window<T> extends Queryable<T> {
      * Returns the previous value in the window, similar to SQL's {@code lag()}
      *
      * @param extractor field extractor
-     * @param <V> the type of field
+     * @param <V>       the type of field
      * @return the previous value
      * @since 4.0.0
      */
@@ -135,8 +135,8 @@ public interface Window<T> extends Queryable<T> {
      * Returns the previous value in the window, similar to SQL's {@code lag()}
      *
      * @param extractor field extractor
-     * @param lag the offset
-     * @param <V> the type of field
+     * @param lag       the offset
+     * @param <V>       the type of field
      * @return the previous value
      * @since 4.0.0
      */
@@ -147,10 +147,10 @@ public interface Window<T> extends Queryable<T> {
     /**
      * Returns the previous value by {@code lag} in the window, similar to SQL's {@code lag()}
      *
-     * @param <V> the type of field
+     * @param <V>       the type of field
      * @param extractor field extractor
-     * @param lag the offset
-     * @param def the default value
+     * @param lag       the offset
+     * @param def       the default value
      * @return the previous value by {@code lag}
      * @since 4.0.0
      */
@@ -159,7 +159,7 @@ public interface Window<T> extends Queryable<T> {
     /**
      * Returns the first value in the window
      *
-     * @param <V> the type of field
+     * @param <V>       the type of field
      * @param extractor field extractor
      * @return the first value
      * @since 4.0.0
@@ -169,7 +169,7 @@ public interface Window<T> extends Queryable<T> {
     /**
      * Returns the last value in the window
      *
-     * @param <V> the type of field
+     * @param <V>       the type of field
      * @param extractor field extractor
      * @return the last value
      * @since 4.0.0
@@ -179,9 +179,9 @@ public interface Window<T> extends Queryable<T> {
     /**
      * Returns the nth value in the window
      *
-     * @param <V> the type of field
+     * @param <V>       the type of field
      * @param extractor field extractor
-     * @param index index for value to fetch, starting with {@code 0}
+     * @param index     index for value to fetch, starting with {@code 0}
      * @return the nth value
      * @since 4.0.0
      */

@@ -74,7 +74,8 @@ final class InheritConstructorsTransformTest {
         '''
     }
 
-    @Test // GROOVY-7059
+    @Test
+    // GROOVY-7059
     void testCopyAnnotations() {
         assertScript shell, '''
             import java.lang.annotation.*
@@ -160,7 +161,8 @@ final class InheritConstructorsTransformTest {
         '''
     }
 
-    @Test // GROOVY-6874
+    @Test
+    // GROOVY-6874
     void testParametersWithGenericsAndCompileStatic1() {
         assertScript shell, '''
             abstract class A<X, Y> {
@@ -180,7 +182,8 @@ final class InheritConstructorsTransformTest {
         '''
     }
 
-    @Test // GROOVY-6874
+    @Test
+    // GROOVY-6874
     void testParametersWithGenericsAndCompileStatic2() {
         assertScript shell, '''
             import java.math.RoundingMode
@@ -221,7 +224,8 @@ final class InheritConstructorsTransformTest {
         '''
     }
 
-    @Test // GROOVY-6874
+    @Test
+    // GROOVY-6874
     void testParametersWithGenericsAndCompileStatic3() {
         def err = shouldFail shell, '''
             import java.math.RoundingMode
@@ -264,7 +268,8 @@ final class InheritConstructorsTransformTest {
         assert err.message.contains('Cannot call OrderPublisher#<init>(java.util.Set<java.math.RoundingMode>) with arguments [java.util.HashSet<java.util.Date>]')
     }
 
-    @Test // GROOVY-9323
+    @Test
+    // GROOVY-9323
     void testAnnotationsCopiedForConstructorsFromPrecompiledClass() {
         assertScript shell, """
             @InheritConstructors(constructorAnnotations=true)
@@ -276,6 +281,7 @@ final class InheritConstructorsTransformTest {
     }
 
     static class MyException9323 extends RuntimeException {
-        @Deprecated MyException9323() {}
+        @Deprecated
+        MyException9323() {}
     }
 }

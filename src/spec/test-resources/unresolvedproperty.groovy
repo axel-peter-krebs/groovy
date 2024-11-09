@@ -21,7 +21,7 @@
 // tag::event[]
 unresolvedProperty { PropertyExpression pexp ->
     if (pexp.propertyAsString == 'longueur' &&
-            getType(pexp.objectExpression) == STRING_TYPE) {
+        getType(pexp.objectExpression) == STRING_TYPE) {
         storeType(pexp, int_TYPE)
         handled = true
     }

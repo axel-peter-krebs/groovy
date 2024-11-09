@@ -27,12 +27,12 @@ public class ExceptionTest extends GroovyTestCase {
     def m1() {
         // this code is in a method, because we need to test
         // insertions for return here along with the method
-        try { 
-            throw new RuntimeException("1") 
+        try {
+            throw new RuntimeException("1")
         } catch (Throwable t) {
-        } finally { 
+        } finally {
             finallyCounter++
-            throw new RuntimeException("2") 
+            throw new RuntimeException("2")
         }
     }
 
@@ -51,9 +51,9 @@ public class ExceptionTest extends GroovyTestCase {
         try {
             def x = 0
         } catch (Throwable t) {
-        } finally { 
-            finallyCounter++ 
-            throw new RuntimeException("1") 
+        } finally {
+            finallyCounter++
+            throw new RuntimeException("1")
         }
     }
 
@@ -68,14 +68,14 @@ public class ExceptionTest extends GroovyTestCase {
         assert finallyCounter == 1
     }
 
-    def m3() {    
+    def m3() {
         try {
-          throw new RuntimeException("1")
+            throw new RuntimeException("1")
         } catch (RuntimeException e) {
-          finallyCounter++
-          throw e
+            finallyCounter++
+            throw e
         } finally {
-          finallyCounter++
+            finallyCounter++
         }
     }
 
@@ -88,5 +88,5 @@ public class ExceptionTest extends GroovyTestCase {
             assert re.message == "1"
         }
         assert finallyCounter == 2
-    }        
+    }
 }

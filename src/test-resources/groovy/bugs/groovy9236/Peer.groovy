@@ -20,5 +20,6 @@ package groovy.bugs.groovy9236
 
 import groovy.transform.PackageScope
 
-@PackageScope class Peer {
+@PackageScope
+class Peer {
 }

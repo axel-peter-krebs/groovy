@@ -23,7 +23,7 @@ final class Groovy11088pt2 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'C.groovy': '''import groovy.transform.*
+            'C.groovy' : '''import groovy.transform.*
                 @PackageScope([
                     PackageScopeTarget.FIELDS,
                     PackageScopeTarget.METHODS

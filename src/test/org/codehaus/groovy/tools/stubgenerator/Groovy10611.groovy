@@ -23,7 +23,7 @@ final class Groovy10611 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'C.groovy': '''
+            'C.groovy' : '''
                 class C {
                     public static final long LONG = 123_456
                     public static final float FLOAT = 78.90

@@ -58,7 +58,8 @@ final class MarkupTemplateEngineTest {
         assert rendered == '<html><body>It works!</body></html>'
     }
 
-    @Test // GROOVY-10731
+    @Test
+    // GROOVY-10731
     void testSimpleTemplate2() {
         def engine = new MarkupTemplateEngine(new TemplateConfiguration())
         def template = engine.createTemplate '''
@@ -514,7 +515,7 @@ html {
 }
 '''
         StringWriter rendered = new StringWriter()
-        def model = [persons:['Cedric','Jochen']]
+        def model = [persons: ['Cedric', 'Jochen']]
         template.make(model).writeTo(rendered)
         assert rendered.toString() == '''\
 <html>
@@ -544,7 +545,7 @@ html {
 }
 '''
         StringWriter rendered = new StringWriter()
-        def model = [persons:['Cedric','Jochen']]
+        def model = [persons: ['Cedric', 'Jochen']]
         template.make(model).writeTo(rendered)
         assert rendered.toString() == '''\
 <html>
@@ -712,16 +713,16 @@ html {
     @Test
     void testCopyConstructorForTemplateConfiguration() {
         TemplateConfiguration cfg = new TemplateConfiguration(
-            declarationEncoding : 'iso-8859-1',
-            expandEmptyElements : true,
-            useDoubleQuotes     : false,
-            newLineString       : 'NL',
-            autoEscape          : true,
-            autoIndent          : true,
-            autoIndentString    : true,
-            autoNewLine         : true,
-            baseTemplateClass   : BaseTemplate,
-            locale              : Locale.CHINA
+            declarationEncoding: 'iso-8859-1',
+            expandEmptyElements: true,
+            useDoubleQuotes: false,
+            newLineString: 'NL',
+            autoEscape: true,
+            autoIndent: true,
+            autoIndentString: true,
+            autoNewLine: true,
+            baseTemplateClass: BaseTemplate,
+            locale: Locale.CHINA
         )
         def copy = new TemplateConfiguration(cfg)
         cfg.properties.each {
@@ -750,7 +751,8 @@ html {
         assert rendered.toString() == '<html><body><ul><li>Cedric</li><li>Jochen</li></ul></body></html>'
     }
 
-    @Test @Ignore("ClassCastException: java.util.LinkedHashMap cannot be cast to groovy.lang.GroovyObject")
+    @Test
+    @Ignore("ClassCastException: java.util.LinkedHashMap cannot be cast to groovy.lang.GroovyObject")
     void testInlinedModelTypeDeclaration() {
         MarkupTemplateEngine engine = new MarkupTemplateEngine(new TemplateConfiguration())
         def template = engine.createTemplate '''
@@ -837,7 +839,8 @@ html {
         assert rendered.toString() == "<html><head><title>This is the title</title></head><body><div><p>This is the body</p></div></body></html>"
     }
 
-    @Test // GROOVY-6915
+    @Test
+    // GROOVY-6915
     void testLayoutWithModelInheritance() {
         def config = new TemplateConfiguration()
         MarkupTemplateEngine engine = new MarkupTemplateEngine(config)
@@ -849,7 +852,7 @@ html {
             }
         '''
         StringWriter rendered = new StringWriter()
-        template.make([title:'This is the title']).writeTo(rendered)
+        template.make([title: 'This is the title']).writeTo(rendered)
         assert rendered.toString() == "<html><head><title/></head><body><div><p>This is the body</p></div></body></html>"
 
         template = engine.createTemplate '''
@@ -860,7 +863,7 @@ html {
             }
         '''
         rendered = new StringWriter()
-        template.make([title:'This is the title']).writeTo(rendered)
+        template.make([title: 'This is the title']).writeTo(rendered)
         assert rendered.toString() == "<html><head><title>This is the title</title></head><body><div><p>This is the body</p></div></body></html>"
 
         template = engine.createTemplate '''
@@ -871,7 +874,7 @@ html {
             }, title: 'This is another title'
         '''
         rendered = new StringWriter()
-        template.make([title:'This is the title']).writeTo(rendered)
+        template.make([title: 'This is the title']).writeTo(rendered)
         assert rendered.toString() == "<html><head><title>This is another title</title></head><body><div><p>This is the body</p></div></body></html>"
     }
 
@@ -886,7 +889,8 @@ html {
         assert rendered.toString() == '<?FOO bar?>'
     }
 
-    @Test // GROOVY-6794
+    @Test
+    // GROOVY-6794
     void testShouldNotThrowForbiddenPropertyAccess() {
         def config = new TemplateConfiguration()
         MarkupTemplateEngine engine = new MarkupTemplateEngine(config)
@@ -900,7 +904,8 @@ html {
         assert rendered.toString() == 'summary'
     }
 
-    @Test // GROOVY-6914
+    @Test
+    // GROOVY-6914
     void testCachingOfTemplateResolver() {
         int hit = 0
         int miss = 0
@@ -930,8 +935,8 @@ html {
         StringWriter rendered = new StringWriter()
         template.make().writeTo(rendered)
         assert rendered.toString() == '<html><body>Hello from include!Hello from include!Hello from include!</body></html>'
-        assert miss==1
-        assert hit==2
+        assert miss == 1
+        assert hit == 2
     }
 
     @Test
@@ -978,7 +983,8 @@ html {
         assert rendered == '<strong>error</strong><p>This is an </p>'
     }
 
-    @Test // GROOVY-6935
+    @Test
+    // GROOVY-6935
     void testShouldNotThrowVerifyErrorBecauseOfEqualsInsteadOfSemiColumn() {
         MarkupTemplateEngine engine = new MarkupTemplateEngine(new TemplateConfiguration())
         def template = engine.createTemplate '''
@@ -996,24 +1002,26 @@ html {
         assert rendered == '<a>link</a>'
     }
 
-    @Test // GROOVY-6939
+    @Test
+    // GROOVY-6939
     void testShouldNotFailWithDoCallMethod() {
         MarkupTemplateEngine engine = new MarkupTemplateEngine(new TemplateConfiguration())
         def template = engine.createTemplate '''
             groups.each { k, v -> li(k) }
         '''
-        def model = [groups:[a:'Group a',b:'Group b']]
+        def model = [groups: [a: 'Group a', b: 'Group b']]
         String rendered = template.make(model)
         assert rendered == '<li>a</li><li>b</li>'
     }
 
-    @Test // GROOVY-6940
+    @Test
+    // GROOVY-6940
     void testSubscriptOperatorOnModel() {
         MarkupTemplateEngine engine = new MarkupTemplateEngine(new TemplateConfiguration())
         def template = engine.createTemplate '''
             yield list[0]
         '''
-        def model = [list:['Item 1']]
+        def model = [list: ['Item 1']]
         String rendered = template.make(model)
         assert rendered == 'Item 1'
 
@@ -1021,7 +1029,7 @@ html {
             list[0] = 'Item 2'
             yield list[0]
         '''
-        model = [list:['Item 1']]
+        model = [list: ['Item 1']]
         rendered = template.make(model)
         assert model.list[0] == 'Item 2'
         assert rendered == 'Item 2'
@@ -1031,13 +1039,14 @@ html {
             indirect[0] = 'Item 4'
             yield list[0]
         '''
-        model = [list:['Item 3']]
+        model = [list: ['Item 3']]
         rendered = template.make(model)
         assert model.list[0] == 'Item 4'
         assert rendered == 'Item 4'
     }
 
-    @Test // GROOVY-6941
+    @Test
+    // GROOVY-6941
     void testDynamicPropertyInsideBlock() {
         MarkupTemplateEngine engine = new MarkupTemplateEngine(new TemplateConfiguration())
         def template = engine.createTemplate '''
@@ -1045,7 +1054,7 @@ html {
                 yield xml.file.name
             }
         '''
-        def model = [xml: [file:[name:'test']]]
+        def model = [xml: [file: [name: 'test']]]
         String rendered = template.make(model)
         assert rendered == '<div>test</div>'
     }

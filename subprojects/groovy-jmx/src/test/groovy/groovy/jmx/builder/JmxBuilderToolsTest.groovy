@@ -77,7 +77,7 @@ class JmxBuilderToolsTest extends GroovyTestCase {
     void testGetDefaultObjectName() {
         def object = new MockManagedObject()
         def name = new ObjectName(JmxBuilderTools.DEFAULT_DOMAIN + ":" +
-                "name=${object.getClass().getName()},hashCode=${object.hashCode()}")
+            "name=${object.getClass().getName()},hashCode=${object.hashCode()}")
 
         def result = JmxBuilderTools.getDefaultObjectName(object)
 

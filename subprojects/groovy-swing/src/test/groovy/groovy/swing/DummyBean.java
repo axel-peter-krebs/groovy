@@ -47,6 +47,10 @@ public class DummyBean {
         this.i = i;
     }
 
+    public static String dummyStaticMethod(String text) {
+        return text.toUpperCase();
+    }
+
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         changeSupport.addPropertyChangeListener(listener);
     }
@@ -74,10 +78,6 @@ public class DummyBean {
 
     public void set(String property, Object newValue) {
         dynamicProperties.put(property, newValue);
-    }
-
-    public static String dummyStaticMethod(String text) {
-        return text.toUpperCase();
     }
 
     public boolean equals(Object that) {

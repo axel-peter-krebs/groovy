@@ -22,7 +22,10 @@ import groovy.cli.Option
 
 // tag::withDefaultValueInterfaceSpec[]
 interface WithDefaultValueI {
-    @Option(shortName='f', defaultValue='one') String from()
-    @Option(shortName='t', defaultValue='35') int to()
+    @Option(shortName = 'f', defaultValue = 'one')
+    String from()
+
+    @Option(shortName = 't', defaultValue = '35')
+    int to()
 }
 // end::withDefaultValueInterfaceSpec[]

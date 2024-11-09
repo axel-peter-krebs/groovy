@@ -43,6 +43,7 @@ public class GroovySyntaxError extends AssertionError {
     public int getSource() {
         return source;
     }
+
     public int getLine() {
         return line;
     }

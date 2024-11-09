@@ -38,6 +38,10 @@ class MethodHandleWrapper {
         this.canSetTarget = canSetTarget;
     }
 
+    public static MethodHandleWrapper getNullMethodHandleWrapper() {
+        return NullMethodHandleWrapper.INSTANCE;
+    }
+
     public MethodHandle getCachedMethodHandle() {
         return cachedMethodHandle;
     }
@@ -60,10 +64,6 @@ class MethodHandleWrapper {
 
     public long getLatestHitCount() {
         return latestHitCount.get();
-    }
-
-    public static MethodHandleWrapper getNullMethodHandleWrapper() {
-        return NullMethodHandleWrapper.INSTANCE;
     }
 
     private static class NullMethodHandleWrapper extends MethodHandleWrapper {

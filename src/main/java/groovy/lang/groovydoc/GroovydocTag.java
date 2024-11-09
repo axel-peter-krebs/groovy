@@ -52,8 +52,8 @@ public class GroovydocTag {
         if (o == null || getClass() != o.getClass()) return false;
         GroovydocTag that = (GroovydocTag) o;
         return Objects.equals(name, that.name) &&
-                Objects.equals(content, that.content) &&
-                Objects.equals(groovydoc, that.groovydoc);
+            Objects.equals(content, that.content) &&
+            Objects.equals(groovydoc, that.groovydoc);
     }
 
     @Override

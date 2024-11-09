@@ -28,6 +28,7 @@ import java.util.Objects;
 
 /**
  * Represents a Java source file in memory to compile
+ *
  * @since 3.0.0
  */
 public class MemJavaFileObject extends SimpleJavaFileObject {
@@ -37,8 +38,8 @@ public class MemJavaFileObject extends SimpleJavaFileObject {
     /**
      * Construct a MemJavaFileObject instance with given class node and source code
      *
-     * @param classNode  the class node
-     * @param src  the source code
+     * @param classNode the class node
+     * @param src       the source code
      */
     public MemJavaFileObject(ClassNode classNode, String src) {
         this(classNode.getName(), src);
@@ -48,7 +49,7 @@ public class MemJavaFileObject extends SimpleJavaFileObject {
      * Construct a MemJavaFileObject instance with given class name and source code
      *
      * @param className the class name
-     * @param src the source code
+     * @param src       the source code
      */
     public MemJavaFileObject(String className, String src) {
         super(createURI(className), Kind.SOURCE);
@@ -85,7 +86,7 @@ public class MemJavaFileObject extends SimpleJavaFileObject {
     @Override
     public String toString() {
         return "MemJavaFileObject{" +
-                "className=" + className +
-                '}';
+            "className=" + className +
+            '}';
     }
 }

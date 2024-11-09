@@ -31,8 +31,9 @@ public interface TypeChooser {
     /**
      * Resolve the type of an expression. Depending on the implementations, the
      * returned type may be the declared type or an inferred type.
+     *
      * @param expression the expression for which the type must be returned.
-     * @param classNode the classnode this expression belongs to
+     * @param classNode  the classnode this expression belongs to
      * @return the resolved type.
      */
     ClassNode resolveType(final Expression expression, ClassNode classNode);

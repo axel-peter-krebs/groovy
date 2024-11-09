@@ -23,11 +23,11 @@ public class TokenException extends SyntaxException {
 
     public TokenException(String message, Token token) {
         super(
-                (token == null)
-                        ? message + ". No token"
-                        : message,
-                getLine(token),
-                getColumn(token));
+            (token == null)
+                ? message + ". No token"
+                : message,
+            getLine(token),
+            getColumn(token));
     }
 
     public TokenException(String message, Throwable cause, int line, int column) {

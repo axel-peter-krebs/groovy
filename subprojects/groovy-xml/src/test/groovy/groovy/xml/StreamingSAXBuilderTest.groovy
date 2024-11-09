@@ -52,8 +52,8 @@ class StreamingSAXBuilderTest extends GroovyTestCase {
         handler.setResult(new StreamResult(outstream))
 
         def doc = new StreamingSAXBuilder().bind {
-            mkp.declareNamespace("" : "uri:urn1")
-            mkp.declareNamespace("x" : "uri:urn2")
+            mkp.declareNamespace("": "uri:urn1")
+            mkp.declareNamespace("x": "uri:urn2")
             outer {
                 'x:inner'('hello')
             }
@@ -69,19 +69,19 @@ class StreamingSAXBuilderTest extends GroovyTestCase {
     void testCustomHandler() {
         def visited = []
         def handler = [
-                startDocument: {->
-                    visited << 'startDocument'
-                },
-                startElement: {uri, localName, qName, atts ->
-                    visited << 'startElement'
-                },
-                characters: {chars, start, end -> /* ignore */ },
-                endElement: {uri, localName, qName ->
-                    visited << 'endElement'
-                },
-                endDocument: {->
-                    visited << 'endDocument'
-                },
+            startDocument: { ->
+                visited << 'startDocument'
+            },
+            startElement : { uri, localName, qName, atts ->
+                visited << 'startElement'
+            },
+            characters   : { chars, start, end -> /* ignore */ },
+            endElement   : { uri, localName, qName ->
+                visited << 'endElement'
+            },
+            endDocument  : { ->
+                visited << 'endDocument'
+            },
         ] as ContentHandler
 
         def doc = new StreamingSAXBuilder().bind {
@@ -90,7 +90,7 @@ class StreamingSAXBuilderTest extends GroovyTestCase {
             }
         }
         def expected = ["startDocument", "startElement", "startElement",
-                "endElement", "endElement", "endDocument"]
+                        "endElement", "endElement", "endDocument"]
 
         doc(handler)
         assert visited == expected

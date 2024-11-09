@@ -40,6 +40,24 @@ import java.util.Arrays;
 public class CachedMethod extends MetaMethod implements Comparable {
 
     public static final CachedMethod[] EMPTY_ARRAY = new CachedMethod[0];
+    public final CachedClass cachedClass;
+
+    //--------------------------------------------------------------------------
+    private final Method cachedMethod;
+    private int hashCode;
+    private boolean skipCompiled;
+    private boolean accessAllowed;
+    private boolean makeAccessibleDone;
+    private CachedMethod transformedMethod;
+    private SoftReference<Constructor<CallSite>> pogoCallSiteConstructor, pojoCallSiteConstructor, staticCallSiteConstructor;
+    public CachedMethod(final CachedClass clazz, final Method method) {
+        this.cachedMethod = method;
+        this.cachedClass = clazz;
+    }
+
+    public CachedMethod(final Method method) {
+        this(ReflectionCache.getCachedClass(method.getDeclaringClass()), method);
+    }
 
     public static CachedMethod find(final Method method) {
         CachedMethod[] methods = ReflectionCache.getCachedClass(method.getDeclaringClass()).getMethods();
@@ -55,25 +73,8 @@ public class CachedMethod extends MetaMethod implements Comparable {
         return (i < 0 ? null : methods[i]);
     }
 
-    //--------------------------------------------------------------------------
-
-    public  final CachedClass cachedClass;
-    private final Method cachedMethod;
-
-    private int hashCode;
-    private boolean skipCompiled;
-    private boolean accessAllowed;
-    private boolean makeAccessibleDone;
-    private CachedMethod transformedMethod;
-    private SoftReference<Constructor<CallSite>> pogoCallSiteConstructor, pojoCallSiteConstructor, staticCallSiteConstructor;
-
-    public CachedMethod(final CachedClass clazz, final Method method) {
-        this.cachedMethod = method;
-        this.cachedClass = clazz;
-    }
-
-    public CachedMethod(final Method method) {
-        this(ReflectionCache.getCachedClass(method.getDeclaringClass()), method);
+    private static <T> Constructor<T> deref(final SoftReference<Constructor<T>> ref) {
+        return (ref != null ? ref.get() : null);
     }
 
     @Override
@@ -146,18 +147,18 @@ public class CachedMethod extends MetaMethod implements Comparable {
     @Override
     public int hashCode() {
         if (hashCode == 0) {
-           hashCode = cachedMethod.hashCode();
-           if (hashCode == 0) hashCode = 0xcafebebe;
+            hashCode = cachedMethod.hashCode();
+            if (hashCode == 0) hashCode = 0xcafebebe;
         }
         return hashCode;
     }
+
+    //--------------------------------------------------------------------------
 
     @Override
     public String toString() {
         return cachedMethod.toString();
     }
-
-    //--------------------------------------------------------------------------
 
     public boolean canAccessLegally(final Class<?> callerClass) {
         return ReflectionUtils.checkAccessible(callerClass, cachedMethod.getDeclaringClass(), cachedMethod.getModifiers(), false);
@@ -228,11 +229,11 @@ public class CachedMethod extends MetaMethod implements Comparable {
         return transformedMethod;
     }
 
+    //--------------------------------------------------------------------------
+
     public void setTransformedMethod(final CachedMethod transformedMethod) {
         this.transformedMethod = transformedMethod;
     }
-
-    //--------------------------------------------------------------------------
 
     public CallSite createPogoMetaMethodSite(final CallSite site, final MetaClassImpl metaClass, final Class[] params) {
         if (!skipCompiled) {
@@ -316,10 +317,6 @@ public class CachedMethod extends MetaMethod implements Comparable {
             }
         }
         return new StaticMetaMethodSite.StaticMetaMethodSiteNoUnwrapNoCoerce(site, metaClass, this, params);
-    }
-
-    private static <T> Constructor<T> deref(final SoftReference<Constructor<T>> ref) {
-        return (ref != null ? ref.get() : null);
     }
 
     @Override

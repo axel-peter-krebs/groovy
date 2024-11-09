@@ -39,8 +39,8 @@ public class Duration extends BaseDuration {
 
     public Duration plus(final Duration rhs) {
         return new Duration(this.getDays() + rhs.getDays(), this.getHours() + rhs.getHours(),
-                            this.getMinutes() + rhs.getMinutes(), this.getSeconds() + rhs.getSeconds(),
-                            this.getMillis() + rhs.getMillis());
+            this.getMinutes() + rhs.getMinutes(), this.getSeconds() + rhs.getSeconds(),
+            this.getMillis() + rhs.getMillis());
     }
 
     public Duration plus(final TimeDuration rhs) {
@@ -53,28 +53,28 @@ public class Duration extends BaseDuration {
 
     public Duration minus(final Duration rhs) {
         return new Duration(this.getDays() - rhs.getDays(), this.getHours() - rhs.getHours(),
-                            this.getMinutes() - rhs.getMinutes(), this.getSeconds() - rhs.getSeconds(),
-                            this.getMillis() - rhs.getMillis());
+            this.getMinutes() - rhs.getMinutes(), this.getSeconds() - rhs.getSeconds(),
+            this.getMillis() - rhs.getMillis());
     }
 
     public TimeDuration minus(final TimeDuration rhs) {
         return new TimeDuration(this.getDays() - rhs.getDays(), this.getHours() - rhs.getHours(),
-                                this.getMinutes() - rhs.getMinutes(), this.getSeconds() - rhs.getSeconds(),
-                                this.getMillis() - rhs.getMillis());
+            this.getMinutes() - rhs.getMinutes(), this.getSeconds() - rhs.getSeconds(),
+            this.getMillis() - rhs.getMillis());
     }
 
     public DatumDependentDuration minus(final DatumDependentDuration rhs) {
         return new DatumDependentDuration(-rhs.getYears(), -rhs.getMonths(),
-                                          this.getDays() - rhs.getDays(), this.getHours() - rhs.getHours(),
-                                          this.getMinutes() - rhs.getMinutes(), this.getSeconds() - rhs.getSeconds(),
-                                          this.getMillis() - rhs.getMillis());
+            this.getDays() - rhs.getDays(), this.getHours() - rhs.getHours(),
+            this.getMinutes() - rhs.getMinutes(), this.getSeconds() - rhs.getSeconds(),
+            this.getMillis() - rhs.getMillis());
     }
 
     public TimeDatumDependentDuration minus(final TimeDatumDependentDuration rhs) {
         return new TimeDatumDependentDuration(-rhs.getYears(), -rhs.getMonths(),
-                                              this.getDays() - rhs.getDays(), this.getHours() - rhs.getHours(),
-                                              this.getMinutes() - rhs.getMinutes(), this.getSeconds() - rhs.getSeconds(),
-                                              this.getMillis() - rhs.getMillis());
+            this.getDays() - rhs.getDays(), this.getHours() - rhs.getHours(),
+            this.getMinutes() - rhs.getMinutes(), this.getSeconds() - rhs.getSeconds(),
+            this.getMillis() - rhs.getMillis());
     }
 
     @Override
@@ -105,7 +105,7 @@ public class Duration extends BaseDuration {
         return new From() {
             @Override
             public Date getNow() {
-            final Calendar cal = Calendar.getInstance();
+                final Calendar cal = Calendar.getInstance();
 
                 cal.add(Calendar.DAY_OF_YEAR, Duration.this.getDays());
 

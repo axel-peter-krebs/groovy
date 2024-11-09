@@ -99,7 +99,7 @@ public class ExternalGroovyClassDoc implements GroovyClassDoc {
         if (other == this) return true;
         if (other == null) return false;
         if (!(other instanceof ExternalGroovyClassDoc)) return false;
-        return qualifiedTypeName().equals(((ExternalGroovyClassDoc)other).qualifiedTypeName());
+        return qualifiedTypeName().equals(((ExternalGroovyClassDoc) other).qualifiedTypeName());
     }
 
     // TODO implement below if/when needed
@@ -295,6 +295,11 @@ public class ExternalGroovyClassDoc implements GroovyClassDoc {
     }
 
     @Override
+    public void setRawCommentText(String arg0) {
+
+    }
+
+    @Override
     public boolean isAnnotationType() {
         return false;
     }
@@ -372,11 +377,6 @@ public class ExternalGroovyClassDoc implements GroovyClassDoc {
     @Override
     public String name() {
         return externalClass.getSimpleName();
-    }
-
-    @Override
-    public void setRawCommentText(String arg0) {
-
     }
 
     @Override

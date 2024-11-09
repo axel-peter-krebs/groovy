@@ -72,15 +72,16 @@ final class ClosureAndInnerClassNodeStructureTest {
             }]
         }
 
-        assertParentOf 't$1'                                 isClass 't'
-        assertParentOf 't$1$_run_closure1'                   isClass 't$1'
-        assertParentOf 't$_run_closure1'                     isClass 't'
-        assertParentOf 't$_run_closure2'                     isClass 't'
-        assertParentOf 't$_run_closure1$_closure3'           isClass 't$_run_closure1'
+        assertParentOf 't$1' isClass 't'
+        assertParentOf 't$1$_run_closure1' isClass 't$1'
+        assertParentOf 't$_run_closure1' isClass 't'
+        assertParentOf 't$_run_closure2' isClass 't'
+        assertParentOf 't$_run_closure1$_closure3' isClass 't$_run_closure1'
         assertParentOf 't$_run_closure1$_closure3$_closure4' isClass 't$_run_closure1$_closure3'
     }
 
-    @Test // GROOVY-5351
+    @Test
+    // GROOVY-5351
     void testGetSimpleName() {
         assertScript '''
             class X {
@@ -97,7 +98,8 @@ final class ClosureAndInnerClassNodeStructureTest {
         '''
     }
 
-    @Test // GROOVY-7119, GROOVY-7120
+    @Test
+    // GROOVY-7119, GROOVY-7120
     void testIrregularMethodNames() {
         [' ', '!', '"', '#', '$', '&', '\\\'', '(', ')', '*', '+', ',', '-', ':', '=', '@', '^', '{', '}', '~'].each { c ->
             assertScript """

@@ -22,5 +22,6 @@ public interface Face {
     default Object foo(long n) {
         return n;
     }
+
     Object foo(String s);
 }

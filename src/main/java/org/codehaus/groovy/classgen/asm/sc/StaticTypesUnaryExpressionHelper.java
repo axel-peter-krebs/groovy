@@ -123,8 +123,8 @@ public class StaticTypesUnaryExpressionHelper extends UnaryExpressionHelper {
     public void writeUnaryMinus(final UnaryMinusExpression expression) {
         expression.getExpression().visit(controller.getAcg());
         ClassNode top = controller.getOperandStack().getTopOperand();
-        if (isPrimitiveInt(top) || isPrimitiveLong(top) || isPrimitiveShort(top)|| isPrimitiveFloat(top)
-                || isPrimitiveDouble(top) || isPrimitiveByte(top) || isPrimitiveChar(top)) {
+        if (isPrimitiveInt(top) || isPrimitiveLong(top) || isPrimitiveShort(top) || isPrimitiveFloat(top)
+            || isPrimitiveDouble(top) || isPrimitiveByte(top) || isPrimitiveChar(top)) {
             bytecodeX(mv -> {
                 if (isPrimitiveInt(top) || isPrimitiveShort(top) || isPrimitiveByte(top) || isPrimitiveChar(top)) {
                     mv.visitInsn(INEG);
@@ -153,8 +153,8 @@ public class StaticTypesUnaryExpressionHelper extends UnaryExpressionHelper {
     public void writeUnaryPlus(final UnaryPlusExpression expression) {
         expression.getExpression().visit(controller.getAcg());
         ClassNode top = controller.getOperandStack().getTopOperand();
-        if (isPrimitiveInt(top) || isPrimitiveLong(top) || isPrimitiveShort(top)|| isPrimitiveFloat(top)
-                || isPrimitiveDouble(top) || isPrimitiveByte(top) || isPrimitiveChar(top)) {
+        if (isPrimitiveInt(top) || isPrimitiveLong(top) || isPrimitiveShort(top) || isPrimitiveFloat(top)
+            || isPrimitiveDouble(top) || isPrimitiveByte(top) || isPrimitiveChar(top)) {
             // only visit the sub-expression
         } else {
             super.writeUnaryPlus(EMPTY_UNARY_PLUS);

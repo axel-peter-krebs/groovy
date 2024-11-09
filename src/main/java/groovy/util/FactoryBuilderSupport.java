@@ -52,7 +52,7 @@ import static org.apache.groovy.util.BeanUtils.capitalize;
 
 /**
  * Mix of BuilderSupport and SwingBuilder's factory support.
- *
+ * <p>
  * Warning: this implementation is not thread safe and should not be used
  * across threads in a multithreaded environment.  A locking mechanism
  * should be implemented by the subclass if use is expected across
@@ -73,6 +73,35 @@ public abstract class FactoryBuilderSupport extends Binding {
     public static final String SCRIPT_CLASS_NAME = "_SCRIPT_CLASS_NAME_";
     private static final Logger LOG = Logger.getLogger(FactoryBuilderSupport.class.getName());
     private static final Comparator<Method> METHOD_COMPARATOR = Comparator.comparing(Method::getName).thenComparingInt(o -> o.getParameterTypes().length);
+    private final ThreadLocal<LinkedList<Map<String, Object>>> contexts = new ThreadLocal<LinkedList<Map<String, Object>>>();
+    private final List<Closure> disposalClosures = new ArrayList<Closure>(); // because of reverse iteration use ArrayList
+    private final Map<String, Factory> factories = new HashMap<String, Factory>();
+    private final ThreadLocal<FactoryBuilderSupport> localProxyBuilder = new ThreadLocal<FactoryBuilderSupport>();
+    protected LinkedList<Closure> attributeDelegates = new LinkedList<Closure>(); //
+    protected LinkedList<Closure> preInstantiateDelegates = new LinkedList<Closure>();
+    protected LinkedList<Closure> postInstantiateDelegates = new LinkedList<Closure>();
+    protected LinkedList<Closure> postNodeCompletionDelegates = new LinkedList<Closure>();
+    protected Closure methodMissingDelegate;
+    protected Closure propertyMissingDelegate;
+    protected Map<String, Closure[]> explicitProperties = new HashMap<String, Closure[]>();
+    protected Map<String, Closure> explicitMethods = new HashMap<String, Closure>();
+    protected Map<String, Set<String>> registrationGroup = new HashMap<String, Set<String>>();
+    protected String registrationGroupName = ""; // use binding to store?
+    protected boolean autoRegistrationRunning = false;
+    protected boolean autoRegistrationComplete = false;
+    private Closure nameMappingClosure;
+    private FactoryBuilderSupport globalProxyBuilder;
+    public FactoryBuilderSupport() {
+        this(false);
+    }
+
+    public FactoryBuilderSupport(boolean init) {
+        globalProxyBuilder = this;
+        registrationGroup.put(registrationGroupName, new TreeSet<String>());
+        if (init) {
+            autoRegisterNodes();
+        }
+    }
 
     /**
      * Throws an exception if value is null.
@@ -93,7 +122,7 @@ public abstract class FactoryBuilderSupport extends Binding {
      * @param name  the node's name
      * @param type  a Class that may be assignable to the value's class
      * @return true if type is assignable to the value's class, false if value
-     *         is null.
+     * is null.
      */
     public static boolean checkValueIsType(Object value, Object name, Class type) {
         if (value != null) {
@@ -101,7 +130,7 @@ public abstract class FactoryBuilderSupport extends Binding {
                 return true;
             } else {
                 throw new RuntimeException("The value argument of '" + name + "' must be of type "
-                        + type.getName() + ". Found: " + value.getClass());
+                    + type.getName() + ". Found: " + value.getClass());
             }
         } else {
             return false;
@@ -115,7 +144,7 @@ public abstract class FactoryBuilderSupport extends Binding {
      * @param name  the node's name
      * @param type  a Class that may be assignable to the value's class
      * @return Returns true if type is assignable to the value's class, false if value is
-     *         null or a String.
+     * null or a String.
      */
     public static boolean checkValueIsTypeNotString(Object value, Object name, Class type) {
         if (value != null) {
@@ -125,42 +154,10 @@ public abstract class FactoryBuilderSupport extends Binding {
                 return false;
             } else {
                 throw new RuntimeException("The value argument of '" + name + "' must be of type "
-                        + type.getName() + " or a String. Found: " + value.getClass());
+                    + type.getName() + " or a String. Found: " + value.getClass());
             }
         } else {
             return false;
-        }
-    }
-
-    private final ThreadLocal<LinkedList<Map<String, Object>>> contexts = new ThreadLocal<LinkedList<Map<String, Object>>>();
-    protected LinkedList<Closure> attributeDelegates = new LinkedList<Closure>(); //
-    private final List<Closure> disposalClosures = new ArrayList<Closure>(); // because of reverse iteration use ArrayList
-    private final Map<String, Factory> factories = new HashMap<String, Factory>();
-    private Closure nameMappingClosure;
-    private final ThreadLocal<FactoryBuilderSupport> localProxyBuilder = new ThreadLocal<FactoryBuilderSupport>();
-    private FactoryBuilderSupport globalProxyBuilder;
-    protected LinkedList<Closure> preInstantiateDelegates = new LinkedList<Closure>();
-    protected LinkedList<Closure> postInstantiateDelegates = new LinkedList<Closure>();
-    protected LinkedList<Closure> postNodeCompletionDelegates = new LinkedList<Closure>();
-    protected Closure methodMissingDelegate;
-    protected Closure propertyMissingDelegate;
-    protected Map<String, Closure[]> explicitProperties = new HashMap<String, Closure[]>();
-    protected Map<String, Closure> explicitMethods = new HashMap<String, Closure>();
-    protected Map<String, Set<String>> registrationGroup = new HashMap<String, Set<String>>();
-    protected String registrationGroupName = ""; // use binding to store?
-
-    protected boolean autoRegistrationRunning = false;
-    protected boolean autoRegistrationComplete = false;
-
-    public FactoryBuilderSupport() {
-        this(false);
-    }
-
-    public FactoryBuilderSupport(boolean init) {
-        globalProxyBuilder = this;
-        registrationGroup.put(registrationGroupName, new TreeSet<String>());
-        if (init) {
-            autoRegisterNodes();
         }
     }
 
@@ -224,8 +221,8 @@ public abstract class FactoryBuilderSupport extends Binding {
     public Object getVariable(String name) {
         try {
             return getProxyBuilder().doGetVariable(name);
-        } catch(MissingPropertyException mpe) {
-            if(mpe.getProperty().equals(name) && propertyMissingDelegate != null) {
+        } catch (MissingPropertyException mpe) {
+            if (mpe.getProperty().equals(name) && propertyMissingDelegate != null) {
                 return propertyMissingDelegate.call(new Object[]{name});
             }
             throw mpe;
@@ -273,8 +270,8 @@ public abstract class FactoryBuilderSupport extends Binding {
             } else {
                 try {
                     return getMetaClass().getProperty(this, property);
-                } catch(MissingPropertyException mpe2) {
-                    if(mpe2.getProperty().equals(property) && propertyMissingDelegate != null) {
+                } catch (MissingPropertyException mpe2) {
+                    if (mpe2.getProperty().equals(property) && propertyMissingDelegate != null) {
                         return propertyMissingDelegate.call(new Object[]{property});
                     }
                     throw mpe2;
@@ -727,7 +724,7 @@ public abstract class FactoryBuilderSupport extends Binding {
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to create component for '" + name + "' reason: "
-                    + e, e);
+                + e, e);
         }
         getProxyBuilder().postInstantiate(name, attributes, node);
         getProxyBuilder().handleNodeAttributes(node, attributes);
@@ -787,8 +784,8 @@ public abstract class FactoryBuilderSupport extends Binding {
         } else {
             try {
                 return dispatchNodeCall(name, args);
-            } catch(MissingMethodException mme) {
-                if(mme.getMethod().equals(methodName) && methodMissingDelegate != null) {
+            } catch (MissingMethodException mme) {
+                if (mme.getMethod().equals(methodName) && methodMissingDelegate != null) {
                     return methodMissingDelegate.call(methodName, args);
                 }
                 throw mme;
@@ -845,12 +842,12 @@ public abstract class FactoryBuilderSupport extends Binding {
             // that
 
             if ((!list.isEmpty())
-                    && (list.get(0) instanceof LinkedHashMap)) {
+                && (list.get(0) instanceof LinkedHashMap)) {
                 namedArgs = (Map) list.get(0);
                 list = list.subList(1, list.size());
             }
             if ((!list.isEmpty())
-                    && (list.get(list.size() - 1) instanceof Closure)) {
+                && (list.get(list.size() - 1) instanceof Closure)) {
                 closure = (Closure) list.get(list.size() - 1);
                 list = list.subList(0, list.size() - 1);
             }
@@ -1134,6 +1131,7 @@ public abstract class FactoryBuilderSupport extends Binding {
 
     /**
      * Stores the thread local states in a Map that can be passed across threads
+     *
      * @return the map
      */
     protected Map<String, Object> getContinuationData() {
@@ -1145,8 +1143,9 @@ public abstract class FactoryBuilderSupport extends Binding {
 
     /**
      * Restores the state of the current builder to the same state as an older build.
-     *
+     * <p>
      * Caution, this will destroy rather than merge the current build context if there is any,
+     *
      * @param data the data retrieved from a compatible getContinuationData call
      */
     protected void restoreFromContinuationData(Map<String, Object> data) {
@@ -1178,7 +1177,7 @@ public abstract class FactoryBuilderSupport extends Binding {
             getProxyBuilder().setVariable(SCRIPT_CLASS_NAME, script.getClass().getName());
             return script.run();
         } finally {
-            if(oldScriptName != null) {
+            if (oldScriptName != null) {
                 getProxyBuilder().setVariable(SCRIPT_CLASS_NAME, oldScriptName);
             } else {
                 getProxyBuilder().getVariables().remove(SCRIPT_CLASS_NAME);
@@ -1215,8 +1214,7 @@ public abstract class FactoryBuilderSupport extends Binding {
             localProxyBuilder.set(builder);
             closure.setDelegate(builder);
             result = closure.call();
-        }
-        catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             // remove contexts created after we started
             localProxyBuilder.set(previousProxyBuilder);
             if (getProxyBuilder().getContexts().contains(previousContext)) {
@@ -1227,8 +1225,7 @@ public abstract class FactoryBuilderSupport extends Binding {
                 }
             }
             throw e;
-        }
-        finally {
+        } finally {
             localProxyBuilder.set(previousProxyBuilder);
         }
 
@@ -1247,7 +1244,7 @@ public abstract class FactoryBuilderSupport extends Binding {
      * @param name    the node to build on the 'parent' builder.
      * @param closure the closure to be executed under the temporary builder.
      * @return a node that responds to value of name with the closure's result as its
-     *         value.
+     * value.
      * @throws RuntimeException - any exception the closure might have thrown during
      *                          execution.
      */
@@ -1273,7 +1270,7 @@ public abstract class FactoryBuilderSupport extends Binding {
      * @param name       the node to build on the 'parent' builder.
      * @param closure    the closure to be executed under the temporary builder.
      * @return a node that responds to value of name with the closure's result as its
-     *         value.
+     * value.
      * @throws RuntimeException - any exception the closure might have thrown during
      *                          execution.
      */

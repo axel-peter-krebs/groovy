@@ -16,7 +16,7 @@ public final class revcomp {
         String[] mm = {"ACBDGHK\nMNSRUTWVYacbdghkmnsrutwvy", "TGVHCDM\nKNSYAAWBRTGVHCDMKNSYAAWBR"};
         for (int i = 0; i < mm[0].length(); i++)
             map[mm[0].charAt(i)] = (byte) mm[1].charAt(i);
-    } 
+    }
 
     static void reverse(byte[] buf, int begin, int end) {
         while (true) {
@@ -34,11 +34,11 @@ public final class revcomp {
         final byte[] buf = new byte[System.in.available()];
         System.in.read(buf);
 
-        for (int i = 0; i < buf.length;) {
-            while (buf[i++] != '\n');
+        for (int i = 0; i < buf.length; ) {
+            while (buf[i++] != '\n') ;
             int data = i;
-            while (i < buf.length && buf[i++] != '>');
-            reverse(buf, data, i-2);
+            while (i < buf.length && buf[i++] != '>') ;
+            reverse(buf, data, i - 2);
         }
 
         System.out.write(buf);

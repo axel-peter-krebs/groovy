@@ -64,14 +64,14 @@ final class IntRangeTest extends GroovyTestCase {
 
     void testSubListBorders() {
         // reminder: RangeInfo stores "to+1" for direct use in places like List#subList and CharSequence#subSequence
-        new IntRange(true, true, 1, 5).subListBorders(-1).with{ assert it.from == 1 && it.to == 6 && !it.reverse }
-        new IntRange(false, true, 1, 5).subListBorders(-1).with{ assert it.from == 2 && it.to == 6 && !it.reverse }
-        new IntRange(true, false, 1, 5).subListBorders(-1).with{ assert it.from == 1 && it.to == 5 && !it.reverse }
-        new IntRange(false, false, 1, 5).subListBorders(-1).with{ assert it.from == 2 && it.to == 5 && !it.reverse }
-        new IntRange(true, true, 5, 1).subListBorders(-1).with{ assert it.from == 1 && it.to == 6 && it.reverse }
-        new IntRange(false, true, 5, 1).subListBorders(-1).with{ assert it.from == 1 && it.to == 5 && it.reverse }
-        new IntRange(true, false, 5, 1).subListBorders(-1).with{ assert it.from == 2 && it.to == 6 && it.reverse }
-        new IntRange(false, false, 5, 1).subListBorders(-1).with{ assert it.from == 2 && it.to == 5 && it.reverse }
+        new IntRange(true, true, 1, 5).subListBorders(-1).with { assert it.from == 1 && it.to == 6 && !it.reverse }
+        new IntRange(false, true, 1, 5).subListBorders(-1).with { assert it.from == 2 && it.to == 6 && !it.reverse }
+        new IntRange(true, false, 1, 5).subListBorders(-1).with { assert it.from == 1 && it.to == 5 && !it.reverse }
+        new IntRange(false, false, 1, 5).subListBorders(-1).with { assert it.from == 2 && it.to == 5 && !it.reverse }
+        new IntRange(true, true, 5, 1).subListBorders(-1).with { assert it.from == 1 && it.to == 6 && it.reverse }
+        new IntRange(false, true, 5, 1).subListBorders(-1).with { assert it.from == 1 && it.to == 5 && it.reverse }
+        new IntRange(true, false, 5, 1).subListBorders(-1).with { assert it.from == 2 && it.to == 6 && it.reverse }
+        new IntRange(false, false, 5, 1).subListBorders(-1).with { assert it.from == 2 && it.to == 5 && it.reverse }
     }
 
     /**
@@ -96,7 +96,7 @@ final class IntRangeTest extends GroovyTestCase {
         }
     }
 
-    void test_Step_ShouldNotOverflowForBigSteps(){
+    void test_Step_ShouldNotOverflowForBigSteps() {
         (0..2000000000).step(1000000000) {
             assert it >= 0
         }
@@ -108,80 +108,80 @@ final class IntRangeTest extends GroovyTestCase {
 
     void testInclusiveRangesWithNegativesAndPositives() {
         final a = [1, 2, 3, 4]
-        assert a[-3..-2]   == [2, 3]
-        assert a[-3..<-2]  == [2]
-        assert a[-3<..2]   == [3]
+        assert a[-3..-2] == [2, 3]
+        assert a[-3..<-2] == [2]
+        assert a[-3<..2] == [3]
         assert a[-3<..<-2] == []
 
-        assert a[2..-3]    == [3, 2]
+        assert a[2..-3] == [3, 2]
 
-        assert a[1..-1]    == [2, 3, 4]
-        assert a[1..<-1]   == [2, 3]
-        assert a[1<..-1]   == [3, 4]
-        assert a[1<..<-1]  == [3]
+        assert a[1..-1] == [2, 3, 4]
+        assert a[1..<-1] == [2, 3]
+        assert a[1<..-1] == [3, 4]
+        assert a[1<..<-1] == [3]
 
-        assert a[-2..<1]   == [3]
-        assert a[-2<..1]   == [2]
-        assert a[-2<..<1]  == []
+        assert a[-2..<1] == [3]
+        assert a[-2<..1] == [2]
+        assert a[-2<..<1] == []
 
-        assert a[-2..<-3]  == [3]
-        assert a[-2<..-3]  == [2]
+        assert a[-2..<-3] == [3]
+        assert a[-2<..-3] == [2]
         assert a[-2<..<-3] == []
 
-        assert a[5..<5]    == []
-        assert a[5<..5]    == []
-        assert a[5<..<5]   == []
-        assert a[5<..<6]   == []
-        assert a[-5..<-5]  == []
+        assert a[5..<5] == []
+        assert a[5<..5] == []
+        assert a[5<..<5] == []
+        assert a[5<..<6] == []
+        assert a[-5..<-5] == []
     }
 
     void testInclusiveRangesWithNegativesAndPositivesStrings() {
         def items = 'abcde'
-        assert items[1..-2]    == 'bcd'
-        assert items[1..<-2]   == 'bc'
-        assert items[1<..-2]   == 'cd'
-        assert items[1<..<-2]  == 'c'
+        assert items[1..-2] == 'bcd'
+        assert items[1..<-2] == 'bc'
+        assert items[1<..-2] == 'cd'
+        assert items[1<..<-2] == 'c'
 
-        assert items[-3..<-2]  == 'c'
-        assert items[-3<..-2]  == 'd'
+        assert items[-3..<-2] == 'c'
+        assert items[-3<..-2] == 'd'
         assert items[-3<..<-2] == ''
 
-        assert items[-2..-4]   == 'dcb'
-        assert items[-2..<-4]  == 'dc'
-        assert items[-2<..-4]  == 'cb'
+        assert items[-2..-4] == 'dcb'
+        assert items[-2..<-4] == 'dc'
+        assert items[-2<..-4] == 'cb'
         assert items[-2<..<-4] == 'c'
 
-        assert items[2..<2]    == ''
-        assert items[2<..2]    == ''
-        assert items[2<..<2]   == ''
-        assert items[2<..<3]   == ''
+        assert items[2..<2] == ''
+        assert items[2<..2] == ''
+        assert items[2<..<2] == ''
+        assert items[2<..<3] == ''
 
-        assert items[-2..<-2]  == ''
-        assert items[-2<..-2]  == ''
+        assert items[-2..<-2] == ''
+        assert items[-2<..-2] == ''
         assert items[-2<..<-2] == ''
         assert items[-2<..<-3] == ''
     }
 
     void testInclusiveRangesWithNegativesAndPositivesPrimBoolArray() {
         boolean[] bs = [true, false, true, true]
-        assert bs[-3..-2]   == [false, true]
-        assert bs[-3..<-2]  == [false]
-        assert bs[-3<..-2]  == [true]
+        assert bs[-3..-2] == [false, true]
+        assert bs[-3..<-2] == [false]
+        assert bs[-3<..-2] == [true]
         assert bs[-3<..<-2] == []
 
-        assert bs[2..-3]    == [true, false]
+        assert bs[2..-3] == [true, false]
 
-        assert bs[1..-1]    == [false, true, true]
-        assert bs[1..<-1]   == [false, true]
-        assert bs[1<..-1]   == [true, true]
-        assert bs[1<..<-1]  == [true]
+        assert bs[1..-1] == [false, true, true]
+        assert bs[1..<-1] == [false, true]
+        assert bs[1<..-1] == [true, true]
+        assert bs[1<..<-1] == [true]
 
-        assert bs[-2..<1]   == [true]
-        assert bs[-2<..1]   == [false]
-        assert bs[-2<..<1]  == []
+        assert bs[-2..<1] == [true]
+        assert bs[-2<..1] == [false]
+        assert bs[-2<..<1] == []
 
-        assert bs[-2..<-3]  == [true]
-        assert bs[-2<..-3]  == [false]
+        assert bs[-2..<-3] == [true]
+        assert bs[-2<..-3] == [false]
         assert bs[-2<..<-3] == []
     }
 
@@ -189,29 +189,29 @@ final class IntRangeTest extends GroovyTestCase {
         int bits = 0b100001110100010001111110
         int numBits = 24
         def bs = new BitSet()
-        numBits.times{ index -> bs[index] = (bits & 0x1).asBoolean(); bits >>= 1 }
+        numBits.times { index -> bs[index] = (bits & 0x1).asBoolean(); bits >>= 1 }
         bs[3..5] = false
         assert bs.toString() == '{1, 2, 6, 10, 14, 16, 17, 18, 23}'
-        assert bs[bs.length()-1] == true
+        assert bs[bs.length() - 1] == true
         assert bs[-1] == true
 
-        assert bs[6..17].toString()    == '{0, 4, 8, 10, 11}'
-        assert bs[6..<17].toString()   == '{0, 4, 8, 10}'
-        assert bs[6<..17].toString()   == '{3, 7, 9, 10}'
-        assert bs[6<..<17].toString()  == '{3, 7, 9}'
+        assert bs[6..17].toString() == '{0, 4, 8, 10, 11}'
+        assert bs[6..<17].toString() == '{0, 4, 8, 10}'
+        assert bs[6<..17].toString() == '{3, 7, 9, 10}'
+        assert bs[6<..<17].toString() == '{3, 7, 9}'
 
-        assert bs[17..6].toString()    == '{0, 1, 3, 7, 11}'
-        assert bs[17..<6].toString()   == '{0, 1, 3, 7}'
-        assert bs[17<..6].toString()   == '{0, 2, 6, 10}'
-        assert bs[17<..<6].toString()  == '{0, 2, 6}'
+        assert bs[17..6].toString() == '{0, 1, 3, 7, 11}'
+        assert bs[17..<6].toString() == '{0, 1, 3, 7}'
+        assert bs[17<..6].toString() == '{0, 2, 6, 10}'
+        assert bs[17<..<6].toString() == '{0, 2, 6}'
 
-        assert bs[-1..-7].toString()   == '{0, 5, 6}'
-        assert bs[-1..<-7].toString()  == '{0, 5}'
-        assert bs[-1<..-7].toString()  == '{4, 5}'
+        assert bs[-1..-7].toString() == '{0, 5, 6}'
+        assert bs[-1..<-7].toString() == '{0, 5}'
+        assert bs[-1<..-7].toString() == '{4, 5}'
         assert bs[-1<..<-7].toString() == '{4}'
 
-        assert bs[20..<-8].toString()  == '{2, 3}'
-        assert bs[20<..-8].toString()  == '{1, 2, 3}'
+        assert bs[20..<-8].toString() == '{2, 3}'
+        assert bs[20<..-8].toString() == '{1, 2, 3}'
         assert bs[20<..<-8].toString() == '{1, 2}'
     }
 
@@ -224,10 +224,10 @@ final class IntRangeTest extends GroovyTestCase {
     }
 
     void testHashCode() {
-        def maxRange = new IntRange(1,Integer.MAX_VALUE)
+        def maxRange = new IntRange(1, Integer.MAX_VALUE)
         def rangeWithName = [:]
         rangeWithName.put(maxRange, "maxRange")
-        def dupRange = new IntRange(1,Integer.MAX_VALUE)
+        def dupRange = new IntRange(1, Integer.MAX_VALUE)
         assertEquals(rangeWithName.get(dupRange), "maxRange")
     }
 

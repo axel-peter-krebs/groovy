@@ -63,6 +63,7 @@ public class TemplateConfiguration {
     /**
      * Set the encoding used to write the declaration header. Note that it is the responsibility of
      * the user to ensure that it matches the writer encoding.
+     *
      * @param declarationEncoding encoding to be used in the declaration string
      */
     public void setDeclarationEncoding(final String declarationEncoding) {
@@ -112,6 +113,7 @@ public class TemplateConfiguration {
      * Set to true if you want variables in the model which are assignable to {@link java.lang.CharSequence} to
      * be escaped automatically in templates. If this flag is set to true and that you want a value not to be
      * automatically escaped, then you need to use <i>${unescaped.variable}</i> instead of <i>$variable</i>
+     *
      * @param autoEscape value if the autoEscape flag
      */
     public void setAutoEscape(final boolean autoEscape) {
@@ -129,6 +131,7 @@ public class TemplateConfiguration {
      * Set this to true if you want the template engine to render indents automatically. In that case,
      * the supplied writer is wrapped into a {@link groovy.text.markup.DelegatingIndentWriter} and indents
      * are inserted after each call to newLine.
+     *
      * @param autoIndent the auto-indent flag
      */
     public void setAutoIndent(final boolean autoIndent) {
@@ -180,6 +183,7 @@ public class TemplateConfiguration {
     /**
      * If cache is enabled, then templates are compiled once for each source (URL or File). It is recommended to keep
      * this flag to true unless you are in development mode and want automatic reloading of templates.
+     *
      * @param cacheTemplates should templates be cached
      */
     public void setCacheTemplates(final boolean cacheTemplates) {

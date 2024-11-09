@@ -62,7 +62,7 @@ import java.lang.annotation.Target;
  *     def process() { ... }
  * }
  * </pre>
- *
+ * <p>
  * After the AST transformation, the following code is passed on for further compilation:
  * <pre>
  * class MyTreeProcessor {
@@ -104,7 +104,7 @@ import java.lang.annotation.Target;
  *     }
  * }
  * </pre>
- *
+ * <p>
  * The annotation is intended to be used sparingly; perhaps in DSL scenarios or when
  * using deeply nested structural types. In particular, there is no support for using
  * the facility with two similarly named classes from different packages at the same time.
@@ -128,8 +128,8 @@ public @interface Newify {
     boolean auto() default true;
 
     /**
-     * @since 2.5.0
      * @return a regex pattern for class names where "Python-style" constructor notation will be supported
+     * @since 2.5.0
      */
     String pattern() default "";
 }

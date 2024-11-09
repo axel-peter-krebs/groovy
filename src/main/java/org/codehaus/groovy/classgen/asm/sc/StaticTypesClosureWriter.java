@@ -54,30 +54,6 @@ public class StaticTypesClosureWriter extends ClosureWriter {
         super(wc);
     }
 
-    @Override
-    protected ClassNode createClosureClass(final ClosureExpression expression, final int mods) {
-        ClassNode closureClass = super.createClosureClass(expression, mods);
-        List<MethodNode> methods = closureClass.getDeclaredMethods("call");
-        List<MethodNode> doCall = closureClass.getMethods("doCall");
-        if (doCall.size() != 1) {
-            throw new GroovyBugError("Expected to find one (1) doCall method on generated closure, but found " + doCall.size());
-        }
-        MethodNode doCallMethod = doCall.get(0);
-        if (methods.isEmpty() && doCallMethod.getParameters().length == 1) {
-            createDirectCallMethod(closureClass, doCallMethod);
-        }
-        MethodTargetCompletionVisitor visitor = new MethodTargetCompletionVisitor(doCallMethod);
-        Object dynamic = expression.getNodeMetaData(StaticTypesMarker.DYNAMIC_RESOLUTION);
-        if (dynamic != null) {
-            doCallMethod.putNodeMetaData(StaticTypesMarker.DYNAMIC_RESOLUTION, dynamic);
-        }
-        for (MethodNode method : methods) {
-            visitor.visitMethod(method);
-        }
-        closureClass.putNodeMetaData(StaticCompilationMetadataKeys.STATIC_COMPILE_NODE, Boolean.TRUE);
-        return closureClass;
-    }
-
     private static void createDirectCallMethod(final ClassNode closureClass, final MethodNode doCallMethod) {
         // in case there is no "call" method on the closure, create a "fast invocation" path
         // to avoid going through ClosureMetaClass by call(Object...) method
@@ -112,12 +88,36 @@ public class StaticTypesClosureWriter extends ClosureWriter {
         callDoCall.setImplicitThis(true);
         callDoCall.setMethodTarget(doCallMethod);
         MethodNode call = new MethodNode("call",
-                Opcodes.ACC_PUBLIC,
-                ClassHelper.OBJECT_TYPE,
-                params,
-                ClassNode.EMPTY_ARRAY,
-                returnS(callDoCall));
+            Opcodes.ACC_PUBLIC,
+            ClassHelper.OBJECT_TYPE,
+            params,
+            ClassNode.EMPTY_ARRAY,
+            returnS(callDoCall));
         addGeneratedMethod(closureClass, call, true);
+    }
+
+    @Override
+    protected ClassNode createClosureClass(final ClosureExpression expression, final int mods) {
+        ClassNode closureClass = super.createClosureClass(expression, mods);
+        List<MethodNode> methods = closureClass.getDeclaredMethods("call");
+        List<MethodNode> doCall = closureClass.getMethods("doCall");
+        if (doCall.size() != 1) {
+            throw new GroovyBugError("Expected to find one (1) doCall method on generated closure, but found " + doCall.size());
+        }
+        MethodNode doCallMethod = doCall.get(0);
+        if (methods.isEmpty() && doCallMethod.getParameters().length == 1) {
+            createDirectCallMethod(closureClass, doCallMethod);
+        }
+        MethodTargetCompletionVisitor visitor = new MethodTargetCompletionVisitor(doCallMethod);
+        Object dynamic = expression.getNodeMetaData(StaticTypesMarker.DYNAMIC_RESOLUTION);
+        if (dynamic != null) {
+            doCallMethod.putNodeMetaData(StaticTypesMarker.DYNAMIC_RESOLUTION, dynamic);
+        }
+        for (MethodNode method : methods) {
+            visitor.visitMethod(method);
+        }
+        closureClass.putNodeMetaData(StaticCompilationMetadataKeys.STATIC_COMPILE_NODE, Boolean.TRUE);
+        return closureClass;
     }
 
     //--------------------------------------------------------------------------

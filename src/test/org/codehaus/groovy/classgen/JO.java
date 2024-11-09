@@ -27,19 +27,19 @@ import java.lang.ref.SoftReference;
 public class JO {
     public static SoftReference staticMetaClass;
 
-    MetaClass getStaticMetaClass (Object obj) {
-        MetaClass mc;
-        if (staticMetaClass == null || (mc = (MetaClass) staticMetaClass.get()) == null ) {
-            mc = InvokerHelper.getMetaClass(obj);
-            staticMetaClass = new SoftReference(mc);
-        }
-        return mc;
-    }
-
     public static void main(String[] args) throws Exception {
         ASMifier.main(new String[]{"build/classes/groovy/swing/SwingBuilder.class"});
 //        ASMifierClassVisitor.main(new String[]{"build/classes/org/codehaus/groovy/runtime/callsite/PogoMetaMethodSite.class"});
 //        ASMifierClassVisitor.main(new String[]{"build/test-classes/spectralnorm.class"});
 //        ASMifierClassVisitor.main(new String[]{"build/test-classes/groovy/bugs/CustomMetaClassTest.class"});
+    }
+
+    MetaClass getStaticMetaClass(Object obj) {
+        MetaClass mc;
+        if (staticMetaClass == null || (mc = (MetaClass) staticMetaClass.get()) == null) {
+            mc = InvokerHelper.getMetaClass(obj);
+            staticMetaClass = new SoftReference(mc);
+        }
+        return mc;
     }
 }

@@ -38,7 +38,8 @@ import java.awt.image.BufferedImage
 @CompileStatic
 class OutputTransforms {
 
-    @Lazy static List<Closure> localTransforms = loadOutputTransforms()
+    @Lazy
+    static List<Closure> localTransforms = loadOutputTransforms()
 
     static List<Closure> loadOutputTransforms() {
         def transforms = []
@@ -89,7 +90,7 @@ class OutputTransforms {
         transforms << { it -> if (it instanceof Icon) it }
 
         // Images become ImageIcons
-        transforms << { it -> if (it instanceof Image) new ImageIcon(it)}
+        transforms << { it -> if (it instanceof Image) new ImageIcon(it) }
 
         // final case, non-nulls just get inspected as strings
         transforms << { it -> if (it != null) "${FormatHelper.inspect(it)}" }
@@ -100,7 +101,7 @@ class OutputTransforms {
     static transformResult(base, List<Closure> transforms = localTransforms) {
         for (Closure c : transforms) {
             def result = c(base as Object)
-            if (result != null)  {
+            if (result != null) {
                 return result
             }
         }

@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class VMPluginFactory {
 
-    private static final Map<Integer,String> PLUGIN_MAP = Maps.of(
+    private static final Map<Integer, String> PLUGIN_MAP = Maps.of(
         // NOTE: Declare the vm plugin entries in *descending* order!
         16, "org.codehaus.groovy.vmplugin.v16.Java16",
         10, "org.codehaus.groovy.vmplugin.v10.Java10"
@@ -42,7 +42,7 @@ public class VMPluginFactory {
         return doPrivileged(() -> {
             ClassLoader loader = VMPluginFactory.class.getClassLoader();
             int specVer = Runtime.version().feature();
-            for (Map.Entry<Integer,String> entry : PLUGIN_MAP.entrySet()) {
+            for (Map.Entry<Integer, String> entry : PLUGIN_MAP.entrySet()) {
                 if (specVer >= entry.getKey()) {
                     String fullName = entry.getValue();
                     try {

@@ -19,9 +19,9 @@
 
 def a = 9
 def b = 8
-def result = switch(a) {
+def result = switch (a) {
     case 8 -> 'a'
-    case 9 -> switch(b) {
+    case 9 -> switch (b) {
         case 8 -> 'b'
         default -> 'c'
     }

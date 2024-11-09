@@ -80,7 +80,7 @@ class HexTest extends GroovyTestCase {
         assert testString.decodeHex().encodeHex().toString() == testString
 
         // test with a string containing all possible byte values
-        def testBytes = (0..255).collect {(byte) it}
+        def testBytes = (0..255).collect { (byte) it }
         def encoded = (testBytes as byte[]).encodeHex().toString()
         assert encoded.length() == 512
         assert encoded.decodeHex() == testBytes

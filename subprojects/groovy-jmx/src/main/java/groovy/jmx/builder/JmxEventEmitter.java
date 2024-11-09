@@ -88,11 +88,11 @@ public class JmxEventEmitter extends NotificationBroadcasterSupport implements J
     public long send(Object data) {
         long seq = NumberSequencer.getNextSequence();
         Notification note = new Notification(
-                this.getEvent(),
-                this,
-                seq,
-                System.currentTimeMillis(),
-                "Event notification " + this.getEvent()
+            this.getEvent(),
+            this,
+            seq,
+            System.currentTimeMillis(),
+            "Event notification " + this.getEvent()
         );
         note.setUserData(data);
         super.sendNotification(note);

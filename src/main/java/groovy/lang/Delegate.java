@@ -54,7 +54,7 @@ import java.lang.annotation.Target;
  *
  * assert gr8conf.before(javaOne.when)
  * </pre>
- *
+ * <p>
  * In this example, the {@code Event} class will have a method called
  * {@code before(Date otherDate)} as well as other public methods of the
  * {@code Date} class.
@@ -64,7 +64,7 @@ import java.lang.annotation.Target;
  *         return when.before(otherDate);
  *     }
  * </pre>
- *
+ * <p>
  * By default, the owner class will also be modified to implement any interfaces
  * implemented by the delegate type. So, in the example above, because {@code Date}
  * implements {@code Cloneable} the following will be true:
@@ -72,7 +72,7 @@ import java.lang.annotation.Target;
  * <pre>
  * assert gr8conf instanceof Cloneable
  * </pre>
- *
+ * <p>
  * This behavior can be disabled by setting the
  * annotation's {@code interfaces} element to false,
  * i.e. {@code @Delegate(interfaces = false)}, e.g. in the above
@@ -84,7 +84,7 @@ import java.lang.annotation.Target;
  * <pre>
  * assert !(gr8conf instanceof Cloneable)
  * </pre>
- *
+ * <p>
  * If multiple delegation targets are used and the same method signature occurs
  * in more than one of the respective delegate types, then the delegate will be
  * made to the first defined target having that signature. If this does occur,
@@ -172,6 +172,7 @@ public @interface Delegate {
      * can be used in addition to an array (using Groovy's literal list notation) of String values.
      * If interfaces is true (the default), you will need to manually supply any methods excluded
      * from delegation that are required for the interface.
+     *
      * @since 2.2.0
      */
     String[] excludes() default {};
@@ -182,6 +183,7 @@ public @interface Delegate {
      * Only one of 'includes', 'includeTypes', 'excludes', 'excludeTypes' should be used.
      * If interfaces is true (the default), you will need to manually supply any methods excluded
      * from delegation that are required for the interface.
+     *
      * @since 2.3.0
      */
     Class[] excludeTypes() default {};
@@ -195,6 +197,7 @@ public @interface Delegate {
      * are included if 'includes' remains undefined and 'excludes' is explicitly or implicitly an empty list.
      * If interfaces is true (the default), you will need to manually supply any methods not included
      * via delegation that are required for the interface.
+     *
      * @since 2.2.0
      */
     String[] includes() default {Undefined.STRING};
@@ -205,6 +208,7 @@ public @interface Delegate {
      * The default value is a special marker value indicating that no includeTypes are defined.
      * If interfaces is true (the default), you will need to manually supply any methods excluded
      * from delegation that are required for the interface.
+     *
      * @since 2.3.0
      */
     Class[] includeTypes() default {Undefined.CLASS.class};

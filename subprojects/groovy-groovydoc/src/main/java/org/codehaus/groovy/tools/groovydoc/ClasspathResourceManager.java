@@ -26,6 +26,7 @@ import java.io.Reader;
 
 public class ClasspathResourceManager implements ResourceManager {
     ClassLoader classLoader;
+
     public ClasspathResourceManager() {
         classLoader = getClass().getClassLoader();
     }

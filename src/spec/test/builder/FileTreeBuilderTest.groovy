@@ -37,22 +37,22 @@ final class FileTreeBuilderTest {
         def fileTreeBuilder = new FileTreeBuilder(tmpDir)
         fileTreeBuilder.dir('src') {
             dir('main') {
-               dir('groovy') {
-                  file('Foo.groovy', 'println "Hello"')
-               }
+                dir('groovy') {
+                    file('Foo.groovy', 'println "Hello"')
+                }
             }
             dir('test') {
-               dir('groovy') {
-                  file('FooTest.groovy', 'class FooTest extends groovy.test.GroovyTestCase {}')
-               }
+                dir('groovy') {
+                    file('FooTest.groovy', 'class FooTest extends groovy.test.GroovyTestCase {}')
+                }
             }
-         }
-         // end::example[]
+        }
+        // end::example[]
 
-         // tag::example_assert[]
-         assert new File(tmpDir, '/src/main/groovy/Foo.groovy').text == 'println "Hello"'
-         assert new File(tmpDir, '/src/test/groovy/FooTest.groovy').text == 'class FooTest extends groovy.test.GroovyTestCase {}'
-         // end::example_assert[]
+        // tag::example_assert[]
+        assert new File(tmpDir, '/src/main/groovy/Foo.groovy').text == 'println "Hello"'
+        assert new File(tmpDir, '/src/test/groovy/FooTest.groovy').text == 'class FooTest extends groovy.test.GroovyTestCase {}'
+        // end::example_assert[]
     }
 
     @Test
@@ -62,21 +62,21 @@ final class FileTreeBuilderTest {
         def fileTreeBuilder = new FileTreeBuilder(tmpDir)
         fileTreeBuilder.src {
             main {
-               groovy {
-                  'Foo.groovy'('println "Hello"')
-               }
+                groovy {
+                    'Foo.groovy'('println "Hello"')
+                }
             }
             test {
-               groovy {
-                  'FooTest.groovy'('class FooTest extends groovy.test.GroovyTestCase {}')
-               }
+                groovy {
+                    'FooTest.groovy'('class FooTest extends groovy.test.GroovyTestCase {}')
+                }
             }
-         }
-         // end::shorthand_syntax[]
+        }
+        // end::shorthand_syntax[]
 
-         // tag::shorthand_syntax_assert[]
-         assert new File(tmpDir, '/src/main/groovy/Foo.groovy').text == 'println "Hello"'
-         assert new File(tmpDir, '/src/test/groovy/FooTest.groovy').text == 'class FooTest extends groovy.test.GroovyTestCase {}'
-         // end::shorthand_syntax_assert[]
+        // tag::shorthand_syntax_assert[]
+        assert new File(tmpDir, '/src/main/groovy/Foo.groovy').text == 'println "Hello"'
+        assert new File(tmpDir, '/src/test/groovy/FooTest.groovy').text == 'class FooTest extends groovy.test.GroovyTestCase {}'
+        // end::shorthand_syntax_assert[]
     }
 }

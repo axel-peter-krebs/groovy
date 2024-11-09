@@ -51,8 +51,8 @@ class SwingBuilderTableTest extends GroovySwingTestCase {
                     }
                 }
             }
-            assert msg.contains("Must specify a property for a propertyColumn"):    \
-               "Instead found message: " + msg
+            assert msg.contains("Must specify a property for a propertyColumn"):     \
+                "Instead found message: " + msg
             swing.table {
                 tableModel(id: 'model') {
                     propertyColumn(propertyName: 'p')
@@ -88,8 +88,8 @@ class SwingBuilderTableTest extends GroovySwingTestCase {
                     }
                 }
             }
-            assert msg.contains("Must specify 'read' Closure property for a closureColumn"):    \
-               "Instead found message: " + msg
+            assert msg.contains("Must specify 'read' Closure property for a closureColumn"):     \
+                "Instead found message: " + msg
             def closure = { x -> x }
             def table = swing.table {
                 tableModel {
@@ -129,9 +129,9 @@ class SwingBuilderTableTest extends GroovySwingTestCase {
     void testTableModelChange2() {
         testInEDT {
             def tableData = [
-                    ["ATHLETEID": 1, "FIRSTNAME": "Bob", "LASTNAME": "Jones", "DATEOFBIRTH": '1875-05-20'],
-                    ["ATHLETEID": 2, "FIRSTNAME": "Sam", "LASTNAME": "Wilson", "DATEOFBIRTH": '1876-12-15'],
-                    ["ATHLETEID": 3, "FIRSTNAME": "Jessie", "LASTNAME": "James", "DATEOFBIRTH": '1877-06-12']
+                ["ATHLETEID": 1, "FIRSTNAME": "Bob", "LASTNAME": "Jones", "DATEOFBIRTH": '1875-05-20'],
+                ["ATHLETEID": 2, "FIRSTNAME": "Sam", "LASTNAME": "Wilson", "DATEOFBIRTH": '1876-12-15'],
+                ["ATHLETEID": 3, "FIRSTNAME": "Jessie", "LASTNAME": "James", "DATEOFBIRTH": '1877-06-12']
             ]
 
             SwingBuilder swing = new SwingBuilder()
@@ -171,18 +171,18 @@ class SwingBuilderTableTest extends GroovySwingTestCase {
     }
 
     void testTableModelValues() {
-        testInEDT {->
+        testInEDT { ->
 
             def squares = [
-                    [val: 1, square: 1],
-                    [val: 2, square: 4],
-                    [val: 3, square: 9],
-                    [val: 4, square: 16]
+                [val: 1, square: 1],
+                [val: 2, square: 4],
+                [val: 3, square: 9],
+                [val: 4, square: 16]
             ]
 
             def swing = new SwingBuilder()
             def frame = swing.frame(title: 'Tabelle',
-                    windowClosing: { System.exit(0) }) {
+                windowClosing: { System.exit(0) }) {
                 scrollPane {
                     table(id: 'table') {
                         tableModel(list: squares) {
@@ -205,15 +205,15 @@ class SwingBuilderTableTest extends GroovySwingTestCase {
 
             SwingBuilder swing = new SwingBuilder()
             def tableData = [
-                    ["ATHLETEID": 1, "FIRSTNAME": "Bob", "LASTNAME": "Jones", "DATEOFBIRTH": '1875-05-20'],
-                    ["ATHLETEID": 2, "FIRSTNAME": "Sam", "LASTNAME": "Wilson", "DATEOFBIRTH": '1876-12-15'],
-                    ["ATHLETEID": 3, "FIRSTNAME": "Jessie", "LASTNAME": "James", "DATEOFBIRTH": '1877-06-12']
+                ["ATHLETEID": 1, "FIRSTNAME": "Bob", "LASTNAME": "Jones", "DATEOFBIRTH": '1875-05-20'],
+                ["ATHLETEID": 2, "FIRSTNAME": "Sam", "LASTNAME": "Wilson", "DATEOFBIRTH": '1876-12-15'],
+                ["ATHLETEID": 3, "FIRSTNAME": "Jessie", "LASTNAME": "James", "DATEOFBIRTH": '1877-06-12']
             ]
 
             def vectorData = [
-                    [1, "Bob", "Jones", '1875-05-20'],
-                    [2, "Sam", "Wilson", '1876-12-15'],
-                    [3, "Jessie", "James", '1877-06-12']
+                [1, "Bob", "Jones", '1875-05-20'],
+                [2, "Sam", "Wilson", '1876-12-15'],
+                [3, "Jessie", "James", '1877-06-12']
             ]
 
 
@@ -230,8 +230,8 @@ class SwingBuilderTableTest extends GroovySwingTestCase {
                 }
                 scrollPane {
                     table(id: 'table02', model: new javax.swing.table.DefaultTableModel(
-                            new Vector(vectorData.collect { new Vector(it) }),
-                            new Vector(['Athlete ID', 'First Name', 'Last Name', 'Date Of Birth']))
+                        new Vector(vectorData.collect { new Vector(it) }),
+                        new Vector(['Athlete ID', 'First Name', 'Last Name', 'Date Of Birth']))
 
                     )
                 }
@@ -276,15 +276,15 @@ class SwingBuilderTableTest extends GroovySwingTestCase {
 
             SwingBuilder swing = new SwingBuilder()
             def tableData = [
-                    ["ATHLETEID": 1, "FIRSTNAME": "Bob", "LASTNAME": "Jones", "DATEOFBIRTH": '1875-05-20'],
-                    ["ATHLETEID": 2, "FIRSTNAME": "Sam", "LASTNAME": "Wilson", "DATEOFBIRTH": '1876-12-15'],
-                    ["ATHLETEID": 3, "FIRSTNAME": "Jessie", "LASTNAME": "James", "DATEOFBIRTH": '1877-06-12']
+                ["ATHLETEID": 1, "FIRSTNAME": "Bob", "LASTNAME": "Jones", "DATEOFBIRTH": '1875-05-20'],
+                ["ATHLETEID": 2, "FIRSTNAME": "Sam", "LASTNAME": "Wilson", "DATEOFBIRTH": '1876-12-15'],
+                ["ATHLETEID": 3, "FIRSTNAME": "Jessie", "LASTNAME": "James", "DATEOFBIRTH": '1877-06-12']
             ]
 
             def vectorData = [
-                    [1, "Bob", "Jones", '1875-05-20'],
-                    [2, "Sam", "Wilson", '1876-12-15'],
-                    [3, "Jessie", "James", '1877-06-12']
+                [1, "Bob", "Jones", '1875-05-20'],
+                [2, "Sam", "Wilson", '1876-12-15'],
+                [3, "Jessie", "James", '1877-06-12']
             ]
 
 
@@ -301,8 +301,8 @@ class SwingBuilderTableTest extends GroovySwingTestCase {
                 }
                 scrollPane {
                     table(id: 'table02', model: new javax.swing.table.DefaultTableModel(
-                            new Vector(vectorData.collect { new Vector(it) }),
-                            new Vector(['Athlete ID', 'First Name', 'Last Name', 'Date Of Birth']))
+                        new Vector(vectorData.collect { new Vector(it) }),
+                        new Vector(['Athlete ID', 'First Name', 'Last Name', 'Date Of Birth']))
 
                     )
                 }

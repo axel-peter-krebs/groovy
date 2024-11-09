@@ -37,8 +37,8 @@ public final class CallSiteArray {
     public CallSiteArray(Class owner, final String[] names) {
         this.owner = owner;
         this.array = IntStream.range(0, names.length)
-                        .mapToObj(i -> new AbstractCallSite(this, i, names[i]))
-                        .toArray(CallSite[]::new);
+            .mapToObj(i -> new AbstractCallSite(this, i, names[i]))
+            .toArray(CallSite[]::new);
     }
 
     public static Object defaultCall(CallSite callSite, Object receiver, Object[] args) throws Throwable {
@@ -50,7 +50,7 @@ public final class CallSiteArray {
     }
 
     public static Object defaultCallStatic(CallSite callSite, Class receiver, Object[] args) throws Throwable {
-        return createCallStaticSite(callSite, receiver, args).callStatic(receiver,args);
+        return createCallStaticSite(callSite, receiver, args).callStatic(receiver, args);
     }
 
     public static Object defaultCallConstructor(CallSite callSite, Object receiver, Object[] args) throws Throwable {
@@ -68,9 +68,9 @@ public final class CallSiteArray {
         });
         MetaClass metaClass = InvokerHelper.getMetaClass(receiver);
         CallSite site =
-                metaClass instanceof MetaClassImpl
-                        ? ((MetaClassImpl) metaClass).createStaticSite(callSite, args)
-                        : new StaticMetaClassSite(callSite, metaClass);
+            metaClass instanceof MetaClassImpl
+                ? ((MetaClassImpl) metaClass).createStaticSite(callSite, args)
+                : new StaticMetaClassSite(callSite, metaClass);
 
         replaceCallSite(callSite, site);
         return site;
@@ -84,9 +84,9 @@ public final class CallSiteArray {
     private static CallSite createCallConstructorSite(CallSite callSite, Class receiver, Object[] args) {
         MetaClass metaClass = InvokerHelper.getMetaClass(receiver);
         CallSite site =
-                metaClass instanceof MetaClassImpl
-                        ? ((MetaClassImpl) metaClass).createConstructorSite(callSite, args)
-                        : new MetaClassConstructorSite(callSite, metaClass);
+            metaClass instanceof MetaClassImpl
+                ? ((MetaClassImpl) metaClass).createConstructorSite(callSite, args)
+                : new MetaClassConstructorSite(callSite, metaClass);
 
         replaceCallSite(callSite, site);
         return site;
@@ -140,10 +140,10 @@ public final class CallSiteArray {
             return new PogoInterceptableSite(callSite);
         }
 
-        MetaClass metaClass = ((GroovyObject)receiver).getMetaClass();
+        MetaClass metaClass = ((GroovyObject) receiver).getMetaClass();
 
         if (metaClass instanceof MetaClassImpl) {
-            return ((MetaClassImpl)metaClass).createPogoCallSite(callSite, args);
+            return ((MetaClassImpl) metaClass).createPogoCallSite(callSite, args);
         }
 
         return new PogoMetaClassSite(callSite, metaClass);

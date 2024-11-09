@@ -16,4 +16,4 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-[].for(1;2;3){println "in loop"}
+[].for(1 ; 2 ; 3) { println "in loop" }

@@ -41,8 +41,8 @@ def bb = new A.B();
 def bb2 = new A.B[0];
 
 new
-    A
-        ('x', 'y');
+A
+('x', 'y' );
 
 
 new a();

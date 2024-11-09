@@ -97,6 +97,69 @@ public class OperandStack {
         this.controller = controller;
     }
 
+    /**
+     * returns true for long and double
+     */
+    private static boolean isTwoSlotType(final ClassNode type) {
+        return isPrimitiveLong(type) || isPrimitiveDouble(type);
+    }
+
+    private static void newInstance(final MethodVisitor mv, final Object value) {
+        String className = BytecodeHelper.getClassInternalName(value.getClass().getName());
+        mv.visitTypeInsn(NEW, className);
+        mv.visitInsn(DUP);
+        mv.visitLdcInsn(value.toString());
+        mv.visitMethodInsn(INVOKESPECIAL, className, "<init>", "(Ljava/lang/String;)V", false);
+    }
+
+    private static void pushPrimitiveConstant(final MethodVisitor mv, final Object value, final ClassNode type) {
+        boolean isInt = isPrimitiveInt(type);
+        boolean isShort = isPrimitiveShort(type);
+        boolean isByte = isPrimitiveByte(type);
+        boolean isChar = isPrimitiveChar(type);
+        if (isInt || isShort || isByte || isChar) {
+            int val = isInt ? (Integer) value : isShort ? (Short) value : isChar ? (Character) value : (Byte) value;
+            BytecodeHelper.pushConstant(mv, val);
+        } else if (isPrimitiveLong(type)) {
+            if ((Long) value == 0L) {
+                mv.visitInsn(LCONST_0);
+            } else if ((Long) value == 1L) {
+                mv.visitInsn(LCONST_1);
+            } else {
+                mv.visitLdcInsn(value);
+            }
+        } else if (isPrimitiveFloat(type)) {
+            // GROOVY-9797: Use Float.equals to differentiate between positive and negative zero
+            if (value.equals(0f)) {
+                mv.visitInsn(FCONST_0);
+            } else if ((Float) value == 1f) {
+                mv.visitInsn(FCONST_1);
+            } else if ((Float) value == 2f) {
+                mv.visitInsn(FCONST_2);
+            } else {
+                mv.visitLdcInsn(value);
+            }
+        } else if (isPrimitiveDouble(type)) {
+            // GROOVY-9797: Use Double.equals to differentiate between positive and negative zero
+            if (value.equals(0d)) {
+                mv.visitInsn(DCONST_0);
+            } else if ((Double) value == 1d) {
+                mv.visitInsn(DCONST_1);
+            } else {
+                mv.visitLdcInsn(value);
+            }
+        } else if (isPrimitiveBoolean(type)) {
+            boolean b = (Boolean) value;
+            if (b) {
+                mv.visitInsn(ICONST_1);
+            } else {
+                mv.visitInsn(ICONST_0);
+            }
+        } else {
+            mv.visitLdcInsn(value);
+        }
+    }
+
     public int getStackLength() {
         return stack.size();
     }
@@ -120,17 +183,10 @@ public class OperandStack {
             return stack.remove(last);
         } catch (IndexOutOfBoundsException e) { //GROOVY-10458
             String method = controller.getMethodNode() != null
-                    ? controller.getMethodNode().getTypeDescriptor()
-                    : controller.getConstructorNode().getTypeDescriptor();
+                ? controller.getMethodNode().getTypeDescriptor()
+                : controller.getConstructorNode().getTypeDescriptor();
             throw new GroovyBugError("Error while popping argument from operand stack tracker in class " + controller.getClassName() + " method " + method + ".");
         }
-    }
-
-    /**
-     * returns true for long and double
-     */
-    private static boolean isTwoSlotType(final ClassNode type) {
-        return isPrimitiveLong(type) || isPrimitiveDouble(type);
     }
 
     /**
@@ -176,7 +232,7 @@ public class OperandStack {
 
     public Label jump(final int ifIns) {
         Label label = new Label();
-        jump(ifIns,label);
+        jump(ifIns, label);
         return label;
     }
 
@@ -310,7 +366,7 @@ public class OperandStack {
     }
 
     public void doAsType(final ClassNode targetType) {
-        doConvertAndCast(targetType,true);
+        doConvertAndCast(targetType, true);
     }
 
     private void throwExceptionForNoStackElement(final int size, final ClassNode targetType, final boolean coerce) {
@@ -318,13 +374,13 @@ public class OperandStack {
         StringBuilder sb = new StringBuilder();
         sb.append("Internal compiler error while compiling ").append(controller.getSourceUnit().getName()).append("\n");
         MethodNode methodNode = controller.getMethodNode();
-        if (methodNode!=null) {
+        if (methodNode != null) {
             sb.append("Method: ");
             sb.append(methodNode);
             sb.append("\n");
         }
         ConstructorNode constructorNode = controller.getConstructorNode();
-        if (constructorNode!=null) {
+        if (constructorNode != null) {
             sb.append("Constructor: ");
             sb.append(methodNode);
             sb.append("\n");
@@ -342,7 +398,7 @@ public class OperandStack {
         ClassNode top = stack.get(size - 1);
         targetType = targetType.redirect();
         if (top == targetType /* for better performance */
-                || ClassNodeUtils.isCompatibleWith(top, targetType)) return;
+            || ClassNodeUtils.isCompatibleWith(top, targetType)) return;
 
         if (coerce) {
             controller.getInvocationWriter().coerce(top, targetType);
@@ -370,12 +426,12 @@ public class OperandStack {
 
         MethodVisitor mv = controller.getMethodVisitor();
         if (primTarget && !isPrimitiveBoolean(targetType)
-                && !primTop && ClassHelper.getWrapper(targetType).equals(top)) {
+            && !primTop && ClassHelper.getWrapper(targetType).equals(top)) {
             BytecodeHelper.doCastToPrimitive(mv, top, targetType);
         } else {
             top = stack.get(size - 1);
             if (!WideningCategories.implementsInterfaceOrSubclassOf(top, targetType)) {
-                BytecodeHelper.doCast(mv,targetType);
+                BytecodeHelper.doCast(mv, targetType);
             }
         }
         replace(targetType);
@@ -408,8 +464,8 @@ public class OperandStack {
             mv.visitInsn(L2I);
             return true;
         } else if (isPrimitiveChar(target)
-                || isPrimitiveByte(target)
-                || isPrimitiveShort(target)) {
+            || isPrimitiveByte(target)
+            || isPrimitiveShort(target)) {
             mv.visitInsn(L2I);
             return convertFromInt(target);
         } else if (isPrimitiveDouble(target)) {
@@ -428,8 +484,8 @@ public class OperandStack {
             mv.visitInsn(D2I);
             return true;
         } else if (isPrimitiveChar(target)
-                || isPrimitiveByte(target)
-                || isPrimitiveShort(target)) {
+            || isPrimitiveByte(target)
+            || isPrimitiveShort(target)) {
             mv.visitInsn(D2I);
             return convertFromInt(target);
         } else if (isPrimitiveLong(target)) {
@@ -448,8 +504,8 @@ public class OperandStack {
             mv.visitInsn(F2I);
             return true;
         } else if (isPrimitiveChar(target)
-                || isPrimitiveByte(target)
-                || isPrimitiveShort(target)) {
+            || isPrimitiveByte(target)
+            || isPrimitiveShort(target)) {
             mv.visitInsn(F2I);
             return convertFromInt(target);
         } else if (isPrimitiveLong(target)) {
@@ -468,8 +524,8 @@ public class OperandStack {
         if (isPrimitiveInt(top)) {
             return convertFromInt(target);
         } else if (isPrimitiveChar(top)
-                || isPrimitiveByte(top)
-                || isPrimitiveShort(top)) {
+            || isPrimitiveByte(top)
+            || isPrimitiveShort(top)) {
             return isPrimitiveInt(target) || convertFromInt(target);
         } else if (isPrimitiveFloat(top)) {
             return convertFromFloat(target);
@@ -510,67 +566,11 @@ public class OperandStack {
             mv.visitLdcInsn(value);
         } else {
             throw new ClassGeneratorException(
-                    "Cannot generate bytecode for constant: " + value + " of type: " + type.getName());
+                "Cannot generate bytecode for constant: " + value + " of type: " + type.getName());
         }
 
         push(type);
         if (boxing) box();
-    }
-
-    private static void newInstance(final MethodVisitor mv, final Object value) {
-        String className = BytecodeHelper.getClassInternalName(value.getClass().getName());
-        mv.visitTypeInsn(NEW, className);
-        mv.visitInsn(DUP);
-        mv.visitLdcInsn(value.toString());
-        mv.visitMethodInsn(INVOKESPECIAL, className, "<init>", "(Ljava/lang/String;)V", false);
-    }
-
-    private static void pushPrimitiveConstant(final MethodVisitor mv, final Object value, final ClassNode type) {
-        boolean isInt = isPrimitiveInt(type);
-        boolean isShort = isPrimitiveShort(type);
-        boolean isByte = isPrimitiveByte(type);
-        boolean isChar = isPrimitiveChar(type);
-        if (isInt || isShort || isByte || isChar) {
-            int val = isInt ? (Integer) value : isShort ? (Short) value : isChar ? (Character) value : (Byte) value;
-            BytecodeHelper.pushConstant(mv, val);
-        } else if (isPrimitiveLong(type)) {
-            if ((Long) value == 0L) {
-                mv.visitInsn(LCONST_0);
-            } else if ((Long) value == 1L) {
-                mv.visitInsn(LCONST_1);
-            } else {
-                mv.visitLdcInsn(value);
-            }
-        } else if (isPrimitiveFloat(type)) {
-            // GROOVY-9797: Use Float.equals to differentiate between positive and negative zero
-            if (value.equals(0f)) {
-                mv.visitInsn(FCONST_0);
-            } else if ((Float) value == 1f) {
-                mv.visitInsn(FCONST_1);
-            } else if ((Float) value == 2f) {
-                mv.visitInsn(FCONST_2);
-            } else {
-                mv.visitLdcInsn(value);
-            }
-        } else if (isPrimitiveDouble(type)) {
-            // GROOVY-9797: Use Double.equals to differentiate between positive and negative zero
-            if (value.equals(0d)) {
-                mv.visitInsn(DCONST_0);
-            } else if ((Double) value == 1d) {
-                mv.visitInsn(DCONST_1);
-            } else {
-                mv.visitLdcInsn(value);
-            }
-        } else if (isPrimitiveBoolean(type)) {
-            boolean b = (Boolean) value;
-            if (b) {
-                mv.visitInsn(ICONST_1);
-            } else {
-                mv.visitInsn(ICONST_0);
-            }
-        } else {
-            mv.visitLdcInsn(value);
-        }
     }
 
     public void pushDynamicName(final Expression name) {

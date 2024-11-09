@@ -50,12 +50,12 @@ public class IntegerCachedClass extends NumberCachedClass {  // int, Integer
     @Override
     public boolean isAssignableFrom(Class classToTransformFrom) {
         return (allowNull && classToTransformFrom == null)
-                || classToTransformFrom == Integer.class
-                || classToTransformFrom == Short.class
-                || classToTransformFrom == Byte.class
-                || classToTransformFrom == BigInteger.class
-                || classToTransformFrom == Integer.TYPE
-                || classToTransformFrom == Short.TYPE
-                || classToTransformFrom == Byte.TYPE;
+            || classToTransformFrom == Integer.class
+            || classToTransformFrom == Short.class
+            || classToTransformFrom == Byte.class
+            || classToTransformFrom == BigInteger.class
+            || classToTransformFrom == Integer.TYPE
+            || classToTransformFrom == Short.TYPE
+            || classToTransformFrom == Byte.TYPE;
     }
 }

@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 
 /**
  * Extracts and indexes named parameters from a sql string.
- *
+ * <p>
  * This class is package-private scoped and is only intended for internal use.
  *
  * @see groovy.sql.Sql
@@ -45,6 +45,10 @@ class ExtractIndexAndSql {
      * Used to track the current position within the sql while parsing
      */
     private int index = 0;
+
+    private ExtractIndexAndSql(String sql) {
+        this.sql = sql;
+    }
 
     /**
      * Static factory method used to create a new instance.  Since parsing of the input
@@ -67,8 +71,23 @@ class ExtractIndexAndSql {
         return NAMED_QUERY_PATTERN.matcher(sql).find();
     }
 
-    private ExtractIndexAndSql(String sql) {
-        this.sql = sql;
+    private static String adaptForNamedParams(String sql, List<Tuple<?>> indexPropList) {
+        StringBuilder newSql = new StringBuilder();
+        int txtIndex = 0;
+
+        Matcher matcher = NAMED_QUERY_PATTERN.matcher(sql);
+        while (matcher.find()) {
+            newSql.append(sql, txtIndex, matcher.start()).append('?');
+            String indexStr = matcher.group(1);
+            if (indexStr == null) indexStr = matcher.group(3);
+            int index = (indexStr == null || indexStr.length() == 0 || ":".equals(indexStr)) ? 0 : Integer.parseInt(indexStr) - 1;
+            String prop = matcher.group(2);
+            if (prop == null) prop = matcher.group(4);
+            indexPropList.add(new Tuple<Object>(index, prop == null || prop.length() == 0 ? "<this>" : prop));
+            txtIndex = matcher.end();
+        }
+        newSql.append(sql, txtIndex, sql.length()); // append ending SQL after last param.
+        return newSql.toString();
     }
 
     List<Tuple<?>> getIndexPropList() {
@@ -133,8 +152,8 @@ class ExtractIndexAndSql {
                 }
                 int previousQuotes = countPreviousRepeatingChars(QUOTE);
                 if (previousQuotes == 0 ||
-                        (previousQuotes % 2 == 0 && (index - previousQuotes) != startQuoteIndex) ||
-                        (previousQuotes % 2 != 0 && (index - previousQuotes) == startQuoteIndex)) {
+                    (previousQuotes % 2 == 0 && (index - previousQuotes) != startQuoteIndex) ||
+                    (previousQuotes % 2 != 0 && (index - previousQuotes) == startQuoteIndex)) {
                     foundClosingQuote = true;
                     break;
                 }
@@ -183,25 +202,6 @@ class ExtractIndexAndSql {
 
     private char next() {
         return ((index + 1) < sql.length()) ? sql.charAt(index + 1) : '\0';
-    }
-
-    private static String adaptForNamedParams(String sql, List<Tuple<?>> indexPropList) {
-        StringBuilder newSql = new StringBuilder();
-        int txtIndex = 0;
-
-        Matcher matcher = NAMED_QUERY_PATTERN.matcher(sql);
-        while (matcher.find()) {
-            newSql.append(sql, txtIndex, matcher.start()).append('?');
-            String indexStr = matcher.group(1);
-            if (indexStr == null) indexStr = matcher.group(3);
-            int index = (indexStr == null || indexStr.length() == 0 || ":".equals(indexStr)) ? 0 : Integer.parseInt(indexStr) - 1;
-            String prop = matcher.group(2);
-            if (prop == null) prop = matcher.group(4);
-            indexPropList.add(new Tuple<Object>(index, prop == null || prop.length() == 0 ? "<this>" : prop));
-            txtIndex = matcher.end();
-        }
-        newSql.append(sql, txtIndex, sql.length()); // append ending SQL after last param.
-        return newSql.toString();
     }
 
 }

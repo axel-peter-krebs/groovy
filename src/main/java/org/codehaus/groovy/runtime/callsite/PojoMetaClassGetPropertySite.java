@@ -29,7 +29,7 @@ public class PojoMetaClassGetPropertySite extends AbstractCallSite {
 
     @Override
     public final CallSite acceptGetProperty(Object receiver) {
-          return this;
+        return this;
     }
 
     @Override

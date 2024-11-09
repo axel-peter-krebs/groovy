@@ -152,8 +152,8 @@ class JmxBeanFactory extends AbstractFactory {
     private def initMetaMap(target) {
         if (!target) {
             throw new JmxBuilderException("You must specify a target object to " +
-                    " export as MBean i.e. JmxBuilder.bean(targetInstance), " +
-                    " JmxBuilder.bean([target:instance]), JmxBuilder.beans([instanceList]).")
+                " export as MBean i.e. JmxBuilder.bean(targetInstance), " +
+                " JmxBuilder.bean([target:instance]), JmxBuilder.beans([instanceList]).")
         }
 
         def metaMap = [:]

@@ -34,10 +34,10 @@ class ManagedConcurrentLinkedQueueTest extends GroovyTestCase {
         queue.add(1)
         def i = 0
         queue.each {
-            assert it==1
+            assert it == 1
             i++
         }
-        assert i ==1
+        assert i == 1
     }
 
     void testEmptylist() {
@@ -52,9 +52,9 @@ class ManagedConcurrentLinkedQueueTest extends GroovyTestCase {
         queue.add(5)
         def iter = queue.iterator()
         while (iter.hasNext()) {
-            if (iter.next()==3) iter.remove()
+            if (iter.next() == 3) iter.remove()
         }
-        def val = queue.inject(0){value, it-> value+it}
+        def val = queue.inject(0) { value, it -> value + it }
         assert val == 12
     }
 
@@ -63,7 +63,7 @@ class ManagedConcurrentLinkedQueueTest extends GroovyTestCase {
             queue.add(it)
             def iter = queue.iterator()
             while (iter.hasNext()) {
-                if (iter.next()==it) iter.remove()
+                if (iter.next() == it) iter.remove()
             }
         }
         assert queue.isEmpty()

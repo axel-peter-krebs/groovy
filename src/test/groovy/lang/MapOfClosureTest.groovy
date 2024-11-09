@@ -114,6 +114,7 @@ class MapOfClosureTest extends GroovyTestCase {
 
     interface MultiMethodInterface {
         String methodOne()
+
         String methodTwo()
     }
 }

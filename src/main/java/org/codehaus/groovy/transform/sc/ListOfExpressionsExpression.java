@@ -43,7 +43,7 @@ public class ListOfExpressionsExpression extends Expression {
 
     @Override
     public Expression transformExpression(final ExpressionTransformer transformer) {
-        return new ListOfExpressionsExpression(transformExpressions(expressions,transformer));
+        return new ListOfExpressionsExpression(transformExpressions(expressions, transformer));
     }
 
     @Override

@@ -16,16 +16,61 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+/* This applies to the root project as well as the submodules; primarily, the following tasks are executed:
+ - Checkstyle
+ - CodeNarc
+ - Code Coverage (Jacoco) report
+ - SpotBugs report
+ - Binary compatibility report (JAPICMP)
+ - Source compatibility check
+ - Compile Java
+ - Compile Groovy
+ - Generate JavaDoc
+ - Generate GroovyDoc
+ - AsciiDoctor generation
+ - Jarring
+ - Testing, s. 'groovy-tested'
+ -
+*/
 
+import com.github.spotbugs.snom.Effort
+import com.github.spotbugs.snom.SpotBugsTask
 import groovy.transform.CompileStatic
+import me.champeau.gradle.japicmp.JapicmpTask
+import org.apache.groovy.gradle.CheckstyleHtmlReport
+import org.apache.groovy.gradle.DgmConverter
 import org.apache.groovy.gradle.GroovyLibraryExtension
 import org.apache.groovy.gradle.JarJarTask
-import org.apache.groovy.gradle.ReleaseInfoGenerator
-import com.github.spotbugs.snom.Effort
 import org.gradle.api.attributes.java.TargetJvmVersion
 
-import com.github.spotbugs.snom.SpotBugsTask
-import org.apache.groovy.gradle.CheckstyleHtmlReport
+@CompileStatic
+static Configuration createConsumableConfiguration(ObjectFactory objects,
+                                                   TaskContainer tasks,
+                                                   ConfigurationContainer container,
+                                                   String name,
+                                                   String usage,
+                                                   String artifactTask,
+                                                   List<String> capabilities,
+                                                   int targetJvmVersion) {
+    container.create(name) { Configuration cnf ->
+        cnf.canBeConsumed = true
+        cnf.canBeResolved = false
+        cnf.attributes {
+            it.attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.LIBRARY))
+            it.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements, LibraryElements.JAR))
+            it.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, usage))
+            // We use external because only Groovy core actually repackages dependencies
+            it.attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling, Bundling.EXTERNAL))
+            it.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, targetJvmVersion)
+        }
+        cnf.outgoing {
+            it.artifact tasks.named(artifactTask)
+            capabilities.each { capability ->
+                it.capability(capability)
+            }
+        }
+    }
+}
 
 plugins {
     id 'java-library'
@@ -33,28 +78,27 @@ plugins {
     id 'checkstyle'
     id 'codenarc'
     id 'com.github.spotbugs'
+    id 'me.champeau.gradle.japicmp' // version "0.4.5"
     id 'org.apache.groovy-common'
     id 'org.apache.groovy-internal'
     id 'org.apache.groovy-tested'
     id 'org.apache.groovy-asciidoctor'
 }
 
-/**
- * This script defines a conventional plugin for all Groovy modules, be it
- * Groovy core or any of its libraries.
- */
-if (sharedConfiguration.hasCodeCoverage.get()) {
-    pluginManager.apply(JacocoPlugin)
+/* DGM converter */
+
+def dgmConverter = tasks.register("dgmConverter", DgmConverter) {
+    classpath.from files(compileJava, configurations.compileClasspath)
+    sources.from('src/main').include('**/*GroovyMethods.java')
 }
 
+// TODO: is 'groovy-core' a groovyLibrary?
 def groovyLibrary = project.extensions.create("groovyLibrary", GroovyLibraryExtension, sharedConfiguration, java)
 
 java {
     withSourcesJar()
     withJavadocJar()
 }
-
-def generateReleaseInfo = tasks.register("generateReleaseInfo", ReleaseInfoGenerator)
 
 def groovydocJar = tasks.register("groovydocJar", Jar) {
     from groovydoc
@@ -135,120 +179,11 @@ dependencies {
     spotbugs "org.apache.logging.log4j:log4j-api:${versions.log4j2}"
     spotbugs "org.apache.logging.log4j:log4j-core:${versions.log4j2}"
     spotbugsSlf4j "org.slf4j:slf4j-simple:${versions.slf4j}"
+
+    runtimeOnly files(dgmConverter)
 }
 
-def excludedFromManifest = [
-        'Ant-Version',
-        'Originally-Created-By',
-        'Bnd-LastModified',
-        'Created-By'
-]
-
-tasks.named('jar') {
-    archiveAppendix = 'raw'
-    archiveClassifier.set("raw")
-    groovyLibrary.configureManifest(manifest, excludedFromManifest)
-}
-
-tasks.withType(AbstractArchiveTask).configureEach {
-    preserveFileTimestamps = false
-    reproducibleFileOrder = true
-}
-
-tasks.withType(Jar).configureEach {jar ->
-    metaInf {
-        if (jar.name == 'sourcesJar') {
-            if (file("${projectDir}/LICENSE").exists()) {
-                from "${projectDir}/LICENSE"
-            } else {
-                from("${rootProject.projectDir}/licenses/LICENSE-BASE") {
-                    rename 'LICENSE-BASE', 'LICENSE'
-                }
-            }
-            if (file("${projectDir}/NOTICE").exists()) {
-                from "${projectDir}/NOTICE"
-            } else {
-                from("${rootProject.projectDir}/notices/NOTICE-BASE") {
-                    rename 'NOTICE-BASE', 'NOTICE'
-                }
-            }
-        }
-        from generateReleaseInfo
-    }
-}
-
-tasks.register("jarjar", JarJarTask) {
-    from = jar.archiveFile
-    repackagedLibraries.from configurations.runtimeClasspath.incoming.artifactView {
-        componentFilter { component ->
-            if (component instanceof ModuleComponentIdentifier) {
-                return component.module in groovyLibrary.repackagedDependencies.get()
-            }
-            return false
-        }
-    }.files
-    untouchedFiles = [
-            'groovy/cli/picocli/CliBuilder*.class',
-            'groovy/cli/picocli/OptionAccessor*.class'
-    ]
-    patterns = [
-            'org.antlr.**': 'groovyjarjarantlr4.@1', // antlr4
-            'org.objectweb.**': 'groovyjarjarasm.@1',
-            'picocli.**': 'groovyjarjarpicocli.@1'
-    ]
-    excludesPerLibrary = [
-            '*': ['META-INF/maven/**', 'META-INF/*', 'META-INF/services/javax.annotation.processing.Processor', '**/module-info.class']
-    ]
-    includesPerLibrary = [
-            'asm-util': ['org/objectweb/asm/util/Printer.class',
-                         'org/objectweb/asm/util/Textifier*',
-                         'org/objectweb/asm/util/ASMifier.class',
-                         'org/objectweb/asm/util/Trace*']
-    ]
-    outputFile = tasks.named('jar').flatMap { layout.buildDirectory.file("libs/${it.archiveBaseName.get()}-${it.archiveVersion.get()}${(it.archiveClassifier.get() && it.archiveClassifier.get() != 'raw') ? '-' + it.archiveClassifier.get() : ''}.jar") }
-
-    withManifest {
-        def extras = project.name == 'groovy' ? ['Main-Class': 'groovy.ui.GroovyMain'] : [:]
-        def moduleName = "org.apache.${project.name.replace('-', '.')}"
-        attributes('Automatic-Module-Name': moduleName, 'Bundle-Name': 'Groovy module: ' + project.name, *:extras)
-        groovyLibrary.configureManifest(it, excludedFromManifest)
-        classpath = configurations.runtimeClasspath
-    }
-}
-
-tasks.withType(AbstractCompile).configureEach {
-    sourceCompatibility(sharedConfiguration.targetJavaVersion.get())
-    targetCompatibility(sharedConfiguration.targetJavaVersion.get())
-}
-
-tasks.withType(Javadoc).configureEach {
-    options.source = sharedConfiguration.targetJavaVersion.get()
-}
-
-tasks.named("compileTestGroovy") {
-    options.forkOptions.jvmArgs += ["-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true"]
-}
-
-tasks.withType(CodeNarc).configureEach {
-    ignoreFailures = true
-    configFile = rootProject.file("config/codenarc/codenarc.groovy")
-}
-
-tasks.withType(SpotBugsTask).configureEach {
-    excludeFilter = rootProject.file("config/spotbugs/exclude.xml")
-    ignoreFailures = true
-    effort = Effort.valueOf('MAX')
-    maxHeapSize = '2g'
-    reports {
-        xml {
-            required = false
-        }
-        html {
-            required = true
-            stylesheet = 'fancy.xsl'
-        }
-    }
-}
+/* CheckStyle */
 
 tasks.register("checkstyle") {
     dependsOn tasks.withType(Checkstyle)
@@ -286,6 +221,182 @@ configurations.checkstyle {
     }
 }
 
+/* CodeNarc */
+
+tasks.withType(CodeNarc).configureEach {
+    ignoreFailures = true
+    configFile = rootProject.file("config/codenarc/codenarc.groovy")
+}
+
+/**
+ * This script defines a conventional plugin for all Groovy modules, be it
+ * Groovy core or any of its libraries.
+ */
+if (sharedConfiguration.hasCodeCoverage.get()) {
+    pluginManager.apply(JacocoPlugin)
+}
+
+/* SpotBugs */
+
+tasks.withType(SpotBugsTask).configureEach {
+    excludeFilter = rootProject.file("config/spotbugs/exclude.xml")
+    ignoreFailures = true
+    effort = Effort.valueOf('MAX')
+    maxHeapSize = '2g'
+    reports {
+        xml {
+            required = false
+        }
+        html {
+            required = true
+            stylesheet = 'fancy.xsl'
+        }
+    }
+}
+
+/* Binary compatibility check (from JAPICMP); moved from module 'binary-compatibility' */
+
+def thisProject = project // core + modules
+def taskName = "japicmp${project.name.split('-').collect { it.capitalize() }.join()}"
+def baselineCoords = "org.apache.groovy:${project.name}:${sharedConfiguration.binaryCompatibilityBaselineVersion.get()}@jar"
+def baseline = thisProject.configurations.create("${taskName}Baseline") {
+    dependencies.add(thisProject.dependencies.create(baselineCoords))
+}
+baseline.resolutionStrategy.disableDependencyVerification()
+def checkBinaryCompatibility = thisProject.tasks.register(taskName, JapicmpTask) {
+    oldArchives.from(baseline)
+    newArchives.from(files(tasks.named("jarjar")))
+    oldClasspath.from(files())
+    newClasspath.from(files())
+    accessModifier = "protected"
+    onlyModified = true
+    failOnModification = false
+    ignoreMissingClasses = true
+    classExcludes = ["**_closure**", "org.codehaus.groovy.runtime.dgm\$**"]
+    packageExcludes = ["**internal**", "groovyjarjar**"]
+//                TODO consider using rich report but we need to add a custom rule first
+//                richReport {
+//                    destinationDir = layout.buildDirectory.dir("reports")
+//                    reportName = "${taskName}.html"
+//                }
+    htmlOutputFile = layout.buildDirectory.file("reports/${taskName}.html").get().asFile
+//                uncomment below if also wanting text only output
+//                txtOutputFile = layout.buildDirectory.file("reports/${taskName}.txt").get().asFile
+}
+
+tasks.register("checkBinaryCompatibility") {
+    dependsOn(checkBinaryCompatibility)
+}
+
+// ALL modules as well as core must be at least Java 11 compatible
+tasks.register('checkCompatibility') {
+    doLast {
+        assert JavaVersion.current().java11Compatible
+    }
+}
+
+/* Source compatibility check */
+
+tasks.withType(AbstractCompile).configureEach {
+    sourceCompatibility(sharedConfiguration.targetJavaVersion.get())
+    targetCompatibility(sharedConfiguration.targetJavaVersion.get())
+}
+
+/* JavaDoc */
+
+tasks.withType(Javadoc).configureEach {
+    options.source = sharedConfiguration.targetJavaVersion.get()
+}
+
+tasks.named("compileTestGroovy") {
+    options.forkOptions.jvmArgs += ["-Dspock.iKnowWhatImDoing.disableGroovyVersionCheck=true"]
+}
+
+
+/* Jarring */
+
+def excludedFromManifest = [
+    'Ant-Version',
+    'Originally-Created-By',
+    'Bnd-LastModified',
+    'Created-By'
+]
+
+tasks.named('jar') {
+    from dgmConverter // for ALL projects; note for overriders
+    archiveAppendix = 'raw'
+    archiveClassifier.set("raw")
+    groovyLibrary.configureManifest(manifest, excludedFromManifest)
+}
+
+tasks.withType(AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+
+tasks.withType(Jar).configureEach { jar ->
+    metaInf {
+        if (jar.name == 'sourcesJar') {
+            if (file("${projectDir}/LICENSE").exists()) {
+                from "${projectDir}/LICENSE"
+            } else {
+                from("${rootProject.projectDir}/licenses/LICENSE-BASE") {
+                    rename 'LICENSE-BASE', 'LICENSE'
+                }
+            }
+            if (file("${projectDir}/NOTICE").exists()) {
+                from "${projectDir}/NOTICE"
+            } else {
+                from("${rootProject.projectDir}/notices/NOTICE-BASE") {
+                    rename 'NOTICE-BASE', 'NOTICE'
+                }
+            }
+        }
+        from generateReleaseInfo
+    }
+}
+
+// register the JarJarTask for every module that inherits from 'groovy-base'; memento: 'groovy-core' also inherits!
+tasks.register("jarjar", JarJarTask) {
+    from = jar.archiveFile
+    repackagedLibraries.from configurations.runtimeClasspath.incoming.artifactView {
+        componentFilter { component ->
+            if (component instanceof ModuleComponentIdentifier) {
+                return component.module in groovyLibrary.repackagedDependencies.get()
+            }
+            return false
+        }
+    }.files
+    untouchedFiles = [
+        'groovy/cli/picocli/CliBuilder*.class',
+        'groovy/cli/picocli/OptionAccessor*.class'
+    ]
+    patterns = [
+        'org.antlr.**'    : 'groovyjarjarantlr4.@1', // antlr4
+        'org.objectweb.**': 'groovyjarjarasm.@1',
+        'picocli.**'      : 'groovyjarjarpicocli.@1'
+    ]
+    excludesPerLibrary = [
+        '*': ['META-INF/maven/**', 'META-INF/*', 'META-INF/services/javax.annotation.processing.Processor', '**/module-info.class']
+    ]
+    includesPerLibrary = [
+        'asm-util': ['org/objectweb/asm/util/Printer.class',
+                     'org/objectweb/asm/util/Textifier*',
+                     'org/objectweb/asm/util/ASMifier.class',
+                     'org/objectweb/asm/util/Trace*']
+    ]
+    outputFile = tasks.named('jar').flatMap { layout.buildDirectory.file("libs/${it.archiveBaseName.get()}-${it.archiveVersion.get()}${(it.archiveClassifier.get() && it.archiveClassifier.get() != 'raw') ? '-' + it.archiveClassifier.get() : ''}.jar") }
+
+    withManifest {
+        def extras = project.name == 'groovy' ? ['Main-Class': 'groovy.ui.GroovyMain'] : [:]
+        def moduleName = "org.apache.${project.name.replace('-', '.')}"
+        attributes('Automatic-Module-Name': moduleName, 'Bundle-Name': 'Groovy module: ' + project.name, *: extras)
+        groovyLibrary.configureManifest(it, excludedFromManifest)
+        classpath = configurations.runtimeClasspath
+    }
+}
+
+
 // Groovy doesn't publish the regular jars: it publishes
 // the repackaged jars, which is why we can't use the
 // default publication, and need to create our own
@@ -308,8 +419,8 @@ components.groovyLibrary {
 // By declaring a codehaus capability we can tell Gradle that the user has to
 // choose between "old" groovy and "new" groovy
 List<String> capabilities = [
-        "org.codehaus.groovy:${base.archivesName.get()}:${sharedConfiguration.groovyVersion.get()}",
-        "org.apache.groovy:${base.archivesName.get()}:${sharedConfiguration.groovyVersion.get()}"
+    "org.codehaus.groovy:${base.archivesName.get()}:${sharedConfiguration.groovyVersion.get()}",
+    "org.apache.groovy:${base.archivesName.get()}:${sharedConfiguration.groovyVersion.get()}"
 ]
 int targetJvmVersion = Integer.valueOf(sharedConfiguration.targetJavaVersion.get())
 // First we create the "API" and "runtime" variants of Groovy for publication
@@ -321,12 +432,15 @@ dependencies {
     groovyApiElements platform(project(":groovy-bom"))
     groovyRuntimeElements platform(project(":groovy-bom"))
 }
+
 component.addVariantsFromConfiguration(shadowApi) {
 
 }
+
 component.addVariantsFromConfiguration(shadowRuntime) {
 
 }
+
 afterEvaluate {
     def repackaged = groovyLibrary.repackagedDependencies.get()
     if (!repackaged) {
@@ -334,34 +448,5 @@ afterEvaluate {
         shadowApi.extendsFrom(configurations.api)
         shadowRuntime.extendsFrom(configurations.implementation)
         shadowRuntime.extendsFrom(configurations.runtimeOnly)
-    }
-}
-
-@CompileStatic
-static Configuration createConsumableConfiguration(ObjectFactory objects,
-                                            TaskContainer tasks,
-                                            ConfigurationContainer container,
-                                            String name,
-                                            String usage,
-                                            String artifactTask,
-                                            List<String> capabilities,
-                                            int targetJvmVersion) {
-    container.create(name) { Configuration cnf ->
-        cnf.canBeConsumed = true
-        cnf.canBeResolved = false
-        cnf.attributes {
-            it.attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.LIBRARY))
-            it.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements, LibraryElements.JAR))
-            it.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, usage))
-            // We use external because only Groovy core actually repackages dependencies
-            it.attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling, Bundling.EXTERNAL))
-            it.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, targetJvmVersion)
-        }
-        cnf.outgoing {
-            it.artifact tasks.named(artifactTask)
-            capabilities.each { capability ->
-                it.capability(capability)
-            }
-        }
     }
 }

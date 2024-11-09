@@ -165,9 +165,9 @@ class ReflectionCompleter {
         boolean showAllMethods = (identifierPrefix.length() >= Integer.valueOf(Preferences.get(Groovysh.METACLASS_COMPLETION_PREFIX_LENGTH_PREFERENCE_KEY, '3')))
         // Also add metaclass methods if prefix is long enough (user would usually not care about those)
         myCandidates.addAll(getMetaclassMethods(
-                instanceOrClass,
-                identifierPrefix,
-                showAllMethods).collect({ String it -> new ReflectionCompletionCandidate(it) }))
+            instanceOrClass,
+            identifierPrefix,
+            showAllMethods).collect({ String it -> new ReflectionCompletionCandidate(it) }))
 
         if (!showAllMethods) {
             // user probably does not care to see default Object / GroovyObject Methods,
@@ -177,7 +177,7 @@ class ReflectionCompleter {
 
         // specific DefaultGroovyMethods only suggested for suitable instances
         myCandidates.addAll(getDefaultMethods(instanceOrClass,
-                identifierPrefix).collect({ String it -> new ReflectionCompletionCandidate(it, AnsiRenderer.Code.BLUE.name()) }))
+            identifierPrefix).collect({ String it -> new ReflectionCompletionCandidate(it, AnsiRenderer.Code.BLUE.name()) }))
 
         if (myCandidates.size() > 0) {
             myCandidates = myCandidates.sort()
@@ -186,16 +186,16 @@ class ReflectionCompleter {
                 myCandidates = myCandidates.collect { cand ->
                     def val = cand.value
                     val = val.endsWith('()') ? val[0..-3] :
-                            (val.endsWith('(') ? val[0..-2] : val)
+                        (val.endsWith('(') ? val[0..-2] : val)
                     new ReflectionCompletionCandidate(val, *cand.jAnsiCodes)
                 }
             }
             if (Boolean.valueOf(Preferences.get(Groovysh.COLORS_PREFERENCE_KEY, 'true'))) {
                 candidates.addAll(myCandidates.collect(
-                        { ReflectionCompletionCandidate it ->
-                            AnsiRenderer.render(it.value,
-                                    it.jAnsiCodes.toArray(new String[it.jAnsiCodes.size()]))
-                        }))
+                    { ReflectionCompletionCandidate it ->
+                        AnsiRenderer.render(it.value,
+                            it.jAnsiCodes.toArray(new String[it.jAnsiCodes.size()]))
+                    }))
             } else {
                 candidates.addAll(myCandidates*.value)
             }
@@ -222,8 +222,8 @@ class ReflectionCompleter {
      */
     Object getInvokerClassOrInstance(final List<Token> groovySourceTokens) {
         if (!groovySourceTokens
-                || groovySourceTokens.last().type == DOT
-                || groovySourceTokens.last().type == SAFE_DOT) {
+            || groovySourceTokens.last().type == DOT
+            || groovySourceTokens.last().type == SAFE_DOT) {
             // we expect the list of tokens before a dot.
             return null
         }
@@ -237,8 +237,8 @@ class ReflectionCompleter {
                 return instance
             } catch (MissingPropertyException |
             MissingMethodException |
-            MissingFieldException |
-            MultipleCompilationErrorsException e) {
+                MissingFieldException |
+                MultipleCompilationErrorsException e ) {
 
             }
         }
@@ -295,8 +295,8 @@ class ReflectionCompleter {
                 case RPAREN:
                     expectedOpeners.push(LPAREN)
                     break
-            // tokens which indicate we have reached the beginning of a statement
-            // operator tokens (must not be evaluated, as they can have side effects via evil overriding
+                    // tokens which indicate we have reached the beginning of a statement
+                    // operator tokens (must not be evaluated, as they can have side effects via evil overriding
                 case SPACESHIP:
                 case EQUAL:
                 case NOTEQUAL:
@@ -329,13 +329,13 @@ class ReflectionCompleter {
                         break outerloop
                     }
                     break
-            // tokens which indicate we have reached the beginning of a statement
+                    // tokens which indicate we have reached the beginning of a statement
                 case LBRACE:
                 case SEMI:
 //                case STRING_CTOR_START:
                 case GStringBegin:
                     break outerloop
-            // tokens we accept
+                    // tokens we accept
                 case Identifier:
                 case CapitalizedIdentifier:
                     if (lastToken) {
@@ -349,7 +349,7 @@ class ReflectionCompleter {
                         }
                     }
                     break
-            // may begin expression when outside brackets (from back)
+                    // may begin expression when outside brackets (from back)
                 case RANGE_INCLUSIVE:
                 case RANGE_EXCLUSIVE_LEFT:
                 case RANGE_EXCLUSIVE_RIGHT:
@@ -359,7 +359,7 @@ class ReflectionCompleter {
                     if (expectedOpeners.empty()) {
                         break outerloop
                     }
-            // harmless literals
+                    // harmless literals
                 case BooleanLiteral:
 //                case LITERAL_true:
 //                case LITERAL_false:
@@ -397,7 +397,7 @@ class ReflectionCompleter {
 
     static boolean acceptName(final String name, final String prefix) {
         return (!prefix || name.startsWith(prefix)) &&
-                (!(name.contains('$')) && !(name.startsWith('_')))
+            (!(name.contains('$')) && !(name.startsWith('_')))
     }
 
     static Collection<String> getMetaclassMethods(final Object instance, final String prefix, final boolean includeMetaClassImplMethods) {
@@ -468,10 +468,10 @@ class ReflectionCompleter {
      */
     static removeStandardMethods(final Collection<ReflectionCompletionCandidate> candidates) {
         for (String defaultMethod : [
-                'clone()', 'finalize()', 'getClass()',
-                'getMetaClass()', 'getProperty(', 'invokeMethod(', 'setMetaClass(', 'setProperty(',
-                'equals(', 'hashCode()', 'toString()',
-                'notify()', 'notifyAll()', 'wait(', 'wait()']) {
+            'clone()', 'finalize()', 'getClass()',
+            'getMetaClass()', 'getProperty(', 'invokeMethod(', 'setMetaClass(', 'setProperty(',
+            'equals(', 'hashCode()', 'toString()',
+            'notify()', 'notifyAll()', 'wait(', 'wait()']) {
             for (ReflectionCompletionCandidate candidate : candidates) {
                 if (defaultMethod.equals(candidate.value)) {
                     candidates.remove(candidate)
@@ -491,155 +491,155 @@ class ReflectionCompleter {
         List<String> candidates = []
         if (instance instanceof Iterable) {
             [
-                    'any()', 'any(',
-                    'collect()', 'collect(',
-                    'combinations()',
-                    'count(',
-                    'countBy(',
-                    'drop(', 'dropRight(', 'dropWhile(',
-                    'each()', 'each(',
-                    'eachPermutation(',
-                    'every()', 'every(',
-                    'find(', 'findResult(', 'findResults(',
-                    'flatten()',
-                    'init()',
-                    'inject(',
-                    'intersect(',
-                    'join(',
-                    'max()', 'min()',
-                    'reverse()',
-                    'size()',
-                    'sort()',
-                    'split(',
-                    'take(', 'takeRight(', 'takeWhile(',
-                    'toSet()',
-                    'retainAll(', 'removeAll(',
-                    'unique()', 'unique('
+                'any()', 'any(',
+                'collect()', 'collect(',
+                'combinations()',
+                'count(',
+                'countBy(',
+                'drop(', 'dropRight(', 'dropWhile(',
+                'each()', 'each(',
+                'eachPermutation(',
+                'every()', 'every(',
+                'find(', 'findResult(', 'findResults(',
+                'flatten()',
+                'init()',
+                'inject(',
+                'intersect(',
+                'join(',
+                'max()', 'min()',
+                'reverse()',
+                'size()',
+                'sort()',
+                'split(',
+                'take(', 'takeRight(', 'takeWhile(',
+                'toSet()',
+                'retainAll(', 'removeAll(',
+                'unique()', 'unique('
             ].findAll({ it.startsWith(prefix) }).each({ candidates.add(it) })
             if (instance instanceof Collection) {
                 [
-                        'grep('
+                    'grep('
                 ].findAll({ it.startsWith(prefix) }).each({ candidates.add(it) })
             }
             if (instance instanceof List) {
                 [
-                        'collate(',
-                        'execute()', 'execute(',
-                        'pop()',
-                        'transpose()'
+                    'collate(',
+                    'execute()', 'execute(',
+                    'pop()',
+                    'transpose()'
                 ].findAll({ it.startsWith(prefix) }).each({ candidates.add(it) })
             }
         }
         if (instance instanceof Map) {
             [
-                    'any(',
-                    'collect(',
-                    'collectEntries(',
-                    'collectMany(',
-                    'count(',
-                    'drop(',
-                    'each(',
-                    'every(',
-                    'find(', 'findAll(', 'findResult(', 'findResults(',
-                    'groupEntriesBy(', 'groupBy(',
-                    'inject(', 'intersect(',
-                    'max(', 'min(',
-                    'sort(',
-                    'spread()',
-                    'subMap(',
-                    'take(', 'takeWhile('
+                'any(',
+                'collect(',
+                'collectEntries(',
+                'collectMany(',
+                'count(',
+                'drop(',
+                'each(',
+                'every(',
+                'find(', 'findAll(', 'findResult(', 'findResults(',
+                'groupEntriesBy(', 'groupBy(',
+                'inject(', 'intersect(',
+                'max(', 'min(',
+                'sort(',
+                'spread()',
+                'subMap(',
+                'take(', 'takeWhile('
             ].findAll({ it.startsWith(prefix) }).each({ candidates.add(it) })
         }
         if (instance instanceof File) {
             [
-                    'append(',
-                    'createTempDir()', 'createTempDir(',
-                    'deleteDir()', 'directorySize()',
-                    'eachByte(', 'eachDir(', 'eachDirMatch(', 'eachDirRecurse(', 'eachFile(', 'eachFileMatch(', 'eachFileRecurse(', 'eachLine(',
-                    'filterLine(',
-                    'getBytes()', 'getText()', 'getText(',
-                    'newInputStream()', 'newOutputStream()', 'newPrintWriter()', 'newPrintWriter(', 'newReader()', 'newReader(', 'newWriter()', 'newWriter(',
-                    'readBytes()', 'readLines(',
-                    'setBytes(', 'setText(', 'size()', 'splitEachLine(',
-                    'traverse(',
-                    'withInputStream(', 'withOutputStream(', 'withPrintWriter(', 'withReader(', 'withWriter(', 'withWriterAppend(', 'write('
+                'append(',
+                'createTempDir()', 'createTempDir(',
+                'deleteDir()', 'directorySize()',
+                'eachByte(', 'eachDir(', 'eachDirMatch(', 'eachDirRecurse(', 'eachFile(', 'eachFileMatch(', 'eachFileRecurse(', 'eachLine(',
+                'filterLine(',
+                'getBytes()', 'getText()', 'getText(',
+                'newInputStream()', 'newOutputStream()', 'newPrintWriter()', 'newPrintWriter(', 'newReader()', 'newReader(', 'newWriter()', 'newWriter(',
+                'readBytes()', 'readLines(',
+                'setBytes(', 'setText(', 'size()', 'splitEachLine(',
+                'traverse(',
+                'withInputStream(', 'withOutputStream(', 'withPrintWriter(', 'withReader(', 'withWriter(', 'withWriterAppend(', 'write('
             ].findAll({ it.startsWith(prefix) }).each({ candidates.add(it) })
         }
         if (instance instanceof String) {
             [
-                    'capitalize()', 'center(', 'collectReplacements(', 'count(',
-                    'decodeBase64()', 'decodeHex()', 'denormalize()',
-                    'eachLine(', 'eachMatch(', 'execute()', 'execute(',
-                    'find(', 'findAll(',
-                    'isAllWhitespace()', 'isBigDecimal()', 'isBigInteger()', 'isDouble()', 'isFloat()', 'isInteger()', 'isLong()', 'isNumber()',
-                    'normalize()',
-                    'padLeft(', 'padRight(',
-                    'readLines()', 'reverse()',
-                    'size()', 'splitEachLine(', 'stripIndent(', 'stripMargin(',
-                    'toBigDecimal()', 'toBigInteger()', 'toBoolean()', 'toCharacter()', 'toDouble()', 'toFloat()', 'toInteger()',
-                    'toList()', 'toLong()', 'toSet()', 'toShort()', 'toURI()', 'toURL()',
-                    'tokenize(', 'tr('
+                'capitalize()', 'center(', 'collectReplacements(', 'count(',
+                'decodeBase64()', 'decodeHex()', 'denormalize()',
+                'eachLine(', 'eachMatch(', 'execute()', 'execute(',
+                'find(', 'findAll(',
+                'isAllWhitespace()', 'isBigDecimal()', 'isBigInteger()', 'isDouble()', 'isFloat()', 'isInteger()', 'isLong()', 'isNumber()',
+                'normalize()',
+                'padLeft(', 'padRight(',
+                'readLines()', 'reverse()',
+                'size()', 'splitEachLine(', 'stripIndent(', 'stripMargin(',
+                'toBigDecimal()', 'toBigInteger()', 'toBoolean()', 'toCharacter()', 'toDouble()', 'toFloat()', 'toInteger()',
+                'toList()', 'toLong()', 'toSet()', 'toShort()', 'toURI()', 'toURL()',
+                'tokenize(', 'tr('
             ].findAll({ it.startsWith(prefix) }).each({ candidates.add(it) })
         }
         if (instance instanceof URL) {
             [
-                    'eachLine(',
-                    'filterLine(',
-                    'getBytes()', 'getBytes(', 'getText()', 'getText(',
-                    'newInputStream()', 'newInputStream(', 'newReader()', 'newReader(',
-                    'readLines()', 'readLines(',
-                    'splitEachLine(',
-                    'withInputStream(', 'withReader('
+                'eachLine(',
+                'filterLine(',
+                'getBytes()', 'getBytes(', 'getText()', 'getText(',
+                'newInputStream()', 'newInputStream(', 'newReader()', 'newReader(',
+                'readLines()', 'readLines(',
+                'splitEachLine(',
+                'withInputStream(', 'withReader('
             ].findAll({ it.startsWith(prefix) }).each({ candidates.add(it) })
         }
         if (instance instanceof InputStream) {
             [
-                    'eachLine(',
-                    'filterLine(',
-                    'getBytes()', 'getText()', 'getText(',
-                    'newReader()', 'newReader(',
-                    'readLines()', 'readLines(',
-                    'splitEachLine(',
-                    'withReader(', 'withStream('
+                'eachLine(',
+                'filterLine(',
+                'getBytes()', 'getText()', 'getText(',
+                'newReader()', 'newReader(',
+                'readLines()', 'readLines(',
+                'splitEachLine(',
+                'withReader(', 'withStream('
             ].findAll({ it.startsWith(prefix) }).each({ candidates.add(it) })
         }
         if (instance instanceof OutputStream) {
             [
-                    'newPrintWriter()', 'newWriter()', 'newWriter(',
-                    'setBytes(',
-                    'withPrintWriter(', 'withStream(', 'withWriter('
+                'newPrintWriter()', 'newWriter()', 'newWriter(',
+                'setBytes(',
+                'withPrintWriter(', 'withStream(', 'withWriter('
             ].findAll({ it.startsWith(prefix) }).each({ candidates.add(it) })
         }
         if (instance instanceof Number) {
             [
-                    'abs()',
-                    'downto(',
-                    'times(',
-                    'power(',
-                    'upto('
+                'abs()',
+                'downto(',
+                'times(',
+                'power(',
+                'upto('
             ].findAll({ it.startsWith(prefix) }).each({ candidates.add(it) })
         }
         Class clazz = instance.getClass()
         if (clazz != null && clazz != Class && clazz.isArray()) {
             [
-                    'any()', 'any(',
-                    'collect()', 'collect(',
-                    'count(',
-                    'countBy(',
-                    'drop(', 'dropRight(', 'dropWhile(',
-                    'each()', 'each(',
-                    'every()', 'every(',
-                    'find(', 'findResult(',
-                    'flatten()',
-                    'init()',
-                    'inject(',
-                    'join(',
-                    'max()', 'min()',
-                    'reverse()',
-                    'size()',
-                    'sort()',
-                    'split(',
-                    'take(', 'takeRight(', 'takeWhile('
+                'any()', 'any(',
+                'collect()', 'collect(',
+                'count(',
+                'countBy(',
+                'drop(', 'dropRight(', 'dropWhile(',
+                'each()', 'each(',
+                'every()', 'every(',
+                'find(', 'findResult(',
+                'flatten()',
+                'init()',
+                'inject(',
+                'join(',
+                'max()', 'min()',
+                'reverse()',
+                'size()',
+                'sort()',
+                'split(',
+                'take(', 'takeRight(', 'takeWhile('
             ].findAll({ it.startsWith(prefix) }).each({ candidates.add(it) })
         }
         return candidates
@@ -658,7 +658,7 @@ class ReflectionCompleter {
                 int modifiers = fit.getModifiers()
                 if (Modifier.isPublic(modifiers) && (Modifier.isStatic(modifiers) ? includeStatic : includeNonStatic)) {
                     if (!clazz.isEnum()
-                            || !(!includeStatic && Modifier.isPublic(modifiers) && Modifier.isFinal(modifiers) && Modifier.isStatic(modifiers) && fit.type == clazz)) {
+                        || !(!includeStatic && Modifier.isPublic(modifiers) && Modifier.isFinal(modifiers) && Modifier.isStatic(modifiers) && fit.type == clazz)) {
                         ReflectionCompletionCandidate candidate = new ReflectionCompletionCandidate(fit.name)
                         if (!Modifier.isStatic(modifiers)) {
                             if (renderBold) {

@@ -56,9 +56,9 @@ class GroovyCategoryTest extends GroovyTestCase {
 }
 
 class Category1 {
-    static String upper(String message) {return message.toUpperCase()}
+    static String upper(String message) { return message.toUpperCase() }
 }
 
 class Category2 {
-    static String lower(String message) {return message.toLowerCase()}
+    static String lower(String message) { return message.toLowerCase() }
 }

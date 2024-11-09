@@ -22,7 +22,6 @@ import groovy.namespace.QName;
 
 /**
  * A simple helper class which acts as a factory of {@link QName} instances.
- * 
  */
 public class Namespace {
 
@@ -43,29 +42,26 @@ public class Namespace {
 
     /**
      * Returns the QName for the given localName.
-     * 
-     * @param localName
-     *            the local name within this
+     *
+     * @param localName the local name within this
      */
     public QName get(String localName) {
         if (uri != null && uri.length() > 0) {
             if (prefix != null) {
                 return new QName(uri, localName, prefix);
-            }
-            else {
+            } else {
                 return new QName(uri, localName);
             }
-        }
-        else {
+        } else {
             return new QName(localName);
         }
     }
 
     /**
      * Returns the prefix mapped to this namespace
-     * 
+     *
      * @return the prefix assigned to this namespace or null if no namespace is
-     *         mapped.
+     * mapped.
      */
     public String getPrefix() {
         return prefix;
@@ -73,7 +69,7 @@ public class Namespace {
 
     /**
      * Returns the URI of this namespace
-     * 
+     *
      * @return the URI of this namespace
      */
     public String getUri() {

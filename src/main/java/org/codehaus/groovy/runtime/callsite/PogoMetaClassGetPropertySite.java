@@ -33,18 +33,18 @@ public class PogoMetaClassGetPropertySite extends AbstractCallSite {
 
     @Override
     public final CallSite acceptGetProperty(Object receiver) {
-        if (!(receiver instanceof GroovyObject) || ((GroovyObject)receiver).getMetaClass() != metaClass)
+        if (!(receiver instanceof GroovyObject) || ((GroovyObject) receiver).getMetaClass() != metaClass)
             return createGetPropertySite(receiver);
         else
-          return this;
+            return this;
     }
 
     @Override
     public final CallSite acceptGroovyObjectGetProperty(Object receiver) {
-        if (!(receiver instanceof GroovyObject) || ((GroovyObject)receiver).getMetaClass() != metaClass)
+        if (!(receiver instanceof GroovyObject) || ((GroovyObject) receiver).getMetaClass() != metaClass)
             return createGroovyObjectGetPropertySite(receiver);
         else
-          return this;
+            return this;
     }
 
     @Override

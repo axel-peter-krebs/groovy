@@ -37,10 +37,10 @@ public class BaseMarkupBuilder extends Builder {
     }
 
     private static class Document extends Built implements GroovyInterceptable {
-        private Object out;
         private final Map pendingNamespaces = new HashMap();
         private final Map namespaces = new HashMap();
         private final Map specialProperties = new HashMap();
+        private Object out;
         private String prefix = "";
 
         {
@@ -80,35 +80,13 @@ public class BaseMarkupBuilder extends Builder {
             });
         }
 
-        private abstract class OutputSink extends GroovyObjectSupport {
-            private final String name;
-
-            OutputSink(final String name) {
-                this.name = name;
-            }
-
-            @Override
-            public Object invokeMethod(final String name, final Object args) {
-                Document.this.prefix = this.name;
-                return Document.this.invokeMethod(name, args);
-            }
-
-            public abstract Object leftShift(Object item);
-
-            protected Object leftShift(final String command, final Object value) {
-                Document.this.getProperty("mkp");
-                Document.this.invokeMethod(command, new Object[]{value});
-                return this;
-            }
-        }
-
         Document(final Closure root, final Map namespaceMethodMap) {
             super(root, namespaceMethodMap);
         }
 
         /* (non-Javadoc)
-           * @see groovy.lang.GroovyObject#invokeMethod(java.lang.String, java.lang.Object)
-           */
+         * @see groovy.lang.GroovyObject#invokeMethod(java.lang.String, java.lang.Object)
+         */
         @Override
         public Object invokeMethod(final String name, final Object args) {
             final Object[] arguments = (Object[]) args;
@@ -185,6 +163,28 @@ public class BaseMarkupBuilder extends Builder {
                 this.root.call(this);
             } else {
                 super.setProperty(property, newValue);
+            }
+        }
+
+        private abstract class OutputSink extends GroovyObjectSupport {
+            private final String name;
+
+            OutputSink(final String name) {
+                this.name = name;
+            }
+
+            @Override
+            public Object invokeMethod(final String name, final Object args) {
+                Document.this.prefix = this.name;
+                return Document.this.invokeMethod(name, args);
+            }
+
+            public abstract Object leftShift(Object item);
+
+            protected Object leftShift(final String command, final Object value) {
+                Document.this.getProperty("mkp");
+                Document.this.invokeMethod(command, new Object[]{value});
+                return this;
             }
         }
     }

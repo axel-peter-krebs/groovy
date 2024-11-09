@@ -58,10 +58,9 @@ assert 1 + 2 == 4 - 2
                 2 ==
 
 
+                4 -
 
-4 -
-
-                          2
+                2
 
         }
     }
@@ -113,7 +112,7 @@ assert Math.max(a,b) == null
         ''', { ->
             def a = 1
             def b = 2
-            assert Math.max(a,b) == null
+            assert Math.max(a, b) == null
         }
     }
 
@@ -150,7 +149,7 @@ assert min(a,b) == null
         ''', { ->
             def a = 1
             def b = 2
-            assert min(a,b) == null
+            assert min(a, b) == null
         }
     }
 
@@ -297,9 +296,9 @@ assert ((a,b) = [1,2]) && false
               |        |
               [1, 2]   false
         ''', { ->
-          def a
-          def b
-          assert ((a,b) = [1,2]) && false
+            def a
+            def b
+            assert ((a, b) = [1, 2]) && false
         }
     }
 
@@ -312,7 +311,7 @@ assert [a:b, c:d] == null
         ''', { ->
             def b = 2
             def d = 4
-            assert [a:b, c:d] == null
+            assert [a: b, c: d] == null
         }
 
         isRendered '''
@@ -324,7 +323,7 @@ assert [(a):b, (c):d] == null
             def b = 2
             def c = 3
             def d = 4
-            assert [(a):b, (c):d] == null
+            assert [(a): b, (c): d] == null
         }
     }
 
@@ -338,7 +337,7 @@ assert [a,b,c] == null
             def a = 1
             def b = 2
             def c = 3
-            assert [a,b,c] == null
+            assert [a, b, c] == null
         }
     }
 
@@ -444,6 +443,7 @@ assert this.@field == 0
         ''', { ->
             new Runnable() {
                 private int field = 1
+
                 @Override
                 public void run() {
                     assert this.@field == 0
@@ -458,6 +458,7 @@ assert 0 == this.@field
         ''', { ->
             new Runnable() {
                 private int field = 1
+
                 @Override
                 public void run() {
                     assert 0 == this.@field
@@ -570,8 +571,8 @@ assert one(*:m)
        |     |
        0     ['a':1, 'b':2]
         ''', { ->
-            def m = [a:1, b:2]
-            assert one(*:m)
+            def m = [a: 1, b: 2]
+            assert one(*: m)
         }
 
         isRendered '''
@@ -580,8 +581,8 @@ assert [a:1, *:m] == null
                |  false
                ['b':2, 'c':3]
         ''', { ->
-            def m = [b:2, c:3]
-            assert [a:1, *:m] == null
+            def m = [b: 2, c: 3]
+            assert [a: 1, *: m] == null
         }
     }
 
@@ -645,7 +646,7 @@ assert (List)a
              null
         ''', { ->
             def a = null
-            assert (List)a
+            assert (List) a
         }
 
         isRendered '''
@@ -668,7 +669,7 @@ assert three(a, b,c)
             def a = 1
             def b = 2
             def c = 3
-            assert three(a, b,c)
+            assert three(a, b, c)
         }
     }
 
@@ -713,8 +714,11 @@ assert func.call(42) == null
     */
 }
 
-@groovy.transform.PackageScope class Holder {
+@groovy.transform.PackageScope
+class Holder {
     public x = 0
+
     def getX() { 9 }
+
     String toString() { 'h' }
 }

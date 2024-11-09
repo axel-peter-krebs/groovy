@@ -58,6 +58,18 @@ public class JavacJavaCompiler implements JavaCompiler {
         this.charset = Charset.forName(config.getSourceEncoding());
     }
 
+    private static void addJavacError(String header, CompilationUnit cu, StringBuilderWriter msg) {
+        if (msg != null) {
+            header = header + "\n" + msg.getBuilder().toString();
+        } else {
+            header = header +
+                "\nThis javac version does not support compile(String[],PrintWriter), " +
+                "so no further details of the error are available. The message error text " +
+                "should be found on System.err.\n";
+        }
+        cu.getErrorCollector().addFatalError(new SimpleMessage(header, cu));
+    }
+
     @Override
     public void compile(List<String> files, CompilationUnit cu) {
         List<String> javacParameters = makeParameters(cu.getClassLoader());
@@ -82,9 +94,15 @@ public class JavacJavaCompiler implements JavaCompiler {
 
         if (javacReturnValue != 0) {
             switch (javacReturnValue) {
-                case 1: addJavacError("Compile error during compilation with javac.", cu, javacOutput); break;
-                case 2: addJavacError("Invalid commandline usage for javac.", cu, javacOutput); break;
-                default: addJavacError("unexpected return value by javac.", cu, javacOutput); break;
+                case 1:
+                    addJavacError("Compile error during compilation with javac.", cu, javacOutput);
+                    break;
+                case 2:
+                    addJavacError("Invalid commandline usage for javac.", cu, javacOutput);
+                    break;
+                default:
+                    addJavacError("unexpected return value by javac.", cu, javacOutput);
+                    break;
             }
         } else {
             // print warnings if any
@@ -113,33 +131,21 @@ public class JavacJavaCompiler implements JavaCompiler {
 
             // add java source files to compile
             fileManager.getJavaFileObjectsFromFiles(
-                    files.stream().map(File::new).collect(Collectors.toList())
+                files.stream().map(File::new).collect(Collectors.toList())
             ).forEach(compilationUnitSet::add);
 
             javax.tools.JavaCompiler.CompilationTask compilationTask = compiler.getTask(
-                    javacOutput,
-                    fileManager,
-                    null,
-                    javacParameters,
-                    Collections.emptyList(),
-                    compilationUnitSet
+                javacOutput,
+                fileManager,
+                null,
+                javacParameters,
+                Collections.emptyList(),
+                compilationUnitSet
             );
             compilationTask.setLocale(DEFAULT_LOCALE);
 
             return compilationTask.call();
         }
-    }
-
-    private static void addJavacError(String header, CompilationUnit cu, StringBuilderWriter msg) {
-        if (msg != null) {
-            header = header + "\n" + msg.getBuilder().toString();
-        } else {
-            header = header +
-                    "\nThis javac version does not support compile(String[],PrintWriter), " +
-                    "so no further details of the error are available. The message error text " +
-                    "should be found on System.err.\n";
-        }
-        cu.getErrorCollector().addFatalError(new SimpleMessage(header, cu));
     }
 
     private List<String> makeParameters(GroovyClassLoader parentClassLoader) {
@@ -205,6 +211,6 @@ public class JavacJavaCompiler implements JavaCompiler {
     @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
     private CodeSource getCodeSource() {
         return java.security.AccessController.doPrivileged(
-                (PrivilegedAction<CodeSource>) () -> GroovyObject.class.getProtectionDomain().getCodeSource());
+            (PrivilegedAction<CodeSource>) () -> GroovyObject.class.getProtectionDomain().getCodeSource());
     }
 }

@@ -27,7 +27,7 @@ import java.io.Writer;
  * Represents multiple other exceptions
  */
 public class MultipleCompilationErrorsException extends
-        CompilationFailedException {
+    CompilationFailedException {
 
     private static final long serialVersionUID = 8583586586290252555L;
     protected ErrorCollector collector;
@@ -58,8 +58,7 @@ public class MultipleCompilationErrorsException extends
         writer.println(":");
         try {
             collector.write(writer, janitor);
-        }
-        finally {
+        } finally {
             janitor.cleanup();
         }
 

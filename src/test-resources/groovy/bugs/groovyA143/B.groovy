@@ -20,14 +20,17 @@ package groovy.bugs.groovyA143
 
 @groovy.transform.SelfType(A)
 trait B {
-	abstract boolean booleanMethod1()
-	abstract boolean booleanMethod2()
-	abstract boolean booleanMethod3()
-	Object getManager() {
-		if (this.managerObject == null) {
-			this.managerObject = new C(this as B)
-		}
-		this.managerObject
-	}
-	C managerObject
+    abstract boolean booleanMethod1()
+
+    abstract boolean booleanMethod2()
+
+    abstract boolean booleanMethod3()
+
+    Object getManager() {
+        if (this.managerObject == null) {
+            this.managerObject = new C(this as B)
+        }
+        this.managerObject
+    }
+    C managerObject
 }

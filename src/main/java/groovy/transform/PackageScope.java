@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  * and makes package protected methods, constructors and classes public.
  * This annotation allows this feature to be turned
  * off and revert back to Java behavior if needed.
- *
+ * <p>
  * Place it on classes, fields, constructors or methods of interest as follows:
  * <pre>
  * {@code @}PackageScope class Bar {      // package protected
@@ -56,7 +56,7 @@ import java.lang.annotation.Target;
  *     def method2(){} // package protected
  * }
  * </pre>
- *
+ * <p>
  * This transformation is not frequently needed but can be useful in certain testing scenarios
  * or when using a third-party library or framework which relies upon package scoping.
  *

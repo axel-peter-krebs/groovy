@@ -60,7 +60,7 @@ public class ManagedIdentityConcurrentMap<K, V> extends ConcurrentReferenceHashM
     /**
      * Creates a new, empty map with the specified key reference type and initial capacity
      *
-     * @param keyType key reference type
+     * @param keyType         key reference type
      * @param initialCapacity the initial capacity
      */
     public ManagedIdentityConcurrentMap(ReferenceType keyType, int initialCapacity) {
@@ -70,7 +70,7 @@ public class ManagedIdentityConcurrentMap<K, V> extends ConcurrentReferenceHashM
     /**
      * Get the key specified value, or put the default value and return it if the key is absent
      *
-     * @param key the key to look up
+     * @param key   the key to look up
      * @param value the default value if the key is absent
      * @return the value
      */

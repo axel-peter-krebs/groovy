@@ -31,13 +31,13 @@ final class Groovy10928 extends StringSourcesStubTestCase {
                     }
                 }
             ''',
-            'G.groovy': '''
+            'G.groovy'          : '''
                 interface G {
                     TypeReference<Map<String,Object>> TYPE_REF =
                         new TypeReference<Map<String,Object>>() {}
                 }
             ''',
-            'J.java': '''
+            'J.java'            : '''
                 public class J {
                     Object m() {
                         return G.TYPE_REF;

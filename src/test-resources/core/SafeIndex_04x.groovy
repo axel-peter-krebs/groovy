@@ -30,6 +30,7 @@ def csSpecialSafeIndex() {
     assert 'Daniel.Sun' == ssi.name
     assert 'Shanghai' == ssi.location
 }
+
 csSpecialSafeIndex()
 
 def specialSafeIndex() {
@@ -37,4 +38,5 @@ def specialSafeIndex() {
     assert 'Daniel.Sun' == ssi.name
     assert 'Shanghai' == ssi.location
 }
+
 specialSafeIndex()

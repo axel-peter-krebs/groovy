@@ -24,4 +24,4 @@ import groovy.transform.Field
 @Option
 @Field
 @AnnotationCollector
-@interface OptionField { }
+@interface OptionField {}

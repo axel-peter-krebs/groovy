@@ -22,7 +22,7 @@ import groovy.test.GroovyTestCase
 
 class Groovy3645Bug extends GroovyTestCase {
     void testMethodCallOnSuperInAStaticMethod() {
-        try{
+        try {
             assertScript """
                 class Foo3645 {
                     static main(args) {
@@ -30,7 +30,7 @@ class Groovy3645Bug extends GroovyTestCase {
                     }
                 }
             """
-        } catch(MissingMethodException ex) {
+        } catch (MissingMethodException ex) {
             assertTrue ex.message.contains("No signature of method: static java.lang.Object.bar()")
         }
     }

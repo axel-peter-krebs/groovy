@@ -23,7 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class StringSetMap extends LinkedHashMap<String,Set<String>> {
+public class StringSetMap extends LinkedHashMap<String, Set<String>> {
 
     private static final long serialVersionUID = -8603734698633884431L;
 
@@ -38,12 +38,12 @@ public class StringSetMap extends LinkedHashMap<String,Set<String>> {
     }
 
     @Override
-    public Set<String> get(Object o){
+    public Set<String> get(Object o) {
         String name = (String) o;
         Set<String> set = super.get(name);
-        if (set==null) {
+        if (set == null) {
             set = new LinkedHashSet<String>();
-            put(name,set);
+            put(name, set);
         }
         return set;
     }
@@ -51,17 +51,17 @@ public class StringSetMap extends LinkedHashMap<String,Set<String>> {
     public void makeTransitiveHull() {
         Set<String> nameSet = new TreeSet<String>(keySet());
 
-        for (String k: nameSet) {
+        for (String k : nameSet) {
             StringSetMap delta = new StringSetMap();
-            for (String i: nameSet) {
-                for (String j: nameSet) {
+            for (String i : nameSet) {
+                for (String j : nameSet) {
                     Set<String> iSet = get(i);
                     if (iSet.contains(k) && get(k).contains(j)) {
                         delta.get(i).add(j);
                     }
                 }
             }
-            for (String i: nameSet) get(i).addAll(delta.get(i));
+            for (String i : nameSet) get(i).addAll(delta.get(i));
         }
     }
 }

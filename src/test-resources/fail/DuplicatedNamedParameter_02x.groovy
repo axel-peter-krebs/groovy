@@ -18,4 +18,5 @@
  */
 
 def m(x) { println x }
+
 m debit: 30, credit: 40, debit: 50, {}

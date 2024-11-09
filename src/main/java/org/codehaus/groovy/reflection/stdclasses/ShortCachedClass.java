@@ -48,9 +48,9 @@ public class ShortCachedClass extends NumberCachedClass {
     @Override
     public boolean isAssignableFrom(Class classToTransformFrom) {
         return (allowNull && classToTransformFrom == null)
-                || classToTransformFrom == Short.class
-                || classToTransformFrom == Byte.class
-                || classToTransformFrom == Short.TYPE
-                || classToTransformFrom == Byte.TYPE;
+            || classToTransformFrom == Short.class
+            || classToTransformFrom == Byte.class
+            || classToTransformFrom == Short.TYPE
+            || classToTransformFrom == Byte.TYPE;
     }
 }

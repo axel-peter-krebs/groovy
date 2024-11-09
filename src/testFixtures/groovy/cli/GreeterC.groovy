@@ -23,14 +23,16 @@ import groovy.cli.Unparsed
 
 // tag::annotationClassSpec[]
 class GreeterC {
-    @Option(shortName='h', description='display usage')
+    @Option(shortName = 'h', description = 'display usage')
     Boolean help                        // <1>
 
     private String audience
-    @Option(shortName='a', description='greeting audience')
+
+    @Option(shortName = 'a', description = 'greeting audience')
     void setAudience(String audience) { // <2>
         this.audience = audience
     }
+
     String getAudience() { audience }
 
     @Unparsed(description = "positional parameters")

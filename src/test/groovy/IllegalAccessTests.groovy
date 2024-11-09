@@ -43,15 +43,22 @@ final class IllegalAccessTests {
         public b
         private c
         protected d
-        @PackageScope e
+        @PackageScope
+            e
+
         public getF() {}
+
         private getG() {}
+
         protected getH() {}
-        @PackageScope getI() {}
+
+        @PackageScope
+        getI() {}
     }
 
     static class ProtectedConstructor {
         protected ProtectedConstructor() {}
+
         void run() {}
     }
 
@@ -173,7 +180,7 @@ final class IllegalAccessTests {
     @Test
     void testAsType2() {
         assertScript """
-            [run: {}] as ${ProtectedConstructor.name.replace('$','.')}
+            [run: {}] as ${ProtectedConstructor.name.replace('$', '.')}
         """
     }
 
@@ -190,14 +197,14 @@ final class IllegalAccessTests {
     void testGetProperties() {
         def kv = "".properties
         assert 'value' !in kv.keySet()
-        assert kv.keySet().containsAll(['blank','bytes','class','empty'])
+        assert kv.keySet().containsAll(['blank', 'bytes', 'class', 'empty'])
     }
 
     // GROOVY-10438, GROOVY-10555
     @Test
     void testGetProperties2() {
         assertScript """
-            Object obj = new ${MultipleProperties.name.replace('$','.')}()
+            Object obj = new ${MultipleProperties.name.replace('$', '.')}()
             assert obj.properties.keySet() == ['a','b','c','class','d','e','f','g','h','i'] as Set
             // TODO work out why all properties are returned and then test with:
             obj.metaClass.permissivePropertyAccess = true

@@ -23,13 +23,13 @@ final class Groovy10122 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'A.java': '''
+            'A.java'   : '''
                 public abstract class A {
                     A(Integer i) {
                     }
                 }
             ''',
-            'C.groovy': '''
+            'C.groovy' : '''
                 class C extends A {
                     C() { super(m()) }
                     static Integer m() { 42 }

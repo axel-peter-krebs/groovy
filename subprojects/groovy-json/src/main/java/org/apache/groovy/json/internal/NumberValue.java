@@ -37,11 +37,11 @@ import static org.apache.groovy.json.internal.Exceptions.sputs;
 
 public class NumberValue extends java.lang.Number implements Value {
 
+    private final Type type;
     private char[] buffer;
     private boolean chopped;
     private int startIndex;
     private int endIndex;
-    private final Type type;
     private Object value;
 
     public NumberValue(Type type) {
@@ -77,6 +77,17 @@ public class NumberValue extends java.lang.Number implements Value {
 
     }
 
+    public static <T extends Enum> T toEnum(Class<T> cls, int value) {
+        T[] enumConstants = cls.getEnumConstants();
+        for (T e : enumConstants) {
+            if (e.ordinal() == value) {
+                return e;
+            }
+        }
+        die("Can't convert ordinal value " + value + " into enum of type " + cls);
+        return null;
+    }
+
     @Override
     public String toString() {
         if (startIndex == 0 && endIndex == buffer.length) {
@@ -94,17 +105,6 @@ public class NumberValue extends java.lang.Number implements Value {
     @Override
     public <T extends Enum> T toEnum(Class<T> cls) {
         return toEnum(cls, intValue());
-    }
-
-    public static <T extends Enum> T toEnum(Class<T> cls, int value) {
-        T[] enumConstants = cls.getEnumConstants();
-        for (T e : enumConstants) {
-            if (e.ordinal() == value) {
-                return e;
-            }
-        }
-        die("Can't convert ordinal value " + value + " into enum of type " + cls);
-        return null;
     }
 
     @Override

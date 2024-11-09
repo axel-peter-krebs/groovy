@@ -49,7 +49,7 @@ class Groovy3156And2621Bug extends GroovyTestCase {
     }
 
     void failingExecute() {
-        def convention= 'value'
+        def convention = 'value'
         1.times {
             this.convention(convention)
         }

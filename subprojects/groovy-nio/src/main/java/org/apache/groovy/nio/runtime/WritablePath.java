@@ -57,8 +57,8 @@ public class WritablePath implements Path, Writable {
     public Writer writeTo(final Writer out) throws IOException {
 
         try (Reader reader = (this.encoding == null)
-                ? new InputStreamReader(Files.newInputStream(this))
-                : new InputStreamReader(Files.newInputStream(this), Charset.forName(this.encoding))) {
+            ? new InputStreamReader(Files.newInputStream(this))
+            : new InputStreamReader(Files.newInputStream(this), Charset.forName(this.encoding))) {
             int c = reader.read();
 
             while (c != -1) {

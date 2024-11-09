@@ -23,7 +23,7 @@ final class Groovy9962 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'Foo.java': '''
+            'Foo.java'         : '''
                 public class Foo {}
             ''',
             'Groovy9962.groovy': '''

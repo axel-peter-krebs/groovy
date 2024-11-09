@@ -17,4 +17,4 @@
  *  under the License.
  */
 
-class var {}
+class var { }

@@ -709,7 +709,7 @@ final class BugsStaticCompileTest extends BugsSTCTest implements StaticCompilati
                 o[0]
             }
         ''',
-        'Cannot find matching method java.lang.Object#getAt(int)'
+            'Cannot find matching method java.lang.Object#getAt(int)'
     }
 
     void testStaticCompileWithPattern() {
@@ -723,7 +723,7 @@ final class BugsStaticCompileTest extends BugsSTCTest implements StaticCompilati
             // should not pass
             def str = value[0]
         ''',
-        'Cannot find matching method java.lang.Object#getAt(int)'
+            'Cannot find matching method java.lang.Object#getAt(int)'
     }
 
     void testChainedNullSafePropertyOnMap() {

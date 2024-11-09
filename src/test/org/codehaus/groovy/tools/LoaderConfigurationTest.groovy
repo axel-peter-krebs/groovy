@@ -105,7 +105,7 @@ class LoaderConfigurationTest extends GroovyTestCase {
 
     void testSlashCorrection() {
         def prop = getNonExistingPropertyName("nope")
-        System.setProperty(prop,'/')
+        System.setProperty(prop, '/')
 
         def txt = "load \${$prop}/"
 

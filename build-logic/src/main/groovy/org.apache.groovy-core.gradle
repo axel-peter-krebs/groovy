@@ -16,28 +16,56 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+/* This applies to the root project ONLY!
+ Tasks: s. 'groovy-base';
+     - Extend the root build.gradle with CoreExtension;
+     - Define configurations and sourceSets
+     - Generate grammar source (DSL)
+     - Override Java and Groovy compiling
+     - Define a 'bootstrap' JAR
 
+*/
 
 import org.apache.groovy.gradle.CoreExtension
-import org.apache.groovy.gradle.DgmConverter
 import org.apache.groovy.gradle.JarJarTask
 
 import javax.inject.Inject
 
 plugins {
-    id 'org.apache.groovy-common'
+    // id 'org.apache.groovy-common' unnecessary, done in 'groovy-base'
     id 'org.apache.groovy-base'
-    id 'org.apache.groovy-published-library'
     id 'org.apache.groovy-documented'
+    id 'org.apache.groovy-published-library'
     id 'antlr'
+    id 'java-test-fixtures'
 }
-
-project.extensions.create('groovyCore', CoreExtension, sourceSets)
 
 configurations {
     compilerCompile
     tools
     spec
+    sourcesForAggregation {
+        canBeConsumed = true
+        canBeResolved = false
+        extendsFrom implementation, runtimeOnly
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.DOCUMENTATION))
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling, Bundling.EXTERNAL))
+            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType, DocsType.SOURCES))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, "aggregation"))
+        }
+        outgoing {
+            sourceSets.main.java.srcDirs.each {
+                artifact(it)
+            }
+            sourceSets.main.groovy.srcDirs.each {
+                artifact(it)
+            }
+            sourceSets.main.antlr.srcDirs.each {
+                artifact(it)
+            }
+        }
+    }
 }
 
 sourceSets {
@@ -104,95 +132,10 @@ sourceSets {
     }
 }
 
-def dgmConverter = tasks.register("dgmConverter", DgmConverter) {
-    classpath.from files(compileJava, configurations.compileClasspath)
-    sources.from('src/main').include('**/*GroovyMethods.java')
-}
+// provide the CoreExtension to plugin client(s) - only root project in this case
+project.extensions.create('groovyCore', CoreExtension, sourceSets)
 
-dependencies {
-    runtimeOnly files(dgmConverter)
-}
-
-tasks.named('jar') {
-    from dgmConverter
-}
-
-tasks.named('jarjar') { JarJarTask it ->
-    def groovyBundleVersion = sharedConfiguration.groovyBundleVersion.get()
-    it.withManifest {
-        version = groovyBundleVersion
-        instruction '-nouses', 'true'
-        instruction 'Export-Package', "*;version=${groovyBundleVersion}"
-        instruction 'Eclipse-ExtensibleAPI', 'true'
-    }
-}
-
-// Gradle classloading magic with Groovy will only work if it finds a *jar*
-// on classpath. This "bootstrap jar" contains the minimal compiler, without .groovy compiled files
-
-def bootstrapJar = tasks.register("bootstrapJar", Jar) {
-    from compileJava
-    from dgmConverter
-
-    destinationDirectory = layout.buildDirectory.dir("bootstrap")
-    archiveClassifier = 'bootstrap'
-}
-
-// The main Groovy compile tasks has a special setup because
-// it uses the "bootstrap compiler"
-tasks.withType(GroovyCompile).configureEach {
-    groovyClasspath = files(bootstrapJar, groovyClasspath)
-    if (it.name == 'compileGroovy') {
-        classpath = files(bootstrapJar, classpath)
-    }
-    options.incremental = true
-}
-
-allprojects {
-    tasks.withType(JarJarTask).configureEach {
-        jarjarToolClasspath.from(rootProject.configurations.tools)
-    }
-}
-
-interface CoreServices {
-    @Inject
-    ExecOperations getExecOperations()
-}
-
-def execOperations = objects.newInstance(CoreServices).execOperations
-
-tasks.named('compileJava') {
-    options.fork(memoryMaximumSize: sharedConfiguration.javacMaxMemory.get())
-    inputs.files(configurations.tools)
-
-    doLast {
-        execOperations.javaexec { spec ->
-            spec.classpath(rootProject.configurations.tools)
-            spec.mainClass = 'org.jboss.bridger.Bridger'
-            spec.args(groovyCore.classesToBridge.asList().collect { it.absolutePath })
-        }
-    }
-}
-
-tasks.named('compileTestGroovy') {
-    groovyOptions.fork(memoryMaximumSize: groovycTest_mx)
-}
-
-tasks.register('checkCompatibility') {
-    doLast {
-        assert JavaVersion.current().java11Compatible
-    }
-}
-
-tasks.named('javadoc') {
-    groovyCore.excludedFromJavadocs.each {
-        exclude it
-    }
-}
-
-tasks.withType(Test).configureEach {
-    jvmArgs /*"-Dgroovy.attach.groovydoc=true", "-Dgroovy.attach.runtime.groovydoc=true",*/ "-Dgroovy.antlr4.cache.threshold=0"
-}
+/* DSL generation */
 
 def generateGrammarSourceTask = tasks.named("generateGrammarSource") {
     maxHeapSize = '1g'
@@ -220,27 +163,87 @@ def generateGrammarSourceTask = tasks.named("generateGrammarSource") {
 
 sourceSets.main.java.srcDir generateGrammarSourceTask
 
-configurations {
-    sourcesForAggregation {
-        canBeConsumed = true
-        canBeResolved = false
-        extendsFrom implementation, runtimeOnly
-        attributes {
-            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.DOCUMENTATION))
-            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling, Bundling.EXTERNAL))
-            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType, DocsType.SOURCES))
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, "aggregation"))
+// Gradle classloading magic with Groovy will only work if it finds a *jar*
+// on classpath. This "bootstrap jar" contains the minimal compiler, without .groovy compiled files
+
+def bootstrapJar = tasks.register("bootstrapJar", Jar) {
+    from compileJava
+    from dgmConverter
+
+    destinationDirectory = layout.buildDirectory.dir("bootstrap")
+    archiveClassifier = 'bootstrap'
+}
+
+/* Java compiling */
+
+interface CoreServices {
+
+    @Inject
+    ExecOperations getExecOperations()
+}
+
+def execOperations = objects.newInstance(CoreServices).execOperations
+
+tasks.named('compileJava') {
+    options.fork(memoryMaximumSize: sharedConfiguration.javacMaxMemory.get())
+    inputs.files(configurations.tools)
+
+    doLast {
+        execOperations.javaexec { spec ->
+            spec.classpath(rootProject.configurations.tools)
+            spec.mainClass = 'org.jboss.bridger.Bridger'
+            spec.args(groovyCore.classesToBridge.asList().collect { it.absolutePath })
         }
-        outgoing {
-            sourceSets.main.java.srcDirs.each {
-                artifact(it)
-            }
-            sourceSets.main.groovy.srcDirs.each {
-                artifact(it)
-            }
-            sourceSets.main.antlr.srcDirs.each {
-                artifact(it)
-            }
-        }
+    }
+}
+
+/* Groovy compiling */
+
+// The main Groovy compile tasks has a special setup because
+// it uses the "bootstrap compiler"
+tasks.withType(GroovyCompile).configureEach {
+    groovyClasspath = files(bootstrapJar, groovyClasspath)
+    if (it.name == 'compileGroovy') {
+        classpath = files(bootstrapJar, classpath)
+    }
+    options.incremental = true
+
+}
+
+tasks.named('compileTestGroovy') {
+    groovyOptions.fork(memoryMaximumSize: groovycTest_mx)
+}
+
+/* Testing */
+
+tasks.withType(Test).configureEach {
+    jvmArgs /*"-Dgroovy.attach.groovydoc=true", "-Dgroovy.attach.runtime.groovydoc=true",*/ "-Dgroovy.antlr4.cache.threshold=0"
+}
+
+/* Jarring */
+
+//tasks.named('jar') { already in 'groovy-base'
+//    from dgmConverter
+//}
+
+// override task 'jarjar' from 'groovy-base', cmp. 'groovy-library'
+tasks.named('jarjar') { JarJarTask it ->
+    def groovyBundleVersion = sharedConfiguration.groovyBundleVersion.get()
+    it.withManifest {
+        version = groovyBundleVersion
+        instruction '-nouses', 'true'
+        instruction 'Export-Package', "*;version=${groovyBundleVersion}"
+        instruction 'Eclipse-ExtensibleAPI', 'true'
+    }
+}
+
+tasks.withType(JarJarTask).configureEach {
+    jarjarToolClasspath.from(rootProject.configurations.tools)
+    def groovyBundleVersion = sharedConfiguration.groovyBundleVersion.get()
+    it.withManifest {
+        version = groovyBundleVersion
+        instruction '-nouses', 'true'
+        instruction 'Export-Package', "*;version=${groovyBundleVersion}"
+        instruction 'Eclipse-ExtensibleAPI', 'true'
     }
 }

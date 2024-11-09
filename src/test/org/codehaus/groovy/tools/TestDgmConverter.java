@@ -33,7 +33,7 @@ public class TestDgmConverter extends TestCase {
 
     private static final String REFERENCE_CLASS = "/org/codehaus/groovy/runtime/dgm$0.class";
 
-    public void testConverter () throws URISyntaxException {
+    public void testConverter() throws URISyntaxException {
         File dgmClassDirectory = new File(TestDgmConverter.class.getResource(REFERENCE_CLASS).toURI()).getParentFile();
 
         final File[] files = dgmClassDirectory.listFiles();
@@ -48,7 +48,7 @@ public class TestDgmConverter extends TestCase {
                     Constructor[] declaredConstructors = cls.getDeclaredConstructors();
                     assertEquals(1, declaredConstructors.length);
                     Constructor constructor = declaredConstructors[0];
-                    final MetaMethod metaMethod = (MetaMethod) constructor.newInstance(null,null, null, null);
+                    final MetaMethod metaMethod = (MetaMethod) constructor.newInstance(null, null, null, null);
                 } catch (ClassNotFoundException e) {
                     fail("Failed to load " + className);
                 } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {

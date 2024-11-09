@@ -50,12 +50,12 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target({
-        ElementType.CONSTRUCTOR,
-        ElementType.FIELD,
-        ElementType.LOCAL_VARIABLE,
-        ElementType.METHOD,
-        ElementType.PARAMETER,
-        ElementType.TYPE})
+    ElementType.CONSTRUCTOR,
+    ElementType.FIELD,
+    ElementType.LOCAL_VARIABLE,
+    ElementType.METHOD,
+    ElementType.PARAMETER,
+    ElementType.TYPE})
 public @interface Grab {
     /**
      * The organisation or group, e.g.: "org.apache.ant". A non-empty value is required unless value() is used.

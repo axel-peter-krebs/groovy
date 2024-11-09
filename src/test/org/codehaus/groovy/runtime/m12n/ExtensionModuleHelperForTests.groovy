@@ -58,7 +58,7 @@ class ExtensionModuleHelperForTests {
             baseDir.deleteDir()
             String out = ant.project.properties.out
             String err = ant.project.properties.err
-            if (err && !allowed.any{ err.trim().matches(it) }) {
+            if (err && !allowed.any { err.trim().matches(it) }) {
                 throw new RuntimeException("$err\nClasspath: ${cp.join('\n')}")
             }
             if (out && (out.contains('FAILURES') || !out.contains('OK'))) {

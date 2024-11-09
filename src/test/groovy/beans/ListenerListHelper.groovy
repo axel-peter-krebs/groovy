@@ -54,20 +54,21 @@ interface SomeOtherTestListener {
 }
 
 interface TestObjectListener {
-  void eventOccurred(Object event)
+    void eventOccurred(Object event)
 }
 
 interface TestListListener {
-  void eventOccurred(List<? extends Object> event)
+    void eventOccurred(List<? extends Object> event)
 }
 
 interface TestMapListener {
-  void eventOccurred(Map event)
+    void eventOccurred(Map event)
 }
 
 interface TestTwoMethodListener {
-  void eventOccurred1(TestEvent event)
-  void eventOccurred2(TestEvent event)
+    void eventOccurred1(TestEvent event)
+
+    void eventOccurred2(TestEvent event)
 }
 
 

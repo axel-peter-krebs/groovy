@@ -207,12 +207,12 @@ class SortableTransformTest extends CompilableTestSupport {
         String str
     }
 
-    @Sortable(includeSuperProperties = true, includes = ['str','num'])
+    @Sortable(includeSuperProperties = true, includes = ['str', 'num'])
     class SortableChild3 extends SortableBase {
         String str
     }
 
-    @Sortable(includeSuperProperties = true, includes = ['num','str'])
+    @Sortable(includeSuperProperties = true, includes = ['num', 'str'])
     class SortableChild4 extends SortableBase {
         String str
     }

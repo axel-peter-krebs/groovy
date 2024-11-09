@@ -67,76 +67,12 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 @GroovyASTTransformation(phase = CompilePhase.CANONICALIZATION)
 public class MapConstructorASTTransformation extends AbstractASTTransformation implements CompilationUnitAware {
 
-    private CompilationUnit compilationUnit;
-
     static final Class<?> MY_CLASS = MapConstructor.class;
     static final ClassNode MY_TYPE = ClassHelper.make(MY_CLASS);
     static final String MY_TYPE_NAME = "@" + MY_TYPE.getNameWithoutPackage();
     private static final ClassNode MAP_TYPE = ClassHelper.MAP_TYPE.getPlainNodeReference();
     private static final ClassNode LHMAP_TYPE = ClassHelper.makeWithoutCaching(LinkedHashMap.class, false);
-
-    @Override
-    public String getAnnotationName() {
-        return MY_TYPE_NAME;
-    }
-
-    @Override
-    public void setCompilationUnit(final CompilationUnit unit) {
-        this.compilationUnit = unit;
-    }
-
-    @Override
-    public void visit(final ASTNode[] nodes, final SourceUnit source) {
-        init(nodes, source);
-        AnnotatedNode parent = (AnnotatedNode) nodes[1];
-        AnnotationNode anno = (AnnotationNode) nodes[0];
-        if (!MY_TYPE.equals(anno.getClassNode())) return;
-
-        if (parent instanceof ClassNode) {
-            ClassNode cNode = (ClassNode) parent;
-            if (!checkNotInterface(cNode, MY_TYPE_NAME)) return;
-            boolean includeFields = memberHasValue(anno, "includeFields", Boolean.TRUE);
-            boolean includeProperties = !memberHasValue(anno, "includeProperties", Boolean.FALSE);
-            boolean includeSuperProperties = memberHasValue(anno, "includeSuperProperties", Boolean.TRUE);
-            boolean includeSuperFields = memberHasValue(anno, "includeSuperFields", Boolean.TRUE);
-            boolean includeStatic = memberHasValue(anno, "includeStatic", Boolean.TRUE);
-            boolean allProperties = memberHasValue(anno, "allProperties", Boolean.TRUE);
-            boolean noArg = memberHasValue(anno, "noArg", Boolean.TRUE);
-            boolean specialNamedArgHandling = !memberHasValue(anno, "specialNamedArgHandling", Boolean.FALSE);
-            List<String> excludes = getMemberStringList(anno, "excludes");
-            List<String> includes = getMemberStringList(anno, "includes");
-            boolean allNames = memberHasValue(anno, "allNames", Boolean.TRUE);
-            if (!checkIncludeExcludeUndefinedAware(anno, excludes, includes, MY_TYPE_NAME)) return;
-            if (!checkPropertyList(cNode, includes, "includes", anno, MY_TYPE_NAME, includeFields, includeSuperProperties, allProperties))
-                return;
-            if (!checkPropertyList(cNode, excludes, "excludes", anno, MY_TYPE_NAME, includeFields, includeSuperProperties, allProperties))
-                return;
-            final GroovyClassLoader classLoader = compilationUnit != null ? compilationUnit.getTransformLoader() : source.getClassLoader();
-            final PropertyHandler handler = PropertyHandler.createPropertyHandler(this, classLoader, cNode);
-            if (handler == null) return;
-            if (!handler.validateAttributes(this, anno)) return;
-
-            Expression pre = anno.getMember("pre");
-            if (pre != null && !(pre instanceof ClosureExpression)) {
-                addError("Expected closure value for annotation parameter 'pre'. Found " + pre, cNode);
-                return;
-            }
-            Expression post = anno.getMember("post");
-            if (post != null && !(post instanceof ClosureExpression)) {
-                addError("Expected closure value for annotation parameter 'post'. Found " + post, cNode);
-                return;
-            }
-
-            createConstructors(this, anno, handler, cNode, includeFields, includeProperties, includeSuperProperties, includeSuperFields, noArg, allNames, allProperties, specialNamedArgHandling, includeStatic, excludes, includes, (ClosureExpression) pre, (ClosureExpression) post, source);
-
-            if (pre != null) {
-                anno.setMember("pre", new ClosureExpression(Parameter.EMPTY_ARRAY, EmptyStatement.INSTANCE));
-            }
-            if (post != null) {
-                anno.setMember("post", new ClosureExpression(Parameter.EMPTY_ARRAY, EmptyStatement.INSTANCE));
-            }
-        }
-    }
+    private CompilationUnit compilationUnit;
 
     private static void createConstructors(final AbstractASTTransformation xform, final AnnotationNode anno, final PropertyHandler handler, final ClassNode cNode,
                                            final boolean includeFields, final boolean includeProperties, final boolean includeSuperProperties, final boolean includeSuperFields,
@@ -169,7 +105,7 @@ public class MapConstructorASTTransformation extends AbstractASTTransformation i
         BlockStatement inner = new BlockStatement();
         Parameter map = new Parameter(MAP_TYPE, "args");
         boolean specialNamedArgsCase = specialNamedArgHandling
-                && ImmutableASTTransformation.isSpecialNamedArgCase(properties, true);
+            && ImmutableASTTransformation.isSpecialNamedArgCase(properties, true);
         createInitializers(xform, anno, cNode, handler, allNames, excludes, includes, properties, map, inner);
         if (specialNamedArgsCase) map = new Parameter(LHMAP_TYPE, "args");
         body.addStatement(inner);
@@ -242,5 +178,68 @@ public class MapConstructorASTTransformation extends AbstractASTTransformation i
                 return unit;
             }
         };
+    }
+
+    @Override
+    public String getAnnotationName() {
+        return MY_TYPE_NAME;
+    }
+
+    @Override
+    public void setCompilationUnit(final CompilationUnit unit) {
+        this.compilationUnit = unit;
+    }
+
+    @Override
+    public void visit(final ASTNode[] nodes, final SourceUnit source) {
+        init(nodes, source);
+        AnnotatedNode parent = (AnnotatedNode) nodes[1];
+        AnnotationNode anno = (AnnotationNode) nodes[0];
+        if (!MY_TYPE.equals(anno.getClassNode())) return;
+
+        if (parent instanceof ClassNode) {
+            ClassNode cNode = (ClassNode) parent;
+            if (!checkNotInterface(cNode, MY_TYPE_NAME)) return;
+            boolean includeFields = memberHasValue(anno, "includeFields", Boolean.TRUE);
+            boolean includeProperties = !memberHasValue(anno, "includeProperties", Boolean.FALSE);
+            boolean includeSuperProperties = memberHasValue(anno, "includeSuperProperties", Boolean.TRUE);
+            boolean includeSuperFields = memberHasValue(anno, "includeSuperFields", Boolean.TRUE);
+            boolean includeStatic = memberHasValue(anno, "includeStatic", Boolean.TRUE);
+            boolean allProperties = memberHasValue(anno, "allProperties", Boolean.TRUE);
+            boolean noArg = memberHasValue(anno, "noArg", Boolean.TRUE);
+            boolean specialNamedArgHandling = !memberHasValue(anno, "specialNamedArgHandling", Boolean.FALSE);
+            List<String> excludes = getMemberStringList(anno, "excludes");
+            List<String> includes = getMemberStringList(anno, "includes");
+            boolean allNames = memberHasValue(anno, "allNames", Boolean.TRUE);
+            if (!checkIncludeExcludeUndefinedAware(anno, excludes, includes, MY_TYPE_NAME)) return;
+            if (!checkPropertyList(cNode, includes, "includes", anno, MY_TYPE_NAME, includeFields, includeSuperProperties, allProperties))
+                return;
+            if (!checkPropertyList(cNode, excludes, "excludes", anno, MY_TYPE_NAME, includeFields, includeSuperProperties, allProperties))
+                return;
+            final GroovyClassLoader classLoader = compilationUnit != null ? compilationUnit.getTransformLoader() : source.getClassLoader();
+            final PropertyHandler handler = PropertyHandler.createPropertyHandler(this, classLoader, cNode);
+            if (handler == null) return;
+            if (!handler.validateAttributes(this, anno)) return;
+
+            Expression pre = anno.getMember("pre");
+            if (pre != null && !(pre instanceof ClosureExpression)) {
+                addError("Expected closure value for annotation parameter 'pre'. Found " + pre, cNode);
+                return;
+            }
+            Expression post = anno.getMember("post");
+            if (post != null && !(post instanceof ClosureExpression)) {
+                addError("Expected closure value for annotation parameter 'post'. Found " + post, cNode);
+                return;
+            }
+
+            createConstructors(this, anno, handler, cNode, includeFields, includeProperties, includeSuperProperties, includeSuperFields, noArg, allNames, allProperties, specialNamedArgHandling, includeStatic, excludes, includes, (ClosureExpression) pre, (ClosureExpression) post, source);
+
+            if (pre != null) {
+                anno.setMember("pre", new ClosureExpression(Parameter.EMPTY_ARRAY, EmptyStatement.INSTANCE));
+            }
+            if (post != null) {
+                anno.setMember("post", new ClosureExpression(Parameter.EMPTY_ARRAY, EmptyStatement.INSTANCE));
+            }
+        }
     }
 }

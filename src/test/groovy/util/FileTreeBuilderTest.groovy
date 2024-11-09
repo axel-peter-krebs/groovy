@@ -40,14 +40,14 @@ final class FileTreeBuilderTest {
 
     @Test
     void testFileWithText() {
-        def file = root.file('foo.txt','foo')
+        def file = root.file('foo.txt', 'foo')
         assert file.exists()
         assert file.text == 'foo'
     }
 
     @Test
     void testFileWithBytes() {
-        def file = root.file('foo.txt','foo'.getBytes('utf-8'))
+        def file = root.file('foo.txt', 'foo'.getBytes('utf-8'))
         assert file.exists()
         assert file.getText('utf-8') == 'foo'
     }
@@ -89,7 +89,7 @@ final class FileTreeBuilderTest {
     void testDirWithClosure() {
         File f = null
         def dir = root.dir('sub') {
-            f = file('foo.txt','foo')
+            f = file('foo.txt', 'foo')
         }
         assert dir.isDirectory()
         assert dir.parentFile == root.baseDir
@@ -102,7 +102,7 @@ final class FileTreeBuilderTest {
         File s1, s2, f1, f2
         root {
             s1 = dir('sub1') {
-                f1 = file('foo.txt','foo')
+                f1 = file('foo.txt', 'foo')
             }
             s2 = dir('sub2') {
                 f2 = file('bar.txt', 'bar')

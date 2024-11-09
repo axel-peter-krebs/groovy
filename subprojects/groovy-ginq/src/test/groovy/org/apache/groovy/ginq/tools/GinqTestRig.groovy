@@ -31,9 +31,9 @@ import org.codehaus.groovy.control.Phases
 class GinqTestRig {
     static String inspect(String src) {
         String result = new AstNodeToScriptAdapter()
-                .compileToScript(src, Phases.CONVERSION,
-                        new GroovyClassLoader(), false, true,
-                        new CompilerConfiguration(CompilerConfiguration.DEFAULT))
+            .compileToScript(src, Phases.CONVERSION,
+                new GroovyClassLoader(), false, true,
+                new CompilerConfiguration(CompilerConfiguration.DEFAULT))
 
         return result
     }

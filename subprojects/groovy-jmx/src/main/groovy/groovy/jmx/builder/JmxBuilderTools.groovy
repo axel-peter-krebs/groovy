@@ -94,70 +94,70 @@ class JmxBuilderTools {
 
 
     static Map PRIMITIVE_TYPES = [
-            "char"   : java.lang.Integer.TYPE,
-            "byte"   : java.lang.Byte.TYPE,
-            "short"  : java.lang.Short.TYPE,
-            "int"    : java.lang.Integer.TYPE,
-            "long"   : java.lang.Long.TYPE,
-            "float"  : java.lang.Float.TYPE,
-            "double" : java.lang.Double.TYPE,
-            "boolean": java.lang.Boolean.TYPE
+        "char"   : java.lang.Integer.TYPE,
+        "byte"   : java.lang.Byte.TYPE,
+        "short"  : java.lang.Short.TYPE,
+        "int"    : java.lang.Integer.TYPE,
+        "long"   : java.lang.Long.TYPE,
+        "float"  : java.lang.Float.TYPE,
+        "double" : java.lang.Double.TYPE,
+        "boolean": java.lang.Boolean.TYPE
     ]
     static Map TYPE_MAP = [
-            "object"              : java.lang.Object.class,
-            "Object"              : java.lang.Object.class,
-            "java.lang.Object"    : java.lang.Object.class,
+        "object"              : java.lang.Object.class,
+        "Object"              : java.lang.Object.class,
+        "java.lang.Object"    : java.lang.Object.class,
 
-            "string"              : java.lang.String.class,
-            "String"              : java.lang.String.class,
-            "java.lang.String"    : java.lang.String.class,
+        "string"              : java.lang.String.class,
+        "String"              : java.lang.String.class,
+        "java.lang.String"    : java.lang.String.class,
 
-            "char"                : char.class,
-            "character"           : java.lang.Character.class,
-            "Character"           : java.lang.Character.class,
-            "java.lang.Character" : java.lang.Character.class,
+        "char"                : char.class,
+        "character"           : java.lang.Character.class,
+        "Character"           : java.lang.Character.class,
+        "java.lang.Character" : java.lang.Character.class,
 
-            "byte"                : byte.class,
-            "Byte"                : java.lang.Byte.class,
-            "java.lang.Byte"      : java.lang.Byte.class,
+        "byte"                : byte.class,
+        "Byte"                : java.lang.Byte.class,
+        "java.lang.Byte"      : java.lang.Byte.class,
 
-            "short"               : short.class,
-            "Short"               : java.lang.Short.class,
-            "java.lang.Short"     : java.lang.Short.class,
+        "short"               : short.class,
+        "Short"               : java.lang.Short.class,
+        "java.lang.Short"     : java.lang.Short.class,
 
-            "int"                 : int.class,
-            "integer"             : java.lang.Integer.class,
-            "Integer"             : java.lang.Integer.class,
-            "java.lang.Integer"   : java.lang.Integer.class,
+        "int"                 : int.class,
+        "integer"             : java.lang.Integer.class,
+        "Integer"             : java.lang.Integer.class,
+        "java.lang.Integer"   : java.lang.Integer.class,
 
-            "long"                : long.class,
-            "Long"                : java.lang.Long.class,
-            "java.lang.Long"      : java.lang.Long.class,
+        "long"                : long.class,
+        "Long"                : java.lang.Long.class,
+        "java.lang.Long"      : java.lang.Long.class,
 
-            "float"               : float.class,
-            "Float"               : java.lang.Float.class,
-            "java.lang.Float"     : java.lang.Float.class,
+        "float"               : float.class,
+        "Float"               : java.lang.Float.class,
+        "java.lang.Float"     : java.lang.Float.class,
 
-            "double"              : double.class,
-            "Double"              : java.lang.Double.class,
-            "java.lang.Double"    : java.lang.Double.class,
+        "double"              : double.class,
+        "Double"              : java.lang.Double.class,
+        "java.lang.Double"    : java.lang.Double.class,
 
-            "boolean"             : boolean.class,
-            "Boolean"             : java.lang.Boolean.class,
-            "java.lang.Boolean"   : java.lang.Boolean.class,
+        "boolean"             : boolean.class,
+        "Boolean"             : java.lang.Boolean.class,
+        "java.lang.Boolean"   : java.lang.Boolean.class,
 
-            "bigDec"              : java.math.BigDecimal.class,
-            "bigDecimal"          : java.math.BigDecimal.class,
-            "BigDecimal"          : java.math.BigDecimal.class,
-            "java.math.BigDecimal": java.math.BigDecimal.class,
+        "bigDec"              : java.math.BigDecimal.class,
+        "bigDecimal"          : java.math.BigDecimal.class,
+        "BigDecimal"          : java.math.BigDecimal.class,
+        "java.math.BigDecimal": java.math.BigDecimal.class,
 
-            "bigInt"              : java.math.BigInteger.class,
-            "bigInteger"          : java.math.BigInteger.class,
-            "BigInteger"          : java.math.BigInteger.class,
-            "java.math.BigInteger": java.math.BigInteger.class,
+        "bigInt"              : java.math.BigInteger.class,
+        "bigInteger"          : java.math.BigInteger.class,
+        "BigInteger"          : java.math.BigInteger.class,
+        "java.math.BigInteger": java.math.BigInteger.class,
 
-            "date"                : java.util.Date.class,
-            "java.util.Date"      : java.util.Date.class
+        "date"                : java.util.Date.class,
+        "java.util.Date"      : java.util.Date.class
     ]
 
     /**

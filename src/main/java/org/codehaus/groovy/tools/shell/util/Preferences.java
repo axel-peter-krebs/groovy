@@ -27,28 +27,22 @@ import java.util.prefs.PreferenceChangeListener;
 /**
  * Container for shell preferences.
  */
-public class Preferences
-{
-    private static final java.util.prefs.Preferences STORE = java.util.prefs.Preferences.userRoot().node("/org/codehaus/groovy/tools/shell");
-
-    public static IO.Verbosity verbosity;
-
+public class Preferences {
     public static final String VERBOSITY_KEY = "verbosity";
     public static final String SHOW_LAST_RESULT_KEY = "show-last-result";
     public static final String SANITIZE_STACK_TRACE_KEY = "sanitize-stack-trace";
     public static final String EDITOR_KEY = "editor";
     public static final String PARSER_FLAVOR_KEY = "parser-flavor";
-
     public static final String PARSER_RIGID = "rigid";
     public static final String PARSER_RELAXED = "relaxed";
-
+    private static final java.util.prefs.Preferences STORE = java.util.prefs.Preferences.userRoot().node("/org/codehaus/groovy/tools/shell");
+    public static IO.Verbosity verbosity;
 
     static {
         String tmp = STORE.get(VERBOSITY_KEY, IO.Verbosity.INFO.name);
         try {
             verbosity = IO.Verbosity.forName(tmp);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             verbosity = IO.Verbosity.INFO;
             STORE.remove(VERBOSITY_KEY);
         }
@@ -65,8 +59,7 @@ public class Preferences
 
                     try {
                         verbosity = IO.Verbosity.forName(name);
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         event.getNode().put(event.getKey(), verbosity.name);
                     }
                 }

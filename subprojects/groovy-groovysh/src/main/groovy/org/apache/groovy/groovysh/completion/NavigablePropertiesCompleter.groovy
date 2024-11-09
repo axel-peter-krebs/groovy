@@ -55,7 +55,7 @@ class NavigablePropertiesCompleter {
 
     static void addMapProperties(final Map instance, final String prefix, final Set<CharSequence> candidates) {
         // key can be any Object but only Strings will be completed
-        for (String key in instance.keySet().findAll {it instanceof String}) {
+        for (String key in instance.keySet().findAll { it instanceof String }) {
             // if key has no Control characters
             if (key.matches(NO_CONTROL_CHARS_PATTERN) && key.startsWith(prefix)) {
                 // if key cannot be parsed used as identifier name, (contains invalid char or ends with $)

@@ -85,10 +85,10 @@ import static groovy.xml.XmlUtil.setFeatureQuietly;
  */
 public class XmlSlurper extends DefaultHandler {
     private final XMLReader reader;
-    private Node currentNode = null;
     private final Stack<Node> stack = new Stack<Node>();
     private final StringBuilder charBuffer = new StringBuilder();
     private final Map<String, String> namespaceTagHints = new HashMap<String, String>();
+    private Node currentNode = null;
     private boolean keepIgnorableWhitespace = false;
     private boolean namespaceAware = false;
 
@@ -96,7 +96,7 @@ public class XmlSlurper extends DefaultHandler {
      * Creates a non-validating and namespace-aware <code>XmlSlurper</code> which does not allow DOCTYPE declarations in documents.
      *
      * @throws ParserConfigurationException if no parser which satisfies the requested configuration can be created.
-     * @throws SAXException for SAX errors.
+     * @throws SAXException                 for SAX errors.
      */
     public XmlSlurper() throws ParserConfigurationException, SAXException {
         this(false, true);
@@ -104,12 +104,11 @@ public class XmlSlurper extends DefaultHandler {
 
     /**
      * Creates a <code>XmlSlurper</code> which does not allow DOCTYPE declarations in documents.
-     * 
-     * @param validating <code>true</code> if the parser should validate documents as they are parsed; false otherwise.
-     * @param namespaceAware <code>true</code> if the parser should provide support for XML namespaces; <code>false</code> otherwise.
      *
+     * @param validating     <code>true</code> if the parser should validate documents as they are parsed; false otherwise.
+     * @param namespaceAware <code>true</code> if the parser should provide support for XML namespaces; <code>false</code> otherwise.
      * @throws ParserConfigurationException if no parser which satisfies the requested configuration can be created.
-     * @throws SAXException for SAX errors.
+     * @throws SAXException                 for SAX errors.
      */
     public XmlSlurper(final boolean validating, final boolean namespaceAware) throws ParserConfigurationException, SAXException {
         this(validating, namespaceAware, false);
@@ -117,13 +116,12 @@ public class XmlSlurper extends DefaultHandler {
 
     /**
      * Creates a <code>XmlSlurper</code>.
-     * 
-     * @param validating <code>true</code> if the parser should validate documents as they are parsed; false otherwise.
-     * @param namespaceAware <code>true</code> if the parser should provide support for XML namespaces; <code>false</code> otherwise.
-     * @param allowDocTypeDeclaration <code>true</code> if the parser should provide support for DOCTYPE declarations; <code>false</code> otherwise.
      *
+     * @param validating              <code>true</code> if the parser should validate documents as they are parsed; false otherwise.
+     * @param namespaceAware          <code>true</code> if the parser should provide support for XML namespaces; <code>false</code> otherwise.
+     * @param allowDocTypeDeclaration <code>true</code> if the parser should provide support for DOCTYPE declarations; <code>false</code> otherwise.
      * @throws ParserConfigurationException if no parser which satisfies the requested configuration can be created.
-     * @throws SAXException for SAX errors.
+     * @throws SAXException                 for SAX errors.
      */
     public XmlSlurper(final boolean validating, final boolean namespaceAware, boolean allowDocTypeDeclaration) throws ParserConfigurationException, SAXException {
         SAXParserFactory factory = FactorySupport.createSaxParserFactory();
@@ -144,21 +142,13 @@ public class XmlSlurper extends DefaultHandler {
     }
 
     /**
-     * @deprecated use setKeepIgnorableWhitespace
      * @param keepWhitespace If true then whitespace before elements is kept.
      *                       The default is to discard the whitespace.
+     * @deprecated use setKeepIgnorableWhitespace
      */
     @Deprecated
     public void setKeepWhitespace(boolean keepWhitespace) {
         setKeepIgnorableWhitespace(keepWhitespace);
-    }
-
-    /**
-     * @param keepIgnorableWhitespace If true then ignorable whitespace (i.e. whitespace before elements) is kept.
-     *                       The default is to discard the whitespace.
-     */
-    public void setKeepIgnorableWhitespace(boolean keepIgnorableWhitespace) {
-        this.keepIgnorableWhitespace = keepIgnorableWhitespace;
     }
 
     /**
@@ -169,9 +159,17 @@ public class XmlSlurper extends DefaultHandler {
     }
 
     /**
+     * @param keepIgnorableWhitespace If true then ignorable whitespace (i.e. whitespace before elements) is kept.
+     *                                The default is to discard the whitespace.
+     */
+    public void setKeepIgnorableWhitespace(boolean keepIgnorableWhitespace) {
+        this.keepIgnorableWhitespace = keepIgnorableWhitespace;
+    }
+
+    /**
      * @return The GPathResult instance created by consuming a stream of SAX events
-     *         Note if one of the parse methods has been called then this returns null
-     *         Note if this is called more than once all calls after the first will return null
+     * Note if one of the parse methods has been called then this returns null
+     * Note if this is called more than once all calls after the first will return null
      */
     public GPathResult getDocument() {
         try {
@@ -191,8 +189,8 @@ public class XmlSlurper extends DefaultHandler {
      * @param input the InputSource to parse
      * @return An object which supports GPath expressions
      * @throws SAXException Any SAX exception, possibly wrapping another exception.
-     * @throws IOException An IO exception from the parser, possibly from a byte stream
-     *         or character stream supplied by the application.
+     * @throws IOException  An IO exception from the parser, possibly from a byte stream
+     *                      or character stream supplied by the application.
      */
     public GPathResult parse(final InputSource input) throws IOException, SAXException {
         reader.setContentHandler(this);
@@ -206,8 +204,8 @@ public class XmlSlurper extends DefaultHandler {
      * @param file the File to parse
      * @return An object which supports GPath expressions
      * @throws SAXException Any SAX exception, possibly wrapping another exception.
-     * @throws IOException An IO exception from the parser, possibly from a byte stream
-     *         or character stream supplied by the application.
+     * @throws IOException  An IO exception from the parser, possibly from a byte stream
+     *                      or character stream supplied by the application.
      */
     public GPathResult parse(final File file) throws IOException, SAXException {
         final FileInputStream fis = new FileInputStream(file);
@@ -229,8 +227,8 @@ public class XmlSlurper extends DefaultHandler {
      * @param input the InputStream to parse
      * @return An object which supports GPath expressions
      * @throws SAXException Any SAX exception, possibly wrapping another exception.
-     * @throws IOException An IO exception from the parser, possibly from a byte stream
-     *         or character stream supplied by the application.
+     * @throws IOException  An IO exception from the parser, possibly from a byte stream
+     *                      or character stream supplied by the application.
      */
     public GPathResult parse(final InputStream input) throws IOException, SAXException {
         return parse(new InputSource(input));
@@ -245,8 +243,8 @@ public class XmlSlurper extends DefaultHandler {
      * @param in the Reader to parse
      * @return An object which supports GPath expressions
      * @throws SAXException Any SAX exception, possibly wrapping another exception.
-     * @throws IOException An IO exception from the parser, possibly from a byte stream
-     *         or character stream supplied by the application.
+     * @throws IOException  An IO exception from the parser, possibly from a byte stream
+     *                      or character stream supplied by the application.
      */
     public GPathResult parse(final Reader in) throws IOException, SAXException {
         return parse(new InputSource(in));
@@ -258,15 +256,15 @@ public class XmlSlurper extends DefaultHandler {
      * @param uri a String containing the URI to parse
      * @return An object which supports GPath expressions
      * @throws SAXException Any SAX exception, possibly wrapping another exception.
-     * @throws IOException An IO exception from the parser, possibly from a byte stream
-     *         or character stream supplied by the application.
+     * @throws IOException  An IO exception from the parser, possibly from a byte stream
+     *                      or character stream supplied by the application.
      */
     public GPathResult parse(final String uri) throws IOException, SAXException {
         return parse(new InputSource(uri));
     }
 
     public GPathResult parse(final Path path) throws IOException, SAXException {
-       return parse(Files.newInputStream(path));
+        return parse(Files.newInputStream(path));
     }
 
     /**
@@ -275,8 +273,8 @@ public class XmlSlurper extends DefaultHandler {
      * @param text a String containing XML to parse
      * @return An object which supports GPath expressions
      * @throws SAXException Any SAX exception, possibly wrapping another exception.
-     * @throws IOException An IO exception from the parser, possibly from a byte stream
-     *         or character stream supplied by the application.
+     * @throws IOException  An IO exception from the parser, possibly from a byte stream
+     *                      or character stream supplied by the application.
      */
     public GPathResult parseText(final String text) throws IOException, SAXException {
         return parse(new StringReader(text));
@@ -286,52 +284,59 @@ public class XmlSlurper extends DefaultHandler {
     //------------------------------------------------------------------------
 
     /* (non-Javadoc)
-    * @see org.xml.sax.XMLReader#getDTDHandler()
-    */
+     * @see org.xml.sax.XMLReader#getDTDHandler()
+     */
     public DTDHandler getDTDHandler() {
         return reader.getDTDHandler();
     }
 
     /* (non-Javadoc)
-    * @see org.xml.sax.XMLReader#getEntityResolver()
-    */
-    public EntityResolver getEntityResolver() {
-        return reader.getEntityResolver();
-    }
-
-    /* (non-Javadoc)
-    * @see org.xml.sax.XMLReader#getErrorHandler()
-    */
-    public ErrorHandler getErrorHandler() {
-        return reader.getErrorHandler();
-    }
-
-    /* (non-Javadoc)
-    * @see org.xml.sax.XMLReader#getFeature(java.lang.String)
-    */
-    public boolean getFeature(final String uri) throws SAXNotRecognizedException, SAXNotSupportedException {
-        return reader.getFeature(uri);
-    }
-
-    /* (non-Javadoc)
-    * @see org.xml.sax.XMLReader#getProperty(java.lang.String)
-    */
-    public Object getProperty(final String uri) throws SAXNotRecognizedException, SAXNotSupportedException {
-        return reader.getProperty(uri);
-    }
-
-    /* (non-Javadoc)
-    * @see org.xml.sax.XMLReader#setDTDHandler(org.xml.sax.DTDHandler)
-    */
+     * @see org.xml.sax.XMLReader#setDTDHandler(org.xml.sax.DTDHandler)
+     */
     public void setDTDHandler(final DTDHandler dtdHandler) {
         reader.setDTDHandler(dtdHandler);
     }
 
     /* (non-Javadoc)
-    * @see org.xml.sax.XMLReader#setEntityResolver(org.xml.sax.EntityResolver)
-    */
+     * @see org.xml.sax.XMLReader#getEntityResolver()
+     */
+    public EntityResolver getEntityResolver() {
+        return reader.getEntityResolver();
+    }
+
+    /* (non-Javadoc)
+     * @see org.xml.sax.XMLReader#setEntityResolver(org.xml.sax.EntityResolver)
+     */
     public void setEntityResolver(final EntityResolver entityResolver) {
         reader.setEntityResolver(entityResolver);
+    }
+
+    /* (non-Javadoc)
+     * @see org.xml.sax.XMLReader#getErrorHandler()
+     */
+    public ErrorHandler getErrorHandler() {
+        return reader.getErrorHandler();
+    }
+
+    /* (non-Javadoc)
+     * @see org.xml.sax.XMLReader#setErrorHandler(org.xml.sax.ErrorHandler)
+     */
+    public void setErrorHandler(final ErrorHandler errorHandler) {
+        reader.setErrorHandler(errorHandler);
+    }
+
+    /* (non-Javadoc)
+     * @see org.xml.sax.XMLReader#getFeature(java.lang.String)
+     */
+    public boolean getFeature(final String uri) throws SAXNotRecognizedException, SAXNotSupportedException {
+        return reader.getFeature(uri);
+    }
+
+    /* (non-Javadoc)
+     * @see org.xml.sax.XMLReader#getProperty(java.lang.String)
+     */
+    public Object getProperty(final String uri) throws SAXNotRecognizedException, SAXNotSupportedException {
+        return reader.getProperty(uri);
     }
 
     /**
@@ -344,22 +349,15 @@ public class XmlSlurper extends DefaultHandler {
     }
 
     /* (non-Javadoc)
-    * @see org.xml.sax.XMLReader#setErrorHandler(org.xml.sax.ErrorHandler)
-    */
-    public void setErrorHandler(final ErrorHandler errorHandler) {
-        reader.setErrorHandler(errorHandler);
-    }
-
-    /* (non-Javadoc)
-    * @see org.xml.sax.XMLReader#setFeature(java.lang.String, boolean)
-    */
+     * @see org.xml.sax.XMLReader#setFeature(java.lang.String, boolean)
+     */
     public void setFeature(final String uri, final boolean value) throws SAXNotRecognizedException, SAXNotSupportedException {
         reader.setFeature(uri, value);
     }
 
     /* (non-Javadoc)
-    * @see org.xml.sax.XMLReader#setProperty(java.lang.String, java.lang.Object)
-    */
+     * @see org.xml.sax.XMLReader#setProperty(java.lang.String, java.lang.Object)
+     */
     public void setProperty(final String uri, final Object value) throws SAXNotRecognizedException, SAXNotSupportedException {
         reader.setProperty(uri, value);
     }
@@ -368,8 +366,8 @@ public class XmlSlurper extends DefaultHandler {
     //-------------------------------------------------------------------------
 
     /* (non-Javadoc)
-    * @see org.xml.sax.ContentHandler#startDocument()
-    */
+     * @see org.xml.sax.ContentHandler#startDocument()
+     */
     @Override
     public void startDocument() throws SAXException {
         currentNode = null;
@@ -377,16 +375,16 @@ public class XmlSlurper extends DefaultHandler {
     }
 
     /* (non-Javadoc)
-    * @see org.xml.sax.helpers.DefaultHandler#startPrefixMapping(java.lang.String, java.lang.String)
-    */
+     * @see org.xml.sax.helpers.DefaultHandler#startPrefixMapping(java.lang.String, java.lang.String)
+     */
     @Override
     public void startPrefixMapping(final String tag, final String uri) throws SAXException {
         if (namespaceAware) namespaceTagHints.put(tag, uri);
     }
 
     /* (non-Javadoc)
-    * @see org.xml.sax.ContentHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
-    */
+     * @see org.xml.sax.ContentHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+     */
     @Override
     public void startElement(final String namespaceURI, final String localName, final String qName, final Attributes atts) throws SAXException {
         addCdata();
@@ -426,16 +424,16 @@ public class XmlSlurper extends DefaultHandler {
     }
 
     /* (non-Javadoc)
-    * @see org.xml.sax.ContentHandler#characters(char[], int, int)
-    */
+     * @see org.xml.sax.ContentHandler#characters(char[], int, int)
+     */
     @Override
     public void characters(final char[] ch, final int start, final int length) throws SAXException {
         charBuffer.append(ch, start, length);
     }
 
     /* (non-Javadoc)
-    * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
-    */
+     * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+     */
     @Override
     public void endElement(final String namespaceURI, final String localName, final String qName) throws SAXException {
         addCdata();
@@ -446,8 +444,8 @@ public class XmlSlurper extends DefaultHandler {
     }
 
     /* (non-Javadoc)
-    * @see org.xml.sax.ContentHandler#endDocument()
-    */
+     * @see org.xml.sax.ContentHandler#endDocument()
+     */
     @Override
     public void endDocument() throws SAXException {
     }

@@ -25,20 +25,15 @@ import java.io.StringReader;
 public class ReaderCharacterSource implements CharacterSource {
 
     private static final int MAX_TOKEN_SIZE = 5;
-
+    private static final char[] EMPTY_CHARS = new char[0];
     private final Reader reader;
     private final int readAheadSize;
-    private int ch = -2;
-
-    private boolean foundEscape;
-
     private final char[] readBuf;
-
-    private int index;
-
-    private int length;
-
     boolean more = true;
+    private int ch = -2;
+    private boolean foundEscape;
+    private int index;
+    private int length;
     private boolean done = false;
 
     public ReaderCharacterSource(final Reader reader, final int readAheadSize) {
@@ -155,8 +150,6 @@ public class ReaderCharacterSource implements CharacterSource {
         }
     }
 
-    private static final char[] EMPTY_CHARS = new char[0];
-
     @Override
     public char[] findNextChar(int match, int esc) {
         try {
@@ -189,8 +182,7 @@ public class ReaderCharacterSource implements CharacterSource {
 
                 if (results != null) {
                     results = Chr.add(results, ArrayUtils.copyRange(readBuf, start, index));
-                }
-                else {
+                } else {
                     results = ArrayUtils.copyRange(readBuf, start, index);
                 }
 
@@ -209,7 +201,7 @@ public class ReaderCharacterSource implements CharacterSource {
 
             // done will only be true if we ran out of data without seeing the match character
             if (done) {
-                return Exceptions.die(char[].class, "Unable to find close char " + (char)match + ": " + new String(results));
+                return Exceptions.die(char[].class, "Unable to find close char " + (char) match + ": " + new String(results));
             } else {
                 index++;
                 return results;

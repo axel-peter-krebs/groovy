@@ -37,8 +37,8 @@ assert (this instanceof Script)
         // tag::integ_binding[]
         def binding = new Binding()             // <1>
         def shell = new GroovyShell(binding)    // <2>
-        binding.setVariable('x',1)              // <3>
-        binding.setVariable('y',3)
+        binding.setVariable('x', 1)              // <3>
+        binding.setVariable('y', 3)
         shell.evaluate 'z=2*x+y'                // <4>
         assert binding.getVariable('z') == 5    // <5>
         // end::integ_binding[]

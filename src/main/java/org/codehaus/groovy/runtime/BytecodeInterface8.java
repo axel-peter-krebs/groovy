@@ -35,14 +35,14 @@ public class BytecodeInterface8 {
      * @return true if integer has its default MetaClass
      */
     public static boolean isOrigInt() {
-       return DefaultMetaClassInfo.isOrigInt();
+        return DefaultMetaClassInfo.isOrigInt();
     }
 
     /**
      * @return true if integer array has its default MetaClass
      */
     public static boolean isOrigIntArray() {
-       return DefaultMetaClassInfo.isOrigIntArray();
+        return DefaultMetaClassInfo.isOrigIntArray();
     }
 
     /**
@@ -67,14 +67,14 @@ public class BytecodeInterface8 {
      * @return true if byte has its default MetaClass
      */
     public static boolean isOrigB() {
-       return DefaultMetaClassInfo.isOrigByte();
+        return DefaultMetaClassInfo.isOrigByte();
     }
 
     /**
      * @return true if byte array has its default MetaClass
      */
     public static boolean isOrigBArray() {
-       return false;
+        return false;
     }
 
     /**
@@ -99,14 +99,14 @@ public class BytecodeInterface8 {
      * @return true if short has its default MetaClass
      */
     public static boolean isOrigS() {
-       return DefaultMetaClassInfo.isOrigShort();
+        return DefaultMetaClassInfo.isOrigShort();
     }
 
     /**
      * @return true if short array has its default MetaClass
      */
     public static boolean isOrigSArray() {
-       return false;
+        return false;
     }
 
     /**
@@ -131,14 +131,14 @@ public class BytecodeInterface8 {
      * @return true if char has its default MetaClass
      */
     public static boolean isOrigC() {
-       return DefaultMetaClassInfo.isOrigChar();
+        return DefaultMetaClassInfo.isOrigChar();
     }
 
     /**
      * @return true if char array has its default MetaClass
      */
     public static boolean isOrigCArray() {
-       return false;
+        return false;
     }
 
     /**
@@ -163,14 +163,14 @@ public class BytecodeInterface8 {
      * @return true if long has its default MetaClass
      */
     public static boolean isOrigL() {
-       return DefaultMetaClassInfo.isOrigLong();
+        return DefaultMetaClassInfo.isOrigLong();
     }
 
     /**
      * @return true if long array has its default MetaClass
      */
     public static boolean isOrigLArray() {
-       return false;
+        return false;
     }
 
     /**
@@ -195,14 +195,14 @@ public class BytecodeInterface8 {
      * @return true if boolean has its default MetaClass
      */
     public static boolean isOrigZ() {
-       return DefaultMetaClassInfo.isOrigBool();
+        return DefaultMetaClassInfo.isOrigBool();
     }
 
     /**
      * @return true if boolean array has its default MetaClass
      */
     public static boolean isOrigZArray() {
-       return false;
+        return false;
     }
 
     /**
@@ -227,14 +227,14 @@ public class BytecodeInterface8 {
      * @return true if float has its default MetaClass
      */
     public static boolean isOrigF() {
-       return DefaultMetaClassInfo.isOrigFloat();
+        return DefaultMetaClassInfo.isOrigFloat();
     }
 
     /**
      * @return true if float array has its default MetaClass
      */
     public static boolean isOrigFArray() {
-       return false;
+        return false;
     }
 
     /**
@@ -259,14 +259,14 @@ public class BytecodeInterface8 {
      * @return true if double has its default MetaClass
      */
     public static boolean isOrigD() {
-       return DefaultMetaClassInfo.isOrigDouble();
+        return DefaultMetaClassInfo.isOrigDouble();
     }
 
     /**
      * @return true if double array has its default MetaClass
      */
     public static boolean isOrigDArray() {
-       return false;
+        return false;
     }
 
     /**

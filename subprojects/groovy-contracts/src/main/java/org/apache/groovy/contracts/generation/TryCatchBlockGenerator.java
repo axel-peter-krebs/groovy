@@ -63,22 +63,22 @@ public class TryCatchBlockGenerator {
         VariableExpression newError = localVarX("newError", assertionErrorClass);
 
         Statement block = block(
-                // newError = message + error.message
-                declS(newError,
-                        ctorX(assertionErrorClass,
-                                args(binX(constX(message), PLUS, callX(varX(param(ClassHelper.makeWithoutCaching(powerAssertionErrorClass), "error")), "getMessage"))))),
-                // newError.stackTrace = error.stackTrace
-                stmt(callX(newError, "setStackTrace", args(
-                        callX(varX(param(ClassHelper.makeWithoutCaching(powerAssertionErrorClass), "error")), "getStackTrace")
-                ))),
-                throwS(newError));
+            // newError = message + error.message
+            declS(newError,
+                ctorX(assertionErrorClass,
+                    args(binX(constX(message), PLUS, callX(varX(param(ClassHelper.makeWithoutCaching(powerAssertionErrorClass), "error")), "getMessage"))))),
+            // newError.stackTrace = error.stackTrace
+            stmt(callX(newError, "setStackTrace", args(
+                callX(varX(param(ClassHelper.makeWithoutCaching(powerAssertionErrorClass), "error")), "getStackTrace")
+            ))),
+            throwS(newError));
 
         CatchStatement catchStatement = catchS(param(ClassHelper.makeWithoutCaching(powerAssertionErrorClass), "error"), block);
 
         return block(tryCatchS(
-                assertStatement,
-                EmptyStatement.INSTANCE,
-                catchStatement));
+            assertStatement,
+            EmptyStatement.INSTANCE,
+            catchStatement));
     }
 
     public static BlockStatement generateTryCatchBlock(final ClassNode assertionErrorClass, final String message, final Statement assertStatement) {
@@ -91,8 +91,8 @@ public class TryCatchBlockGenerator {
         final BlockStatement overallBlock = block(declS(variableExpression, ConstantExpression.FALSE));
 
         final BlockStatement assertBlockStatement = block(
-                assertStatement,
-                assignS(variableExpression, ConstantExpression.TRUE)
+            assertStatement,
+            assignS(variableExpression, ConstantExpression.TRUE)
         );
 
         final Class powerAssertionErrorClass = loadPowerAssertionErrorClass();
@@ -103,16 +103,16 @@ public class TryCatchBlockGenerator {
         VariableExpression newErrorVariableExpression = localVarX("newError", assertionErrorClass);
 
         Statement expr = declS(newErrorVariableExpression, ctorX(assertionErrorClass,
-                args(binX(constX(message), PLUS, callX(varX(param(ClassHelper.makeWithoutCaching(powerAssertionErrorClass), "error")), "getMessage")))));
+            args(binX(constX(message), PLUS, callX(varX(param(ClassHelper.makeWithoutCaching(powerAssertionErrorClass), "error")), "getMessage")))));
 
         Statement exp2 = stmt(callX(newErrorVariableExpression, "setStackTrace", args(
-                callX(varX(param(ClassHelper.makeWithoutCaching(powerAssertionErrorClass), "error")), "getStackTrace")
+            callX(varX(param(ClassHelper.makeWithoutCaching(powerAssertionErrorClass), "error")), "getStackTrace")
         )));
 
         final TryCatchStatement tryCatchStatement = tryCatchS(
-                assertBlockStatement,
-                EmptyStatement.INSTANCE,
-                catchS(param(ClassHelper.makeWithoutCaching(powerAssertionErrorClass), "error"), block(expr, exp2)));
+            assertBlockStatement,
+            EmptyStatement.INSTANCE,
+            catchS(param(ClassHelper.makeWithoutCaching(powerAssertionErrorClass), "error"), block(expr, exp2)));
 
         overallBlock.addStatement(tryCatchStatement);
         overallBlock.addStatement(returnS(variableExpression));

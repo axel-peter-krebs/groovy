@@ -23,7 +23,7 @@ import groovy.test.GroovyTestCase
 class ClosureReturnWithoutReturnStatementTest extends GroovyTestCase {
 
     void testReturnValues() {
-        def block = {x-> x > 5}
+        def block = { x -> x > 5 }
 
         def value = block.call(10)
         assert value
@@ -33,7 +33,7 @@ class ClosureReturnWithoutReturnStatementTest extends GroovyTestCase {
     }
 
     void testReturnValueUsingFunction() {
-        def block = {x-> someFunction(x) }
+        def block = { x -> someFunction(x) }
 
         def value = block.call(10)
         assert value

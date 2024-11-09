@@ -47,7 +47,7 @@ abstract class ShellRunnerTestSupport extends GroovyTestCase {
 
         shellMocker = new MockFor(Groovysh)
         // Groovysh constructor
-        shellMocker.demand.getClass( 1) { Groovysh }
+        shellMocker.demand.getClass(1) { Groovysh }
         shellMocker.demand.getIo(0..21) { testio }
         shellMocker.demand.register(18) { it }
         // InteractiveShellRunner constructor
@@ -56,8 +56,8 @@ abstract class ShellRunnerTestSupport extends GroovyTestCase {
         shellMocker.demand.getRegistry(0..1) { new CommandRegistry() }
         // InteractiveShellRunner adjustHistory
         shellMocker.demand.getHistory(0..1) { null }
-        shellMocker.demand.setHistoryFull(0..1) { }
-        shellMocker.demand.isHistoryFull(0..1) { }
+        shellMocker.demand.setHistoryFull(0..1) {}
+        shellMocker.demand.isHistoryFull(0..1) {}
 
         readerStubber = new StubFor(ConsoleReader)
         readerStubber.demand.setExpandEvents {}

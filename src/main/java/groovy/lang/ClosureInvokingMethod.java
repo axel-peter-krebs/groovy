@@ -28,6 +28,7 @@ public interface ClosureInvokingMethod extends MetaMember {
 
     /**
      * Returns the original closure that this method invokes
+     *
      * @return The closure
      */
     Closure getClosure();

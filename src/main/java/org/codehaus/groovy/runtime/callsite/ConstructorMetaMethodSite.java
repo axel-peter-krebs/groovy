@@ -26,19 +26,19 @@ import org.codehaus.groovy.runtime.ScriptBytecodeAdapter;
 
 /**
  * Call site for invoking static methods
-*   metaclass  - cached
-*   method - not cached
-*/
+ * metaclass  - cached
+ * method - not cached
+ */
 public class ConstructorMetaMethodSite extends MetaMethodSite {
 
     private final int version;
 
-    public ConstructorMetaMethodSite(CallSite site, MetaClassImpl metaClass, MetaMethod method, Class [] params) {
+    public ConstructorMetaMethodSite(CallSite site, MetaClassImpl metaClass, MetaMethod method, Class[] params) {
         super(site, metaClass, method, params);
         this.version = metaClass.getVersion();
     }
 
-    public final Object invoke(Object receiver, Object [] args) throws Throwable{
+    public final Object invoke(Object receiver, Object[] args) throws Throwable {
         MetaClassHelper.unwrap(args);
         try {
             return metaMethod.doMethodInvoke(metaClass.getTheClass(), args);
@@ -50,9 +50,8 @@ public class ConstructorMetaMethodSite extends MetaMethodSite {
     @Override
     public final Object callConstructor(Object receiver, Object[] args) throws Throwable {
         if (receiver == metaClass.getTheClass() // metaclass match receiver
-           && ((MetaClassImpl)metaClass).getVersion() == version // metaClass still be valid
-           && MetaClassHelper.sameClasses(params, args) )
-        {
+            && ((MetaClassImpl) metaClass).getVersion() == version // metaClass still be valid
+            && MetaClassHelper.sameClasses(params, args)) {
             MetaClassHelper.unwrap(args);
             try {
                 return metaMethod.doMethodInvoke(metaClass.getTheClass(), args);
@@ -60,7 +59,7 @@ public class ConstructorMetaMethodSite extends MetaMethodSite {
                 throw ScriptBytecodeAdapter.unwrap(gre);
             }
         } else {
-          return CallSiteArray.defaultCallConstructor(this, receiver, args);
+            return CallSiteArray.defaultCallConstructor(this, receiver, args);
         }
     }
 }

@@ -16,7 +16,9 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 class Foo {}
+
 new Foo() {
     Foo() {}
 }

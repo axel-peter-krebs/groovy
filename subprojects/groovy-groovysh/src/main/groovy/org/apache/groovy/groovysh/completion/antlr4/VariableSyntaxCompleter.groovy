@@ -56,6 +56,6 @@ class VariableSyntaxCompleter implements IdentifierCompleter {
 
     private static boolean acceptName(String name, String prefix) {
         return (!prefix || name.startsWith(prefix)) &&
-                (!(name.contains('$')) && !(name.startsWith('_')))
+            (!(name.contains('$')) && !(name.startsWith('_')))
     }
 }

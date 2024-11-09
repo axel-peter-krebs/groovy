@@ -89,80 +89,12 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 @GroovyASTTransformation(phase = CompilePhase.CANONICALIZATION)
 public class ImmutableASTTransformation extends AbstractASTTransformation implements CompilationUnitAware {
 
+    public static final String IMMUTABLE_BREADCRUMB = "_IMMUTABLE_BREADCRUMB";
     private static final ClassNode HMAP_TYPE = makeWithoutCaching(HashMap.class, false);
     private static final Class<? extends Annotation> MY_CLASS = ImmutableBase.class;
     public static final ClassNode MY_TYPE = makeWithoutCaching(MY_CLASS, false);
     private static final String MY_TYPE_NAME = MY_TYPE.getNameWithoutPackage();
-    public static final String IMMUTABLE_BREADCRUMB = "_IMMUTABLE_BREADCRUMB";
-
     private CompilationUnit compilationUnit;
-
-    @Override
-    public String getAnnotationName() {
-        return MY_TYPE_NAME;
-    }
-
-    @Override
-    public void setCompilationUnit(final CompilationUnit unit) {
-        this.compilationUnit = unit;
-    }
-
-    @Override
-    public void visit(final ASTNode[] nodes, final SourceUnit source) {
-        init(nodes, source);
-        AnnotationNode anno = (AnnotationNode) nodes[0];
-        AnnotatedNode parent = (AnnotatedNode) nodes[1];
-        if (MY_TYPE.equals(anno.getClassNode()) && parent instanceof ClassNode) { ClassNode type = (ClassNode) parent;
-            GroovyClassLoader classLoader = compilationUnit != null ? compilationUnit.getTransformLoader() : source.getClassLoader();
-            PropertyHandler handler = PropertyHandler.createPropertyHandler(this, classLoader, type);
-            if (handler != null
-                    && handler.validateAttributes(this, anno)
-                    && checkNotInterface(type, MY_TYPE_NAME))
-                doMakeImmutable(type, anno, handler);
-        }
-    }
-
-    private void doMakeImmutable(final ClassNode cNode, final AnnotationNode anno, final PropertyHandler handler) {
-        String cName = cNode.getName();
-        List<PropertyNode> newProperties = new ArrayList<>();
-        List<PropertyNode> pList = getInstanceProperties(cNode);
-        for (PropertyNode pNode : pList) {
-            adjustPropertyForImmutability(pNode, newProperties, handler);
-        }
-        for (PropertyNode pNode : newProperties) {
-            cNode.getProperties().remove(pNode);
-            addProperty(cNode, pNode);
-        }
-        for (FieldNode fNode : cNode.getFields()) {
-            ensureNotPublic(this, cName, fNode);
-        }
-        if (hasAnnotation(cNode, TupleConstructorASTTransformation.MY_TYPE)) {
-            // TODO: Make this a method to be called from TupleConstructor xform, add check for 'defaults'?
-            AnnotationNode tupleCons = cNode.getAnnotations(TupleConstructorASTTransformation.MY_TYPE).get(0);
-            if (unsupportedTupleAttribute(tupleCons, "excludes")) return;
-            if (unsupportedTupleAttribute(tupleCons, "includes")) return;
-            if (unsupportedTupleAttribute(tupleCons, "includeFields")) return;
-            if (unsupportedTupleAttribute(tupleCons, "includeProperties")) return;
-            if (unsupportedTupleAttribute(tupleCons, "includeSuperFields")) return;
-            if (unsupportedTupleAttribute(tupleCons, "callSuper")) return;
-          //if (unsupportedTupleAttribute(tupleCons, "useSetters")) return;
-            if (unsupportedTupleAttribute(tupleCons, "force")) return;
-        }
-        if (hasExplicitConstructor(this, cNode)) return;
-        if (!pList.isEmpty() && memberHasValue(anno, "copyWith", Boolean.TRUE) && !hasDeclaredMethod(cNode, "copyWith", 1)) {
-            createCopyWith(cNode, pList);
-        }
-    }
-
-    private boolean unsupportedTupleAttribute(final AnnotationNode anno, final String memberName) {
-        if (getMemberValue(anno, memberName) != null) {
-            String tname = TupleConstructorASTTransformation.MY_TYPE_NAME;
-            addError("Error during " + MY_TYPE_NAME + " processing: Annotation attribute '" + memberName +
-                    "' not supported for " + tname + " when used with " + MY_TYPE_NAME, anno);
-            return true;
-        }
-        return false;
-    }
 
     static boolean isSpecialNamedArgCase(final List<PropertyNode> list, final boolean checkSize) {
         if (checkSize && list.size() != 1) return false;
@@ -193,7 +125,7 @@ public class ImmutableASTTransformation extends AbstractASTTransformation implem
         final FieldNode fn = pNode.getField();
         cNode.getFields().remove(fn);
         cNode.addProperty(pNode.getName(), pNode.getModifiers() | ACC_FINAL, pNode.getType(),
-                pNode.getInitialExpression(), pNode.getGetterBlock(), pNode.getSetterBlock());
+            pNode.getInitialExpression(), pNode.getGetterBlock(), pNode.getSetterBlock());
         final FieldNode newfn = cNode.getField(fn.getName());
         cNode.getFields().remove(newfn);
         cNode.addField(fn);
@@ -219,76 +151,76 @@ public class ImmutableASTTransformation extends AbstractASTTransformation implem
 
     private static Statement createCheckForProperty(final PropertyNode pNode) {
         return block(
-                new VariableScope(),
-                ifElseS(
+            new VariableScope(),
+            ifElseS(
+                callX(
+                    varX("map", HMAP_TYPE),
+                    "containsKey",
+                    args(constX(pNode.getName()))
+                ),
+                block(
+                    new VariableScope(),
+                    declS(
+                        localVarX("newValue", ClassHelper.OBJECT_TYPE),
                         callX(
-                                varX("map", HMAP_TYPE),
-                                "containsKey",
-                                args(constX(pNode.getName()))
-                        ),
-                        block(
-                                new VariableScope(),
-                                declS(
-                                        localVarX("newValue", ClassHelper.OBJECT_TYPE),
-                                        callX(
-                                                varX("map", HMAP_TYPE),
-                                                "get",
-                                                args(constX(pNode.getName()))
-                                        )
-                                ),
-                                declS(
-                                        localVarX("oldValue", ClassHelper.OBJECT_TYPE),
-                                        callThisX(pNode.getGetterNameOrDefault())
-                                ),
-                                ifS(
-                                        neX(
-                                                varX("newValue", ClassHelper.OBJECT_TYPE),
-                                                varX("oldValue", ClassHelper.OBJECT_TYPE)
-                                        ),
-                                        block(
-                                                new VariableScope(),
-                                                assignS(
-                                                        varX("oldValue", ClassHelper.OBJECT_TYPE),
-                                                        varX("newValue", ClassHelper.OBJECT_TYPE)
-                                                ),
-                                                assignS(
-                                                        varX("dirty", ClassHelper.boolean_TYPE),
-                                                        ConstantExpression.TRUE
-                                                )
-                                        )
-                                ),
-                                stmt(callX(
-                                        varX("construct", HMAP_TYPE),
-                                        "put",
-                                        args(
-                                                constX(pNode.getName()),
-                                                varX("oldValue", ClassHelper.OBJECT_TYPE)
-                                        )
-                                ))
-                        ),
-                        block(
-                                new VariableScope(),
-                                stmt(callX(
-                                        varX("construct", HMAP_TYPE),
-                                        "put",
-                                        args(
-                                                constX(pNode.getName()),
-                                                callThisX(pNode.getGetterNameOrDefault())
-                                        )
-                                ))
+                            varX("map", HMAP_TYPE),
+                            "get",
+                            args(constX(pNode.getName()))
                         )
+                    ),
+                    declS(
+                        localVarX("oldValue", ClassHelper.OBJECT_TYPE),
+                        callThisX(pNode.getGetterNameOrDefault())
+                    ),
+                    ifS(
+                        neX(
+                            varX("newValue", ClassHelper.OBJECT_TYPE),
+                            varX("oldValue", ClassHelper.OBJECT_TYPE)
+                        ),
+                        block(
+                            new VariableScope(),
+                            assignS(
+                                varX("oldValue", ClassHelper.OBJECT_TYPE),
+                                varX("newValue", ClassHelper.OBJECT_TYPE)
+                            ),
+                            assignS(
+                                varX("dirty", ClassHelper.boolean_TYPE),
+                                ConstantExpression.TRUE
+                            )
+                        )
+                    ),
+                    stmt(callX(
+                        varX("construct", HMAP_TYPE),
+                        "put",
+                        args(
+                            constX(pNode.getName()),
+                            varX("oldValue", ClassHelper.OBJECT_TYPE)
+                        )
+                    ))
+                ),
+                block(
+                    new VariableScope(),
+                    stmt(callX(
+                        varX("construct", HMAP_TYPE),
+                        "put",
+                        args(
+                            constX(pNode.getName()),
+                            callThisX(pNode.getGetterNameOrDefault())
+                        )
+                    ))
                 )
+            )
         );
     }
 
     private static void createCopyWith(final ClassNode cNode, final List<PropertyNode> pList) {
         BlockStatement body = new BlockStatement();
         body.addStatement(ifS(
-                orX(
-                        equalsNullX(varX("map", ClassHelper.MAP_TYPE)),
-                        eqX(callX(varX("map", HMAP_TYPE), "size"), constX(0))
-                ),
-                returnS(varX("this", cNode))
+            orX(
+                equalsNullX(varX("map", ClassHelper.MAP_TYPE)),
+                eqX(callX(varX("map", HMAP_TYPE), "size"), constX(0))
+            ),
+            returnS(varX("this", cNode))
         ));
         body.addStatement(declS(localVarX("dirty", ClassHelper.boolean_TYPE), ConstantExpression.PRIM_FALSE));
         body.addStatement(declS(localVarX("construct", HMAP_TYPE), ctorX(HMAP_TYPE)));
@@ -298,9 +230,9 @@ public class ImmutableASTTransformation extends AbstractASTTransformation implem
         }
 
         body.addStatement(returnS(ternaryX(
-                isTrueX(varX("dirty", ClassHelper.boolean_TYPE)),
-                ctorX(cNode, args(varX("construct", HMAP_TYPE))),
-                varX("this", cNode)
+            isTrueX(varX("dirty", ClassHelper.boolean_TYPE)),
+            ctorX(cNode, args(varX("construct", HMAP_TYPE))),
+            varX("this", cNode)
         )));
 
         addGeneratedMethod(cNode,
@@ -316,7 +248,8 @@ public class ImmutableASTTransformation extends AbstractASTTransformation implem
      * This method exists to be binary compatible with 1.7 - 1.8.6 compiled code.
      */
     public static Object checkImmutable(final String className, final String fieldName, final Object field) {
-        if (field == null || field instanceof Enum || ImmutablePropertyUtils.isBuiltinImmutable(field.getClass().getName())) return field;
+        if (field == null || field instanceof Enum || ImmutablePropertyUtils.isBuiltinImmutable(field.getClass().getName()))
+            return field;
         if (field instanceof Collection) return DefaultGroovyMethods.asImmutable((Collection<?>) field);
         if (getAnnotationByName(field, "groovy.transform.Immutable") != null) return field;
 
@@ -415,5 +348,73 @@ public class ImmutableASTTransformation extends AbstractASTTransformation implem
                 throw new MissingPropertyException(name, instance.getClass());
             }
         }
+    }
+
+    @Override
+    public String getAnnotationName() {
+        return MY_TYPE_NAME;
+    }
+
+    @Override
+    public void setCompilationUnit(final CompilationUnit unit) {
+        this.compilationUnit = unit;
+    }
+
+    @Override
+    public void visit(final ASTNode[] nodes, final SourceUnit source) {
+        init(nodes, source);
+        AnnotationNode anno = (AnnotationNode) nodes[0];
+        AnnotatedNode parent = (AnnotatedNode) nodes[1];
+        if (MY_TYPE.equals(anno.getClassNode()) && parent instanceof ClassNode) {
+            ClassNode type = (ClassNode) parent;
+            GroovyClassLoader classLoader = compilationUnit != null ? compilationUnit.getTransformLoader() : source.getClassLoader();
+            PropertyHandler handler = PropertyHandler.createPropertyHandler(this, classLoader, type);
+            if (handler != null
+                && handler.validateAttributes(this, anno)
+                && checkNotInterface(type, MY_TYPE_NAME))
+                doMakeImmutable(type, anno, handler);
+        }
+    }
+
+    private void doMakeImmutable(final ClassNode cNode, final AnnotationNode anno, final PropertyHandler handler) {
+        String cName = cNode.getName();
+        List<PropertyNode> newProperties = new ArrayList<>();
+        List<PropertyNode> pList = getInstanceProperties(cNode);
+        for (PropertyNode pNode : pList) {
+            adjustPropertyForImmutability(pNode, newProperties, handler);
+        }
+        for (PropertyNode pNode : newProperties) {
+            cNode.getProperties().remove(pNode);
+            addProperty(cNode, pNode);
+        }
+        for (FieldNode fNode : cNode.getFields()) {
+            ensureNotPublic(this, cName, fNode);
+        }
+        if (hasAnnotation(cNode, TupleConstructorASTTransformation.MY_TYPE)) {
+            // TODO: Make this a method to be called from TupleConstructor xform, add check for 'defaults'?
+            AnnotationNode tupleCons = cNode.getAnnotations(TupleConstructorASTTransformation.MY_TYPE).get(0);
+            if (unsupportedTupleAttribute(tupleCons, "excludes")) return;
+            if (unsupportedTupleAttribute(tupleCons, "includes")) return;
+            if (unsupportedTupleAttribute(tupleCons, "includeFields")) return;
+            if (unsupportedTupleAttribute(tupleCons, "includeProperties")) return;
+            if (unsupportedTupleAttribute(tupleCons, "includeSuperFields")) return;
+            if (unsupportedTupleAttribute(tupleCons, "callSuper")) return;
+            //if (unsupportedTupleAttribute(tupleCons, "useSetters")) return;
+            if (unsupportedTupleAttribute(tupleCons, "force")) return;
+        }
+        if (hasExplicitConstructor(this, cNode)) return;
+        if (!pList.isEmpty() && memberHasValue(anno, "copyWith", Boolean.TRUE) && !hasDeclaredMethod(cNode, "copyWith", 1)) {
+            createCopyWith(cNode, pList);
+        }
+    }
+
+    private boolean unsupportedTupleAttribute(final AnnotationNode anno, final String memberName) {
+        if (getMemberValue(anno, memberName) != null) {
+            String tname = TupleConstructorASTTransformation.MY_TYPE_NAME;
+            addError("Error during " + MY_TYPE_NAME + " processing: Annotation attribute '" + memberName +
+                "' not supported for " + tname + " when used with " + MY_TYPE_NAME, anno);
+            return true;
+        }
+        return false;
     }
 }

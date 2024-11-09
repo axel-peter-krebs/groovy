@@ -31,7 +31,8 @@ import org.codehaus.groovy.control.messages.SyntaxErrorMessage
 /**
  * Support class for static type checking test cases.
  */
-@AutoFinal @CompileStatic
+@AutoFinal
+@CompileStatic
 abstract class StaticTypeCheckingTestCase extends GroovyTestCase {
     protected CompilerConfiguration config
     protected GroovyShell shell

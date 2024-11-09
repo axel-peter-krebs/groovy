@@ -39,9 +39,9 @@ class Groovy3776Bug extends GroovyTestCase {
         try {
             cl.parseClass(scriptStr)
             fail('Compilation should have failed with MultipleCompilationErrorsException')
-        } catch(MultipleCompilationErrorsException mcee) {
+        } catch (MultipleCompilationErrorsException mcee) {
             // ok if failed with this error.
-        } catch(GroovyBugError gbe) {
+        } catch (GroovyBugError gbe) {
             fail('Compilation should have failed with MultipleCompilationErrorsException but failed with GroovyBugError')
         }
     }

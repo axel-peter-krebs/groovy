@@ -27,7 +27,7 @@ class EditCommandTest extends CommandTestSupport {
     void testProcessBuilderInit() {
         def mockEdit = new EditCommand(shell)
         ProcessBuilder pb = mockEdit.getEditorProcessBuilder('/usr/bin/vim',
-                '/var/folders/tu/tuATI/-Tmp-/groovysh-buffer1761911.groovy')
+            '/var/folders/tu/tuATI/-Tmp-/groovysh-buffer1761911.groovy')
 
         assert pb.redirectErrorStream()
 

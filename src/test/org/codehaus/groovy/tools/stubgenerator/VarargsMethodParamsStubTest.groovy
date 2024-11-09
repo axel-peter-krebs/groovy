@@ -25,14 +25,14 @@ class VarargsMethodParamsStubTest extends StringSourcesStubTestCase {
 
     Map<String, String> provideSources() {
         [
-                'Main4112.java': '''
+            'Main4112.java'         : '''
                     public class Main4112 {
                         public static void main(String[] args) {
                             GroovyClass4112.foo("one", "two", "three");
                         }
                     }
                 ''',
-                'GroovyClass4112.groovy': '''
+            'GroovyClass4112.groovy': '''
                     class GroovyClass4112 {
                         static foo(String[] args) {}
                     }

@@ -38,7 +38,7 @@ public class IntIntArrayColumnIterator implements Iterator<int[]> {
         Objects.requireNonNull(array);
         this.array = array;
         numColumns = Integer.MAX_VALUE;
-        for (int[] row: array) {
+        for (int[] row : array) {
             if (row.length < numColumns) numColumns = row.length;
         }
         if (numColumns == Integer.MAX_VALUE) numColumns = 0;

@@ -137,7 +137,7 @@ class Groovy7883Bug extends GroovyTestCase {
     }
 
     void test8() {
-        def errMsg = shouldFail  '''
+        def errMsg = shouldFail '''
         @groovy.transform.CompileStatic
         class A {
             protected void doIt(ArrayList al) { doIt2(al) }

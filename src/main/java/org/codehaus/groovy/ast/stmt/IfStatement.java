@@ -36,20 +36,6 @@ public class IfStatement extends Statement {
         setElseBlock(elseBlock);
     }
 
-    public void setBooleanExpression(final BooleanExpression booleanExpression) {
-        this.booleanExpression = booleanExpression;
-    }
-
-    public void setIfBlock(final Statement statement) {
-        ifBlock = statement;
-    }
-
-    public void setElseBlock(final Statement statement) {
-        elseBlock = statement;
-    }
-
-    //--------------------------------------------------------------------------
-
     @Override
     public void visit(final GroovyCodeVisitor visitor) {
         visitor.visitIfElse(this);
@@ -59,12 +45,26 @@ public class IfStatement extends Statement {
         return booleanExpression;
     }
 
+    public void setBooleanExpression(final BooleanExpression booleanExpression) {
+        this.booleanExpression = booleanExpression;
+    }
+
+    //--------------------------------------------------------------------------
+
     public Statement getIfBlock() {
         return ifBlock;
     }
 
+    public void setIfBlock(final Statement statement) {
+        ifBlock = statement;
+    }
+
     public Statement getElseBlock() {
         return elseBlock;
+    }
+
+    public void setElseBlock(final Statement statement) {
+        elseBlock = statement;
     }
 
     @Override

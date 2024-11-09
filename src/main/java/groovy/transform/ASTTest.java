@@ -44,7 +44,7 @@ import java.lang.annotation.Target;
  *  })
  * {@code @Field int x}
  * </pre>
- *
+ * <p>
  * The closure code is executed after the specified phase has completed. If no phase is provided, then the
  * code is executed after the {@link org.codehaus.groovy.control.CompilePhase#SEMANTIC_ANALYSIS semantic analysis} phase
  * and each subsequent phase.

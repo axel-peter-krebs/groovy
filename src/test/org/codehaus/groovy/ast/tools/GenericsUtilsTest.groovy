@@ -346,7 +346,7 @@ final class GenericsUtilsTest {
         // get the intermediate type of the map literal (LinkedHashMap<#K,#V>)
         def node = classNodeList[0].getDeclaredMethod('test').code.statements[0]
         def type = new StaticTypeCheckingVisitor(classNodeList[0].module.context,
-                        classNodeList[0]).getType(node.expression.rightExpression)
+            classNodeList[0]).getType(node.expression.rightExpression)
 
         ClassNode mapType = GenericsUtils.parameterizeType(type, ClassHelper.MAP_TYPE)
 
@@ -372,7 +372,7 @@ final class GenericsUtilsTest {
         // get the intermediate type of the list literal (ArrayList<#E>)
         def node = classNodeList[0].getDeclaredMethod('test').code.statements[0]
         def type = new StaticTypeCheckingVisitor(classNodeList[0].module.context,
-                        classNodeList[0]).getType(node.expression.rightExpression)
+            classNodeList[0]).getType(node.expression.rightExpression)
 
         ClassNode listType = GenericsUtils.parameterizeType(type, ClassHelper.LIST_TYPE)
 

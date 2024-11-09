@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * <p>A closure signature hint class is always used in conjunction with the {@link ClosureParams} annotation. It is
  * called at compile time (or may be used by IDEs) to infer the types of the parameters of a {@link groovy.lang.Closure}.</p>
-
+ *
  * <p>A closure hint class is responsible for generating the list of arguments that a closure accepts. Since closures
  * may accept several signatures, {@link #getClosureSignatures(org.codehaus.groovy.ast.MethodNode, org.codehaus.groovy.control.SourceUnit, org.codehaus.groovy.control.CompilationUnit, String[], org.codehaus.groovy.ast.ASTNode)} should
  * return a list.</p>
@@ -49,19 +49,19 @@ import java.util.List;
  * <p>Several predefined hints can be found, which should cover most of the use cases.</p>
  *
  * @since 2.3.0
- *
  */
 public abstract class ClosureSignatureHint {
 
     /**
      * A helper method which will extract the n-th generic type from a class node.
-     * @param type the class node from which to pick a generic type
+     *
+     * @param type    the class node from which to pick a generic type
      * @param gtIndex the index of the generic type to extract
      * @return the n-th generic type, or {@link org.codehaus.groovy.ast.ClassHelper#OBJECT_TYPE} if it doesn't exist.
      */
     public static ClassNode pickGenericType(final ClassNode type, final int gtIndex) {
         final GenericsType[] genericsTypes = type.getGenericsTypes();
-        if (genericsTypes==null || genericsTypes.length<gtIndex) {
+        if (genericsTypes == null || genericsTypes.length < gtIndex) {
             return ClassHelper.OBJECT_TYPE;
         }
         return genericsTypes[gtIndex].getType();
@@ -69,15 +69,24 @@ public abstract class ClosureSignatureHint {
 
     /**
      * A helper method which will extract the n-th generic type from the n-th parameter of a method node.
-     * @param node the method node from which the generic type should be picked
+     *
+     * @param node           the method node from which the generic type should be picked
      * @param parameterIndex the index of the parameter in the method parameter list
-     * @param gtIndex the index of the generic type to extract
+     * @param gtIndex        the index of the generic type to extract
      * @return the generic type, or {@link org.codehaus.groovy.ast.ClassHelper#OBJECT_TYPE} if it doesn't exist.
      */
     public static ClassNode pickGenericType(final MethodNode node, final int parameterIndex, final int gtIndex) {
         final Parameter[] parameters = node.getParameters();
         final ClassNode type = parameters[parameterIndex].getOriginType();
         return pickGenericType(type, gtIndex);
+    }
+
+    private static Class<?> tryLoadClass(final String className, final ClassLoader classLoader) {
+        try {
+            return Class.forName(className, false, classLoader);
+        } catch (ClassNotFoundException ignore) {
+            return null;
+        }
     }
 
     /**
@@ -89,7 +98,7 @@ public abstract class ClosureSignatureHint {
      *
      * <code>@groovy.transform.TypeChecked
      * void doSomething() {
-     *     println ['a','b'].collect { it.toUpperCase() }
+     * println ['a','b'].collect { it.toUpperCase() }
      * }</code>
      *
      * <p>The <i>collect</i> method accepts a closure, but normally, the type checker doesn't have enough type information
@@ -110,13 +119,12 @@ public abstract class ClosureSignatureHint {
      *
      * <p>Subclasses are therefore expected to return the signatures according to the available context, which is only the target method and the potential options.</p>
      *
-     *
-     * @param node the method node for which a {@link groovy.lang.Closure} parameter was annotated with
-     *             {@link ClosureParams}
-     * @param sourceUnit the source unit of the file being compiled
+     * @param node            the method node for which a {@link groovy.lang.Closure} parameter was annotated with
+     *                        {@link ClosureParams}
+     * @param sourceUnit      the source unit of the file being compiled
      * @param compilationUnit the compilation unit of the file being compiled
-     * @param options the options, corresponding to the {@link ClosureParams#options()} found on the annotation  @return a non-null list of signature, where a signature corresponds to an array of class nodes, each of them matching a parameter.
-     * @param usage the AST node, in the compiled file, which triggered a call to this method. Normally only used for logging/error handling
+     * @param options         the options, corresponding to the {@link ClosureParams#options()} found on the annotation  @return a non-null list of signature, where a signature corresponds to an array of class nodes, each of them matching a parameter.
+     * @param usage           the AST node, in the compiled file, which triggered a call to this method. Normally only used for logging/error handling
      */
     public abstract List<ClassNode[]> getClosureSignatures(MethodNode node, SourceUnit sourceUnit, CompilationUnit compilationUnit, String[] options, ASTNode usage);
 
@@ -124,9 +132,9 @@ public abstract class ClosureSignatureHint {
      * Produces a {@link ClassNode} given a string representing the type. Checks
      * the supplied compilation unit in case it is also being compiled.
      *
-     * @param sourceUnit source unit
+     * @param sourceUnit      source unit
      * @param compilationUnit compilation unit
-     * @param className the type name to resolve
+     * @param className       the type name to resolve
      */
     protected ClassNode findClassNode(final SourceUnit sourceUnit, final CompilationUnit compilationUnit, String className) {
         if (className.endsWith("[]")) {
@@ -137,7 +145,7 @@ public abstract class ClosureSignatureHint {
             className = className.substring(0, i);
             String message = getClass().getSimpleName() + " doesn't support generics";
             sourceUnit.getErrorCollector().addWarning(WarningMessage.LIKELY_ERRORS, message,
-                    null, null); // TODO: include reference to the source method & parameter
+                null, null); // TODO: include reference to the source method & parameter
         }
 
         ClassNode cn = compilationUnit.getClassNode(className);
@@ -154,13 +162,5 @@ public abstract class ClosureSignatureHint {
             }
         }
         return cn;
-    }
-
-    private static Class<?> tryLoadClass(final String className, final ClassLoader classLoader) {
-        try {
-            return Class.forName(className, false, classLoader);
-        } catch (ClassNotFoundException ignore) {
-            return null;
-        }
     }
 }

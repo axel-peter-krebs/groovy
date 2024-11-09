@@ -45,8 +45,7 @@ class STCExtensionMethodsTest extends StaticTypeCheckingTestCase {
     }
 
     /**
-     * @see org.codehaus.groovy.runtime.m12n.TestStringExtension
-     * @see org.codehaus.groovy.runtime.m12n.TestStaticStringExtension
+     * @see org.codehaus.groovy.runtime.m12n.TestStringExtension* @see org.codehaus.groovy.runtime.m12n.TestStaticStringExtension
      */
     void testShouldFindExtensionMethodWithGrab() {
         doInFork 'groovy.transform.stc.StaticTypeCheckingTestCase', '''
@@ -105,30 +104,41 @@ class STCExtensionMethodsTest extends StaticTypeCheckingTestCase {
 
     static class Groovy8788 {
         static class A {
-            def m1(Object o) {1}
-            def m2(String s) {1}
-            def m4(String s) {4}
-            def m5(String s) {4}
-            def m6(String s) {4}
+            def m1(Object o) { 1 }
+
+            def m2(String s) { 1 }
+
+            def m4(String s) { 4 }
+
+            def m5(String s) { 4 }
+
+            def m6(String s) { 4 }
         }
+
         static class B extends A {
-            def m1(String s) {2}
-            def m2(Object o) {2}
+            def m1(String s) { 2 }
+
+            def m2(Object o) { 2 }
         }
+
         static class C extends B {
         }
 
-        static m3(A self, String s) {1}
-        static m3(B self, Object o) {2}
-        static m3(B self, String s) {3}
+        static m3(A self, String s) { 1 }
 
-        static m4(A self, String s) {1}
-        static m4(B self, Object o) {2}
+        static m3(B self, Object o) { 2 }
 
-        static m5(A self, String s) {1}
-        static m5(B self, Object o) {2}
+        static m3(B self, String s) { 3 }
 
-        static m6(B self, Object o) {2}
+        static m4(A self, String s) { 1 }
+
+        static m4(B self, Object o) { 2 }
+
+        static m5(A self, String s) { 1 }
+
+        static m5(B self, Object o) { 2 }
+
+        static m6(B self, Object o) { 2 }
     }
 
     // GROOVY-8788
@@ -157,7 +167,7 @@ class STCExtensionMethodsTest extends StaticTypeCheckingTestCase {
             def a = new A()
             a.m2(new Object())
         """,
-        'Cannot find matching method','A#m2(java.lang.Object)'
+            'Cannot find matching method', 'A#m2(java.lang.Object)'
     }
 
     // GROOVY-8788

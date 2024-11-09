@@ -21,8 +21,9 @@ package org.codehaus.groovy.tools.stubgenerator;
 import java.util.Map;
 import java.util.SortedMap;
 
-public class Groovy5859Support<K,V> {
-    public Groovy5859Support(SortedMap<? extends K, ? extends V> map) {}
+public class Groovy5859Support<K, V> {
+    public Groovy5859Support(SortedMap<? extends K, ? extends V> map) {
+    }
 
     public void putAll(final Map<? extends K, ? extends V> m) {
     }

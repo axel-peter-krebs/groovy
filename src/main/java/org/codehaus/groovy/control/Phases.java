@@ -22,26 +22,46 @@ package org.codehaus.groovy.control;
  * Compilation phase identifiers.
  */
 public class Phases {
-    /** Opening of files and such */
+    /**
+     * Opening of files and such
+     */
     public static final int INITIALIZATION = 1;
-    /** Lexing, parsing, and AST building */
+    /**
+     * Lexing, parsing, and AST building
+     */
     public static final int PARSING = 2;
-    /** CST to AST conversion */
+    /**
+     * CST to AST conversion
+     */
     public static final int CONVERSION = 3;
-    /** AST semantic analysis and elucidation */
+    /**
+     * AST semantic analysis and elucidation
+     */
     public static final int SEMANTIC_ANALYSIS = 4;
-    /** AST completion */
+    /**
+     * AST completion
+     */
     public static final int CANONICALIZATION = 5;
-    /** Class generation (pt.1) */
+    /**
+     * Class generation (pt.1)
+     */
     public static final int INSTRUCTION_SELECTION = 6;
-    /** Class generation (pt.2) */
+    /**
+     * Class generation (pt.2)
+     */
     public static final int CLASS_GENERATION = 7;   //
-    /** Output of class to disk */
+    /**
+     * Output of class to disk
+     */
     public static final int OUTPUT = 8;
-    /** Cleanup */
+    /**
+     * Cleanup
+     */
     public static final int FINALIZATION = 9;
 
-    /** Synonym for full compilation */
+    /**
+     * Synonym for full compilation
+     */
     public static final int ALL = FINALIZATION;
 
     // TODO: If no reference is made to array, convert to switch in getDescription(int).

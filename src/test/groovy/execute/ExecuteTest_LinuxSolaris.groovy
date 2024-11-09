@@ -39,66 +39,68 @@ import static org.junit.Assume.assumeTrue
 @RunWith(JUnit4)
 class ExecuteTest_LinuxSolaris extends GroovyTestCase {
 
-  private static final boolean linuxOrSolaris = System.getProperty('os.name').contains('Linux') ||
-          System.getProperty('os.name').contains('sunos')
+    private static final boolean linuxOrSolaris = System.getProperty('os.name').contains('Linux') ||
+        System.getProperty('os.name').contains('sunos')
 
-  @Before
-  void assumeUnixOrSolaris() {
-    assumeTrue('Test requires Linux or Solaris.', linuxOrSolaris)
-  }
-
-  @Test
-  void testShellEchoOneArray ( ) {
-    def process = ( [ "sh" , "-c" , "echo 1" ] as String[] ).execute ( )
-    process.waitFor ( )
-    assert process.in.text.trim ( ) == "1"
-  }
-
-  @Test
-  void testShellEchoOneList ( ) {
-    def process = [ "sh" , "-c" , "echo 1" ].execute ( )
-    process.waitFor ( )
-    assert process.in.text.trim ( ) == "1"
-  }
-
-  @Test
-  void testEchoOneArray ( ) {
-    try {
-      def process = ( [ "echo 1" ] as String[] ).execute ( )
-      process.waitFor ( )
-       fail ( "Should have thrown java.io.IOException: echo 1: not found" )
+    @Before
+    void assumeUnixOrSolaris() {
+        assumeTrue('Test requires Linux or Solaris.', linuxOrSolaris)
     }
-    catch ( IOException ioe ) { }
-  }
 
-  @Test
-  void testEchoOneList ( ) {
-    try {
-      def process = [ "echo 1" ].execute ( )
-      process.waitFor ( )
-       fail ( "Should have thrown java.io.IOException: echo 1: not found" )
+    @Test
+    void testShellEchoOneArray() {
+        def process = (["sh", "-c", "echo 1"] as String[]).execute()
+        process.waitFor()
+        assert process.in.text.trim() == "1"
     }
-    catch ( IOException ioe ) { }
-  }
 
-  @Test
-  void testEchoOneScalar ( ) {
-    def process = "echo 1".execute ( )
-    process.waitFor ( )
-    assert process.in.text.trim ( ) == "1"
-  }
+    @Test
+    void testShellEchoOneList() {
+        def process = ["sh", "-c", "echo 1"].execute()
+        process.waitFor()
+        assert process.in.text.trim() == "1"
+    }
 
-  @Test
-  void testEchoArray ( ) {
-    def process = ( [ "echo" , "1" ] as String[] ).execute ( )
-    process.waitFor ( )
-    assert process.in.text.trim ( ) == "1"
-   }
+    @Test
+    void testEchoOneArray() {
+        try {
+            def process = (["echo 1"] as String[]).execute()
+            process.waitFor()
+            fail("Should have thrown java.io.IOException: echo 1: not found")
+        }
+        catch (IOException ioe) {
+        }
+    }
 
-  @Test
-  void testEchoList ( ) {
-    def process = [ "echo" , "1" ].execute ( )
-    process.waitFor ( )
-    assert process.in.text.trim ( ) == "1"
-   }
+    @Test
+    void testEchoOneList() {
+        try {
+            def process = ["echo 1"].execute()
+            process.waitFor()
+            fail("Should have thrown java.io.IOException: echo 1: not found")
+        }
+        catch (IOException ioe) {
+        }
+    }
+
+    @Test
+    void testEchoOneScalar() {
+        def process = "echo 1".execute()
+        process.waitFor()
+        assert process.in.text.trim() == "1"
+    }
+
+    @Test
+    void testEchoArray() {
+        def process = (["echo", "1"] as String[]).execute()
+        process.waitFor()
+        assert process.in.text.trim() == "1"
+    }
+
+    @Test
+    void testEchoList() {
+        def process = ["echo", "1"].execute()
+        process.waitFor()
+        assert process.in.text.trim() == "1"
+    }
 }

@@ -60,32 +60,32 @@ class NavigablePropertiesCompleterTest extends GroovyTestCase {
         completer.addCompletions(null, '', [] as Set)
 
         Map map = [
-                'id': 'FX-17',
-                name: 'Turnip',
-                99: 123,
-                (new Object()) : 'some non string object',
-                [] : 'some non string object',
-                'a b' : 'space',
-                'a.b' : 'dot',
-                'a\rb' : 'control',
-                'a\'b' : 'quote',
-                'a\\b' : 'escape',
-                'a\nb' : 'new line',
-                'a\tb' : 'tab',
-                'G$\\"tring' : 'string',
-                '_ !@#$%^&*()_+={}[]~`<>,./?:;|' : 'operators',
-                'snowman ☃' : 'Olaf',
-                'Japan ぁ' : '77',
-                'ぁJapanstart' : '77',
-                'a☃$4ä_' : 'no hypehns',
-                '$123' : 'digits',
-                '123$' : 'digits',
-                '\u0002foo' : 'bar'
+            'id'                            : 'FX-17',
+            name                            : 'Turnip',
+            99                              : 123,
+            (new Object())                  : 'some non string object',
+            []                              : 'some non string object',
+            'a b'                           : 'space',
+            'a.b'                           : 'dot',
+            'a\rb'                          : 'control',
+            'a\'b'                          : 'quote',
+            'a\\b'                          : 'escape',
+            'a\nb'                          : 'new line',
+            'a\tb'                          : 'tab',
+            'G$\\"tring'                    : 'string',
+            '_ !@#$%^&*()_+={}[]~`<>,./?:;|': 'operators',
+            'snowman ☃'                     : 'Olaf',
+            'Japan ぁ'                      : '77',
+            'ぁJapanstart'                  : '77',
+            'a☃$4ä_'                        : 'no hypehns',
+            '$123'                          : 'digits',
+            '123$'                          : 'digits',
+            '\u0002foo'                     : 'bar'
         ]
 
         Set candidates = [] as Set
         Set expected = ['id', 'name', '\'a b\'', '\'a.b\'', '\'a\\\'b\'', '\'a\\\\b\'', '\'G$\\\\"tring\'',
-                        '\'_ !@#$%^&*()_+={}[]~`<>,./?:;|\'', '\'snowman ☃\'', '\'Japan ぁ\'', 'ぁJapanstart', 'a☃$4ä_', '$123', '\'123$\'' ] as Set
+                        '\'_ !@#$%^&*()_+={}[]~`<>,./?:;|\'', '\'snowman ☃\'', '\'Japan ぁ\'', 'ぁJapanstart', 'a☃$4ä_', '$123', '\'123$\''] as Set
         completer.addCompletions(map, '', candidates)
         assert expected == candidates
     }
@@ -94,7 +94,7 @@ class NavigablePropertiesCompleterTest extends GroovyTestCase {
         NavigablePropertiesCompleter completer = new NavigablePropertiesCompleter()
         completer.addCompletions(null, '', [] as Set)
         NodeBuilder someBuilder = new NodeBuilder()
-        Node node = someBuilder.foo {[bar {[bam(7)]}, baz()]}
+        Node node = someBuilder.foo { [bar { [bam(7)] }, baz()] }
 
         Set candidates = [] as Set
         completer.addCompletions(node, 'ba', candidates)

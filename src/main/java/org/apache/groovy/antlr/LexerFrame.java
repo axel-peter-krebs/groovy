@@ -77,10 +77,22 @@ public class LexerFrame extends JFrame implements ActionListener {
     private final JTextArea scriptPane = new JTextArea();
     private final JLabel tokenStreamLabel = new JLabel(" Token Stream:");
     private final Map<Integer, String> tokens = new HashMap<>();
+    private final Action loadFileAction = new AbstractAction("Open File...") {
+        private static final long serialVersionUID = 4541927184172762704L;
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            final JFileChooser jfc = new JFileChooser();
+            final int response = jfc.showOpenDialog(LexerFrame.this);
+            if (response != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
+            safeScanScript(jfc.getSelectedFile());
+        }
+    };
 
     /**
      * Constructor used when invoking as a standalone application
-     *
      */
     public LexerFrame() {
         this(null);
@@ -88,7 +100,6 @@ public class LexerFrame extends JFrame implements ActionListener {
 
     /**
      * Constructor used when invoking for a specific file
-     *
      */
     public LexerFrame(Reader reader) {
         super("Token Stream Viewer");
@@ -116,6 +127,27 @@ public class LexerFrame extends JFrame implements ActionListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) throws Exception {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ignore) {
+            // Ignore
+        }
+        LexerFrame lexerFrame = null;
+
+        if (args.length == 0) {
+            lexerFrame = new LexerFrame();
+        } else if (args.length > 1) {
+            System.err.println("usage: java LexerFrame [filename.ext]");
+            System.exit(1);
+        } else {
+            String filename = args[0];
+            FileReader fileReader = new FileReader(filename);
+            lexerFrame = new LexerFrame(fileReader);
+        }
+        lexerFrame.setVisible(true);
     }
 
     private void listTokens(Class tokenTypes) throws Exception {
@@ -158,20 +190,6 @@ public class LexerFrame extends JFrame implements ActionListener {
             // IGNORE
         }
     }
-
-    private final Action loadFileAction = new AbstractAction("Open File...") {
-        private static final long serialVersionUID = 4541927184172762704L;
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            final JFileChooser jfc = new JFileChooser();
-            final int response = jfc.showOpenDialog(LexerFrame.this);
-            if (response != JFileChooser.APPROVE_OPTION) {
-                return;
-            }
-            safeScanScript(jfc.getSelectedFile());
-        }
-    };
 
     private void safeScanScript(File file) {
         try {
@@ -279,27 +297,6 @@ public class LexerFrame extends JFrame implements ActionListener {
         jScrollPane1.setColumnHeaderView(tokenStreamLabel);
         jScrollPane2.setColumnHeaderView(new JLabel(" Input Script:"));
         jSplitPane1.setResizeWeight(0.5);
-    }
-
-    public static void main(String[] args) throws Exception {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ignore) {
-            // Ignore
-        }
-        LexerFrame lexerFrame = null;
-
-        if (args.length == 0) {
-            lexerFrame = new LexerFrame();
-        } else if (args.length > 1) {
-            System.err.println("usage: java LexerFrame [filename.ext]");
-            System.exit(1);
-        } else {
-            String filename = args[0];
-            FileReader fileReader = new FileReader(filename);
-            lexerFrame = new LexerFrame(fileReader);
-        }
-        lexerFrame.setVisible(true);
     }
 
     private static class HScrollableTextPane extends JTextPane {

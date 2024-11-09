@@ -181,7 +181,11 @@ public class Groovyc extends MatchingTask {
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     private final LoggingHelper log = new LoggingHelper(this);
-
+    private final List<File> temporaryFiles = new ArrayList<>(2);
+    protected boolean failOnError = true;
+    protected boolean listFiles;
+    protected File[] compileList = EMPTY_FILE_ARRAY;
+    protected CompilerConfiguration configuration;
     private Path src;
     private File destDir;
     private Path compileClasspath;
@@ -198,21 +202,12 @@ public class Groovyc extends MatchingTask {
     private String memoryMaximumSize;
     private String scriptExtension = "*.groovy";
     private String targetBytecode;
-
-    protected boolean failOnError = true;
-    protected boolean listFiles;
-    protected File[] compileList = EMPTY_FILE_ARRAY;
-
     private String updatedProperty;
     private String errorProperty;
     private boolean taskSuccess = true;
     private boolean includeDestClasses = true;
-
-    protected CompilerConfiguration configuration;
     private Javac javac;
     private boolean jointCompilation;
-
-    private final List<File> temporaryFiles = new ArrayList<>(2);
     private File stubDir;
     private boolean keepStubs;
     private boolean forceLookupUnnamedFiles;
@@ -230,6 +225,14 @@ public class Groovyc extends MatchingTask {
      * If true, enable preview Java features (JEP 12) (jdk12+ only). Defaults to false.
      */
     private boolean previewFeatures;
+
+    private static URI getLocation(Class<?> clazz) {
+        try {
+            return clazz.getProtectionDomain().getCodeSource().getLocation().toURI();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Adds a path for source compilation.
@@ -254,6 +257,15 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
+     * Gets the source dirs to find the source java files.
+     *
+     * @return the source directories as a path
+     */
+    public Path getSrcdir() {
+        return src;
+    }
+
+    /**
      * Set the source directories to find the source Java files.
      *
      * @param srcDir the source directories as a path
@@ -267,12 +279,12 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
-     * Gets the source dirs to find the source java files.
+     * Get the extension to use when searching for Groovy source files.
      *
-     * @return the source directories as a path
+     * @return the extension of Groovy source files
      */
-    public Path getSrcdir() {
-        return src;
+    public String getScriptExtension() {
+        return scriptExtension;
     }
 
     /**
@@ -292,12 +304,12 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
-     * Get the extension to use when searching for Groovy source files.
+     * Retrieves the compiler bytecode compatibility level.
      *
-     * @return the extension of Groovy source files
+     * @return bytecode compatibility level. Can be one of the values in {@link CompilerConfiguration#ALLOWED_JDKS}.
      */
-    public String getScriptExtension() {
-        return scriptExtension;
+    public String getTargetBytecode() {
+        return this.targetBytecode;
     }
 
     /**
@@ -311,12 +323,13 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
-     * Retrieves the compiler bytecode compatibility level.
+     * Gets the destination directory into which the java source files
+     * should be compiled.
      *
-     * @return bytecode compatibility level. Can be one of the values in {@link CompilerConfiguration#ALLOWED_JDKS}.
+     * @return the destination directory
      */
-    public String getTargetBytecode() {
-        return this.targetBytecode;
+    public File getDestdir() {
+        return destDir;
     }
 
     /**
@@ -330,13 +343,12 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
-     * Gets the destination directory into which the java source files
-     * should be compiled.
+     * Gets the sourcepath to be used for this compilation.
      *
-     * @return the destination directory
+     * @return the source path
      */
-    public File getDestdir() {
-        return destDir;
+    public Path getSourcepath() {
+        return compileSourcepath;
     }
 
     /**
@@ -350,15 +362,6 @@ public class Groovyc extends MatchingTask {
         } else {
             compileSourcepath.append(sourcepath);
         }
-    }
-
-    /**
-     * Gets the sourcepath to be used for this compilation.
-     *
-     * @return the source path
-     */
-    public Path getSourcepath() {
-        return compileSourcepath;
     }
 
     /**
@@ -383,6 +386,15 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
+     * Gets the classpath to be used for this compilation.
+     *
+     * @return the class path
+     */
+    public Path getClasspath() {
+        return compileClasspath;
+    }
+
+    /**
      * Set the classpath to be used for this compilation.
      *
      * @param classpath an Ant Path object containing the compilation classpath.
@@ -393,15 +405,6 @@ public class Groovyc extends MatchingTask {
         } else {
             compileClasspath.append(classpath);
         }
-    }
-
-    /**
-     * Gets the classpath to be used for this compilation.
-     *
-     * @return the class path
-     */
-    public Path getClasspath() {
-        return compileClasspath;
     }
 
     /**
@@ -426,16 +429,6 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
-     * If true, list the source files being handed off to the compiler.
-     * Default is false.
-     *
-     * @param list if true list the source files
-     */
-    public void setListfiles(boolean list) {
-        listFiles = list;
-    }
-
-    /**
      * Get the listfiles flag.
      *
      * @return the listfiles flag
@@ -445,13 +438,13 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
-     * Indicates whether the build will continue
-     * even if there are compilation errors; defaults to true.
+     * If true, list the source files being handed off to the compiler.
+     * Default is false.
      *
-     * @param fail if true halt the build on failure
+     * @param list if true list the source files
      */
-    public void setFailonerror(boolean fail) {
-        failOnError = fail;
+    public void setListfiles(boolean list) {
+        listFiles = list;
     }
 
     /**
@@ -471,6 +464,25 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
+     * Indicates whether the build will continue
+     * even if there are compilation errors; defaults to true.
+     *
+     * @param fail if true halt the build on failure
+     */
+    public void setFailonerror(boolean fail) {
+        failOnError = fail;
+    }
+
+    /**
+     * Gets the memoryInitialSize flag.
+     *
+     * @return the memoryInitialSize flag
+     */
+    public String getMemoryInitialSize() {
+        return memoryInitialSize;
+    }
+
+    /**
      * The initial size of the memory for the underlying VM
      * if javac is run externally; ignored otherwise.
      * Defaults to the standard VM memory setting.
@@ -483,12 +495,12 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
-     * Gets the memoryInitialSize flag.
+     * Gets the memoryMaximumSize flag.
      *
-     * @return the memoryInitialSize flag
+     * @return the memoryMaximumSize flag
      */
-    public String getMemoryInitialSize() {
-        return memoryInitialSize;
+    public String getMemoryMaximumSize() {
+        return memoryMaximumSize;
     }
 
     /**
@@ -504,12 +516,12 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
-     * Gets the memoryMaximumSize flag.
+     * Returns the encoding to be used when creating files.
      *
-     * @return the memoryMaximumSize flag
+     * @return the file encoding to use
      */
-    public String getMemoryMaximumSize() {
-        return memoryMaximumSize;
+    public String getEncoding() {
+        return encoding;
     }
 
     /**
@@ -522,12 +534,12 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
-     * Returns the encoding to be used when creating files.
+     * Gets the verbose flag.
      *
-     * @return the file encoding to use
+     * @return the verbose flag
      */
-    public String getEncoding() {
-        return encoding;
+    public boolean getVerbose() {
+        return verbose;
     }
 
     /**
@@ -539,12 +551,12 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
-     * Gets the verbose flag.
+     * Gets whether the ant classpath is to be included in the classpath.
      *
-     * @return the verbose flag
+     * @return whether the ant classpath is to be included in the classpath
      */
-    public boolean getVerbose() {
-        return verbose;
+    public boolean getIncludeantruntime() {
+        return includeAntRuntime;
     }
 
     /**
@@ -560,12 +572,13 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
-     * Gets whether the ant classpath is to be included in the classpath.
+     * Gets whether the java runtime should be included in this
+     * task's classpath.
      *
-     * @return whether the ant classpath is to be included in the classpath
+     * @return the includejavaruntime attribute
      */
-    public boolean getIncludeantruntime() {
-        return includeAntRuntime;
+    public boolean getIncludejavaruntime() {
+        return includeJavaRuntime;
     }
 
     /**
@@ -575,16 +588,6 @@ public class Groovyc extends MatchingTask {
      */
     public void setIncludejavaruntime(boolean include) {
         includeJavaRuntime = include;
-    }
-
-    /**
-     * Gets whether the java runtime should be included in this
-     * task's classpath.
-     *
-     * @return the includejavaruntime attribute
-     */
-    public boolean getIncludejavaruntime() {
-        return includeJavaRuntime;
     }
 
     /**
@@ -607,6 +610,16 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
+     * The value of the executable attribute, if any.
+     *
+     * @return the name of the java executable
+     * @since Groovy 1.8.7
+     */
+    public String getExecutable() {
+        return forkedExecutable;
+    }
+
+    /**
      * Sets the name of the java executable to use when
      * invoking the compiler in forked mode, ignored otherwise.
      *
@@ -615,16 +628,6 @@ public class Groovyc extends MatchingTask {
      */
     public void setExecutable(String forkExecPath) {
         forkedExecutable = forkExecPath;
-    }
-
-    /**
-     * The value of the executable attribute, if any.
-     *
-     * @return the name of the java executable
-     * @since Groovy 1.8.7
-     */
-    public String getExecutable() {
-        return forkedExecutable;
     }
 
     /**
@@ -650,6 +653,15 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
+     * Get the value of the includeDestClasses property.
+     *
+     * @return the value.
+     */
+    public boolean isIncludeDestClasses() {
+        return includeDestClasses;
+    }
+
+    /**
      * This property controls whether to include the
      * destination classes directory in the classpath
      * given to the compiler.
@@ -659,15 +671,6 @@ public class Groovyc extends MatchingTask {
      */
     public void setIncludeDestClasses(boolean includeDestClasses) {
         this.includeDestClasses = includeDestClasses;
-    }
-
-    /**
-     * Get the value of the includeDestClasses property.
-     *
-     * @return the value.
-     */
-    public boolean isIncludeDestClasses() {
-        return includeDestClasses;
     }
 
     /**
@@ -697,6 +700,14 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
+     * Get the value of the indy flag (always true).
+     */
+    @Deprecated
+    public boolean getIndy() {
+        return true;
+    }
+
+    /**
      * Legacy method to set the indy flag (only true is allowed)
      *
      * @param indy true means invokedynamic support is active
@@ -709,11 +720,12 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
-     * Get the value of the indy flag (always true).
+     * Get the base script class name for the scripts (must derive from Script)
+     *
+     * @return Base class name for scripts (must derive from Script)
      */
-    @Deprecated
-    public boolean getIndy() {
-        return true;
+    public String getScriptBaseClass() {
+        return this.scriptBaseClass;
     }
 
     /**
@@ -723,15 +735,6 @@ public class Groovyc extends MatchingTask {
      */
     public void setScriptBaseClass(String scriptBaseClass) {
         this.scriptBaseClass = scriptBaseClass;
-    }
-
-    /**
-     * Get the base script class name for the scripts (must derive from Script)
-     *
-     * @return Base class name for scripts (must derive from Script)
-     */
-    public String getScriptBaseClass() {
-        return this.scriptBaseClass;
     }
 
     /**
@@ -753,6 +756,16 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
+     * Gets the stub directory into which the Java source stub
+     * files should be generated
+     *
+     * @return the stub directory
+     */
+    public File getStubdir() {
+        return stubDir;
+    }
+
+    /**
      * Set the stub directory into which the Java source stub
      * files should be generated. The directory need not exist
      * and will not be deleted automatically - though its contents
@@ -766,13 +779,12 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
-     * Gets the stub directory into which the Java source stub
-     * files should be generated
+     * Gets the keepStubs flag.
      *
-     * @return the stub directory
+     * @return the keepStubs flag
      */
-    public File getStubdir() {
-        return stubDir;
+    public boolean getKeepStubs() {
+        return keepStubs;
     }
 
     /**
@@ -786,12 +798,12 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
-     * Gets the keepStubs flag.
+     * Gets the forceLookupUnnamedFiles flag.
      *
-     * @return the keepStubs flag
+     * @return the forceLookupUnnamedFiles flag
      */
-    public boolean getKeepStubs() {
-        return keepStubs;
+    public boolean getForceLookupUnnamedFiles() {
+        return forceLookupUnnamedFiles;
     }
 
     /**
@@ -812,12 +824,10 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
-     * Gets the forceLookupUnnamedFiles flag.
-     *
-     * @return the forceLookupUnnamedFiles flag
+     * Returns true if parameter metadata generation has been enabled.
      */
-    public boolean getForceLookupUnnamedFiles() {
-        return forceLookupUnnamedFiles;
+    public boolean getParameters() {
+        return this.parameters;
     }
 
     /**
@@ -830,10 +840,10 @@ public class Groovyc extends MatchingTask {
     }
 
     /**
-     * Returns true if parameter metadata generation has been enabled.
+     * Returns true if preview features has been enabled.
      */
-    public boolean getParameters() {
-        return this.parameters;
+    public boolean getPreviewFeatures() {
+        return previewFeatures;
     }
 
     /**
@@ -843,13 +853,6 @@ public class Groovyc extends MatchingTask {
      */
     public void setPreviewFeatures(boolean previewFeatures) {
         this.previewFeatures = previewFeatures;
-    }
-
-    /**
-     * Returns true if preview features has been enabled.
-     */
-    public boolean getPreviewFeatures() {
-        return previewFeatures;
     }
 
     /**
@@ -880,8 +883,8 @@ public class Groovyc extends MatchingTask {
 
         compile();
         if (updatedProperty != null
-                && taskSuccess
-                && compileList.length != 0) {
+            && taskSuccess
+            && compileList.length != 0) {
             getProject().setNewProperty(updatedProperty, "true");
         }
     }
@@ -949,9 +952,9 @@ public class Groovyc extends MatchingTask {
 
         if (destDir != null && !destDir.isDirectory()) {
             throw new BuildException("destination directory \""
-                    + destDir
-                    + "\" does not exist or is not a directory",
-                    getLocation());
+                + destDir
+                + "\" does not exist or is not a directory",
+                getLocation());
         }
 
         if (encoding != null && !Charset.isSupported(encoding)) {
@@ -1016,12 +1019,12 @@ public class Groovyc extends MatchingTask {
         for (Map.Entry<String, Object> e : rc.getAttributeMap().entrySet()) {
             String key = e.getKey();
             if ("depend".equals(key)
-                    || "encoding".equals(key)
-                    || "extdirs".equals(key)
-                    || "nativeheaderdir".equals(key)
-                    || "release".equals(key)
-                    || "source".equals(key)
-                    || "target".equals(key)) {
+                || "encoding".equals(key)
+                || "extdirs".equals(key)
+                || "nativeheaderdir".equals(key)
+                || "release".equals(key)
+                || "source".equals(key)
+                || "target".equals(key)) {
                 switch (key) {
                     case "nativeheaderdir":
                         key = "h";
@@ -1100,14 +1103,14 @@ public class Groovyc extends MatchingTask {
             bootstrapClasspath = ((AntClassLoader) loader).getClasspath().split(File.pathSeparator);
         } else {
             Class<?>[] bootstrapClasses = {
-                    FileSystemCompilerFacade.class,
-                    FileSystemCompiler.class,
-                    ParseTreeVisitor.class,
-                    ClassVisitor.class,
-                    CommandLine.class,
+                FileSystemCompilerFacade.class,
+                FileSystemCompiler.class,
+                ParseTreeVisitor.class,
+                ClassVisitor.class,
+                CommandLine.class,
             };
             bootstrapClasspath = Arrays.stream(bootstrapClasses).map(Groovyc::getLocation)
-                    .map(uri -> new File(uri).getAbsolutePath()).distinct().toArray(String[]::new);
+                .map(uri -> new File(uri).getAbsolutePath()).distinct().toArray(String[]::new);
         }
         if (bootstrapClasspath.length > 0) {
             commandLineList.add("-classpath");
@@ -1160,14 +1163,6 @@ public class Groovyc extends MatchingTask {
             }
         }
         return sb.toString();
-    }
-
-    private static URI getLocation(Class<?> clazz) {
-        try {
-            return clazz.getProtectionDomain().getCodeSource().getLocation().toURI();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**
@@ -1335,8 +1330,8 @@ public class Groovyc extends MatchingTask {
 
         try {
             log.info("Compiling " + compileList.length + " source file"
-                    + (compileList.length == 1 ? "" : "s")
-                    + (destDir != null ? " to " + destDir : ""));
+                + (compileList.length == 1 ? "" : "s")
+                + (destDir != null ? " to " + destDir : ""));
 
             listFiles();
 
@@ -1441,7 +1436,7 @@ public class Groovyc extends MatchingTask {
 
         @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
         GroovyClassLoader groovyLoader = java.security.AccessController.doPrivileged((PrivilegedAction<GroovyClassLoader>) () ->
-                new GroovyClassLoader(loader, configuration));
+            new GroovyClassLoader(loader, configuration));
 
         if (!forceLookupUnnamedFiles) {
             // in normal case we don't need to do script lookups

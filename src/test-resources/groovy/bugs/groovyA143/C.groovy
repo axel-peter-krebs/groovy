@@ -19,8 +19,9 @@
 package groovy.bugs.groovyA143
 
 class C {
-	final B base
-	C(B base) {
-		this.base = base
-	}
+    final B base
+
+    C(B base) {
+        this.base = base
+    }
 }

@@ -25,7 +25,7 @@ class StubGenerationForConstructorWithOptionalArgsStubsTest extends StringSource
 
     Map<String, String> provideSources() {
         [
-            'Base4508.java': '''
+            'Base4508.java'     : '''
                 class Base4508 {
                   Base4508(String str) {}
                 }

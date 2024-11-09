@@ -51,49 +51,11 @@ public class CachedClass {
     public static final CachedClass[] EMPTY_ARRAY = new CachedClass[0];
 
     private static ReferenceBundle softBundle = ReferenceBundle.getSoftBundle();
-
-    @SuppressWarnings("removal") // TODO: perform the action as not privileged
-    private static <T> T doPrivileged(java.security.PrivilegedAction<T> action) {
-        return java.security.AccessController.doPrivileged(action);
-    }
-
-    private static <M extends AccessibleObject & Member> boolean isAccessibleOrCanSetAccessible(M m) {
-        if (isPublic(m.getModifiers()) && m.getDeclaringClass().getPackageName().startsWith("sun.")) {
-            return false;
-        }
-        if (isProtected(m.getModifiers()) && isPublic(m.getDeclaringClass().getModifiers())) {
-            return true;
-        }
-        return ReflectionUtils.checkCanSetAccessible(m, CachedClass.class);
-    }
-
-    private final LazyReference<CachedField[]> fields = new LazyReference<CachedField[]>(softBundle) {
-        private static final long serialVersionUID = 5450437842165410025L;
-
-        @Override
-        public CachedField[] initValue() {
-            return doPrivileged(() -> Arrays.stream(getTheClass().getDeclaredFields())
-                .filter(CachedClass::isAccessibleOrCanSetAccessible)
-                .map(CachedField::new).toArray(CachedField[]::new)
-            );
-        }
-    };
-
-    private final LazyReference<CachedConstructor[]> constructors = new LazyReference<CachedConstructor[]>(softBundle) {
-        private static final long serialVersionUID = -5834446523983631635L;
-
-        @Override
-        public CachedConstructor[] initValue() {
-            return doPrivileged(() -> Arrays.stream(getTheClass().getDeclaredConstructors())
-                .filter(c -> !c.isSynthetic()) // GROOVY-9245: exclude inner class ctors
-                .filter(CachedClass::isAccessibleOrCanSetAccessible)
-                .map(c -> new CachedConstructor(CachedClass.this, c))
-                .toArray(CachedConstructor[]::new)
-            );
-        }
-    };
-
-    private final LazyReference<CachedMethod[]> methods = new LazyReference<CachedMethod[]>(softBundle) {
+    public final boolean isArray;
+    public final boolean isPrimitive;
+    public final int modifiers;
+    public final boolean isInterface;
+    public final boolean isNumber;    private final LazyReference<CachedMethod[]> methods = new LazyReference<CachedMethod[]>(softBundle) {
         private static final long serialVersionUID = 6347586066597418308L;
 
         @Override
@@ -134,17 +96,18 @@ public class CachedClass {
             return methods.toArray(CachedMethod.EMPTY_ARRAY);
         }
     };
-
-    private final LazyReference<CallSiteClassLoader> callSiteClassLoader = new LazyReference<CallSiteClassLoader>(softBundle) {
-        private static final long serialVersionUID = 4410385968428074090L;
+    private final Class<?> cachedClass;
+    private final LazyReference<CachedField[]> fields = new LazyReference<CachedField[]>(softBundle) {
+        private static final long serialVersionUID = 5450437842165410025L;
 
         @Override
-        public CallSiteClassLoader initValue() {
-            return doPrivileged(() -> new CallSiteClassLoader(CachedClass.this.cachedClass));
+        public CachedField[] initValue() {
+            return doPrivileged(() -> Arrays.stream(getTheClass().getDeclaredFields())
+                .filter(CachedClass::isAccessibleOrCanSetAccessible)
+                .map(CachedField::new).toArray(CachedField[]::new)
+            );
         }
-    };
-
-    private final LazyReference<Collection<ClassInfo>> hierarchy = new LazyReference<Collection<ClassInfo>>(softBundle) {
+    };    private final LazyReference<Collection<ClassInfo>> hierarchy = new LazyReference<Collection<ClassInfo>>(softBundle) {
         private static final long serialVersionUID = 7166687623678851596L;
 
         @Override
@@ -165,23 +128,27 @@ public class CachedClass {
             return res;
         }
     };
-
-    private final LazyReference<Set<CachedClass>> declaredInterfaces = new LazyReference<Set<CachedClass>>(softBundle) {
-        private static final long serialVersionUID = 2139190436931329873L;
+    private final LazyReference<CachedConstructor[]> constructors = new LazyReference<CachedConstructor[]>(softBundle) {
+        private static final long serialVersionUID = -5834446523983631635L;
 
         @Override
-        public Set<CachedClass> initValue() {
-            Set<CachedClass> res = new HashSet<>(0);
-
-            Class[] classes = getTheClass().getInterfaces();
-            for (Class cls : classes) {
-                res.add(ReflectionCache.getCachedClass(cls));
-            }
-            return res;
+        public CachedConstructor[] initValue() {
+            return doPrivileged(() -> Arrays.stream(getTheClass().getDeclaredConstructors())
+                .filter(c -> !c.isSynthetic()) // GROOVY-9245: exclude inner class ctors
+                .filter(CachedClass::isAccessibleOrCanSetAccessible)
+                .map(c -> new CachedConstructor(CachedClass.this, c))
+                .toArray(CachedConstructor[]::new)
+            );
         }
     };
+    private final LazyReference<CallSiteClassLoader> callSiteClassLoader = new LazyReference<CallSiteClassLoader>(softBundle) {
+        private static final long serialVersionUID = 4410385968428074090L;
 
-    private final LazyReference<Set<CachedClass>> interfaces = new LazyReference<Set<CachedClass>>(softBundle) {
+        @Override
+        public CallSiteClassLoader initValue() {
+            return doPrivileged(() -> new CallSiteClassLoader(CachedClass.this.cachedClass));
+        }
+    };    private final LazyReference<Set<CachedClass>> interfaces = new LazyReference<Set<CachedClass>>(softBundle) {
         private static final long serialVersionUID = 4060471819464086940L;
 
         @Override
@@ -205,7 +172,22 @@ public class CachedClass {
             return res;
         }
     };
+    private final LazyReference<Set<CachedClass>> declaredInterfaces = new LazyReference<Set<CachedClass>>(softBundle) {
+        private static final long serialVersionUID = 2139190436931329873L;
 
+        @Override
+        public Set<CachedClass> initValue() {
+            Set<CachedClass> res = new HashSet<>(0);
+
+            Class[] classes = getTheClass().getInterfaces();
+            for (Class cls : classes) {
+                res.add(ReflectionCache.getCachedClass(cls));
+            }
+            return res;
+        }
+    };
+
+    //--------------------------------------------------------------------------
     private final LazyReference<CachedClass> superClass = new LazyReference<CachedClass>(softBundle) {
         private static final long serialVersionUID = -4663740963306806058L;
 
@@ -220,20 +202,10 @@ public class CachedClass {
             }
         }
     };
-
-    //--------------------------------------------------------------------------
-
-    private final Class<?> cachedClass;
     public ClassInfo classInfo;
-    public final boolean isArray;
-    public final boolean isPrimitive;
-    public final int modifiers;
-    public final boolean isInterface;
-    public final boolean isNumber;
     public CachedMethod[] mopMethods;
     int distance = -1;
     int hashCode;
-
     public CachedClass(Class<?> klazz, ClassInfo classInfo) {
         cachedClass = klazz;
         this.classInfo = classInfo;
@@ -242,6 +214,43 @@ public class CachedClass {
         modifiers = klazz.getModifiers();
         isInterface = klazz.isInterface();
         isNumber = Number.class.isAssignableFrom(klazz);
+    }
+
+    @SuppressWarnings("removal") // TODO: perform the action as not privileged
+    private static <T> T doPrivileged(java.security.PrivilegedAction<T> action) {
+        return java.security.AccessController.doPrivileged(action);
+    }
+
+    private static <M extends AccessibleObject & Member> boolean isAccessibleOrCanSetAccessible(M m) {
+        if (isPublic(m.getModifiers()) && m.getDeclaringClass().getPackageName().startsWith("sun.")) {
+            return false;
+        }
+        if (isProtected(m.getModifiers()) && isPublic(m.getDeclaringClass().getModifiers())) {
+            return true;
+        }
+        return ReflectionUtils.checkCanSetAccessible(m, CachedClass.class);
+    }
+
+    private static boolean arrayContentsEq(Object[] a1, Object[] a2) {
+        if (a1 == null) {
+            return a2 == null || a2.length == 0;
+        }
+
+        if (a2 == null) {
+            return a1.length == 0;
+        }
+
+        if (a1.length != a2.length) {
+            return false;
+        }
+
+        for (int i = 0; i < a1.length; i++) {
+            if (a1[i] != a2[i]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public CachedClass getCachedSuperClass() {
@@ -274,34 +283,12 @@ public class CachedClass {
         CachedMethod res = null;
         for (CachedMethod m : methods) {
             if (m.getName().equals(name)
-                    && arrayContentsEq(parameterTypes, m.getParameterTypes())
-                    && (res == null || res.getReturnType().isAssignableFrom(m.getReturnType())))
+                && arrayContentsEq(parameterTypes, m.getParameterTypes())
+                && (res == null || res.getReturnType().isAssignableFrom(m.getReturnType())))
                 res = m;
         }
 
         return res;
-    }
-
-    private static boolean arrayContentsEq(Object[] a1, Object[] a2) {
-        if (a1 == null) {
-            return a2 == null || a2.length == 0;
-        }
-
-        if (a2 == null) {
-            return a1.length == 0;
-        }
-
-        if (a1.length != a2.length) {
-            return false;
-        }
-
-        for (int i = 0; i < a1.length; i++) {
-            if (a1[i] != a2[i]) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     public int getModifiers() {
@@ -326,9 +313,9 @@ public class CachedClass {
     @Override
     public int hashCode() {
         if (hashCode == 0) {
-          hashCode = super.hashCode();
-          if (hashCode == 0)
-            hashCode = 0xcafebebe;
+            hashCode = super.hashCode();
+            if (hashCode == 0)
+                hashCode = 0xcafebebe;
         }
         return hashCode;
     }
@@ -362,14 +349,13 @@ public class CachedClass {
 
         final MetaClass metaClass = classInfo.getStrongMetaClass();
         if (metaClass instanceof ExpandoMetaClass) {
-            arr.addAll(((ExpandoMetaClass)metaClass).getExpandoMethods());
+            arr.addAll(((ExpandoMetaClass) metaClass).getExpandoMethods());
         }
 
         if (isInterface) {
             MetaClass mc = ReflectionCache.OBJECT_CLASS.classInfo.getStrongMetaClass();
             addSubclassExpandos(arr, mc);
-        }
-        else {
+        } else {
             for (CachedClass cls = this; cls != null; cls = cls.getCachedSuperClass()) {
                 MetaClass mc = cls.classInfo.getStrongMetaClass();
                 addSubclassExpandos(arr, mc);
@@ -391,14 +377,13 @@ public class CachedClass {
                 if (mm instanceof MetaMethod) {
                     MetaMethod method = (MetaMethod) mm;
                     if (method.getDeclaringClass() == this)
-                      arr.add(method);
-                }
-                else {
+                        arr.add(method);
+                } else {
                     FastArray farr = (FastArray) mm;
                     for (int i = 0; i != farr.size; ++i) {
                         MetaMethod method = (MetaMethod) farr.get(i);
                         if (method.getDeclaringClass() == this)
-                          arr.add(method);
+                            arr.add(method);
                     }
                 }
             }
@@ -408,25 +393,25 @@ public class CachedClass {
     public void setNewMopMethods(List<MetaMethod> arr) {
         final MetaClass metaClass = classInfo.getStrongMetaClass();
         if (metaClass != null) {
-          if (metaClass.getClass() == MetaClassImpl.class) {
-              classInfo.setStrongMetaClass(null);
-              updateSetNewMopMethods(arr);
-              MetaClassImpl mci = new MetaClassImpl(metaClass.getTheClass());
-              mci.initialize();
-              classInfo.setStrongMetaClass(mci);
-              return;
-          }
+            if (metaClass.getClass() == MetaClassImpl.class) {
+                classInfo.setStrongMetaClass(null);
+                updateSetNewMopMethods(arr);
+                MetaClassImpl mci = new MetaClassImpl(metaClass.getTheClass());
+                mci.initialize();
+                classInfo.setStrongMetaClass(mci);
+                return;
+            }
 
-          if (metaClass.getClass() == ExpandoMetaClass.class) {
-              classInfo.setStrongMetaClass(null);
-              updateSetNewMopMethods(arr);
-              ExpandoMetaClass newEmc = new ExpandoMetaClass(metaClass.getTheClass());
-              newEmc.initialize();
-              classInfo.setStrongMetaClass(newEmc);
-              return;
-          }
+            if (metaClass.getClass() == ExpandoMetaClass.class) {
+                classInfo.setStrongMetaClass(null);
+                updateSetNewMopMethods(arr);
+                ExpandoMetaClass newEmc = new ExpandoMetaClass(metaClass.getTheClass());
+                newEmc.initialize();
+                classInfo.setStrongMetaClass(newEmc);
+                return;
+            }
 
-          throw new GroovyRuntimeException("Can't add methods to class " + getTheClass().getName() + ". Strong custom meta class already set.");
+            throw new GroovyRuntimeException("Can't add methods to class " + getTheClass().getName() + ". Strong custom meta class already set.");
         }
 
         classInfo.setWeakMetaClass(null);
@@ -438,40 +423,39 @@ public class CachedClass {
             final MetaMethod[] metaMethods = arr.toArray(MetaMethod.EMPTY_ARRAY);
             classInfo.dgmMetaMethods = metaMethods;
             classInfo.newMetaMethods = metaMethods;
-        }
-        else
+        } else
             classInfo.newMetaMethods = classInfo.dgmMetaMethods;
     }
 
     public void addNewMopMethods(List<MetaMethod> arr) {
         final MetaClass metaClass = classInfo.getStrongMetaClass();
         if (metaClass != null) {
-          if (metaClass.getClass() == MetaClassImpl.class) {
-              classInfo.setStrongMetaClass(null);
-              List<MetaMethod> res = new ArrayList<>();
-              Collections.addAll(res, classInfo.newMetaMethods);
-              res.addAll(arr);
-              updateSetNewMopMethods(res);
-              MetaClassImpl answer = new MetaClassImpl(((MetaClassImpl)metaClass).getRegistry(),metaClass.getTheClass());
-              answer.initialize();
-              classInfo.setStrongMetaClass(answer);
-              return;
-          }
+            if (metaClass.getClass() == MetaClassImpl.class) {
+                classInfo.setStrongMetaClass(null);
+                List<MetaMethod> res = new ArrayList<>();
+                Collections.addAll(res, classInfo.newMetaMethods);
+                res.addAll(arr);
+                updateSetNewMopMethods(res);
+                MetaClassImpl answer = new MetaClassImpl(((MetaClassImpl) metaClass).getRegistry(), metaClass.getTheClass());
+                answer.initialize();
+                classInfo.setStrongMetaClass(answer);
+                return;
+            }
 
-          if (metaClass.getClass() == ExpandoMetaClass.class) {
-              ExpandoMetaClass emc = (ExpandoMetaClass)metaClass;
-              classInfo.setStrongMetaClass(null);
-              updateAddNewMopMethods(arr);
-              ExpandoMetaClass newEmc = new ExpandoMetaClass(metaClass.getTheClass());
-              for (MetaMethod mm : emc.getExpandoMethods()) {
-                  newEmc.registerInstanceMethod(mm);
-              }
-              newEmc.initialize();
-              classInfo.setStrongMetaClass(newEmc);
-              return;
-          }
+            if (metaClass.getClass() == ExpandoMetaClass.class) {
+                ExpandoMetaClass emc = (ExpandoMetaClass) metaClass;
+                classInfo.setStrongMetaClass(null);
+                updateAddNewMopMethods(arr);
+                ExpandoMetaClass newEmc = new ExpandoMetaClass(metaClass.getTheClass());
+                for (MetaMethod mm : emc.getExpandoMethods()) {
+                    newEmc.registerInstanceMethod(mm);
+                }
+                newEmc.initialize();
+                classInfo.setStrongMetaClass(newEmc);
+                return;
+            }
 
-          throw new GroovyRuntimeException("Can't add methods to class " + getTheClass().getName() + ". Strong custom meta class already set.");
+            throw new GroovyRuntimeException("Can't add methods to class " + getTheClass().getName() + ". Strong custom meta class already set.");
         }
 
         classInfo.setWeakMetaClass(null);
@@ -508,6 +492,7 @@ public class CachedClass {
 
     /**
      * compatibility method
+     *
      * @return this
      */
     public CachedClass getCachedClass() {
@@ -518,8 +503,6 @@ public class CachedClass {
     public String toString() {
         return cachedClass.toString();
     }
-
-    //--------------------------------------------------------------------------
 
     public static class CachedMethodComparatorByName implements Comparator<CachedMethod> {
         public static final Comparator INSTANCE = new CachedMethodComparatorByName();
@@ -541,4 +524,12 @@ public class CachedClass {
                 return ((String) o1).compareTo(((CachedMethod) o2).getName());
         }
     }
+
+
+
+    //--------------------------------------------------------------------------
+
+
+
+
 }

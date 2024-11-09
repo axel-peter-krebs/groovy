@@ -24,16 +24,16 @@ import groovy.xml.markupsupport.SurrogateToUndefined
 import spock.lang.Specification
 
 class MarkupBuilderIllegalCharactersSpec extends Specification {
-    static final char[] nullCharacter  = [0x0]
-    static final char[] c0Controls     = ((0x0..0x8) + [0xB] + (0xE..0x1F))
-    static final char[] extControl1    = (0x7F..0x84)
-    static final char[] nextLine       = [0x85]
-    static final char[] extControl2    = (0x86..0x9F)
-    static final char[] surrogates     = (0xD800..0xDFFF)
+    static final char[] nullCharacter = [0x0]
+    static final char[] c0Controls = ((0x0..0x8) + [0xB] + (0xE..0x1F))
+    static final char[] extControl1 = (0x7F..0x84)
+    static final char[] nextLine = [0x85]
+    static final char[] extControl2 = (0x86..0x9F)
+    static final char[] surrogates = (0xD800..0xDFFF)
     static final char[] nonCharacters1 = (0xFDD0..0xFDEF)
     static final char[] nonCharacters2 = [0xFFFE, 0xFFFF]
 
-    def "Default MarkupBuilder character filter for #characterRange"(String characterRange, boolean shouldFilter,  char[] characters) {
+    def "Default MarkupBuilder character filter for #characterRange"(String characterRange, boolean shouldFilter, char[] characters) {
         given:
         def writer
         def xml
@@ -50,7 +50,7 @@ class MarkupBuilderIllegalCharactersSpec extends Specification {
             def actual = writer.toString()
 
             assert actual == "<tag attr='$encoded'>$encoded</tag>",
-                    "Character (${it as int}) is encoded correctly"
+                "Character (${it as int}) is encoded correctly"
         }
 
         where:
@@ -65,7 +65,7 @@ class MarkupBuilderIllegalCharactersSpec extends Specification {
         'Non-characters II'         | true         | nonCharacters2        // Discouraged XML, not in HTML char references
     }
 
-    def "MarkupBuilder ALL_XML character filter for #characterRange"(String characterRange, boolean shouldFilter,  char[] characters) {
+    def "MarkupBuilder ALL_XML character filter for #characterRange"(String characterRange, boolean shouldFilter, char[] characters) {
         given:
         def writer
         def xml
@@ -82,7 +82,7 @@ class MarkupBuilderIllegalCharactersSpec extends Specification {
             def actual = writer.toString()
 
             assert actual == "<tag attr='$encoded'>$encoded</tag>",
-                    "Character (${it as int}) is encoded correctly"
+                "Character (${it as int}) is encoded correctly"
         }
 
         where:
@@ -112,7 +112,7 @@ class MarkupBuilderIllegalCharactersSpec extends Specification {
             def actual = writer.toString()
 
             assert actual == "<tag attr='$encoded'>$encoded</tag>",
-                    "Character (${it as int}) is encoded correctly"
+                "Character (${it as int}) is encoded correctly"
         }
 
         where:

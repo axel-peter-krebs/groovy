@@ -33,13 +33,16 @@ import java.io.Writer;
  * For safe usage with multiple {@link Thread}s then
  * {@link java.io.StringWriter} should be used.
  * </p>
+ *
  * @since 2.0
  */
 public class StringBuilderWriter extends Writer implements Serializable {
 
     private static final long serialVersionUID = -146927496096066153L;
 
-    /** The append target. */
+    /**
+     * The append target.
+     */
     private final StringBuilder builder;
 
     /**
@@ -98,7 +101,7 @@ public class StringBuilderWriter extends Writer implements Serializable {
      *
      * @param value The character to append
      * @param start The index of the first character
-     * @param end The index of the last character + 1
+     * @param end   The index of the last character + 1
      * @return This writer instance
      */
     @Override
@@ -145,7 +148,7 @@ public class StringBuilderWriter extends Writer implements Serializable {
     /**
      * Writes a portion of a character array to the {@link StringBuilder}.
      *
-     * @param value The value to write
+     * @param value  The value to write
      * @param offset The index of the first character
      * @param length The number of characters to write
      */

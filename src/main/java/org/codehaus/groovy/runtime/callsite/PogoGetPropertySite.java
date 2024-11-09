@@ -32,10 +32,10 @@ public class PogoGetPropertySite extends AbstractCallSite {
 
     @Override
     public CallSite acceptGetProperty(Object receiver) {
-        if (receiver== null || receiver.getClass() != aClass)
+        if (receiver == null || receiver.getClass() != aClass)
             return createGetPropertySite(receiver);
         else
-          return this;
+            return this;
     }
 
     @Override
@@ -43,13 +43,13 @@ public class PogoGetPropertySite extends AbstractCallSite {
         if (receiver == null || receiver.getClass() != aClass)
             return createGroovyObjectGetPropertySite(receiver);
         else
-          return this;
+            return this;
     }
 
     @Override
     public Object getProperty(Object receiver) throws Throwable {
-        try{
-            return ((GroovyObject)receiver).getProperty(name);
+        try {
+            return ((GroovyObject) receiver).getProperty(name);
         } catch (GroovyRuntimeException gre) {
             throw ScriptBytecodeAdapter.unwrap(gre);
         }

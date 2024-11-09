@@ -28,6 +28,12 @@ public class NullObject extends GroovyObjectSupport {
 
     private static final NullObject INSTANCE = new NullObject();
 
+    private NullObject() {
+        if (INSTANCE != null) {
+            throw new RuntimeException("Can't instantiate NullObject. Use NullObject.getNullObject()");
+        }
+    }
+
     /**
      * Returns the NullObject reference.
      *
@@ -35,12 +41,6 @@ public class NullObject extends GroovyObjectSupport {
      */
     public static NullObject getNullObject() {
         return INSTANCE;
-    }
-
-    private NullObject() {
-        if (INSTANCE != null) {
-            throw new RuntimeException("Can't instantiate NullObject. Use NullObject.getNullObject()");
-        }
     }
 
     //--------------------------------------------------------------------------
@@ -100,7 +100,7 @@ public class NullObject extends GroovyObjectSupport {
      * @throws NullPointerException
      */
     @Override
-    public  void  setProperty(final String name, final Object value) {
+    public void setProperty(final String name, final Object value) {
         throw new NullPointerException("Cannot set property '" + name + "' on null object");
     }
 

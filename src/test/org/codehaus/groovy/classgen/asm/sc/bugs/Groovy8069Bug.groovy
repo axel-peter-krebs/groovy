@@ -37,6 +37,7 @@ class Groovy8069Bug extends StaticTypeCheckingTestCase implements StaticCompilat
             new Foo().bar()
         '''
     }
+
     void testComplexLogInClosureInStaticMethod() {
         assertScript '''
             @groovy.util.logging.Log

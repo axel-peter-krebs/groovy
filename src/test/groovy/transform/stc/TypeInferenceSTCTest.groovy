@@ -120,7 +120,7 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             }
             o.toUpperCase() // ensure that type information is reset
         ''',
-        'Cannot find matching method java.lang.Object#toUpperCase()'
+            'Cannot find matching method java.lang.Object#toUpperCase()'
     }
 
     void testInstanceOf4() {
@@ -132,7 +132,7 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                 o.toUpperCase() // ensure that type information is reset
             }
         ''',
-        'Cannot find matching method java.lang.Object#toUpperCase()'
+            'Cannot find matching method java.lang.Object#toUpperCase()'
     }
 
     void testInstanceOf5() {
@@ -258,7 +258,7 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                 (false || foo instanceof Bar) ? foo : new Bar()
             }
         ''',
-        'Cannot return value of type Foo for method returning Bar'
+            'Cannot return value of type Foo for method returning Bar'
     }
 
     // GROOVY-11007
@@ -590,7 +590,7 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                     }
                 }
             """,
-            'Cannot find matching method java.lang.Object#toUpperCase()'
+                'Cannot find matching method java.lang.Object#toUpperCase()'
         }
     }
 
@@ -696,7 +696,7 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                 a.x = '2'
             }
         ''',
-        'Cannot assign value of type java.lang.String to variable of type int'
+            'Cannot assign value of type java.lang.String to variable of type int'
     }
 
     void testInstanceOfInferenceWithMissingProperty() {
@@ -709,7 +709,7 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                 a.y = 2
             }
         ''',
-        'No such property: y for class: A'
+            'No such property: y for class: A'
     }
 
     // GROOVY-9967
@@ -763,7 +763,7 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             String name = 'Guillaume'
             println naamme
         ''',
-        'The variable [naamme] is undeclared'
+            'The variable [naamme] is undeclared'
     }
 
     void testShouldNotFailWithWith() {
@@ -789,7 +789,7 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                 x = '2' // should be recognized as a.x at compile time and fail because of wrong type
             }
         ''',
-        'Cannot assign value of type java.lang.String to variable of type int'
+            'Cannot assign value of type java.lang.String to variable of type int'
     }
 
     void testShouldNotFailWithWithTwoClasses() {
@@ -850,11 +850,11 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                 it.x = 2 // should be recognized as a.x at compile time
             }
         ''',
-        'Expected type A for closure parameter: it'
+            'Expected type A for closure parameter: it'
     }
 
     void testShouldNotFailWithInheritanceAndWith() {
-         assertScript '''
+        assertScript '''
              class A {
                  int x
                  void method() { println x }
@@ -882,9 +882,9 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
     }
 
     void testCallMethodInWithContextAndShadowing() {
-       // make sure that the method which is found in 'with' is actually the one from class A
-       // which returns a String
-       assertScript '''
+        // make sure that the method which is found in 'with' is actually the one from class A
+        // which returns a String
+        assertScript '''
             class A {
                 String method() { return 'Cedric' }
             }
@@ -897,8 +897,8 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             }
         '''
 
-       // check that if we switch signatures, it fails
-       shouldFailWithMessages '''
+        // check that if we switch signatures, it fails
+        shouldFailWithMessages '''
             class A {
                 int method() { 1 }
             }
@@ -910,8 +910,8 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                 method().toUpperCase()
             }
         ''',
-        'Cannot find matching method java.lang.Integer#toUpperCase()'
-   }
+            'Cannot find matching method java.lang.Integer#toUpperCase()'
+    }
 
     void testDeclarationTypeInference() {
         MethodNode method
@@ -952,7 +952,7 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             }
         '''
         inft = method.code.statements[0].expression.leftExpression.getNodeMetaData(StaticTypesMarker.DECLARATION_INFERRED_TYPE)
-        assert inft  == ClassHelper.long_TYPE
+        assert inft == ClassHelper.long_TYPE
 
         assertScript '''
             void method() {
@@ -992,7 +992,7 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             List values = [x:1,y:2,z:3]*.value
             values*.toUpperCase()
         ''',
-        'Cannot find matching method java.lang.Integer#toUpperCase()'
+            'Cannot find matching method java.lang.Integer#toUpperCase()'
     }
 
     void testStarOperatorOnMap3() {
@@ -1007,7 +1007,7 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
             def values = [x:1,y:2,z:3]*.value
             values*.toUpperCase()
         ''',
-        'Cannot find matching method java.lang.Integer#toUpperCase()'
+            'Cannot find matching method java.lang.Integer#toUpperCase()'
     }
 
     void testStarOperatorOnMap4() {
@@ -1036,13 +1036,13 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             [x:1,y:2,z:3]*.value = ""
         ''',
-        'Cannot assign java.util.List<java.lang.String> to: java.util.List<java.lang.Integer>'
+            'Cannot assign java.util.List<java.lang.String> to: java.util.List<java.lang.Integer>'
 
         // GROOVY-10326
         shouldFailWithMessages '''
             [x:1,y:2,z:3]*.key = null
         ''',
-        'Cannot set read-only property: key'
+            'Cannot set read-only property: key'
     }
 
     // GROOVY-7247
@@ -1072,7 +1072,7 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             Map<String, Integer> map = [*:[A:1], *:[B:2.3]]
         ''',
-        'Cannot assign java.util.LinkedHashMap<java.lang.String, java.lang.Number',' to: java.util.Map<java.lang.String, java.lang.Integer>'
+            'Cannot assign java.util.LinkedHashMap<java.lang.String, java.lang.Number', ' to: java.util.Map<java.lang.String, java.lang.Integer>'
     }
 
     void testFlowTypingWithStringVariable() {
@@ -1196,7 +1196,7 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                 }
             }
         ''',
-        'No such property: canonicalName for class: java.io.File'
+            'No such property: canonicalName for class: java.io.File'
 
         shouldFailWithMessages '''
             void test(something) {
@@ -1208,7 +1208,7 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                 }
             }
         ''',
-        'No such property: canonicalName for class: java.lang.Object'
+            'No such property: canonicalName for class: java.lang.Object'
 /*
         shouldFailWithMessages '''
             void test(something) {
@@ -1233,7 +1233,7 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
                 something.canonicalName
             }
         ''',
-        'No such property: canonicalName for class: java.lang.Object'
+            'No such property: canonicalName for class: java.lang.Object'
 
         assertScript '''
             void test(something) {
@@ -1267,13 +1267,13 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
     }
 
     void testNumberPrefixPlusPlusInference() {
-        [Byte:'Integer',
-         Character: 'Character',
-         Short: 'Integer',
-         Integer: 'Integer',
-         Long: 'Long',
-         Float: 'Double',
-         Double: 'Double',
+        [Byte      : 'Integer',
+         Character : 'Character',
+         Short     : 'Integer',
+         Integer   : 'Integer',
+         Long      : 'Long',
+         Float     : 'Double',
+         Double    : 'Double',
          BigDecimal: 'BigDecimal',
          BigInteger: 'BigInteger'
         ].each { orig, dest ->
@@ -1291,13 +1291,13 @@ class TypeInferenceSTCTest extends StaticTypeCheckingTestCase {
     }
 
     void testNumberPostfixPlusPlusInference() {
-        [Byte:'Byte',
-         Character: 'Character',
-         Short: 'Short',
-         Integer: 'Integer',
-         Long: 'Long',
-         Float: 'Float',
-         Double: 'Double',
+        [Byte      : 'Byte',
+         Character : 'Character',
+         Short     : 'Short',
+         Integer   : 'Integer',
+         Long      : 'Long',
+         Float     : 'Float',
+         Double    : 'Double',
          BigDecimal: 'BigDecimal',
          BigInteger: 'BigInteger'
         ].each { orig, dest ->

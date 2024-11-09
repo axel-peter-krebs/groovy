@@ -25,10 +25,10 @@ import org.codehaus.groovy.runtime.InvokerHelper;
  */
 public class PropertyModel implements ValueModel, NestedValueModel {
 
+    boolean editable;
     private ValueModel sourceModel;
     private String property;
     private Class type;
-    boolean editable;
 
     public PropertyModel(ValueModel sourceModel, String property) {
         this(sourceModel, property, Object.class, true);

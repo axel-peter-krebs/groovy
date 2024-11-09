@@ -77,7 +77,7 @@ public class CallSiteGenerator {
                 BytecodeHelper.pushConstant(mv, i);
                 mv.visitInsn(Opcodes.AALOAD);
             } else {
-                mv.visitVarInsn(Opcodes.ALOAD, i+2);
+                mv.visitVarInsn(Opcodes.ALOAD, i + 2);
             }
 
             // cast argument to parameter class, inclusive unboxing
@@ -120,18 +120,18 @@ public class CallSiteGenerator {
         return mv;
     }
 
-    public static void genCallWithFixedParams(ClassWriter cw, String name, final String superClass, CachedMethod cachedMethod, String receiverType ) {
+    public static void genCallWithFixedParams(ClassWriter cw, String name, final String superClass, CachedMethod cachedMethod, String receiverType) {
         if (cachedMethod.getParamsCount() > 4) return;
 
         StringBuilder pdescb = new StringBuilder();
         final int pc = cachedMethod.getParamsCount();
         for (int i = 0; i != pc; ++i) pdescb.append("Ljava/lang/Object;");
 
-        writeMethod(cw,name,pc+2,superClass,cachedMethod,receiverType,pdescb.toString(),false);
+        writeMethod(cw, name, pc + 2, superClass, cachedMethod, receiverType, pdescb.toString(), false);
     }
 
     public static void genCallXxxWithArray(ClassWriter cw, final String name, final String superClass, CachedMethod cachedMethod, String receiverType) {
-        writeMethod(cw,name,3,superClass,cachedMethod,receiverType,"[Ljava/lang/Object;",true);
+        writeMethod(cw, name, 3, superClass, cachedMethod, receiverType, "[Ljava/lang/Object;", true);
     }
 
     private static void genConstructor(ClassWriter cw, final String superClass, String internalName) {
@@ -248,9 +248,9 @@ public class CallSiteGenerator {
         return callSiteLoader.defineClassAndGetConstructor(name, bytes);
     }
 
-    public static boolean isCompilable (CachedMethod method) {
+    public static boolean isCompilable(CachedMethod method) {
         return (Modifier.isPublic(method.cachedClass.getModifiers()) && method.isPublic() && publicParams(method))
-                && !AndroidSupport.isRunningAndroid() && containsOnlyValidChars(method.getName());
+            && !AndroidSupport.isRunningAndroid() && containsOnlyValidChars(method.getName());
     }
 
     private static boolean publicParams(CachedMethod method) {

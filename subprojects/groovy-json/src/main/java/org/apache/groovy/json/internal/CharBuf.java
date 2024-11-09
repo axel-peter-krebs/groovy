@@ -28,24 +28,39 @@ import java.nio.charset.StandardCharsets;
 
 public class CharBuf extends Writer implements CharSequence {
 
+    static final char[] nullChars = "null".toCharArray();
+    private static final char[] EMPTY_STRING_CHARS = Chr.array('"', '"');
+    final char[] trueChars = "true".toCharArray();
+    final char[] falseChars = "false".toCharArray();
+    final byte[] encoded = new byte[2];
+    final byte[] charTo = new byte[2];
     protected int capacity = 16;
     protected int location = 0;
-
     protected char[] buffer;
+    private Cache<Integer, char[]> icache;
+    private Cache<Double, char[]> dcache;
+    private Cache<Float, char[]> fcache;
+    private Cache<BigDecimal, char[]> bigDCache;
+    private Cache<BigInteger, char[]> bigICache;
+    private Cache<Long, char[]> lcache;
 
     public CharBuf(char[] buffer) {
         __init__(buffer);
-    }
-
-    private void __init__(char[] buffer) {
-        this.buffer = buffer;
-        this.capacity = buffer.length;
     }
 
     public CharBuf(byte[] bytes) {
         this.buffer = null;
         String str = new String(bytes, StandardCharsets.UTF_8);
         __init__(FastStringUtils.toCharArray(str));
+    }
+
+    protected CharBuf(int capacity) {
+        this.capacity = capacity;
+        init();
+    }
+
+    protected CharBuf() {
+        init();
     }
 
     public static CharBuf createExact(final int capacity) {
@@ -67,13 +82,35 @@ public class CharBuf extends Writer implements CharSequence {
         return new CharBuf(buffer);
     }
 
-    protected CharBuf(int capacity) {
-        this.capacity = capacity;
-        init();
+    private static boolean shouldEscape(int c, boolean disableUnicodeEscaping) {
+        if (c < 32) { /* less than space is a control char */
+            return true;
+        } else if (c == 34) {  /* double quote */
+            return true;
+        } else if (c == 92) {  /* backslash */
+            return true;
+        } else if (!disableUnicodeEscaping && c > 126) {  /* non-ascii char range */
+            return true;
+        }
+
+        return false;
     }
 
-    protected CharBuf() {
-        init();
+    private static boolean hasAnyJSONControlChars(final char[] charArray, boolean disableUnicodeEscaping) {
+        int index = 0;
+        char c;
+        while (true) {
+            c = charArray[index];
+            if (shouldEscape(c, disableUnicodeEscaping)) {
+                return true;
+            }
+            if (++index >= charArray.length) return false;
+        }
+    }
+
+    private void __init__(char[] buffer) {
+        this.buffer = buffer;
+        this.capacity = buffer.length;
     }
 
     @Override
@@ -113,8 +150,6 @@ public class CharBuf extends Writer implements CharSequence {
         return this;
     }
 
-    private Cache<Integer, char[]> icache;
-
     public final CharBuf addInt(int i) {
         switch (i) {
             case 0:
@@ -148,9 +183,6 @@ public class CharBuf extends Writer implements CharSequence {
         addChars(chars);
         return this;
     }
-
-    final char[] trueChars = "true".toCharArray();
-    final char[] falseChars = "false".toCharArray();
 
     public final CharBuf add(boolean b) {
         addChars(b ? trueChars : falseChars);
@@ -192,8 +224,6 @@ public class CharBuf extends Writer implements CharSequence {
         return this;
     }
 
-    private Cache<Double, char[]> dcache;
-
     public final CharBuf addDouble(double d) {
         addDouble(Double.valueOf(d));
         return this;
@@ -219,8 +249,6 @@ public class CharBuf extends Writer implements CharSequence {
         add(Float.toString(d));
         return this;
     }
-
-    private Cache<Float, char[]> fcache;
 
     public final CharBuf addFloat(float d) {
         addFloat(Float.valueOf(d));
@@ -346,32 +374,6 @@ public class CharBuf extends Writer implements CharSequence {
         return addJsonEscapedString(charArray, disableUnicodeEscaping);
     }
 
-    private static boolean shouldEscape(int c, boolean disableUnicodeEscaping) {
-        if (c < 32) { /* less than space is a control char */
-            return true;
-        } else if (c == 34) {  /* double quote */
-            return true;
-        } else if (c == 92) {  /* backslash */
-            return true;
-        } else if (!disableUnicodeEscaping && c > 126) {  /* non-ascii char range */
-            return true;
-        }
-
-        return false;
-    }
-
-    private static boolean hasAnyJSONControlChars(final char[] charArray, boolean disableUnicodeEscaping) {
-        int index = 0;
-        char c;
-        while (true) {
-            c = charArray[index];
-            if (shouldEscape(c, disableUnicodeEscaping)) {
-                return true;
-            }
-            if (++index >= charArray.length) return false;
-        }
-    }
-
     public final CharBuf addJsonEscapedString(final char[] charArray) {
         return addJsonEscapedString(charArray, false);
     }
@@ -384,10 +386,6 @@ public class CharBuf extends Writer implements CharSequence {
             return this.addQuoted(charArray);
         }
     }
-
-    final byte[] encoded = new byte[2];
-
-    final byte[] charTo = new byte[2];
 
     private CharBuf doAddJsonEscapedString(char[] charArray, boolean disableUnicodeEscaping) {
         char[] _buffer = buffer;
@@ -524,8 +522,6 @@ public class CharBuf extends Writer implements CharSequence {
         return addJsonFieldName(FastStringUtils.toCharArray(str), disableUnicodeEscaping);
     }
 
-    private static final char[] EMPTY_STRING_CHARS = Chr.array('"', '"');
-
     public final CharBuf addJsonFieldName(char[] chars) {
         return addJsonFieldName(chars, false);
     }
@@ -615,9 +611,9 @@ public class CharBuf extends Writer implements CharSequence {
 
     public String toDebugString() {
         return "CharBuf{" +
-                "capacity=" + capacity +
-                ", location=" + location +
-                '}';
+            "capacity=" + capacity +
+            ", location=" + location +
+            '}';
     }
 
     public String toStringAndRecycle() {
@@ -679,8 +675,6 @@ public class CharBuf extends Writer implements CharSequence {
         }
     }
 
-    static final char[] nullChars = "null".toCharArray();
-
     public final void addNull() {
         this.add(nullChars);
     }
@@ -692,13 +686,11 @@ public class CharBuf extends Writer implements CharSequence {
     }
 
     public void removeLastChar(char expect) {
-        if (location == 0 || buffer[location-1] != expect) {
+        if (location == 0 || buffer[location - 1] != expect) {
             return;
         }
         removeLastChar();
     }
-
-    private Cache<BigDecimal, char[]> bigDCache;
 
     public CharBuf addBigDecimal(BigDecimal key) {
         if (bigDCache == null) {
@@ -717,8 +709,6 @@ public class CharBuf extends Writer implements CharSequence {
         return this;
     }
 
-    private Cache<BigInteger, char[]> bigICache;
-
     public CharBuf addBigInteger(BigInteger key) {
         if (bigICache == null) {
             bigICache = new SimpleCache<BigInteger, char[]>(20);
@@ -735,8 +725,6 @@ public class CharBuf extends Writer implements CharSequence {
 
         return this;
     }
-
-    private Cache<Long, char[]> lcache;
 
     public final CharBuf addLong(long l) {
         addLong(Long.valueOf(l));

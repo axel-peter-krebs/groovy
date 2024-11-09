@@ -91,7 +91,7 @@ Luxe, calme et volupté.'''
         reader.withReader { LineColumnReader r ->
             int linesRead = 0
             String line = ""
-            for(;;) {
+            for (; ;) {
                 if (line == null) break
                 line = r.readLine()
                 if (line != null) linesRead++

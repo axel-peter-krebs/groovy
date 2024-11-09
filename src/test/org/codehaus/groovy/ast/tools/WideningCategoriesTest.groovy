@@ -29,99 +29,100 @@ final class WideningCategoriesTest extends GenericsTestCase {
     void testBuildCommonTypeWithNullClassNode() {
         ClassNode a = null
         ClassNode b = SERIALIZABLE_TYPE
-        assert lowestUpperBound(a,b) == null
-        assert lowestUpperBound(b,a) == null
+        assert lowestUpperBound(a, b) == null
+        assert lowestUpperBound(b, a) == null
     }
 
     void testBuildCommonTypeWithObjectClassNode() {
         ClassNode a = OBJECT_TYPE
         ClassNode b = SERIALIZABLE_TYPE
-        assert lowestUpperBound(a,b) == OBJECT_TYPE
-        assert lowestUpperBound(b,a) == OBJECT_TYPE
+        assert lowestUpperBound(a, b) == OBJECT_TYPE
+        assert lowestUpperBound(b, a) == OBJECT_TYPE
     }
 
     void testBuildCommonTypeWithVoidClassNode() {
         ClassNode a = VOID_TYPE
         ClassNode b = VOID_TYPE
-        assert lowestUpperBound(a,b) == VOID_TYPE
-        assert lowestUpperBound(b,a) == VOID_TYPE
+        assert lowestUpperBound(a, b) == VOID_TYPE
+        assert lowestUpperBound(b, a) == VOID_TYPE
     }
 
     void testBuildCommonTypeWithVoidClassNodeAndAnyNode() {
         ClassNode a = VOID_TYPE
         ClassNode b = SET_TYPE
-        assert lowestUpperBound(a,b) == OBJECT_TYPE
-        assert lowestUpperBound(b,a) == OBJECT_TYPE
+        assert lowestUpperBound(a, b) == OBJECT_TYPE
+        assert lowestUpperBound(b, a) == OBJECT_TYPE
     }
 
     void testBuildCommonTypeWithTwoIdenticalClasses() {
         ClassNode a = make(HashSet)
         ClassNode b = make(HashSet)
-        assert lowestUpperBound(a,b) == make(HashSet)
-        assert lowestUpperBound(b,a) == make(HashSet)
+        assert lowestUpperBound(a, b) == make(HashSet)
+        assert lowestUpperBound(b, a) == make(HashSet)
     }
 
     void testBuildCommonTypeWithIdenticalInterfaces() {
         ClassNode a = SERIALIZABLE_TYPE
         ClassNode b = SERIALIZABLE_TYPE
-        assert lowestUpperBound(a,b) == SERIALIZABLE_TYPE
+        assert lowestUpperBound(a, b) == SERIALIZABLE_TYPE
     }
 
     void testBuildCommonTypeWithDivergentInterfaces() {
         ClassNode a = SET_TYPE
         ClassNode b = LIST_TYPE
-        assert lowestUpperBound(a,b) == COLLECTION_TYPE
-        assert lowestUpperBound(b,a) == COLLECTION_TYPE
+        assert lowestUpperBound(a, b) == COLLECTION_TYPE
+        assert lowestUpperBound(b, a) == COLLECTION_TYPE
     }
 
     void testBuildCommonTypeWithOneInterfaceExtendsOther() {
         ClassNode a = SET_TYPE
         ClassNode b = make(SortedSet)
-        assert lowestUpperBound(a,b) == SET_TYPE
-        assert lowestUpperBound(b,a) == SET_TYPE
+        assert lowestUpperBound(a, b) == SET_TYPE
+        assert lowestUpperBound(b, a) == SET_TYPE
     }
 
     void testBuildCommonTypeWithTwoIncompatibleInterfaces() {
         ClassNode a = SET_TYPE
         ClassNode b = MAP_TYPE
-        assert lowestUpperBound(a,b) == OBJECT_TYPE
-        assert lowestUpperBound(b,a) == OBJECT_TYPE
+        assert lowestUpperBound(a, b) == OBJECT_TYPE
+        assert lowestUpperBound(b, a) == OBJECT_TYPE
     }
 
     void testBuildCommonTypeWithOneClassAndOneImplementedInterface() {
         ClassNode a = SET_TYPE
         ClassNode b = make(HashSet)
-        assert lowestUpperBound(a,b) == SET_TYPE
-        assert lowestUpperBound(b,a) == SET_TYPE
+        assert lowestUpperBound(a, b) == SET_TYPE
+        assert lowestUpperBound(b, a) == SET_TYPE
     }
 
     void testBuildCommonTypeWithOneClassAndNoImplementedInterface() {
         ClassNode a = MAP_TYPE
         ClassNode b = make(HashSet)
-        assert lowestUpperBound(a,b) == OBJECT_TYPE
-        assert lowestUpperBound(b,a) == OBJECT_TYPE
+        assert lowestUpperBound(a, b) == OBJECT_TYPE
+        assert lowestUpperBound(b, a) == OBJECT_TYPE
     }
 
     void testBuildCommonTypeWithTwoClassesWithoutSuperClass() {
         ClassNode a = make(ClassA)
         ClassNode b = make(ClassB)
-        assert lowestUpperBound(a,b) == GROOVY_OBJECT_TYPE // GroovyObject because Groovy classes implicitly implement GroovyObject
-        assert lowestUpperBound(b,a) == GROOVY_OBJECT_TYPE
+        assert lowestUpperBound(a, b) == GROOVY_OBJECT_TYPE
+        // GroovyObject because Groovy classes implicitly implement GroovyObject
+        assert lowestUpperBound(b, a) == GROOVY_OBJECT_TYPE
     }
 
     void testBuildCommonTypeWithOneClassInheritsFromAnother() {
         ClassNode a = make(HashSet)
         ClassNode b = make(LinkedHashSet)
-        assert lowestUpperBound(a,b) == make(HashSet)
-        assert lowestUpperBound(b,a) == make(HashSet)
+        assert lowestUpperBound(a, b) == make(HashSet)
+        assert lowestUpperBound(b, a) == make(HashSet)
     }
 
     void testBuildCommonTypeWithIdenticalPrimitiveTypes() {
         [byte_TYPE, short_TYPE, int_TYPE, long_TYPE, float_TYPE, double_TYPE, boolean_TYPE].each {
             ClassNode a = it
             ClassNode b = it
-            assert lowestUpperBound(a,b) == it
-            assert lowestUpperBound(b,a) == it
+            assert lowestUpperBound(a, b) == it
+            assert lowestUpperBound(b, a) == it
         }
     }
 
@@ -129,68 +130,68 @@ final class WideningCategoriesTest extends GenericsTestCase {
         [byte_TYPE, short_TYPE, int_TYPE, long_TYPE, float_TYPE, double_TYPE, boolean_TYPE].each {
             ClassNode a = it
             ClassNode b = getWrapper(it)
-            assert lowestUpperBound(a,b) == getWrapper(it)
-            assert lowestUpperBound(b,a) == getWrapper(it)
+            assert lowestUpperBound(a, b) == getWrapper(it)
+            assert lowestUpperBound(b, a) == getWrapper(it)
         }
     }
 
     // GROOVY-11014
     void testBuildCommonTypeWithPrimitiveAndWrapperType2() {
         [[Float_TYPE, Double_TYPE], [double_TYPE]].combinations().each { ClassNode a, ClassNode b ->
-            assert lowestUpperBound(a,b) == Double_TYPE
-            assert lowestUpperBound(b,a) == Double_TYPE
+            assert lowestUpperBound(a, b) == Double_TYPE
+            assert lowestUpperBound(b, a) == Double_TYPE
         }
         [[Float_TYPE, Double_TYPE], [int_TYPE, long_TYPE, float_TYPE]].combinations().each { ClassNode a, ClassNode b ->
-            assert lowestUpperBound(a,b) == a
-            assert lowestUpperBound(b,a) == a
+            assert lowestUpperBound(a, b) == a
+            assert lowestUpperBound(b, a) == a
         }
         [[Byte_TYPE, Short_TYPE, Integer_TYPE/*, Long_TYPE*/], [int_TYPE]].combinations().each { ClassNode a, ClassNode b ->
-            assert lowestUpperBound(a,b) == Integer_TYPE
-            assert lowestUpperBound(b,a) == Integer_TYPE
+            assert lowestUpperBound(a, b) == Integer_TYPE
+            assert lowestUpperBound(b, a) == Integer_TYPE
         }
     }
 
     void testBuildCommonTypeWithTwoInterfacesSharingOneParent() {
         ClassNode a = make(InterfaceCA)
         ClassNode b = make(InterfaceDA)
-        assert lowestUpperBound(a,b) == make(InterfaceA)
-        assert lowestUpperBound(b,a) == make(InterfaceA)
+        assert lowestUpperBound(a, b) == make(InterfaceA)
+        assert lowestUpperBound(b, a) == make(InterfaceA)
     }
 
     // GROOVY-11189
     void testBuildCommonTypeWithTwoInterfacesSharingOneParent2() {
         ClassNode a = make(InterfaceCCA)
         ClassNode b = make(InterfaceDDA)
-        assert lowestUpperBound(a,b) == make(InterfaceA)
-        assert lowestUpperBound(b,a) == make(InterfaceA)
+        assert lowestUpperBound(a, b) == make(InterfaceA)
+        assert lowestUpperBound(b, a) == make(InterfaceA)
     }
 
     void testBuildCommonTypeWithTwoInterfacesSharingTwoParents() {
         ClassNode a = make(InterfaceCAB)
         ClassNode b = make(InterfaceDAB)
-        assert lowestUpperBound(a,b).interfaces as Set == [make(InterfaceA), make(InterfaceB)] as Set
-        assert lowestUpperBound(b,a).interfaces as Set == [make(InterfaceA), make(InterfaceB)] as Set
+        assert lowestUpperBound(a, b).interfaces as Set == [make(InterfaceA), make(InterfaceB)] as Set
+        assert lowestUpperBound(b, a).interfaces as Set == [make(InterfaceA), make(InterfaceB)] as Set
     }
 
     void testBuildCommonTypeWithTwoInterfacesSharingTwoParentsAndOneDifferent() {
         ClassNode a = make(InterfaceCAB)
         ClassNode b = make(InterfaceDABE)
-        assert lowestUpperBound(a,b).interfaces as Set == [make(InterfaceA), make(InterfaceB)] as Set
-        assert lowestUpperBound(b,a).interfaces as Set == [make(InterfaceA), make(InterfaceB)] as Set
+        assert lowestUpperBound(a, b).interfaces as Set == [make(InterfaceA), make(InterfaceB)] as Set
+        assert lowestUpperBound(b, a).interfaces as Set == [make(InterfaceA), make(InterfaceB)] as Set
     }
 
     void testBuildCommonTypeFromTwoClassesInDifferentBranches() {
         ClassNode a = make(ClassA1)
         ClassNode b = make(ClassB1)
-        assert lowestUpperBound(a,b) == GROOVY_OBJECT_TYPE
-        assert lowestUpperBound(b,a) == GROOVY_OBJECT_TYPE
+        assert lowestUpperBound(a, b) == GROOVY_OBJECT_TYPE
+        assert lowestUpperBound(b, a) == GROOVY_OBJECT_TYPE
     }
 
     void testBuildCommonTypeFromTwoClassesInDifferentBranchesAndOneCommonInterface() {
         ClassNode a = make(ClassA1_Serializable)
         ClassNode b = make(ClassB1_Serializable)
-        assert lowestUpperBound(a,b).interfaces as Set == [SERIALIZABLE_TYPE, GROOVY_OBJECT_TYPE] as Set
-        assert lowestUpperBound(b,a).interfaces as Set == [SERIALIZABLE_TYPE, GROOVY_OBJECT_TYPE] as Set
+        assert lowestUpperBound(a, b).interfaces as Set == [SERIALIZABLE_TYPE, GROOVY_OBJECT_TYPE] as Set
+        assert lowestUpperBound(b, a).interfaces as Set == [SERIALIZABLE_TYPE, GROOVY_OBJECT_TYPE] as Set
     }
 
     void testBuildCommonTypeFromTwoClassesWithCommonSuperClassAndOneCommonInterface() {
@@ -223,27 +224,27 @@ final class WideningCategoriesTest extends GenericsTestCase {
     void testStringWithGString() {
         ClassNode a = make(String)
         ClassNode b = make(GString)
-        ClassNode type = lowestUpperBound(a,b)
+        ClassNode type = lowestUpperBound(a, b)
         assert type.interfaces as Set == [make(CharSequence), COMPARABLE_TYPE, SERIALIZABLE_TYPE] as Set
     }
 
     void testDistinctPrimitiveTypes() {
         ClassNode a = int_TYPE // primitive int
         ClassNode b = long_TYPE // primitive long
-        assert lowestUpperBound(a,b) == long_TYPE
+        assert lowestUpperBound(a, b) == long_TYPE
     }
 
     void testIdenticalPrimitiveTypes() {
         ClassNode a = int_TYPE // primitive int
         ClassNode b = int_TYPE // primitive int
-        assert lowestUpperBound(a,b) == int_TYPE
-        assert lowestUpperBound(b,a) == int_TYPE
+        assert lowestUpperBound(a, b) == int_TYPE
+        assert lowestUpperBound(b, a) == int_TYPE
     }
 
     void testLUBWithTwoInterfacesAndSameGenericArg() {
         ClassNode a = extractTypesFromCode('List<String> type').type
         ClassNode b = extractTypesFromCode('List<String> type').type
-        ClassNode lub = lowestUpperBound(a,b)
+        ClassNode lub = lowestUpperBound(a, b)
         assert lub == LIST_TYPE
         assert lub.genericsTypes.length == 1
         assert lub.genericsTypes[0].type == STRING_TYPE
@@ -252,7 +253,7 @@ final class WideningCategoriesTest extends GenericsTestCase {
     void testLUBWithTwoInterfacesAndCommonSuperClassGenericArg() {
         ClassNode a = extractTypesFromCode('List<Integer> type').type
         ClassNode b = extractTypesFromCode('List<Long> type').type
-        ClassNode lub = lowestUpperBound(a,b)
+        ClassNode lub = lowestUpperBound(a, b)
         assert lub == LIST_TYPE
         assert lub.genericsTypes.length == 1
         assert lub.genericsTypes[0].wildcard
@@ -263,7 +264,7 @@ final class WideningCategoriesTest extends GenericsTestCase {
     void testLUBWithTwoInterfacesAndSingleCommonInterface() {
         ClassNode a = extractTypesFromCode('List<Set> type').type
         ClassNode b = extractTypesFromCode('List<Queue> type').type
-        ClassNode lub = lowestUpperBound(a,b)
+        ClassNode lub = lowestUpperBound(a, b)
         assert lub == LIST_TYPE
         assert lub.genericsTypes.length == 1
         assert lub.genericsTypes[0].wildcard
@@ -273,7 +274,7 @@ final class WideningCategoriesTest extends GenericsTestCase {
     void testLUBWithTwoInterfacesAndNestedSingleCommonInterface() {
         ClassNode a = extractTypesFromCode('Collection<List<Set>> type').type
         ClassNode b = extractTypesFromCode('Collection<List<SortedSet>> type').type
-        ClassNode lub = lowestUpperBound(a,b)
+        ClassNode lub = lowestUpperBound(a, b)
         assert lub == COLLECTION_TYPE
         assert lub.genericsTypes.length == 1
         def nestedType = lub.genericsTypes[0].type
@@ -289,7 +290,7 @@ final class WideningCategoriesTest extends GenericsTestCase {
         // Top does not implement Serializable
         ClassNode a = extractTypesFromCode('List<org.codehaus.groovy.ast.tools.WideningCategoriesTest.BottomA> type').type
         ClassNode b = extractTypesFromCode('List<org.codehaus.groovy.ast.tools.WideningCategoriesTest.BottomB> type').type
-        ClassNode lub = lowestUpperBound(a,b)
+        ClassNode lub = lowestUpperBound(a, b)
         assert lub == LIST_TYPE // List<? extends Top>
         assert lub.genericsTypes.length == 1
         assert lub.genericsTypes[0].wildcard
@@ -305,8 +306,9 @@ final class WideningCategoriesTest extends GenericsTestCase {
         // PTop<E> does not implement Serializable
         ClassNode a = extractTypesFromCode('org.codehaus.groovy.ast.tools.WideningCategoriesTest.PTopInt type').type
         ClassNode b = extractTypesFromCode('org.codehaus.groovy.ast.tools.WideningCategoriesTest.PTopLong type').type
-        ClassNode lub = lowestUpperBound(a,b)
-        assert lub instanceof LowestUpperBoundClassNode // a virtual class which extends PTop<? extends Number> and implements Serializable
+        ClassNode lub = lowestUpperBound(a, b)
+        assert lub instanceof LowestUpperBoundClassNode
+        // a virtual class which extends PTop<? extends Number> and implements Serializable
         assert lub.interfaces == [SERIALIZABLE_TYPE]
         assert lub.unresolvedSuperClass == make(PTop)
         assert lub.unresolvedSuperClass.genericsTypes.length == 1
@@ -384,44 +386,68 @@ final class WideningCategoriesTest extends GenericsTestCase {
     // ---------- Classes and Interfaces used in this unit test ----------------
 
     private static interface InterfaceA {}
+
     private static interface InterfaceB {}
+
     private static interface InterfaceE {}
+
     private static interface InterfaceCA extends InterfaceA {}
+
     private static interface InterfaceDA extends InterfaceA {}
+
     private static interface InterfaceCCA extends InterfaceCA {}
+
     private static interface InterfaceDDA extends InterfaceDA {}
+
     private static interface InterfaceCAB extends InterfaceA, InterfaceB {}
+
     private static interface InterfaceDAB extends InterfaceA, InterfaceB {}
+
     private static interface InterfaceDABE extends InterfaceA, InterfaceB, InterfaceE {}
 
     private static class ClassA {}
+
     private static class ClassB {}
+
     private static class ClassA1 extends ClassA {}
+
     private static class ClassB1 extends ClassB {}
+
     private static class ClassA1_Serializable extends ClassA implements Serializable {}
+
     private static class ClassB1_Serializable extends ClassB implements Serializable {}
 
     private static class Top {}
+
     private static class BottomA extends Top implements Serializable {}
+
     private static class BottomB extends Top implements Serializable {}
 
     private static class PTop<E> {}
-    private static class PTopInt extends PTop<Integer> implements Serializable {}
-    private static class PTopLong extends PTop<Long  > implements Serializable {}
 
-    private static class Pair<L,R> implements Map.Entry<L,R>, Comparable<Pair<L,R>>, Serializable {
+    private static class PTopInt extends PTop<Integer> implements Serializable {}
+
+    private static class PTopLong extends PTop<Long> implements Serializable {}
+
+    private static class Pair<L, R> implements Map.Entry<L, R>, Comparable<Pair<L, R>>, Serializable {
         public final L left
         public final R right
+
         private Pair(final L left, final R right) {
             this.left = left
             this.right = right
         }
+
         static <L, R> Pair<L, R> of(final L left, final R right) {
             return new Pair<>(left, right)
         }
+
         L getKey() { left }
+
         R getValue() { right }
+
         R setValue(R value) { right }
-        int compareTo(Pair<L,R> that) { 0 }
+
+        int compareTo(Pair<L, R> that) { 0 }
     }
 }

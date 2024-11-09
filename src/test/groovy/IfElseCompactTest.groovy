@@ -26,7 +26,9 @@ class IfElseCompactTest extends GroovyTestCase {
 
         def x = false
 
-        if ( true ) {x = true}
+        if (true) {
+            x = true
+        }
 
         assert x == true
     }
@@ -36,7 +38,11 @@ class IfElseCompactTest extends GroovyTestCase {
         def x = false
         def y = false
 
-        if ( true ) {x = true} else {y = true}
+        if (true) {
+            x = true
+        } else {
+            y = true
+        }
 
         assert x == true
         assert y == false

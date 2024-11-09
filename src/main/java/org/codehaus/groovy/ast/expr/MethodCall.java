@@ -27,7 +27,10 @@ import org.codehaus.groovy.ast.ASTNode;
  */
 public interface MethodCall {
     ASTNode getReceiver();
+
     String getMethodAsString();
+
     Expression getArguments();
+
     String getText();
 }

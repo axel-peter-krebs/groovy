@@ -116,10 +116,10 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
     static consoleControllers = []
 
     static boolean smartHighlighter = prefs.getBoolean('smartHighlighter',
-            Boolean.valueOf(SystemUtil.getSystemPropertySafe('groovy.console.enable.smart.highlighter', 'true')))
+        Boolean.valueOf(SystemUtil.getSystemPropertySafe('groovy.console.enable.smart.highlighter', 'true')))
 
     boolean fullStackTraces = prefs.getBoolean('fullStackTraces',
-            Boolean.valueOf(System.getProperty('groovy.full.stacktrace', 'false')))
+        Boolean.valueOf(System.getProperty('groovy.full.stacktrace', 'false')))
     Action fullStackTracesAction
 
     boolean showScriptInOutput = prefs.getBoolean('showScriptInOutput', true)
@@ -244,7 +244,7 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
     static void main(args) {
         MessageSource messages = new MessageSource(Console)
         def cli = new CliBuilderInternal(usage: 'groovyConsole [options] [filename]', stopAtNonOption: false,
-                header: messages['cli.option.header'])
+            header: messages['cli.option.header'])
         cli.with {
             _(names: ['-cp', '-classpath', '--classpath'], messages['cli.option.classpath.description'])
             h(longOpt: 'help', messages['cli.option.help.description'])
@@ -334,8 +334,8 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
 
     void createOutputPrintWriter(File outputFile) {
         outputPrintWriter = new PrintWriter(new FileOutputStream(
-                outputFile,
-                true))
+            outputFile,
+            true))
     }
 
     void closeOutputPrintWriter() {
@@ -362,7 +362,7 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
         newScript(parent, binding)
         try {
             System.setProperty('groovy.full.stacktrace', System.getProperty('groovy.full.stacktrace',
-                    Boolean.toString(prefs.getBoolean('fullStackTraces', false))))
+                Boolean.toString(prefs.getBoolean('fullStackTraces', false))))
 
         } catch (SecurityException se) {
             fullStackTracesAction.enabled = false
@@ -391,24 +391,24 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
     }
 
     static frameConsoleDelegates = [
-            rootContainerDelegate: {
-                frame(
-                        title: 'GroovyConsole',
-                        //location: [100,100], // in groovy 2.0 use platform default location
-                        iconImage: imageIcon('/groovy/console/ui/ConsoleIcon.png').image,
-                        defaultCloseOperation: JFrame.DO_NOTHING_ON_CLOSE,
-                ) {
-                    try {
-                        current.locationByPlatform = true
-                    } catch (Exception e) {
-                        current.location = [100, 100] // for 1.4 compatibility
-                    }
-                    containingWindows += current
+        rootContainerDelegate: {
+            frame(
+                title: 'GroovyConsole',
+                //location: [100,100], // in groovy 2.0 use platform default location
+                iconImage: imageIcon('/groovy/console/ui/ConsoleIcon.png').image,
+                defaultCloseOperation: JFrame.DO_NOTHING_ON_CLOSE,
+            ) {
+                try {
+                    current.locationByPlatform = true
+                } catch (Exception e) {
+                    current.location = [100, 100] // for 1.4 compatibility
                 }
-            },
-            menuBarDelegate      : { arg ->
-                current.JMenuBar = build(arg)
+                containingWindows += current
             }
+        },
+        menuBarDelegate      : { arg ->
+            current.JMenuBar = build(arg)
+        }
     ]
 
     void run() {
@@ -416,16 +416,17 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
     }
 
     @Deprecated
-    @SuppressWarnings("removal") // TODO a future Groovy version will remove this method
+    @SuppressWarnings("removal")
+    // TODO a future Groovy version will remove this method
     void run(javax.swing.JApplet applet) {
         run([
-                rootContainerDelegate: {
-                    containingWindows += SwingUtilities.getRoot(applet.getParent())
-                    applet
-                },
-                menuBarDelegate      : { arg ->
-                    current.JMenuBar = build(arg)
-                }
+            rootContainerDelegate: {
+                containingWindows += SwingUtilities.getRoot(applet.getParent())
+                applet
+            },
+            menuBarDelegate      : { arg ->
+                current.JMenuBar = build(arg)
+            }
         ])
     }
 
@@ -629,8 +630,8 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
             return true
         }
         switch (JOptionPane.showConfirmDialog(frame,
-                'Save changes' + (scriptFile != null ? " to ${scriptFile.name}" : '') + '?',
-                'GroovyConsole', JOptionPane.YES_NO_CANCEL_OPTION)) {
+            'Save changes' + (scriptFile != null ? " to ${scriptFile.name}" : '') + '?',
+            'GroovyConsole', JOptionPane.YES_NO_CANCEL_OPTION)) {
             case JOptionPane.YES_OPTION:
                 return fileSave()
             case JOptionPane.NO_OPTION:
@@ -664,7 +665,7 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
     void fullStackTraces(EventObject evt) {
         fullStackTraces = evt.source.selected
         System.setProperty('groovy.full.stacktrace',
-                Boolean.toString(fullStackTraces))
+            Boolean.toString(fullStackTraces))
         prefs.putBoolean('fullStackTraces', fullStackTraces)
     }
 
@@ -770,7 +771,7 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
     def askToInterruptScript() {
         if (!scriptRunning) return true
         def rc = JOptionPane.showConfirmDialog(frame, "Script executing. Press 'OK' to attempt to interrupt it before exiting.",
-                'GroovyConsole', JOptionPane.OK_CANCEL_OPTION)
+            'GroovyConsole', JOptionPane.OK_CANCEL_OPTION)
         if (rc == JOptionPane.OK_OPTION) {
             doInterrupt()
             return true
@@ -822,8 +823,8 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
     // Start a new window with a copy of current variables
     void fileNewWindow(EventObject evt = null) {
         Console consoleController = new Console(
-                new Binding(
-                        new HashMap(shell.getContext().variables)))
+            new Binding(
+                new HashMap(shell.getContext().variables)))
         consoleController.systemOutInterceptor = systemOutInterceptor
         consoleController.systemErrorInterceptor = systemErrorInterceptor
         SwingBuilder swing = new SwingBuilder()
@@ -1003,7 +1004,7 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
         appendStacktrace("\n${sw.builder}\n")
     }
 
-    def finishNormal(Object result, Long elapsedTime=null) {
+    def finishNormal(Object result, Long elapsedTime = null) {
         String elapsedTimeStr = null != elapsedTime ? " Elapsed time: ${elapsedTime}ms." : ''
         // Take down the wait/cancel dialog
         history[-1].result = result
@@ -1011,8 +1012,8 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
             statusLabel.text = "Execution complete.${elapsedTimeStr}"
             appendOutputNl('Result: ', promptStyle)
             def obj = (visualizeScriptResults
-                    ? OutputTransforms.transformResult(result, shell.getContext()._outputTransforms)
-                    : result.toString())
+                ? OutputTransforms.transformResult(result, shell.getContext()._outputTransforms)
+                : result.toString())
 
             // multi-methods are magical!
             appendOutput(obj, resultStyle)
@@ -1074,7 +1075,7 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
     void inspectLast(EventObject evt = null) {
         if (null == lastResult) {
             JOptionPane.showMessageDialog(frame, 'The last result is null.',
-                    'Cannot Inspect', JOptionPane.INFORMATION_MESSAGE)
+                'Cannot Inspect', JOptionPane.INFORMATION_MESSAGE)
             return
         }
         ObjectBrowser.inspect(lastResult)
@@ -1091,7 +1092,7 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
     @CompileStatic
     private static class CstInspector extends TestRig {
         CstInspector() throws Exception {
-            super(new String[] { 'Groovy', 'compilationUnit', '-gui' })
+            super(new String[]{'Groovy', 'compilationUnit', '-gui'})
         }
 
         void inspectParseTree(String text) {
@@ -1233,6 +1234,7 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
         String extension
 
         abstract Object run(String src)
+
         abstract Object compile(String src)
     }
 
@@ -1345,7 +1347,7 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
         stackOverFlowError = false // reset this flag before running a script
         def endLine = System.lineSeparator()
         def record = new HistoryRecord(allText: inputArea.getText().replace(endLine, '\n'),
-                selectionStart: textSelectionStart, selectionEnd: textSelectionEnd)
+            selectionStart: textSelectionStart, selectionEnd: textSelectionEnd)
         addToHistory(record)
         pendingRecord = new HistoryRecord(allText: '', selectionStart: 0, selectionEnd: 0)
 
@@ -1400,10 +1402,10 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
                 scriptRunning = false
                 interruptAction.enabled = false
                 systemOutInterceptor.removeConsoleId()
-                if( loopMode ) {
+                if (loopMode) {
                     int delay = prefs.getInt('loopModeDelay', ConsolePreferences.DEFAULT_LOOP_MODE_DELAY_MILLIS)
                     Timer timer = new Timer(delay, {
-                        if( inputAreaContentHash == inputArea.getText().hashCode() ) {
+                        if (inputAreaContentHash == inputArea.getText().hashCode()) {
                             runScriptImpl(selected, st)
                         }
                     })
@@ -1426,12 +1428,12 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
 
     @CompileStatic
     private static Optional<String> findPrimaryClassName(String javaSrc) {
-        CompilationUnit compilationUnit= StaticJavaParser.parse(javaSrc)
+        CompilationUnit compilationUnit = StaticJavaParser.parse(javaSrc)
         for (TypeDeclaration<?> td : compilationUnit.getTypes()) {
             if (td.isPublic()
-                    && td.isTopLevelType()
-                    && td.isClassOrInterfaceDeclaration()
-                    && td.getFullyQualifiedName().isPresent()) {
+                && td.isTopLevelType()
+                && td.isClassOrInterfaceDeclaration()
+                && td.getFullyQualifiedName().isPresent()) {
                 return td.getFullyQualifiedName();
             }
         }
@@ -1450,7 +1452,7 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
         stackOverFlowError = false // reset this flag before running a script
         def endLine = System.lineSeparator()
         def record = new HistoryRecord(allText: inputArea.getText().replace(endLine, '\n'),
-                selectionStart: textSelectionStart, selectionEnd: textSelectionEnd)
+            selectionStart: textSelectionStart, selectionEnd: textSelectionEnd)
 
         if (prefs.getBoolean('autoClearOutput', false)) clearOutput()
 
@@ -1507,7 +1509,7 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
         def endLine = System.lineSeparator()
         if (historyIndex >= history.size()) {
             pendingRecord = new HistoryRecord(allText: inputArea.getText().replace(endLine, '\n'),
-                    selectionStart: textSelectionStart, selectionEnd: textSelectionEnd)
+                selectionStart: textSelectionStart, selectionEnd: textSelectionEnd)
         }
         historyIndex = newIndex
         def record
@@ -1544,10 +1546,12 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
         try {
             def javaVersion = VMPluginFactory.getPlugin().version >= 9 ? Runtime.version().toString() : System.getProperty('java.version')
             message += "\nJava version: ${javaVersion} (${System.getProperty('java.vendor')})"
-        } catch(ignore) { }
+        } catch (ignore) {
+        }
         try {
             message += "\nOS version: ${System.getProperty('os.version')} (${System.getProperty('os.name')})"
-        } catch(ignore) { }
+        } catch (ignore) {
+        }
         pane.setMessage(message)
         def dialog = pane.createDialog(frame, 'About GroovyConsole')
         dialog.show()
@@ -1563,9 +1567,9 @@ class Console implements CaretListener, HyperlinkListener, ComponentListener, Fo
 
     void findPrevious(EventObject evt = null) {
         def reverseEvt = new ActionEvent(
-                evt.getSource(), evt.getID(),
-                evt.getActionCommand(), evt.getWhen(),
-                ActionEvent.SHIFT_MASK) //reverse
+            evt.getSource(), evt.getID(),
+            evt.getActionCommand(), evt.getWhen(),
+            ActionEvent.SHIFT_MASK) //reverse
         FindReplaceUtility.FIND_ACTION.actionPerformed(reverseEvt)
     }
 

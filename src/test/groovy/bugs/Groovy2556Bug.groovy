@@ -34,15 +34,15 @@ class Groovy2556Bug extends GroovyTestCase {
 
     private count = 0
 
-    private getCount () {
+    private getCount() {
         count++;
     }
 
-    void testCompile () {
-        new GroovyShell().parse ("""
+    void testCompile() {
+        new GroovyShell().parse("""
         def arr = [2:0]
         assert 33 == (arr[2] += 33)
-        """).run ()
+        """).run()
     }
 
     void testAssignmentWithString() {
@@ -83,7 +83,7 @@ class Groovy2556Bug extends GroovyTestCase {
 
     void testVarAssignment() {
         def var = 1
-        assert 77 == ( var = 77)
+        assert 77 == (var = 77)
     }
 
     void testVarAssignmentInClosure() {
@@ -95,8 +95,8 @@ class Groovy2556Bug extends GroovyTestCase {
     void testReusableExpression() {
         def arr = [*1..5]
         assert 34 == (arr[getCount()] += 33)
-        assert 34 == arr [0]
-        assert 2 == arr [getCount()]
+        assert 34 == arr[0]
+        assert 2 == arr[getCount()]
     }
 }
 

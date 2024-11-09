@@ -33,7 +33,7 @@ class ConstructorBug extends GroovyTestCase {
         def mytest = InvokerHelper.invokeConstructorOf(type, ["Hello"] as Object[])
         assert mytest.foo == "Hello"
         /** @todo fix bug
-        */
+         */
 
         /*
         def test = type.newInstance()

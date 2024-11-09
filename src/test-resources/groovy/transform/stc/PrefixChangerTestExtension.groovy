@@ -30,12 +30,12 @@ finish {
     ec.errors.each { err ->
         if (err instanceof SyntaxErrorMessage && err.cause.message.startsWith('[Static type checking] - ')) {
             err.cause = new SyntaxException(
-                    err.cause.message.replace('[Static type checking]','[Custom]'),
-                    err.cause.cause,
-                    err.cause.startLine,
-                    err.cause.startColumn,
-                    err.cause.endLine,
-                    err.cause.endColumn,
+                err.cause.message.replace('[Static type checking]', '[Custom]'),
+                err.cause.cause,
+                err.cause.startLine,
+                err.cause.startColumn,
+                err.cause.endLine,
+                err.cause.endColumn,
             )
         }
         co.addError(err)

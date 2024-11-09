@@ -16,8 +16,9 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-import org.apache.groovy.gradle.Versions
+import org.apache.groovy.gradle.ReleaseInfoGenerator
 import org.apache.groovy.gradle.SharedConfiguration
+import org.apache.groovy.gradle.Versions
 
 /**
  * This is the base plugin for all modules in the Groovy build.
@@ -27,19 +28,29 @@ import org.apache.groovy.gradle.SharedConfiguration
  *
  * Currently limited to repositories, shared extensions and license checks
  */
-
+// Define rules for both modules and core
 plugins {
-    id 'org.apache.groovy-bad-practices-detection'
+    id 'org.apache.groovy-bad-practices-detection' // checks build script configuration - TOP
     id 'org.nosphere.apache.rat'
+    id 'com.github.ben-manes.versions' // provides 'versions' object, s. 'versions.properties'
 }
 
+// TODO: move this to root project?
 if (project == rootProject) {
-    def sharedConfiguration = project.extensions.create('sharedConfiguration', SharedConfiguration, project.objects, rootProject.layout, project.providers, rootProject.layout.buildDirectory.get().asFile, rootProject.logger, gradle.startParameter)
+    def sharedConfiguration = project.extensions.create('sharedConfiguration', SharedConfiguration,
+        project.objects,
+        rootProject.layout,
+        project.providers,
+        rootProject.layout.buildDirectory.get().asFile,
+        rootProject.logger,
+        gradle.startParameter)
     project.extensions.create('versions', Versions, sharedConfiguration, project.providers, project.layout)
 }
 
 group = 'org.apache.groovy'
 version = sharedConfiguration.groovyVersion.get()
+
+def generateReleaseInfo = tasks.register("generateReleaseInfo", ReleaseInfoGenerator)
 
 tasks.named('rat') {
     inputDir = projectDir
@@ -61,4 +72,8 @@ tasks.named('rat') {
                 '**/hs_err_pid**.log', // sometimes left over error files
                 '.jqwik-database'
     ]
+}
+
+tasks.withType(AbstractCopyTask).configureEach {
+    it.duplicatesStrategy = DuplicatesStrategy.WARN
 }

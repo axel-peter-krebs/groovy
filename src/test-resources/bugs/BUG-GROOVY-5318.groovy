@@ -16,4 +16,4 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-def a= new java.util<Integer>.ArrayList<ArrayList<Integer>>()
+def a = new java.util<Integer>.ArrayList<ArrayList<Integer>>()

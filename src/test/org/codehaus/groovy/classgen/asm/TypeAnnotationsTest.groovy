@@ -37,10 +37,10 @@ final class TypeAnnotationsTest extends AbstractBytecodeTestCase {
             }
         ''')
         assert bytecode.hasSequence([
-                'public <init>()V',
-                '@LCtorAnno;()',
-                '@LTypeAnno0;() : METHOD_RETURN',
-                '@LTypeAnno1;() : METHOD_RETURN'
+            'public <init>()V',
+            '@LCtorAnno;()',
+            '@LTypeAnno0;() : METHOD_RETURN',
+            '@LTypeAnno1;() : METHOD_RETURN'
         ])
     }
 
@@ -58,10 +58,10 @@ final class TypeAnnotationsTest extends AbstractBytecodeTestCase {
             }
         ''')
         assert bytecode.hasStrictSequence([
-                'public <init>(LFoo;Ljava/lang/Object;)V',
-                '@LTypeAnno0;(value="this") : METHOD_RETURN',
-                '@LTypeAnno1;(value="that") : METHOD_FORMAL_PARAMETER 0, null',
-                'L0'
+            'public <init>(LFoo;Ljava/lang/Object;)V',
+            '@LTypeAnno0;(value="this") : METHOD_RETURN',
+            '@LTypeAnno1;(value="that") : METHOD_FORMAL_PARAMETER 0, null',
+            'L0'
         ])
     }
 
@@ -79,16 +79,16 @@ final class TypeAnnotationsTest extends AbstractBytecodeTestCase {
             }
         ''')
         assert bytecode.hasStrictSequence([
-                'public <init>(LFoo;Ljava/lang/Object;)V',
-                '@LTypeAnno0;(value="this") : METHOD_RECEIVER, null',
-                '@LTypeAnno1;(value="that") : METHOD_FORMAL_PARAMETER 0, null',
-                'L0'
+            'public <init>(LFoo;Ljava/lang/Object;)V',
+            '@LTypeAnno0;(value="this") : METHOD_RECEIVER, null',
+            '@LTypeAnno1;(value="that") : METHOD_FORMAL_PARAMETER 0, null',
+            'L0'
         ])
         assert bytecode.hasStrictSequence([
-                'public <init>(LFoo;)V',
-                '@Lgroovy/transform/Generated;()',
-                '@LTypeAnno0;(value="this") : METHOD_RECEIVER, null',
-                'L0'
+            'public <init>(LFoo;)V',
+            '@Lgroovy/transform/Generated;()',
+            '@LTypeAnno0;(value="this") : METHOD_RECEIVER, null',
+            'L0'
         ])
     }
 
@@ -111,17 +111,17 @@ final class TypeAnnotationsTest extends AbstractBytecodeTestCase {
             }
         ''')
         assert bytecode.hasSequence([
-                'public foo(Ljava/util/List;)Ljava/util/List;',
-                '@LTypeAnno0;() : METHOD_TYPE_PARAMETER 0, null',
-                '@LTypeAnno1;() : METHOD_TYPE_PARAMETER_BOUND 0, 0, null',
-                '@LTypeAnno2;() : METHOD_RETURN, null',
-                '@LTypeAnno3;() : METHOD_RETURN, 0;',
-                '@LTypeAnno4;() : METHOD_FORMAL_PARAMETER 0, null',
-                '@LTypeAnno5;() : METHOD_FORMAL_PARAMETER 0, 0;',
-                '@LTypeAnno6;() : METHOD_FORMAL_PARAMETER 0, 0;*',
-                '@LTypeAnno7;() : METHOD_FORMAL_PARAMETER 0, 0;*0;',
-                '@LTypeAnno8;() : METHOD_FORMAL_PARAMETER 0, 0;*1;',
-                '@LTypeAnno9;() : THROWS 0, null'
+            'public foo(Ljava/util/List;)Ljava/util/List;',
+            '@LTypeAnno0;() : METHOD_TYPE_PARAMETER 0, null',
+            '@LTypeAnno1;() : METHOD_TYPE_PARAMETER_BOUND 0, 0, null',
+            '@LTypeAnno2;() : METHOD_RETURN, null',
+            '@LTypeAnno3;() : METHOD_RETURN, 0;',
+            '@LTypeAnno4;() : METHOD_FORMAL_PARAMETER 0, null',
+            '@LTypeAnno5;() : METHOD_FORMAL_PARAMETER 0, 0;',
+            '@LTypeAnno6;() : METHOD_FORMAL_PARAMETER 0, 0;*',
+            '@LTypeAnno7;() : METHOD_FORMAL_PARAMETER 0, 0;*0;',
+            '@LTypeAnno8;() : METHOD_FORMAL_PARAMETER 0, 0;*1;',
+            '@LTypeAnno9;() : THROWS 0, null'
         ])
     }
 
@@ -147,15 +147,15 @@ final class TypeAnnotationsTest extends AbstractBytecodeTestCase {
             }
         ''')
         assert bytecode.hasSequence([
-                'public foo(Ljava/lang/Number;II)V',
-                '@LTypeAnno0;() : METHOD_TYPE_PARAMETER 0, null',
-                '@LTypeParameterAnno;() : METHOD_TYPE_PARAMETER 0, null',
-                '@LTypeAnno1;() : METHOD_TYPE_PARAMETER_BOUND 0, 0, null',
-                '@LTypeAnno2;() : METHOD_TYPE_PARAMETER_BOUND 0, 1, null',
-                '@LTypeAnno3;() : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;',
-                '@LTypeAnno4;() : METHOD_FORMAL_PARAMETER 0, null',
-                '@LTypeAnno5;() : METHOD_FORMAL_PARAMETER 1, null',
-                '@LTypeAnno6;() : METHOD_FORMAL_PARAMETER 2, null'
+            'public foo(Ljava/lang/Number;II)V',
+            '@LTypeAnno0;() : METHOD_TYPE_PARAMETER 0, null',
+            '@LTypeParameterAnno;() : METHOD_TYPE_PARAMETER 0, null',
+            '@LTypeAnno1;() : METHOD_TYPE_PARAMETER_BOUND 0, 0, null',
+            '@LTypeAnno2;() : METHOD_TYPE_PARAMETER_BOUND 0, 1, null',
+            '@LTypeAnno3;() : METHOD_TYPE_PARAMETER_BOUND 0, 1, 0;',
+            '@LTypeAnno4;() : METHOD_FORMAL_PARAMETER 0, null',
+            '@LTypeAnno5;() : METHOD_FORMAL_PARAMETER 1, null',
+            '@LTypeAnno6;() : METHOD_FORMAL_PARAMETER 2, null'
         ])
     }
 
@@ -190,20 +190,20 @@ final class TypeAnnotationsTest extends AbstractBytecodeTestCase {
             }
         ''')
         assert bytecode.hasSequence([
-                'public get(Ljava/util/List;Ljava/util/Map;)Ljava/util/Map; throws java/lang/RuntimeException',
-                '@LTypeAnno0;() : METHOD_RETURN, null',
-                '@LTypeAnno1;() : METHOD_RETURN, 0;',
-                '@LTypeAnno2;() : METHOD_RETURN, 1;*',
-                '@LTypeAnno3;() : METHOD_FORMAL_PARAMETER 0, null',
-                '@LTypeUseAndParameterAnno;() : METHOD_FORMAL_PARAMETER 0, null',
-                '@LTypeAnno4;() : METHOD_FORMAL_PARAMETER 0, 0;',
-                '@LTypeAnno5;() : METHOD_FORMAL_PARAMETER 0, 0;0;',
-                '@LTypeAnno6;() : METHOD_FORMAL_PARAMETER 1, 0;',
-                '@LTypeAnno7;() : METHOD_FORMAL_PARAMETER 1, 0;*',
-                '@LTypeAnno8;() : METHOD_FORMAL_PARAMETER 1, 1;',
-                '@LTypeAnno9;() : METHOD_FORMAL_PARAMETER 1, 1;*',
-                '@LTypeAnno0;() : THROWS 0, null',
-                '@LTypeAnno1;() : THROWS 1, null'
+            'public get(Ljava/util/List;Ljava/util/Map;)Ljava/util/Map; throws java/lang/RuntimeException',
+            '@LTypeAnno0;() : METHOD_RETURN, null',
+            '@LTypeAnno1;() : METHOD_RETURN, 0;',
+            '@LTypeAnno2;() : METHOD_RETURN, 1;*',
+            '@LTypeAnno3;() : METHOD_FORMAL_PARAMETER 0, null',
+            '@LTypeUseAndParameterAnno;() : METHOD_FORMAL_PARAMETER 0, null',
+            '@LTypeAnno4;() : METHOD_FORMAL_PARAMETER 0, 0;',
+            '@LTypeAnno5;() : METHOD_FORMAL_PARAMETER 0, 0;0;',
+            '@LTypeAnno6;() : METHOD_FORMAL_PARAMETER 1, 0;',
+            '@LTypeAnno7;() : METHOD_FORMAL_PARAMETER 1, 0;*',
+            '@LTypeAnno8;() : METHOD_FORMAL_PARAMETER 1, 1;',
+            '@LTypeAnno9;() : METHOD_FORMAL_PARAMETER 1, 1;*',
+            '@LTypeAnno0;() : THROWS 0, null',
+            '@LTypeAnno1;() : THROWS 1, null'
         ])
     }
 
@@ -244,16 +244,16 @@ final class TypeAnnotationsTest extends AbstractBytecodeTestCase {
             }
         ''')
         assert bytecode.hasStrictSequence([
-                'public bar(Ljava/lang/Object;)Ljava/lang/Object;',
-                '@LTypeAnno0;(value="this") : METHOD_RECEIVER, null',
-                '@LTypeAnno1;(value="that") : METHOD_FORMAL_PARAMETER 0, null',
-                'L0'
+            'public bar(Ljava/lang/Object;)Ljava/lang/Object;',
+            '@LTypeAnno0;(value="this") : METHOD_RECEIVER, null',
+            '@LTypeAnno1;(value="that") : METHOD_FORMAL_PARAMETER 0, null',
+            'L0'
         ])
         assert bytecode.hasStrictSequence([
-                'public bar()Ljava/lang/Object;',
-                '@Lgroovy/transform/Generated;()',
-                '@LTypeAnno0;(value="this") : METHOD_RECEIVER, null',
-                'L0'
+            'public bar()Ljava/lang/Object;',
+            '@Lgroovy/transform/Generated;()',
+            '@LTypeAnno0;(value="this") : METHOD_RECEIVER, null',
+            'L0'
         ])
     }
 
@@ -269,9 +269,9 @@ final class TypeAnnotationsTest extends AbstractBytecodeTestCase {
             }
         ''')
         assert bytecode.hasStrictSequence([
-                'public doCall(I)Ljava/lang/Integer;',
-                '@LTypeAnno1;() : METHOD_FORMAL_PARAMETER 0, null',
-                'L0'
+            'public doCall(I)Ljava/lang/Integer;',
+            '@LTypeAnno1;() : METHOD_FORMAL_PARAMETER 0, null',
+            'L0'
         ])
     }
 
@@ -287,9 +287,9 @@ final class TypeAnnotationsTest extends AbstractBytecodeTestCase {
             }
         ''')
         assert bytecode.hasStrictSequence([
-                'public doCall(I)I',
-                '@LTypeAnno1;() : METHOD_FORMAL_PARAMETER 0, null',
-                'L0'
+            'public doCall(I)I',
+            '@LTypeAnno1;() : METHOD_FORMAL_PARAMETER 0, null',
+            'L0'
         ])
     }
 
@@ -310,12 +310,12 @@ final class TypeAnnotationsTest extends AbstractBytecodeTestCase {
             }
         ''')
         assert bytecode.hasSequence([
-                'public Ljava/util/Map; foo',
-                '@LFieldAnno;(value="foo")',
-                '@LTypeAnno0;(value="foo") : FIELD, 0;',
-                '@LTypeAnno1;(value="foo") : FIELD, 0;*',
-                '@LTypeAnno2;(value="foo") : FIELD, 1;',
-                '@LTypeAnno3;(value="foo") : FIELD, 1;0;'
+            'public Ljava/util/Map; foo',
+            '@LFieldAnno;(value="foo")',
+            '@LTypeAnno0;(value="foo") : FIELD, 0;',
+            '@LTypeAnno1;(value="foo") : FIELD, 0;*',
+            '@LTypeAnno2;(value="foo") : FIELD, 1;',
+            '@LTypeAnno3;(value="foo") : FIELD, 1;0;'
         ])
     }
 
@@ -332,10 +332,10 @@ final class TypeAnnotationsTest extends AbstractBytecodeTestCase {
             }
         ''')
         assert bytecode.hasSequence([
-                'public Ljava/util/List; numbers',
-                '@LTypeAnno4;() : FIELD, null',
-                '@LTypeAnno5;() : FIELD, 0;',
-                '@LTypeAnno6;() : FIELD, 0;*'
+            'public Ljava/util/List; numbers',
+            '@LTypeAnno4;() : FIELD, null',
+            '@LTypeAnno5;() : FIELD, 0;',
+            '@LTypeAnno6;() : FIELD, 0;*'
         ])
     }
 
@@ -363,19 +363,19 @@ final class TypeAnnotationsTest extends AbstractBytecodeTestCase {
             }
         ''')
         assert bytecode.hasSequence([
-                'public class Baz extends java/util/ArrayList implements java/io/Serializable java/util/List groovy/lang/GroovyObject {',
-                '@LTypeAnno;(value="foo")',
-                '@LTypeUseAnno0;(value="foo")',
-                '@LTypeUseAnno1;(value="foo")',
-                '@LTypeParameterAnno1;() : CLASS_TYPE_PARAMETER 0, null',
-                '@LTypeParameterAnno2;() : CLASS_TYPE_PARAMETER 0, null',
-                '@LTypeParameterAnno2;() : CLASS_TYPE_PARAMETER 1, null',
-                '@LTypeUseAnno2;(value="foo") : CLASS_TYPE_PARAMETER_BOUND 1, 0, null',
-                '@LTypeUseAnno3;(value="foo") : CLASS_EXTENDS -1, null',
-                '@LTypeUseAnno4;(value="foo") : CLASS_EXTENDS -1, 0;',
-                '@LTypeUseAnno5;(value="foo") : CLASS_EXTENDS 0, null',
-                '@LTypeUseAnno6;(value="foo") : CLASS_EXTENDS 1, null',
-                '@LTypeUseAnno7;(value="foo") : CLASS_EXTENDS 1, 0;'
+            'public class Baz extends java/util/ArrayList implements java/io/Serializable java/util/List groovy/lang/GroovyObject {',
+            '@LTypeAnno;(value="foo")',
+            '@LTypeUseAnno0;(value="foo")',
+            '@LTypeUseAnno1;(value="foo")',
+            '@LTypeParameterAnno1;() : CLASS_TYPE_PARAMETER 0, null',
+            '@LTypeParameterAnno2;() : CLASS_TYPE_PARAMETER 0, null',
+            '@LTypeParameterAnno2;() : CLASS_TYPE_PARAMETER 1, null',
+            '@LTypeUseAnno2;(value="foo") : CLASS_TYPE_PARAMETER_BOUND 1, 0, null',
+            '@LTypeUseAnno3;(value="foo") : CLASS_EXTENDS -1, null',
+            '@LTypeUseAnno4;(value="foo") : CLASS_EXTENDS -1, 0;',
+            '@LTypeUseAnno5;(value="foo") : CLASS_EXTENDS 0, null',
+            '@LTypeUseAnno6;(value="foo") : CLASS_EXTENDS 1, null',
+            '@LTypeUseAnno7;(value="foo") : CLASS_EXTENDS 1, 0;'
         ])
     }
 }

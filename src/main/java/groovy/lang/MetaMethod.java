@@ -47,70 +47,8 @@ public abstract class MetaMethod extends ParameterTypes implements MetaMember, C
      *
      * @param pt A list of parameters types
      */
-    public MetaMethod(Class [] pt) {
-        super (pt);
-    }
-
-    /**
-     * Returns the modifiers of this method.
-     *
-     * @return modifiers as an int.
-     */
-    public abstract int getModifiers();
-
-    /**
-     * Returns the name of this method.
-     *
-     * @return name of this method
-     */
-    public abstract String getName();
-
-    /**
-     * Returns the return type for this method.
-     *
-     *@return the return type of this method
-     */
-    public abstract Class getReturnType();
-
-    /**
-     * Gets the class where this method is declared.
-     *
-     * @return class of this method
-     */
-    public abstract CachedClass getDeclaringClass();
-
-    /**
-     * Checks that the given parameters are valid to call this method.
-     *
-     * @param arguments the arguments to check
-     * @throws IllegalArgumentException if the parameters are not valid
-     * @deprecated
-     */
-    @Deprecated
-    public void checkParameters(Class[] arguments) {
-        // let's check that the argument types are valid
-        if (!isValidMethod(arguments)) {
-            throw new IllegalArgumentException(
-                    "Parameters to method: "
-                    + getName()
-                    + " do not match types: "
-                    + FormatHelper.toString(getParameterTypes())
-                    + " for arguments: "
-                    + FormatHelper.toString(arguments));
-        }
-    }
-
-    /**
-     * Returns true if this metamethod represents the same method as the argument.
-     *
-     * @param method A metaMethod instance
-     * @return true if method is for the same method as this method, false otherwise.
-     */
-    public boolean isMethod(MetaMethod method) {
-        return getName().equals(method.getName())
-            && getModifiers() == method.getModifiers()
-            && getReturnType().equals(method.getReturnType())
-            && equal(getParameterTypes(), method.getParameterTypes());
+    public MetaMethod(Class[] pt) {
+        super(pt);
     }
 
     protected static boolean equal(CachedClass[] a, Class[] b) {
@@ -137,6 +75,79 @@ public abstract class MetaMethod extends ParameterTypes implements MetaMember, C
         return false;
     }
 
+    /**
+     * Checks the compatibility between two modifier masks. Checks that they are
+     * equal in regard to access and static modifier.
+     *
+     * @return true if the modifiers are compatible
+     */
+    private static boolean compatibleModifiers(int modifiersA, int modifiersB) {
+        int mask = Modifier.PRIVATE | Modifier.PROTECTED | Modifier.PUBLIC | Modifier.STATIC;
+        return (modifiersA & mask) == (modifiersB & mask);
+    }
+
+    /**
+     * Returns the modifiers of this method.
+     *
+     * @return modifiers as an int.
+     */
+    public abstract int getModifiers();
+
+    /**
+     * Returns the name of this method.
+     *
+     * @return name of this method
+     */
+    public abstract String getName();
+
+    /**
+     * Returns the return type for this method.
+     *
+     * @return the return type of this method
+     */
+    public abstract Class getReturnType();
+
+    /**
+     * Gets the class where this method is declared.
+     *
+     * @return class of this method
+     */
+    public abstract CachedClass getDeclaringClass();
+
+    /**
+     * Checks that the given parameters are valid to call this method.
+     *
+     * @param arguments the arguments to check
+     * @throws IllegalArgumentException if the parameters are not valid
+     * @deprecated
+     */
+    @Deprecated
+    public void checkParameters(Class[] arguments) {
+        // let's check that the argument types are valid
+        if (!isValidMethod(arguments)) {
+            throw new IllegalArgumentException(
+                "Parameters to method: "
+                    + getName()
+                    + " do not match types: "
+                    + FormatHelper.toString(getParameterTypes())
+                    + " for arguments: "
+                    + FormatHelper.toString(arguments));
+        }
+    }
+
+    /**
+     * Returns true if this metamethod represents the same method as the argument.
+     *
+     * @param method A metaMethod instance
+     * @return true if method is for the same method as this method, false otherwise.
+     */
+    public boolean isMethod(MetaMethod method) {
+        return getName().equals(method.getName())
+            && getModifiers() == method.getModifiers()
+            && getReturnType().equals(method.getReturnType())
+            && equal(getParameterTypes(), method.getParameterTypes());
+    }
+
     @Override
     public String toString() {
         return super.toString()
@@ -155,14 +166,14 @@ public abstract class MetaMethod extends ParameterTypes implements MetaMember, C
     public Object clone() {
         try {
             return super.clone();
-        }
-        catch (CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException e) {
             throw new GroovyRuntimeException("This should never happen", e);
         }
     }
 
     /**
      * Returns whether this method is abstract.
+     *
      * @return true if this method is abstract
      */
     public boolean isAbstract() {
@@ -171,6 +182,7 @@ public abstract class MetaMethod extends ParameterTypes implements MetaMember, C
 
     /**
      * Returns whether this method is interface-default.
+     *
      * @return true if this method is default
      */
     public boolean isDefault() {
@@ -188,17 +200,6 @@ public abstract class MetaMethod extends ParameterTypes implements MetaMember, C
             && compatibleModifiers(getModifiers(), method.getModifiers())
             && getReturnType().equals(method.getReturnType())
             && equal(getParameterTypes(), method.getParameterTypes());
-    }
-
-    /**
-     * Checks the compatibility between two modifier masks. Checks that they are
-     * equal in regard to access and static modifier.
-     *
-     * @return true if the modifiers are compatible
-     */
-    private static boolean compatibleModifiers(int modifiersA, int modifiersB) {
-        int mask = Modifier.PRIVATE | Modifier.PROTECTED | Modifier.PUBLIC | Modifier.STATIC;
-        return (modifiersA & mask) == (modifiersB & mask);
     }
 
     /**
@@ -222,9 +223,9 @@ public abstract class MetaMethod extends ParameterTypes implements MetaMember, C
      */
     public synchronized String getSignature() {
         if (signature == null) {
-            CachedClass [] parameters = getParameterTypes();
+            CachedClass[] parameters = getParameterTypes();
             final String name = getName();
-            StringBuilder buf = new StringBuilder(name.length()+parameters.length*10);
+            StringBuilder buf = new StringBuilder(name.length() + parameters.length * 10);
             buf.append(getReturnType().getName());
 
             buf.append(' ');
@@ -252,7 +253,7 @@ public abstract class MetaMethod extends ParameterTypes implements MetaMember, C
     /**
      * Invokes this method.
      *
-     * @param object The object this method should be invoked on
+     * @param object    The object this method should be invoked on
      * @param arguments The arguments for the method if applicable
      * @return The return value of the invocation
      */
@@ -264,7 +265,7 @@ public abstract class MetaMethod extends ParameterTypes implements MetaMember, C
      * This method is not final but it should be overloaded very carefully and
      * only by generated methods there is no guarantee that it will be called.
      *
-     * @param object The object the method is to be called at.
+     * @param object    The object the method is to be called at.
      * @param arguments Arguments for the method invocation.
      * @return The return value of the invoked method.
      */
@@ -280,7 +281,7 @@ public abstract class MetaMethod extends ParameterTypes implements MetaMember, C
     /**
      * Called when an exception occurs while invoking this method.
      */
-    public final RuntimeException processDoMethodInvokeException(final Exception e, final Object object, final Object [] arguments) {
+    public final RuntimeException processDoMethodInvokeException(final Exception e, final Object object, final Object[] arguments) {
         /*
         if (e instanceof IllegalArgumentException) {
             //TODO: test if this is OK with new MOP, should be changed!

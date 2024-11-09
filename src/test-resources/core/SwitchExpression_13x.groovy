@@ -17,9 +17,10 @@
  *  under the License.
  */
 
-def yield (String msg) { return msg }
-def yield () { return 'b' }
+def yield(String msg) { return msg }
+
+def yield() { return 'b' }
 
 def result = yield 'a'
 assert 'a' == result
-assert 'b'== yield()
+assert 'b' == yield()

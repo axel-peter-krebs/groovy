@@ -43,14 +43,13 @@ import static org.codehaus.groovy.ast.ClassHelper.isGroovyObjectType;
  * </ul>
  */
 public class OptimizerVisitor extends ClassCodeExpressionTransformer {
-    private ClassNode currentClass;
-    private SourceUnit source;
-
     // TODO make @CS lookup smarter so that we don't need both these maps
     private final Map<Object, FieldNode> const2Objects = new HashMap<Object, FieldNode>();
     private final Map<Object, FieldNode> const2Prims = new HashMap<Object, FieldNode>();
-    private int index;
     private final List<FieldNode> missingFields = new LinkedList<FieldNode>();
+    private ClassNode currentClass;
+    private SourceUnit source;
+    private int index;
 
     public OptimizerVisitor(CompilationUnit cu) {
     }
@@ -115,10 +114,10 @@ public class OptimizerVisitor extends ClassCodeExpressionTransformer {
         } while (currentClass.getDeclaredField(name) != null);
         // TODO consider moving initcode to <clinit> and remaking field final
         field = new FieldNode(name,
-                Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC,
-                constantExpression.getType(),
-                currentClass,
-                constantExpression);
+            Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_SYNTHETIC,
+            constantExpression.getType(),
+            currentClass,
+            constantExpression);
         field.setSynthetic(true);
         missingFields.add(field);
         constantExpression.setConstantName(field.getName());

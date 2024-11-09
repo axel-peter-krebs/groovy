@@ -16,6 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 trait SwimmingAbility {
     def swim() {
         prt("swimming..")

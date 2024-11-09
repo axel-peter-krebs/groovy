@@ -27,48 +27,48 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC
 
 class InWhileLoopWrapperTest {
 
-	InWhileLoopWrapper wrapper = new InWhileLoopWrapper()
+    InWhileLoopWrapper wrapper = new InWhileLoopWrapper()
 
-	@Test
-	void wrapWholeMethodBody() throws Exception {
-		MethodNode methodToWrap = new AstBuilder().buildFromSpec {
-			method('myMethod', ACC_PUBLIC, int.class) {
-				parameters {}
-				exceptions {}
-				block { returnStatement{ constant 2 } }
-			}
-		}[0]
-		
-		MethodNode expectedWrap = new AstBuilder().buildFromSpec {
-			method('myMethod', ACC_PUBLIC, int.class) {
-				parameters {}
-				exceptions {}
-				block {
-					whileStatement {
-						booleanExpression { constant true }
+    @Test
+    void wrapWholeMethodBody() throws Exception {
+        MethodNode methodToWrap = new AstBuilder().buildFromSpec {
+            method('myMethod', ACC_PUBLIC, int.class) {
+                parameters {}
+                exceptions {}
+                block { returnStatement { constant 2 } }
+            }
+        }[0]
+
+        MethodNode expectedWrap = new AstBuilder().buildFromSpec {
+            method('myMethod', ACC_PUBLIC, int.class) {
+                parameters {}
+                exceptions {}
+                block {
+                    whileStatement {
+                        booleanExpression { constant true }
                         block {
                             tryCatch {
                                 block {
-                                    returnStatement{  constant 2 }
+                                    returnStatement { constant 2 }
                                 }
                                 empty() //finally block
                                 catchStatement {
                                     parameter 'ignore': GotoRecurHereException.class
                                     //block {
-                                        continueStatement {
-                                            label InWhileLoopWrapper.LOOP_LABEL
-                                        }
+                                    continueStatement {
+                                        label InWhileLoopWrapper.LOOP_LABEL
+                                    }
                                     //}
                                 }
                             }
                         }
-					}
-				}
-			}
-		}[0]
-		
-		wrapper.wrap(methodToWrap)
-		AstAssert.assertSyntaxTree([expectedWrap], [methodToWrap])
-		assert methodToWrap.code.statements[0].loopBlock.statements[0].statementLabel == InWhileLoopWrapper.LOOP_LABEL
-	}
+                    }
+                }
+            }
+        }[0]
+
+        wrapper.wrap(methodToWrap)
+        AstAssert.assertSyntaxTree([expectedWrap], [methodToWrap])
+        assert methodToWrap.code.statements[0].loopBlock.statements[0].statementLabel == InWhileLoopWrapper.LOOP_LABEL
+    }
 }

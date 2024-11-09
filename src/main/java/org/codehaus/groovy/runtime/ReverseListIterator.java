@@ -34,6 +34,7 @@ public class ReverseListIterator<T> implements Iterator<T> {
 
     /**
      * Constructs a new <code>ReverseListIterator</code> for the provided list.
+     *
      * @param list the list to iterate over in reverse
      */
     public ReverseListIterator(List<T> list) {

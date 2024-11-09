@@ -40,26 +40,27 @@ if (false)
     int number = 1
 
 
-if(true) 1; else 0
+if (true) 1; else 0
 
-if(true) 1 else 0
+if (true) 1 else 0
 
-if(true) 1; else 0;
+if (true) 1; else 0;
 
-if(true)
+if (true)
     1;
 else
     0
 
-if(true)
+if (true)
     1
 else
     0
 
-if(true)
+if (true)
     1;
 else
     0;
 
-if (false) { ;out<<_s[_i]
+if (false) {
+    ; out << _s[_i]
 }

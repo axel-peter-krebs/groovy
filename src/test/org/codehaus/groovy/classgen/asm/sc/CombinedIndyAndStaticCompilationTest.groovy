@@ -28,9 +28,9 @@ import static org.codehaus.groovy.control.CompilerConfiguration.DEFAULT as confi
 class CombinedIndyAndStaticCompilationTest extends AbstractBytecodeTestCase {
     void testArrayAccess() {
         if (!config.indyEnabled) return;
-        ["byte", "short", "int", "long", "float", "double", "boolean", "char"].each { type->
+        ["byte", "short", "int", "long", "float", "double", "boolean", "char"].each { type ->
             //array get
-            compile ("""
+            compile("""
                 @groovy.transform.CompileStatic
                 def foo() {
                     ${type}[] array = new ${type}[10]
@@ -38,7 +38,7 @@ class CombinedIndyAndStaticCompilationTest extends AbstractBytecodeTestCase {
                 }
             """).hasSequence(["INVOKEDYNAMIC"])
             //array set
-            compile ("""
+            compile("""
                 @groovy.transform.CompileStatic
                 def foo() {
                     ${type}[] array = new ${type}[10]

@@ -335,7 +335,7 @@ class CliBuilder {
                     throw new CliBuilderException("'type' must be a Class")
                 }
                 if ((convert || type) && !args[0].containsKey('args') &&
-                        type?.simpleName?.toLowerCase() != 'boolean') {
+                    type?.simpleName?.toLowerCase() != 'boolean') {
                     args[0].args = 1
                 }
                 def option = option(name, args[0], args[1])
@@ -357,7 +357,7 @@ class CliBuilder {
         }
         try {
             def accessor = new OptionAccessor(
-                    parser.parse(options, args as String[], stopAtNonOption))
+                parser.parse(options, args as String[], stopAtNonOption))
             accessor.savedTypeOptions = savedTypeOptions
             return accessor
         } catch (ParseException pe) {
@@ -407,7 +407,7 @@ class CliBuilder {
     }
 
     void addOptionsFromAnnotations(Class optionClass, boolean namesAreSetters) {
-        optionClass.methods.findAll{ it.getAnnotation(Option) }.each { Method m ->
+        optionClass.methods.findAll { it.getAnnotation(Option) }.each { Method m ->
             Annotation annotation = m.getAnnotation(Option)
             def typedOption = processAddAnnotation(annotation, m, namesAreSetters)
             options.addOption(typedOption.cliOption)
@@ -507,7 +507,7 @@ class CliBuilder {
     }
 
     def setOptionsFromAnnotations(def cli, Class optionClass, Object t, boolean namesAreSetters) {
-        optionClass.methods.findAll{ it.getAnnotation(Option) }.each { Method m ->
+        optionClass.methods.findAll { it.getAnnotation(Option) }.each { Method m ->
             Annotation annotation = m.getAnnotation(Option)
             Map names = calculateNames(annotation.longName(), annotation.shortName(), m, namesAreSetters)
             processSetAnnotation(m, t, names.long ?: names.short, cli, namesAreSetters)
@@ -519,10 +519,10 @@ class CliBuilder {
             processSetAnnotation(m, t, names.long ?: names.short, cli, true)
         }
         def remaining = cli.arguments()
-        optionClass.methods.findAll{ it.getAnnotation(Unparsed) }.each { Method m ->
+        optionClass.methods.findAll { it.getAnnotation(Unparsed) }.each { Method m ->
             processSetRemaining(m, remaining, t, cli, namesAreSetters)
         }
-        optionClass.declaredFields.findAll{ it.getAnnotation(Unparsed) }.each { Field f ->
+        optionClass.declaredFields.findAll { it.getAnnotation(Unparsed) }.each { Field f ->
             Method m = optionClass.getMethod(getSetterName(f.getName()), f.getType())
             processSetRemaining(m, remaining, t, cli, namesAreSetters)
         }
@@ -535,7 +535,7 @@ class CliBuilder {
         def type = null
         if (isTyped) {
             type = resultType.componentType
-            result = remaining.collect{ cli.getValue(type, it, null) }.asType(resultType)
+            result = remaining.collect { cli.getValue(type, it, null) }.asType(resultType)
         } else {
             result = remaining.toList()
         }
@@ -559,14 +559,14 @@ class CliBuilder {
             boolean isFlag = (isBoolArg && !hasArg) || noArg
             if (cli.hasOption(name) || isFlag || cli.defaultValue(name)) {
                 m.invoke(t, [isFlag ? cli.hasOption(name) :
-                                     cli.hasOption(name) ? optionValue(cli, name) : cli.defaultValue(name)] as Object[])
+                                 cli.hasOption(name) ? optionValue(cli, name) : cli.defaultValue(name)] as Object[])
             }
         } else {
             def isBoolRetType = m.returnType.simpleName.toLowerCase() == 'boolean'
             boolean isFlag = (isBoolRetType && !hasArg) || noArg
             t.put(m.getName(), cli.hasOption(name) ?
-                    { -> isFlag ? true : optionValue(cli, name) } :
-                    { -> isFlag ? false : cli.defaultValue(name) })
+                { -> isFlag ? true : optionValue(cli, name) } :
+                { -> isFlag ? false : cli.defaultValue(name) })
         }
     }
 
@@ -616,7 +616,7 @@ class CliBuilder {
             if (k == 'args' && v == '+') {
                 [[args: org.apache.commons.cli.Option.UNLIMITED_VALUES]]
             } else if (k == 'args' && v == '*') {
-                [[args: org.apache.commons.cli.Option.UNLIMITED_VALUES,
+                [[args       : org.apache.commons.cli.Option.UNLIMITED_VALUES,
                   optionalArg: true]]
             } else if (k == 'args' && v instanceof String) {
                 [[args: Integer.parseInt(v)]]

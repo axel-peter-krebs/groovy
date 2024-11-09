@@ -69,7 +69,7 @@ class JavadocAssertionTestSuite extends TestSuite {
     public static final String SYSPROP_SRC_EXCLUDES_PATTERN = "javadocAssertion.src.excludesPattern";
 
     private static final JavadocAssertionTestBuilder testBuilder = new JavadocAssertionTestBuilder()
-    private static final IFileNameFinder finder = Class.forName('groovy.ant.FileNameFinder',true,this.classLoader).newInstance()
+    private static final IFileNameFinder finder = Class.forName('groovy.ant.FileNameFinder', true, this.classLoader).newInstance()
 
     static Test suite() {
         String basedir = System.getProperty(SYSPROP_SRC_DIR, "./src/")
@@ -91,7 +91,7 @@ class JavadocAssertionTestSuite extends TestSuite {
 
         TestSuite suite = new JavadocAssertionTestSuite()
 
-        Collection filenames = finder.getFileNames([dir:basedir, includes:includePattern, excludes:excludePattern])
+        Collection filenames = finder.getFileNames([dir: basedir, includes: includePattern, excludes: excludePattern])
         filenames.each { filename ->
             String code = new File(filename).text
             Class test = testBuilder.buildTest(filename, code)
@@ -104,7 +104,7 @@ class JavadocAssertionTestSuite extends TestSuite {
     }
 
     static void main(String[] args) {
-        switch(args.length) {
+        switch (args.length) {
             case 3:
                 TestRunner.run(suite(args[0], args[1], args[2]))
                 break

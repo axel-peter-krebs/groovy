@@ -27,9 +27,9 @@ class CompareEqualsTest extends GroovyTestCase {
         assertEquals new Xyz(), new Xyz()
 
         shouldFail {
-          assert new Xyz() == 239
+            assert new Xyz() == 239
         }
-        assert new Xyz () == "GROOVY.XYZ"
+        assert new Xyz() == "GROOVY.XYZ"
     }
 }
 

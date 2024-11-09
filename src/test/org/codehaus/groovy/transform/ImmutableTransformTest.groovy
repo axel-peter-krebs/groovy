@@ -136,7 +136,7 @@ final class ImmutableTransformTest {
             [new HasArray(letters:letters), new HasArray(letters)]
         '''
         assert objects[0].hashCode() == objects[1].hashCode()
-        assert objects[0].equals( objects[1] )
+        assert objects[0].equals(objects[1])
         assert objects[0].letters.size() == 3
     }
 
@@ -150,7 +150,7 @@ final class ImmutableTransformTest {
             [new HasList(numbers:numbers), new HasList(numbers)]
         '''
         assert objects[0].hashCode() == objects[1].hashCode()
-        assert objects[0].equals( objects[1] )
+        assert objects[0].equals(objects[1])
         assert objects[0].numbers.size() == 3
     }
 
@@ -460,7 +460,8 @@ final class ImmutableTransformTest {
         '''
     }
 
-    @Test // GROOVY-4997
+    @Test
+    // GROOVY-4997
     void testImmutableUsageOnInnerClasses() {
         assertScript shell, '''
             class A4997 {
@@ -609,33 +610,33 @@ final class ImmutableTransformTest {
             |class Person {
             |    String first, last
             |}
-            |'''.stripMargin() )
+            |'''.stripMargin())
 
         // One instance
-        def tim = tester.newInstance( first:'tim', last:'yates' )
+        def tim = tester.newInstance(first: 'tim', last: 'yates')
         assert tim.first == 'tim'
 
         // This should be the same instance and no changes
-        def tim2 = tim.copyWith( first:'tim' )
-        assert tim.is( tim2 )
+        def tim2 = tim.copyWith(first: 'tim')
+        assert tim.is(tim2)
 
         // This should also be the same instance and no changes
-        def tim3 = tim.copyWith( first:'tim', whatever:true )
-        assert tim.is( tim3 )
+        def tim3 = tim.copyWith(first: 'tim', whatever: true)
+        assert tim.is(tim3)
 
         // As should this
-        def tim4 = tim.copyWith( whatever:true )
-        assert tim.is( tim4 )
+        def tim4 = tim.copyWith(whatever: true)
+        assert tim.is(tim4)
 
         // And this
         def tim5 = tim.copyWith()
-        assert tim.is( tim5 )
+        assert tim.is(tim5)
 
         // This should be a new instance with a new firstname
-        def alice = tim.copyWith( first:'alice' )
+        def alice = tim.copyWith(first: 'alice')
         assert tim != alice
         assert alice.first == 'alice'
-        assert !alice.is( tim )
+        assert !alice.is(tim)
     }
 
     @Test
@@ -645,21 +646,21 @@ final class ImmutableTransformTest {
             |class Person {
             |    List<String> names
             |}
-            |'''.stripMargin() )
+            |'''.stripMargin())
 
         // One instance
-        def tim = tester.newInstance( [ 'Tim', 'Yates' ] )
-        assert tim.names == [ 'Tim', 'Yates' ]
+        def tim = tester.newInstance(['Tim', 'Yates'])
+        assert tim.names == ['Tim', 'Yates']
 
         // This should be the same instance and no changes
-        def tim2 = tim.copyWith( names:[ 'Tim', 'Yates' ] )
-        assert tim.is( tim2 )
+        def tim2 = tim.copyWith(names: ['Tim', 'Yates'])
+        assert tim.is(tim2)
 
         // This should be a new instance
-        def alice = tim.copyWith( names:[ 'Alice', 'Yates' ] )
+        def alice = tim.copyWith(names: ['Alice', 'Yates'])
         assert tim != alice
-        assert alice.names == [ 'Alice', 'Yates' ]
-        assert !alice.is( tim )
+        assert alice.names == ['Alice', 'Yates']
+        assert !alice.is(tim)
     }
 
     @Test
@@ -676,20 +677,20 @@ final class ImmutableTransformTest {
             |    cache
             |  }
             |}
-            |'''.stripMargin() )
+            |'''.stripMargin())
 
         // One instance
-        def tim = tester.newInstance( 'Tim', 'Yates', [ 'tim', 'nick1' ] )
+        def tim = tester.newInstance('Tim', 'Yates', ['tim', 'nick1'])
         assert tim.full() == 'Tim Yates (tim, nick1)'
 
         // This should be the same instance and no changes
-        def tim2 = tim.copyWith( nicknames:[ 'tim', 'nick1' ] )
-        assert tim.is( tim2 )
+        def tim2 = tim.copyWith(nicknames: ['tim', 'nick1'])
+        assert tim.is(tim2)
 
         // This should be a new instance
-        def alice = tim.copyWith( first:'Alice', nicknames:[ 'ali' ] )
+        def alice = tim.copyWith(first: 'Alice', nicknames: ['ali'])
         assert tim != alice
-        assert !alice.is( tim )
+        assert !alice.is(tim)
         assert alice.full() == 'Alice Yates (ali)'
     }
 
@@ -708,20 +709,20 @@ final class ImmutableTransformTest {
             |    cache
             |  }
             |}
-            |'''.stripMargin() )
+            |'''.stripMargin())
 
         // One instance
-        def tim = tester.newInstance( 'Tim', 'Yates', [ 'tim', 'nick1' ] )
+        def tim = tester.newInstance('Tim', 'Yates', ['tim', 'nick1'])
         assert tim.full() == 'Tim Yates (tim, nick1)'
 
         // This should be the same instance and no changes
-        def tim2 = tim.copyWith( nicknames:[ 'tim', 'nick1' ] )
-        assert tim.is( tim2 )
+        def tim2 = tim.copyWith(nicknames: ['tim', 'nick1'])
+        assert tim.is(tim2)
 
         // This should be a new instance
-        def alice = tim.copyWith( first:'Alice', nicknames:[ 'ali' ] )
+        def alice = tim.copyWith(first: 'Alice', nicknames: ['ali'])
         assert tim != alice
-        assert !alice.is( tim )
+        assert !alice.is(tim)
         assert alice.full() == 'Alice Yates (ali)'
     }
 
@@ -740,20 +741,20 @@ final class ImmutableTransformTest {
             |    cache
             |  }
             |}
-            |'''.stripMargin() )
+            |'''.stripMargin())
 
         // One instance
-        def tim = tester.newInstance( 'Tim', 'Yates', [ 'tim', 'nick1' ] )
+        def tim = tester.newInstance('Tim', 'Yates', ['tim', 'nick1'])
         assert tim.full() == 'Tim Yates (tim, nick1)'
 
         // This should be the same instance and no changes
-        def tim2 = tim.copyWith( nicknames:[ 'tim', 'nick1' ] )
-        assert tim.is( tim2 )
+        def tim2 = tim.copyWith(nicknames: ['tim', 'nick1'])
+        assert tim.is(tim2)
 
         // This should be a new instance
-        def alice = tim.copyWith( first:'Alice', nicknames:[ 'ali' ] )
+        def alice = tim.copyWith(first: 'Alice', nicknames: ['ali'])
         assert tim != alice
-        assert !alice.is( tim )
+        assert !alice.is(tim)
         assert alice.full() == 'Alice Yates (ali)'
     }
 
@@ -765,33 +766,33 @@ final class ImmutableTransformTest {
             |class Person {
             |    String first, last
             |}
-            |'''.stripMargin() )
+            |'''.stripMargin())
 
         // One instance
-        def tim = tester.newInstance( first:'tim', last:'yates' )
+        def tim = tester.newInstance(first: 'tim', last: 'yates')
         assert tim.first == 'tim'
 
         // This should be the same instance and no changes
-        def tim2 = tim.copyWith( first:'tim' )
-        assert tim.is( tim2 )
+        def tim2 = tim.copyWith(first: 'tim')
+        assert tim.is(tim2)
 
         // This should also be the same instance and no changes
-        def tim3 = tim.copyWith( first:'tim', whatever:true )
-        assert tim.is( tim3 )
+        def tim3 = tim.copyWith(first: 'tim', whatever: true)
+        assert tim.is(tim3)
 
         // As should this
-        def tim4 = tim.copyWith( whatever:true )
-        assert tim.is( tim4 )
+        def tim4 = tim.copyWith(whatever: true)
+        assert tim.is(tim4)
 
         // And this
         def tim5 = tim.copyWith()
-        assert tim.is( tim5 )
+        assert tim.is(tim5)
 
         // This should be a new instance with a new firstname
-        def alice = tim.copyWith( first:'alice' )
+        def alice = tim.copyWith(first: 'alice')
         assert tim != alice
         assert alice.first == 'alice'
-        assert !alice.is( tim )
+        assert !alice.is(tim)
     }
 
     @Test
@@ -802,33 +803,33 @@ final class ImmutableTransformTest {
             |class Person {
             |    String first, last
             |}
-            |'''.stripMargin() )
+            |'''.stripMargin())
 
         // One instance
-        def tim = tester.newInstance( first:'tim', last:'yates' )
+        def tim = tester.newInstance(first: 'tim', last: 'yates')
         assert tim.first == 'tim'
 
         // This should be the same instance and no changes
-        def tim2 = tim.copyWith( first:'tim' )
-        assert tim.is( tim2 )
+        def tim2 = tim.copyWith(first: 'tim')
+        assert tim.is(tim2)
 
         // This should also be the same instance and no changes
-        def tim3 = tim.copyWith( first:'tim', whatever:true )
-        assert tim.is( tim3 )
+        def tim3 = tim.copyWith(first: 'tim', whatever: true)
+        assert tim.is(tim3)
 
         // As should this
-        def tim4 = tim.copyWith( whatever:true )
-        assert tim.is( tim4 )
+        def tim4 = tim.copyWith(whatever: true)
+        assert tim.is(tim4)
 
         // And this
         def tim5 = tim.copyWith()
-        assert tim.is( tim5 )
+        assert tim.is(tim5)
 
         // This should be a new instance with a new firstname
-        def alice = tim.copyWith( first:'alice' )
+        def alice = tim.copyWith(first: 'alice')
         assert tim != alice
         assert alice.first == 'alice'
-        assert !alice.is( tim )
+        assert !alice.is(tim)
     }
 
     @Test
@@ -841,16 +842,16 @@ final class ImmutableTransformTest {
             |        (1..i).collect { this }
             |    }
             |}
-            |'''.stripMargin() )
+            |'''.stripMargin())
 
         // One instance
-        def tim = tester.newInstance( firstname:'tim', lastname:'yates' )
+        def tim = tester.newInstance(firstname: 'tim', lastname: 'yates')
         assert tim.firstname == 'tim'
 
         // Check original copyWith remains
-        def result = tim.copyWith( 2 )
+        def result = tim.copyWith(2)
         assert result.size() == 2
-        assert result.firstname == [ 'tim', 'tim' ]
+        assert result.firstname == ['tim', 'tim']
     }
 
     @Test
@@ -864,16 +865,16 @@ final class ImmutableTransformTest {
             |        (1..i).collect { this }
             |    }
             |}
-            |'''.stripMargin() )
+            |'''.stripMargin())
 
         // One instance
-        def tim = tester.newInstance( firstname:'tim', lastname:'yates' )
+        def tim = tester.newInstance(firstname: 'tim', lastname: 'yates')
         assert tim.firstname == 'tim'
 
         // Check original copyWith remains
-        def result = tim.copyWith( 2 )
+        def result = tim.copyWith(2)
         assert result.size() == 2
-        assert result.firstname == [ 'tim', 'tim' ]
+        assert result.firstname == ['tim', 'tim']
     }
 
     @Test
@@ -887,16 +888,16 @@ final class ImmutableTransformTest {
             |        (1..i).collect { this }
             |    }
             |}
-            |'''.stripMargin() )
+            |'''.stripMargin())
 
         // One instance
-        def tim = tester.newInstance( firstname:'tim', lastname:'yates' )
+        def tim = tester.newInstance(firstname: 'tim', lastname: 'yates')
         assert tim.firstname == 'tim'
 
         // Check original copyWith remains
-        def result = tim.copyWith( 2 )
+        def result = tim.copyWith(2)
         assert result.size() == 2
-        assert result.firstname == [ 'tim', 'tim' ]
+        assert result.firstname == ['tim', 'tim']
     }
 
     // GROOVY-6293

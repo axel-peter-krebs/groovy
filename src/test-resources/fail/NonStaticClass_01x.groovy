@@ -27,7 +27,9 @@ public class Y {
     }
 
     public static X createX(Y y) {
-        return y.new X(name:'Daniel')
+        return y.new
+        X(name: 'Daniel')
     }
 }
+
 assert 'Daniel' == Y.createX(new Y()).name

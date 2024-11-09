@@ -28,7 +28,7 @@ final class Groovy10535 {
     void testBooleanTypecast_invokeDynamicOptimization1() {
         for (String stcAnn : ['@groovy.transform.CompileStatic', '']) {
             assertScript(
-                    stcAnn + '''
+                stcAnn + '''
                     class C {
                         static main(args) {
                             Collection<String> strings = null
@@ -50,8 +50,8 @@ final class Groovy10535 {
     @Test
     void testBooleanTypecast_invokeDynamicOptimization2() {
         for (String stcAnn : ['@groovy.transform.CompileStatic', '']) {
-            assertScript (
-                    stcAnn + '''
+            assertScript(
+                stcAnn + '''
                     class C {
                         static main(args) {
                             Collection<String> strings = ['x']
@@ -73,8 +73,8 @@ final class Groovy10535 {
     @Test
     void testBooleanTypecast_invokeDynamicOptimization3() {
         for (String stcAnn : ['@groovy.transform.CompileStatic', '']) {
-            assertScript (
-                    stcAnn + '''
+            assertScript(
+                stcAnn + '''
                     class C {
                         static main(args) {
                             Collection<String> strings

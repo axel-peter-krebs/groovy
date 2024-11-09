@@ -32,8 +32,8 @@ public class ConcurrentLinkedHashMapTest {
     @Test
     public void computeIfAbsent() {
         ConcurrentLinkedHashMap m = new ConcurrentLinkedHashMap.Builder<>()
-                .maximumWeightedCapacity(3)
-                .build();
+            .maximumWeightedCapacity(3)
+            .build();
 
         assertEquals(1, m.computeIfAbsent("a", k -> 1));
         assertEquals(1, m.computeIfAbsent("a", k -> 2));
@@ -45,15 +45,15 @@ public class ConcurrentLinkedHashMapTest {
         assertEquals(5, m.computeIfAbsent("d", k -> 5));
         assertEquals(5, m.computeIfAbsent("d", k -> 6));
 
-        assertArrayEquals(new String[] {"b", "c", "d"}, m.keySet().toArray(new String[0]));
-        assertArrayEquals(new Integer[] {3, 4, 5}, m.values().toArray(new Integer[0]));
+        assertArrayEquals(new String[]{"b", "c", "d"}, m.keySet().toArray(new String[0]));
+        assertArrayEquals(new Integer[]{3, 4, 5}, m.values().toArray(new Integer[0]));
     }
 
     @Test
     public void computeIfAbsentConcurrently() throws InterruptedException {
         final ConcurrentLinkedHashMap m = new ConcurrentLinkedHashMap.Builder<>()
-                .maximumWeightedCapacity(3)
-                .build();
+            .maximumWeightedCapacity(3)
+            .build();
 
         final int threadNum = 20;
         final CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -79,7 +79,7 @@ public class ConcurrentLinkedHashMapTest {
 
         m.computeIfAbsent(0, k -> 100);
 
-        assertArrayEquals(new Integer[] {0, 1, 2}, new TreeSet(m.keySet()).toArray(new Integer[0]));
+        assertArrayEquals(new Integer[]{0, 1, 2}, new TreeSet(m.keySet()).toArray(new Integer[0]));
 
         assertNotEquals(100, m.get(0));
         assertEquals(0, (Integer) m.get(0) % 3);

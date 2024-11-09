@@ -62,38 +62,10 @@ public class FinalVariableAnalyzer extends ClassCodeVisitorSupport {
 
     private final SourceUnit sourceUnit;
     private final VariableNotFinalCallback callback;
-
+    private final Deque<Map<Variable, VariableState>> assignmentTracker = new LinkedList<>();
     private Set<Variable> declaredFinalVariables = null;
     private boolean inAssignmentRHS = false;
     private boolean inArgumentList = false;
-
-    private enum VariableState {
-        is_uninitialized(false),
-        is_final(true),
-        is_var(false),
-        is_ambiguous(false); // any further use of that variable can trigger uninitialized or not final errors
-
-        private final boolean isFinal;
-
-        VariableState(final boolean isFinal) {
-            this.isFinal = isFinal;
-        }
-
-        public VariableState getNext() {
-            switch (this) {
-                case is_uninitialized:
-                    return is_final;
-                default:
-                    return is_var;
-            }
-        }
-
-        public boolean isFinal() {
-            return isFinal;
-        }
-    }
-
-    private final Deque<Map<Variable, VariableState>> assignmentTracker = new LinkedList<>();
 
     public FinalVariableAnalyzer(final SourceUnit sourceUnit) {
         this(sourceUnit, null);
@@ -105,13 +77,6 @@ public class FinalVariableAnalyzer extends ClassCodeVisitorSupport {
         assignmentTracker.add(new StateMap());
     }
 
-    private Map<Variable, VariableState> pushState() {
-        Map<Variable, VariableState> state = new StateMap();
-        state.putAll(getState());
-        assignmentTracker.add(state);
-        return state;
-    }
-
     private static Variable getTarget(Variable v) {
         if (v instanceof VariableExpression) {
             Variable t = ((VariableExpression) v).getAccessedVariable();
@@ -119,6 +84,13 @@ public class FinalVariableAnalyzer extends ClassCodeVisitorSupport {
             return getTarget(t);
         }
         return v;
+    }
+
+    private Map<Variable, VariableState> pushState() {
+        Map<Variable, VariableState> state = new StateMap();
+        state.putAll(getState());
+        assignmentTracker.add(state);
+        return state;
     }
 
     private Map<Variable, VariableState> popState() {
@@ -137,7 +109,7 @@ public class FinalVariableAnalyzer extends ClassCodeVisitorSupport {
     public boolean isEffectivelyFinal(Variable v) {
         VariableState state = getState().get(v);
         return (v instanceof Parameter && state == null)
-                || (state != null && state.isFinal());
+            || (state != null && state.isFinal());
     }
 
     @Override
@@ -221,7 +193,7 @@ public class FinalVariableAnalyzer extends ClassCodeVisitorSupport {
         for (Iterator<Map.Entry<Variable, VariableState>> iter = state.entrySet().iterator(); iter.hasNext(); ) {
             Map.Entry<Variable, VariableState> next = iter.next();
             Variable key = next.getKey();
-            if (key instanceof VariableExpression && ((VariableExpression)key).getAccessedVariable() == key && !origState.containsKey(key)) {
+            if (key instanceof VariableExpression && ((VariableExpression) key).getAccessedVariable() == key && !origState.containsKey(key)) {
                 // remove local variable
                 iter.remove();
             }
@@ -441,7 +413,7 @@ public class FinalVariableAnalyzer extends ClassCodeVisitorSupport {
      * @return true if the block's last statement is a return or throw
      */
     private boolean returningBlock(Statement block) {
-        if (block instanceof ReturnStatement || block instanceof  ThrowStatement) {
+        if (block instanceof ReturnStatement || block instanceof ThrowStatement) {
             return true;
         }
         if (!(block instanceof BlockStatement)) {
@@ -478,11 +450,11 @@ public class FinalVariableAnalyzer extends ClassCodeVisitorSupport {
     }
 
     private void recordAssignment(
-            Variable var,
-            boolean isDeclaration,
-            boolean uninitialized,
-            boolean forceVariable,
-            Expression expression) {
+        Variable var,
+        boolean isDeclaration,
+        boolean uninitialized,
+        boolean forceVariable,
+        Expression expression) {
         if (var == null) {
             return;
         }
@@ -520,12 +492,38 @@ public class FinalVariableAnalyzer extends ClassCodeVisitorSupport {
     // This fixes xform declaration expressions but not other synthetic fields which aren't set up correctly
     private void fixVar(Variable var) {
         if (getTarget(var) == null && var instanceof VariableExpression && getState() != null && var.getName() != null) {
-            for (Variable v: getState().keySet()) {
+            for (Variable v : getState().keySet()) {
                 if (var.getName().equals(v.getName())) {
-                    ((VariableExpression)var).setAccessedVariable(v);
+                    ((VariableExpression) var).setAccessedVariable(v);
                     break;
                 }
             }
+        }
+    }
+
+    private enum VariableState {
+        is_uninitialized(false),
+        is_final(true),
+        is_var(false),
+        is_ambiguous(false); // any further use of that variable can trigger uninitialized or not final errors
+
+        private final boolean isFinal;
+
+        VariableState(final boolean isFinal) {
+            this.isFinal = isFinal;
+        }
+
+        public VariableState getNext() {
+            switch (this) {
+                case is_uninitialized:
+                    return is_final;
+                default:
+                    return is_var;
+            }
+        }
+
+        public boolean isFinal() {
+            return isFinal;
         }
     }
 

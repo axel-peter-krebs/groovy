@@ -71,12 +71,12 @@ public class DummyClassGenerator extends ClassGenerator {
             this.internalBaseClassName = BytecodeHelper.getClassInternalName(classNode.getSuperClass());
 
             cv.visit(
-                    classNode.getCompileUnit().getConfig().getBytecodeVersion(),
-                    classNode.getModifiers(),
-                    internalClassName,
-                    null,
-                    internalBaseClassName,
-                    BytecodeHelper.getClassInternalNames(classNode.getInterfaces())
+                classNode.getCompileUnit().getConfig().getBytecodeVersion(),
+                classNode.getModifiers(),
+                internalClassName,
+                null,
+                internalBaseClassName,
+                BytecodeHelper.getClassInternalNames(classNode.getInterfaces())
             );
 
             classNode.visitContents(this);
@@ -90,14 +90,13 @@ public class DummyClassGenerator extends ClassGenerator {
                     outerClassName = null;
                 }
                 cv.visitInnerClass(
-                        innerClassInternalName,
-                        outerClassName,
-                        innerClass.getName(),
-                        innerClass.getModifiers());
+                    innerClassInternalName,
+                    outerClassName,
+                    innerClass.getName(),
+                    innerClass.getModifiers());
             }
             cv.visitEnd();
-        }
-        catch (GroovyRuntimeException e) {
+        } catch (GroovyRuntimeException e) {
             e.setModule(classNode.getModule());
             throw e;
         }
@@ -136,11 +135,11 @@ public class DummyClassGenerator extends ClassGenerator {
     @Override
     public void visitField(final FieldNode fieldNode) {
         cv.visitField(
-                fieldNode.getModifiers(),
-                fieldNode.getName(),
-                BytecodeHelper.getTypeDescription(fieldNode.getType()),
-                null, //fieldValue,  //br  all the sudden that one cannot init the field here. init is done in static initializer and instance initializer.
-                null);
+            fieldNode.getModifiers(),
+            fieldNode.getName(),
+            BytecodeHelper.getTypeDescription(fieldNode.getType()),
+            null, //fieldValue,  //br  all the sudden that one cannot init the field here. init is done in static initializer and instance initializer.
+            null);
     }
 
     @Override

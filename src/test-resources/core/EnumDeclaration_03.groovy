@@ -18,8 +18,11 @@
  */
 
 enum E {
-    A() {}, B(1) {{}},
-    C(1, 2) {
+    A(){}, B(1){
+        {
+        }
+    },
+    C(1, 2){
         public void prt() {
             println "$x, $y"
         }
@@ -28,7 +31,8 @@ enum E {
             println "$x, $y"
         }
 
-        @Test2 prt3() {
+        @Test2
+        prt3() {
             println "$x, $y"
         }
 
@@ -40,7 +44,7 @@ enum E {
             println "$x, $y"
         }
     },
-    D {
+    D{
         void hello() {}
     }
 
@@ -48,9 +52,11 @@ enum E {
     protected int y;
 
     E() {}
+
     E(int x) {
         this.x = x;
     }
+
     E(int x, y) {
         this(x)
         this.y = y;

@@ -47,25 +47,78 @@ import java.util.TreeSet;
 
 public class TypeCheckingContext {
 
-    public TypeCheckingContext(final StaticTypeCheckingVisitor visitor) {
-        this.visitor = visitor;
-    }
+    protected final StaticTypeCheckingVisitor visitor;
 
     /*public TypeCheckingContext(final SourceUnit source) {
         this.source = source;
         pushErrorCollector(source.getErrorCollector());
     }*/
+    protected final LinkedList<ErrorCollector> errorCollectors = new LinkedList<>();
+    /**
+     * Some expressions need to be visited twice, because type information may be insufficient at some point. For
+     * example, for closure shared variables, we need a first pass to collect every type which is assigned to a closure
+     * shared variable, then a second pass to ensure that every method call on such a variable is made on a LUB.
+     */
+    protected final LinkedHashSet<SecondPassExpression> secondPassExpressions = new LinkedHashSet<>();
+    /**
+     * A map used to store every type used in closure shared variable assignments. In a second pass, we will compute the
+     * LUB of each type and check that method calls on those variables are valid.
+     */
+    protected final Map<VariableExpression, List<ClassNode>> closureSharedVariablesAssignmentTypes = new HashMap<>();
 
-    protected final StaticTypeCheckingVisitor visitor;
-    protected       SourceUnit source;
+    //--------------------------------------------------------------------------
+    // this map is used to ensure that two errors are not reported on the same line/column
+    protected final Set<Long> reportedErrors = new TreeSet<>();
+    // TODO: replace with general node stack and filters
+    protected final LinkedList<ClassNode> enclosingClassNodes = new LinkedList<>();
+    protected final LinkedList<MethodNode> enclosingMethods = new LinkedList<>();
+
+    //--------------------------------------------------------------------------
+    protected final LinkedList<Expression> enclosingMethodCalls = new LinkedList<>();
+    protected final LinkedList<SwitchStatement> switchStatements = new LinkedList<>();
+    protected final LinkedList<EnclosingClosure> enclosingClosures = new LinkedList<>();
+    // stores the current binary expression. This is used when assignments are made with a null object, for type inference
+    protected final LinkedList<BinaryExpression> enclosingBinaryExpressions = new LinkedList<>();
+    protected SourceUnit source;
+    protected CompilationUnit compilationUnit;
+
+    //--------------------------------------------------------------------------
+    /**
+     * Stores information which is valid in the "then" branch of an if-then-else
+     * statement.  This is used when the if condition expression makes use of an
+     * {@code instanceof} check.
+     */
+    protected Stack<Map<Object, List<ClassNode>>> temporaryIfBranchTypeInformation = new Stack<>();
+    /**
+     * Whenever a method using a closure as argument (typically, "with") is
+     * detected, this list is updated with the receiver type of the with method.
+     */
+    protected DelegationMetadata delegationMetadata;
+    protected boolean isInStaticContext;
+
+    //--------------------------------------------------------------------------
+    // TODO: Should these be fields of StaticTypeCheckingVisitor?
+    /**
+     * The type of the last encountered "it" implicit parameter.
+     */
+    protected ClassNode lastImplicitItType;
+    protected Set<MethodNode> methodsToBeVisited = Collections.emptySet();
+    /**
+     * This field is used to track assignments in if/else branches, for loops and
+     * while loops. For example, in the following code: <code>if (cond) { x = 1 } else { x = '123' }</code>
+     * the inferred type of x after the if/else statement should be the LUB of int and String.
+     */
+    protected Map<VariableExpression, List<ClassNode>> ifElseForWhileAssignmentTracker;
+    protected Set<MethodNode> alreadyVisitedMethods = new HashSet<>();
+    protected Map<Parameter, ClassNode> controlStructureVariables = new HashMap<>();
+
+    public TypeCheckingContext(final StaticTypeCheckingVisitor visitor) {
+        this.visitor = visitor;
+    }
 
     public SourceUnit getSource() {
         return source;
     }
-
-    //--------------------------------------------------------------------------
-
-    protected CompilationUnit compilationUnit;
 
     public CompilationUnit getCompilationUnit() {
         return compilationUnit;
@@ -75,18 +128,16 @@ public class TypeCheckingContext {
         this.compilationUnit = compilationUnit;
     }
 
-    //--------------------------------------------------------------------------
-
-    protected final LinkedList<ErrorCollector> errorCollectors = new LinkedList<>();
-
     public ErrorCollector pushErrorCollector() {
         CompilerConfiguration config = Optional.ofNullable(getErrorCollector())
-                .map(ErrorCollector::getConfiguration).orElseGet(() -> getSource().getConfiguration());
+            .map(ErrorCollector::getConfiguration).orElseGet(() -> getSource().getConfiguration());
 
         ErrorCollector collector = new ErrorCollector(config);
         pushErrorCollector(collector);
         return collector;
     }
+
+    //--------------------------------------------------------------------------
 
     public void pushErrorCollector(final ErrorCollector collector) {
         errorCollectors.addFirst(collector);
@@ -107,15 +158,6 @@ public class TypeCheckingContext {
         return Collections.unmodifiableList(errorCollectors);
     }
 
-    //--------------------------------------------------------------------------
-
-    /**
-     * Stores information which is valid in the "then" branch of an if-then-else
-     * statement.  This is used when the if condition expression makes use of an
-     * {@code instanceof} check.
-     */
-    protected Stack<Map<Object, List<ClassNode>>> temporaryIfBranchTypeInformation = new Stack<>();
-
     public void pushTemporaryTypeInfo() {
         temporaryIfBranchTypeInformation.push(new HashMap<>());
     }
@@ -123,62 +165,6 @@ public class TypeCheckingContext {
     public void popTemporaryTypeInfo() {
         temporaryIfBranchTypeInformation.pop();
     }
-
-    //--------------------------------------------------------------------------
-    // TODO: Should these be fields of StaticTypeCheckingVisitor?
-
-    /**
-     * Whenever a method using a closure as argument (typically, "with") is
-     * detected, this list is updated with the receiver type of the with method.
-     */
-    protected DelegationMetadata delegationMetadata;
-
-    protected boolean isInStaticContext;
-
-    /**
-     * The type of the last encountered "it" implicit parameter.
-     */
-    protected ClassNode lastImplicitItType;
-
-    protected Set<MethodNode> methodsToBeVisited = Collections.emptySet();
-
-    /**
-     * This field is used to track assignments in if/else branches, for loops and
-     * while loops. For example, in the following code: <code>if (cond) { x = 1 } else { x = '123' }</code>
-     * the inferred type of x after the if/else statement should be the LUB of int and String.
-     */
-    protected Map<VariableExpression, List<ClassNode>> ifElseForWhileAssignmentTracker;
-
-    protected Set<MethodNode> alreadyVisitedMethods = new HashSet<>();
-
-    /**
-     * Some expressions need to be visited twice, because type information may be insufficient at some point. For
-     * example, for closure shared variables, we need a first pass to collect every type which is assigned to a closure
-     * shared variable, then a second pass to ensure that every method call on such a variable is made on a LUB.
-     */
-    protected final LinkedHashSet<SecondPassExpression> secondPassExpressions = new LinkedHashSet<>();
-
-    /**
-     * A map used to store every type used in closure shared variable assignments. In a second pass, we will compute the
-     * LUB of each type and check that method calls on those variables are valid.
-     */
-    protected final Map<VariableExpression, List<ClassNode>> closureSharedVariablesAssignmentTypes = new HashMap<>();
-
-    protected       Map<Parameter, ClassNode> controlStructureVariables = new HashMap<>();
-
-    // this map is used to ensure that two errors are not reported on the same line/column
-    protected final Set<Long> reportedErrors = new TreeSet<>();
-
-    //--------------------------------------------------------------------------
-
-    // TODO: replace with general node stack and filters
-    protected final LinkedList<ClassNode> enclosingClassNodes = new LinkedList<>();
-    protected final LinkedList<MethodNode> enclosingMethods = new LinkedList<>();
-    protected final LinkedList<Expression> enclosingMethodCalls = new LinkedList<>();
-    protected final LinkedList<SwitchStatement> switchStatements = new LinkedList<>();
-    protected final LinkedList<EnclosingClosure> enclosingClosures = new LinkedList<>();
-    // stores the current binary expression. This is used when assignments are made with a null object, for type inference
-    protected final LinkedList<BinaryExpression> enclosingBinaryExpressions = new LinkedList<>();
 
     /**
      * Pushes a binary expression into the binary expression stack.

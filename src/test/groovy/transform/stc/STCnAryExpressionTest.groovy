@@ -45,7 +45,7 @@ class STCnAryExpressionTest extends StaticTypeCheckingTestCase {
             int num = 2
             obj+num
         ''',
-        'Cannot find matching method java.lang.Object#plus(int)'
+            'Cannot find matching method java.lang.Object#plus(int)'
     }
 
     void testBinaryIntPlusObject() {
@@ -54,7 +54,7 @@ class STCnAryExpressionTest extends StaticTypeCheckingTestCase {
             int num = 2
             num+obj
         ''',
-        'Cannot find matching method java.lang.Integer#plus(java.lang.Object)'
+            'Cannot find matching method java.lang.Integer#plus(java.lang.Object)'
     }
 
     // GROOVY-10818
@@ -108,7 +108,7 @@ class STCnAryExpressionTest extends StaticTypeCheckingTestCase {
             def test = (that >= this)
             test.booleanValue() // no error
         ''',
-        'Cannot find matching method java.lang.Object#compareTo'
+            'Cannot find matching method java.lang.Object#compareTo'
     }
 
     void testShiftOnPrimitives() {
@@ -304,20 +304,20 @@ class STCnAryExpressionTest extends StaticTypeCheckingTestCase {
         shouldFailWithMessages '''
             [] < 1
         ''',
-        'Cannot find matching method java.util.ArrayList#compareTo(int)'
+            'Cannot find matching method java.util.ArrayList#compareTo(int)'
     }
 
     void testComparisonOperatorCheckWithIncompatibleTypesFailsIfComparableImplemented() {
         shouldFailWithMessages '''
            'abc' < 1
         ''',
-        'Cannot call java.lang.String#compareTo(java.lang.String) with arguments [int]'
+            'Cannot call java.lang.String#compareTo(java.lang.String) with arguments [int]'
     }
 
     void testCompareToCallCheckWithIncompatibleTypesAlsoFailsIfComparableImplemented() {
         shouldFailWithMessages '''
            'abc'.compareTo(1)
         ''',
-        'Cannot call java.lang.String#compareTo(java.lang.String) with arguments [int]'
+            'Cannot call java.lang.String#compareTo(java.lang.String) with arguments [int]'
     }
 }

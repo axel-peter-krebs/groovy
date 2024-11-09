@@ -50,7 +50,7 @@ class StripMarginTest extends GroovyTestCase {
     }
 
     void testStripIndent() {
-        def actual   = """
+        def actual = """
                 return 'foo'
             }
 
@@ -72,7 +72,7 @@ def method() {
     }
 
     void testStripIndentWithFirstLineBackslash() {
-        def actual   = """\
+        def actual = """\
                 return 'foo'
             }
 

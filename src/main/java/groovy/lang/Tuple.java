@@ -42,83 +42,19 @@ public class Tuple<E> extends AbstractList<E> implements Serializable, Cloneable
         this.contents = tuple.contents;
     }
 
-    @Override
-    public E get(int index) {
-        return contents[index];
-    }
-
-    @Override
-    public int size() {
-        return contents.length;
-    }
-
-    @Override
-    public E[] toArray() {
-        return contents;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<E> subList(int fromIndex, int toIndex) {
-        int size = toIndex - fromIndex;
-        E[] newContent = (E[]) new Object[size];
-        System.arraycopy(contents, fromIndex, newContent, 0, size);
-        return new Tuple<>(newContent);
-    }
-
-    public Tuple<E> subTuple(int fromIndex, int toIndex) {
-        return (Tuple<E>) subList(fromIndex, toIndex);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Tuple)) return false;
-
-        Tuple that = (Tuple) o;
-        int size = size();
-        if (size != that.size()) return false;
-        for (int i = 0; i < size; i++) {
-            if (!DefaultTypeTransformation.compareEqual(get(i), that.get(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(contents);
-    }
-
-    @Override
-    public int compareTo(Tuple<E> other) {
-        int thisSize = this.size();
-        int otherSize = other.size();
-
-        for (int i = 0, n = Math.min(thisSize, otherSize); i < n; i++) {
-            int result = compare(this.get(i), other.get(i));
-            if (result != 0) {
-                return result;
-            }
-        }
-
-        return Integer.compare(thisSize, otherSize);
-    }
-
     @SuppressWarnings("unchecked")
     private static <T> int compare(T t1, T t2) {
         return t1 == null && t2 == null
-                ? 0
-                : t1 == null
-                ? 1
-                : t2 == null
-                ? -1
-                : t1 instanceof Comparable
-                ? ((Comparable<T>) t1).compareTo(t2)
-                : DefaultTypeTransformation.compareEqual(t1, t2)
-                ? 0
-                : 1;
+            ? 0
+            : t1 == null
+            ? 1
+            : t2 == null
+            ? -1
+            : t1 instanceof Comparable
+            ? ((Comparable<T>) t1).compareTo(t2)
+            : DefaultTypeTransformation.compareEqual(t1, t2)
+            ? 0
+            : 1;
     }
 
     /**
@@ -238,6 +174,70 @@ public class Tuple<E> extends AbstractList<E> implements Serializable, Cloneable
      */
     public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> Tuple16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> tuple(T1 v1, T2 v2, T3 v3, T4 v4, T5 v5, T6 v6, T7 v7, T8 v8, T9 v9, T10 v10, T11 v11, T12 v12, T13 v13, T14 v14, T15 v15, T16 v16) {
         return new Tuple16<>(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16);
+    }
+
+    @Override
+    public E get(int index) {
+        return contents[index];
+    }
+
+    @Override
+    public int size() {
+        return contents.length;
+    }
+
+    @Override
+    public E[] toArray() {
+        return contents;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<E> subList(int fromIndex, int toIndex) {
+        int size = toIndex - fromIndex;
+        E[] newContent = (E[]) new Object[size];
+        System.arraycopy(contents, fromIndex, newContent, 0, size);
+        return new Tuple<>(newContent);
+    }
+
+    public Tuple<E> subTuple(int fromIndex, int toIndex) {
+        return (Tuple<E>) subList(fromIndex, toIndex);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tuple)) return false;
+
+        Tuple that = (Tuple) o;
+        int size = size();
+        if (size != that.size()) return false;
+        for (int i = 0; i < size; i++) {
+            if (!DefaultTypeTransformation.compareEqual(get(i), that.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(contents);
+    }
+
+    @Override
+    public int compareTo(Tuple<E> other) {
+        int thisSize = this.size();
+        int otherSize = other.size();
+
+        for (int i = 0, n = Math.min(thisSize, otherSize); i < n; i++) {
+            int result = compare(this.get(i), other.get(i));
+            if (result != 0) {
+                return result;
+            }
+        }
+
+        return Integer.compare(thisSize, otherSize);
     }
 
     @Override

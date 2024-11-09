@@ -19,45 +19,70 @@ import H.I
  *  under the License.
  */
 
-enum e1{}
-enum e2 { }
+enum e1 {}
+
+enum e2 {}
+
 public enum E3 {}
+
 public enum E4 implements A {}
+
 @Test2
-public enum E5 implements A,B {}
+public enum E5 implements A, B {}
+
 enum E6 implements I<T> {}
 
-enum E10 {A}
-enum E11 {A, B}
-enum E12 {A, B
+enum E10 {
+    A
 }
+
+enum E11 {
+    A, B
+}
+
+enum E12 {
+    A, B
+}
+
 enum E13 {
     A, B
 }
-enum E14 {A, B,}
+
+enum E14 {
+    A, B,
+}
+
 enum E15 {
     A,
-    B}
+    B
+}
+
 enum E16 {
     A,
-    B,}
+    B,
+}
+
 enum E17
-{A,
-B,}
+{
+    A,
+    B,
+}
+
 enum E18
 {
-A
-,
-B
-,
+    A
+    ,
+    B
+    ,
 }
+
 enum E19
 {
-A
-,
-B
-,
-;
+    A
+    ,
+    B
+    ,
+    ;
 }
 
 enum E20 {
@@ -66,5 +91,5 @@ enum E20 {
 }
 
 enum E21 {
-    A(111,'aa'), B(222,'bb')
+    A(111, 'aa'), B(222, 'bb')
 }

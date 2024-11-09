@@ -38,7 +38,7 @@ public class JUnit5Runner implements GroovyRunner {
      * test, i.e. checks whether it appears to be using the relevant annotations.
      *
      * @param scriptClass the class we want to check
-     * @param loader the GroovyClassLoader to use to find classes
+     * @param loader      the GroovyClassLoader to use to find classes
      * @return true if the class appears to be a compatible test
      */
     @Override
@@ -107,7 +107,7 @@ public class JUnit5Runner implements GroovyRunner {
      * Utility method to run a JUnit 5 test.
      *
      * @param scriptClass the class we want to run as a test
-     * @param loader the class loader to use
+     * @param loader      the class loader to use
      * @return the result of running the test
      */
     @Override

@@ -112,7 +112,7 @@ class SubscriptTest extends GroovyTestCase {
     }
 
     void testIntArrayRange() {
-        Integer[] list = [ 10, 11, 12, 13, 14, 15 ]
+        Integer[] list = [10, 11, 12, 13, 14, 15]
 
         def sub = list[2..4]
         assert sub == [12, 13, 14]
@@ -153,7 +153,7 @@ class SubscriptTest extends GroovyTestCase {
 
     }
 
-    void testStringPutAtRange(){
+    void testStringPutAtRange() {
         def text = "0123"
     }
 
@@ -204,7 +204,7 @@ class SubscriptTest extends GroovyTestCase {
     }
 
     void testSubMap() {
-        def map = ['a':123, 'b':456, 'c':789]
+        def map = ['a': 123, 'b': 456, 'c': 789]
 
         def keys = ['b', 'a']
         def sub = map.subMap(keys)
@@ -212,13 +212,13 @@ class SubscriptTest extends GroovyTestCase {
         assert sub.size() == 2
         assert sub['a'] == 123
         assert sub['b'] == 456
-        assert ! sub.containsKey('c')
+        assert !sub.containsKey('c')
 
         assert map.getClass() == sub.getClass()
     }
 
     void testSubMapWithNonExistentKey() {
-        def map = ['a':123, 'b':456, 'c':789]
+        def map = ['a': 123, 'b': 456, 'c': 789]
 
         def keys = ['b', 'a', 'd']
         def sub = map.subMap(keys)
@@ -226,8 +226,8 @@ class SubscriptTest extends GroovyTestCase {
         assert sub.size() == 2
         assert sub['a'] == 123
         assert sub['b'] == 456
-        assert ! sub.containsKey('c')
-        assert ! sub.containsKey('d')
+        assert !sub.containsKey('c')
+        assert !sub.containsKey('d')
 
         assert map.getClass() == sub.getClass()
     }

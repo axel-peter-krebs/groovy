@@ -32,33 +32,33 @@ import java.util.List;
  * Collect all recursive calls within method
  */
 public class CollectRecursiveCalls extends CodeVisitorSupport {
-	private final List<Expression> recursiveCalls = new ArrayList<>();
-	private MethodNode method;
+    private final List<Expression> recursiveCalls = new ArrayList<>();
+    private MethodNode method;
 
-	@Override
-	public void visitMethodCallExpression(MethodCallExpression call) {
-		if (isRecursive(call)) {
-			recursiveCalls.add(call);
-		}
+    @Override
+    public void visitMethodCallExpression(MethodCallExpression call) {
+        if (isRecursive(call)) {
+            recursiveCalls.add(call);
+        }
         super.visitMethodCallExpression(call);
     }
 
-	@Override
-	public void visitStaticMethodCallExpression(StaticMethodCallExpression call) {
-		if (isRecursive(call)) {
+    @Override
+    public void visitStaticMethodCallExpression(StaticMethodCallExpression call) {
+        if (isRecursive(call)) {
             recursiveCalls.add(call);
         }
-		super.visitStaticMethodCallExpression(call);
-	}
-	
-	public synchronized List<Expression> collect(MethodNode method) {
-		recursiveCalls.clear();
-		this.method = method;
-		this.method.getCode().visit(this);
-		return recursiveCalls;
-	}
+        super.visitStaticMethodCallExpression(call);
+    }
 
-	private boolean isRecursive(Expression call) {
-		return new RecursivenessTester().isRecursive(Maps.of("method", method, "call", call));
-	}
+    public synchronized List<Expression> collect(MethodNode method) {
+        recursiveCalls.clear();
+        this.method = method;
+        this.method.getCode().visit(this);
+        return recursiveCalls;
+    }
+
+    private boolean isRecursive(Expression call) {
+        return new RecursivenessTester().isRecursive(Maps.of("method", method, "call", call));
+    }
 }

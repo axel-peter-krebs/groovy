@@ -29,8 +29,7 @@ import java.util.ResourceBundle;
  * instances for simple i18n support.
  */
 public class MessageSource
-    extends GroovyObjectSupport
-{
+    extends GroovyObjectSupport {
     private final String[] bundleNames;
 
     private ResourceBundle[] cachedBundles;
@@ -43,7 +42,15 @@ public class MessageSource
     }
 
     public MessageSource(final String name) {
-        this(new String[] { name });
+        this(new String[]{name});
+    }
+
+    public MessageSource(final Class[] types) {
+        this(classNames(types));
+    }
+
+    public MessageSource(final Class type) {
+        this(new String[]{type.getName()});
     }
 
     private static String[] classNames(final Class[] types) {
@@ -52,7 +59,7 @@ public class MessageSource
 
         String[] names = new String[types.length];
 
-        for (int i=0; i<types.length; i++) {
+        for (int i = 0; i < types.length; i++) {
             assert types[i] != null;
 
             names[i] = types[i].getName();
@@ -61,18 +68,10 @@ public class MessageSource
         return names;
     }
 
-    public MessageSource(final Class[] types) {
-        this(classNames(types));
-    }
-
-    public MessageSource(final Class type) {
-        this(new String[] { type.getName() });
-    }
-
     private ResourceBundle[] createBundles() {
         ResourceBundle[] bundles = new ResourceBundle[bundleNames.length];
 
-        for (int i=0; i<bundleNames.length; i++) {
+        for (int i = 0; i < bundleNames.length; i++) {
             assert bundleNames[i] != null;
 
             bundles[i] = ResourceBundle.getBundle(bundleNames[i]);

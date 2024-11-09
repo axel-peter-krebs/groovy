@@ -22,24 +22,24 @@ import groovy.test.GroovyTestCase
 
 class Groovy5056Bug extends GroovyTestCase {
     void testASortedSetMinusACollection() {
-        def comparator = [compare: {a,b->
-                def retVal = a.x.compareTo(b.x)
-                return retVal
-            }
+        def comparator = [compare: { a, b ->
+            def retVal = a.x.compareTo(b.x)
+            return retVal
+        }
         ] as Comparator
 
         def ts1 = new TreeSet(comparator)
         ts1.addAll([
-            new ToCompare(x:"1"),
-            new ToCompare(x:"2"),
-            new ToCompare(x:"3")
+            new ToCompare(x: "1"),
+            new ToCompare(x: "2"),
+            new ToCompare(x: "3")
         ])
 
         def ts2 = new TreeSet(comparator)
         ts2.addAll([
-            new ToCompare(x:"1"),
-            new ToCompare(x:"2"),
-            new ToCompare(x:"3")
+            new ToCompare(x: "1"),
+            new ToCompare(x: "2"),
+            new ToCompare(x: "3")
         ])
 
         def difference = ts1 - ts2
@@ -47,20 +47,20 @@ class Groovy5056Bug extends GroovyTestCase {
     }
 
     void testASortedSetMinusAnItem() {
-        def comparator = [compare: {a,b->
-                def retVal = a.x.compareTo(b.x)
-                return retVal
-            }
+        def comparator = [compare: { a, b ->
+            def retVal = a.x.compareTo(b.x)
+            return retVal
+        }
         ] as Comparator
 
         def ts1 = new TreeSet(comparator)
         ts1.addAll([
-            new ToCompare(x:"1"),
-            new ToCompare(x:"2"),
-            new ToCompare(x:"3")
+            new ToCompare(x: "1"),
+            new ToCompare(x: "2"),
+            new ToCompare(x: "3")
         ])
 
-        def difference = ts1 - new ToCompare(x:"3")
+        def difference = ts1 - new ToCompare(x: "3")
         assert difference.size() == 2
     }
 }

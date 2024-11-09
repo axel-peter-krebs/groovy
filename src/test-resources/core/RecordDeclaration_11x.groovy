@@ -18,7 +18,7 @@
  */
 package core
 
-@groovy.transform.TupleConstructor(defaults=false, namedVariant=false)
+@groovy.transform.TupleConstructor(defaults = false, namedVariant = false)
 record Point(int x, int y, String color) {
     public Point {
         x = -x;

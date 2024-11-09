@@ -53,6 +53,52 @@ public final class AssertionRenderer {
         return new AssertionRenderer(text, recorder).render();
     }
 
+    private static void placeString(StringBuilder line, String str, int column) {
+        while (line.length() < column)
+            line.append(' ');
+        line.replace(column - 1, column - 1 + str.length(), str);
+    }
+
+    /**
+     * Returns a string representation of the given value, or <tt>null</tt> if
+     * the value should not be included (because it does not add any valuable
+     * information).
+     *
+     * @param value a value
+     * @return a string representation of the given value
+     */
+    private static String valueToString(Object value) {
+        String toString;
+
+        try {
+            toString = FormatHelper.format(value, true, -1, false);
+        } catch (Exception e) {
+            return String.format("%s (toString() threw %s)",
+                javaLangObjectToString(value), e.getClass().getName());
+        }
+
+        if (toString == null) {
+            return String.format("%s (toString() == null)", javaLangObjectToString(value));
+        }
+
+        if (toString.isEmpty()) {
+            if (hasStringLikeType(value)) return "\"\"";
+            return String.format("%s (toString() == \"\")", javaLangObjectToString(value));
+        }
+
+        return toString;
+    }
+
+    private static boolean hasStringLikeType(Object value) {
+        Class<?> clazz = value.getClass();
+        return clazz == String.class || clazz == StringBuffer.class || clazz == StringBuilder.class;
+    }
+
+    private static String javaLangObjectToString(Object value) {
+        String hash = Integer.toHexString(System.identityHashCode(value));
+        return value.getClass().getName() + "@" + hash;
+    }
+
     private String render() {
         renderText();
         sortValues();
@@ -95,8 +141,8 @@ public final class AssertionRenderer {
 
             String[] strs = str.split("\r\n|\r|\n");
             int endColumn = strs.length == 1 ?
-                    startColumn + str.length() : // exclusive
-                    Integer.MAX_VALUE; // multi-line strings are always placed on new lines
+                startColumn + str.length() : // exclusive
+                Integer.MAX_VALUE; // multi-line strings are always placed on new lines
 
             for (int j = 1; j < lines.size(); j++)
                 if (endColumn < startColumns.get(j)) {
@@ -124,51 +170,5 @@ public final class AssertionRenderer {
         for (int i = 1; i < lines.size(); i++)
             firstLine.append('\n').append(lines.get(i).toString());
         return firstLine.toString();
-    }
-
-    private static void placeString(StringBuilder line, String str, int column) {
-        while (line.length() < column)
-            line.append(' ');
-        line.replace(column - 1, column - 1 + str.length(), str);
-    }
-
-    /**
-     * Returns a string representation of the given value, or <tt>null</tt> if
-     * the value should not be included (because it does not add any valuable
-     * information).
-     *
-     * @param value a value
-     * @return a string representation of the given value
-     */
-    private static String valueToString(Object value) {
-        String toString;
-
-        try {
-            toString = FormatHelper.format(value, true, -1, false);
-        } catch (Exception e) {
-            return String.format("%s (toString() threw %s)",
-                    javaLangObjectToString(value), e.getClass().getName());
-        }
-
-        if (toString == null) {
-            return String.format("%s (toString() == null)", javaLangObjectToString(value));
-        }
-
-        if (toString.isEmpty()) {
-            if (hasStringLikeType(value)) return "\"\"";
-            return String.format("%s (toString() == \"\")", javaLangObjectToString(value));
-        }
-
-        return toString;
-    }
-
-    private static boolean hasStringLikeType(Object value) {
-        Class<?> clazz = value.getClass();
-        return clazz == String.class || clazz == StringBuffer.class || clazz == StringBuilder.class;
-    }
-
-    private static String javaLangObjectToString(Object value) {
-        String hash = Integer.toHexString(System.identityHashCode(value));
-        return value.getClass().getName() + "@" + hash;
     }
 }

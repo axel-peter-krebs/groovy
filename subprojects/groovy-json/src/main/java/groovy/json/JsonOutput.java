@@ -166,7 +166,7 @@ public class JsonOutput {
     /**
      * Pretty print a JSON payload.
      *
-     * @param jsonPayload a JSON payload
+     * @param jsonPayload            a JSON payload
      * @param disableUnicodeEscaping whether to disable unicode escaping
      * @return a pretty representation of JSON payload.
      * @since 4.0.19

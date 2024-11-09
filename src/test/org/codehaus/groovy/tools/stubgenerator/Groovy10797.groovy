@@ -23,15 +23,15 @@ final class Groovy10797 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'A.java': '''
+            'A.java'   : '''
                 public class A<T> {
                 }
             ''',
-            'B.java': '''
+            'B.java'   : '''
                 public class B<T extends A<?>> {
                 }
             ''',
-            'C.groovy': '''
+            'C.groovy' : '''
                 class C {
                     static <T extends A<?>> B<T> test() {
                     }

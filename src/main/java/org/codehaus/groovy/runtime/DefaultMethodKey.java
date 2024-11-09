@@ -21,12 +21,12 @@ package org.codehaus.groovy.runtime;
 /**
  * A default implementation of MethodKey
  */
-public class DefaultMethodKey extends MethodKey{
+public class DefaultMethodKey extends MethodKey {
 
     private final Class[] parameterTypes;
 
     public DefaultMethodKey(Class sender, String name, Class[] parameterTypes, boolean isCallToSuper) {
-        super(sender, name,isCallToSuper);
+        super(sender, name, isCallToSuper);
         this.parameterTypes = parameterTypes;
     }
 
@@ -38,7 +38,7 @@ public class DefaultMethodKey extends MethodKey{
     @Override
     public Class getParameterType(int index) {
         Class c = parameterTypes[index];
-        if (c==null) return Object.class;
+        if (c == null) return Object.class;
         return c;
     }
 }

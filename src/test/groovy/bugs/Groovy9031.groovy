@@ -29,8 +29,8 @@ final class Groovy9031 {
         def config = new CompilerConfiguration(
             targetDirectory: File.createTempDir(),
             jointCompilationOptions: [
-                    stubDir: File.createTempDir(),
-                    keepStubs: true   // keep stubs to read the stubs later in this test
+                stubDir  : File.createTempDir(),
+                keepStubs: true   // keep stubs to read the stubs later in this test
             ]
         )
 

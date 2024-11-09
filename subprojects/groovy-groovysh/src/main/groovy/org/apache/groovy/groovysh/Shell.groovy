@@ -29,8 +29,7 @@ import static org.fusesource.jansi.Ansi.ansi
 /**
  * A simple shell for invoking commands from a command-line.
  */
-class Shell
-{
+class Shell {
     protected final Logger log = Logger.create(this.class)
 
     final CommandRegistry registry = new CommandRegistry()
@@ -38,7 +37,7 @@ class Shell
     final IO io
 
     Shell(final IO io) {
-        assert(io != null)
+        assert (io != null)
 
         this.io = io
     }
@@ -46,7 +45,6 @@ class Shell
     Shell() {
         this(new IO())
     }
-
 
 
     /**

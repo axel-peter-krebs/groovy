@@ -37,7 +37,8 @@ final class Groovy9141 {
         assert err =~ / You defined an abstract method\[meth\] with a body. Try removing the method body @ line /
     }
 
-    @Test // not a language requirement but script-level check takes precedence in current implementation
+    @Test
+    // not a language requirement but script-level check takes precedence in current implementation
     void testAbstractMethodWithBodyInScript() {
         def err = shouldFail CompilationFailedException, '''
             abstract void meth() {}

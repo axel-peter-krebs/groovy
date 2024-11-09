@@ -36,7 +36,7 @@ class Groovy7291Bug extends GroovyTestCase {
 
     void testDouble() {
         shouldFail(NullPointerException,
-        '''
+            '''
             Double a;
             def b = {
                a = a + 1;

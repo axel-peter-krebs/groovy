@@ -31,7 +31,9 @@ public class SimpleGroovyFieldDoc extends SimpleGroovyMemberDoc implements Groov
     }
 
     @Override
-    public Object constantValue() {/*todo*/return null;}
+    public Object constantValue() {/*todo*/
+        return null;
+    }
 
     public void setConstantValueExpression(String constantValueExpression) {
         this.constantValueExpression = constantValueExpression;
@@ -43,10 +45,14 @@ public class SimpleGroovyFieldDoc extends SimpleGroovyMemberDoc implements Groov
     }
 
     @Override
-    public boolean isTransient() {/*todo*/return false;}
+    public boolean isTransient() {/*todo*/
+        return false;
+    }
 
     @Override
-    public boolean isVolatile() {/*todo*/return false;}
+    public boolean isVolatile() {/*todo*/
+        return false;
+    }
 
     //    public GroovySerialFieldTag[] serialFieldTags() {/*todo*/return null;}
 

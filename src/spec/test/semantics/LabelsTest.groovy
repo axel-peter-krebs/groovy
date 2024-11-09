@@ -24,25 +24,26 @@ class LabelsTest extends GroovyTestCase {
     void testLabels() {
         // tag::test_labels[]
         given:
-            def x = 1
-            def y = 2
+        def x = 1
+        def y = 2
         when:
-            def z = x+y
+        def z = x + y
         then:
-            assert z == 3
+        assert z == 3
         // end::test_labels[]
     }
 
     void testUseOfLabel() {
         // tag::label_bad_practice[]
-        for (int i=0;i<10;i++) {
-            for (int j=0;j<i;j++) {
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < i; j++) {
                 println "j=$j"
                 if (j == 5) {
                     break exit
                 }
             }
-            exit: println "i=$i"
+            exit:
+            println "i=$i"
         }
         // end::label_bad_practice[]
     }

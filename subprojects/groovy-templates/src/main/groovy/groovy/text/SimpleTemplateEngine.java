@@ -91,8 +91,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * In this case, your template source file should be HTML with the appropriate embedded placeholders.
  */
 public class SimpleTemplateEngine extends TemplateEngine {
-    private boolean verbose;
     private static AtomicInteger counter = new AtomicInteger(0);
+    private boolean verbose;
     private GroovyShell groovyShell;
     private boolean escapeBackslash;
 
@@ -130,6 +130,10 @@ public class SimpleTemplateEngine extends TemplateEngine {
         return template;
     }
 
+    public boolean isVerbose() {
+        return verbose;
+    }
+
     /**
      * @param verbose true if you want the engine to display the template source file for debugging purposes
      */
@@ -137,8 +141,12 @@ public class SimpleTemplateEngine extends TemplateEngine {
         this.verbose = verbose;
     }
 
-    public boolean isVerbose() {
-        return verbose;
+    public boolean isEscapeBackslash() {
+        return escapeBackslash;
+    }
+
+    public void setEscapeBackslash(boolean escapeBackslash) {
+        this.escapeBackslash = escapeBackslash;
     }
 
     private static class SimpleTemplate implements Template {
@@ -361,13 +369,5 @@ public class SimpleTemplateEngine extends TemplateEngine {
             }
             sw.write(";\nout.print(\"\"\"");
         }
-    }
-
-    public boolean isEscapeBackslash() {
-        return escapeBackslash;
-    }
-
-    public void setEscapeBackslash(boolean escapeBackslash) {
-        this.escapeBackslash = escapeBackslash;
     }
 }

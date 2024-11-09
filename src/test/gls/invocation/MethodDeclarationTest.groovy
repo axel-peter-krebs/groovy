@@ -20,7 +20,7 @@ package gls.invocation
 
 import gls.CompilableTestSupport;
 
-class MethodDeclarationTest  extends CompilableTestSupport {
+class MethodDeclarationTest extends CompilableTestSupport {
     void testDuplicateMethod() {
         shouldNotCompile """
             class A {

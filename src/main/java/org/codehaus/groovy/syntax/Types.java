@@ -369,6 +369,247 @@ public class Types {
 
     //---------------------------------------------------------------------------
     // TYPE HIERARCHIES
+    private static final Map<Integer, String> TEXTS = new HashMap<Integer, String>();  // symbol/keyword type -> text
+    private static final Map<String, Integer> LOOKUP = new HashMap<String, Integer>();  // text -> symbol/keyword type
+
+
+    //---------------------------------------------------------------------------
+    // TYPE COERSIONS
+    private static final Set<String> KEYWORDS = new HashSet<String>();  // valid keywords
+    private static final Map<Integer, String> DESCRIPTIONS = new HashMap<Integer, String>();
+
+    static {
+
+        //
+        // SYMBOLS
+
+        addTranslation("\n", NEWLINE);
+
+        addTranslation("{", LEFT_CURLY_BRACE);
+        addTranslation("}", RIGHT_CURLY_BRACE);
+        addTranslation("[", LEFT_SQUARE_BRACKET);
+        addTranslation("]", RIGHT_SQUARE_BRACKET);
+        addTranslation("(", LEFT_PARENTHESIS);
+        addTranslation(")", RIGHT_PARENTHESIS);
+
+        addTranslation(".", DOT);
+        addTranslation("..", DOT_DOT);
+        addTranslation("...", DOT_DOT_DOT);
+
+        addTranslation("->", NAVIGATE);
+
+        addTranslation("=~", FIND_REGEX);
+        addTranslation("==~", MATCH_REGEX);
+        addTranslation("~", REGEX_PATTERN);
+        addTranslation("==>", IMPLIES);
+
+        addTranslation("=", EQUAL);
+
+        addTranslation("!=", COMPARE_NOT_EQUAL);
+        addTranslation("===", COMPARE_IDENTICAL);
+        addTranslation("!==", COMPARE_NOT_IDENTICAL);
+        addTranslation("==", COMPARE_EQUAL);
+        addTranslation("<", COMPARE_LESS_THAN);
+        addTranslation("<=", COMPARE_LESS_THAN_EQUAL);
+        addTranslation(">", COMPARE_GREATER_THAN);
+        addTranslation(">=", COMPARE_GREATER_THAN_EQUAL);
+        addTranslation("<=>", COMPARE_TO);
+        addTranslation("!in", COMPARE_NOT_IN);
+        addTranslation("!instanceof", COMPARE_NOT_INSTANCEOF);
+
+        addTranslation("!", NOT);
+        addTranslation("||", LOGICAL_OR);
+        addTranslation("&&", LOGICAL_AND);
+
+        addTranslation("||=", LOGICAL_OR_EQUAL);
+        addTranslation("&&=", LOGICAL_AND_EQUAL);
+
+        addTranslation("+", PLUS);
+        addTranslation("-", MINUS);
+        addTranslation("*", MULTIPLY);
+        addTranslation("/", DIVIDE);
+        addTranslation("\\", INTDIV);
+        addTranslation("%", REMAINDER);
+
+        addTranslation("**", POWER);
+        addTranslation("+=", PLUS_EQUAL);
+        addTranslation("-=", MINUS_EQUAL);
+        addTranslation("*=", MULTIPLY_EQUAL);
+        addTranslation("/=", DIVIDE_EQUAL);
+        addTranslation("\\=", INTDIV_EQUAL);
+        addTranslation("%=", REMAINDER_EQUAL);
+        addTranslation("**=", POWER_EQUAL);
+        addTranslation("?=", ELVIS_EQUAL);
+
+        addTranslation("++", PLUS_PLUS);
+        addTranslation("--", MINUS_MINUS);
+
+        addTranslation("<<", LEFT_SHIFT);
+        addTranslation(">>", RIGHT_SHIFT);
+        addTranslation(">>>", RIGHT_SHIFT_UNSIGNED);
+
+        addTranslation("<<=", LEFT_SHIFT_EQUAL);
+        addTranslation(">>=", RIGHT_SHIFT_EQUAL);
+        addTranslation(">>>=", RIGHT_SHIFT_UNSIGNED_EQUAL);
+
+        addTranslation("&", BITWISE_AND);
+        addTranslation("^", BITWISE_XOR);
+
+        addTranslation("|=", BITWISE_OR_EQUAL);
+        addTranslation("&=", BITWISE_AND_EQUAL);
+        addTranslation("^=", BITWISE_XOR_EQUAL);
+
+        addTranslation(",", COMMA);
+        addTranslation(":", COLON);
+        addTranslation(";", SEMICOLON);
+        addTranslation("?", QUESTION);
+        addTranslation("|", PIPE);
+
+        addTranslation("${}", GSTRING_EXPRESSION_START);
+
+
+        //
+        // Keywords
+
+        addKeyword("abstract", KEYWORD_ABSTRACT);
+        addKeyword("as", KEYWORD_AS);
+        addKeyword("assert", KEYWORD_ASSERT);
+        addKeyword("break", KEYWORD_BREAK);
+        addKeyword("case", KEYWORD_CASE);
+        addKeyword("catch", KEYWORD_CATCH);
+        addKeyword("class", KEYWORD_CLASS);
+        addKeyword("const", KEYWORD_CONST);
+        addKeyword("continue", KEYWORD_CONTINUE);
+        addKeyword("def", KEYWORD_DEF);
+        addKeyword("defmacro", KEYWORD_DEF); // xxx br defmacro
+        addKeyword("default", KEYWORD_DEFAULT);
+        addKeyword("do", KEYWORD_DO);
+        addKeyword("else", KEYWORD_ELSE);
+        addKeyword("extends", KEYWORD_EXTENDS);
+        addKeyword("final", KEYWORD_FINAL);
+        addKeyword("finally", KEYWORD_FINALLY);
+        addKeyword("for", KEYWORD_FOR);
+        addKeyword("goto", KEYWORD_GOTO);
+        addKeyword("if", KEYWORD_IF);
+        addKeyword("in", KEYWORD_IN);
+        addKeyword("implements", KEYWORD_IMPLEMENTS);
+        addKeyword("import", KEYWORD_IMPORT);
+        addKeyword("instanceof", KEYWORD_INSTANCEOF);
+        addKeyword("interface", KEYWORD_INTERFACE);
+        addKeyword("mixin", KEYWORD_MIXIN);
+        addKeyword("native", KEYWORD_NATIVE);
+        addKeyword("new", KEYWORD_NEW);
+        addKeyword("package", KEYWORD_PACKAGE);
+        addKeyword("private", KEYWORD_PRIVATE);
+        addKeyword("property", KEYWORD_PROPERTY);
+        addKeyword("protected", KEYWORD_PROTECTED);
+        addKeyword("public", KEYWORD_PUBLIC);
+        addKeyword("return", KEYWORD_RETURN);
+        addKeyword("static", KEYWORD_STATIC);
+        addKeyword("super", KEYWORD_SUPER);
+        addKeyword("switch", KEYWORD_SWITCH);
+        addKeyword("synchronized", KEYWORD_SYNCHRONIZED);
+        addKeyword("this", KEYWORD_THIS);
+        addKeyword("throw", KEYWORD_THROW);
+        addKeyword("throws", KEYWORD_THROWS);
+        addKeyword("transient", KEYWORD_TRANSIENT);
+        addKeyword("try", KEYWORD_TRY);
+        addKeyword("volatile", KEYWORD_VOLATILE);
+        addKeyword("while", KEYWORD_WHILE);
+        addKeyword("true", KEYWORD_TRUE);
+        addKeyword("false", KEYWORD_FALSE);
+        addKeyword("null", KEYWORD_NULL);
+        addKeyword("void", KEYWORD_VOID);
+        addKeyword("boolean", KEYWORD_BOOLEAN);
+        addKeyword("byte", KEYWORD_BYTE);
+        addKeyword("int", KEYWORD_INT);
+        addKeyword("short", KEYWORD_SHORT);
+        addKeyword("long", KEYWORD_LONG);
+        addKeyword("float", KEYWORD_FLOAT);
+        addKeyword("double", KEYWORD_DOUBLE);
+        addKeyword("char", KEYWORD_CHAR);
+    }
+
+
+    //---------------------------------------------------------------------------
+    // OPERATOR PRECEDENCE
+
+    static {
+        for (Map.Entry<String, Integer> entry : LOOKUP.entrySet()) {
+            addDescription(entry.getValue(), entry.getKey());
+        }
+
+        addDescription(NEWLINE, "<newline>");
+        addDescription(PREFIX_PLUS_PLUS, "<prefix ++>");
+        addDescription(POSTFIX_PLUS_PLUS, "<postfix ++>");
+        addDescription(PREFIX_MINUS_MINUS, "<prefix -->");
+        addDescription(POSTFIX_MINUS_MINUS, "<postfix -->");
+        addDescription(PREFIX_PLUS, "<positive>");
+        addDescription(PREFIX_MINUS, "<negative>");
+
+        addDescription(STRING, "<string literal>");
+        addDescription(IDENTIFIER, "<identifier>");
+        addDescription(INTEGER_NUMBER, "<integer>");
+        addDescription(DECIMAL_NUMBER, "<decimal>");
+
+        addDescription(SYNTH_COMPILATION_UNIT, "<compilation unit>");
+        addDescription(SYNTH_CLASS, "<class>");
+        addDescription(SYNTH_INTERFACE, "<interface>");
+        addDescription(SYNTH_MIXIN, "<mixin>");
+        addDescription(SYNTH_METHOD, "<method>");
+        addDescription(SYNTH_METHOD_CALL, "<method call>");
+        addDescription(SYNTH_PROPERTY, "<property>");
+        addDescription(SYNTH_PARAMETER_DECLARATION, "<parameter>");
+        addDescription(SYNTH_LIST, "<list>");
+        addDescription(SYNTH_MAP, "<map>");
+        addDescription(SYNTH_TUPLE, "<tuple>");
+        addDescription(SYNTH_GSTRING, "<gstring>");
+        addDescription(SYNTH_CAST, "<cast>");
+        addDescription(SYNTH_BLOCK, "<block>");
+        addDescription(SYNTH_CLOSURE, "<closure>");
+        addDescription(SYNTH_TERNARY, "<ternary>");
+        addDescription(SYNTH_LABEL, "<label>");
+        addDescription(SYNTH_VARIABLE_DECLARATION, "<variable declaration>");
+
+        addDescription(GSTRING_START, "<start of gstring tokens>");
+        addDescription(GSTRING_END, "<end of gstring tokens>");
+        addDescription(GSTRING_EXPRESSION_START, "<start of gstring expression>");
+        addDescription(GSTRING_EXPRESSION_END, "<end of gstring expression>");
+
+        addDescription(ASSIGNMENT_OPERATOR, "<assignment operator>");
+        addDescription(COMPARISON_OPERATOR, "<comparison operator>");
+        addDescription(MATH_OPERATOR, "<math operator>");
+        addDescription(LOGICAL_OPERATOR, "<logical operator>");
+        addDescription(BITWISE_OPERATOR, "<bitwise operator>");
+        addDescription(RANGE_OPERATOR, "<range operator>");
+        addDescription(REGEX_COMPARISON_OPERATOR, "<regex comparison operator>");
+        addDescription(DEREFERENCE_OPERATOR, "<dereference operator>");
+        addDescription(PREFIX_OPERATOR, "<prefix operator>");
+        addDescription(POSTFIX_OPERATOR, "<postfix operator>");
+        addDescription(INFIX_OPERATOR, "<infix operator>");
+        addDescription(KEYWORD, "<keyword>");
+        addDescription(LITERAL, "<literal>");
+        addDescription(NUMBER, "<number>");
+        addDescription(NAMED_VALUE, "<named value>");
+        addDescription(TRUTH_VALUE, "<truth value>");
+        addDescription(PRIMITIVE_TYPE, "<primitive type>");
+        addDescription(CREATABLE_PRIMITIVE_TYPE, "<creatable primitive type>");
+        addDescription(LOOP, "<loop>");
+        addDescription(RESERVED_KEYWORD, "<reserved keyword>");
+        addDescription(SYNTHETIC, "<synthetic>");
+        addDescription(TYPE_DECLARATION, "<type declaration>");
+        addDescription(DECLARATION_MODIFIER, "<declaration modifier>");
+        addDescription(TYPE_NAME, "<type name>");
+        addDescription(CREATABLE_TYPE_NAME, "<creatable type name>");
+        addDescription(MATCHED_CONTAINER, "<matched container>");
+        addDescription(LEFT_OF_MATCHED_CONTAINER, "<left of matched container>");
+        addDescription(RIGHT_OF_MATCHED_CONTAINER, "<right of matched container>");
+        addDescription(SWITCH_ENTRIES, "<valid in a switch body>");
+    }
+
+
+    //---------------------------------------------------------------------------
+    // TEXTS
 
     /**
      * @since 3.0.0
@@ -414,8 +655,8 @@ public class Types {
 
             case ASSIGNMENT_OPERATOR:
                 return specific == EQUAL || (specific >= PLUS_EQUAL && specific <= ELVIS_EQUAL) || (specific >= LOGICAL_OR_EQUAL && specific <= LOGICAL_AND_EQUAL)
-                        || (specific >= LEFT_SHIFT_EQUAL && specific <= RIGHT_SHIFT_UNSIGNED_EQUAL)
-                        || (specific >= BITWISE_OR_EQUAL && specific <= BITWISE_XOR_EQUAL);
+                    || (specific >= LEFT_SHIFT_EQUAL && specific <= RIGHT_SHIFT_UNSIGNED_EQUAL)
+                    || (specific >= BITWISE_OR_EQUAL && specific <= BITWISE_XOR_EQUAL);
 
             case COMPARISON_OPERATOR:
                 return specific >= COMPARE_NOT_EQUAL && specific <= COMPARE_TO;
@@ -425,7 +666,7 @@ public class Types {
 
             case MATH_OPERATOR:
                 return (specific >= PLUS && specific <= RIGHT_SHIFT_UNSIGNED) || (specific >= NOT && specific <= LOGICAL_AND)
-                        || (specific >= BITWISE_OR && specific <= BITWISE_XOR);
+                    || (specific >= BITWISE_OR && specific <= BITWISE_XOR);
 
             case LOGICAL_OPERATOR:
                 return specific >= NOT && specific <= LOGICAL_AND;
@@ -496,7 +737,7 @@ public class Types {
                 }
 
                 return (specific >= COMPARE_NOT_EQUAL && specific <= COMPARE_TO) || (specific >= PLUS && specific <= MOD_EQUAL) || specific == EQUAL || (specific >= PLUS_EQUAL && specific <= ELVIS_EQUAL) || (specific >= LOGICAL_OR_EQUAL && specific <= LOGICAL_AND_EQUAL)
-                        || (specific >= LEFT_SHIFT_EQUAL && specific <= RIGHT_SHIFT_UNSIGNED_EQUAL) || (specific >= BITWISE_OR_EQUAL && specific <= BITWISE_XOR_EQUAL);
+                    || (specific >= LEFT_SHIFT_EQUAL && specific <= RIGHT_SHIFT_UNSIGNED_EQUAL) || (specific >= BITWISE_OR_EQUAL && specific <= BITWISE_XOR_EQUAL);
 
             case PREFIX_OR_INFIX_OPERATOR:
                 switch (specific) {
@@ -800,11 +1041,6 @@ public class Types {
         return false;
     }
 
-
-    //---------------------------------------------------------------------------
-    // TYPE COERSIONS
-
-
     /**
      * Given two types, returns true if the first can be viewed as the second.
      * NOTE that <code>canMean()</code> is orthogonal to <code>ofType()</code>.
@@ -857,7 +1093,6 @@ public class Types {
         return false;
     }
 
-
     /**
      * Converts a node from a generic type to a specific prefix type.
      * Throws a <code>GroovyBugError</code> if the type can't be converted
@@ -890,7 +1125,6 @@ public class Types {
 
     }
 
-
     /**
      * Converts a node from a generic type to a specific postfix type.
      * Throws a <code>GroovyBugError</code> if the type can't be converted.
@@ -913,11 +1147,6 @@ public class Types {
         }
 
     }
-
-
-    //---------------------------------------------------------------------------
-    // OPERATOR PRECEDENCE
-
 
     /**
      * Returns the precedence of the specified operator.  Non-operator's will
@@ -1045,14 +1274,6 @@ public class Types {
         return -1;
     }
 
-
-    //---------------------------------------------------------------------------
-    // TEXTS
-
-    private static final Map<Integer, String> TEXTS = new HashMap<Integer, String>();  // symbol/keyword type -> text
-    private static final Map<String, Integer> LOOKUP = new HashMap<String, Integer>();  // text -> symbol/keyword type
-    private static final Set<String> KEYWORDS = new HashSet<String>();  // valid keywords
-
     public static Collection<String> getKeywords() {
         return Collections.unmodifiableSet(KEYWORDS);
     }
@@ -1078,7 +1299,6 @@ public class Types {
         return type;
     }
 
-
     /**
      * Returns the type for the specified keyword text.  Returns UNKNOWN
      * if the text isn't found.
@@ -1087,7 +1307,6 @@ public class Types {
         return lookup(text, KEYWORD);
     }
 
-
     /**
      * Returns the type for the specified symbol text.  Returns UNKNOWN
      * if the text isn't found.
@@ -1095,7 +1314,6 @@ public class Types {
     public static int lookupSymbol(String text) {
         return lookup(text, SYMBOL);
     }
-
 
     /**
      * Returns the text for the specified type.  Returns "" if the
@@ -1111,6 +1329,9 @@ public class Types {
         return text;
     }
 
+
+    //---------------------------------------------------------------------------
+    // DESCRIPTIONS
 
     /**
      * Adds an element to the TEXTS and LOOKUP.
@@ -1128,166 +1349,6 @@ public class Types {
         addTranslation(text, type);
     }
 
-    static {
-
-        //
-        // SYMBOLS
-
-        addTranslation("\n", NEWLINE);
-
-        addTranslation("{", LEFT_CURLY_BRACE);
-        addTranslation("}", RIGHT_CURLY_BRACE);
-        addTranslation("[", LEFT_SQUARE_BRACKET);
-        addTranslation("]", RIGHT_SQUARE_BRACKET);
-        addTranslation("(", LEFT_PARENTHESIS);
-        addTranslation(")", RIGHT_PARENTHESIS);
-
-        addTranslation(".", DOT);
-        addTranslation("..", DOT_DOT);
-        addTranslation("...", DOT_DOT_DOT);
-
-        addTranslation("->", NAVIGATE);
-
-        addTranslation("=~", FIND_REGEX);
-        addTranslation("==~", MATCH_REGEX);
-        addTranslation("~", REGEX_PATTERN);
-        addTranslation("==>", IMPLIES);
-
-        addTranslation("=", EQUAL);
-
-        addTranslation("!=", COMPARE_NOT_EQUAL);
-        addTranslation("===", COMPARE_IDENTICAL);
-        addTranslation("!==", COMPARE_NOT_IDENTICAL);
-        addTranslation("==", COMPARE_EQUAL);
-        addTranslation("<", COMPARE_LESS_THAN);
-        addTranslation("<=", COMPARE_LESS_THAN_EQUAL);
-        addTranslation(">", COMPARE_GREATER_THAN);
-        addTranslation(">=", COMPARE_GREATER_THAN_EQUAL);
-        addTranslation("<=>", COMPARE_TO);
-        addTranslation("!in", COMPARE_NOT_IN);
-        addTranslation("!instanceof", COMPARE_NOT_INSTANCEOF);
-
-        addTranslation("!", NOT);
-        addTranslation("||", LOGICAL_OR);
-        addTranslation("&&", LOGICAL_AND);
-
-        addTranslation("||=", LOGICAL_OR_EQUAL);
-        addTranslation("&&=", LOGICAL_AND_EQUAL);
-
-        addTranslation("+", PLUS);
-        addTranslation("-", MINUS);
-        addTranslation("*", MULTIPLY);
-        addTranslation("/", DIVIDE);
-        addTranslation("\\", INTDIV);
-        addTranslation("%", REMAINDER);
-
-        addTranslation("**", POWER);
-        addTranslation("+=", PLUS_EQUAL);
-        addTranslation("-=", MINUS_EQUAL);
-        addTranslation("*=", MULTIPLY_EQUAL);
-        addTranslation("/=", DIVIDE_EQUAL);
-        addTranslation("\\=", INTDIV_EQUAL);
-        addTranslation("%=", REMAINDER_EQUAL);
-        addTranslation("**=", POWER_EQUAL);
-        addTranslation("?=", ELVIS_EQUAL);
-
-        addTranslation("++", PLUS_PLUS);
-        addTranslation("--", MINUS_MINUS);
-
-        addTranslation("<<", LEFT_SHIFT);
-        addTranslation(">>", RIGHT_SHIFT);
-        addTranslation(">>>", RIGHT_SHIFT_UNSIGNED);
-
-        addTranslation("<<=", LEFT_SHIFT_EQUAL);
-        addTranslation(">>=", RIGHT_SHIFT_EQUAL);
-        addTranslation(">>>=", RIGHT_SHIFT_UNSIGNED_EQUAL);
-
-        addTranslation("&", BITWISE_AND);
-        addTranslation("^", BITWISE_XOR);
-
-        addTranslation("|=", BITWISE_OR_EQUAL);
-        addTranslation("&=", BITWISE_AND_EQUAL);
-        addTranslation("^=", BITWISE_XOR_EQUAL);
-
-        addTranslation(",", COMMA);
-        addTranslation(":", COLON);
-        addTranslation(";", SEMICOLON);
-        addTranslation("?", QUESTION);
-        addTranslation("|", PIPE);
-
-        addTranslation("${}", GSTRING_EXPRESSION_START);
-
-
-        //
-        // Keywords
-
-        addKeyword("abstract", KEYWORD_ABSTRACT);
-        addKeyword("as", KEYWORD_AS);
-        addKeyword("assert", KEYWORD_ASSERT);
-        addKeyword("break", KEYWORD_BREAK);
-        addKeyword("case", KEYWORD_CASE);
-        addKeyword("catch", KEYWORD_CATCH);
-        addKeyword("class", KEYWORD_CLASS);
-        addKeyword("const", KEYWORD_CONST);
-        addKeyword("continue", KEYWORD_CONTINUE);
-        addKeyword("def", KEYWORD_DEF);
-        addKeyword("defmacro", KEYWORD_DEF); // xxx br defmacro
-        addKeyword("default", KEYWORD_DEFAULT);
-        addKeyword("do", KEYWORD_DO);
-        addKeyword("else", KEYWORD_ELSE);
-        addKeyword("extends", KEYWORD_EXTENDS);
-        addKeyword("final", KEYWORD_FINAL);
-        addKeyword("finally", KEYWORD_FINALLY);
-        addKeyword("for", KEYWORD_FOR);
-        addKeyword("goto", KEYWORD_GOTO);
-        addKeyword("if", KEYWORD_IF);
-        addKeyword("in", KEYWORD_IN);
-        addKeyword("implements", KEYWORD_IMPLEMENTS);
-        addKeyword("import", KEYWORD_IMPORT);
-        addKeyword("instanceof", KEYWORD_INSTANCEOF);
-        addKeyword("interface", KEYWORD_INTERFACE);
-        addKeyword("mixin", KEYWORD_MIXIN);
-        addKeyword("native", KEYWORD_NATIVE);
-        addKeyword("new", KEYWORD_NEW);
-        addKeyword("package", KEYWORD_PACKAGE);
-        addKeyword("private", KEYWORD_PRIVATE);
-        addKeyword("property", KEYWORD_PROPERTY);
-        addKeyword("protected", KEYWORD_PROTECTED);
-        addKeyword("public", KEYWORD_PUBLIC);
-        addKeyword("return", KEYWORD_RETURN);
-        addKeyword("static", KEYWORD_STATIC);
-        addKeyword("super", KEYWORD_SUPER);
-        addKeyword("switch", KEYWORD_SWITCH);
-        addKeyword("synchronized", KEYWORD_SYNCHRONIZED);
-        addKeyword("this", KEYWORD_THIS);
-        addKeyword("throw", KEYWORD_THROW);
-        addKeyword("throws", KEYWORD_THROWS);
-        addKeyword("transient", KEYWORD_TRANSIENT);
-        addKeyword("try", KEYWORD_TRY);
-        addKeyword("volatile", KEYWORD_VOLATILE);
-        addKeyword("while", KEYWORD_WHILE);
-        addKeyword("true", KEYWORD_TRUE);
-        addKeyword("false", KEYWORD_FALSE);
-        addKeyword("null", KEYWORD_NULL);
-        addKeyword("void", KEYWORD_VOID);
-        addKeyword("boolean", KEYWORD_BOOLEAN);
-        addKeyword("byte", KEYWORD_BYTE);
-        addKeyword("int", KEYWORD_INT);
-        addKeyword("short", KEYWORD_SHORT);
-        addKeyword("long", KEYWORD_LONG);
-        addKeyword("float", KEYWORD_FLOAT);
-        addKeyword("double", KEYWORD_DOUBLE);
-        addKeyword("char", KEYWORD_CHAR);
-    }
-
-
-    //---------------------------------------------------------------------------
-    // DESCRIPTIONS
-
-
-    private static final Map<Integer, String> DESCRIPTIONS = new HashMap<Integer, String>();
-
-
     /**
      * Gets the description for the specified type.
      */
@@ -1299,7 +1360,6 @@ public class Types {
         return "<>";
     }
 
-
     /**
      * Adds a description to the set.
      */
@@ -1309,79 +1369,5 @@ public class Types {
         } else {
             DESCRIPTIONS.put(type, '"' + description + '"');
         }
-    }
-
-
-    static {
-        for (Map.Entry<String, Integer> entry : LOOKUP.entrySet()) {
-            addDescription(entry.getValue(), entry.getKey());
-        }
-
-        addDescription(NEWLINE, "<newline>");
-        addDescription(PREFIX_PLUS_PLUS, "<prefix ++>");
-        addDescription(POSTFIX_PLUS_PLUS, "<postfix ++>");
-        addDescription(PREFIX_MINUS_MINUS, "<prefix -->");
-        addDescription(POSTFIX_MINUS_MINUS, "<postfix -->");
-        addDescription(PREFIX_PLUS, "<positive>");
-        addDescription(PREFIX_MINUS, "<negative>");
-
-        addDescription(STRING, "<string literal>");
-        addDescription(IDENTIFIER, "<identifier>");
-        addDescription(INTEGER_NUMBER, "<integer>");
-        addDescription(DECIMAL_NUMBER, "<decimal>");
-
-        addDescription(SYNTH_COMPILATION_UNIT, "<compilation unit>");
-        addDescription(SYNTH_CLASS, "<class>");
-        addDescription(SYNTH_INTERFACE, "<interface>");
-        addDescription(SYNTH_MIXIN, "<mixin>");
-        addDescription(SYNTH_METHOD, "<method>");
-        addDescription(SYNTH_METHOD_CALL, "<method call>");
-        addDescription(SYNTH_PROPERTY, "<property>");
-        addDescription(SYNTH_PARAMETER_DECLARATION, "<parameter>");
-        addDescription(SYNTH_LIST, "<list>");
-        addDescription(SYNTH_MAP, "<map>");
-        addDescription(SYNTH_TUPLE, "<tuple>");
-        addDescription(SYNTH_GSTRING, "<gstring>");
-        addDescription(SYNTH_CAST, "<cast>");
-        addDescription(SYNTH_BLOCK, "<block>");
-        addDescription(SYNTH_CLOSURE, "<closure>");
-        addDescription(SYNTH_TERNARY, "<ternary>");
-        addDescription(SYNTH_LABEL, "<label>");
-        addDescription(SYNTH_VARIABLE_DECLARATION, "<variable declaration>");
-
-        addDescription(GSTRING_START, "<start of gstring tokens>");
-        addDescription(GSTRING_END, "<end of gstring tokens>");
-        addDescription(GSTRING_EXPRESSION_START, "<start of gstring expression>");
-        addDescription(GSTRING_EXPRESSION_END, "<end of gstring expression>");
-
-        addDescription(ASSIGNMENT_OPERATOR, "<assignment operator>");
-        addDescription(COMPARISON_OPERATOR, "<comparison operator>");
-        addDescription(MATH_OPERATOR, "<math operator>");
-        addDescription(LOGICAL_OPERATOR, "<logical operator>");
-        addDescription(BITWISE_OPERATOR, "<bitwise operator>");
-        addDescription(RANGE_OPERATOR, "<range operator>");
-        addDescription(REGEX_COMPARISON_OPERATOR, "<regex comparison operator>");
-        addDescription(DEREFERENCE_OPERATOR, "<dereference operator>");
-        addDescription(PREFIX_OPERATOR, "<prefix operator>");
-        addDescription(POSTFIX_OPERATOR, "<postfix operator>");
-        addDescription(INFIX_OPERATOR, "<infix operator>");
-        addDescription(KEYWORD, "<keyword>");
-        addDescription(LITERAL, "<literal>");
-        addDescription(NUMBER, "<number>");
-        addDescription(NAMED_VALUE, "<named value>");
-        addDescription(TRUTH_VALUE, "<truth value>");
-        addDescription(PRIMITIVE_TYPE, "<primitive type>");
-        addDescription(CREATABLE_PRIMITIVE_TYPE, "<creatable primitive type>");
-        addDescription(LOOP, "<loop>");
-        addDescription(RESERVED_KEYWORD, "<reserved keyword>");
-        addDescription(SYNTHETIC, "<synthetic>");
-        addDescription(TYPE_DECLARATION, "<type declaration>");
-        addDescription(DECLARATION_MODIFIER, "<declaration modifier>");
-        addDescription(TYPE_NAME, "<type name>");
-        addDescription(CREATABLE_TYPE_NAME, "<creatable type name>");
-        addDescription(MATCHED_CONTAINER, "<matched container>");
-        addDescription(LEFT_OF_MATCHED_CONTAINER, "<left of matched container>");
-        addDescription(RIGHT_OF_MATCHED_CONTAINER, "<right of matched container>");
-        addDescription(SWITCH_ENTRIES, "<valid in a switch body>");
     }
 }

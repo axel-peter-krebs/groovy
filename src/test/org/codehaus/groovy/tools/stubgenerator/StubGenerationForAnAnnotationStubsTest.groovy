@@ -19,7 +19,7 @@
 package org.codehaus.groovy.tools.stubgenerator
 
 /**
- * Test stub generation for an annotation 
+ * Test stub generation for an annotation
  */
 class StubGenerationForAnAnnotationStubsTest extends StringSourcesStubTestCase {
 
@@ -35,7 +35,7 @@ class StubGenerationForAnAnnotationStubsTest extends StringSourcesStubTestCase {
                 @Target( [ ElementType.TYPE ])
                 public @interface Foo4451 {}
             ''',
-            'Bar.java': '''
+            'Bar.java'      : '''
                 class Bar {}
             '''
         ]

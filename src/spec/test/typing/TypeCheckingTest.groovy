@@ -401,7 +401,7 @@ class TypeCheckingTest extends StaticTypeCheckingTestCase {
                 }
             }
             // end::method_type_checked[]
-        ''','Cannot find matching method MyService#printLine(java.lang.String)'
+        ''', 'Cannot find matching method MyService#printLine(java.lang.String)'
     }
 
     void testDuckTypingShouldFailWithTypeChecked() {
@@ -626,7 +626,7 @@ import static org.codehaus.groovy.ast.tools.WideningCategories.lowestUpperBound 
             }
             // end::least_upper_bound_collection_inference[]
         ''',
-        'Cannot find matching method (Greeter & Salute','#exit()'
+            'Cannot find matching method (Greeter & Salute', '#exit()'
     }
 
     void testInstanceOfInference() {
@@ -702,7 +702,7 @@ import static org.codehaus.groovy.ast.tools.WideningCategories.lowestUpperBound 
             // end::flowtyping_typeconstraints_failure[]
             flowTypingWithExplicitType()
         ''',
-        'Cannot call java.util.ArrayList#add(java.lang.String) with arguments [int]'
+            'Cannot call java.util.ArrayList#add(java.lang.String) with arguments [int]'
 
         assertScript '''
             // tag::flowtyping_typeconstraints_fixed[]
@@ -752,10 +752,10 @@ import static org.codehaus.groovy.ast.tools.WideningCategories.lowestUpperBound 
                 o.methodFromBottom()  // compilation error      // <4>
                 // end::flow_lub_ifelse_test[]
             }
-        ''','Cannot find matching method Top#methodFromBottom()'
+        ''', 'Cannot find matching method Top#methodFromBottom()'
     }
 
-    void testClosureSharedVariable(){
+    void testClosureSharedVariable() {
         assertScript '''
             // tag::closure_shared_variable_definition[]
             def text = 'Hello, world!'                          // <1>
@@ -791,7 +791,7 @@ import static org.codehaus.groovy.ast.tools.WideningCategories.lowestUpperBound 
             o.methodFromTop()                               // <3>
             o.methodFromBottom()  // compilation error      // <4>
             // end::closure_shared_variable_ex2[]
-            ''','Cannot find matching method Top#methodFromBottom()'
+            ''', 'Cannot find matching method Top#methodFromBottom()'
     }
 
     void testClosureReturnTypeInference() {

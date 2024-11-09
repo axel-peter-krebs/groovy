@@ -34,11 +34,10 @@ public class Grape {
     public static final String SYSTEM_PROPERTIES_SETTING = "systemProperties";
     private static final URI[] EMPTY_URI_ARRAY = new URI[0];
     private static final Map[] EMPTY_MAP_ARRAY = new Map[0];
-
+    protected static GrapeEngine instance;
     private static boolean enableGrapes = Boolean.parseBoolean(System.getProperty("groovy.grape.enable", "true"));
     private static boolean enableAutoDownload = Boolean.parseBoolean(System.getProperty("groovy.grape.autoDownload", "true"));
     private static boolean disableChecksums = Boolean.parseBoolean(System.getProperty("groovy.grape.disableChecksums", "false"));
-    protected static GrapeEngine instance;
 
     /**
      * This is a static access kill-switch.  All the static shortcut

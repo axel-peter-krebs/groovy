@@ -64,10 +64,11 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.varX
  * checks on loops (for, while, do) and first statement of closures. By default,
  * also adds an interrupt check statement on the beginning of method calls.
  *
- * @see groovy.transform.ThreadInterrupt
- * @since 1.8.0
+ * @see groovy.transform.ThreadInterrupt* @since 1.8.0
  */
-@AutoFinal @CompileStatic @GroovyASTTransformation
+@AutoFinal
+@CompileStatic
+@GroovyASTTransformation
 class TimedInterruptibleASTTransformation extends AbstractASTTransformation {
 
     private static final ClassNode MY_TYPE = ClassHelper.make(TimedInterrupt)
@@ -180,27 +181,27 @@ class TimedInterruptibleASTTransformation extends AbstractASTTransformation {
          */
         private Statement createInterruptStatement() {
             ifS(
-                    ltX(
-                            propX(varX('this'), basename + '$expireTime'),
-                            callX(ClassHelper.make(System), 'nanoTime')
-                    ),
-                    throwS(
-                            ctorX(thrown,
-                                    args(
-                                            plusX(
-                                                    plusX(
-                                                            constX('Execution timed out after ' + maximum + ' '),
-                                                            callX(callX(unit, 'name'), 'toLowerCase', propX(classX(Locale), 'US'))
-                                                    ),
-                                                    plusX(
-                                                            constX('. Start time: '),
-                                                            propX(varX('this'), basename + '$startTime')
-                                                    )
-                                            )
-
-                                    )
+                ltX(
+                    propX(varX('this'), basename + '$expireTime'),
+                    callX(ClassHelper.make(System), 'nanoTime')
+                ),
+                throwS(
+                    ctorX(thrown,
+                        args(
+                            plusX(
+                                plusX(
+                                    constX('Execution timed out after ' + maximum + ' '),
+                                    callX(callX(unit, 'name'), 'toLowerCase', propX(classX(Locale), 'US'))
+                                ),
+                                plusX(
+                                    constX('. Start time: '),
+                                    propX(varX('this'), basename + '$startTime')
+                                )
                             )
+
+                        )
                     )
+                )
             )
         }
 
@@ -223,26 +224,26 @@ class TimedInterruptibleASTTransformation extends AbstractASTTransformation {
             String expireTime = basename + '$expireTime'
             if (node.getDeclaredField(expireTime) == null) {
                 expireTimeField = node.addFieldFirst(
-                        expireTime,
-                        Modifier.FINAL | Modifier.PRIVATE,
-                        ClassHelper.long_TYPE,
-                        plusX(
-                                callX(ClassHelper.make(System), 'nanoTime'),
-                                callX(
-                                        propX(classX(TimeUnit), 'NANOSECONDS'),
-                                        'convert',
-                                        args(constX(maximum, true), unit)
-                                )
+                    expireTime,
+                    Modifier.FINAL | Modifier.PRIVATE,
+                    ClassHelper.long_TYPE,
+                    plusX(
+                        callX(ClassHelper.make(System), 'nanoTime'),
+                        callX(
+                            propX(classX(TimeUnit), 'NANOSECONDS'),
+                            'convert',
+                            args(constX(maximum, true), unit)
                         )
+                    )
                 )
                 expireTimeField.synthetic = true
 
                 ClassNode dateClass = ClassHelper.make(Date)
                 startTimeField = node.addFieldFirst(
-                        startTime,
-                        Modifier.FINAL | Modifier.PRIVATE,
-                        dateClass,
-                        ctorX(dateClass)
+                    startTime,
+                    Modifier.FINAL | Modifier.PRIVATE,
+                    dateClass,
+                    ctorX(dateClass)
                 )
                 startTimeField.synthetic = true
 

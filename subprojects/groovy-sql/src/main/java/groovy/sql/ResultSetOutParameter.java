@@ -21,6 +21,6 @@ package groovy.sql;
 /**
  * A ResultSet out parameter.
  */
-public interface ResultSetOutParameter extends OutParameter{
+public interface ResultSetOutParameter extends OutParameter {
 
 }

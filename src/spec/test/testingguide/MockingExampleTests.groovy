@@ -23,37 +23,38 @@ import groovy.mock.interceptor.StubFor
 import groovy.test.GroovyTestCase
 
 // tag::map_coercion[]
-        class TranslationService {
-            String convert(String key) {
-                return "test"
-            }
-        }
+class TranslationService {
+    String convert(String key) {
+        return "test"
+    }
+}
 
 // end::map_coercion[]
 
 // tag::sam_coercion[]
-        abstract class BaseService {
-            abstract void doSomething()
-        }
+abstract class BaseService {
+    abstract void doSomething()
+}
 
 // end::sam_coercion[]
 
 // tag::collaborators[]
-        class Person {
-            String first, last
-        }
+class Person {
+    String first, last
+}
 
-        class Family {
-            Person father, mother
-            def nameOfMother() { "$mother.first $mother.last" }
-        }
+class Family {
+    Person father, mother
+
+    def nameOfMother() { "$mother.first $mother.last" }
+}
 
 // end::collaborators[]
 
 // tag::emc2[]
-        class Book {
-            String title
-        }
+class Book {
+    String title
+}
 
 // end::emc2[]
 
@@ -90,11 +91,11 @@ class MockingExampleTests extends GroovyTestCase {
     void testMockFor() {
         // tag::mockFor[]
         def mock = new MockFor(Person)      // <1>
-        mock.demand.getFirst{ 'dummy' }
-        mock.demand.getLast{ 'name' }
+        mock.demand.getFirst { 'dummy' }
+        mock.demand.getLast { 'name' }
         mock.use {                          // <2>
-            def mary = new Person(first:'Mary', last:'Smith')
-            def f = new Family(mother:mary)
+            def mary = new Person(first: 'Mary', last: 'Smith')
+            def f = new Family(mother: mary)
             assert f.nameOfMother() == 'dummy name'
         }
         mock.expect.verify()                // <3>
@@ -105,12 +106,12 @@ class MockingExampleTests extends GroovyTestCase {
         // tag::stubFor[]
         def stub = new StubFor(Person)      // <1>
         stub.demand.with {                  // <2>
-            getLast{ 'name' }
-            getFirst{ 'dummy' }
+            getLast { 'name' }
+            getFirst { 'dummy' }
         }
         stub.use {                          // <3>
-            def john = new Person(first:'John', last:'Smith')
-            def f = new Family(father:john)
+            def john = new Person(first: 'John', last: 'Smith')
+            def f = new Family(father: john)
             assert f.father.first == 'dummy'
             assert f.father.last == 'name'
         }
@@ -120,7 +121,7 @@ class MockingExampleTests extends GroovyTestCase {
 
     void testEMC() {
         // tag::emc[]
-        String.metaClass.swapCase = {->
+        String.metaClass.swapCase = { ->
             def sb = new StringBuffer()
             delegate.each {
                 sb << (Character.isUpperCase(it as char) ? Character.toLowerCase(it as char) :
@@ -140,7 +141,7 @@ class MockingExampleTests extends GroovyTestCase {
 
     void testEMCStaticMethod() {
         // tag::emc2[]
-        Book.metaClass.static.create << { String title -> new Book(title:title) }
+        Book.metaClass.static.create << { String title -> new Book(title: title) }
 
         def b = Book.create("The Stand")
         assert b.title == 'The Stand'
@@ -149,7 +150,7 @@ class MockingExampleTests extends GroovyTestCase {
 
     void testEMCConstructor() {
         // tag::emc3[]
-        Book.metaClass.constructor << { String title -> new Book(title:title) }
+        Book.metaClass.constructor << { String title -> new Book(title: title) }
 
         def b = new Book("The Stand")
         assert b.title == 'The Stand'
@@ -159,7 +160,7 @@ class MockingExampleTests extends GroovyTestCase {
     void testEMCPerObject() {
         // tag::emc5[]
         def b = new Book(title: "The Stand")
-        b.metaClass.getTitle {-> 'My Title' }
+        b.metaClass.getTitle { -> 'My Title' }
 
         assert b.title == 'My Title'
         // end::emc5[]

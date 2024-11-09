@@ -83,7 +83,7 @@ public final class SqlExtensions {
 
     /**
      * Return an Iterator given a ResultSetMetaData.
-     *
+     * <p>
      * Enables Groovy collection method syntactic sugar on ResultSetMetaData.
      *
      * @param resultSetMetaData the ResultSetMetaData to iterate over
@@ -106,8 +106,7 @@ public final class SqlExtensions {
         public boolean hasNext() {
             try {
                 return index <= target.getColumnCount();
-            }
-            catch (SQLException ex) {
+            } catch (SQLException ex) {
                 throw new GroovyRuntimeException("Unable to obtain column count from ResultSetMetaData", ex);
             }
         }

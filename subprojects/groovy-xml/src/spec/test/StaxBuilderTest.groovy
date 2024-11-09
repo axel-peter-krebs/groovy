@@ -27,7 +27,7 @@ class StaxBuilderTest extends GroovyTestCase {
         def writer = new StringWriter()
         def builder = new groovy.xml.StaxBuilder(factory.createXMLStreamWriter(writer))
 
-        builder.root(attribute:1) {
+        builder.root(attribute: 1) {
             elem1('hello')
             elem2('world')
         }

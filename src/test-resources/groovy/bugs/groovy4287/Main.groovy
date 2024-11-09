@@ -19,7 +19,9 @@
 package groovy.bugs.groovy4287
 
 import static groovy.bugs.groovy4287.Outer.Inner
-import static groovy.bugs.groovy4287.Outer3.* // the static star import is used to test resolving, don't remove it
+import static groovy.bugs.groovy4287.Outer3.*
+
+// the static star import is used to test resolving, don't remove it
 import static groovy.bugs.groovy4287.Outer2.*
 
 assert "outer.inner" == new Inner().innerName

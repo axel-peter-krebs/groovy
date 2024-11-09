@@ -32,7 +32,7 @@ class Groovy4247Bug extends GroovyTestCase {
         try {
             renameToMethod.invoke(file, [null] as Object[])
             fail('The renameTo() with null parameter should have failed with NPE')
-        } catch(ex) {
+        } catch (ex) {
             assert ex instanceof NullPointerException
         }
     }

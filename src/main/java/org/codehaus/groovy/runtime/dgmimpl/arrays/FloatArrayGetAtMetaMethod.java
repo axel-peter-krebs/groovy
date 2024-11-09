@@ -60,7 +60,7 @@ public class FloatArrayGetAtMetaMethod extends ArrayGetAtMetaMethod {
         @Override
         public Object call(Object receiver, Object arg) throws Throwable {
             if ((receiver instanceof float[] && arg instanceof Integer)
-                    && checkPojoMetaClass()) {
+                && checkPojoMetaClass()) {
                 final float[] objects = (float[]) receiver;
                 return objects[normaliseIndex((Integer) arg, objects.length)];
             } else

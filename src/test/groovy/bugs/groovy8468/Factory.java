@@ -19,5 +19,5 @@
 package groovy.bugs.groovy8468;
 
 public interface Factory {
-  public <T extends Face> T[] makeArray(Class<T> clazz);
+    public <T extends Face> T[] makeArray(Class<T> clazz);
 }

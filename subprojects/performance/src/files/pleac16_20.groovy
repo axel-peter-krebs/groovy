@@ -57,7 +57,7 @@ proc.waitFor()
 //----------------------------------------------------------------------------------
 // sending text to the input of another process
 proc = 'groovy -e "print System.in.text.toUpperCase()"'.execute()
-Thread.start{
+Thread.start {
     def writer = new PrintWriter(new BufferedOutputStream(proc.out))
     writer.println('Hello')
     writer.close()
@@ -78,15 +78,15 @@ pipe = new PipedInputStream()
 reader = new BufferedReader(new InputStreamReader(pipe))
 System.setOut(new PrintStream(new BufferedOutputStream(new PipedOutputStream(pipe))))
 int numlines = 2
-Thread.start{
-    while((next = reader.readLine()) != null) {
+Thread.start {
+    while ((next = reader.readLine()) != null) {
         if (numlines-- > 0) keep.println(next)
     }
 }
-(1..8).each{ println it }
+(1..8).each { println it }
 System.out.close()
 System.setOut(keep)
-(9..10).each{ println it }
+(9..10).each { println it }
 // =>
 // 1
 // 2
@@ -99,6 +99,7 @@ class FilterOutput extends Thread {
     Closure c
     Reader reader
     PrintStream orig
+
     FilterOutput(Closure c) {
         this.c = c
         orig = System.out
@@ -106,29 +107,33 @@ class FilterOutput extends Thread {
         reader = new BufferedReader(new InputStreamReader(pipe))
         System.setOut(new PrintStream(new BufferedOutputStream(new PipedOutputStream(pipe))))
     }
+
     void run() {
         def next
-        while((next = reader.readLine()) != null) {
+        while ((next = reader.readLine()) != null) {
             c(orig, next)
         }
     }
+
     def close() {
         sleep 100
         System.out.close()
         System.setOut(orig)
     }
 }
+
 cnt = 0
 number = { s, n -> cnt++; s.println(cnt + ':' + n) }
-quote =  { s, n -> s.println('> ' + n) }
+quote = { s, n -> s.println('> ' + n) }
 f1 = new FilterOutput(number); f1.start()
 f2 = new FilterOutput(quote); f2.start()
-('a'..'e').each{ println it }
+('a'..'e').each { println it }
 f2.close()
 f1.close()
 //----------------------------------------------------------------------------------
 
 import java.util.zip.GZIPInputStream
+
 // @@PLEAC@@_16.6
 //----------------------------------------------------------------------------------
 // Groovy programs (like Java ones) would use streams here. Just process
@@ -185,7 +190,7 @@ System.setErr(new PrintStream(new FileOutputStream("error.txt")))
 // Simplist approach is to just link streams:
 proc1 = 'groovy -e "println args[0]" Hello'.execute()
 proc2 = 'groovy -e "print System.in.text.toUpperCase()"'.execute()
-Thread.start{
+Thread.start {
     def reader = new BufferedReader(new InputStreamReader(proc1.in))
     def writer = new PrintWriter(new BufferedOutputStream(proc2.out))
     while ((next = reader.readLine()) != null) {
@@ -222,19 +227,22 @@ print proc2.text
 // This example would normally be done with multiple threads in Java/Groovy as follows.
 class Shared {
     String buffer = "not set yet"
-    synchronized void leftShift(value){
+
+    synchronized void leftShift(value) {
         buffer = value
         notifyAll()
     }
+
     synchronized Object read() {
         return buffer
     }
 }
+
 def shared = new Shared()
 rand = new Random()
 threads = []
-(1..5).each{
-def    t = new Thread(){
+(1..5).each {
+    def t = new Thread() {
         def me = t
 //        for (j in 0..9) {
 //            shared << "$me.name $j"
@@ -243,7 +251,7 @@ def    t = new Thread(){
     }
     t.start()
 }
-while(1) {
+while (1) {
     println shared.read()
     sleep 50
 }
@@ -279,7 +287,8 @@ session.close()
 
 // ipcReaderScript:
 //import org.garret.jipc.client.JIPCClientFactory
-class JIPCClientFactory{}
+class JIPCClientFactory {}
+
 port = 6000
 factory = JIPCClientFactory.instance
 session = factory.create('localhost', port)
@@ -297,7 +306,7 @@ session.close()
 // kick off processes:
 "java org.garret.jipc.server.JIPCServer 6000".execute()
 "groovy ipcReaderScript".execute()
-(0..3).each{ "groovy ipcWriterScript $it".execute() }
+(0..3).each { "groovy ipcWriterScript $it".execute() }
 
 // =>
 // ...
@@ -333,10 +342,11 @@ USR1 USR2 CHLD PWR WINCH URG POLL STOP TSTP CONT TTIN TTOU VTALRM PROF XCPU
 XFSZ WAITING LWP AIO IO INFO THR BREAK FREEZE THAW CANCEL EMT
 '''
 
-sigs.tokenize(' \n').each{
+sigs.tokenize(' \n').each {
     try {
         print ' ' + new sun.misc.Signal(it)
-    } catch(IllegalArgumentException iae) {}
+    } catch (IllegalArgumentException iae) {
+    }
 }
 // =>  on Windows XP:
 // SIGINT SIGILL SIGABRT SIGFPE SIGSEGV SIGTERM SIGBREAK
@@ -355,8 +365,9 @@ Signal.raise(new Signal("INT"))
 // install a signal handler
 class DiagSignalHandler implements SignalHandler {
     @Override
-    void handle(Signal signal) { }
+    void handle(Signal signal) {}
 }
+
 diagHandler = new DiagSignalHandler()
 Signal.handle(new Signal("INT"), diagHandler)
 //----------------------------------------------------------------------------------
@@ -367,8 +378,9 @@ Signal.handle(new Signal("INT"), diagHandler)
 // temporarily install a signal handler
 class DiagSignalHandler2 implements SignalHandler {
     @Override
-    void handle(Signal signal) { }
+    void handle(Signal signal) {}
 }
+
 diagHandler = new DiagSignalHandler2()
 oldHandler = Signal.handle(new Signal("INT"), diagHandler)
 Signal.handle(new Signal("INT"), oldHandler)
@@ -390,19 +402,19 @@ class DiagSignalHandler3 implements SignalHandler {
     }
 
     void handle(Signal sig) {
-        println("Diagnostic Signal handler called for signal "+sig)
+        println("Diagnostic Signal handler called for signal " + sig)
         // Output information for each thread
         def list = []
-        Thread.activeCount().each{ list += null }
+        Thread.activeCount().each { list += null }
         Thread[] threadArray = list as Thread[]
         int numThreads = Thread.enumerate(threadArray)
         println("Current threads:")
         for (i in 0..<numThreads) {
-            println("    "+threadArray[i])
+            println("    " + threadArray[i])
         }
 
         // Chain back to previous handler, if one exists
-        if ( oldHandler != SIG_DFL && oldHandler != SIG_IGN ) {
+        if (oldHandler != SIG_DFL && oldHandler != SIG_IGN) {
             oldHandler.handle(sig)
         }
     }
@@ -441,12 +453,12 @@ DiagSignalHandler3.install(new Signal("INT"))
 // @@PLEAC@@_16.21
 //----------------------------------------------------------------------------------
 t = new Timer()
-t.runAfter(3500){
+t.runAfter(3500) {
     println 'Took too long'
     System.exit(1)
 }
 def count = 0
-6.times{
+6.times {
     count++
     sleep 1000
     println "Count = $count"
@@ -497,7 +509,7 @@ Programs that write programs are the happiest programs in the world.
 name = 'me@somewhere.org\n'
 file = new File(System.getProperty('user.home') + File.separator + '.signature')
 rand = new Random()
-while(1) {
+while (1) {
     file.delete()
     file << name + sigs[rand.nextInt(sigs.size())]
     sleep 10000
@@ -542,26 +554,26 @@ s.close()
 //groovy -l 5000 -e "System.err.println line"
 
 // a web server as a script (extension to cookbook)
- server = new ServerSocket(5000)
- while(true) {
-     server.accept() { socket ->
-         socket.withStreams { input, output ->
-             // ignore input and just serve dummy content
-             output.withWriter { writer ->
-                 writer << "HTTP/1.1 200 OK\n"
-                 writer << "Content-Type: text/html\n\n"
-                 writer << "<html><body>Hello World! It's ${new Date()}</body></html>\n"
-             }
-         }
-     }
- }
+server = new ServerSocket(5000)
+while (true) {
+    server.accept() { socket ->
+        socket.withStreams { input, output ->
+            // ignore input and just serve dummy content
+            output.withWriter { writer ->
+                writer << "HTTP/1.1 200 OK\n"
+                writer << "Content-Type: text/html\n\n"
+                writer << "<html><body>Hello World! It's ${new Date()}</body></html>\n"
+            }
+        }
+    }
+}
 //----------------------------------------------------------------------------------
 
 
 // @@PLEAC@@_17.3
 //----------------------------------------------------------------------------------
 server = new ServerSocket(5000)
-while(true) {
+while (true) {
     server.accept() { socket ->
         socket.withStreams { input, output ->
             w = new PrintWriter(output)
@@ -593,13 +605,13 @@ socket.send(packet)
 // UDP server
 socket = new DatagramSocket(5000)
 buffer = (' ' * 4096) as byte[]
-while(true) {
+while (true) {
     incoming = new DatagramPacket(buffer, buffer.length)
     socket.receive(incoming)
     s = new String(incoming.data, 0, incoming.length)
     String reply = "Client said: '$s'"
     outgoing = new DatagramPacket(reply.bytes, reply.size(),
-            incoming.address, incoming.port);
+        incoming.address, incoming.port);
     socket.send(outgoing)
 }
 
@@ -711,7 +723,8 @@ for (port in 1..1024) {
         s = new Socket(host, port)
         println("There is a server on port $port of $host")
     }
-    catch (Exception ex) {}
+    catch (Exception ex) {
+    }
 }
 // You could open a ServerSocket() on each unused port and monitor those.
 //----------------------------------------------------------------------------------
@@ -742,11 +755,12 @@ println address.hostName // => www.oreillynet.com
 
 // For more complex operations use dnsjava: http://www.dnsjava.org/
 import org.xbill.DNS.*
-System.setProperty("sun.net.spi.nameservice.provider.1","dns,dnsjava")
+
+System.setProperty("sun.net.spi.nameservice.provider.1", "dns,dnsjava")
 Lookup lookup = new Lookup('cnn.com', Type.ANY)
 records = lookup.run()
 println "${records?.size()} record(s) found"
-records.each{ println it }
+records.each { println it }
 // =>
 // 17 record(s) found
 // cnn.com.     55  IN  A   64.236.16.20
@@ -776,13 +790,15 @@ def reverseDns(hostIp) {
     answers = response.getSectionArray(Section.ANSWER)
     if (answers) return answers[0].rdataToString() else return hostIp
 }
+
 println '208.201.239.36 => ' + reverseDns('208.201.239.36')
 // => 208.201.239.36 => www.oreillynet.com.
 
 def hostAddrs(name) {
     addresses = Address.getAllByName(name)
-    println addresses[0].canonicalHostName + ' => ' + addresses.collect{ it.hostAddress }.join(' ')
+    println addresses[0].canonicalHostName + ' => ' + addresses.collect { it.hostAddress }.join(' ')
 }
+
 hostAddrs('www.ora.com')
 // => www.oreillynet.com. => 208.201.239.36 208.201.239.37
 hostAddrs('www.whitehouse.gov')
@@ -795,32 +811,33 @@ hostAddrs('www.whitehouse.gov')
 // commons net examples (explicit error handling not shown)
 import java.text.DateFormat
 import org.apache.commons.net.ftp.FTPClient
+
 // connect
 server = "localhost"                   //server = "ftp.host.com"
 
 ftp = new FTPClient()
-ftp.connect( server )
-ftp.login( 'anonymous', 'guest' )     //ftp.login( 'username', 'password' )
+ftp.connect(server)
+ftp.login('anonymous', 'guest')     //ftp.login( 'username', 'password' )
 
 println "Connected to $server. $ftp.replyString"
 
 // retrieve file
-ftp.changeWorkingDirectory( '.' )  //ftp.changeWorkingDirectory( 'serverFolder' )
+ftp.changeWorkingDirectory('.')  //ftp.changeWorkingDirectory( 'serverFolder' )
 file = new File('README.txt') //new File('localFolder' + File.separator + 'localFilename')
 
-file.withOutputStream{ os ->
-    ftp.retrieveFile( 'README.txt', os )  //ftp.retrieveFile( 'serverFilename', os )
+file.withOutputStream { os ->
+    ftp.retrieveFile('README.txt', os)  //ftp.retrieveFile( 'serverFilename', os )
 }
 
 // upload file
 file = new File('otherFile.txt') //new File('localFolder' + File.separator + 'localFilename')
-file.withInputStream{ fis -> ftp.storeFile( 'otherFile.txt', fis ) }
+file.withInputStream { fis -> ftp.storeFile('otherFile.txt', fis) }
 
 // List the files in the directory
 files = ftp.listFiles()
 println "Number of files in dir: $files.length"
-df = DateFormat.getDateInstance( DateFormat.SHORT )
-files.each{ file ->
+df = DateFormat.getDateInstance(DateFormat.SHORT)
+files.each { file ->
     println "${df.format(file.timestamp.time)}\t $file.name"
 }
 
@@ -838,12 +855,12 @@ ftp.disconnect()
 // http://ant.apache.org/manual/OptionalTasks/ftp.html
 
 ant = new AntBuilder()
-ant.ftp(action:'send', server:'ftp.hypothetical.india.org', port:'2121',
-        remotedir:'/pub/incoming', userid:'coder', password:'java1',
-        depends:'yes', binary:'no', systemTypeKey:'Windows',
-        serverTimeZoneConfig:'India/Calcutta'){
-    fileset(dir:'htdocs/manual'){
-        include(name:'**/*.html')
+ant.ftp(action: 'send', server: 'ftp.hypothetical.india.org', port: '2121',
+    remotedir: '/pub/incoming', userid: 'coder', password: 'java1',
+    depends: 'yes', binary: 'no', systemTypeKey: 'Windows',
+    serverTimeZoneConfig: 'India/Calcutta') {
+    fileset(dir: 'htdocs/manual') {
+        include(name: '**/*.html')
     }
 }
 //----------------------------------------------------------------------------------
@@ -854,54 +871,57 @@ ant.ftp(action:'send', server:'ftp.hypothetical.india.org', port:'2121',
 // using AntBuilder; for more info, see:
 // http://ant.apache.org/manual/CoreTasks/mail.html
 ant = new AntBuilder()
-ant.mail(mailhost:'smtp.myisp.com', mailport:'1025', subject:'Test build'){
-  from(address:'config@myisp.com')
-  replyto(address:'me@myisp.com')
-  to(address:'all@xyz.com')
-  message("The ${buildname} nightly build has completed")
-  attachments(){ // ant 1.7 uses files attribute in earlier versions
-    fileset(dir:'dist'){
-      include(name:'**/*.zip')
+ant.mail(mailhost: 'smtp.myisp.com', mailport: '1025', subject: 'Test build') {
+    from(address: 'config@myisp.com')
+    replyto(address: 'me@myisp.com')
+    to(address: 'all@xyz.com')
+    message("The ${buildname} nightly build has completed")
+    attachments() { // ant 1.7 uses files attribute in earlier versions
+        fileset(dir: 'dist') {
+            include(name: '**/*.zip')
+        }
     }
-  }
 }
 
 // using commons net
 //import org.apache.commons.net.smtp.*
-class SMTPClient{}
-class SMTPReply{}
-class SimpleSMTPHeader{}
+class SMTPClient {}
+
+class SMTPReply {}
+
+class SimpleSMTPHeader {}
+
 client = new SMTPClient()
-client.connect( "mail.myserver.com", 25 )
-if( !SMTPReply.isPositiveCompletion(client.replyCode) ) {
+client.connect("mail.myserver.com", 25)
+if (!SMTPReply.isPositiveCompletion(client.replyCode)) {
     client.disconnect()
     System.err.println("SMTP server refused connection.")
     System.exit(1)
 }
 
 // Login
-client.login( "myserver.com" )
+client.login("myserver.com")
 
 // Set the sender and recipient(s)
-client.setSender( "config@myisp.com" )
-client.addRecipient( "all@xyz.com" )
+client.setSender("config@myisp.com")
+client.addRecipient("all@xyz.com")
 
 // Use the SimpleSMTPHeader class to build the header
-writer = new PrintWriter( client.sendMessageData() )
-header = new SimpleSMTPHeader( "config@myisp.com", "all@xyz.com", "My Subject")
-header.addCC( "me@myisp.com" )
-header.addHeaderField( "Organization", "My Company" )
+writer = new PrintWriter(client.sendMessageData())
+header = new SimpleSMTPHeader("config@myisp.com", "all@xyz.com", "My Subject")
+header.addCC("me@myisp.com")
+header.addHeaderField("Organization", "My Company")
 
 // Write the header to the SMTP Server
-writer.write( header.toString() )
+writer.write(header.toString())
 
 // Write the body of the message
-writer.write( "This is a test..." )
+writer.write("This is a test...")
 
 // Close the writer
 writer.close()
-if ( !client.completePendingCommand() ) // failure
-    System.exit( 1 )
+if (!client.completePendingCommand()) // failure
+    System.exit(1)
 
 // Logout from the e-mail server (QUIT) and close connection
 client.logout()
@@ -920,7 +940,8 @@ client.disconnect()
 // slight variation to original cookbook:
 // prints 1st, 2nd and last articles from random newsgroup
 //import org.apache.commons.net.nntp.NNTPClient
-class NNTPClient{}
+class NNTPClient {}
+
 postingPerm = ['Unknown', 'Moderated', 'Permitted', 'Prohibited']
 client = new NNTPClient()
 client.connect("news.example.com")
@@ -931,10 +952,10 @@ println "$aList.newsgroup has $aList.articleCount articles"
 println "PostingPermission = ${postingPerm[aList.postingPermission]}"
 first = aList.firstArticle
 println "First=$first, Last=$aList.lastArticle"
-client.retrieveArticle(first)?.eachLine{ println it }
+client.retrieveArticle(first)?.eachLine { println it }
 client.selectNextArticle()
-client.retrieveArticle()?.eachLine{ println it }
-client.retrieveArticle(aList.lastArticle)?.eachLine{ println it }
+client.retrieveArticle()?.eachLine { println it }
+client.retrieveArticle(aList.lastArticle)?.eachLine { println it }
 writer = client.postArticle()
 // ... use writer ...
 writer.close()
@@ -954,7 +975,8 @@ if (client.isConnected()) client.disconnect()
 // slight variation to original cookbook to print summary of messages on server
 // uses commons net
 //import org.apache.commons.net.pop3.POP3Client
-class POP3Client{}
+class POP3Client {}
+
 server = 'pop.myisp.com'
 username = 'gnat'
 password = 'S33kr1T Pa55w0rD'
@@ -962,7 +984,7 @@ timeoutMillis = 30000
 
 def printMessageInfo(reader, id) {
     def from, subject
-    reader.eachLine{ line ->
+    reader.eachLine { line ->
         lower = line.toLowerCase()
         if (lower.startsWith("from: ")) from = line[6..-1].trim()
         else if (lower.startsWith("subject: ")) subject = line[9..-1].trim()
@@ -983,7 +1005,7 @@ messages = pop3.listMessages()
 if (!messages) System.err.println("Could not retrieve message list.")
 else if (messages.length == 0) println("No messages")
 else {
-    messages.each{ message ->
+    messages.each { message ->
         reader = pop3.retrieveMessageTop(message.number, 0)
         if (!reader) {
             System.err.println("Could not retrieve message header. Skipping...")
@@ -1007,7 +1029,7 @@ pop3.disconnect()
 // a telnet-based weather server at the University of Michigan.
 import org.apache.commons.net.telnet.TelnetClient
 
-def readUntil( pattern ) {
+def readUntil(pattern) {
     sb = new StringBuffer()
     while ((ch = reader.read()) != -1) {
         sb << (char) ch
@@ -1021,23 +1043,23 @@ def readUntil( pattern ) {
 }
 
 telnet = new TelnetClient()
-telnet.connect( 'rainmaker.wunderground.com', 3000 )
+telnet.connect('rainmaker.wunderground.com', 3000)
 reader = telnet.inputStream.newReader()
-writer = new PrintWriter(new OutputStreamWriter(telnet.outputStream),true)
-readUntil( "Welcome" )
-println 'Welcome' + readUntil( "!" )
-readUntil( "continue:" )
+writer = new PrintWriter(new OutputStreamWriter(telnet.outputStream), true)
+readUntil("Welcome")
+println 'Welcome' + readUntil("!")
+readUntil("continue:")
 writer.println()
-readUntil( "-- " )
+readUntil("-- ")
 writer.println()
-readUntil( "Selection:" )
+readUntil("Selection:")
 writer.println("10")
-readUntil( "Selection:" )
+readUntil("Selection:")
 writer.println("3")
-x = readUntil( "Return" )
+x = readUntil("Return")
 while (!x.contains('SYDNEY')) {
     writer.println()
-    x = readUntil( "Return" )
+    x = readUntil("Return")
 }
 m = (x =~ /(?sm).*(SYDNEY.*?)$/)
 telnet.disconnect()
@@ -1064,7 +1086,8 @@ println address.isReachable(timeoutMillis)
 // @@PLEAC@@_18.8
 //----------------------------------------------------------------------------------
 //import org.apache.commons.net.WhoisClient
-class WhoisClient{}
+class WhoisClient {}
+
 whois = new WhoisClient()
 whois.connect(WhoisClient.DEFAULT_HOST)
 result = whois.query('cnn.com') // as text of complete query
@@ -1077,7 +1100,7 @@ whois.disconnect()
 //----------------------------------------------------------------------------------
 // not exact equivalent to original cookbook: just shows raw functionality
 client = new SMTPClient()
-client.connect( "smtp.example.com", 25 )
+client.connect("smtp.example.com", 25)
 println client.verify("george") // => true
 println client.replyString // => 250 George Washington <george@wash.dc.gov>
 println client.verify("jetson") // => false
@@ -1127,6 +1150,7 @@ You typed: $param
 
 // as a groovelet using markup builder
 import groovy.xml.MarkupBuilder
+
 writer = new StringWriter()
 builder = new MarkupBuilder(writer)
 builder.html {
@@ -1139,7 +1163,7 @@ builder.html {
 }
 println writer.toString()
 
-        /*
+/*
 // as a GSP page:
 <html><head>
 <title>Howdy there!</title>
@@ -1166,7 +1190,7 @@ response.setContentType('text/html;charset=UTF-8')
 response.setContentType('text/plain')
 response.setContentType('text/plain')
 response.setHeader('Cache-control', 'no-cache')
-response.setDateHeader('Expires', System.currentTimeMillis() + 3*24*60*60*1000)
+response.setDateHeader('Expires', System.currentTimeMillis() + 3 * 24 * 60 * 60 * 1000)
 //----------------------------------------------------------------------------------
 
 
@@ -1177,14 +1201,14 @@ response.setDateHeader('Expires', System.currentTimeMillis() + 3*24*60*60*1000)
 
 // To send errors to custom HTML pages, update the web.xml deployment
 // descriptor to include one or more <error-page> elements, e.g.:
-        /*
+/*
 <error-page>
-    <error-code>404</error-code>
-    <location>/404.html</location>
+<error-code>404</error-code>
+<location>/404.html</location>
 </error-page>
 <error-page>
-    <exception-type>java.lang.NullPointerException</exception-type>
-    <location>/NpeError.gsp</location>
+<exception-type>java.lang.NullPointerException</exception-type>
+<location>/NpeError.gsp</location>
 </error-page>
 */
 // Another trick is to catch an exception within the servlet/gsp code
@@ -1244,10 +1268,11 @@ response.setDateHeader('Expires', System.currentTimeMillis() + 3*24*60*60*1000)
 // @@PLEAC@@_19.7
 //----------------------------------------------------------------------------------
 import groovy.xml.*
+
 // using a builder:
 Closure markup = {
     ol {
-        ['red','blue','green'].each{ li(it) }
+        ['red', 'blue', 'green'].each { li(it) }
     }
 }
 println new StreamingMarkupBuilder().bind(markup).toString()
@@ -1256,7 +1281,7 @@ println new StreamingMarkupBuilder().bind(markup).toString()
 names = 'Larry Moe Curly'.split(' ')
 markup = {
     ul {
-        names.each{ li(type:'disc', it) }
+        names.each { li(type: 'disc', it) }
     }
 }
 println new StreamingMarkupBuilder().bind(markup).toString()
@@ -1268,27 +1293,27 @@ m = { li("alpha") }
 println new StreamingMarkupBuilder().bind(m).toString()
 //     <li>alpha</li>
 
-m = { ['alpha','omega'].each { li(it) } }
+m = { ['alpha', 'omega'].each { li(it) } }
 println new StreamingMarkupBuilder().bind(m).toString()
 //     <li>alpha</li> <li>omega</li>
 //-----------------------------
 
 states = [
-    "Wisconsin":  [ "Superior", "Lake Geneva", "Madison" ],
-    "Colorado":   [ "Denver", "Fort Collins", "Boulder" ],
-    "Texas":      [ "Plano", "Austin", "Fort Stockton" ],
-    "California": [ "Sebastopol", "Santa Rosa", "Berkeley" ],
+    "Wisconsin" : ["Superior", "Lake Geneva", "Madison"],
+    "Colorado"  : ["Denver", "Fort Collins", "Boulder"],
+    "Texas"     : ["Plano", "Austin", "Fort Stockton"],
+    "California": ["Sebastopol", "Santa Rosa", "Berkeley"],
 ]
 
 writer = new StringWriter()
 builder = new MarkupBuilder(writer)
-builder.table{
+builder.table {
     caption('Cities I Have Known')
-    tr{ th('State'); th(colspan:3, 'Cities') }
-    states.keySet().sort().each{ state ->
-        tr{
+    tr { th('State'); th(colspan: 3, 'Cities') }
+    states.keySet().sort().each { state ->
+        tr {
             th(state)
-            states[state].sort().each{ td(it) }
+            states[state].sort().each { td(it) }
         }
     }
 }
@@ -1331,7 +1356,8 @@ import groovy.xml.MarkupBuilder
 
 dbHandle = null
 dbUrl = 'jdbc:hsqldb:...'
-def getDb(){
+
+def getDb() {
     if (dbHandle) return dbHandle
 //    def source = new org.hsqldb.jdbc.jdbcDataSource()
     def source = new jdbcDataSource()
@@ -1352,16 +1378,16 @@ builder = new MarkupBuilder(writer)
 builder.html {
     head { title('Salary Query') }
     h1('Search')
-    form{
+    form {
         p('Enter minimum salary')
-        input(type:'text', name:'LIMIT')
-        input(type:'submit')
+        input(type: 'text', name: 'LIMIT')
+        input(type: 'submit')
     }
     if (limit) {
         h1('Results')
-        table(border:1){
-            findByLimit(limit).each{ row ->
-                tr{ td(row.name); td(row.salary) }
+        table(border: 1) {
+            findByLimit(limit).each { row ->
+                tr { td(row.name); td(row.salary) }
             }
         }
     }
@@ -1402,7 +1428,7 @@ menu = [
     [/SunOS/, 's/scumos.html'],
 ]
 page = 'a/aportraitofj.randomhacker.html'
-menu.each{
+menu.each {
     if (agent =~ it[0]) page = it[1]
 }
 response.sendRedirect("$dir/$page")
@@ -1422,7 +1448,8 @@ response.sendError(204, 'No Response')
 //----------------------------------------------------------------------------------
 // helper method
 //import javax.servlet.http.Cookie
-class Cookie{}
+class Cookie {}
+
 import groovy.xml.MarkupBuilder
 
 def getCookieValue(cookies, cookieName, defaultValue) {
@@ -1433,14 +1460,14 @@ def getCookieValue(cookies, cookieName, defaultValue) {
 }
 
 prefValue = getCookieValue(request.cookies, 'preference_name', 'default')
-cookie = new Cookie('preference name',"whatever you'd like")
-SECONDS_PER_YEAR = 60*60*24*365
+cookie = new Cookie('preference name', "whatever you'd like")
+SECONDS_PER_YEAR = 60 * 60 * 24 * 365
 cookie.maxAge = SECONDS_PER_YEAR * 2
 response.addCookie(cookie)
 
 cookname = 'fav_ice_cream'
 favorite = request.getParameter('flavor')
-tasty    = getCookieValue(request.cookies, cookname, 'mint')
+tasty = getCookieValue(request.cookies, cookname, 'mint')
 
 writer = new StringWriter()
 builder = new MarkupBuilder(writer)
@@ -1458,7 +1485,7 @@ builder.html {
             hr()
             form {
                 p('Please select a flavor: ')
-                input(type:'text', name:'flavor', value:tasty)
+                input(type: 'text', name: 'flavor', value: tasty)
             }
             hr()
         }
@@ -1470,6 +1497,7 @@ println writer.toString()
 // @@PLEAC@@_19.11
 //----------------------------------------------------------------------------------
 import groovy.xml.MarkupBuilder
+
 // On Linux systems replace with: "who".execute().text
 fakedWhoInput = '''
 root tty1 Nov 2 17:57
@@ -1480,14 +1508,14 @@ sigmund tty2 Nov 2 18:08
 name = request.getParameter('WHO')
 if (!name) name = ''
 writer = new StringWriter()
-new MarkupBuilder(writer).html{
-    head{ title('Query Users') }
-    body{
+new MarkupBuilder(writer).html {
+    head { title('Query Users') }
+    body {
         h1('Search')
-        form{
+        form {
             p('Which User?')
-            input(type:'text', name:'WHO', value:name)
-            input(type:'submit')
+            input(type: 'text', name: 'WHO', value: name)
+            input(type: 'submit')
         }
         if (name) {
             h1('Results')
@@ -1509,10 +1537,10 @@ println writer.toString()
 // even when doing it manually, you would probably use session variables
 
 // setting a hidden field
-input(type:'hidden', value:'bacon')
+input(type: 'hidden', value: 'bacon')
 
 // setting a value on the submit
-input(type:'submit', name:".State", value:'Checkout')
+input(type: 'submit', name: ".State", value: 'Checkout')
 
 // determining 'mode'
 page = request.getParameter('.State')
@@ -1529,17 +1557,17 @@ if (page == "Default") {
 
 // forking with map
 states = [
-    Default:  this.&frontPage,
-    Shirt:    this.&tShirt,
-    Sweater:  this.&sweater,
+    Default : this.&frontPage,
+    Shirt   : this.&tShirt,
+    Sweater : this.&sweater,
     Checkout: this.&checkout,
-    Card:     this.&creditCard,
-    Order:    this.&order,
-    Cancel:   this.&frontPage,
+    Card    : this.&creditCard,
+    Order   : this.&order,
+    Cancel  : this.&frontPage,
 ]
 
 // calling each to allow hidden variable saving
-states.each{ key, closure ->
+states.each { key, closure ->
     closure(page == key)
 }
 
@@ -1553,14 +1581,14 @@ def tShirt(active) {
         return
     }
     p("You want to buy a t-shirt?");
-    label("Size:  ");     dropDown("size", sizes)
-    label("Color: ");     dropDown("color", colors)
+    label("Size:  "); dropDown("size", sizes)
+    label("Color: "); dropDown("color", colors)
     shopMenu()
 }
 
 // kicking off processing
-html{
-    head{ title('chemiserie store') }
+html {
+    head { title('chemiserie store') }
     body {
         if (states[page]) process(page)
         else noSuchPage()
@@ -1575,7 +1603,7 @@ html{
 map = request.parameterMap
 
 // save to file
-new File(filename).withOutputStream{ fos ->
+new File(filename).withOutputStream { fos ->
     oos = new ObjectOutputStream(fos)
     oos.writeObject(map)
     oos.close()
@@ -1583,7 +1611,7 @@ new File(filename).withOutputStream{ fos ->
 
 // convert to text
 sb = new StringBuffer()
-map.each{ k,v -> sb << "$k=$v" }
+map.each { k, v -> sb << "$k=$v" }
 text = sb.toString()
 // to send text via email, see 18.3
 //----------------------------------------------------------------------------------
@@ -1598,19 +1626,19 @@ import groovy.xml.MarkupBuilder
 page = param('.State', 'Default')
 
 states = [
-    Default:  this.&frontPage,
-    Shirt:    this.&shirt,
-    Sweater:  this.&sweater,
+    Default : this.&frontPage,
+    Shirt   : this.&shirt,
+    Sweater : this.&sweater,
     Checkout: this.&checkout,
-    Card:     this.&creditCard,
-    Order:    this.&order,
-    Cancel:   this.&frontPage,
+    Card    : this.&creditCard,
+    Order   : this.&order,
+    Cancel  : this.&frontPage,
 ]
 
 writer = new StringWriter()
 b = new MarkupBuilder(writer)
-b.html{
-    head{ title('chemiserie store') }
+b.html {
+    head { title('chemiserie store') }
     body {
         if (states[page]) process(page)
         else noSuchPage()
@@ -1619,8 +1647,8 @@ b.html{
 println writer.toString()
 
 def process(page) {
-    b.form{
-        states.each{ key, closure ->
+    b.form {
+        states.each { key, closure ->
             closure(page == key)
         }
     }
@@ -1649,7 +1677,7 @@ def frontPage(active) {
 def shirt(active) {
     def sizes = ['XL', 'L', 'M', 'S']
     def colors = ['Black', 'White']
-    def count = param('shirt_count',0)
+    def count = param('shirt_count', 0)
     def color = param('shirt_color')
     def size = param('shirt_size')
     // sanity check
@@ -1668,16 +1696,16 @@ def shirt(active) {
         It comes with full luxury interior, cotton trim, and a collar
         to make your eyes water! Unit price: $33.00'''
     b.h2 'Options'
-    label("How Many?");  textfield("shirt_count")
-    label("Size?");      dropDown("shirt_size", sizes)
-    label("Color?");     dropDown("shirt_color", colors)
+    label("How Many?"); textfield("shirt_count")
+    label("Size?"); dropDown("shirt_size", sizes)
+    label("Color?"); dropDown("shirt_color", colors)
     shopMenu()
 }
 
 def sweater(active) {
     def sizes = ['XL', 'L', 'M']
     def colors = ['Chartreuse', 'Puce', 'Lavender']
-    def count = param('sweater_count',0)
+    def count = param('sweater_count', 0)
     def color = param('sweater_color')
     def size = param('sweater_size')
     // sanity check
@@ -1718,19 +1746,19 @@ def checkout(active) {
 def creditCard(active) {
     def widgets = 'Name Address1 Address2 City Zip State Phone Card Expiry'.split(' ')
     if (!active) {
-        widgets.each{ hidden(it) }
+        widgets.each { hidden(it) }
         return
     }
-    b.pre{
-        label("Name: ");          textfield("Name")
-        label("Address: ");       textfield("Address1")
-        label(" ");               textfield("Address2")
-        label("City: ");          textfield("City")
-        label("Zip: ");           textfield("Zip")
-        label("State: ");         textfield("State")
-        label("Phone: ");         textfield("Phone")
+    b.pre {
+        label("Name: "); textfield("Name")
+        label("Address: "); textfield("Address1")
+        label(" "); textfield("Address2")
+        label("City: "); textfield("City")
+        label("Zip: "); textfield("Zip")
+        label("State: "); textfield("State")
+        label("Phone: "); textfield("Phone")
         label("Credit Card #: "); textfield("Card")
-        label("Expiry: ");        textfield("Expiry")
+        label("Expiry: "); textfield("Expiry")
     }
     b.p("Click on 'Order' to order the items. Click on 'Cancel' to return shopping.")
     toPage("Order")
@@ -1763,25 +1791,33 @@ def orderText() {
 }
 
 def label(text) { b.span(text) }
-def reset(text) { b.a(href:request.requestURI,text) }
-def toPage(name) { b.input(type:'submit', name:'.State', value:name) }
+
+def reset(text) { b.a(href: request.requestURI, text) }
+
+def toPage(name) { b.input(type: 'submit', name: '.State', value: name) }
+
 def dropDown(name, values) {
-    b.select(name:name){
-        values.each{
-            if (param(name)==it) option(value:it, selected:true, it)
-            else option(value:it, it)
+    b.select(name: name) {
+        values.each {
+            if (param(name) == it) option(value: it, selected: true, it)
+            else option(value: it, it)
         }
     }
     b.br()
 }
+
 def hidden(name) {
     if (binding.variables.containsKey(name)) v = binding[name]
     else v = ''
     hidden(name, v)
 }
-def hidden(name, value) { b.input(type:'hidden', name:name, value:value) }
-def textfield(name) { b.input(type:'text', name:name, value:param(name,'')); b.br() }
+
+def hidden(name, value) { b.input(type: 'hidden', name: name, value: value) }
+
+def textfield(name) { b.input(type: 'text', name: name, value: param(name, '')); b.br() }
+
 def param(name) { request.getParameter(name) }
+
 def param(name, defValue) {
     def val = request.getParameter(name)
     if (val) return val else return defValue
@@ -1836,11 +1872,12 @@ try {
 // titleBytes example
 def titleBytes(urlStr) {
     def lineCount = 0; def byteCount = 0
-    new URL(urlStr).eachLine{ line ->
+    new URL(urlStr).eachLine { line ->
         lineCount++; byteCount += line.size()
     }
     println "$urlStr => ($lineCount lines, $byteCount bytes)"
 }
+
 titleBytes('http://www.tpj.com/')
 // http://www.tpj.com/ => (677 lines, 25503 bytes)
 //----------------------------------------------------------------------------------
@@ -1862,7 +1899,7 @@ field.setValueAttribute('DB_File')
 def button = form.getInputByValue('CPAN Search')
 def result = button.click()
 // check search result has at least one link ending in DB_File.pm
-assert result.anchors.any{ a -> a.hrefAttribute.endsWith('DB_File.pm') }
+assert result.anchors.any { a -> a.hrefAttribute.endsWith('DB_File.pm') }
 
 // fields must be properly escaped
 println URLEncoder.encode(/"this isn't <EASY>&<FUN>"/, 'utf-8')
@@ -1881,7 +1918,7 @@ println URLEncoder.encode(/"this isn't <EASY>&<FUN>"/, 'utf-8')
 
 client = new WebClient()
 html = client.getPage('http://www.perl.com/CPAN/')
-println page.anchors.collect{ it.hrefAttribute }.sort().unique().join('\n')
+println page.anchors.collect { it.hrefAttribute }.sort().unique().join('\n')
 // =>
 // disclaimer.html
 // http://bookmarks.cpan.org/
@@ -1895,7 +1932,7 @@ println page.anchors.collect{ it.hrefAttribute }.sort().unique().join('\n')
 //----------------------------------------------------------------------------------
 // split paragraphs
 LS = System.properties.'line.separator'
-new File(args[0]).text.split("$LS$LS").each{ para ->
+new File(args[0]).text.split("$LS$LS").each { para ->
     if (para.startsWith(" ")) println "<pre>\n$para\n</pre>"
     else {
         para = para.replaceAll(/(?m)^(>.*?)$/, /$1<br \/>/)            // quoted text
@@ -1912,7 +1949,7 @@ def encodeEmail(email) {
     email = URLEncoder.encode(email)
     email = text.replaceAll(/(\n[ \t]+)/, / . /)   // continuation lines
     email = text.replaceAll(/(?m)^(\S+?:)\s*(.*?)$/,
-                  /<tr><th align="left">$1<\/th><td>$2<\/td><\/tr>/);
+        /<tr><th align="left">$1<\/th><td>$2<\/td><\/tr>/);
     println email
     println "</table>"
 }
@@ -1922,11 +1959,12 @@ def encodeEmail(email) {
 // @@PLEAC@@_20.5
 //----------------------------------------------------------------------------------
 // using CyberNeko Parser (people.apache.org/~andyc/neko/doc)
-class XmlParser{}
+class XmlParser {}
+
 parser = new org.cyberneko.html.parsers.SAXParser()
 parser.setFeature('http://xml.org/sax/features/namespaces', false)
 page = new XmlParser(parser).parse('http://www.perl.com/CPAN/')
-page.depthFirst().each{ println it.text() }
+page.depthFirst().each { println it.text() }
 //----------------------------------------------------------------------------------
 
 
@@ -1953,7 +1991,7 @@ println html.titleText
 
 client = new WebClient()
 page = client.getPage('http://www.perl.com/CPAN/')
-page.anchors.each{
+page.anchors.each {
     checkUrl(page, it.hrefAttribute)
 }
 
@@ -1997,14 +2035,14 @@ urls = [
 df = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.MEDIUM)
 client = new HttpClient()
 urlInfo = [:]
-urls.each{ url ->
+urls.each { url ->
     head = new HeadMethod(url)
     client.executeMethod(head)
     lastModified = head.getResponseHeader("last-modified")?.value
-    urlInfo[df.parse(lastModified)]=url
+    urlInfo[df.parse(lastModified)] = url
 }
 
-urlInfo.keySet().sort().each{ key ->
+urlInfo.keySet().sort().each { key ->
     println "$key ${urlInfo[key]}"
 }
 // =>
@@ -2042,15 +2080,16 @@ $username logged in $count times, for a total of $total minutes.
 def engine = new groovy.text.SimpleTemplateEngine()
 def reader = new StringReader(html)
 def template = engine.createTemplate(reader)
-println template.make(username:"Peter", count:"23", total: "1234")
+println template.make(username: "Peter", count: "23", total: "1234")
 
 // SQL version
 import groovy.sql.Sql
+
 user = 'Peter'
 def sql = Sql.newInstance('jdbc:mysql://localhost:3306/mydb', 'dbuser',
-                      'dbpass', 'com.mysql.jdbc.Driver')
+    'dbpass', 'com.mysql.jdbc.Driver')
 sql.query("SELECT COUNT(duration),SUM(duration) FROM logins WHERE username='$user'") { answer ->
-    println (template.make(username:user, count:answer[0], total:answer[1]))
+    println(template.make(username: user, count: answer[0], total: answer[1]))
 }
 //----------------------------------------------------------------------------------
 
@@ -2061,15 +2100,15 @@ sql.query("SELECT COUNT(duration),SUM(duration) FROM logins WHERE username='$use
 urlStr = 'http://jakarta.apache.org/'
 url = new URL(urlStr)
 connection = url.openConnection()
-connection.ifModifiedSince = new Date(2007,1,18).time
+connection.ifModifiedSince = new Date(2007, 1, 18).time
 connection.connect()
 println connection.responseCode
 
 // manually setting header field
 connection = url.openConnection()
-df = new java.text.SimpleDateFormat ("EEE, dd MMM yyyy HH:mm:ss 'GMT'")
+df = new java.text.SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'")
 df.setTimeZone(TimeZone.getTimeZone('GMT'))
-connection.setRequestProperty("If-Modified-Since",df.format(new Date(2007,1,18)));
+connection.setRequestProperty("If-Modified-Since", df.format(new Date(2007, 1, 18)));
 connection.connect()
 println connection.responseCode
 //----------------------------------------------------------------------------------
@@ -2101,13 +2140,15 @@ LOGFILE = '''
 '''
 
 // similar to perl version:
-fields = ['client','identuser','authuser','date','time','tz','method','url','protocol','status','bytes']
+fields = ['client', 'identuser', 'authuser', 'date', 'time', 'tz', 'method', 'url', 'protocol', 'status', 'bytes']
 regex = /^(\S+) (\S+) (\S+) \[([^:]+):(\d+:\d+:\d+) ([^\]]+)\] "(\S+) (.*?) (\S+)" (\S+) (\S+).*$/
 
-LOGFILE.trim().split('\n').each{ line2 ->
+LOGFILE.trim().split('\n').each { line2 ->
     m = line2 =~ regex
     if (m.matches()) {
-        for (idx in 0..<fields.size()) { println "${fields[idx]}=${m[0][idx+1]}" }
+        for (idx in 0..<fields.size()) {
+            println "${fields[idx]}=${m[0][idx + 1]}"
+        }
         println()
     }
 }
@@ -2135,7 +2176,7 @@ ppp931.on.bellglobal.com - - [26/Apr/2000:00:16:12 -0400] "GET /download/windows
 192.168.0.1 - - [05/Sep/2005:20:50:36 +0200] "GET /bus/libjs/layersmenu-library.js HTTP/1.1" 200 6228 "http://localhost/bus/" "Opera/8.02 (X11; Linux i686; U; en)"
 '''
 
-fields = ['client','identuser','authuser','date','time','tz','method','url','protocol','status','bytes']
+fields = ['client', 'identuser', 'authuser', 'date', 'time', 'tz', 'method', 'url', 'protocol', 'status', 'bytes']
 regex = /^(\S+) (\S+) (\S+) \[([^:]+):(\d+:\d+:\d+) ([^\]]+)\] "(\S+) (.*?) (\S+)" (\S+) (\S+).*$/
 
 class Summary {
@@ -2146,32 +2187,33 @@ class Summary {
     def homeCount = 0
     def totalBytes = 0
 }
+
 totals = [:]
-LOGFILE.trim().split('\n').each{ line3 ->
+LOGFILE.trim().split('\n').each { line3 ->
     m = line3 =~ regex
     if (m.matches()) {
-        date = m[0][fields.indexOf('date')+1]
+        date = m[0][fields.indexOf('date') + 1]
         s = totals.get(date, new Summary())
         s.accessCount++
-        if (m[0][fields.indexOf('method')+1] == 'POST') s.postCount++
-        s.totalBytes += (m[0][fields.indexOf('bytes')+1]).toInteger()
-        def url = m[0][fields.indexOf('url')+1]
+        if (m[0][fields.indexOf('method') + 1] == 'POST') s.postCount++
+        s.totalBytes += (m[0][fields.indexOf('bytes') + 1]).toInteger()
+        def url = m[0][fields.indexOf('url') + 1]
         if (url == '/') s.homeCount++
         s.what[url] = s.what.get(url, 0) + 1
-        def host = m[0][fields.indexOf('client')+1]
+        def host = m[0][fields.indexOf('client') + 1]
         s.hosts[host] = s.hosts.get(host, 0) + 1
     }
 }
-report('Date','Hosts','Accesses','Unidocs','POST','Home','Bytes')
-totals.each{ key, s ->
+report('Date', 'Hosts', 'Accesses', 'Unidocs', 'POST', 'Home', 'Bytes')
+totals.each { key, s ->
     report(key, s.hosts.size(), s.accessCount, s.what.size(), s.postCount, s.homeCount, s.totalBytes)
 }
 v = totals.values()
-report('Grand Total', v.sum{it.hosts.size()}, v.sum{it.accessCount}, v.sum{it.what.size()},
-        v.sum{it.postCount}, v.sum{it.homeCount}, v.sum{it.totalBytes} )
+report('Grand Total', v.sum { it.hosts.size() }, v.sum { it.accessCount }, v.sum { it.what.size() },
+    v.sum { it.postCount }, v.sum { it.homeCount }, v.sum { it.totalBytes })
 
 def report(a, b, c, d, e, f, g) {
-    printf ("%12s %6s %8s %8s %8s %8s %10s\n", [a,b,c,d,e,f,g])
+    printf("%12s %6s %8s %8s %8s %8s %10s\n", [a, b, c, d, e, f, g])
 }
 // =>
 //         Date  Hosts Accesses  Unidocs     POST     Home      Bytes
@@ -2196,14 +2238,14 @@ def report(a, b, c, d, e, f, g) {
 
 // @@PLEAC@@_20.14
 //----------------------------------------------------------------------------------
- import org.cyberneko.html.filters.Writer
- import org.cyberneko.html.filters.DefaultFilter
- import org.apache.xerces.xni.parser.XMLDocumentFilter
- import org.apache.xerces.xni.*
- import org.cyberneko.html.parsers.DOMParser
- import org.xml.sax.InputSource
+import org.cyberneko.html.filters.Writer
+import org.cyberneko.html.filters.DefaultFilter
+import org.apache.xerces.xni.parser.XMLDocumentFilter
+import org.apache.xerces.xni.*
+import org.cyberneko.html.parsers.DOMParser
+import org.xml.sax.InputSource
 
- input = '''
+input = '''
  <HTML><HEAD><TITLE>Hi!</TITLE></HEAD><BODY>
  <H1>Welcome to Scooby World!</H1>
  I have <A HREF="pictures.html">pictures</A> of the crazy dog
@@ -2216,22 +2258,26 @@ def report(a, b, c, d, e, f, g) {
  </BODY></HTML>
  '''
 
- class WordReplaceFilter extends DefaultFilter {
-     private before, after
-     WordReplaceFilter(b, a) { before = b; after = a }
-     void characters(XMLString text, Augmentations augs) {
-         char[] c = text.toString().replaceAll(before, after)
-         super.characters(new XMLString(c, 0, c.size()), augs)
-     }
-     void setProperty(String s, Object o){}
- }
- XMLDocumentFilter[] filters = [
-     new WordReplaceFilter(/(?sm)picture/, /photo/),
-     new Writer()
- ]
- parser = new DOMParser()
- parser.setProperty("http://cyberneko.org/html/properties/filters", filters)
- parser.parse(new InputSource(new StringReader(input)))
+class WordReplaceFilter extends DefaultFilter {
+    private before, after
+
+    WordReplaceFilter(b, a) { before = b; after = a }
+
+    void characters(XMLString text, Augmentations augs) {
+        char[] c = text.toString().replaceAll(before, after)
+        super.characters(new XMLString(c, 0, c.size()), augs)
+    }
+
+    void setProperty(String s, Object o) {}
+}
+
+XMLDocumentFilter[] filters = [
+    new WordReplaceFilter(/(?sm)picture/, /photo/),
+    new Writer()
+]
+parser = new DOMParser()
+parser.setProperty("http://cyberneko.org/html/properties/filters", filters)
+parser.parse(new InputSource(new StringReader(input)))
 //----------------------------------------------------------------------------------
 
 
@@ -2259,7 +2305,9 @@ cards</A>.
 
 class HrefReplaceFilter extends DefaultFilter {
     private before, after
+
     HrefReplaceFilter(b, a) { before = b; after = a }
+
     void startElement(QName element, XMLAttributes attributes, Augmentations augs) {
         def idx = attributes.getIndex('href')
         if (idx != -1) {
@@ -2268,8 +2316,10 @@ class HrefReplaceFilter extends DefaultFilter {
         }
         super.startElement(element, attributes, augs)
     }
-    void setProperty(String s, Object o){}
+
+    void setProperty(String s, Object o) {}
 }
+
 XMLDocumentFilter[] myfilters = [
     new HrefReplaceFilter(/shergold.html/, /cards.html/),
     new Writer()

@@ -25,25 +25,25 @@ import java.util.List;
  * value and <em>working up</em> towards some ending (or <code>to</code>) value.
  * For a reverse range, the list is obtained by starting at the <code>to</code> value and
  * <em>working down</em> towards the <code>from</code> value.
- *
+ * <p>
  * The concept of <em>working up</em> and <em>working down</em> is dependent on the range implementation.
  * In the general case, working up involves successive calls to the first item's <code>next()</code>
  * method while working down involves calling the <code>previous()</code> method. Optimized
  * numerical ranges may apply numeric addition or subtraction of some numerical step size.
- *
+ * <p>
  * Particular range implementations may also support the notion of inclusivity
  * and exclusivity with respect to the ending value in the range.
  * E.g. {@code 1..3 == [1, 2, 3]}; but {@code 1..<3 == [1, 2]}.
- *
+ * <p>
  * In general, the second boundary may not be contained in the range,
  * and <code>a..b</code> may produce a different set of elements than <code>(b..a).reversed()</code>.
  * E.g.  <code>1..2.5 == [1, 2]</code>; but <code>2.5..1 == [2.5, 1.5]</code>.
- *
+ * <p>
  * Implementations can be memory efficient by storing just the <code>from</code> and <code>to</code> boundary
  * values rather than eagerly creating all discrete items in the conceptual list. The actual discrete items
  * can be lazily calculated on an as needed basis (e.g. when calling methods from the <code>java.util.List</code>
  * interface or the additional <code>step</code> methods in the <code>Range</code> interface).
- *
+ * <p>
  * In addition to the methods related to a Range's "discrete items" abstraction, there is a method,
  * <code>containsWithinBounds</code> which, for numerical ranges, allows checking within the continuous
  * interval between the Range's boundary values.
@@ -76,7 +76,7 @@ public interface Range<T extends Comparable> extends List<T> {
      * value for the range and less than or equal to the <code>to</code> value.
      * <p>
      * This may be true even for values not contained in the range.
-     *
+     * <p>
      * Example: from = 1.5, to = 3, next() increments by 1
      * containsWithinBounds(2) == true
      * contains(2) == false

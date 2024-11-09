@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * implementing that trait is supposed to extend. This is useful when you want to be
  * able to call methods from the class implementing the trait without having to declare
  * all of them as members of the trait.
- *
+ * <p>
  * Self types are particularly useful in combination with {@link groovy.transform.CompileStatic},
  * if you know that a trait can only be applied to a specific type but that the trait cannot extend
  * that type itself. For example, imagine the following code:
@@ -44,7 +44,7 @@ import java.lang.annotation.Target;
  *     }
  *     class DecoratedComponent extends Component implements ComponentDecorator {}
  * </code></pre>
- *
+ * <p>
  * This will work because the trait uses the dynamic backend, so there is no check at
  * compile time that the <i>methodInComponent</i> call in <i>logAndCall</i> is actually
  * defined. If you annotate the trait with {@link groovy.transform.CompileStatic}, compilation
@@ -65,7 +65,7 @@ import java.lang.annotation.Target;
  *     }
  *     class DecoratedComponent extends Component implements ComponentDecorator {}
  * </code></pre>
- *
+ * <p>
  * This pattern can therefore be used to avoid explicit casts everywhere you need to call a method
  * that you know is defined in the class that will implement the trait but normally don't have access
  * to, which is often the case where a trait needs to be applied on a class provided by a third-party

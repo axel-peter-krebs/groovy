@@ -29,9 +29,9 @@ class BinaryOperationsTest extends AbstractBytecodeTestCase {
             int j = 2
             int k = i + j
         """).hasSequence([
-                "ILOAD",
-                "ILOAD",
-                "IADD"
+            "ILOAD",
+            "ILOAD",
+            "IADD"
         ])
     }
 
@@ -41,9 +41,9 @@ class BinaryOperationsTest extends AbstractBytecodeTestCase {
             int i = 0
             if (i < 100) println "true"
         """).hasSequence([
-                "ILOAD",
-                "BIPUSH 100",
-                "IF_ICMPGE"
+            "ILOAD",
+            "BIPUSH 100",
+            "IF_ICMPGE"
         ])
     }
 
@@ -65,8 +65,8 @@ class BinaryOperationsTest extends AbstractBytecodeTestCase {
             long a = 1
             long b = a << 32
         """).hasStrictSequence([
-                "BIPUSH 32",
-                "LSHL"
+            "BIPUSH 32",
+            "LSHL"
         ])
     }
 
@@ -76,28 +76,28 @@ class BinaryOperationsTest extends AbstractBytecodeTestCase {
             assert compile("""\
                 int a = $it
             """).hasStrictSequence([
-                    "ICONST_$it",
+                "ICONST_$it",
             ])
         }
-        [-1, 6,Byte.MIN_VALUE,Byte.MAX_VALUE].each {
+        [-1, 6, Byte.MIN_VALUE, Byte.MAX_VALUE].each {
             assert compile("""\
                     int a = $it
                 """).hasStrictSequence([
-                    "BIPUSH",
+                "BIPUSH",
             ])
         }
-        [Byte.MIN_VALUE-1,Byte.MAX_VALUE+1,Short.MIN_VALUE,Short.MAX_VALUE].each {
+        [Byte.MIN_VALUE - 1, Byte.MAX_VALUE + 1, Short.MIN_VALUE, Short.MAX_VALUE].each {
             assert compile("""\
                     int a = $it
                 """).hasStrictSequence([
-                    "SIPUSH",
+                "SIPUSH",
             ])
         }
-        [Short.MAX_VALUE+1,Integer.MAX_VALUE].each {
+        [Short.MAX_VALUE + 1, Integer.MAX_VALUE].each {
             assert compile("""\
                     int a = $it
                 """).hasStrictSequence([
-                    "LDC",
+                "LDC",
             ])
         }
     }
@@ -106,7 +106,7 @@ class BinaryOperationsTest extends AbstractBytecodeTestCase {
         if (config.indyEnabled) return;
         assert compile('''
             int i = ('a' as char) ^ ('b' as char)
-        ''').hasStrictSequence ([
+        ''').hasStrictSequence([
             'IXOR'
         ])
     }
@@ -125,7 +125,7 @@ class BinaryOperationsTest extends AbstractBytecodeTestCase {
     }
 
     void testPrimitiveOrAssign() {
-        ['byte','int','short','long'].each { type ->
+        ['byte', 'int', 'short', 'long'].each { type ->
             assertScript """
                 $type[] array = new $type[1]
                 array[0] = 16
@@ -136,7 +136,7 @@ class BinaryOperationsTest extends AbstractBytecodeTestCase {
     }
 
     void testPrimitiveAndAssign() {
-        ['byte','int','short','long'].each { type ->
+        ['byte', 'int', 'short', 'long'].each { type ->
             assertScript """
                 $type[] array = new $type[1]
                 array[0] = 18

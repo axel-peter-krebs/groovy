@@ -56,61 +56,13 @@ import static org.codehaus.groovy.transform.stc.StaticTypeCheckingSupport.evalua
  */
 public class ASTTransformationCollectorCodeVisitor extends ClassCodeVisitorSupport {
 
-    private ClassNode classNode;
     private final SourceUnit source;
     private final GroovyClassLoader transformLoader;
+    private ClassNode classNode;
 
     public ASTTransformationCollectorCodeVisitor(final SourceUnit source, final GroovyClassLoader transformLoader) {
         this.source = source;
         this.transformLoader = transformLoader;
-    }
-
-    @Override
-    protected SourceUnit getSourceUnit() {
-        return source;
-    }
-
-    @Override
-    public void visitClass(final ClassNode classNode) {
-        ClassNode oldClass = this.classNode;
-        this.classNode = classNode;
-        super.visitClass(classNode);
-        this.classNode = oldClass;
-    }
-
-    @Override
-    public void visitAnnotations(final AnnotatedNode node) {
-        List<AnnotationNode> nodeAnnotations = node.getAnnotations();
-        if (nodeAnnotations.isEmpty()) return;
-        super.visitAnnotations(node);
-
-        for (;;) {
-            Map<Integer, AnnotationCollectorMode> modes = new LinkedHashMap<>();
-            Map<Integer, List<AnnotationNode>> existing = new LinkedHashMap<>();
-            Map<Integer, List<AnnotationNode>> replacements = new LinkedHashMap<>();
-            int index = 0;
-            for (AnnotationNode annotation : nodeAnnotations) {
-                findCollectedAnnotations(annotation, node, index, modes, existing, replacements);
-                index += 1;
-            }
-            for (Map.Entry<Integer, List<AnnotationNode>> entry : replacements.entrySet()) {
-                Integer replacementIndex = entry.getKey();
-                List<AnnotationNode> annotationNodeList = entry.getValue();
-                mergeCollectedAnnotations(modes.get(replacementIndex), existing, annotationNodeList);
-                existing.put(replacementIndex, annotationNodeList);
-            }
-            List<AnnotationNode> mergedList = new ArrayList<>();
-            existing.values().forEach(mergedList::addAll);
-            if (mergedList.equals(nodeAnnotations)) break;
-
-            nodeAnnotations.clear();
-            nodeAnnotations.addAll(mergedList);
-            // GROOVY-9238: look again for collector annotations
-        }
-
-        for (AnnotationNode annotation : nodeAnnotations) {
-            addTransformsToClassNode(annotation);
-        }
     }
 
     private static void mergeCollectedAnnotations(final AnnotationCollectorMode mode, final Map<Integer, List<AnnotationNode>> existing, final List<AnnotationNode> replacements) {
@@ -136,7 +88,7 @@ public class ASTTransformationCollectorCodeVisitor extends ClassCodeVisitorSuppo
         for (AnnotationNode replacement : replacements) {
             for (Map.Entry<Integer, List<AnnotationNode>> entry : existing.entrySet()) {
                 List<AnnotationNode> annotationNodes = new ArrayList<>(entry.getValue());
-                for (Iterator<AnnotationNode> iterator = annotationNodes.iterator(); iterator.hasNext();) {
+                for (Iterator<AnnotationNode> iterator = annotationNodes.iterator(); iterator.hasNext(); ) {
                     AnnotationNode annotation = iterator.next();
                     if (replacement.getClassNode().getName().equals(annotation.getClassNode().getName())) {
                         if (mergeParams) {
@@ -151,7 +103,7 @@ public class ASTTransformationCollectorCodeVisitor extends ClassCodeVisitorSuppo
     }
 
     private static void deleteReplacement(final boolean mergeParams, final Map<Integer, List<AnnotationNode>> existing, final List<AnnotationNode> replacements) {
-        for (Iterator<AnnotationNode> nodeIterator = replacements.iterator(); nodeIterator.hasNext();) {
+        for (Iterator<AnnotationNode> nodeIterator = replacements.iterator(); nodeIterator.hasNext(); ) {
             boolean remove = false;
             AnnotationNode replacement = nodeIterator.next();
             for (Map.Entry<Integer, List<AnnotationNode>> entry : existing.entrySet()) {
@@ -175,6 +127,69 @@ public class ASTTransformationCollectorCodeVisitor extends ClassCodeVisitorSuppo
             if (to.getMember(name) == null) {
                 to.setMember(name, from.getMember(name));
             }
+        }
+    }
+
+    private static Annotation getTransformClassAnnotation(final ClassNode annotationType) {
+        if (!annotationType.isResolved()) return null;
+
+        for (Annotation a : annotationType.getTypeClass().getAnnotations()) {
+            // clients are free to choose any GroovyClassLoader for resolving a
+            // ClassNode such as annotationType; we have to compare by name and
+            // cannot cast the return value to our GroovyASTTransformationClass
+            if (a.annotationType().getName().equals(GroovyASTTransformationClass.class.getName())) {
+                return a;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    protected SourceUnit getSourceUnit() {
+        return source;
+    }
+
+    @Override
+    public void visitClass(final ClassNode classNode) {
+        ClassNode oldClass = this.classNode;
+        this.classNode = classNode;
+        super.visitClass(classNode);
+        this.classNode = oldClass;
+    }
+
+    @Override
+    public void visitAnnotations(final AnnotatedNode node) {
+        List<AnnotationNode> nodeAnnotations = node.getAnnotations();
+        if (nodeAnnotations.isEmpty()) return;
+        super.visitAnnotations(node);
+
+        for (; ; ) {
+            Map<Integer, AnnotationCollectorMode> modes = new LinkedHashMap<>();
+            Map<Integer, List<AnnotationNode>> existing = new LinkedHashMap<>();
+            Map<Integer, List<AnnotationNode>> replacements = new LinkedHashMap<>();
+            int index = 0;
+            for (AnnotationNode annotation : nodeAnnotations) {
+                findCollectedAnnotations(annotation, node, index, modes, existing, replacements);
+                index += 1;
+            }
+            for (Map.Entry<Integer, List<AnnotationNode>> entry : replacements.entrySet()) {
+                Integer replacementIndex = entry.getKey();
+                List<AnnotationNode> annotationNodeList = entry.getValue();
+                mergeCollectedAnnotations(modes.get(replacementIndex), existing, annotationNodeList);
+                existing.put(replacementIndex, annotationNodeList);
+            }
+            List<AnnotationNode> mergedList = new ArrayList<>();
+            existing.values().forEach(mergedList::addAll);
+            if (mergedList.equals(nodeAnnotations)) break;
+
+            nodeAnnotations.clear();
+            nodeAnnotations.addAll(mergedList);
+            // GROOVY-9238: look again for collector annotations
+        }
+
+        for (AnnotationNode annotation : nodeAnnotations) {
+            addTransformsToClassNode(annotation);
         }
     }
 
@@ -215,6 +230,8 @@ public class ASTTransformationCollectorCodeVisitor extends ClassCodeVisitorSuppo
         }
     }
 
+    //--------------------------------------------------------------------------
+
     private Class<?> loadTransformClass(final String transformClass, final AnnotationNode annotation) {
         try {
             return transformLoader.loadClass(transformClass, false, true, false);
@@ -224,8 +241,6 @@ public class ASTTransformationCollectorCodeVisitor extends ClassCodeVisitorSuppo
         }
         return null;
     }
-
-    //--------------------------------------------------------------------------
 
     /**
      * Determines if given annotation specifies an AST transformation and if so,
@@ -258,21 +273,6 @@ public class ASTTransformationCollectorCodeVisitor extends ClassCodeVisitorSuppo
                 source.getErrorCollector().addError(new ExceptionMessage(e, true, source));
             }
         }
-    }
-
-    private static Annotation getTransformClassAnnotation(final ClassNode annotationType) {
-        if (!annotationType.isResolved()) return null;
-
-        for (Annotation a : annotationType.getTypeClass().getAnnotations()) {
-            // clients are free to choose any GroovyClassLoader for resolving a
-            // ClassNode such as annotationType; we have to compare by name and
-            // cannot cast the return value to our GroovyASTTransformationClass
-            if (a.annotationType().getName().equals(GroovyASTTransformationClass.class.getName())) {
-                return a;
-            }
-        }
-
-        return null;
     }
 
     @SuppressWarnings("unchecked")

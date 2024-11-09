@@ -100,8 +100,7 @@ public class PropertyTest extends GroovyTestCase {
 
             InvokerHelper.setProperty(bean, "location", list);
             assertEquals("Should have set a point", new Point(10, 20), bean.getLocation());
-        }
-        catch (MissingMethodException e) {
+        } catch (MissingMethodException e) {
             System.out.println("Failed with cause: " + e);
             e.printStackTrace();
             fail("Should not have throw: " + e);

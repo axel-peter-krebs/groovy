@@ -27,8 +27,8 @@ class HotSwapTest extends AbstractBytecodeTestCase {
         assert compile(method: '__$swapInit', '''
             Long d = 123456L
         ''').hasSequence([
-                'ACONST_NULL',
-                'PUTSTATIC script.$callSiteArray : Ljava/lang/ref/SoftReference;'
+            'ACONST_NULL',
+            'PUTSTATIC script.$callSiteArray : Ljava/lang/ref/SoftReference;'
         ])
     }
 
@@ -36,7 +36,7 @@ class HotSwapTest extends AbstractBytecodeTestCase {
         assert compile(method: '<clinit>', '''
              Long d = 123456L
         ''').hasSequence([
-                'INVOKESTATIC script.__$swapInit ()V'
+            'INVOKESTATIC script.__$swapInit ()V'
         ])
     }
 }

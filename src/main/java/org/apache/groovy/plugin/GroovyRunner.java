@@ -32,7 +32,7 @@ public interface GroovyRunner {
      * run the given class.
      *
      * @param scriptClass class to run
-     * @param loader used to locate classes and resources
+     * @param loader      used to locate classes and resources
      * @return true if given class can be run, else false
      */
     boolean canRun(Class<?> scriptClass, GroovyClassLoader loader);
@@ -41,7 +41,7 @@ public interface GroovyRunner {
      * Runs the given class.
      *
      * @param scriptClass class to run
-     * @param loader used to locate classes and resources
+     * @param loader      used to locate classes and resources
      * @return result of running the class
      */
     Object run(Class<?> scriptClass, GroovyClassLoader loader);

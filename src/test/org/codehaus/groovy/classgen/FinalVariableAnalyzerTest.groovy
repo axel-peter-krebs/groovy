@@ -53,7 +53,7 @@ final class FinalVariableAnalyzerTest extends GroovyTestCase {
             vars.each { var ->
                 if (!unInitialized) {
                     assert (e.message =~ "The variable \\[${var}\\] is declared final but is reassigned" ||
-                            e.message =~ "Cannot assign a value to final variable '${var}'")
+                        e.message =~ "Cannot assign a value to final variable '${var}'")
                 } else {
                     assert e.message =~ "The variable \\[${var}\\] may be uninitialized"
                 }
@@ -575,7 +575,8 @@ final class FinalVariableAnalyzerTest extends GroovyTestCase {
         ''')
     }
 
-    @AutoFinal @CompileStatic
+    @AutoFinal
+    @CompileStatic
     private static class AssertionFinalVariableAnalyzer extends FinalVariableAnalyzer {
 
         private final Map<String, Boolean> assertionsToCheck

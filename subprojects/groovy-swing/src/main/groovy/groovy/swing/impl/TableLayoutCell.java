@@ -34,26 +34,41 @@ public class TableLayoutCell {
     private GridBagConstraints constraints;
     private String align;
     private String valign;
+    private int colspan = 1;
+    private int rowspan = 1;
+    private boolean colfill;
+    private boolean rowfill;
+    public TableLayoutCell(TableLayoutRow parent) {
+        this.parent = parent;
+    }
 
     public int getColspan() {
         return colspan;
+    }
+
+    /**
+     * Sets the number of columns that this cell should span. The default value is 1
+     *
+     * @param colspan The default is 1
+     */
+    public void setColspan(int colspan) {
+        this.colspan = colspan;
     }
 
     public int getRowspan() {
         return rowspan;
     }
 
-    private int colspan = 1;
-    private int rowspan = 1;
-    private boolean colfill;
-    private boolean rowfill;
-
-
-    public TableLayoutCell(TableLayoutRow parent) {
-        this.parent = parent;
+    /**
+     * Sets the number of rows that this cell should span. The default value is 1
+     *
+     * @param rowspan The default is 1
+     */
+    public void setRowspan(int rowspan) {
+        this.rowspan = rowspan;
     }
 
-    public void addComponent(Component component)  {
+    public void addComponent(Component component) {
         if (this.component != null) {
             LOG.log(Level.WARNING, "This td cell already has a component: " + component);
         }
@@ -67,6 +82,7 @@ public class TableLayoutCell {
 
     /**
      * Sets the horizontal alignment to a case insensitive value of {LEFT, CENTER, RIGHT}
+     *
      * @param align one of  'left', 'center', or 'right'
      */
     public void setAlign(String align) {
@@ -75,31 +91,16 @@ public class TableLayoutCell {
 
     /**
      * Sets the vertical alignment to a case insensitive value of {TOP, MIDDLE, BOTTOM}
+     *
      * @param valign one of 'top', 'middle', 'bottom'
      */
     public void setValign(String valign) {
         this.valign = valign;
     }
 
-
-    /**
-     * Sets the number of columns that this cell should span. The default value is 1
-     * @param colspan The default is 1
-     */
-    public void setColspan(int colspan) {
-        this.colspan = colspan;
-    }
-
-    /**
-     * Sets the number of rows that this cell should span. The default value is 1
-     * @param rowspan The default is 1
-     */
-    public void setRowspan(int rowspan) {
-        this.rowspan = rowspan;
-    }
-
     /**
      * Returns the colfill.
+     *
      * @return boolean
      */
     public boolean isColfill() {
@@ -107,15 +108,8 @@ public class TableLayoutCell {
     }
 
     /**
-     * Returns the rowfill.
-     * @return boolean
-     */
-    public boolean isRowfill() {
-        return rowfill;
-    }
-
-    /**
      * Sets whether or not this column should allow its component to stretch to fill the space available
+     *
      * @param colfill The default is false
      */
     public void setColfill(boolean colfill) {
@@ -123,7 +117,17 @@ public class TableLayoutCell {
     }
 
     /**
+     * Returns the rowfill.
+     *
+     * @return boolean
+     */
+    public boolean isRowfill() {
+        return rowfill;
+    }
+
+    /**
      * Sets whether or not this row should allow its component to stretch to fill the space available
+     *
      * @param rowfill The default is false
      */
     public void setRowfill(boolean rowfill) {
@@ -153,12 +157,11 @@ public class TableLayoutCell {
         if (rowspan < 1) {
             rowspan = 1;
         }
-        if (isColfill())  {
+        if (isColfill()) {
             answer.fill = isRowfill()
                 ? GridBagConstraints.BOTH
                 : GridBagConstraints.HORIZONTAL;
-        }
-        else {
+        } else {
             answer.fill = isRowfill()
                 ? GridBagConstraints.VERTICAL
                 : GridBagConstraints.NONE;
@@ -180,34 +183,26 @@ public class TableLayoutCell {
         if ("center".equalsIgnoreCase(align)) {
             if (isTop) {
                 return GridBagConstraints.NORTH;
-            }
-            else if (isBottom) {
+            } else if (isBottom) {
                 return GridBagConstraints.SOUTH;
-            }
-            else {
+            } else {
                 return GridBagConstraints.CENTER;
             }
-        }
-        else if ("right".equalsIgnoreCase(align)) {
+        } else if ("right".equalsIgnoreCase(align)) {
             if (isTop) {
                 return GridBagConstraints.NORTHEAST;
-            }
-            else if (isBottom) {
+            } else if (isBottom) {
                 return GridBagConstraints.SOUTHEAST;
-            }
-            else {
+            } else {
                 return GridBagConstraints.EAST;
             }
-        }
-        else {
+        } else {
             // defaults to left
             if (isTop) {
                 return GridBagConstraints.NORTHWEST;
-            }
-            else if (isBottom) {
+            } else if (isBottom) {
                 return GridBagConstraints.SOUTHWEST;
-            }
-            else {
+            } else {
                 return GridBagConstraints.WEST;
             }
         }

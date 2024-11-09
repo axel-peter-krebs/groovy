@@ -31,7 +31,7 @@ public abstract class InstanceOfVerifier extends ClassCodeVisitorSupport {
     @Override
     public void visitBinaryExpression(BinaryExpression expression) {
         if (expression.getOperation().isA(Types.INSTANCEOF_OPERATOR) &&
-                expression.getRightExpression() instanceof ClassExpression) {
+            expression.getRightExpression() instanceof ClassExpression) {
             ClassNode referenceType = expression.getRightExpression().getType();
 
             if (ClassHelper.isPrimitiveType(referenceType)) {

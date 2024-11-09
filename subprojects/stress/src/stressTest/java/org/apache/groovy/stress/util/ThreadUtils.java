@@ -23,7 +23,8 @@ import java.util.concurrent.CyclicBarrier;
 
 public class ThreadUtils {
 
-    private ThreadUtils() { }
+    private ThreadUtils() {
+    }
 
     public static void await(CountDownLatch latch) {
         try {

@@ -23,7 +23,7 @@ final class Groovy4554 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'Dummy.groovy': '''
+            'Dummy.groovy'          : '''
                 interface Dummy {
                 }
             ''',

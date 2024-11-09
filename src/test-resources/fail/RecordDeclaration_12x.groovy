@@ -18,4 +18,4 @@
  */
 package core
 
-abstract record Bad(int x) { }
+abstract record Bad(int x) {}

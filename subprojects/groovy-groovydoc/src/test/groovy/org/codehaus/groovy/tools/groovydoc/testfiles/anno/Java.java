@@ -32,8 +32,10 @@ public class Java implements Serializable {
     public String annotatedField;
 
     @Deprecated
-    public Java() {}
+    public Java() {
+    }
 
     @Deprecated
-    public void annotatedMethod(@CommandLine.Parameters(hidden = true) String annotatedParam) {}
+    public void annotatedMethod(@CommandLine.Parameters(hidden = true) String annotatedParam) {
+    }
 }

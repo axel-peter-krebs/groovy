@@ -28,9 +28,9 @@ import org.codehaus.groovy.ast.GroovyCodeVisitor;
  */
 public class StaticMethodCallExpression extends Expression implements MethodCall {
 
-    private ClassNode ownerType;
     private final String method;
     private final Expression arguments;
+    private ClassNode ownerType;
     private MetaMethod metaMethod = null;
 
     public StaticMethodCallExpression(ClassNode type, String method, Expression arguments) {
@@ -89,12 +89,12 @@ public class StaticMethodCallExpression extends Expression implements MethodCall
         this.ownerType = ownerType;
     }
 
-    public void setMetaMethod(MetaMethod metaMethod) {
-        this.metaMethod = metaMethod;
-    }
-
     public MetaMethod getMetaMethod() {
         return metaMethod;
+    }
+
+    public void setMetaMethod(MetaMethod metaMethod) {
+        this.metaMethod = metaMethod;
     }
 
 }

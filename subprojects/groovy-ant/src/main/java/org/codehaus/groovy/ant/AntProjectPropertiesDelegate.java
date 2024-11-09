@@ -29,9 +29,8 @@ import java.util.Set;
 
 public class AntProjectPropertiesDelegate extends Hashtable<String, Object> {
 
-    private final transient Project project;
-
     private static final long serialVersionUID = -8311751517184349962L;
+    private final transient Project project;
 
     public AntProjectPropertiesDelegate(Project project) {
         super();

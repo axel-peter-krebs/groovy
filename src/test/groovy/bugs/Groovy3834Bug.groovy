@@ -30,9 +30,10 @@ class Groovy3834Bug extends GroovyTestCase {
 
 class AClassWithMethodMissingMethod {
     int count = 0
+
     def methodMissing(String name, args) {
         count++
-        throw new MissingMethodException(name, AClassWithMethodMissingMethod, args)        
+        throw new MissingMethodException(name, AClassWithMethodMissingMethod, args)
     }
 
 }

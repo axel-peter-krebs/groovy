@@ -16,6 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 trait AA {
     {
         println 123
@@ -53,6 +54,18 @@ trait DD {
     }
 }
 
-trait EE {{}}
-trait FF {static {}}
-trait GG {static {};{}}
+trait EE {
+    {
+    }
+}
+
+trait FF {
+    static {
+    }
+}
+
+trait GG {
+    static {
+    }; {
+    }
+}

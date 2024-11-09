@@ -34,7 +34,7 @@ class StringUtil {
      * @since 1.7.3
      */
     static String tr(String text, String source, String replacement) {
-        if (text == null   || source == null   || replacement == null  ) return text
+        if (text == null || source == null || replacement == null) return text
         if (text.isEmpty() || source.isEmpty() || replacement.isEmpty()) return text
 
         source = expandHyphen(source)

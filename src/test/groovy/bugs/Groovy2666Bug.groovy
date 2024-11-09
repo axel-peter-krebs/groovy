@@ -21,22 +21,22 @@ package groovy.bugs
 import groovy.test.GroovyTestCase
 import org.codehaus.groovy.GroovyBugError
 
-class Groovy2666Bug extends GroovyTestCase{
+class Groovy2666Bug extends GroovyTestCase {
 
-    private void ex () {
-        throw new GroovyBugError ("ERR")
+    private void ex() {
+        throw new GroovyBugError("ERR")
     }
 
-    void testMe () {
+    void testMe() {
 
         try {
-            ex ()
+            ex()
         } catch (org.codehaus.groovy.GroovyBugError e) {
             // expected
             return
         } catch (NullPointerException e) {
         }
 
-        fail ()
+        fail()
     }
 }

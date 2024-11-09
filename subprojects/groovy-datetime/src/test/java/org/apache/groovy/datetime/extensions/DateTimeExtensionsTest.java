@@ -58,9 +58,9 @@ public class DateTimeExtensionsTest {
         assertEquals("LocalDateTime", expectedLocalDateTime, DateTimeExtensions.toLocalDateTime(calendar));
         assertEquals("OffsetTime", expectedLocalTime, DateTimeExtensions.toOffsetTime(calendar).toLocalTime());
         assertEquals("OffsetDateTime", expectedLocalDateTime,
-                DateTimeExtensions.toOffsetDateTime(calendar).toLocalDateTime());
+            DateTimeExtensions.toOffsetDateTime(calendar).toLocalDateTime());
         assertEquals("ZonedDateTime", expectedLocalDateTime,
-                DateTimeExtensions.toZonedDateTime(calendar).toLocalDateTime());
+            DateTimeExtensions.toZonedDateTime(calendar).toLocalDateTime());
     }
 
     @Test
@@ -87,8 +87,8 @@ public class DateTimeExtensionsTest {
         assertEquals("LocalDateTime", DateTimeExtensions.toLocalDate(calendar), DateTimeExtensions.toLocalDate(date));
         assertEquals("OffsetTime", DateTimeExtensions.toOffsetTime(calendar), DateTimeExtensions.toOffsetTime(date));
         assertEquals("OffsetDateTime",
-                DateTimeExtensions.toOffsetDateTime(calendar), DateTimeExtensions.toOffsetDateTime(date));
+            DateTimeExtensions.toOffsetDateTime(calendar), DateTimeExtensions.toOffsetDateTime(date));
         assertEquals("ZonedDateTime",
-                DateTimeExtensions.toZonedDateTime(calendar), DateTimeExtensions.toZonedDateTime(date));
+            DateTimeExtensions.toZonedDateTime(calendar), DateTimeExtensions.toZonedDateTime(date));
     }
 }

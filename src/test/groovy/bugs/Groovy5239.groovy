@@ -28,7 +28,8 @@ final class Groovy5239 {
         static who() { 'PublicStatic' }
     }
 
-    @Test @groovy.test.NotYetImplemented
+    @Test
+    @groovy.test.NotYetImplemented
     void testStaticImportVersusDelegateMethod() {
         assertScript '''
             import static groovy.bugs.Groovy5239.PublicStatic.who

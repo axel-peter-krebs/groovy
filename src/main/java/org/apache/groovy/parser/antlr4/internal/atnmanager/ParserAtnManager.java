@@ -26,6 +26,9 @@ import org.apache.groovy.parser.antlr4.GroovyLangParser;
 public class ParserAtnManager extends AtnManager {
     public static final ParserAtnManager INSTANCE = new ParserAtnManager();
 
+    private ParserAtnManager() {
+    }
+
     @Override
     protected AtnWrapper createAtnWrapper() {
         return new AtnWrapper(GroovyLangParser._ATN);
@@ -35,6 +38,4 @@ public class ParserAtnManager extends AtnManager {
     protected boolean shouldClearDfaCache() {
         return true;
     }
-
-    private ParserAtnManager() {}
 }

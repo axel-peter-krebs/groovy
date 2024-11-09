@@ -18,25 +18,13 @@
  */
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 package org.codehaus.groovy.classgen.asm.sc.bugs
 
 import groovy.transform.stc.StaticTypeCheckingTestCase
 import org.codehaus.groovy.classgen.asm.sc.StaticCompilationTestSupport
 
 class Groovy7358Bug extends StaticTypeCheckingTestCase implements StaticCompilationTestSupport {
-        void testShouldHandleContinuePropertyInOptimizedLoop() {
+    void testShouldHandleContinuePropertyInOptimizedLoop() {
         assertScript '''
 
             private int foo(String[] arr) {

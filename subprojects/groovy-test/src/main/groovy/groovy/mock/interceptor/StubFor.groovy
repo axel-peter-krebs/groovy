@@ -81,7 +81,7 @@ class StubFor {
         this.clazz = clazz
         proxy = MockProxyMetaClass.make(clazz, interceptConstruction)
         demand = new Demand()
-        ignore = new Ignore(parent:this)
+        ignore = new Ignore(parent: this)
         expect = new LooseExpectation(demand)
         proxy.interceptor = new MockInterceptor(expectation: expect)
     }
@@ -133,7 +133,7 @@ class StubFor {
      *
      * @See MockFor#proxyInstance(Object)
      */
-    GroovyObject proxyInstance(args=null) {
+    GroovyObject proxyInstance(args = null) {
         makeProxyInstance(args, false)
     }
 
@@ -143,7 +143,7 @@ class StubFor {
      *
      * @See MockFor#proxyDelegateInstance(Object)
      */
-    GroovyObject proxyDelegateInstance(args=null) {
+    GroovyObject proxyDelegateInstance(args = null) {
         makeProxyInstance(args, true)
     }
 

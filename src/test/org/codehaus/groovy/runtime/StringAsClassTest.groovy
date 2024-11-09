@@ -20,16 +20,16 @@ package org.codehaus.groovy.runtime
 
 import groovy.test.GroovyTestCase
 
-class StringAsClassTest extends GroovyTestCase{
-    void testStringAsClass  () {
+class StringAsClassTest extends GroovyTestCase {
+    void testStringAsClass() {
         assertEquals "java.util.ArrayList" as Class, ArrayList
     }
 
-    void testStringBuffer () {
+    void testStringBuffer() {
         assertEquals "${ArrayList.'package'.name}.ArrayList" as Class, ArrayList
     }
 
-    void testFails () {
+    void testFails() {
         def message = shouldFail {
             assertEquals "NOSUCHCLASS" as Class, ArrayList
         }

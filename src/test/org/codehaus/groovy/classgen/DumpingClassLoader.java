@@ -42,11 +42,19 @@ public class DumpingClassLoader extends GroovyClassLoader implements Opcodes {
 
     protected static boolean CHECK_CLASS = false;
     protected static boolean DUMP_CLASS = true;
-
+    protected TraceClassVisitor dumpVisitor = new TraceClassVisitor(null, new ASMifier(), new PrintWriter(new OutputStreamWriter(System.out)));
+    protected TraceClassVisitor invisibleDumpVisitor = new TraceClassVisitor(null, new ASMifier(), new PrintWriter(new StringBuilderWriter()));
+    protected CompileUnit unit = new CompileUnit(this, new CompilerConfiguration());
+    protected ClassGenerator checker =
+        new AsmClassGenerator(null, new GeneratorContext(unit), new CheckClassAdapter(invisibleDumpVisitor), null);
+    protected ClassGenerator dumper = new AsmClassGenerator(null, new GeneratorContext(unit), dumpVisitor, null);
     public DumpingClassLoader(ClassLoader parentLoader) {
         super(parentLoader);
     }
 
+    protected ClassCollector createCollector(CompilationUnit unit) {
+        return new DebugCollector(this, unit, null);
+    }
 
     protected class DebugCollector extends ClassCollector {
 
@@ -67,16 +75,5 @@ public class DumpingClassLoader extends GroovyClassLoader implements Opcodes {
             super.call(classWriter, classNode);
         }
     }
-
-    protected ClassCollector createCollector(CompilationUnit unit) {
-        return new DebugCollector(this, unit, null);
-    }
-
-    protected TraceClassVisitor dumpVisitor = new TraceClassVisitor(null, new ASMifier(), new PrintWriter(new OutputStreamWriter(System.out)));
-    protected TraceClassVisitor invisibleDumpVisitor = new TraceClassVisitor(null, new ASMifier(), new PrintWriter(new StringBuilderWriter()));
-    protected CompileUnit unit = new CompileUnit(this, new CompilerConfiguration());
-    protected ClassGenerator checker =
-            new AsmClassGenerator(null,new GeneratorContext(unit), new CheckClassAdapter(invisibleDumpVisitor), null);
-    protected ClassGenerator dumper = new AsmClassGenerator(null,new GeneratorContext(unit), dumpVisitor, null);
 
 }

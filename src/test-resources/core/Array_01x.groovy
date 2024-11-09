@@ -19,31 +19,31 @@
 import groovy.transform.CompileStatic
 
 def testArrayInitializer() {
-    def x = new double[] {}
+    def x = new double[]{}
     assert x.length == 0
 
-    def y = new double[][] {}
+    def y = new double[][]{}
     assert y.length == 0
 
     def z = new double[0][]
     assert z.length == 0
 
-    def a = new int[] {1, 2}
+    def a = new int[]{1, 2}
     assert a[0] == 1
     assert a[1] == 2
     assert a.toList() == [1, 2]
 
-    def b = new int[][] {
+    def b = new int[][]{
         // GROOVY-8551:
-        {1, 1.plus(1)},
-        new int[] {2.plus(1), 4}
+        { 1 , 1.plus(1) },
+        new int[]{2.plus(1), 4}
     }
     assert b[0][0] == 1
     assert b[0][1] == 2
     assert b[1][0] == 3
     assert b[1][1] == 4
 
-    def c = new String[] {
+    def c = new String[]{
         'a'
         ,
         'b'
@@ -56,40 +56,41 @@ def testArrayInitializer() {
     assert c[2] == 'c'
 
     assert new String[]
-            {
-                'a', 'b'
-            }
-    ==
-            ['a', 'b'] as String[]
+        {
+            'a', 'b'
+        }
+        ==
+        ['a', 'b'] as String[]
 }
+
 testArrayInitializer()
 
 @CompileStatic
 def testArrayInitializerCS() {
-    def x = new double[] {}
+    def x = new double[]{}
     assert x.length == 0
 
-    def y = new double[][] {}
+    def y = new double[][]{}
     assert y.length == 0
 
     def z = new double[0][]
     assert z.length == 0
 
-    def a = new int[] {1, 2}
+    def a = new int[]{1, 2}
     assert a[0] == 1
     assert a[1] == 2
     assert a.toList() == [1, 2]
 
-    def b = new int[][] {
-        {1, 1.plus(1)},
-        new int[] {2.plus(1), 4}
+    def b = new int[][]{
+        { 1 , 1.plus(1) },
+        new int[]{2.plus(1), 4}
     }
     assert b[0][0] == 1
     assert b[0][1] == 2
     assert b[1][0] == 3
     assert b[1][1] == 4
 
-    def c = new String[] {
+    def c = new String[]{
         'a'
         ,
         'b'
@@ -102,10 +103,11 @@ def testArrayInitializerCS() {
     assert c[2] == 'c'
 
     assert new String[]
-            {
-                'a', 'b'
-            }
-    ==
-    ['a', 'b'] as String[]
+        {
+            'a', 'b'
+        }
+        ==
+        ['a', 'b'] as String[]
 }
+
 testArrayInitializerCS()

@@ -54,6 +54,10 @@ public class InheritConstructorsASTTransformation extends AbstractASTTransformat
     private static final ClassNode INHERIT_CONSTRUCTORS_TYPE = ClassHelper.make(InheritConstructors.class);
     private static final String ANNOTATION = "@" + INHERIT_CONSTRUCTORS_TYPE.getNameWithoutPackage();
 
+    private static boolean isExisting(final ClassNode classNode, final Parameter[] params) {
+        return classNode.getDeclaredConstructors().stream().anyMatch(ctor -> parametersEqual(params, ctor.getParameters()));
+    }
+
     @Override
     public void visit(ASTNode[] nodes, SourceUnit source) {
         init(nodes, source);
@@ -67,7 +71,7 @@ public class InheritConstructorsASTTransformation extends AbstractASTTransformat
     private void processClass(ClassNode cNode, AnnotationNode node) {
         if (cNode.isInterface()) {
             addError("Error processing interface '" + cNode.getName() +
-                    "'. " + ANNOTATION + " only allowed for classes.", cNode);
+                "'. " + ANNOTATION + " only allowed for classes.", cNode);
             return;
         }
         boolean copyConstructorAnnotations = memberHasValue(node, "constructorAnnotations", true);
@@ -114,9 +118,5 @@ public class InheritConstructorsASTTransformation extends AbstractASTTransformat
             theArgs.add(castX(p.getType(), varX(p.getName(), newType)));
         }
         return theArgs;
-    }
-
-    private static boolean isExisting(final ClassNode classNode, final Parameter[] params) {
-        return classNode.getDeclaredConstructors().stream().anyMatch(ctor -> parametersEqual(params, ctor.getParameters()));
     }
 }

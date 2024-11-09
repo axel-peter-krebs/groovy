@@ -69,52 +69,6 @@ public class AutoImplementASTTransformation extends AbstractASTTransformation {
     private static final ClassNode MY_TYPE = ClassHelper.make(MY_CLASS);
     private static final String MY_TYPE_NAME = "@" + MY_TYPE.getNameWithoutPackage();
 
-    @Override
-    public void visit(final ASTNode[] nodes, final SourceUnit source) {
-        init(nodes, source);
-        AnnotatedNode parent = (AnnotatedNode) nodes[1];
-        AnnotationNode anno = (AnnotationNode) nodes[0];
-        if (!MY_TYPE.equals(anno.getClassNode())) return;
-
-        if (parent instanceof ClassNode) {
-            ClassNode cNode = (ClassNode) parent;
-            if (!checkNotInterface(cNode, MY_TYPE_NAME)) return;
-
-            String message = getMemberStringValue(anno, "message");
-            ClassNode exception = getMemberClassValue(anno, "exception");
-            if (exception != null && Undefined.isUndefinedException(exception)) {
-                exception = null;
-            }
-
-            Expression code = anno.getMember("code");
-            if (code != null && !(code instanceof ClosureExpression)) {
-                addError("Expected closure value for annotation parameter 'code'. Found " + code, cNode);
-            } else {
-                createMethods(cNode, exception, message, (ClosureExpression) code);
-                if (code != null) {
-                    anno.setMember("code", new ClosureExpression(Parameter.EMPTY_ARRAY, EmptyStatement.INSTANCE));
-                }
-            }
-        }
-    }
-
-    private void createMethods(final ClassNode cNode, final ClassNode exception, final String message, final ClosureExpression code) {
-        for (MethodNode candidate : getAllCorrectedMethodsMap(cNode).values()) {
-            if (candidate.isAbstract()) {
-                MethodNode mNode = addGeneratedMethod(cNode,
-                        candidate.getName(),
-                        candidate.getModifiers() & 0x7, // visibility only
-                        candidate.getReturnType(),
-                        candidate.getParameters(),
-                        candidate.getExceptions(),
-                        createMethodBody(cNode, candidate, exception, message, code)
-                );
-                mNode.addAnnotation(ClassHelper.OVERRIDE_TYPE);
-                mNode.setGenericsTypes(candidate.getGenericsTypes()); // GROOVY-10552
-            }
-        }
-    }
-
     private static Statement createMethodBody(final ClassNode cNode, final MethodNode mNode, final ClassNode exception, final String message, final ClosureExpression code) {
         if (mNode.getParameters().length == 0) {
             String propertyName = getPropertyName(mNode);
@@ -226,7 +180,7 @@ public class AutoImplementASTTransformation extends AbstractASTTransformation {
                 }
             } else {
                 // getter generated only if no explicit isser and vice versa
-                String  isserName = getGetterName(pn.getName(), Boolean.TYPE);
+                String isserName = getGetterName(pn.getName(), Boolean.TYPE);
                 String getterName = getGetterName(pn.getName());
                 if (!cNode.hasMethod(isserName, Parameter.EMPTY_ARRAY)) {
                     MethodNode mn = new MethodNode(getterName, modifiers, pn.getType(), Parameter.EMPTY_ARRAY, null, null);
@@ -248,8 +202,8 @@ public class AutoImplementASTTransformation extends AbstractASTTransformation {
 
     private static boolean isWeakerCandidate(final MethodNode existing, final MethodNode found) {
         return !(existing.isAbstract() && !found.isAbstract()) &&
-                // GROOVY-10472: prefer covariant method with more concrete type
-                isSubtype(found.getReturnType(), existing.getReturnType());
+            // GROOVY-10472: prefer covariant method with more concrete type
+            isSubtype(found.getReturnType(), existing.getReturnType());
     }
 
     private static MethodNode getDeclaredMethodCorrected(final Map<String, ClassNode> genericsSpec, final MethodNode origMethod, final ClassNode correctedClass) {
@@ -260,5 +214,51 @@ public class AutoImplementASTTransformation extends AbstractASTTransformation {
             }
         }
         return null;
+    }
+
+    @Override
+    public void visit(final ASTNode[] nodes, final SourceUnit source) {
+        init(nodes, source);
+        AnnotatedNode parent = (AnnotatedNode) nodes[1];
+        AnnotationNode anno = (AnnotationNode) nodes[0];
+        if (!MY_TYPE.equals(anno.getClassNode())) return;
+
+        if (parent instanceof ClassNode) {
+            ClassNode cNode = (ClassNode) parent;
+            if (!checkNotInterface(cNode, MY_TYPE_NAME)) return;
+
+            String message = getMemberStringValue(anno, "message");
+            ClassNode exception = getMemberClassValue(anno, "exception");
+            if (exception != null && Undefined.isUndefinedException(exception)) {
+                exception = null;
+            }
+
+            Expression code = anno.getMember("code");
+            if (code != null && !(code instanceof ClosureExpression)) {
+                addError("Expected closure value for annotation parameter 'code'. Found " + code, cNode);
+            } else {
+                createMethods(cNode, exception, message, (ClosureExpression) code);
+                if (code != null) {
+                    anno.setMember("code", new ClosureExpression(Parameter.EMPTY_ARRAY, EmptyStatement.INSTANCE));
+                }
+            }
+        }
+    }
+
+    private void createMethods(final ClassNode cNode, final ClassNode exception, final String message, final ClosureExpression code) {
+        for (MethodNode candidate : getAllCorrectedMethodsMap(cNode).values()) {
+            if (candidate.isAbstract()) {
+                MethodNode mNode = addGeneratedMethod(cNode,
+                    candidate.getName(),
+                    candidate.getModifiers() & 0x7, // visibility only
+                    candidate.getReturnType(),
+                    candidate.getParameters(),
+                    candidate.getExceptions(),
+                    createMethodBody(cNode, candidate, exception, message, code)
+                );
+                mNode.addAnnotation(ClassHelper.OVERRIDE_TYPE);
+                mNode.setGenericsTypes(candidate.getGenericsTypes()); // GROOVY-10552
+            }
+        }
     }
 }

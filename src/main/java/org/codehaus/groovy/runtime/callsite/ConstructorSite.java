@@ -38,6 +38,18 @@ public class ConstructorSite extends MetaClassSite {
         this.version = metaClass.getVersion();
     }
 
+    public static ConstructorSite createConstructorSite(CallSite site, MetaClassImpl metaClass, CachedConstructor constructor, Class[] params, Object[] args) {
+        if (constructor.correctArguments(args) == args) {
+            if (noWrappers(args)) {
+                if (noCoerce(constructor, args))
+                    return new ConstructorSiteNoUnwrap(site, metaClass, constructor, params);
+                else
+                    return new ConstructorSiteNoUnwrapNoCoerce(site, metaClass, constructor, params);
+            }
+        }
+        return new ConstructorSite(site, metaClass, constructor, params);
+    }
+
     @Override
     public Object callConstructor(Object receiver, Object[] args) throws Throwable {
         if (checkCall(receiver, args)) {
@@ -53,22 +65,9 @@ public class ConstructorSite extends MetaClassSite {
 
     protected final boolean checkCall(Object receiver, Object[] args) {
         return receiver == metaClass.getTheClass() // metaclass match receiver
-                && ((MetaClassImpl) metaClass).getVersion() == version // metaClass still be valid
-                && MetaClassHelper.sameClasses(params, args);
+            && ((MetaClassImpl) metaClass).getVersion() == version // metaClass still be valid
+            && MetaClassHelper.sameClasses(params, args);
     }
-
-    public static ConstructorSite createConstructorSite(CallSite site, MetaClassImpl metaClass, CachedConstructor constructor, Class[] params, Object[] args) {
-        if (constructor.correctArguments(args) == args) {
-            if (noWrappers(args)) {
-                if (noCoerce(constructor, args))
-                    return new ConstructorSiteNoUnwrap(site, metaClass, constructor, params);
-                else
-                    return new ConstructorSiteNoUnwrapNoCoerce(site, metaClass, constructor, params);
-            }
-        }
-        return new ConstructorSite(site, metaClass, constructor, params);
-    }
-
 
     /**
      * Call site where we know there is no need to unwrap arguments
@@ -144,7 +143,7 @@ public class ConstructorSite extends MetaClassSite {
         @Override
         public final Object callConstructor(Object receiver, Object[] args) throws Throwable {
             if (checkCall(receiver, args)) {
-                final Object[] newArgs = new Object[] {args[0]};
+                final Object[] newArgs = new Object[]{args[0]};
                 final Object bean = constructor.invoke(newArgs);
                 try {
                     ((MetaClassImpl) metaClass).setProperties(bean, (Map) args[1]);

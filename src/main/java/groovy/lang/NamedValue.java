@@ -37,17 +37,17 @@ public class NamedValue<T> implements Serializable {
     private final String name;
     private final T val;
 
+    public NamedValue(String name, T val) {
+        this.name = name;
+        this.val = val;
+    }
+
     public String getName() {
         return name;
     }
 
     public T getVal() {
         return val;
-    }
-
-    public NamedValue(String name, T val) {
-        this.name = name;
-        this.val = val;
     }
 
     @Override

@@ -25,13 +25,13 @@ class AmbiguousListOrMethodTest extends GroovyTestCase {
     void testLocalVariableVersion() {
         def foo = [3, 2, 3]
 
-        def val = foo [0]
+        def val = foo[0]
         assert val == 3
     }
 
     void testUndefinedPropertyVersion() {
         shouldFail(MissingPropertyException) {
-            def val = this.foo [0]
+            def val = this.foo[0]
         }
     }
 
@@ -58,6 +58,7 @@ class AmbiguousListOrMethodTest extends GroovyTestCase {
 }
 
 class Example {
-    def getAt(String a, String b) {return 2}
-    def getAt(String a) {return 1}
+    def getAt(String a, String b) { return 2 }
+
+    def getAt(String a) { return 1 }
 }

@@ -37,7 +37,7 @@ final class Groovy5150 {
             targetDirectory: File.createTempDir(),
             jointCompilationOptions: [stubDir: File.createTempDir()]
         )
-        try (def loader = new GroovyClassLoader(this.class.classLoader).tap{ addURL(this.class.location) }) {
+        try (def loader = new GroovyClassLoader(this.class.classLoader).tap { addURL(this.class.location) }) {
             def b = new File(sourceDirectory, 'B.java')
             b.write """
                 public class B {
@@ -67,7 +67,7 @@ final class Groovy5150 {
             targetDirectory: File.createTempDir(),
             jointCompilationOptions: [stubDir: File.createTempDir()]
         )
-        try (def loader = new GroovyClassLoader(this.class.classLoader).tap{ addURL(this.class.location) }) {
+        try (def loader = new GroovyClassLoader(this.class.classLoader).tap { addURL(this.class.location) }) {
             def a = new File(sourceDirectory, 'A.groovy')
             a.write '''
                 class A {

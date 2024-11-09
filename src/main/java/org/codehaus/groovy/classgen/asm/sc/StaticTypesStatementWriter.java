@@ -71,14 +71,41 @@ public class StaticTypesStatementWriter extends StatementWriter {
         super(controller);
     }
 
+    private static void loadFromArray(final MethodVisitor mv, final OperandStack os, final BytecodeVariable variable, final int array, final int index) {
+        mv.visitVarInsn(ALOAD, array);
+        mv.visitVarInsn(ILOAD, index);
+        ClassNode varType = variable.getType();
+        if (ClassHelper.isPrimitiveType(varType)) {
+            if (ClassHelper.isPrimitiveInt(varType)) {
+                mv.visitInsn(IALOAD);
+            } else if (ClassHelper.isPrimitiveLong(varType)) {
+                mv.visitInsn(LALOAD);
+            } else if (ClassHelper.isPrimitiveByte(varType) || ClassHelper.isPrimitiveBoolean(varType)) {
+                mv.visitInsn(BALOAD);
+            } else if (ClassHelper.isPrimitiveChar(varType)) {
+                mv.visitInsn(CALOAD);
+            } else if (ClassHelper.isPrimitiveShort(varType)) {
+                mv.visitInsn(SALOAD);
+            } else if (ClassHelper.isPrimitiveFloat(varType)) {
+                mv.visitInsn(FALOAD);
+            } else if (ClassHelper.isPrimitiveDouble(varType)) {
+                mv.visitInsn(DALOAD);
+            }
+        } else {
+            mv.visitInsn(AALOAD);
+        }
+        os.push(varType);
+        os.storeVar(variable);
+    }
+
+    //--------------------------------------------------------------------------
+
     @Override
     public void writeBlockStatement(final BlockStatement statement) {
         controller.switchToFastPath();
         super.writeBlockStatement(statement);
         controller.switchToSlowPath();
     }
-
-    //--------------------------------------------------------------------------
 
     @Override
     protected void writeForInLoop(final ForStatement loop) {
@@ -158,33 +185,6 @@ public class StaticTypesStatementWriter extends StatementWriter {
         compileStack.removeVar(array);
     }
 
-    private static void loadFromArray(final MethodVisitor mv, final OperandStack os, final BytecodeVariable variable, final int array, final int index) {
-        mv.visitVarInsn(ALOAD, array);
-        mv.visitVarInsn(ILOAD, index);
-        ClassNode varType = variable.getType();
-        if (ClassHelper.isPrimitiveType(varType)) {
-            if (ClassHelper.isPrimitiveInt(varType)) {
-                mv.visitInsn(IALOAD);
-            } else if (ClassHelper.isPrimitiveLong(varType)) {
-                mv.visitInsn(LALOAD);
-            } else if (ClassHelper.isPrimitiveByte(varType) || ClassHelper.isPrimitiveBoolean(varType)) {
-                mv.visitInsn(BALOAD);
-            } else if (ClassHelper.isPrimitiveChar(varType)) {
-                mv.visitInsn(CALOAD);
-            } else if (ClassHelper.isPrimitiveShort(varType)) {
-                mv.visitInsn(SALOAD);
-            } else if (ClassHelper.isPrimitiveFloat(varType)) {
-                mv.visitInsn(FALOAD);
-            } else if (ClassHelper.isPrimitiveDouble(varType)) {
-                mv.visitInsn(DALOAD);
-            }
-        } else {
-            mv.visitInsn(AALOAD);
-        }
-        os.push(varType);
-        os.storeVar(variable);
-    }
-
     private void writeEnumerationBasedForEachLoop(final ForStatement loop, final Expression collectionExpression, final ClassNode collectionType) {
         CompileStack compileStack = controller.getCompileStack();
         OperandStack operandStack = controller.getOperandStack();
@@ -226,8 +226,8 @@ public class StaticTypesStatementWriter extends StatementWriter {
             MethodNode iterator = collectionType.getMethod("iterator", Parameter.EMPTY_ARRAY);
             if (iterator == null) {
                 iterator = GeneralUtils.getInterfacesAndSuperInterfaces(collectionType).stream()
-                        .map(in -> in.getMethod("iterator", Parameter.EMPTY_ARRAY))
-                        .filter(Objects::nonNull).findFirst().orElse(null);
+                    .map(in -> in.getMethod("iterator", Parameter.EMPTY_ARRAY))
+                    .filter(Objects::nonNull).findFirst().orElse(null);
             }
             if (iterator != null && GeneralUtils.isOrImplements(iterator.getReturnType(), ClassHelper.Iterator_TYPE)) {
                 MethodCallExpression call = GeneralUtils.callX(collectionExpression, "iterator");

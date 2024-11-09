@@ -31,6 +31,10 @@ public class Tt1gi extends Tt1 implements GroovyObject, GroovyInterceptable {
         return this.metaClass;
     }
 
+    public void setMetaClass(final MetaClass metaClass) {
+        this.metaClass = metaClass;
+    }
+
     public Object getProperty(final String property) {
         if ("x".equals(property)) {
             return "dynamic property";
@@ -45,10 +49,6 @@ public class Tt1gi extends Tt1 implements GroovyObject, GroovyInterceptable {
         } else {
             return this.metaClass.invokeMethod(this, name, args);
         }
-    }
-
-    public void setMetaClass(final MetaClass metaClass) {
-        this.metaClass = metaClass;
     }
 
     public void setProperty(final String property, final Object newValue) {

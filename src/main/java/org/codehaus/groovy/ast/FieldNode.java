@@ -40,13 +40,8 @@ public class FieldNode extends AnnotatedNode implements Variable {
     private boolean holder;
     private ClassNode originType;
 
-    public static FieldNode newStatic(Class theClass, String name) throws SecurityException, NoSuchFieldException {
-        Field field = theClass.getField(name);
-        ClassNode fldType = ClassHelper.make(field.getType());
-        return new FieldNode(name, ACC_PUBLIC | ACC_STATIC, fldType, ClassHelper.make(theClass), null);
+    protected FieldNode() {
     }
-
-    protected FieldNode() {}
 
     public FieldNode(String name, int modifiers, ClassNode type, ClassNode owner, Expression initialValueExpression) {
         this.name = name;
@@ -54,6 +49,12 @@ public class FieldNode extends AnnotatedNode implements Variable {
         this.setType(type);
         this.owner = owner;
         this.initialValueExpression = initialValueExpression;
+    }
+
+    public static FieldNode newStatic(Class theClass, String name) throws SecurityException, NoSuchFieldException {
+        Field field = theClass.getField(name);
+        ClassNode fldType = ClassHelper.make(field.getType());
+        return new FieldNode(name, ACC_PUBLIC | ACC_STATIC, fldType, ClassHelper.make(theClass), null);
     }
 
     @Override
@@ -79,6 +80,13 @@ public class FieldNode extends AnnotatedNode implements Variable {
 
     public ClassNode getOwner() {
         return owner;
+    }
+
+    /**
+     * @param owner The owner to set.
+     */
+    public void setOwner(ClassNode owner) {
+        this.owner = owner;
     }
 
     public boolean isHolder() {
@@ -108,13 +116,6 @@ public class FieldNode extends AnnotatedNode implements Variable {
      */
     public boolean isEnum() {
         return (getModifiers() & ACC_ENUM) != 0;
-    }
-
-    /**
-     * @param owner The owner to set.
-     */
-    public void setOwner(ClassNode owner) {
-        this.owner = owner;
     }
 
     @Override

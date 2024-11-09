@@ -22,7 +22,7 @@ import static org.codehaus.groovy.control.CompilerConfiguration.DEFAULT as confi
 
 class MethodPatternsTest extends AbstractBytecodeTestCase {
 
-    void testUnoptimizedIfWithNestedOptimizedLoop(){
+    void testUnoptimizedIfWithNestedOptimizedLoop() {
         if (config.indyEnabled) return;
         // in this example the if block contains statements that will not be optimized
         // but we still want to optimize the for loops, which can.
@@ -50,39 +50,39 @@ class MethodPatternsTest extends AbstractBytecodeTestCase {
 
             System.err.println( "Done: "+sum+" "+m );
         ''').hasSequence([
-                // for (int j=0; j<1000; j++) start and condition
-                'ICONST_0',
-                'SIPUSH 1000',
-                'IF_ICMPGE',
-                'ICONST_1',
-                // for (int i=0; i<100_000; i++) start and condition
-                'ICONST_0',
-                'LDC 100000',
-                'IF_ICMPGE',
-                'ICONST_1',
-                'GOTO',
-                'ICONST_0',
-                'IFEQ',
-                // sum = sum + i
-                'LLOAD',
-                'ILOAD',
-                'I2L',
-                'LADD',
-                // m = m * i
-                'DLOAD',
-                'ILOAD',
-                'I2D',
-                'DMUL',
-                // for (int i=0; i<100_000; i++) increment
-                'ILOAD',
-                'ICONST_1',
-                'IADD',
-                'ISTORE',
-                // for (int j=0; j<1000; j++) increment
-                'ILOAD',
-                'ICONST_1',
-                'IADD',
-                'ISTORE'
+            // for (int j=0; j<1000; j++) start and condition
+            'ICONST_0',
+            'SIPUSH 1000',
+            'IF_ICMPGE',
+            'ICONST_1',
+            // for (int i=0; i<100_000; i++) start and condition
+            'ICONST_0',
+            'LDC 100000',
+            'IF_ICMPGE',
+            'ICONST_1',
+            'GOTO',
+            'ICONST_0',
+            'IFEQ',
+            // sum = sum + i
+            'LLOAD',
+            'ILOAD',
+            'I2L',
+            'LADD',
+            // m = m * i
+            'DLOAD',
+            'ILOAD',
+            'I2D',
+            'DMUL',
+            // for (int i=0; i<100_000; i++) increment
+            'ILOAD',
+            'ICONST_1',
+            'IADD',
+            'ISTORE',
+            // for (int j=0; j<1000; j++) increment
+            'ILOAD',
+            'ICONST_1',
+            'IADD',
+            'ISTORE'
         ])
     }
 
@@ -233,7 +233,7 @@ class MethodPatternsTest extends AbstractBytecodeTestCase {
             int[] x = new int[n]
             int[] y = new int[n]
             for (int i = 0; i < n; i++) x[i] += y[i]
-        ''').hasSequence ([
+        ''').hasSequence([
             'ILOAD',
             'ILOAD',
             'IF_ICMPGE',
@@ -282,7 +282,7 @@ class MethodPatternsTest extends AbstractBytecodeTestCase {
                     return result;
                 }
             }
-        ''').hasSequence ([
+        ''').hasSequence([
             'IMUL',
             'ALOAD 0',
             'GETFIELD X._tagReservationDate : J',
@@ -305,7 +305,7 @@ class MethodPatternsTest extends AbstractBytecodeTestCase {
                     xa[0] = new X()
                 }
             }
-        ''').hasSequence ([
+        ''').hasSequence([
             'ICONST_0',
             'INVOKESTATIC org/codehaus/groovy/runtime/BytecodeInterface8.objectArraySet ([Ljava/lang/Object;ILjava/lang/Object;)V',
         ])
@@ -320,7 +320,7 @@ class MethodPatternsTest extends AbstractBytecodeTestCase {
                     xa[0] = false
                 }
             }
-        ''').hasSequence ([
+        ''').hasSequence([
             'ICONST_0',
             'INVOKESTATIC org/codehaus/groovy/runtime/BytecodeInterface8.zArraySet ([ZIZ)V',
         ])
@@ -329,14 +329,14 @@ class MethodPatternsTest extends AbstractBytecodeTestCase {
     void testArray() {
         if (config.indyEnabled) return;
         def methods = [
-            "short"     :   [1, "sArraySet ([SIS)V", "sArrayGet ([SI)S"],
-            "int"       :   [1, "intArraySet ([III)V", "intArrayGet ([II)I"],
-            "boolean"   :   [false, "zArraySet ([ZIZ)V", "zArrayGet ([ZI)Z"],
-            "long"      :   [1l, "lArraySet ([JIJ)V","lArrayGet ([JI)J"],
-            "float"     :   [1f, "fArraySet ([FIF)V", "fArrayGet ([FI)F"],
-            "byte"      :   [1, "bArraySet ([BIB)V", "bArrayGet ([BI)B"],
-            "char"      :   [1, "cArraySet ([CIC)V", "cArrayGet ([CI)C"],
-            "double"    :   [1d, "dArraySet ([DID)V", "dArrayGet ([DI)D"]
+            "short"  : [1, "sArraySet ([SIS)V", "sArrayGet ([SI)S"],
+            "int"    : [1, "intArraySet ([III)V", "intArrayGet ([II)I"],
+            "boolean": [false, "zArraySet ([ZIZ)V", "zArrayGet ([ZI)Z"],
+            "long"   : [1l, "lArraySet ([JIJ)V", "lArrayGet ([JI)J"],
+            "float"  : [1f, "fArraySet ([FIF)V", "fArrayGet ([FI)F"],
+            "byte"   : [1, "bArraySet ([BIB)V", "bArrayGet ([BI)B"],
+            "char"   : [1, "cArraySet ([CIC)V", "cArrayGet ([CI)C"],
+            "double" : [1d, "dArraySet ([DID)V", "dArrayGet ([DI)D"]
         ]
         methods.each {
             assert compile(method: "foo", """
@@ -346,9 +346,9 @@ class MethodPatternsTest extends AbstractBytecodeTestCase {
                     xa[0] = ${it.value[0]}
                   }
                 }
-            """).hasSequence ([
+            """).hasSequence([
                 'ICONST_0',
-                "INVOKESTATIC org/codehaus/groovy/runtime/BytecodeInterface8."+it.value[1],
+                "INVOKESTATIC org/codehaus/groovy/runtime/BytecodeInterface8." + it.value[1],
             ])
 
             assert compile(method: "foo", """
@@ -358,7 +358,7 @@ class MethodPatternsTest extends AbstractBytecodeTestCase {
                     xa[0]
                   }
                 }
-            """).hasSequence ([
+            """).hasSequence([
                 'ICONST_0',
                 "INVOKESTATIC org/codehaus/groovy/runtime/BytecodeInterface8.${it.value[2]}",
             ])
@@ -379,7 +379,7 @@ class MethodPatternsTest extends AbstractBytecodeTestCase {
             }
             clos.call(b)
             assert b.v == 3
-            assert a[3] == 8        
+            assert a[3] == 8
         """
     }
 
@@ -389,7 +389,7 @@ class MethodPatternsTest extends AbstractBytecodeTestCase {
             int fib(int i) {
                 i < 2 ? 1 : fib(i - 2) + fib(i - 1)
             }
-        """).hasSequence ([
+        """).hasSequence([
             'ILOAD 1',
             'ICONST_2',
             'IF_ICMPGE',
@@ -432,7 +432,7 @@ class MethodPatternsTest extends AbstractBytecodeTestCase {
 
             public boolean someCode() {
                 boolean val = someCall()
-            }        
+            }
         """).hasSequence([
             'ALOAD',
             'INVOKEVIRTUAL script.someCall ()Z',
@@ -446,15 +446,15 @@ class MethodPatternsTest extends AbstractBytecodeTestCase {
         if (config.indyEnabled) return;
         def types = [
             "byte", "short", "int", "long", "double", "float"]
-        types.each {type ->
-            assert compile(method: "someCode","""
+        types.each { type ->
+            assert compile(method: "someCode", """
                 def someCode() {
                     $type v = 5/4
                 }
             """).hasSequence(["IDIV"])
         }
-        types.each {type ->
-            assert compile(method: "someCode","""
+        types.each { type ->
+            assert compile(method: "someCode", """
                 def someCode() {
                     $type v = 0
                     v = 5/4

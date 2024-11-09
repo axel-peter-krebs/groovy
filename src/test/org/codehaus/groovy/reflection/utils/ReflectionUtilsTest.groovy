@@ -64,7 +64,7 @@ class ReflectionUtilsTest extends GroovyTestCase {
             mcr.removeMetaClass PojoCallerTestClass
             mcr.removeMetaClass PogoCalleTestClass
 
-            Closure testClosure = {-> return ReflectionUtils.getCallingClass()}
+            Closure testClosure = { -> return ReflectionUtils.getCallingClass() }
             PojoCallerTestClass.metaClass.metaInstanceCaller = testClosure
             PogoCalleTestClass.metaClass.metaInstanceCaller = testClosure
 

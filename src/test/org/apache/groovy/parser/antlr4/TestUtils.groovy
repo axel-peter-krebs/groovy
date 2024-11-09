@@ -1,21 +1,21 @@
-    /*
- *  Licensed to the Apache Software Foundation (ASF) under one
- *  or more contributor license agreements.  See the NOTICE file
- *  distributed with this work for additional information
- *  regarding copyright ownership.  The ASF licenses this file
- *  to you under the Apache License, Version 2.0 (the
- *  "License"); you may not use this file except in compliance
- *  with the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing,
- *  software distributed under the License is distributed on an
- *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- *  KIND, either express or implied.  See the License for the
- *  specific language governing permissions and limitations
- *  under the License.
- */
+/*
+*  Licensed to the Apache Software Foundation (ASF) under one
+*  or more contributor license agreements.  See the NOTICE file
+*  distributed with this work for additional information
+*  regarding copyright ownership.  The ASF licenses this file
+*  to you under the Apache License, Version 2.0 (the
+*  "License"); you may not use this file except in compliance
+*  with the License.  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+*  Unless required by applicable law or agreed to in writing,
+*  software distributed under the License is distributed on an
+*  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+*  KIND, either express or implied.  See the License for the
+*  specific language governing permissions and limitations
+*  under the License.
+*/
 package org.apache.groovy.parser.antlr4
 
 import groovy.transform.AutoFinal
@@ -53,7 +53,9 @@ import java.util.logging.Level
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
-@CompileStatic @AutoFinal @Log
+@CompileStatic
+@AutoFinal
+@Log
 final class TestUtils {
 
     public static final List<Class> COMMON_IGNORE_CLASS_LIST = [AssertStatement, BreakStatement, ConstructorNode, ContinueStatement, ExpressionStatement, FieldNode, ForStatement, GenericsType, IfStatement, MethodNode, PackageNode, Parameter, PropertyNode, ReturnStatement, ThrowStatement, Token, WhileStatement].asUnmodifiable()
@@ -67,7 +69,7 @@ final class TestUtils {
     @CompileDynamic
     static doTest(String path, conf = ASTComparatorCategory.DEFAULT_CONFIGURATION, CompilerConfiguration compilerConfiguration = CompilerConfiguration.DEFAULT) {
         File file = new File("$RESOURCES_PATH/$path")
-        assert file.exists() : "Test resource not found: $file.absolutePath"
+        assert file.exists(): "Test resource not found: $file.absolutePath"
 
         def (newAST, newElapsedTime) = profile { buildAST(file, getAntlr4Config(compilerConfiguration)) }
 //        def (oldAST, oldElapsedTime) = profile { buildAST(file, getAntlr2Config(compilerConfiguration)) }
@@ -95,7 +97,7 @@ final class TestUtils {
     @CompileDynamic
     static void shouldFail(String path, conf = ASTComparatorCategory.DEFAULT_CONFIGURATION, boolean toCheckNewParserOnly = false) {
         File file = new File("$RESOURCES_PATH/$path")
-        assert file.exists() : "Test resource not found: $file.absolutePath"
+        assert file.exists(): "Test resource not found: $file.absolutePath"
 
         def (newAST, newElapsedTime) = profile { buildAST(file, antlr4Config) }
 //        def (oldAST, oldElapsedTime) = profile { buildAST(file, antlr2Config) }
@@ -259,7 +261,7 @@ final class TestUtils {
 
     private static boolean executeScript(GroovyShell shell, String path) {
         File file = new File("$RESOURCES_PATH/$path")
-        assert file.exists() : "Test resource not found: $file.absolutePath"
+        assert file.exists(): "Test resource not found: $file.absolutePath"
         try {
             shell.evaluate(file.text)
             return true
@@ -272,7 +274,8 @@ final class TestUtils {
     private static String readZipEntry(String path, String entryName) {
         String result = ''
 
-        try (zf = new ZipFile(new File(path))) {
+        try (
+        zf = new ZipFile(new File(path)) ) {
             def is = new BufferedInputStream(zf.getInputStream(new ZipEntry(entryName)))
             result = is.getText('UTF-8')
         } catch (e) {

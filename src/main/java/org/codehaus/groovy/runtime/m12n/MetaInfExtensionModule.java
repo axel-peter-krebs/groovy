@@ -33,23 +33,11 @@ import java.util.logging.Logger;
  * @since 2.0.0
  */
 public class MetaInfExtensionModule extends SimpleExtensionModule {
-    private static final Logger LOG = Logger.getLogger(MetaInfExtensionModule.class.getName());
-
     public static final String MODULE_INSTANCE_CLASSES_KEY = "extensionClasses";
     public static final String MODULE_STATIC_CLASSES_KEY = "staticExtensionClasses";
-
+    private static final Logger LOG = Logger.getLogger(MetaInfExtensionModule.class.getName());
     private final List<Class> instanceExtensionClasses;
     private final List<Class> staticExtensionClasses;
-
-    @Override
-    public List<Class> getInstanceMethodsExtensionClasses() {
-        return instanceExtensionClasses;
-    }
-
-    @Override
-    public List<Class> getStaticMethodsExtensionClasses() {
-        return staticExtensionClasses;
-    }
 
     private MetaInfExtensionModule(final String moduleName, final String moduleVersion, final List<Class> instanceExtensionClasses, final List<Class> staticExtensionClasses) {
         super(moduleName, moduleVersion);
@@ -90,5 +78,15 @@ public class MetaInfExtensionModule extends SimpleExtensionModule {
                 errors.add(extensionClass);
             }
         }
+    }
+
+    @Override
+    public List<Class> getInstanceMethodsExtensionClasses() {
+        return instanceExtensionClasses;
+    }
+
+    @Override
+    public List<Class> getStaticMethodsExtensionClasses() {
+        return staticExtensionClasses;
     }
 }

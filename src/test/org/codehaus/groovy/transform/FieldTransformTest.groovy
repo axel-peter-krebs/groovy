@@ -159,7 +159,8 @@ final class FieldTransformTest {
         '''
     }
 
-    @Test // GROOVY-4700
+    @Test
+    // GROOVY-4700
     void testFieldShouldBeAccessibleFromClosureWithoutAssignment() {
         assertScript shell, '''
             @Field xxx = 3
@@ -170,7 +171,8 @@ final class FieldTransformTest {
         '''
     }
 
-    @Test // GROOVY-5207
+    @Test
+    // GROOVY-5207
     void testFieldShouldBeAccessibleFromClosureForExternalClosures() {
         assertScript shell, '''
             @Field xxx = [:]
@@ -215,7 +217,8 @@ final class FieldTransformTest {
         '''
     }
 
-    @Test // GROOVY-6112
+    @Test
+    // GROOVY-6112
     void testGroovyTransformsShouldTransferToFields() {
         assertScript shell, '''
             @Lazy @Field foo = 'foo'
@@ -229,7 +232,8 @@ final class FieldTransformTest {
         '''
     }
 
-    @Test // GROOVY-8112
+    @Test
+    // GROOVY-8112
     void testAnonymousInnerClassReferencesToField() {
         assertScript shell, '''
             @Field
@@ -263,7 +267,8 @@ final class FieldTransformTest {
         '''
     }
 
-    @Test // GROOVY-9554
+    @Test
+    // GROOVY-9554
     void testClosureReferencesToField() {
         assertScript shell, '''
             @Field String abc
@@ -279,7 +284,8 @@ final class FieldTransformTest {
         '''
     }
 
-    @Test // GROOVY-8430
+    @Test
+    // GROOVY-8430
     void testFieldTransformWithFinalField() {
         assertScript shell, '''
             @Field final foo = 14
@@ -293,7 +299,8 @@ final class FieldTransformTest {
         '''
     }
 
-    @Test // GROOVY-8430 in conjunction with @Option
+    @Test
+    // GROOVY-8430 in conjunction with @Option
     void testFieldTransformWithFinalFieldAndOption() {
         shouldFail '''
             import groovy.cli.OptionField
@@ -301,7 +308,8 @@ final class FieldTransformTest {
         '''
     }
 
-    @Test // GROOVY-10516
+    @Test
+    // GROOVY-10516
     void testFieldOnFullyQualifiedType() {
         assertScript shell, '''
             @Field java.util.List list

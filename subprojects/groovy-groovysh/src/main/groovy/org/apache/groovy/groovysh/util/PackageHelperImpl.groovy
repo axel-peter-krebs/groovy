@@ -36,7 +36,8 @@ import java.util.regex.Pattern
  * Helper class that crawls all items of the classpath for packages.
  * Retrieves from those sources the list of subpackages and classes on demand.
  */
-@AutoFinal @CompileStatic
+@AutoFinal
+@CompileStatic
 class PackageHelperImpl implements PreferenceChangeListener, PackageHelper {
 
     protected static final Logger LOG = Logger.create(PackageHelperImpl)
@@ -88,7 +89,7 @@ class PackageHelperImpl implements PreferenceChangeListener, PackageHelper {
                 continue
             }
 
-            urls.addAll(((URLClassLoader)loader).URLs)
+            urls.addAll(((URLClassLoader) loader).URLs)
         }
 
         // System classes
@@ -125,7 +126,7 @@ class PackageHelperImpl implements PreferenceChangeListener, PackageHelper {
         }
         if (jigsaw || isModularRuntime()) {
             URL jigsawURL = URI.create("jrt:/").toURL()
-            Set<String> jigsawPackages = getPackagesAndClassesFromJigsaw(jigsawURL)  { isPackage, name -> isPackage && name }
+            Set<String> jigsawPackages = getPackagesAndClassesFromJigsaw(jigsawURL) { isPackage, name -> isPackage && name }
             mergeNewPackages(jigsawPackages, jigsawURL, rootPackages)
         }
         return rootPackages
@@ -219,7 +220,7 @@ Files.walkFileTree(fs.getPath('modules'),
                 rootPackages.put(rootname, cp)
             }
 
-            while(tokenizer.hasMoreTokens()) {
+            while (tokenizer.hasMoreTokens()) {
                 String packbasename = tokenizer.nextToken()
                 if (cp.childPackages == null) {
                     // small initial size, to save memory
@@ -279,7 +280,7 @@ Files.walkFileTree(fs.getPath('modules'),
                 }
                 String optionalDot = prefix ? '.' : ''
                 collectPackageNamesFromFolderRecursive(files[i], prefix + optionalDot + files[i].name, packnames)
-            } else if (! packageAdded) {
+            } else if (!packageAdded) {
                 if (files[i].name.endsWith(CLASS_SUFFIX)) {
                     packageAdded = true
                     if (prefix) {

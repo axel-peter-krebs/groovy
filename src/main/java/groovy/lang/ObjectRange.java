@@ -50,16 +50,14 @@ public class ObjectRange extends AbstractList<Comparable> implements Range<Compa
      * The last value in the range.
      */
     private final Comparable to;
-
-    /**
-     * The cached size, or -1 if not yet computed
-     */
-    private int size = -1;
-
     /**
      * <code>true</code> if the range counts backwards from <code>to</code> to <code>from</code>.
      */
     private final boolean reverse;
+    /**
+     * The cached size, or -1 if not yet computed
+     */
+    private int size = -1;
 
     /**
      * Creates a new {@link ObjectRange}. Creates a reversed range if
@@ -140,7 +138,7 @@ public class ObjectRange extends AbstractList<Comparable> implements Range<Compa
             if classes match, or both numerical, no checks possible / necessary
         */
         if (smaller.getClass() == larger.getClass() ||
-                (smaller instanceof Number && larger instanceof Number)) {
+            (smaller instanceof Number && larger instanceof Number)) {
             this.from = smaller;
             this.to = larger;
         } else {
@@ -167,6 +165,32 @@ public class ObjectRange extends AbstractList<Comparable> implements Range<Compa
             }
         }
         checkBoundaryCompatibility();
+    }
+
+    private static boolean areReversed(Comparable from, Comparable to) {
+        try {
+            return ScriptBytecodeAdapter.compareGreaterThan(from, to);
+        } catch (IllegalArgumentException iae) {
+            throw new IllegalArgumentException("Unable to create range due to incompatible types: " + from.getClass().getSimpleName() + ".." + to.getClass().getSimpleName() + " (possible missing brackets around range?)", iae);
+        }
+    }
+
+    /**
+     * if operand is a Character or a String with one character, return that character's int value.
+     */
+    private static Comparable normaliseStringType(final Comparable operand) {
+        if (operand instanceof Character) {
+            return (int) (Character) operand;
+        }
+        if (operand instanceof String) {
+            final String string = (String) operand;
+
+            if (string.length() == 1) {
+                return (int) string.charAt(0);
+            }
+            return string;
+        }
+        return operand;
     }
 
     /**
@@ -196,14 +220,6 @@ public class ObjectRange extends AbstractList<Comparable> implements Range<Compa
         }
     }
 
-    private static boolean areReversed(Comparable from, Comparable to) {
-        try {
-            return ScriptBytecodeAdapter.compareGreaterThan(from, to);
-        } catch (IllegalArgumentException iae) {
-            throw new IllegalArgumentException("Unable to create range due to incompatible types: " + from.getClass().getSimpleName() + ".." + to.getClass().getSimpleName() + " (possible missing brackets around range?)", iae);
-        }
-    }
-
     @Override
     public boolean equals(Object that) {
         return (that instanceof ObjectRange) ? equals((ObjectRange) that) : super.equals(that);
@@ -217,9 +233,9 @@ public class ObjectRange extends AbstractList<Comparable> implements Range<Compa
      */
     public boolean equals(ObjectRange that) {
         return that != null
-                && reverse == that.reverse
-                && DefaultTypeTransformation.compareEqual(from, that.from)
-                && DefaultTypeTransformation.compareEqual(to, that.to);
+            && reverse == that.reverse
+            && DefaultTypeTransformation.compareEqual(from, that.from)
+            && DefaultTypeTransformation.compareEqual(to, that.to);
     }
 
     @Override
@@ -286,7 +302,7 @@ public class ObjectRange extends AbstractList<Comparable> implements Range<Compa
         if (size == -1) {
             int tempsize = 0;
             if ((from instanceof Integer || from instanceof Long)
-                    && (to instanceof Integer || to instanceof Long)) {
+                && (to instanceof Integer || to instanceof Long)) {
                 // let's fast calculate the size
                 final BigInteger fromNum = new BigInteger(from.toString());
                 final BigInteger toNum = new BigInteger(to.toString());
@@ -301,7 +317,7 @@ public class ObjectRange extends AbstractList<Comparable> implements Range<Compa
                 final char toNum = (Character) to;
                 tempsize = toNum - fromNum + 1;
             } else if (((from instanceof BigDecimal || from instanceof BigInteger) && to instanceof Number) ||
-                    ((to instanceof BigDecimal || to instanceof BigInteger) && from instanceof Number)) {
+                ((to instanceof BigDecimal || to instanceof BigInteger) && from instanceof Number)) {
                 // let's fast calculate the size
                 final BigDecimal fromNum = NumberMath.toBigDecimal((Number) from);
                 final BigDecimal toNum = NumberMath.toBigDecimal((Number) to);
@@ -415,6 +431,33 @@ public class ObjectRange extends AbstractList<Comparable> implements Range<Compa
         return new StepIterator(this, 1);
     }
 
+    @Override
+    public List<Comparable> step(int step) {
+        final IteratorClosureAdapter<Comparable> adapter = new IteratorClosureAdapter<Comparable>(this);
+        step(step, adapter);
+        return adapter.asList();
+    }
+
+    /**
+     * Increments by one
+     *
+     * @param value the value to increment
+     * @return the incremented value
+     */
+    protected Object increment(Object value) {
+        return InvokerHelper.invokeMethod(value, "next", null);
+    }
+
+    /**
+     * Decrements by one
+     *
+     * @param value the value to decrement
+     * @return the decremented value
+     */
+    protected Object decrement(Object value) {
+        return InvokerHelper.invokeMethod(value, "previous", null);
+    }
+
     /**
      * Non-thread-safe iterator which lazily produces the next element only on calls of hasNext() or next()
      */
@@ -494,50 +537,5 @@ public class ObjectRange extends AbstractList<Comparable> implements Range<Compa
             }
             return null;
         }
-    }
-
-    @Override
-    public List<Comparable> step(int step) {
-        final IteratorClosureAdapter<Comparable> adapter = new IteratorClosureAdapter<Comparable>(this);
-        step(step, adapter);
-        return adapter.asList();
-    }
-
-    /**
-     * Increments by one
-     *
-     * @param value the value to increment
-     * @return the incremented value
-     */
-    protected Object increment(Object value) {
-        return InvokerHelper.invokeMethod(value, "next", null);
-    }
-
-    /**
-     * Decrements by one
-     *
-     * @param value the value to decrement
-     * @return the decremented value
-     */
-    protected Object decrement(Object value) {
-        return InvokerHelper.invokeMethod(value, "previous", null);
-    }
-
-    /**
-     * if operand is a Character or a String with one character, return that character's int value.
-     */
-    private static Comparable normaliseStringType(final Comparable operand) {
-        if (operand instanceof Character) {
-            return (int) (Character) operand;
-        }
-        if (operand instanceof String) {
-            final String string = (String) operand;
-
-            if (string.length() == 1) {
-                return (int) string.charAt(0);
-            }
-            return string;
-        }
-        return operand;
     }
 }

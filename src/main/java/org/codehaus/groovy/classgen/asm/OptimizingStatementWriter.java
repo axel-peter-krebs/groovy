@@ -112,6 +112,23 @@ public class OptimizingStatementWriter extends StatementWriter {
         super(controller);
     }
 
+    public static void setNodeMeta(final TypeChooser chooser, final ClassNode classNode) {
+        if (classNode.getNodeMetaData(ClassNodeSkip.class) != null) return;
+        new OptVisitor(chooser).visitClass(classNode);
+    }
+
+    private static StatementMeta addMeta(final ASTNode node) {
+        StatementMeta meta = node.getNodeMetaData(StatementMeta.class, x -> new StatementMeta());
+        meta.optimize = true;
+        return meta;
+    }
+
+    private static StatementMeta addMeta(final ASTNode node, final OptimizeFlagsCollector opt) {
+        StatementMeta meta = addMeta(node);
+        meta.chainInvolvedTypes(opt);
+        return meta;
+    }
+
     private FastPathData writeGuards(final StatementMeta meta, final ASTNode node) {
         if (fastPathBlocked || controller.isFastPath() || meta == null || !meta.optimize) return null;
 
@@ -392,9 +409,9 @@ public class OptimizingStatementWriter extends StatementWriter {
 
         // change statement to do assignment only
         BinaryExpression assignment = new BinaryExpression(
-                declaration.getLeftExpression(),
-                declaration.getOperation(),
-                declaration.getRightExpression());
+            declaration.getLeftExpression(),
+            declaration.getOperation(),
+            declaration.getRightExpression());
         assignment.setSourcePosition(declaration);
         assignment.copyNodeMetaData(declaration);
         // replace statement code
@@ -419,23 +436,6 @@ public class OptimizingStatementWriter extends StatementWriter {
         return !controller.isFastPath();
     }
 
-    public static void setNodeMeta(final TypeChooser chooser, final ClassNode classNode) {
-        if (classNode.getNodeMetaData(ClassNodeSkip.class) != null) return;
-        new OptVisitor(chooser).visitClass(classNode);
-    }
-
-    private static StatementMeta addMeta(final ASTNode node) {
-        StatementMeta meta = node.getNodeMetaData(StatementMeta.class, x -> new StatementMeta());
-        meta.optimize = true;
-        return meta;
-    }
-
-    private static StatementMeta addMeta(final ASTNode node, final OptimizeFlagsCollector opt) {
-        StatementMeta meta = addMeta(node);
-        meta.chainInvolvedTypes(opt);
-        return meta;
-    }
-
     //--------------------------------------------------------------------------
 
     public static class ClassNodeSkip {
@@ -447,11 +447,11 @@ public class OptimizingStatementWriter extends StatementWriter {
     }
 
     public static class StatementMeta {
-        private boolean optimize;
         protected ClassNode type;
         protected MethodNode target;
         protected VariableExpression declaredVariableExpression;
         protected boolean[] involvedTypes = new boolean[typeMapKeyNames.length];
+        private boolean optimize;
 
         public void chainInvolvedTypes(final OptimizeFlagsCollector opt) {
             for (int i = 0, n = typeMapKeyNames.length; i < n; i += 1) {
@@ -478,14 +478,8 @@ public class OptimizingStatementWriter extends StatementWriter {
     }
 
     private static class OptimizeFlagsCollector {
-        private static class OptimizeFlagsEntry {
-            private boolean canOptimize;
-            private boolean shouldOptimize;
-            private boolean[] involvedTypes = new boolean[typeMapKeyNames.length];
-        }
-
-        private OptimizeFlagsEntry current = new OptimizeFlagsEntry();
         private final Deque<OptimizeFlagsEntry> previous = new LinkedList<>();
+        private OptimizeFlagsEntry current = new OptimizeFlagsEntry();
 
         public void push() {
             previous.push(current);
@@ -562,18 +556,41 @@ public class OptimizingStatementWriter extends StatementWriter {
             current.shouldOptimize = false;
             current.involvedTypes = new boolean[typeMapKeyNames.length];
         }
+
+        private static class OptimizeFlagsEntry {
+            private boolean canOptimize;
+            private boolean shouldOptimize;
+            private boolean[] involvedTypes = new boolean[typeMapKeyNames.length];
+        }
     }
 
     private static class OptVisitor extends ClassCodeVisitorSupport {
         private static final VariableScope nonStaticScope = new VariableScope();
         private final OptimizeFlagsCollector opt = new OptimizeFlagsCollector();
-        private boolean optimizeMethodCall = true;
         private final TypeChooser typeChooser;
+        private boolean optimizeMethodCall = true;
         private VariableScope scope;
         private ClassNode node;
 
         OptVisitor(final TypeChooser chooser) {
             this.typeChooser = chooser;
+        }
+
+        private static MethodNode selectConstructor(final ClassNode node, final Parameter[] parameters) {
+            List<ConstructorNode> ctors = node.getDeclaredConstructors();
+            MethodNode result = null;
+            for (ConstructorNode ctor : ctors) {
+                if (parametersEqual(ctor.getParameters(), parameters)) {
+                    result = ctor;
+                    break;
+                }
+            }
+            return (result != null && result.isPublic() ? result : null);
+        }
+
+        private static boolean validTypeForCall(final ClassNode type) {
+            // do call only for final classes and primitive types
+            return isPrimitiveType(type) || (type.getModifiers() & ACC_FINAL) > 0;
         }
 
         @Override
@@ -591,6 +608,8 @@ public class OptimizingStatementWriter extends StatementWriter {
             this.node = null;
         }
 
+        // statements:
+
         @Override
         public void visitConstructor(final ConstructorNode node) {
             scope = node.getVariableScope();
@@ -604,8 +623,6 @@ public class OptimizingStatementWriter extends StatementWriter {
             super.visitMethod(node);
             opt.reset();
         }
-
-        // statements:
 
         @Override
         public void visitBlockStatement(final BlockStatement statement) {
@@ -650,6 +667,8 @@ public class OptimizingStatementWriter extends StatementWriter {
             opt.pop(opt.shouldOptimize());
         }
 
+        // expressions:
+
         @Override
         public void visitIfElse(final IfStatement statement) {
             opt.push();
@@ -665,12 +684,10 @@ public class OptimizingStatementWriter extends StatementWriter {
             opt.push();
             super.visitReturnStatement(statement);
             if (opt.shouldOptimize()) {
-                addMeta(statement,opt);
+                addMeta(statement, opt);
             }
             opt.pop(opt.shouldOptimize());
         }
-
-        // expressions:
 
         @Override
         public void visitBinaryExpression(final BinaryExpression expression) {
@@ -831,6 +848,8 @@ public class OptimizingStatementWriter extends StatementWriter {
             setMethodTarget(expression, expression.getMethod(), expression.getArguments(), true);
         }
 
+        //
+
         @Override
         public void visitUnaryMinusExpression(final UnaryMinusExpression expression) {
             // TODO: implement int operations for this
@@ -844,8 +863,6 @@ public class OptimizingStatementWriter extends StatementWriter {
             super.visitUnaryPlusExpression(expression);
             addMeta(expression).type = OBJECT_TYPE;
         }
-
-        //
 
         private void addTypeInformation(final Expression expression, final Expression orig) {
             ClassNode type = typeChooser.resolveType(expression, node);
@@ -869,7 +886,7 @@ public class OptimizingStatementWriter extends StatementWriter {
 
             ClassNode originalResultType = typeChooser.resolveType(binExp, node);
             if (!isBigDecimalType(originalResultType)
-                    || !(isLongCategory(assignmentTartgetType) || isFloatingCategory(assignmentTartgetType))) {
+                || !(isLongCategory(assignmentTartgetType) || isFloatingCategory(assignmentTartgetType))) {
                 return null;
             }
 
@@ -935,23 +952,6 @@ public class OptimizingStatementWriter extends StatementWriter {
             meta.target = target;
             meta.type = type;
             opt.chainShouldOptimize(true);
-        }
-
-        private static MethodNode selectConstructor(final ClassNode node, final Parameter[] parameters) {
-            List<ConstructorNode> ctors = node.getDeclaredConstructors();
-            MethodNode result = null;
-            for (ConstructorNode ctor : ctors) {
-                if (parametersEqual(ctor.getParameters(), parameters)) {
-                    result = ctor;
-                    break;
-                }
-            }
-            return (result != null && result.isPublic() ? result : null);
-        }
-
-        private static boolean validTypeForCall(final ClassNode type) {
-            // do call only for final classes and primitive types
-            return isPrimitiveType(type) || (type.getModifiers() & ACC_FINAL) > 0;
         }
     }
 }

@@ -20,30 +20,36 @@
 @Test2
 enum E1 {
     A,
-    B,C,
+    B, C,
     D
+
     private void proc() {}
     def prop;
 }
 
 enum E2 {
     A(1), B(2)
-    
+
     public static final String SOME_CONSTANT = '123';
     private final String name;
     private final int age = 2;
-    final String title='title'
+    final String title = 'title'
+
     public E2(int x) {}
 }
 
 enum E3 {
     A, B
-    enum E4{X, Y}
+
+    enum E4 {
+        X, Y
+    }
 }
 
 class C {
     enum E5 {
         A
+
         enum E6 {
             B
         }
@@ -52,6 +58,7 @@ class C {
 
 enum E7 {
     A(1), B(2)
+
     E7(value) {
         this.value = value
     }
@@ -60,6 +67,7 @@ enum E7 {
 
 enum E8 {
     @Test2 A(1), B(2)
+
     E8(value) {
         this.value = value
     }
@@ -79,6 +87,7 @@ enum E10 {
     X(1), Y(2), // trailing comma
     ;
     Object value
+
     E10(value) {
         this.value = value
     }
@@ -86,93 +95,116 @@ enum E10 {
 
 enum E11 {
     X, Y, Z
-    def m1() { }
-    public m2(args) { }
-    int m3(String arg) { }
+
+    def m1() {}
+
+    public m2(args) {}
+
+    int m3(String arg) {}
 }
 
 enum E12 {
     X, Y, Z
-    def <T> T m() { }
+
+    def <T> T m() {}
 }
 
 enum E13 {
     X, Y, Z
-    final <T> T m() { }
+
+    final <T> T m() {}
 }
 
 enum E14 {
     X, Y, Z
-    public <T> T m() { }
+
+    public <T> T m() {}
 }
 
 enum E15 {
-    X { double eval(int v) { return (double) v } },
-    Y {
+    X{
+        double eval(int v) { return (double) v }
+    },
+    Y{
         double eval(int v) { return (double) v + 1 }
     }, Z
 }
 
 enum E16 {
     X, Y, Z
-    class C { }
+
+    class C {}
 }
 
 // GROOVY-8507
 enum E17 {
     X, Y, Z, // trailing comma
     ;
-    class C { }
+
+    class C {}
 }
 
 enum E18 {
     X, Y, Z
-    enum E2 { A, B, C }
+
+    enum E2 {
+        A, B, C
+    }
 }
 
 // GROOVY-8507
 enum E19 {
     X, Y, Z, // trailing comma
     ;
-    enum Another { A, B, C }
+
+    enum Another {
+        A, B, C
+    }
 }
 
 enum E20 {
     X, Y, Z
-    interface I { }
+
+    interface I {}
 }
 
 // GROOVY-8507
 enum E21 {
     X, Y, Z, // trailing comma
     ;
-    interface I { }
+
+    interface I {}
 }
 
 enum E22 {
     X, Y, Z
-    @interface A { }
+
+    @interface A {}
 }
 
 enum E23 {
     X, Y, Z, // trailing comma
     ;
-    @interface A { }
+
+    @interface A {}
 }
 
 enum E24 {
     X, Y, Z
-    trait T { }
+
+    trait T {}
 }
 
 enum E25 {
     X, Y, Z;
-    trait T { }
+
+    trait T {}
 }
 
 enum Color {
     RED, BLACK
 }
+
 enum Suit {
     CLUBS(Color.BLACK),
     DIAMONDS(Color.RED),
@@ -180,6 +212,7 @@ enum Suit {
     SPADES(Color.BLACK), // trailing comma
     ;
     final Color color
+
     Suit(Color color) {
         this.color = color
     }
@@ -187,7 +220,7 @@ enum Suit {
 
 enum Orientation1 {
     LANDSCAPE, PORTRAIT
-    
+
     @Override
     String toString() {
         name().toLowerCase().capitalize()
@@ -198,6 +231,7 @@ enum Orientation1 {
 enum Orientation2 {
     LANDSCAPE, PORTRAIT, // trailing comma
     ;
+
     @Override
     String toString() {
         name().toLowerCase().capitalize()
@@ -208,5 +242,7 @@ enum Orientation2 {
 enum Orientation3 {
     LANDSCAPE, PORTRAIT, // trailing comma
     ;
-    @Deprecated <T> T whatever() { }
+
+    @Deprecated
+    <T> T whatever() {}
 }

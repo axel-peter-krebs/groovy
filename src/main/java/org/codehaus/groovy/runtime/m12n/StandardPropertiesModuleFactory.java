@@ -36,15 +36,15 @@ public class StandardPropertiesModuleFactory extends PropertiesModuleFactory {
     @SuppressWarnings("unchecked")
     public ExtensionModule newModule(final Properties properties, final ClassLoader classLoader) {
         String factoryName = properties.getProperty(MODULE_FACTORY_KEY);
-        if (factoryName!=null) {
+        if (factoryName != null) {
             try {
                 Class<? extends PropertiesModuleFactory> factoryClass = (Class<? extends PropertiesModuleFactory>) classLoader.loadClass(factoryName);
                 PropertiesModuleFactory delegate = factoryClass.getDeclaredConstructor().newInstance();
                 return delegate.newModule(properties, classLoader);
             } catch (ClassNotFoundException | NoSuchMethodException e) {
-                throw new GroovyRuntimeException("Unable to load module factory ["+factoryName+"]",e);
+                throw new GroovyRuntimeException("Unable to load module factory [" + factoryName + "]", e);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                throw new GroovyRuntimeException("Unable to instantiate module factory ["+factoryName+"]",e);
+                throw new GroovyRuntimeException("Unable to instantiate module factory [" + factoryName + "]", e);
             }
         }
         return MetaInfExtensionModule.newModule(properties, classLoader);

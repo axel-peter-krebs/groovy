@@ -29,7 +29,7 @@ class CategoriesSTCTest extends StaticTypeCheckingTestCase {
                 1.day
             }
         ''',
-        'Due to their dynamic nature, usage of categories is not possible with static type checking active',
-        'No such property: day for class: java.lang.Integer'
+            'Due to their dynamic nature, usage of categories is not possible with static type checking active',
+            'No such property: day for class: java.lang.Integer'
     }
 }

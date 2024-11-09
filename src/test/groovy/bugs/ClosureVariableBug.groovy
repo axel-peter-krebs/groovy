@@ -36,7 +36,7 @@ class ClosureVariableBug extends GroovyTestCase {
     void testPassingClosureAsNamedParameter() {
         def x = 123
 
-        def foo = new Expando(a:{x}, b:456)
+        def foo = new Expando(a: { x }, b: 456)
 
         assert foo.a != null
 
@@ -52,8 +52,8 @@ class ClosureVariableBug extends GroovyTestCase {
     protected Integer callClosure(collection) {
         Integer x
         /** @todo
-        Integer x = 0
-        */
+         Integer x = 0
+         */
         collection.each { x = it }
         return x
     }

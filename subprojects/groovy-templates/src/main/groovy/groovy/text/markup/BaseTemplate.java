@@ -54,7 +54,7 @@ public abstract class BaseTemplate implements Writable {
     private static final Map EMPTY_MODEL = Collections.emptyMap();
 
     private final Map model;
-    private final Map<String,String> modelTypes;
+    private final Map<String, String> modelTypes;
     private final MarkupTemplateEngine engine;
     private final TemplateConfiguration configuration;
     private final Map<String, Template> cachedFragments;
@@ -62,8 +62,8 @@ public abstract class BaseTemplate implements Writable {
     private Writer out;
     private boolean doWriteIndent;
 
-    public BaseTemplate(final MarkupTemplateEngine templateEngine, final Map model, final Map<String,String> modelTypes, final TemplateConfiguration configuration) {
-        this.model = model==null?EMPTY_MODEL:model;
+    public BaseTemplate(final MarkupTemplateEngine templateEngine, final Map model, final Map<String, String> modelTypes, final TemplateConfiguration configuration) {
+        this.model = model == null ? EMPTY_MODEL : model;
         this.engine = templateEngine;
         this.configuration = configuration;
         this.modelTypes = modelTypes;
@@ -80,6 +80,7 @@ public abstract class BaseTemplate implements Writable {
      * Renders the object provided as parameter using its {@link Object#toString()} method,
      * The contents is rendered as is, unescaped. This means that depending on what the
      * {@link Object#toString()} method call returns, you might create invalid markup.
+     *
      * @param obj the object to be rendered unescaped
      * @return this template instance
      * @throws IOException
@@ -93,6 +94,7 @@ public abstract class BaseTemplate implements Writable {
     /**
      * Renders the object provided as parameter using its {@link Object#toString()} method,
      * The contents is rendered after being escaped for XML, enforcing valid XML output.
+     *
      * @param obj the object to be rendered
      * @return this template instance
      * @throws IOException
@@ -108,7 +110,7 @@ public abstract class BaseTemplate implements Writable {
         Writer stringWriter = new StringBuilderWriter(32);
         out = stringWriter;
         Object result = cl.call();
-        if (result!=null && result!=this) {
+        if (result != null && result != this) {
             stringWriter.append(result.toString());
         }
         out = old;
@@ -119,6 +121,7 @@ public abstract class BaseTemplate implements Writable {
     /**
      * Renders the supplied object using its {@link Object#toString} method inside a
      * comment markup block (&lt;!-- ... --&gt;). The object is rendered as is, unescaped.
+     *
      * @param cs the object to be rendered inside an XML comment block.
      * @return this template instance.
      * @throws IOException
@@ -135,6 +138,7 @@ public abstract class BaseTemplate implements Writable {
      * Renders an XML declaration header. If the declaration encoding is set in the
      * {@link TemplateConfiguration#getDeclarationEncoding() template configuration},
      * then the encoding is rendered into the declaration.
+     *
      * @return this template instance
      * @throws IOException
      */
@@ -154,7 +158,7 @@ public abstract class BaseTemplate implements Writable {
      * rendered as processing instructions. The key is the name of the element, the value
      * is either a map of attributes, or an object to be rendered directly. For example:</p>
      * <code>
-     *     pi("xml-stylesheet":[href:"mystyle.css", type:"text/css"])
+     * pi("xml-stylesheet":[href:"mystyle.css", type:"text/css"])
      * </code>
      *
      * <p>will be rendered as:</p>
@@ -204,7 +208,7 @@ public abstract class BaseTemplate implements Writable {
 
     private void writeIndent() throws IOException {
         if (out instanceof DelegatingIndentWriter && doWriteIndent) {
-            ((DelegatingIndentWriter)out).writeIndent();
+            ((DelegatingIndentWriter) out).writeIndent();
             doWriteIndent = false;
         }
     }
@@ -224,8 +228,9 @@ public abstract class BaseTemplate implements Writable {
      *     <li>a map of attributes</li> in which case the attributes are rendered inside the opening tag
      * </ul>
      * <p>or a combination of (attributes,string), (attributes,closure)</p>
+     *
      * @param tagName the name of the tag
-     * @param args tag generation arguments
+     * @param args    tag generation arguments
      * @return this template instance
      * @throws IOException
      */
@@ -233,7 +238,7 @@ public abstract class BaseTemplate implements Writable {
         Object o = model.get(tagName);
         if (o instanceof Closure) {
             if (args instanceof Object[]) {
-                yieldUnescaped(((Closure) o).call((Object[])args));
+                yieldUnescaped(((Closure) o).call((Object[]) args));
                 return this;
             }
             yieldUnescaped(((Closure) o).call(args));
@@ -270,11 +275,11 @@ public abstract class BaseTemplate implements Writable {
         boolean indent = out instanceof DelegatingIndentWriter;
         if (body instanceof Closure) {
             if (indent) {
-                ((DelegatingIndentWriter)(out)).next();
+                ((DelegatingIndentWriter) (out)).next();
             }
             ((Closure) body).call();
             if (indent) {
-                ((DelegatingIndentWriter)(out)).previous();
+                ((DelegatingIndentWriter) (out)).previous();
             }
         } else {
             out.write(body.toString());
@@ -296,6 +301,7 @@ public abstract class BaseTemplate implements Writable {
 
     /**
      * Includes another template inside this template.
+     *
      * @param templatePath the path to the included resource.
      * @throws IOException
      * @throws ClassNotFoundException
@@ -331,8 +337,9 @@ public abstract class BaseTemplate implements Writable {
     /**
      * Escapes the string representation of the supplied object if it derives from {@link java.lang.CharSequence},
      * otherwise returns the object itself.
+     *
      * @param contents an object to be escaped for XML
-     * @return  an escaped string, or the object itself
+     * @return an escaped string, or the object itself
      */
     public Object tryEscape(Object contents) {
         if (contents instanceof CharSequence) {
@@ -353,6 +360,7 @@ public abstract class BaseTemplate implements Writable {
     /**
      * Adds a new line to the output. The new line string can be configured by
      * {@link groovy.text.markup.TemplateConfiguration#setNewLineString(String)}
+     *
      * @throws IOException
      */
     public void newLine() throws IOException {
@@ -365,7 +373,7 @@ public abstract class BaseTemplate implements Writable {
      * if you use the same fragment in a template, it will only be compiled once, but once <b>per template
      * instance</b>. This is less performant than using {@link #layout(java.util.Map, String)}.
      *
-     * @param model model to be passed to the template
+     * @param model        model to be passed to the template
      * @param templateText template body
      * @return this template instance
      * @throws IOException
@@ -373,7 +381,7 @@ public abstract class BaseTemplate implements Writable {
      */
     public Object fragment(Map model, String templateText) throws IOException, ClassNotFoundException {
         Template template = cachedFragments.get(templateText);
-        if (template==null) {
+        if (template == null) {
             template = engine.createTemplate(new StringReader(templateText));
             cachedFragments.put(templateText, template);
         }
@@ -386,7 +394,8 @@ public abstract class BaseTemplate implements Writable {
      * of templates and layouting. This works similarly to a template include but allows a distinct
      * model to be used. This version doesn't inherit the model from the parent. If you need model
      * inheritance, see {@link #layout(java.util.Map, String, boolean)}.
-     * @param model model to be passed to the template
+     *
+     * @param model        model to be passed to the template
      * @param templateName the name of the template to be used as a layout
      * @return this template instance
      * @throws IOException
@@ -428,6 +437,7 @@ public abstract class BaseTemplate implements Writable {
      * Wraps a closure so that it can be used as a prototype for inclusion in layouts. This is useful when
      * you want to use a closure in a model, but that you don't want to render the result of the closure but instead
      * call it as if it was a specification of a template fragment.
+     *
      * @param cl the fragment to be wrapped
      * @return a wrapped closure returning an empty string
      */
@@ -457,13 +467,14 @@ public abstract class BaseTemplate implements Writable {
 
     /**
      * Main method used to render a template.
+     *
      * @param out the Writer to which this Writable should output its data.
      * @return a writer instance
      * @throws IOException
      */
     @Override
     public Writer writeTo(final Writer out) throws IOException {
-        if (this.out!=null) {
+        if (this.out != null) {
             // StackOverflow prevention
             return NullWriter.DEFAULT;
         }
@@ -472,7 +483,7 @@ public abstract class BaseTemplate implements Writable {
             run();
             return out;
         } finally {
-            if (this.out!=null) {
+            if (this.out != null) {
                 this.out.flush();
             }
             this.out = null;
@@ -480,7 +491,18 @@ public abstract class BaseTemplate implements Writable {
     }
 
     private Writer createWriter(final Writer out) {
-        return configuration.isAutoIndent() && !(out instanceof DelegatingIndentWriter)?new DelegatingIndentWriter(out, configuration.getAutoIndentString()):out;
+        return configuration.isAutoIndent() && !(out instanceof DelegatingIndentWriter) ? new DelegatingIndentWriter(out, configuration.getAutoIndentString()) : out;
+    }
+
+    @Override
+    public String toString() {
+        Writer wrt = new StringBuilderWriter(512);
+        try {
+            writeTo(wrt);
+        } catch (IOException e) {
+            UncheckedThrow.rethrow(e);
+        }
+        return wrt.toString();
     }
 
     private static class TagData {
@@ -489,7 +511,7 @@ public abstract class BaseTemplate implements Writable {
         private Object body;
 
         TagData(final Object args) {
-            this.array = (Object[])args;
+            this.array = (Object[]) args;
         }
 
         public Map getAttributes() {
@@ -512,16 +534,5 @@ public abstract class BaseTemplate implements Writable {
             }
             return this;
         }
-    }
-
-    @Override
-    public String toString() {
-        Writer wrt = new StringBuilderWriter(512);
-        try {
-            writeTo(wrt);
-        } catch (IOException e) {
-            UncheckedThrow.rethrow(e);
-        }
-        return wrt.toString();
     }
 }

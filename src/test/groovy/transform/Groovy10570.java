@@ -24,4 +24,5 @@ import java.lang.annotation.*;
 @AnnotationCollector
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.SOURCE)
-public @interface Groovy10570 {  }
+public @interface Groovy10570 {
+}

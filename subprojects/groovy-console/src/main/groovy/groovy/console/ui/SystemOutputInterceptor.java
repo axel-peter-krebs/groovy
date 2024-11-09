@@ -29,15 +29,14 @@ import java.io.PrintStream;
  */
 public class SystemOutputInterceptor extends FilterOutputStream {
 
-    private Closure callback;
-    private boolean output;
-
     private static final ThreadLocal<Integer> consoleId = new InheritableThreadLocal<Integer>() {
         @Override
         protected Integer initialValue() {
             return 0;
         }
     };
+    private Closure callback;
+    private boolean output;
 
     /**
      * Constructor

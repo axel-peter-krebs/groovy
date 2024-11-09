@@ -50,7 +50,7 @@ public interface NodeMetaDataHandler {
     /**
      * Gets the node metadata.
      *
-     * @param key the metadata key
+     * @param key   the metadata key
      * @param valFn the metadata value supplier
      * @return the node metadata value for this key
      */
@@ -151,12 +151,12 @@ public interface NodeMetaDataHandler {
 
     Map<?, ?> getMetaDataMap();
 
+    void setMetaDataMap(Map<?, ?> metaDataMap);
+
     /**
      * @since 5.0.0
      */
     default Map<?, ?> newMetaDataMap() {
         return new ListHashMap();
     }
-
-    void setMetaDataMap(Map<?, ?> metaDataMap);
 }

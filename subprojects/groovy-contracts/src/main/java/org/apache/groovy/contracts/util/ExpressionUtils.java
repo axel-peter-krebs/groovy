@@ -43,7 +43,8 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.boolX;
  * @see BooleanExpression
  */
 public final class ExpressionUtils {
-    private ExpressionUtils() { }
+    private ExpressionUtils() {
+    }
 
     /**
      * Returns all {@link BooleanExpression} instances found in the given {@link ClosureExpression}.

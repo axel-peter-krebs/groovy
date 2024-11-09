@@ -19,13 +19,13 @@
 package org.codehaus.groovy;
 
 /**
- *  An interface for use by all Groovy compiler exceptions.
+ * An interface for use by all Groovy compiler exceptions.
  */
 
 public interface GroovyExceptionInterface {
 
     boolean isFatal();
 
-    void setFatal( boolean fatal );
+    void setFatal(boolean fatal);
 
 }

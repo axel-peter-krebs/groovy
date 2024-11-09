@@ -23,7 +23,7 @@ final class Groovy9462 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'Main.java': '''
+            'Main.java'               : '''
                 public class Main {
                     public static void main(String[] args) {
                         new Neo4jRelationship<Byte, Character>(null, null, "Type");
@@ -42,7 +42,7 @@ final class Groovy9462 extends StringSourcesStubTestCase {
                     }
                 }
             ''',
-            'Relationship.groovy': '''
+            'Relationship.groovy'     : '''
                 @groovy.transform.CompileStatic
                 trait Relationship<F, T> {
                     Long id

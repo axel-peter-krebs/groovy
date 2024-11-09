@@ -29,10 +29,10 @@ import java.util.List;
  */
 public abstract class MethodKey {
 
-    private int hash;
     private final String name;
     private final Class sender;
     private final boolean isCallToSuper;
+    private int hash;
 
     public MethodKey(Class sender, String name, boolean isCallToSuper) {
         this.sender = sender;
@@ -56,26 +56,25 @@ public abstract class MethodKey {
     public boolean equals(Object that) {
         if (this == that) {
             return true;
-        }
-        else if (that instanceof MethodKey) {
+        } else if (that instanceof MethodKey) {
             return equals((MethodKey) that);
         }
         return false;
     }
 
     public boolean equals(MethodKey that) {
-      int size;
-      if (sender!=that.sender) return false;
-      if (isCallToSuper!=that.isCallToSuper) return false;
-      if (!name.equals(that.name)) return false;
-      if ((size = getParameterCount()) != that.getParameterCount()) return false;
+        int size;
+        if (sender != that.sender) return false;
+        if (isCallToSuper != that.isCallToSuper) return false;
+        if (!name.equals(that.name)) return false;
+        if ((size = getParameterCount()) != that.getParameterCount()) return false;
 
-      for (int i = 0; i < size; i++) {
-          if (getParameterType(i) != that.getParameterType(i)) {
-              return false;
-          }
-      }
-      return true;
+        for (int i = 0; i < size; i++) {
+            if (getParameterType(i) != that.getParameterType(i)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -111,6 +110,7 @@ public abstract class MethodKey {
     }
 
     public abstract int getParameterCount();
+
     public abstract Class getParameterType(int index);
 
     protected int createHashCode() {
@@ -126,7 +126,7 @@ public abstract class MethodKey {
             answer += 1 + getParameterType(i).hashCode();
         }
         answer *= 37;
-        answer += isCallToSuper?1:0;
+        answer += isCallToSuper ? 1 : 0;
         answer *= 37;
         answer += 1 + sender.hashCode();
         return answer;

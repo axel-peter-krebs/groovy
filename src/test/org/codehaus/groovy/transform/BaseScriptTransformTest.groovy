@@ -140,7 +140,8 @@ final class BaseScriptTransformTest {
         '''
     }
 
-    @Test // GROOVY-6585
+    @Test
+    // GROOVY-6585
     void testBaseScriptAbstractMethod() {
         def answer = shell.evaluate '''
             abstract class Custom extends Script {
@@ -267,7 +268,8 @@ final class BaseScriptTransformTest {
         '''
     }
 
-    @Test // GROOVY-6706
+    @Test
+    // GROOVY-6706
     void testBaseScriptOnImport2() {
         assertScript '''
             @BaseScript(Custom)
@@ -316,7 +318,8 @@ final class BaseScriptTransformTest {
         '''
     }
 
-    @Test // GROOVY-6586
+    @Test
+    // GROOVY-6586
     void testBaseScriptVsBinding() {
         assertScript shell, '''
             abstract class Custom extends Script {

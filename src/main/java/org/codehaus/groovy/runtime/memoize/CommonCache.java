@@ -39,7 +39,6 @@ import java.util.Set;
  * @since 2.5.0
  */
 public class CommonCache<K, V> implements EvictableCache<K, V>, ValueConvertable<V, Object>, Serializable {
-    private static final long serialVersionUID = 934699400232698324L;
     /**
      * The default load factor
      */
@@ -48,7 +47,7 @@ public class CommonCache<K, V> implements EvictableCache<K, V>, ValueConvertable
      * The default initial capacity
      */
     public static final int DEFAULT_INITIAL_CAPACITY = 16;
-
+    private static final long serialVersionUID = 934699400232698324L;
     private final Map<K, V> map;
 
     /**
@@ -67,25 +66,6 @@ public class CommonCache<K, V> implements EvictableCache<K, V>, ValueConvertable
      */
     public CommonCache(final int initialCapacity, final int maxSize, final EvictionStrategy evictionStrategy) {
         this(createMap(initialCapacity, maxSize, evictionStrategy));
-    }
-
-    private static <K, V> Map<K, V> createMap(int initialCapacity, int maxSize, EvictionStrategy evictionStrategy) {
-        final boolean lru = EvictionStrategy.LRU == evictionStrategy;
-
-        if (lru) {
-            return new ConcurrentLinkedHashMap.Builder<K, V>()
-                        .initialCapacity(initialCapacity)
-                        .maximumWeightedCapacity(maxSize)
-                        .build();
-        }
-        return new LinkedHashMap<K, V>(initialCapacity, DEFAULT_LOAD_FACTOR, lru) {
-            private static final long serialVersionUID = -8012450791479726621L;
-
-            @Override
-            protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-                return size() > maxSize;
-            }
-        };
     }
 
     /**
@@ -116,6 +96,25 @@ public class CommonCache<K, V> implements EvictableCache<K, V>, ValueConvertable
      */
     public CommonCache(Map<K, V> map) {
         this.map = map;
+    }
+
+    private static <K, V> Map<K, V> createMap(int initialCapacity, int maxSize, EvictionStrategy evictionStrategy) {
+        final boolean lru = EvictionStrategy.LRU == evictionStrategy;
+
+        if (lru) {
+            return new ConcurrentLinkedHashMap.Builder<K, V>()
+                .initialCapacity(initialCapacity)
+                .maximumWeightedCapacity(maxSize)
+                .build();
+        }
+        return new LinkedHashMap<K, V>(initialCapacity, DEFAULT_LOAD_FACTOR, lru) {
+            private static final long serialVersionUID = -8012450791479726621L;
+
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+                return size() > maxSize;
+            }
+        };
     }
 
     /**
@@ -242,8 +241,8 @@ public class CommonCache<K, V> implements EvictableCache<K, V>, ValueConvertable
             K key = entry.getKey();
             V value = entry.getValue();
             if (null == value
-                    || (value instanceof SoftReference && null == ((SoftReference) value).get())
-                    || (value instanceof WeakReference && null == ((WeakReference) value).get())) {
+                || (value instanceof SoftReference && null == ((SoftReference) value).get())
+                || (value instanceof WeakReference && null == ((WeakReference) value).get())) {
                 keys.add(key);
             }
         }

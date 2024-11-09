@@ -16,5 +16,6 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-@Test2(pre={ super(xx);})
+
+@Test2(pre = { super(xx); })
 class XX {}

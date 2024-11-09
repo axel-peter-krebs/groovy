@@ -78,8 +78,8 @@ public class DateUtilStaticExtensions {
      * Note that a new SimpleDateFormat instance is created for every
      * invocation of this method (for thread safety).
      *
-     * @param self          placeholder variable used by Groovy categories; ignored for default static methods
-     * @param dateToString  String to be parsed to create the date instance. Must match the pattern EEE MMM dd HH:mm:ss zzz yyyy with US-locale symbols
+     * @param self         placeholder variable used by Groovy categories; ignored for default static methods
+     * @param dateToString String to be parsed to create the date instance. Must match the pattern EEE MMM dd HH:mm:ss zzz yyyy with US-locale symbols
      * @return a new Date instance representing the parsed input string
      * @throws ParseException if there is a parse error
      * @since 1.8.4

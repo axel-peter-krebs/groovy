@@ -145,14 +145,16 @@ final class GroovyScriptEngineReloadingTest {
 
     //--------------------------------------------------------------------------
 
-    @Test // ensures new source is no picked up
+    @Test
+    // ensures new source is no picked up
     void testIsSourceNewer() {
         execute(1000, 2000, 2)
         execute(1000, 5000, 2)
         execute(1000, 10000, 2)
     }
 
-    @Test // ensures new source is ignored till minimumRecompilationIntervall is passed
+    @Test
+    // ensures new source is ignored till minimumRecompilationIntervall is passed
     void testRecompilationIntervall() {
         execute(100000, 10000, 1)
         execute(100000, 10000, 1)
@@ -373,14 +375,15 @@ final class GroovyScriptEngineReloadingTest {
         makeGSE(cl)
 
         MapFileSystem.instance.modFile(
-                'groovyScriptEngineSampleScript.groovy',
-                'println "Hello Guillaume, is it a Groovy day?"', 0)
+            'groovyScriptEngineSampleScript.groovy',
+            'println "Hello Guillaume, is it a Groovy day?"', 0)
         def aScript = gse.createScript('groovyScriptEngineSampleScript.groovy', new Binding())
 
         assert aScript instanceof CustomBaseClass
     }
 
-    @Test // GROOVY-3893
+    @Test
+    // GROOVY-3893
     void testGSEWithNoScriptRoots() {
         shouldFail ResourceException, {
             String[] emptyScriptRoots = []
@@ -389,19 +392,21 @@ final class GroovyScriptEngineReloadingTest {
         }
     }
 
-    @Test // GROOVY-6203
+    @Test
+    // GROOVY-6203
     void testGSEBaseClass() {
         gse.config = new org.codehaus.groovy.control.CompilerConfiguration(scriptBaseClass: CustomBaseClass.name)
 
         MapFileSystem.instance.modFile(
-                'Groovy6203Helper.groovy',
-                'println "Hello Guillaume, is it a Groovy day?"', 0)
+            'Groovy6203Helper.groovy',
+            'println "Hello Guillaume, is it a Groovy day?"', 0)
 
         def script = gse.createScript('Groovy6203Helper.groovy', new Binding())
         assert script instanceof CustomBaseClass
     }
 
-    @Test // GROOVY-4013
+    @Test
+    // GROOVY-4013
     void testGSENoCachingOfInnerClasses() {
         MapFileSystem.instance.modFile('Groovy4013Helper.groovy', '''
             import java.awt.event.*
@@ -424,7 +429,8 @@ final class GroovyScriptEngineReloadingTest {
         assert klazz.name == 'Groovy4013Helper' // we should still get the outer class, not inner one
     }
 
-    @Test // GROOVY-4234
+    @Test
+    // GROOVY-4234
     void testGSERunningAScriptThatHasMultipleClasses() {
         MapFileSystem.instance.modFile('Groovy4234Helper.groovy', '''
             class Foo4234 {
@@ -443,7 +449,8 @@ final class GroovyScriptEngineReloadingTest {
         gse.run('Groovy4234Helper.groovy', new Binding())
     }
 
-    @Test // GROOVY-2811, GROOVY-4286
+    @Test
+    // GROOVY-2811, GROOVY-4286
     void testReloadingInterval() {
         gse.config.minimumRecompilationInterval = 1500
         def binding = new Binding([:])

@@ -165,8 +165,8 @@ class JmxBeanExportFactoryTest extends GroovyTestCase {
         def gbean
 
         beans = builder.export {
-            bean([target: new MockManagedObject(), name: objName,
-                    attributes: "*"])
+            bean([target    : new MockManagedObject(), name: objName,
+                  attributes: "*"])
         }
 
         assert beans
@@ -178,8 +178,8 @@ class JmxBeanExportFactoryTest extends GroovyTestCase {
         assert gbean.info().getOperations().size() == 3
 
         beans = builder.export {
-            bean([target: new MockManagedObject(), name: objName,
-                    attributes: ["Something", "SomethingElse"]
+            bean([target    : new MockManagedObject(), name: objName,
+                  attributes: ["Something", "SomethingElse"]
             ])
         }
         gbean = beans[0]
@@ -188,8 +188,8 @@ class JmxBeanExportFactoryTest extends GroovyTestCase {
         assert gbean.info().getOperations().size() == 2
 
         beans = builder.export {
-            bean([target: new MockManagedObject(), name: objName,
-                    attributes: ["Something"]
+            bean([target    : new MockManagedObject(), name: objName,
+                  attributes: ["Something"]
             ])
         }
         gbean = beans[0]
@@ -198,11 +198,11 @@ class JmxBeanExportFactoryTest extends GroovyTestCase {
         assert gbean.info().getOperations().size() == 1
 
         beans = builder.export {
-            bean([target: new MockManagedObject(), name: objName,
-                    attributes: [
-                            "Something": [desc: "Something description", readable: true, writeable: false],
-                            "SomethingElse": [readable: true, writable: true, defaultValue: "Hello"]
-                    ]
+            bean([target    : new MockManagedObject(), name: objName,
+                  attributes: [
+                      "Something"    : [desc: "Something description", readable: true, writeable: false],
+                      "SomethingElse": [readable: true, writable: true, defaultValue: "Hello"]
+                  ]
             ])
         }
 
@@ -259,7 +259,7 @@ class JmxBeanExportFactoryTest extends GroovyTestCase {
 
         beans = builder.export {
             bean([target: new MockManagedObject(), name: objName,
-                    ctors: "*"
+                  ctors : "*"
             ])
         }
         gbean = beans[0]
@@ -268,9 +268,9 @@ class JmxBeanExportFactoryTest extends GroovyTestCase {
 
         beans = builder.export {
             bean([target: new MockManagedObject(), name: objName,
-                    ctors: [
-                            "MockManagedObject": []
-                    ]
+                  ctors : [
+                      "MockManagedObject": []
+                  ]
             ])
         }
         gbean = beans[0]
@@ -280,9 +280,9 @@ class JmxBeanExportFactoryTest extends GroovyTestCase {
 
         beans = builder.export {
             bean([target: new MockManagedObject(), name: objName,
-                    ctors: [
-                            "MockManagedObject": ["String", "int"]
-                    ]
+                  ctors : [
+                      "MockManagedObject": ["String", "int"]
+                  ]
             ])
         }
         gbean = beans[0]
@@ -294,15 +294,15 @@ class JmxBeanExportFactoryTest extends GroovyTestCase {
 
         beans = builder.export {
             bean([target: new MockManagedObject(), name: objName,
-                    ctors: [
-                            "MockManagedObject": [
-                                    desc: "Class creator",
-                                    params: [
-                                            "String": [name: "initialTarget", desc: "The constructor target"],
-                                            "int": [name: "quantity"]
-                                    ]
-                            ]
-                    ]
+                  ctors : [
+                      "MockManagedObject": [
+                          desc  : "Class creator",
+                          params: [
+                              "String": [name: "initialTarget", desc: "The constructor target"],
+                              "int"   : [name: "quantity"]
+                          ]
+                      ]
+                  ]
             ])
         }
         gbean = beans[0]
@@ -333,7 +333,7 @@ class JmxBeanExportFactoryTest extends GroovyTestCase {
 
         beans = builder.export {
             bean([target: new MockManagedObject(), name: objName,
-                    ops: ["doSomething", "dontDoThis"]
+                  ops   : ["doSomething", "dontDoThis"]
             ])
         }
         gbean = beans[0]
@@ -346,10 +346,10 @@ class JmxBeanExportFactoryTest extends GroovyTestCase {
 
         beans = builder.export {
             bean([target: new MockManagedObject(), name: objName,
-                    ops: [
-                            "doSomething": "*",
-                            "doSomethingElse": ["int", "String"]
-                    ]
+                  ops   : [
+                      "doSomething"    : "*",
+                      "doSomethingElse": ["int", "String"]
+                  ]
             ])
         }
         gbean = beans[0]
@@ -362,14 +362,14 @@ class JmxBeanExportFactoryTest extends GroovyTestCase {
 
         beans = builder.export {
             bean([target: new MockManagedObject(), name: objName,
-                    ops: [
-                            "doSomething": [params: []],
+                  ops   : [
+                      "doSomething"    : [params: []],
 
-                            "doSomethingElse": [
-                                    desc: "SomethingElse will be done",
-                                    params: ["int", "java.lang.String"]
-                            ]
-                    ]
+                      "doSomethingElse": [
+                          desc  : "SomethingElse will be done",
+                          params: ["int", "java.lang.String"]
+                      ]
+                  ]
             ])
         }
 
@@ -419,18 +419,18 @@ class JmxBeanExportFactoryTest extends GroovyTestCase {
         }
         def beans = builder.export {
             bean(target: object, name: objName,
-                    attributes: [
-                            "Something": [desc: "Something description", defaultValue: "Hello", writable: true,
-                                    onChange: {event ->
-                                        testFlag = 1
-                                    }
-                            ],
+                attributes: [
+                    "Something"    : [desc    : "Something description", defaultValue: "Hello", writable: true,
+                                      onChange: { event ->
+                                          testFlag = 1
+                                      }
+                    ],
 
-                            "SomethingElse": [
-                                    writable: true,
-                                    onChange: object.&dynaMethod
-                            ]
+                    "SomethingElse": [
+                        writable: true,
+                        onChange: object.&dynaMethod
                     ]
+                ]
             )
         }
 
@@ -454,31 +454,31 @@ class JmxBeanExportFactoryTest extends GroovyTestCase {
         def testFlag4 = 4
         def beans = builder.export {
             bean(
-                    target: object, name: "jmx.builder:type=ExplicitObject",
-                    operations: [
-                            doSomethingElse: [params: ["int", "String"],
-                                    onCall: {event ->
-                                        testFlag1 = "1"
-                                    }
-                            ],
-                            doSomething: [
-                                    onCall: {event ->
-                                        testFlag2 = "2"
-                                    }
-                            ],
-                            dontDoThis: [
-                                    params: ["Object"],
-                                    onCall: {->
-                                        testFlag3 = 3 + 5
-                                    }
-                            ],
-                            doWork: [
-                                    params: ["int", "String"],
-                                    onCall: {->
-                                        testFlag4 = 4
-                                    }
-                            ]
+                target: object, name: "jmx.builder:type=ExplicitObject",
+                operations: [
+                    doSomethingElse: [params: ["int", "String"],
+                                      onCall: { event ->
+                                          testFlag1 = "1"
+                                      }
+                    ],
+                    doSomething    : [
+                        onCall: { event ->
+                            testFlag2 = "2"
+                        }
+                    ],
+                    dontDoThis     : [
+                        params: ["Object"],
+                        onCall: { ->
+                            testFlag3 = 3 + 5
+                        }
+                    ],
+                    doWork         : [
+                        params: ["int", "String"],
+                        onCall: { ->
+                            testFlag4 = 4
+                        }
                     ]
+                ]
             )
         }
 

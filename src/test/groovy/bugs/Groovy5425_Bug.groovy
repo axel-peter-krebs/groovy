@@ -26,11 +26,11 @@ import groovy.test.GroovyTestCase
  */
 class Groovy5425_Bug extends GroovyTestCase {
 
-  void testBigDecimalRangeSize() {
-    assert (1.0G..2147483647.0G).size() == 2147483647
-  }
+    void testBigDecimalRangeSize() {
+        assert (1.0G..2147483647.0G).size() == 2147483647
+    }
 
-  void testBigIntegerRangeSize() {
-    assert (1G..2147483647G).size() == 2147483647
-  }
+    void testBigIntegerRangeSize() {
+        assert (1G..2147483647G).size() == 2147483647
+    }
 }

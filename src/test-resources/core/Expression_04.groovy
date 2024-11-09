@@ -51,30 +51,30 @@ super = someValue;
 list[0] = 1
 list[1, 2] = [11, 22]
 
-(a)         = [1]
-(a)         = x++
-(a)         = (SomeType)x++
-(a)         = obj.m()
-(a)         = [1]
-(a)         = [1] + [2]
-(a, b)      = [1, 2]
-(a, b, c)   = [1, 2, 3]
+(a) = [1]
+(a) = x++
+(a) = (SomeType) x++
+(a) = obj.m()
+(a) = [1]
+(a) = [1] + [2]
+(a, b) = [1, 2]
+(a, b, c) = [1, 2, 3]
 
 (obj) =
-        a =
-              b =
-                left >>>=
-                        left >>=
-                                left <<=
-                                        sum +=
-                                                cantlive -=
-                                                        times *=
-                                                                times **=
-                                                                        slash /=
-                                                                                your |=
-                                                                                        here %=
-                                                                                                water ^=
-                                                                                                        a &=
-                                                                                                                that =
-                                                                                                                        x y z
+    a =
+        b =
+            left >>>=
+                left >>=
+                    left <<=
+                        sum +=
+                            cantlive -=
+                                times *=
+                                    times **=
+                                        slash /=
+                                            your |=
+                                                here %=
+                                                    water ^=
+                                                        a &=
+                                                            that =
+                                                                x y z
 

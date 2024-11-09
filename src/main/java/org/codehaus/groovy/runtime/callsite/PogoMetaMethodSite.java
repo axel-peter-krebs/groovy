@@ -33,101 +33,23 @@ import java.lang.reflect.Method;
 
 /**
  * POGO call site
- *   metaclass - cached
- *   method - cached
-*/
+ * metaclass - cached
+ * method - cached
+ */
 public class PogoMetaMethodSite extends PlainObjectMetaMethodSite {
     private static final VMPlugin VM_PLUGIN = VMPluginFactory.getPlugin();
     private final int version;
     private final boolean skipVersionCheck;
+
     public PogoMetaMethodSite(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params) {
         super(site, metaClass, metaMethod, params);
         version = metaClass.getVersion();
-        skipVersionCheck = metaClass.getClass()==MetaClassImpl.class;
-    }
-
-    public Object invoke(Object receiver, Object[] args) throws Throwable {
-        MetaClassHelper.unwrap(args);
-        try {
-            return metaMethod.doMethodInvoke(receiver,  args);
-        } catch (GroovyRuntimeException gre) {
-            throw ScriptBytecodeAdapter.unwrap(gre);
-        }
-    }
-
-    @Override
-    public Object callCurrent(GroovyObject receiver, Object[] args) throws Throwable {
-        if(checkCall(receiver, args)) {
-            try {
-                return invoke(receiver,args);
-            } catch (GroovyRuntimeException gre) {
-                throw ScriptBytecodeAdapter.unwrap(gre);
-            }
-        } else {
-            return CallSiteArray.defaultCallCurrent(this, receiver, args);
-        }
-    }
-
-    @Override
-    public Object call(Object receiver, Object[] args) throws Throwable {
-        if(checkCall(receiver, args)) {
-            try {
-                return invoke(receiver,args);
-            } catch (GroovyRuntimeException gre) {
-                throw ScriptBytecodeAdapter.unwrap(gre);
-            }
-        } else {
-            return CallSiteArray.defaultCall(this, receiver, args);
-        }
-    }
-
-    private boolean nonParamCheck(Object receiver) {
-        try {
-            return !GroovyCategorySupport.hasCategoryInCurrentThread()
-                    && ((GroovyObject)receiver).getMetaClass() == metaClass // metaClass still be valid
-                    && (skipVersionCheck || ((MetaClassImpl) metaClass).getVersion() == version);
-        } catch (NullPointerException e) {
-            if (receiver == null) return false;
-            throw e;
-        } catch (ClassCastException e) {
-            if (!(receiver instanceof GroovyObject)) return false;
-            throw e;
-        }
-    }
-
-    protected boolean checkCall(Object receiver, Object[] args) {
-        return nonParamCheck(receiver)
-                && MetaClassHelper.sameClasses(params, args);
-    }
-
-    protected boolean checkCall(Object receiver) {
-        return nonParamCheck(receiver)
-                && MetaClassHelper.sameClasses(params);
-    }
-
-    protected boolean checkCall(Object receiver, Object arg1) {
-        return nonParamCheck(receiver)
-                && MetaClassHelper.sameClasses(params, arg1);
-    }
-
-    protected boolean checkCall(Object receiver, Object arg1, Object arg2) {
-        return nonParamCheck(receiver)
-                && MetaClassHelper.sameClasses(params, arg1, arg2);
-    }
-
-    protected boolean checkCall(Object receiver, Object arg1, Object arg2, Object arg3) {
-        return nonParamCheck(receiver)
-                && MetaClassHelper.sameClasses(params, arg1, arg2, arg3);
-    }
-
-    protected boolean checkCall(Object receiver, Object arg1, Object arg2, Object arg3, Object arg4) {
-        return nonParamCheck(receiver)
-                && MetaClassHelper.sameClasses(params, arg1, arg2, arg3, arg4);
+        skipVersionCheck = metaClass.getClass() == MetaClassImpl.class;
     }
 
     public static CallSite createPogoMetaMethodSite(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object[] args) {
         if (metaMethod.getClass() == CachedMethod.class)
-          return createCachedMethodSite (site, metaClass, (CachedMethod) metaMethod, params, args);
+            return createCachedMethodSite(site, metaClass, (CachedMethod) metaMethod, params, args);
 
         return createNonAwareCallSite(site, metaClass, metaMethod, params, args);
     }
@@ -135,7 +57,7 @@ public class PogoMetaMethodSite extends PlainObjectMetaMethodSite {
     private static CallSite createNonAwareCallSite(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object[] args) {
         if (metaMethod.correctArguments(args) == args) {
             if (noWrappers(args)) {
-                if (noCoerce(metaMethod,args))
+                if (noCoerce(metaMethod, args))
                     return new PogoMetaMethodSiteNoUnwrap(site, metaClass, metaMethod, params);
                 else {
                     return new PogoMetaMethodSiteNoUnwrapNoCoerce(site, metaClass, metaMethod, params);
@@ -148,7 +70,7 @@ public class PogoMetaMethodSite extends PlainObjectMetaMethodSite {
     public static CallSite createCachedMethodSite(CallSite site, MetaClassImpl metaClass, CachedMethod metaMethod, Class[] params, Object[] args) {
         if (metaMethod.correctArguments(args) == args) {
             if (noWrappers(args)) {
-                if (noCoerce(metaMethod,args))
+                if (noCoerce(metaMethod, args))
                     return new PogoCachedMethodSiteNoUnwrap(site, metaClass, metaMethod, params);
                 else {
                     return metaMethod.createPogoMetaMethodSite(site, metaClass, params);
@@ -156,6 +78,85 @@ public class PogoMetaMethodSite extends PlainObjectMetaMethodSite {
             }
         }
         return new PogoCachedMethodSite(site, metaClass, metaMethod, params);
+    }
+
+    public Object invoke(Object receiver, Object[] args) throws Throwable {
+        MetaClassHelper.unwrap(args);
+        try {
+            return metaMethod.doMethodInvoke(receiver, args);
+        } catch (GroovyRuntimeException gre) {
+            throw ScriptBytecodeAdapter.unwrap(gre);
+        }
+    }
+
+    @Override
+    public Object callCurrent(GroovyObject receiver, Object[] args) throws Throwable {
+        if (checkCall(receiver, args)) {
+            try {
+                return invoke(receiver, args);
+            } catch (GroovyRuntimeException gre) {
+                throw ScriptBytecodeAdapter.unwrap(gre);
+            }
+        } else {
+            return CallSiteArray.defaultCallCurrent(this, receiver, args);
+        }
+    }
+
+    @Override
+    public Object call(Object receiver, Object[] args) throws Throwable {
+        if (checkCall(receiver, args)) {
+            try {
+                return invoke(receiver, args);
+            } catch (GroovyRuntimeException gre) {
+                throw ScriptBytecodeAdapter.unwrap(gre);
+            }
+        } else {
+            return CallSiteArray.defaultCall(this, receiver, args);
+        }
+    }
+
+    private boolean nonParamCheck(Object receiver) {
+        try {
+            return !GroovyCategorySupport.hasCategoryInCurrentThread()
+                && ((GroovyObject) receiver).getMetaClass() == metaClass // metaClass still be valid
+                && (skipVersionCheck || ((MetaClassImpl) metaClass).getVersion() == version);
+        } catch (NullPointerException e) {
+            if (receiver == null) return false;
+            throw e;
+        } catch (ClassCastException e) {
+            if (!(receiver instanceof GroovyObject)) return false;
+            throw e;
+        }
+    }
+
+    protected boolean checkCall(Object receiver, Object[] args) {
+        return nonParamCheck(receiver)
+            && MetaClassHelper.sameClasses(params, args);
+    }
+
+    protected boolean checkCall(Object receiver) {
+        return nonParamCheck(receiver)
+            && MetaClassHelper.sameClasses(params);
+    }
+
+    protected boolean checkCall(Object receiver, Object arg1) {
+        return nonParamCheck(receiver)
+            && MetaClassHelper.sameClasses(params, arg1);
+    }
+
+    protected boolean checkCall(Object receiver, Object arg1, Object arg2) {
+        return nonParamCheck(receiver)
+            && MetaClassHelper.sameClasses(params, arg1, arg2);
+    }
+
+    protected boolean checkCall(Object receiver, Object arg1, Object arg2, Object arg3) {
+        return nonParamCheck(receiver)
+            && MetaClassHelper.sameClasses(params, arg1, arg2, arg3);
+    }
+
+    protected boolean checkCall(Object receiver, Object arg1, Object arg2, Object arg3, Object arg4) {
+        return nonParamCheck(receiver)
+            && MetaClassHelper.sameClasses(params, arg1, arg2, arg3, arg4);
     }
 
     public static class PogoCachedMethodSite extends PogoMetaMethodSite {
@@ -211,7 +212,7 @@ public class PogoMetaMethodSite extends PlainObjectMetaMethodSite {
         @Override
         public final Object invoke(Object receiver, Object[] args) throws Throwable {
             try {
-                return metaMethod.doMethodInvoke(receiver,  args);
+                return metaMethod.doMethodInvoke(receiver, args);
             } catch (GroovyRuntimeException gre) {
                 throw ScriptBytecodeAdapter.unwrap(gre);
             }
@@ -230,7 +231,7 @@ public class PogoMetaMethodSite extends PlainObjectMetaMethodSite {
         @Override
         public final Object invoke(Object receiver, Object[] args) throws Throwable {
             try {
-                return metaMethod.invoke(receiver,  args);
+                return metaMethod.invoke(receiver, args);
             } catch (GroovyRuntimeException gre) {
                 throw ScriptBytecodeAdapter.unwrap(gre);
             }

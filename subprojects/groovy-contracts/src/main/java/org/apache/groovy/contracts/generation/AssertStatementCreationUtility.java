@@ -156,19 +156,18 @@ public final class AssertStatementCreationUtility {
      */
     public static class AddResultReturnStatementVisitor extends ClassCodeVisitorSupport {
 
-        @Override
-        protected SourceUnit getSourceUnit() {
-            return null;
-        }
-
         private final ReturnStatement returnStatement;
         private final ClassNode returnType;
         private final BlockStatement assertionCallBlock;
-
         public AddResultReturnStatementVisitor(ReturnStatement returnStatement, ClassNode returnType, BlockStatement assertionCallBlock) {
             this.returnStatement = returnStatement;
             this.returnType = returnType;
             this.assertionCallBlock = assertionCallBlock;
+        }
+
+        @Override
+        protected SourceUnit getSourceUnit() {
+            return null;
         }
 
         @Override
@@ -197,17 +196,16 @@ public final class AssertStatementCreationUtility {
      */
     public static class AddAssertionCallStatementToReturnStatementVisitor extends ClassCodeVisitorSupport {
 
-        @Override
-        protected SourceUnit getSourceUnit() {
-            return null;
-        }
-
         private final ReturnStatement returnStatement;
         private final Statement assertionCallStatement;
-
         public AddAssertionCallStatementToReturnStatementVisitor(ReturnStatement returnStatement, Statement assertionCallStatement) {
             this.returnStatement = returnStatement;
             this.assertionCallStatement = assertionCallStatement;
+        }
+
+        @Override
+        protected SourceUnit getSourceUnit() {
+            return null;
         }
 
         @Override

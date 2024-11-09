@@ -24,6 +24,7 @@ import groovy.lang.NumberRange;
 import groovy.lang.Range;
 import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
 
+import javax.naming.OperationNotSupportedException;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -51,18 +52,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.WeakHashMap;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.DelayQueue;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.*;
 
 /**
  * Support methods for DefaultGroovyMethods and PluginDefaultMethods.
@@ -161,7 +151,7 @@ public class DefaultGroovyMethodsSupport {
      * Attempts to close the closeable returning rather than throwing
      * any Exception that may occur.
      *
-     * @param closeable the thing to close
+     * @param closeable  the thing to close
      * @param logWarning if true will log a warning if an exception occurs
      * @return throwable Exception from the close method, else null
      */
@@ -206,7 +196,7 @@ public class DefaultGroovyMethodsSupport {
         return copy;
     }
 
-    protected static <K, V> Map<K ,V> cloneSimilarMap(Map<K, V> orig) {
+    protected static <K, V> Map<K, V> cloneSimilarMap(Map<K, V> orig) {
         var copy = maybeClone(orig);
         if (copy == null) {
             copy = createSimilarMap(orig);
@@ -251,7 +241,8 @@ public class DefaultGroovyMethodsSupport {
             return createSimilarList((List<T>) orig, newCapacity);
         }
         if (orig instanceof Queue) {
-            return createSimilarQueue((Queue<T>) orig);
+            throw new RuntimeException("N.Y.I.");
+            // return createSimilarQueue((Queue<T>) orig);
         }
         return new ArrayList<>(newCapacity);
     }
@@ -281,7 +272,7 @@ public class DefaultGroovyMethodsSupport {
 
     protected static <T> Set<T> createSimilarSet(Set<T> orig) {
         if (orig instanceof SortedSet) {
-            var comparator = ((SortedSet<T>)orig).comparator();
+            var comparator = ((SortedSet<T>) orig).comparator();
             if (orig instanceof ConcurrentSkipListSet) {
                 return new ConcurrentSkipListSet<>(comparator);
             } else {
@@ -296,7 +287,7 @@ public class DefaultGroovyMethodsSupport {
         }
     }
 
-    protected static <T> Queue<T> createSimilarQueue(Queue<T> orig) {
+    protected static <T extends Delayed> Queue<T> createSimilarQueue(Queue<T> orig) {
         if (orig instanceof ArrayBlockingQueue) {
             ArrayBlockingQueue<T> queue = (ArrayBlockingQueue<T>) orig;
             return new ArrayBlockingQueue<>(queue.size() + queue.remainingCapacity());
@@ -305,7 +296,7 @@ public class DefaultGroovyMethodsSupport {
         } else if (orig instanceof ConcurrentLinkedQueue) {
             return new ConcurrentLinkedQueue<>();
         } else if (orig instanceof DelayQueue) {
-            return new DelayQueue(); // T extends Delayed
+            return new DelayQueue<T>(); // T extends Delayed
         } else if (orig instanceof LinkedBlockingDeque) {
             return new LinkedBlockingDeque<>();
         } else if (orig instanceof LinkedBlockingQueue) {
@@ -323,7 +314,7 @@ public class DefaultGroovyMethodsSupport {
 
     protected static <K, V> Map<K, V> createSimilarMap(Map<K, V> orig) {
         if (orig instanceof SortedMap) {
-            var comparator = ((SortedMap<K,V>)orig).comparator();
+            var comparator = ((SortedMap<K, V>) orig).comparator();
             if (orig instanceof ConcurrentSkipListMap) {
                 return new ConcurrentSkipListMap<>(comparator);
             } else {
@@ -335,7 +326,7 @@ public class DefaultGroovyMethodsSupport {
             } else if (orig instanceof Hashtable) {
                 if (orig instanceof Properties) {
                     @SuppressWarnings("unchecked") // safe?
-                    var props = (Map<K,V>)new Properties();
+                    var props = (Map<K, V>) new Properties();
                     return props;
                 } else {
                     return new Hashtable<>();
@@ -359,7 +350,7 @@ public class DefaultGroovyMethodsSupport {
      * @return true if the collections are all of the same type
      */
     protected static boolean sameType(Collection[] cols) {
-        List<Object> all = new ArrayList<>(cols.length*8);
+        List<Object> all = new ArrayList<>(cols.length * 8);
         for (Collection<?> col : cols) {
             all.addAll(col);
         }

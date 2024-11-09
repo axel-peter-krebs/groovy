@@ -18,4 +18,4 @@
  */
 package stubgenerator.traitStaticPropertiesStub
 
-class GroovyXImpl implements GroovyXTrait { }
+class GroovyXImpl implements GroovyXTrait {}

@@ -48,12 +48,12 @@ class SuperMethod2Bug extends GroovyTestCase {
 
     void testBug3() {
         def base = new SuperBase()
-        def value = base.foo(2,3)
+        def value = base.foo(2, 3)
         assert value == "foo(x,y)Base2,3"
 
 
         base = new SuperDerived()
-        value = base.foo(3,4)
+        value = base.foo(3, 4)
         assert value == "foo(x,y)Derived3,4foo(x,y)Base3,4"
     }
 
@@ -68,16 +68,16 @@ class SuperMethod2Bug extends GroovyTestCase {
         assert value == "CheeseDerived"
     }
 
-    void testCallsToSuperMethodsReturningPrimitives(){
-       def base = new SuperBase("super cheese")
-       assert base.longMethod() == 1
-       assert base.intMethod() == 1
-       assert base.boolMethod() == true
+    void testCallsToSuperMethodsReturningPrimitives() {
+        def base = new SuperBase("super cheese")
+        assert base.longMethod() == 1
+        assert base.intMethod() == 1
+        assert base.boolMethod() == true
 
-       base = new SuperDerived("derived super cheese")
-       assert base.longMethod() == 1
-       assert base.intMethod() == 1
-       assert base.boolMethod() == true       
+        base = new SuperDerived("derived super cheese")
+        assert base.longMethod() == 1
+        assert base.intMethod() == 1
+        assert base.boolMethod() == true
     }
 }
 
@@ -103,9 +103,11 @@ class SuperBase {
         "foo(x,y)Base" + x + "," + y
     }
 
-    boolean boolMethod(){true}
-    long longMethod(){1l}
-    int intMethod(){1i}
+    boolean boolMethod() { true }
+
+    long longMethod() { 1l }
+
+    int intMethod() { 1i }
 }
 
 class SuperDerived extends SuperBase {
@@ -120,7 +122,7 @@ class SuperDerived extends SuperBase {
     }
 
     def doSomething() {
-        /** @todo ++calls causes bug */
+        /** @todo ++calls causes bug  */
         //calls++
         /*
         calls = calls + 1
@@ -138,10 +140,12 @@ class SuperDerived extends SuperBase {
         "foo(x,y)Derived" + x + "," + y + super.foo(x, y)
     }
 
-    // we want to ensure that a call with super, which is directly added into 
+    // we want to ensure that a call with super, which is directly added into
     // bytecode without calling MetaClass does correct boxing
-    boolean booMethod(){super.boolMethod()}
-    int intMethod(){super.intMethod()}
-    long longMethod(){super.longMethod()}
+    boolean booMethod() { super.boolMethod() }
+
+    int intMethod() { super.intMethod() }
+
+    long longMethod() { super.longMethod() }
 }
 

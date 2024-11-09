@@ -72,12 +72,7 @@ import static java.time.temporal.ChronoUnit.YEARS;
  */
 public final class DateTimeExtensions {
 
-    // Static methods only
-    private DateTimeExtensions() {
-    }
-
     private static final DateTimeFormatter ZONE_SHORT_FORMATTER = DateTimeFormatter.ofPattern("z");
-
     /**
      * For any Temporal subtype that does not use {@link java.time.temporal.ChronoUnit#SECONDS} as the unit for
      * the upto/downto methods, should have an entry.
@@ -90,17 +85,21 @@ public final class DateTimeExtensions {
         DEFAULT_UNITS.put(Year.class, YEARS);
     }
 
+    // Static methods only
+    private DateTimeExtensions() {
+    }
+
     /**
      * A number of extension methods permit a long or int to be provided as a parameter. This method determines
      * what the unit should be for this number.
      */
     private static TemporalUnit defaultUnitFor(Temporal temporal) {
         return DEFAULT_UNITS.entrySet()
-                .stream()
-                .filter(e -> e.getKey().isAssignableFrom(temporal.getClass()))
-                .findFirst()
-                .map(Map.Entry::getValue)
-                .orElse(ChronoUnit.SECONDS);
+            .stream()
+            .filter(e -> e.getKey().isAssignableFrom(temporal.getClass()))
+            .findFirst()
+            .map(Map.Entry::getValue)
+            .orElse(ChronoUnit.SECONDS);
     }
 
     /**
@@ -161,7 +160,7 @@ public final class DateTimeExtensions {
             }
         } else {
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to upto() cannot be earlier than the value (" + from + ") it's called on.");
+                ") to upto() cannot be earlier than the value (" + from + ") it's called on.");
         }
     }
 
@@ -176,7 +175,7 @@ public final class DateTimeExtensions {
             return isNonnegative((Duration) amount);
         } else {
             throw new GroovyRuntimeException("Temporal implementations of "
-                    + from.getClass().getCanonicalName() + " are not supported by upto().");
+                + from.getClass().getCanonicalName() + " are not supported by upto().");
         }
     }
 
@@ -229,7 +228,7 @@ public final class DateTimeExtensions {
             }
         } else {
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to downto() cannot be later than the value (" + from + ") it's called on.");
+                ") to downto() cannot be later than the value (" + from + ") it's called on.");
         }
     }
 
@@ -244,7 +243,7 @@ public final class DateTimeExtensions {
             return isNonpositive((Duration) amount);
         } else {
             throw new GroovyRuntimeException("Temporal implementations of "
-                    + from.getClass().getCanonicalName() + " are not supported by downto().");
+                + from.getClass().getCanonicalName() + " are not supported by downto().");
         }
     }
 
@@ -312,7 +311,7 @@ public final class DateTimeExtensions {
      * </pre>
      * <p>
      *
-     * @param self  a TemporalAccessor
+     * @param self   a TemporalAccessor
      * @param fields an iterable of non-null TemporalField values
      * @return the list of values for the fields
      * @throws DateTimeException                if a value for the field cannot be obtained
@@ -613,7 +612,7 @@ public final class DateTimeExtensions {
     /**
      * Calculates the number of days between two dates
      *
-     * @param self a LocalDate
+     * @param self  a LocalDate
      * @param other the other LocalDate
      * @return the number of days
      * @since 3.0.0
@@ -1413,8 +1412,8 @@ public final class DateTimeExtensions {
      */
     public static Period positive(final Period self) {
         return !self.isNegative() ? self : self.withDays(Math.abs(self.getDays()))
-                .withMonths(Math.abs(self.getMonths()))
-                .withYears(Math.abs(self.getYears()));
+            .withMonths(Math.abs(self.getMonths()))
+            .withYears(Math.abs(self.getYears()));
     }
 
     /**

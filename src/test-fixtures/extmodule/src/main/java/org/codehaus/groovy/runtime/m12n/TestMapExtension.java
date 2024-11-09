@@ -21,7 +21,7 @@ package org.codehaus.groovy.runtime.m12n;
 import java.util.Map;
 
 public class TestMapExtension {
-    public static int taille(Map<?,?> map) {
+    public static int taille(Map<?, ?> map) {
         return map.size();
     }
 }

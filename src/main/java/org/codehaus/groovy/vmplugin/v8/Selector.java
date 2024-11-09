@@ -99,6 +99,10 @@ import static org.codehaus.groovy.vmplugin.v8.IndyInterface.LOG_ENABLED;
 import static org.codehaus.groovy.vmplugin.v8.IndyInterface.switchPoint;
 
 public abstract class Selector {
+    /**
+     * Cache values for read-only access
+     */
+    private static final CallType[] CALL_TYPE_VALUES = CallType.values();
     public Object[] args, originalArguments;
     public MetaMethod method;
     public MethodType targetType, currentType;
@@ -114,11 +118,6 @@ public abstract class Selector {
     public Class<?> selectionBase;
     public boolean catchException = true;
     public CallType callType;
-
-    /**
-     * Cache values for read-only access
-     */
-    private static final CallType[] CALL_TYPE_VALUES = CallType.values();
 
     /**
      * Returns the Selector
@@ -141,6 +140,68 @@ public abstract class Selector {
             default:
                 throw new GroovyBugError("unexpected call type");
         }
+    }
+
+    /**
+     * Returns the MetaClassImpl if the given MetaClass is one of
+     * MetaClassImpl, AdaptingMetaClass or ClosureMetaClass. If
+     * none of these cases matches, this method returns null.
+     */
+    private static MetaClassImpl getMetaClassImpl(final MetaClass mc, final boolean includeEMC) {
+        Class<?> mcc = mc.getClass();
+        boolean valid = mcc == MetaClassImpl.class
+            || mcc == ClosureMetaClass.class
+            || (includeEMC && mcc == ExpandoMetaClass.class);
+        if (!valid) {
+            if (LOG_ENABLED)
+                LOG.info("meta class is neither MetaClassImpl, nor ClosureMetaClass, normal method selection path disabled.");
+            return null;
+        }
+        if (LOG_ENABLED) LOG.info("meta class is a recognized MetaClassImpl");
+        return (MetaClassImpl) mc;
+    }
+
+    /**
+     * Helper method to transform the given arguments, consisting of the receiver
+     * and the actual arguments in an Object[], into a new Object[] consisting
+     * of the receiver and the arguments directly. Before the size of args was
+     * always 2, the returned Object[] will have a size of 1+n, where n is the
+     * number arguments.
+     */
+    private static Object[] spread(final Object[] args, final boolean spreadCall) {
+        if (!spreadCall) return args;
+        Object[] normalArguments = (Object[]) args[1];
+        Object[] ret = new Object[normalArguments.length + 1];
+        ret[0] = args[0];
+        System.arraycopy(normalArguments, 0, ret, 1, ret.length - 1);
+        return ret;
+    }
+
+    //--------------------------------------------------------------------------
+
+    /**
+     * Helper method to remove the receiver from the argument array
+     * by producing a new array.
+     */
+    private static Object[] removeRealReceiver(final Object[] args) {
+        Object[] ar = new Object[args.length - 1];
+        System.arraycopy(args, 1, ar, 0, args.length - 1);
+        return ar;
+    }
+
+    /**
+     * Unwraps the given object from a {@link Wrapper}. If not
+     * wrapped, the given object is returned.
+     */
+    private static Object unwrapIfWrapped(final Object object) {
+        return object instanceof Wrapper ? unwrap(object) : object;
+    }
+
+    private static Class<?> getThisType(Class<?> sender) {
+        while (GeneratedClosure.class.isAssignableFrom(sender)) {
+            sender = sender.getEnclosingClass();
+        }
+        return sender;
     }
 
     /**
@@ -168,6 +229,12 @@ public abstract class Selector {
             super(callSite, Selector.class, "", CallType.CAST, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, arguments);
             this.staticSourceType = callSite.type().parameterType(0);
             this.staticTargetType = callSite.type().returnType();
+        }
+
+        private static boolean isAbstractClassOf(Class<?> toTest, Class<?> givenOnCallSite) {
+            if (!toTest.isAssignableFrom(givenOnCallSite)) return false;
+            if (givenOnCallSite.isInterface()) return true;
+            return Modifier.isAbstract(givenOnCallSite.getModifiers());
         }
 
         @Override
@@ -220,12 +287,6 @@ public abstract class Selector {
             if (staticTargetType.isAssignableFrom(args[0].getClass())) {
                 handle = MethodHandles.identity(staticSourceType);
             }
-        }
-
-        private static boolean isAbstractClassOf(Class<?> toTest, Class<?> givenOnCallSite) {
-            if (!toTest.isAssignableFrom(givenOnCallSite)) return false;
-            if (givenOnCallSite.isInterface()) return true;
-            return Modifier.isAbstract(givenOnCallSite.getModifiers());
         }
 
         private void handleCollections() {
@@ -530,8 +591,8 @@ public abstract class Selector {
      */
     private static class MethodSelector extends Selector {
         private static final Object[] SINGLE_NULL_ARRAY = {null};
-        private boolean isCategoryMethod;
         protected MetaClass mc;
+        private boolean isCategoryMethod;
 
         public MethodSelector(CacheableCallSite callSite, Class<?> sender, String methodName, CallType callType, Boolean safeNavigation, Boolean thisCall, Boolean spreadCall, Object[] arguments) {
             this.callType = callType;
@@ -549,15 +610,15 @@ public abstract class Selector {
 
             if (LOG_ENABLED) {
                 StringBuilder msg =
-                        new StringBuilder("----------------------------------------------------" +
-                                "\n\t\tinvocation of method '" + methodName + "'" +
-                                "\n\t\tinvocation type: " + callType +
-                                "\n\t\tsender: " + sender +
-                                "\n\t\ttargetType: " + targetType +
-                                "\n\t\tsafe navigation: " + safeNavigation +
-                                "\n\t\tthisCall: " + thisCall +
-                                "\n\t\tspreadCall: " + spreadCall +
-                                "\n\t\twith " + arguments.length + " arguments");
+                    new StringBuilder("----------------------------------------------------" +
+                        "\n\t\tinvocation of method '" + methodName + "'" +
+                        "\n\t\tinvocation type: " + callType +
+                        "\n\t\tsender: " + sender +
+                        "\n\t\ttargetType: " + targetType +
+                        "\n\t\tsafe navigation: " + safeNavigation +
+                        "\n\t\tthisCall: " + thisCall +
+                        "\n\t\tspreadCall: " + spreadCall +
+                        "\n\t\twith " + arguments.length + " arguments");
                 for (int i = 0; i < arguments.length; i++) {
                     msg.append("\n\t\t\targument[").append(i).append("] = ");
                     if (arguments[i] == null) {
@@ -616,8 +677,7 @@ public abstract class Selector {
                 if (LOG_ENABLED) LOG.info("receiver is a class");
                 if (!mci.hasCustomStaticInvokeMethod())
                     method = mci.retrieveStaticMethod(name, newArgs);
-            }
-            else if (!mci.hasCustomInvokeMethod()) {
+            } else if (!mci.hasCustomInvokeMethod()) {
                 String name = this.name;
                 if ("call".equals(name) && receiver instanceof GeneratedClosure) {
                     name = "doCall";
@@ -639,7 +699,7 @@ public abstract class Selector {
             isCategoryMethod = (method instanceof CategoryMethod);
 
             if (metaMethod instanceof NumberNumberMetaMethod
-                    || (method instanceof GeneratedMetaMethod && ("next".equals(name) || "previous".equals(name)))) {
+                || (method instanceof GeneratedMetaMethod && ("next".equals(name) || "previous".equals(name)))) {
                 if (LOG_ENABLED) LOG.info("meta method is number method");
                 if (IndyMath.chooseMathMethod(this, metaMethod)) {
                     catchException = false;
@@ -672,7 +732,7 @@ public abstract class Selector {
                             handle = MethodHandles.publicLookup().findVirtual(receiverClass, "clone", MethodType.methodType(Object.class));
                         } else { // GROOVY-10319
                             handle = MethodHandles.throwException(Object.class, CloneNotSupportedException.class) // prevent illegal access
-                                                                    .bindTo(new CloneNotSupportedException());
+                                .bindTo(new CloneNotSupportedException());
                             handle = MethodHandles.dropArguments(handle, 0, Object.class); // discard receiver
                         }
                     } else if (parameterCount == 1 && "forName".equals(name) && declaringClass == Class.class) {
@@ -795,11 +855,11 @@ public abstract class Selector {
 
             int aCount = args.length;
             int pCount = params.length;
-            var vaType = params[pCount-1];
+            var vaType = params[pCount - 1];
             if (aCount == pCount) {
-                var lastArg = MetaClassHelper.convertToTypeArray(args)[aCount-1]; // GROOVY-6146
+                var lastArg = MetaClassHelper.convertToTypeArray(args)[aCount - 1]; // GROOVY-6146
                 if (lastArg != null && (!lastArg.isArray() || (ArrayTypeUtils.dimension(lastArg)
-                            != ArrayTypeUtils.dimension(vaType) && vaType != Object[].class))) {
+                    != ArrayTypeUtils.dimension(vaType) && vaType != Object[].class))) {
                     // we depend on the method selection having done a good job previously
                     // arg is null with cast or not assignment compatible; wrap with array
                     handle = handle.asCollector(vaType, 1);
@@ -976,9 +1036,9 @@ public abstract class Selector {
                 }
             } else if (Arrays.stream(pt).anyMatch(paramType -> !Modifier.isFinal(paramType.getModifiers()))) {
                 MethodHandle test = SAME_CLASSES
-                        .bindTo(Arrays.stream(args).map(Object::getClass).toArray(Class[]::new))
-                        .asCollector(Object[].class, pt.length)
-                        .asType(MethodType.methodType(boolean.class, pt));
+                    .bindTo(Arrays.stream(args).map(Object::getClass).toArray(Class[]::new))
+                    .asCollector(Object[].class, pt.length)
+                    .asType(MethodType.methodType(boolean.class, pt));
                 handle = MethodHandles.guardWithTest(test, handle, fallback);
             } else if (safeNavigationOrig) { // GROOVY-11126
                 MethodHandle test = NON_NULL.asType(MethodType.methodType(boolean.class, pt[0]));
@@ -1051,66 +1111,5 @@ public abstract class Selector {
             setGuards(args[0]);
             doCallSiteTargetSet();
         }
-    }
-
-    //--------------------------------------------------------------------------
-
-    /**
-     * Returns the MetaClassImpl if the given MetaClass is one of
-     * MetaClassImpl, AdaptingMetaClass or ClosureMetaClass. If
-     * none of these cases matches, this method returns null.
-     */
-    private static MetaClassImpl getMetaClassImpl(final MetaClass mc, final boolean includeEMC) {
-        Class<?> mcc = mc.getClass();
-        boolean valid = mcc == MetaClassImpl.class
-                || mcc == ClosureMetaClass.class
-                || (includeEMC && mcc == ExpandoMetaClass.class);
-        if (!valid) {
-            if (LOG_ENABLED) LOG.info("meta class is neither MetaClassImpl, nor ClosureMetaClass, normal method selection path disabled.");
-            return null;
-        }
-        if (LOG_ENABLED) LOG.info("meta class is a recognized MetaClassImpl");
-        return (MetaClassImpl) mc;
-    }
-
-    /**
-     * Helper method to transform the given arguments, consisting of the receiver
-     * and the actual arguments in an Object[], into a new Object[] consisting
-     * of the receiver and the arguments directly. Before the size of args was
-     * always 2, the returned Object[] will have a size of 1+n, where n is the
-     * number arguments.
-     */
-    private static Object[] spread(final Object[] args, final boolean spreadCall) {
-        if (!spreadCall) return args;
-        Object[] normalArguments = (Object[]) args[1];
-        Object[] ret = new Object[normalArguments.length + 1];
-        ret[0] = args[0];
-        System.arraycopy(normalArguments, 0, ret, 1, ret.length - 1);
-        return ret;
-    }
-
-    /**
-     * Helper method to remove the receiver from the argument array
-     * by producing a new array.
-     */
-    private static Object[] removeRealReceiver(final Object[] args) {
-        Object[] ar = new Object[args.length - 1];
-        System.arraycopy(args, 1, ar, 0, args.length - 1);
-        return ar;
-    }
-
-    /**
-     * Unwraps the given object from a {@link Wrapper}. If not
-     * wrapped, the given object is returned.
-     */
-    private static Object unwrapIfWrapped(final Object object) {
-        return object instanceof Wrapper ? unwrap(object) : object;
-    }
-
-    private static Class<?> getThisType(Class<?> sender) {
-        while (GeneratedClosure.class.isAssignableFrom(sender)) {
-            sender = sender.getEnclosingClass();
-        }
-        return sender;
     }
 }

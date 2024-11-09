@@ -46,6 +46,16 @@ public class JmxEventListener implements NotificationListener {
         return listener;
     }
 
+    private static Map buildOperationNotificationPacket(Notification note) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("event", note.getType());
+        result.put("source", note.getSource());
+        result.put("sequenceNumber", note.getSequenceNumber());
+        result.put("timeStamp", note.getTimeStamp());
+        result.put("data", note.getUserData());
+        return result;
+    }
+
     /**
      * This is the implemented method for NotificationListener.  It is called by an event emitter to dispatch
      * JMX events to listeners.  Here it handles internal JmxBuilder events.
@@ -67,15 +77,5 @@ public class JmxEventListener implements NotificationListener {
                 else closure.call();
             }
         }
-    }
-
-    private static Map buildOperationNotificationPacket(Notification note) {
-        Map<String, Object> result = new HashMap<String, Object>();
-        result.put("event", note.getType());
-        result.put("source", note.getSource());
-        result.put("sequenceNumber", note.getSequenceNumber());
-        result.put("timeStamp", note.getTimeStamp());
-        result.put("data", note.getUserData());
-        return result;
     }
 }

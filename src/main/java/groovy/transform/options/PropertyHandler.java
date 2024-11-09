@@ -45,50 +45,6 @@ public abstract class PropertyHandler {
     private static final Class<? extends Annotation> PROPERTY_OPTIONS_CLASS = PropertyOptions.class;
     public static final ClassNode PROPERTY_OPTIONS_TYPE = makeWithoutCaching(PROPERTY_OPTIONS_CLASS, false);
 
-    public abstract boolean validateAttributes(AbstractASTTransformation xform, AnnotationNode anno);
-
-    public boolean validateProperties(final AbstractASTTransformation xform, final BlockStatement body, final ClassNode cNode, final List<PropertyNode> props) {
-        return true;
-    }
-
-    /**
-     * Create a statement that will initialize the property including any defensive copying. Null if no statement should be added.
-     *
-     * @param xform the transform being processed
-     * @param anno the '@ImmutableBase' annotation node
-     * @param cNode the classnode containing the property
-     * @param pNode the property node to initialize
-     * @param namedArgMap an "args" Map if the property value should come from a named arg map or null if not
-     */
-    public abstract Statement createPropInit(AbstractASTTransformation xform, AnnotationNode anno, ClassNode cNode, PropertyNode pNode, Parameter namedArgMap);
-
-    /**
-     * Create the getter block used when reading the property including any defensive copying.
-     *
-     *  @param pNode the property node
-     */
-    public Statement createPropGetter(final PropertyNode pNode) {
-        return pNode.getGetterBlock();
-    }
-
-    /**
-     * Create the setter block used when setting the property. Can be null for read-only properties.
-     *
-     *  @param pNode the property node
-     */
-    public Statement createPropSetter(final PropertyNode pNode) {
-        return pNode.getSetterBlock();
-    }
-
-    protected boolean isValidAttribute(final AbstractASTTransformation xform, final AnnotationNode anno, final String memberName) {
-        if (xform.getMemberValue(anno, memberName) != null) {
-            xform.addError("Error during " + xform.getAnnotationName() + " processing: Annotation attribute '" + memberName +
-                    "' not supported for property handler " + getClass().getSimpleName(), anno);
-            return false;
-        }
-        return true;
-    }
-
     public static PropertyHandler createPropertyHandler(final AbstractASTTransformation xform, final GroovyClassLoader loader, final ClassNode cNode) {
         List<AnnotationNode> annotations = cNode.getAnnotations(PROPERTY_OPTIONS_TYPE);
         AnnotationNode anno = annotations.isEmpty() ? null : annotations.get(0);
@@ -112,5 +68,49 @@ public abstract class PropertyHandler {
             xform.addError("Can't load propertyHandler '" + className + "' " + e, anno);
             return null;
         }
+    }
+
+    public abstract boolean validateAttributes(AbstractASTTransformation xform, AnnotationNode anno);
+
+    public boolean validateProperties(final AbstractASTTransformation xform, final BlockStatement body, final ClassNode cNode, final List<PropertyNode> props) {
+        return true;
+    }
+
+    /**
+     * Create a statement that will initialize the property including any defensive copying. Null if no statement should be added.
+     *
+     * @param xform       the transform being processed
+     * @param anno        the '@ImmutableBase' annotation node
+     * @param cNode       the classnode containing the property
+     * @param pNode       the property node to initialize
+     * @param namedArgMap an "args" Map if the property value should come from a named arg map or null if not
+     */
+    public abstract Statement createPropInit(AbstractASTTransformation xform, AnnotationNode anno, ClassNode cNode, PropertyNode pNode, Parameter namedArgMap);
+
+    /**
+     * Create the getter block used when reading the property including any defensive copying.
+     *
+     * @param pNode the property node
+     */
+    public Statement createPropGetter(final PropertyNode pNode) {
+        return pNode.getGetterBlock();
+    }
+
+    /**
+     * Create the setter block used when setting the property. Can be null for read-only properties.
+     *
+     * @param pNode the property node
+     */
+    public Statement createPropSetter(final PropertyNode pNode) {
+        return pNode.getSetterBlock();
+    }
+
+    protected boolean isValidAttribute(final AbstractASTTransformation xform, final AnnotationNode anno, final String memberName) {
+        if (xform.getMemberValue(anno, memberName) != null) {
+            xform.addError("Error during " + xform.getAnnotationName() + " processing: Annotation attribute '" + memberName +
+                "' not supported for property handler " + getClass().getSimpleName(), anno);
+            return false;
+        }
+        return true;
     }
 }

@@ -25,7 +25,7 @@ final class AutoImplementWithJointCompilationStubTest extends StringSourcesStubT
 
     Map<String, String> provideSources() {
         [
-            'foo/JavaI.java': '''package foo;
+            'foo/JavaI.java'        : '''package foo;
                 public interface JavaI {
                 }
             ''',
@@ -34,7 +34,7 @@ final class AutoImplementWithJointCompilationStubTest extends StringSourcesStubT
                 class GroovyClass implements Runnable {
                 }
             ''',
-            'foo/Main.groovy': '''package foo
+            'foo/Main.groovy'       : '''package foo
                 class Main {
                     boolean runGroovyClass() {
                         new GroovyClass().run()

@@ -47,7 +47,7 @@ class AbstractHttpServletTest extends GroovyTestCase {
         def request = { attribute -> attribute }
 
         assert servlet.getScriptUri(request as HttpServletRequest) ==
-                AbstractHttpServlet.INC_SERVLET_PATH + AbstractHttpServlet.INC_PATH_INFO
+            AbstractHttpServlet.INC_SERVLET_PATH + AbstractHttpServlet.INC_PATH_INFO
     }
 
     /**
@@ -61,7 +61,7 @@ class AbstractHttpServletTest extends GroovyTestCase {
         }
 
         assert servlet.getScriptUri(request as HttpServletRequest) ==
-                AbstractHttpServlet.INC_SERVLET_PATH
+            AbstractHttpServlet.INC_SERVLET_PATH
     }
 
     /**
@@ -70,9 +70,9 @@ class AbstractHttpServletTest extends GroovyTestCase {
      */
     void testGetScriptUri_NoAttributesPathInfoExists() {
         def request = [
-                getAttribute: { null },
-                getServletPath: { 'servletPath' },
-                getPathInfo: { 'pathInfo' }
+            getAttribute  : { null },
+            getServletPath: { 'servletPath' },
+            getPathInfo   : { 'pathInfo' }
         ] as HttpServletRequest
 
         def servlet = new ConcreteHttpServlet()
@@ -86,9 +86,9 @@ class AbstractHttpServletTest extends GroovyTestCase {
      */
     void testGetScriptUri_NoAttributesPathInfoMissing() {
         def request = [
-                getAttribute: { null },
-                getServletPath: { 'servletPath' },
-                getPathInfo: { null }
+            getAttribute  : { null },
+            getServletPath: { 'servletPath' },
+            getPathInfo   : { null }
         ] as HttpServletRequest
 
         def servlet = new ConcreteHttpServlet()
@@ -101,18 +101,18 @@ class AbstractHttpServletTest extends GroovyTestCase {
      */
     void testGetScriptURIasFile() {
         def request = [
-                getAttribute: { null },
-                getServletPath: { 'servletPath' },
-                getPathInfo: { 'pathInfo' }
+            getAttribute  : { null },
+            getServletPath: { 'servletPath' },
+            getPathInfo   : { 'pathInfo' }
         ] as HttpServletRequest
 
         def servletContext = [
-                getRealPath: { arg -> 'realPath' + arg }
+            getRealPath: { arg -> 'realPath' + arg }
         ] as ServletContext
 
         def servletConfig = [
-                getServletContext: { servletContext },
-                getInitParameter: { null }
+            getServletContext: { servletContext },
+            getInitParameter : { null }
         ] as ServletConfig
 
         servlet.init(servletConfig)
@@ -126,18 +126,18 @@ class AbstractHttpServletTest extends GroovyTestCase {
      */
     void testGetScriptURIasFileNoMapping() {
         def request = [
-                getAttribute: { null },
-                getServletPath: { 'servletPath' },
-                getPathInfo: { 'pathInfo' }
+            getAttribute  : { null },
+            getServletPath: { 'servletPath' },
+            getPathInfo   : { 'pathInfo' }
         ] as HttpServletRequest
 
         def servletContext = [
-                getRealPath: { arg -> null }
+            getRealPath: { arg -> null }
         ] as ServletContext
 
         def servletConfig = [
-                getServletContext: { servletContext },
-                getInitParameter: { null }
+            getServletContext: { servletContext },
+            getInitParameter : { null }
         ] as ServletConfig
 
         servlet.init(servletConfig)
@@ -151,13 +151,13 @@ class AbstractHttpServletTest extends GroovyTestCase {
      */
     void testGetResourceConnection_MissingResource() {
         def servletContext = [
-                getRealPath: { arg -> 'realPath' + arg },
-                getResource: { arg -> null }
+            getRealPath: { arg -> 'realPath' + arg },
+            getResource: { arg -> null }
         ] as ServletContext
 
         def servletConfig = [
-                getServletContext: { servletContext },
-                getInitParameter: { null }
+            getServletContext: { servletContext },
+            getInitParameter : { null }
         ] as ServletConfig
 
         // servlet config is used to find resources
@@ -174,13 +174,13 @@ class AbstractHttpServletTest extends GroovyTestCase {
     void testGetResourceConnection_FoundInCurrentDir() {
         def urlStub = new java.net.URL('file:realPath/someresource')
         def servletContext = [
-                getRealPath: { arg -> 'realPath' + arg },
-                getResource: { arg -> arg == '/someresource' ? urlStub : null }
+            getRealPath: { arg -> 'realPath' + arg },
+            getResource: { arg -> arg == '/someresource' ? urlStub : null }
         ] as ServletContext
 
         def servletConfig = [
-                getServletContext: { servletContext },
-                getInitParameter: { null }
+            getServletContext: { servletContext },
+            getInitParameter : { null }
         ] as ServletConfig
 
         // servlet config is used to find resources
@@ -197,13 +197,13 @@ class AbstractHttpServletTest extends GroovyTestCase {
     void testGetResourceConnection_FoundInWebInf() {
         def urlStub = new java.net.URL('file:realPath/WEB-INF/groovy/someresource')
         def servletContext = [
-                getRealPath: { arg -> 'realPath' + arg },
-                getResource: { arg -> arg == '/WEB-INF/groovy/someresource' ? urlStub : null }
+            getRealPath: { arg -> 'realPath' + arg },
+            getResource: { arg -> arg == '/WEB-INF/groovy/someresource' ? urlStub : null }
         ] as ServletContext
 
         def servletConfig = [
-                getServletContext: { servletContext },
-                getInitParameter: { null }
+            getServletContext: { servletContext },
+            getInitParameter : { null }
         ] as ServletConfig
 
         // servlet config is used to find resources
@@ -219,28 +219,28 @@ class AbstractHttpServletTest extends GroovyTestCase {
      */
     void testGetResourceConnection_Replace1stFooWithBar() {
         def servletContext = [
-                getRealPath: { arg -> 'realPath' + arg },
-                getResource: { arg ->
-                    if (arg.startsWith('//')) arg = arg.substring(2)
-                    new URL('http://' + (arg == '/' ? '' : arg))
-                }
+            getRealPath: { arg -> 'realPath' + arg },
+            getResource: { arg ->
+                if (arg.startsWith('//')) arg = arg.substring(2)
+                new URL('http://' + (arg == '/' ? '' : arg))
+            }
         ] as ServletContext
 
         def servletConfig = [
-                getServletContext: { servletContext },
-                getInitParameter: { arg ->
-                    // replace first occurrence of foo resources with bar resources
-                    if (arg == 'resource.name.regex') return 'foo'
-                    else if (arg == 'resource.name.replacement') return 'bar'
-                    else if (arg == 'resource.name.replace.all') return 'false'
-                    return null
-                }
+            getServletContext: { servletContext },
+            getInitParameter : { arg ->
+                // replace first occurrence of foo resources with bar resources
+                if (arg == 'resource.name.regex') return 'foo'
+                else if (arg == 'resource.name.replacement') return 'bar'
+                else if (arg == 'resource.name.replace.all') return 'false'
+                return null
+            }
         ] as ServletConfig
 
         def request = [
-                getAttribute: { null },
-                getServletPath: { '/somefoo/foo' },
-                getPathInfo: { null }
+            getAttribute  : { null },
+            getServletPath: { '/somefoo/foo' },
+            getPathInfo   : { null }
         ] as HttpServletRequest
 
         // servlet config is used to find resources
@@ -257,28 +257,28 @@ class AbstractHttpServletTest extends GroovyTestCase {
      */
     void testGetResourceConnection_ReplaceAllFooWithBar() {
         def servletContext = [
-                getRealPath: { arg -> 'realPath' + arg },
-                getResource: { arg ->
-                    if (arg.startsWith('//')) arg = arg.substring(2)
-                    new URL('http://' + (arg == '/' ? '' : arg))
-                }
+            getRealPath: { arg -> 'realPath' + arg },
+            getResource: { arg ->
+                if (arg.startsWith('//')) arg = arg.substring(2)
+                new URL('http://' + (arg == '/' ? '' : arg))
+            }
         ] as ServletContext
 
         def servletConfig = [
-                getServletContext: { servletContext },
-                getInitParameter: { arg ->
-                    // replace all occurrences of foo resources with bar resources
-                    if (arg == 'resource.name.regex') return 'foo'
-                    else if (arg == 'resource.name.replacement') return 'bar'
-                    else if (arg == 'resource.name.replace.all') return 'true'
-                    return null
-                }
+            getServletContext: { servletContext },
+            getInitParameter : { arg ->
+                // replace all occurrences of foo resources with bar resources
+                if (arg == 'resource.name.regex') return 'foo'
+                else if (arg == 'resource.name.replacement') return 'bar'
+                else if (arg == 'resource.name.replace.all') return 'true'
+                return null
+            }
         ] as ServletConfig
 
         def request = [
-                getAttribute: { null },
-                getServletPath: { '/somefoo/foo' },
-                getPathInfo: { null }
+            getAttribute  : { null },
+            getServletPath: { '/somefoo/foo' },
+            getPathInfo   : { null }
         ] as HttpServletRequest
 
         // servlet config is used to find resources

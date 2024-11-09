@@ -39,22 +39,23 @@ class SqlCallTest extends GroovyTestCase {
 
     protected Sql setUpSql() {
         DataSource ds = DB_DATASOURCE.newInstance(
-                (DB_DS_KEY): DB_URL_PREFIX + getMethodName(),
-                user: DB_USER,
-                password: DB_PASSWORD)
+            (DB_DS_KEY): DB_URL_PREFIX + getMethodName(),
+            user: DB_USER,
+            password: DB_PASSWORD)
         return new Sql(ds.connection)
     }
 
     protected tryDrop(String tableName) {
         try {
-           sql.execute("DROP TABLE $tableName".toString())
-        } catch(Exception e){ }
+            sql.execute("DROP TABLE $tableName".toString())
+        } catch (Exception e) {
+        }
     }
 
     @Override
     void setUp() {
         sql = setUpSql()
-        ["PERSON"].each{ tryDrop(it) }
+        ["PERSON"].each { tryDrop(it) }
 
         sql.execute("CREATE TABLE person ( id INTEGER, firstname VARCHAR(10), lastname VARCHAR(10), PRIMARY KEY (id))")
 
@@ -196,7 +197,7 @@ class SqlCallTest extends GroovyTestCase {
                 first = false
                 assert !isResultSet && result == 0
             } else {
-                assert isResultSet && result == [[ID:1, FIRSTNAME:'James', LASTNAME:'Strachan'], [ID:4, FIRSTNAME:'Jean', LASTNAME:'Gabin']]
+                assert isResultSet && result == [[ID: 1, FIRSTNAME: 'James', LASTNAME: 'Strachan'], [ID: 4, FIRSTNAME: 'Jean', LASTNAME: 'Gabin']]
             }
         }
     }
@@ -303,7 +304,7 @@ class SqlCallTest extends GroovyTestCase {
     void testCallWithStatementCaching() {
         String sqlText = '{call FindByFirst(?, ?)}'
         CallableStatement statement = null
-        sql.withStatement { statement = (CallableStatement)it }
+        sql.withStatement { statement = (CallableStatement) it }
 
         sql.cacheStatements = false
         sql.call sqlText, ['James', Sql.VARCHAR]
@@ -320,7 +321,7 @@ class SqlCallTest extends GroovyTestCase {
     void testCallWithRowsStatementCaching() {
         String sqlText = '{call FindByFirst(?, ?)}'
         CallableStatement statement = null
-        sql.withStatement { statement = (CallableStatement)it }
+        sql.withStatement { statement = (CallableStatement) it }
 
         sql.cacheStatements = false
         sql.call sqlText, ['James', Sql.VARCHAR], { ans ->

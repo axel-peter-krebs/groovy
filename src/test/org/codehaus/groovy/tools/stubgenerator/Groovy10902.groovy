@@ -28,7 +28,7 @@ final class Groovy10902 extends StringSourcesStubTestCase {
                     public static final int DYNAMIC_CONSTANT = (9.9).intValue()
                 }
             ''',
-            'J.java': '''
+            'J.java'  : '''
                 public class J {
                     int m() {
                         return G.DYNAMIC_CONSTANT;

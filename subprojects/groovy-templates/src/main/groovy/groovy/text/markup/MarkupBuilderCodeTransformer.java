@@ -95,9 +95,9 @@ class MarkupBuilderCodeTransformer extends ClassCodeExpressionTransformer {
             VariableExpression var = (VariableExpression) exp;
             if (var.getAccessedVariable() instanceof DynamicVariable) {
                 MethodCallExpression callGetModel = new MethodCallExpression(
-                        new VariableExpression("this"),
-                        "getModel",
-                        ArgumentListExpression.EMPTY_ARGUMENTS
+                    new VariableExpression("this"),
+                    "getModel",
+                    ArgumentListExpression.EMPTY_ARGUMENTS
                 );
                 callGetModel.setImplicitThis(true);
                 callGetModel.setSourcePosition(exp);
@@ -106,21 +106,21 @@ class MarkupBuilderCodeTransformer extends ClassCodeExpressionTransformer {
                     return callGetModel;
                 }
                 MethodCallExpression mce = new MethodCallExpression(
-                        callGetModel,
-                        "get",
-                        new ArgumentListExpression(new ConstantExpression(varName))
+                    callGetModel,
+                    "get",
+                    new ArgumentListExpression(new ConstantExpression(varName))
                 );
                 mce.setSourcePosition(exp);
                 mce.setImplicitThis(false);
                 MethodCallExpression yield = new MethodCallExpression(
-                        new VariableExpression("this"),
-                        "tryEscape",
-                        new ArgumentListExpression(mce)
+                    new VariableExpression("this"),
+                    "tryEscape",
+                    new ArgumentListExpression(mce)
                 );
                 yield.setImplicitThis(true);
                 yield.setSourcePosition(exp);
                 yield.putNodeMetaData(TARGET_VARIABLE, varName);
-                return autoEscape?yield:mce;
+                return autoEscape ? yield : mce;
             }
         }
         return super.transform(exp);
@@ -136,16 +136,16 @@ class MarkupBuilderCodeTransformer extends ClassCodeExpressionTransformer {
                 String varName = var.getName();
                 if (!"modelTypes".equals(varName)) {
                     MethodCallExpression callGetModel = new MethodCallExpression(
-                            new VariableExpression("this"),
-                            "getModel",
-                            ArgumentListExpression.EMPTY_ARGUMENTS
+                        new VariableExpression("this"),
+                        "getModel",
+                        ArgumentListExpression.EMPTY_ARGUMENTS
                     );
                     callGetModel.setImplicitThis(true);
                     callGetModel.setSourcePosition(left);
                     MethodCallExpression mce = new MethodCallExpression(
-                            callGetModel,
-                            "put",
-                            new ArgumentListExpression(new ConstantExpression(varName), right)
+                        callGetModel,
+                        "put",
+                        new ArgumentListExpression(new ConstantExpression(varName), right)
                     );
                     mce.setSourcePosition(left);
                     mce.setImplicitThis(false);
@@ -161,7 +161,7 @@ class MarkupBuilderCodeTransformer extends ClassCodeExpressionTransformer {
                 //  List<String> items
                 //  ...
                 // }
-                Map<String,ClassNode> modelTypes = extractModelTypesFromClosureExpression((ClosureExpression)right);
+                Map<String, ClassNode> modelTypes = extractModelTypesFromClosureExpression((ClosureExpression) right);
                 Expression result = EmptyExpression.INSTANCE;
                 classNode.putNodeMetaData(MarkupTemplateEngine.MODELTYPES_ASTKEY, modelTypes);
                 return result;
@@ -204,20 +204,20 @@ class MarkupBuilderCodeTransformer extends ClassCodeExpressionTransformer {
             }
             Expression newArguments = transform(new ArgumentListExpression(new ConstantExpression(name.substring(1)), new ArrayExpression(ClassHelper.OBJECT_TYPE, args)));
             MethodCallExpression call = new MethodCallExpression(
-                    new VariableExpression("this"),
-                    "methodMissing",
-                    newArguments
+                new VariableExpression("this"),
+                "methodMissing",
+                newArguments
             );
             call.setImplicitThis(true);
             call.setSafe(exp.isSafe());
             call.setSpreadSafe(exp.isSpreadSafe());
             call.setSourcePosition(exp);
             return call;
-        } else if (name!=null && name.startsWith("$")) {
+        } else if (name != null && name.startsWith("$")) {
             MethodCallExpression reformatted = new MethodCallExpression(
-                    exp.getObjectExpression(),
-                    name.substring(1),
-                    exp.getArguments()
+                exp.getObjectExpression(),
+                name.substring(1),
+                exp.getArguments()
             );
             reformatted.setImplicitThis(exp.isImplicitThis());
             reformatted.setSafe(exp.isSafe());
@@ -227,8 +227,8 @@ class MarkupBuilderCodeTransformer extends ClassCodeExpressionTransformer {
             ClosureExpression clos = new ClosureExpression(Parameter.EMPTY_ARRAY, new ExpressionStatement(reformatted));
             clos.setVariableScope(new VariableScope());
             MethodCallExpression stringOf = new MethodCallExpression(new VariableExpression("this"),
-                    "stringOf",
-                    clos);
+                "stringOf",
+                clos);
             stringOf.setImplicitThis(true);
             stringOf.setSourcePosition(reformatted);
             return stringOf;
@@ -249,11 +249,11 @@ class MarkupBuilderCodeTransformer extends ClassCodeExpressionTransformer {
                     try {
                         IncludeType includeType = IncludeType.valueOf(keyExpression.getText().toLowerCase());
                         MethodCallExpression call = new MethodCallExpression(
-                                exp.getObjectExpression(),
-                                includeType.getMethodName(),
-                                new ArgumentListExpression(
-                                        mapEntry.getValueExpression()
-                                )
+                            exp.getObjectExpression(),
+                            includeType.getMethodName(),
+                            new ArgumentListExpression(
+                                mapEntry.getValueExpression()
+                            )
                         );
                         call.setImplicitThis(true);
                         call.setSafe(exp.isSafe());

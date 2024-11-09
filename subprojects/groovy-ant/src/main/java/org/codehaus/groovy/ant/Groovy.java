@@ -76,63 +76,62 @@ public class Groovy extends Java {
     private static final String PREFIX = "embedded_script_in_";
     private static final String SUFFIX = "groovy_Ant_task";
     private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
-
-    /**
-     * encoding; set to null or empty means 'default'
-     */
-    private String encoding = null;
-
-    /**
-     * output encoding; set to null or empty means 'default'
-     */
-    private String outputEncoding = null;
-
     private final LoggingHelper log = new LoggingHelper(this);
-
     /**
      * files to load
      */
     private final Vector<FileSet> filesets = new Vector<>();
-
-    /**
-     * The input resource
-     */
-    private Resource src = null;
-
-    /**
-     * input command
-     */
-    private String command = "";
-
-    /**
-     * Results Output file
-     */
-    private File output = null;
-
-    /**
-     * Append to an existing file or overwrite it?
-     */
-    private boolean append = false;
-
-    private Path classpath;
-    private boolean fork = false;
-    private boolean includeAntRuntime = true;
-    private boolean useGroovyShell = false;
-
-    private String scriptBaseClass;
-    private String configscript;
-
     private final List<FilterChain> filterChains = new Vector<>();
-
     /**
      * Compiler configuration.
      * <p>
      * Used to specify the debug output to print stacktraces in case something fails.
      */
     private final CompilerConfiguration configuration = new CompilerConfiguration();
-
     private final Commandline cmdline = new Commandline();
+    /**
+     * encoding; set to null or empty means 'default'
+     */
+    private String encoding = null;
+    /**
+     * output encoding; set to null or empty means 'default'
+     */
+    private String outputEncoding = null;
+    /**
+     * The input resource
+     */
+    private Resource src = null;
+    /**
+     * input command
+     */
+    private String command = "";
+    /**
+     * Results Output file
+     */
+    private File output = null;
+    /**
+     * Append to an existing file or overwrite it?
+     */
+    private boolean append = false;
+    private Path classpath;
+    private boolean fork = false;
+    private boolean includeAntRuntime = true;
+    private boolean useGroovyShell = false;
+    private String scriptBaseClass;
+    private String configscript;
     private boolean contextClassLoader;
+
+    public static void main(String[] args) {
+        final GroovyShell shell = new GroovyShell(new Binding());
+        final Groovy groovy = new Groovy();
+        for (int i = 1; i < args.length; i++) {
+            final Commandline.Argument argument = groovy.createArg();
+            argument.setValue(args[i]);
+        }
+        final AntBuilder builder = new AntBuilder();
+        groovy.setProject(builder.getProject());
+        groovy.parseAndRunScript(shell, null, null, null, new File(args[0]), builder);
+    }
 
     /**
      * Should the script be executed using a forked process. Defaults to false.
@@ -249,16 +248,6 @@ public class Groovy extends Java {
     }
 
     /**
-     * Sets the classpath for loading.
-     *
-     * @param classpath The classpath to set
-     */
-    @Override
-    public void setClasspath(final Path classpath) {
-        this.classpath = classpath;
-    }
-
-    /**
      * Returns a new path element that can be configured.
      * Gets called for instance by Ant when it encounters a nested &lt;classpath&gt; element.
      *
@@ -293,6 +282,16 @@ public class Groovy extends Java {
     }
 
     /**
+     * Sets the classpath for loading.
+     *
+     * @param classpath The classpath to set
+     */
+    @Override
+    public void setClasspath(final Path classpath) {
+        this.classpath = classpath;
+    }
+
+    /**
      * Sets the configuration script for the groovy compiler configuration.
      *
      * @param configscript path to the configuration script
@@ -323,19 +322,19 @@ public class Groovy extends Java {
     }
 
     /**
+     * Returns true if parameter metadata generation has been enabled.
+     */
+    public boolean getParameters() {
+        return configuration.getParameters();
+    }
+
+    /**
      * If true, generates metadata for reflection on method parameter names (jdk8+ only).  Defaults to false.
      *
      * @param parameters set to true to generate metadata.
      */
     public void setParameters(boolean parameters) {
         configuration.setParameters(parameters);
-    }
-
-    /**
-     * Returns true if parameter metadata generation has been enabled.
-     */
-    public boolean getParameters() {
-        return configuration.getParameters();
     }
 
     /**
@@ -375,7 +374,7 @@ public class Groovy extends Java {
                 if (output != null) {
                     log.verbose("Opening PrintStream to output file " + output);
                     BufferedOutputStream bos = new BufferedOutputStream(
-                            new FileOutputStream(output.getAbsolutePath(), append));
+                        new FileOutputStream(output.getAbsolutePath(), append));
                     out = new PrintStream(bos, false, outputEncoding);
                 }
 
@@ -449,6 +448,7 @@ public class Groovy extends Java {
 
     /**
      * Add the FilterChain element.
+     *
      * @param filter the filter to add
      */
     public final void addFilterChain(FilterChain filter) {
@@ -457,6 +457,7 @@ public class Groovy extends Java {
 
     /**
      * Set the source resource.
+     *
      * @param a the resource to load as a single element Resource collection.
      */
     public void addConfigured(ResourceCollection a) {
@@ -474,7 +475,7 @@ public class Groovy extends Java {
      * @throws java.io.IOException if something goes wrong
      */
     protected void runStatements(Reader reader, PrintStream out)
-            throws IOException {
+        throws IOException {
         log.debug("runStatements()");
         StringBuilder txt = new StringBuilder();
         String line = "";
@@ -561,9 +562,10 @@ public class Groovy extends Java {
         }
 
         final String scriptName = computeScriptName();
-        @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
+        @SuppressWarnings("removal")
+        // TODO a future Groovy version should perform the operation not as a privileged action
         final GroovyClassLoader classLoader = java.security.AccessController.doPrivileged((PrivilegedAction<GroovyClassLoader>) () ->
-                new GroovyClassLoader(baseClassLoader));
+            new GroovyClassLoader(baseClassLoader));
         addClassPathes(classLoader);
         configureCompiler();
         final GroovyShell groovy = new GroovyShell(classLoader, new Binding(), configuration);
@@ -639,18 +641,6 @@ public class Groovy extends Java {
         new ErrorReporter(e, false).write(new PrintWriter(writer));
         String message = writer.toString();
         throw new BuildException("Script Failed: " + message, e, getLocation());
-    }
-
-    public static void main(String[] args) {
-        final GroovyShell shell = new GroovyShell(new Binding());
-        final Groovy groovy = new Groovy();
-        for (int i = 1; i < args.length; i++) {
-            final Commandline.Argument argument = groovy.createArg();
-            argument.setValue(args[i]);
-        }
-        final AntBuilder builder = new AntBuilder();
-        groovy.setProject(builder.getProject());
-        groovy.parseAndRunScript(shell, null, null, null, new File(args[0]), builder);
     }
 
     private void createClasspathParts() {

@@ -34,24 +34,36 @@ import static groovy.json.JsonTokenType.TRUE;
  */
 public class JsonToken {
 
-    private static final BigInteger MAX_LONG    = BigInteger.valueOf(Long.MAX_VALUE);
-    private static final BigInteger MIN_LONG    = BigInteger.valueOf(Long.MIN_VALUE);
+    private static final BigInteger MAX_LONG = BigInteger.valueOf(Long.MAX_VALUE);
+    private static final BigInteger MIN_LONG = BigInteger.valueOf(Long.MIN_VALUE);
     private static final BigInteger MAX_INTEGER = BigInteger.valueOf(Integer.MAX_VALUE);
     private static final BigInteger MIN_INTEGER = BigInteger.valueOf(Integer.MIN_VALUE);
 
-    /** Start line position */
+    /**
+     * Start line position
+     */
     private long startLine;
-    /** End line position */
+    /**
+     * End line position
+     */
     private long endLine;
-    /** Start column position */
+    /**
+     * Start column position
+     */
     private long startColumn;
-    /** End column position */
+    /**
+     * End column position
+     */
     private long endColumn;
 
-    /** The type of the token */
+    /**
+     * The type of the token
+     */
     private JsonTokenType type;
 
-    /** The text of that token */
+    /**
+     * The text of that token
+     */
     private String text;
 
     /**
@@ -91,7 +103,7 @@ public class JsonToken {
             return null;
         } else {
             throw new JsonException(
-                    "No appropriate value represented by '" + text +
+                "No appropriate value represented by '" + text +
                     "' on line: " + startLine + ", column: " + startColumn
             );
         }
@@ -142,11 +154,11 @@ public class JsonToken {
         this.type = type;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
     public String getText() {
         return this.text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

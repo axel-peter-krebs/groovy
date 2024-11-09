@@ -24,23 +24,23 @@ class Groovy3509Bug extends GroovyTestCase {
 
     void testGPathInconcistency() {
         def data = [
-                [a: null],
-                [a: [b: 1]],
-                [a: [b: 2]]
+            [a: null],
+            [a: [b: 1]],
+            [a: [b: 2]]
         ]
         assert data.a.b.sum() == 3
 
         data = [
-                [a: [b: 1]],
-                [a: [b: 2]],
-                [a: null]
+            [a: [b: 1]],
+            [a: [b: 2]],
+            [a: null]
         ]
         assert data.a.b.sum() == 3
 
         data = [
-                [a: [b: [c:1]]],
-                [a: [b: null]],
-                [a: [b: [c:2]]]
+            [a: [b: [c: 1]]],
+            [a: [b: null]],
+            [a: [b: [c: 2]]]
         ]
         assert data.a.b.c.sum() == 3
     }
@@ -72,13 +72,13 @@ class Groovy3509Bug extends GroovyTestCase {
 }
 
 class Root {
-  List level1 = []
+    List level1 = []
 }
 
 class Level2 {
-  Integer level3
+    Integer level3
 }
 
 class Level1 {
-  Level2 level2
+    Level2 level2
 }

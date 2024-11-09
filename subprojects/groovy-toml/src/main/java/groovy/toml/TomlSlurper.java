@@ -31,9 +31,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- *  Represents a TOML parser
+ * Represents a TOML parser
  *
- *  @since 4.0.0
+ * @since 4.0.0
  */
 @Incubating
 public class TomlSlurper {

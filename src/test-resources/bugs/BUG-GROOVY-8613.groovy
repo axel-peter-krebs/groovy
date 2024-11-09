@@ -16,6 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 @groovy.transform.CompileStatic
 def foo() {
     def a = 0

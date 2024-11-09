@@ -37,6 +37,7 @@ import org.codehaus.groovy.ast.stmt.Statement;
  */
 public class LambdaExpression extends ClosureExpression {
     private boolean serializable;
+
     public LambdaExpression(Parameter[] parameters, Statement code) {
         super(parameters, code);
     }

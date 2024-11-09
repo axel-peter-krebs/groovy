@@ -23,7 +23,7 @@ import groovy.test.GroovyTestCase
 class TableModelTest extends GroovyTestCase {
 
     void testTableModel() {
-        def list = [ ['name':'James', 'location':'London'], ['name':'Bob', 'location':'Atlanta']]
+        def list = [['name': 'James', 'location': 'London'], ['name': 'Bob', 'location': 'Atlanta']]
 
         def listModel = new ValueHolder(list)
 
@@ -52,6 +52,6 @@ class TableModelTest extends GroovyTestCase {
 
     protected void assertValueAt(model, row, col, expected) {
         def value = model.getValueAt(row, col)
-        assert value == expected , "for row " + row + " col " + col
+        assert value == expected, "for row " + row + " col " + col
     }
 }

@@ -33,13 +33,31 @@ import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
  */
 public class MethodCaller {
 
+    private static final int ANY_PARAMETER_COUNT = -1;
     private int opcode;
     private String internalName;
     private String name;
     private Class theClass;
     private String methodDescriptor;
     private int parameterCount;
-    private static final int ANY_PARAMETER_COUNT = -1;
+
+    /**
+     * @since 2.5.0
+     */
+    protected MethodCaller() {
+    }
+
+    public MethodCaller(int opcode, Class theClass, String name) {
+        this(opcode, theClass, name, ANY_PARAMETER_COUNT);
+    }
+
+    public MethodCaller(int opcode, Class theClass, String name, int parameterCount) {
+        this.opcode = opcode;
+        this.internalName = Type.getInternalName(theClass);
+        this.theClass = theClass;
+        this.name = name;
+        this.parameterCount = parameterCount;
+    }
 
     public static MethodCaller newStatic(Class theClass, String name) {
         return new MethodCaller(INVOKESTATIC, theClass, name);
@@ -55,23 +73,6 @@ public class MethodCaller {
 
     public static MethodCaller newVirtual(Class theClass, String name) {
         return new MethodCaller(INVOKEVIRTUAL, theClass, name);
-    }
-
-    /**
-     * @since 2.5.0
-     */
-    protected MethodCaller() {}
-
-    public MethodCaller(int opcode, Class theClass, String name) {
-        this(opcode, theClass, name, ANY_PARAMETER_COUNT);
-    }
-
-    public MethodCaller(int opcode, Class theClass, String name, int parameterCount) {
-        this.opcode = opcode;
-        this.internalName = Type.getInternalName(theClass);
-        this.theClass = theClass;
-        this.name = name;
-        this.parameterCount = parameterCount;
     }
 
     public void call(MethodVisitor methodVisitor) {
@@ -102,6 +103,6 @@ public class MethodCaller {
             }
         }
         throw new ClassGeneratorException("Could not find method: " + name +
-                (parameterCount >= 0 ? " with parameter count " + parameterCount : "") + " on class: " + theClass);
+            (parameterCount >= 0 ? " with parameter count " + parameterCount : "") + " on class: " + theClass);
     }
 }

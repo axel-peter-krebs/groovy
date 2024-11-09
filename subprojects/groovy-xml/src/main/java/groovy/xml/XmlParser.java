@@ -71,10 +71,10 @@ import static groovy.xml.XmlUtil.setFeatureQuietly;
  */
 public class XmlParser implements ContentHandler {
 
-    private StringBuilder bodyText = new StringBuilder();
     private final List<Node> stack = new ArrayList<Node>();
-    private Locator locator;
     private final XMLReader reader;
+    private StringBuilder bodyText = new StringBuilder();
+    private Locator locator;
     private Node parent;
 
     private boolean trimWhitespace = false;
@@ -85,7 +85,7 @@ public class XmlParser implements ContentHandler {
      * Creates a non-validating and namespace-aware <code>XmlParser</code> which does not allow DOCTYPE declarations in documents.
      *
      * @throws ParserConfigurationException if no parser which satisfies the requested configuration can be created.
-     * @throws SAXException for SAX errors.
+     * @throws SAXException                 for SAX errors.
      */
     public XmlParser() throws ParserConfigurationException, SAXException {
         this(false, true);
@@ -94,10 +94,10 @@ public class XmlParser implements ContentHandler {
     /**
      * Creates a <code>XmlParser</code> which does not allow DOCTYPE declarations in documents.
      *
-     * @param validating <code>true</code> if the parser should validate documents as they are parsed; false otherwise.
+     * @param validating     <code>true</code> if the parser should validate documents as they are parsed; false otherwise.
      * @param namespaceAware <code>true</code> if the parser should provide support for XML namespaces; <code>false</code> otherwise.
      * @throws ParserConfigurationException if no parser which satisfies the requested configuration can be created.
-     * @throws SAXException for SAX errors.
+     * @throws SAXException                 for SAX errors.
      */
     public XmlParser(boolean validating, boolean namespaceAware) throws ParserConfigurationException, SAXException {
         this(validating, namespaceAware, false);
@@ -106,11 +106,11 @@ public class XmlParser implements ContentHandler {
     /**
      * Creates a <code>XmlParser</code>.
      *
-     * @param validating <code>true</code> if the parser should validate documents as they are parsed; false otherwise.
-     * @param namespaceAware <code>true</code> if the parser should provide support for XML namespaces; <code>false</code> otherwise.
+     * @param validating              <code>true</code> if the parser should validate documents as they are parsed; false otherwise.
+     * @param namespaceAware          <code>true</code> if the parser should provide support for XML namespaces; <code>false</code> otherwise.
      * @param allowDocTypeDeclaration <code>true</code> if the parser should provide support for DOCTYPE declarations; <code>false</code> otherwise.
      * @throws ParserConfigurationException if no parser which satisfies the requested configuration can be created.
-     * @throws SAXException for SAX errors.
+     * @throws SAXException                 for SAX errors.
      */
     public XmlParser(boolean validating, boolean namespaceAware, boolean allowDocTypeDeclaration) throws ParserConfigurationException, SAXException {
         SAXParserFactory factory = FactorySupport.createSaxParserFactory();
@@ -303,6 +303,13 @@ public class XmlParser implements ContentHandler {
     }
 
     /* (non-Javadoc)
+     * @see org.xml.sax.XMLReader#setDTDHandler(org.xml.sax.DTDHandler)
+     */
+    public void setDTDHandler(final DTDHandler dtdHandler) {
+        this.reader.setDTDHandler(dtdHandler);
+    }
+
+    /* (non-Javadoc)
      * @see org.xml.sax.XMLReader#getEntityResolver()
      */
     public EntityResolver getEntityResolver() {
@@ -310,10 +317,24 @@ public class XmlParser implements ContentHandler {
     }
 
     /* (non-Javadoc)
+     * @see org.xml.sax.XMLReader#setEntityResolver(org.xml.sax.EntityResolver)
+     */
+    public void setEntityResolver(final EntityResolver entityResolver) {
+        this.reader.setEntityResolver(entityResolver);
+    }
+
+    /* (non-Javadoc)
      * @see org.xml.sax.XMLReader#getErrorHandler()
      */
     public ErrorHandler getErrorHandler() {
         return this.reader.getErrorHandler();
+    }
+
+    /* (non-Javadoc)
+     * @see org.xml.sax.XMLReader#setErrorHandler(org.xml.sax.ErrorHandler)
+     */
+    public void setErrorHandler(final ErrorHandler errorHandler) {
+        this.reader.setErrorHandler(errorHandler);
     }
 
     /* (non-Javadoc)
@@ -328,27 +349,6 @@ public class XmlParser implements ContentHandler {
      */
     public Object getProperty(final String uri) throws SAXNotRecognizedException, SAXNotSupportedException {
         return this.reader.getProperty(uri);
-    }
-
-    /* (non-Javadoc)
-     * @see org.xml.sax.XMLReader#setDTDHandler(org.xml.sax.DTDHandler)
-     */
-    public void setDTDHandler(final DTDHandler dtdHandler) {
-        this.reader.setDTDHandler(dtdHandler);
-    }
-
-    /* (non-Javadoc)
-     * @see org.xml.sax.XMLReader#setEntityResolver(org.xml.sax.EntityResolver)
-     */
-    public void setEntityResolver(final EntityResolver entityResolver) {
-        this.reader.setEntityResolver(entityResolver);
-    }
-
-    /* (non-Javadoc)
-     * @see org.xml.sax.XMLReader#setErrorHandler(org.xml.sax.ErrorHandler)
-     */
-    public void setErrorHandler(final ErrorHandler errorHandler) {
-        this.reader.setErrorHandler(errorHandler);
     }
 
     /* (non-Javadoc)
@@ -379,7 +379,7 @@ public class XmlParser implements ContentHandler {
 
     @Override
     public void startElement(String namespaceURI, String localName, String qName, Attributes list)
-            throws SAXException {
+        throws SAXException {
         addTextToNode();
 
         Object nodeName = getElementName(namespaceURI, localName, qName);

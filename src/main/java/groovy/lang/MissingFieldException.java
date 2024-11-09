@@ -20,7 +20,7 @@ package groovy.lang;
 
 /**
  * An exception occurred if a dynamic field dispatch fails with an unknown field.
- * 
+ * <p>
  * Note that the Missing*Exception classes were named for consistency and
  * to avoid conflicts with JDK exceptions of the same name.
  */
@@ -56,7 +56,6 @@ public class MissingFieldException extends GroovyRuntimeException {
     }
 
     /**
-     * 
      * @return The type on which the field was attempted to be called
      */
     public Class getType() {

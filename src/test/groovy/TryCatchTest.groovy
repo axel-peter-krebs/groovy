@@ -114,43 +114,50 @@ class TryCatchTest extends CompilableTestSupport {
     int intTry() {
         try {
             return 1
-        } finally {}
+        } finally {
+        }
     }
 
     long longTry() {
         try {
             return 2
-        } finally {}
+        } finally {
+        }
     }
 
     byte byteTry() {
         try {
             return 3
-        } finally {}
+        } finally {
+        }
     }
 
     short shortTry() {
         try {
             return 4
-        } finally {}
+        } finally {
+        }
     }
 
     char charTry() {
         try {
             return 'c'
-        } finally {}
+        } finally {
+        }
     }
 
     float floatTry() {
         try {
             return 1.0
-        } finally {}
+        } finally {
+        }
     }
 
     double doubleTry() {
         try {
             return 2.0
-        } finally {}
+        } finally {
+        }
     }
 
     void testTryCatchWithUntyped() {

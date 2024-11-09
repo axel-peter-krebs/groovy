@@ -68,6 +68,16 @@ public class AnnotationProcessorVisitor extends BaseVisitor {
         this.pci = pci;
     }
 
+    public static AnnotationProcessor getAnnotationProcessor(String name) {
+        try {
+            var apt = Class.forName(name);
+            return (AnnotationProcessor) apt.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException |
+                 InvocationTargetException ignore) {
+        }
+        return null;
+    }
+
     @Override
     public void visitClass(ClassNode type) {
         handleClassNode(type);
@@ -223,14 +233,5 @@ public class AnnotationProcessorVisitor extends BaseVisitor {
         }
 
         throw new GroovyBugError("Annotation processing class could not be instantiated! This indicates a bug in groovy-contracts, please file an issue!");
-    }
-
-    public static AnnotationProcessor getAnnotationProcessor(String name) {
-        try {
-            var apt = Class.forName(name);
-            return (AnnotationProcessor) apt.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException ignore) {
-        }
-        return null;
     }
 }

@@ -24,14 +24,14 @@ modelTypes = {
     String title
     String baseline
     String archive
-    Map<String,Map<String,List<String>>> violations
+    Map<String, Map<String, List<String>>> violations
 }
 
 def severityMapping = [
-        error  : 'danger',
-        warning: 'warning',
-        info   : 'info',
-        ignore : 'success'
+    error  : 'danger',
+    warning: 'warning',
+    info   : 'info',
+    ignore : 'success'
 ]
 
 yieldUnescaped '<!DOCTYPE html>'
@@ -51,19 +51,19 @@ html {
     }
 
     body {
-        div(class:'navbar navbar-inverse navbar-fixed-top', role:'navigation') {
-            div(class:'container') {
-                div(class:'navbar-header') {
-                    button(type:'button', class:'navbar-toggle', 'data-toggle':'collapse', 'data-target':'navbar-collaspe') {
-                        span(class:'sr-only', 'Toggle navigation')
-                        span(class:'icon-bar'){}
-                        span(class:'icon-bar'){}
-                        span(class:'icon-bar'){}
+        div(class: 'navbar navbar-inverse navbar-fixed-top', role: 'navigation') {
+            div(class: 'container') {
+                div(class: 'navbar-header') {
+                    button(type: 'button', class: 'navbar-toggle', 'data-toggle': 'collapse', 'data-target': 'navbar-collaspe') {
+                        span(class: 'sr-only', 'Toggle navigation')
+                        span(class: 'icon-bar') {}
+                        span(class: 'icon-bar') {}
+                        span(class: 'icon-bar') {}
                     }
-                    a(class:'navbar-brand',href:'#', 'Binary compatibility report')
+                    a(class: 'navbar-brand', href: '#', 'Binary compatibility report')
                 }
-                div(class:'navbar-collapse collapse') {
-                    ul(class:"nav navbar-nav") {
+                div(class: 'navbar-collapse collapse') {
+                    ul(class: "nav navbar-nav") {
                         li(class: 'dropdown') {
                             a(id: 'severityDropdown', href: '#', class: 'dropdown-toggle', 'data-toggle': 'dropdown', 'Severity <span class="caret"></span>')
                             ul(class: "dropdown-menu dropdown-severity", role: "menu") {
@@ -83,8 +83,8 @@ html {
 
 
         div(class: 'container') {
-            div(class:'jumbotron') {
-                div(class:'container') {
+            div(class: 'jumbotron') {
+                div(class: 'container') {
                     div(class: 'page-header') {
                         h1 'Binary compatibility'
                         p "Comparing ${archive} to reference ${baseline}"

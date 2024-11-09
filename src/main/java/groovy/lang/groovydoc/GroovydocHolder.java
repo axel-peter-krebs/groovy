@@ -23,14 +23,17 @@ package groovy.lang.groovydoc;
  */
 public interface GroovydocHolder<T> {
     String DOC_COMMENT = "_DOC_COMMENT"; // keys for meta data
+
     /**
      * Get the groovydoc
+     *
      * @return the groovydoc
      */
     Groovydoc getGroovydoc();
 
     /**
      * Get GroovydocHolder instance
+     *
      * @return GroovydocHolder instance
      */
     T getInstance();

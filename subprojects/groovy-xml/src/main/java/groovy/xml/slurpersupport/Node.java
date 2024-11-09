@@ -46,11 +46,11 @@ public class Node implements Writable {
     private final Node parent;
 
     /**
-     * @param parent the parent node
-     * @param name the name for the node
-     * @param attributes the attributes for the node
+     * @param parent              the parent node
+     * @param name                the name for the node
+     * @param attributes          the attributes for the node
      * @param attributeNamespaces the namespace mappings for attributes
-     * @param namespaceURI the namespace URI if any
+     * @param namespaceURI        the namespace URI if any
      */
     public Node(final Node parent, final String name, final Map attributes, final Map attributeNamespaces, final String namespaceURI) {
         this.name = name;
@@ -60,8 +60,57 @@ public class Node implements Writable {
         this.parent = parent;
     }
 
+    private static String getTagFor(final Object namespaceURI, final Map current,
+                                    final Map pending, final Map local, final Map tagHints,
+                                    final List newTags, final GroovyObject builder) {
+        String tag = findNamespaceTag(pending, namespaceURI); // look in the namespaces whose declaration has already been emitted
+        if (tag == null) {
+            tag = findNamespaceTag(current, namespaceURI);  // look in the namespaces who will be declared at the next element
+
+            if (tag == null) {
+                // we have to declare the namespace - choose a tag
+                tag = findNamespaceTag(local, namespaceURI);  // If the namespace has been declared in the GPath expression use that tag
+
+                if (tag == null || tag.length() == 0) {
+                    tag = findNamespaceTag(tagHints, namespaceURI);  // If the namespace has been used in the parse document use that tag
+                }
+
+                if (tag == null || tag.length() == 0) { // otherwise make up a new tag and check it has not been used before
+                    int suffix = 0;
+                    do {
+                        final String possibleTag = "tag" + suffix++;
+
+                        if (!pending.containsKey(possibleTag) && !current.containsKey(possibleTag) && !local.containsKey(possibleTag)) {
+                            tag = possibleTag;
+                        }
+                    } while (tag == null);
+                }
+
+                final Map newNamespace = new HashMap();
+                newNamespace.put(tag, namespaceURI);
+                builder.getProperty("mkp");
+                builder.invokeMethod("declareNamespace", new Object[]{newNamespace});
+                newTags.add(tag);
+            }
+        }
+        return tag;
+    }
+
+    private static String findNamespaceTag(final Map tagMap, final Object namespaceURI) {
+        if (tagMap.containsValue(namespaceURI)) {
+            for (Object o : tagMap.entrySet()) {
+                final Map.Entry entry = (Map.Entry) o;
+                if (namespaceURI.equals(entry.getValue())) {
+                    return (String) entry.getKey();
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Returns the name of this Node.
+     *
      * @return the name of this Node
      */
     public String name() {
@@ -70,6 +119,7 @@ public class Node implements Writable {
 
     /**
      * Returns the parent of this Node.
+     *
      * @return the parent of this Node
      */
     public Node parent() {
@@ -78,6 +128,7 @@ public class Node implements Writable {
 
     /**
      * Returns the URI of the namespace of this Node.
+     *
      * @return the namespace of this Node
      */
     public String namespaceURI() {
@@ -86,6 +137,7 @@ public class Node implements Writable {
 
     /**
      * Returns a map of the attributes of this Node.
+     *
      * @return a map of the attributes of this Node
      */
     public Map attributes() {
@@ -94,6 +146,7 @@ public class Node implements Writable {
 
     /**
      * Returns a list of the children of this Node.
+     *
      * @return a list of the children of this Node
      */
     public List children() {
@@ -102,6 +155,7 @@ public class Node implements Writable {
 
     /**
      * Adds an object as a new child to this Node.
+     *
      * @param child the object to add as a child
      */
     public void addChild(final Object child) {
@@ -123,6 +177,7 @@ public class Node implements Writable {
 
     /**
      * Replaces the current body of this Node with the passed object.
+     *
      * @param newValue the new body
      */
     protected void replaceBody(final Object newValue) {
@@ -147,6 +202,7 @@ public class Node implements Writable {
 
     /**
      * Returns a string containing the text of the children of this Node.
+     *
      * @return a string containing the text of the children of this Node
      */
     public String text() {
@@ -179,6 +235,7 @@ public class Node implements Writable {
 
     /**
      * Returns an iterator over the child nodes of this Node.
+     *
      * @return an iterator over the child nodes of this Node
      */
     public Iterator childNodes() {
@@ -261,7 +318,7 @@ public class Node implements Writable {
                         final Object attributeNamespaceURI = this.attributeNamespaces.get(key);
                         if (attributeNamespaceURI != null) {
                             attributesWithNamespaces.put(getTagFor(attributeNamespaceURI, current, pending, namespaceMap, namespaceTagHints, newTags, builder) +
-                                    "$" + key, attributesWithNamespaces.remove(key));
+                                "$" + key, attributesWithNamespaces.remove(key));
                         }
                     }
                     builder.getProperty(getTagFor(this.namespaceURI, current, pending, namespaceMap, namespaceTagHints, newTags, builder));
@@ -279,54 +336,6 @@ public class Node implements Writable {
         } else {
             ((ReplacementNode) this.replacementNodeStack.peek()).build(builder, namespaceMap, namespaceTagHints);
         }
-    }
-
-    private static String getTagFor(final Object namespaceURI, final Map current,
-                                    final Map pending, final Map local, final Map tagHints,
-                                    final List newTags, final GroovyObject builder) {
-        String tag = findNamespaceTag(pending, namespaceURI); // look in the namespaces whose declaration has already been emitted
-        if (tag == null) {
-            tag = findNamespaceTag(current, namespaceURI);  // look in the namespaces who will be declared at the next element
-
-            if (tag == null) {
-                // we have to declare the namespace - choose a tag
-                tag = findNamespaceTag(local, namespaceURI);  // If the namespace has been declared in the GPath expression use that tag
-
-                if (tag == null || tag.length() == 0) {
-                    tag = findNamespaceTag(tagHints, namespaceURI);  // If the namespace has been used in the parse document use that tag
-                }
-
-                if (tag == null || tag.length() == 0) { // otherwise make up a new tag and check it has not been used before
-                    int suffix = 0;
-                    do {
-                        final String possibleTag = "tag" + suffix++;
-
-                        if (!pending.containsKey(possibleTag) && !current.containsKey(possibleTag) && !local.containsKey(possibleTag)) {
-                            tag = possibleTag;
-                        }
-                    } while (tag == null);
-                }
-
-                final Map newNamespace = new HashMap();
-                newNamespace.put(tag, namespaceURI);
-                builder.getProperty("mkp");
-                builder.invokeMethod("declareNamespace", new Object[]{newNamespace});
-                newTags.add(tag);
-            }
-        }
-        return tag;
-    }
-
-    private static String findNamespaceTag(final Map tagMap, final Object namespaceURI) {
-        if (tagMap.containsValue(namespaceURI)) {
-            for (Object o : tagMap.entrySet()) {
-                final Map.Entry entry = (Map.Entry) o;
-                if (namespaceURI.equals(entry.getValue())) {
-                    return (String) entry.getKey();
-                }
-            }
-        }
-        return null;
     }
 
     private void buildChildren(final GroovyObject builder, final Map namespaceMap, final Map<String, String> namespaceTagHints) {

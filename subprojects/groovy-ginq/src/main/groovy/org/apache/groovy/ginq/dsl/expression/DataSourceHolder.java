@@ -25,5 +25,6 @@ package org.apache.groovy.ginq.dsl.expression;
  */
 public interface DataSourceHolder {
     DataSourceExpression getDataSourceExpression();
+
     void setDataSourceExpression(DataSourceExpression dataSourceExpression);
 }

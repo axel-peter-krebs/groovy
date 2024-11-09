@@ -18,25 +18,33 @@
  */
 
 def a = 6
-def result = switch(a) {
-    case 6 -> { 'a' }
+def result = switch (a) {
+    case 6 -> {
+        'a'
+    }
 }
 assert 'a' == result
 
 a = 6
-result = switch(a) {
-    case 6 -> { yield 'a' }
+result = switch (a) {
+    case 6 -> {
+        yield 'a'
+    }
 }
 assert 'a' == result
 
 a = 8
-result = switch(a) {
-    case 6, 8 -> { yield 'a' }
+result = switch (a) {
+    case 6, 8 -> {
+        yield 'a'
+    }
 }
 assert 'a' == result
 
 a = 9
-result = switch(a) {
-    case 6, 8 -> { yield 'a' }
+result = switch (a) {
+    case 6, 8 -> {
+        yield 'a'
+    }
 }
 assert null == result

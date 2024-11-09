@@ -58,13 +58,13 @@ class StreamingMarkupBuilderTest extends BuilderTestSupport {
         def xml = new StreamingMarkupBuilder().bind { builder ->
             mkp.xmlDeclaration()
             mkp.declareNamespace('': 'http://www.dnb.com/GSRL/Vers7/Rls24',
-                    'xsi': 'http://www.w3.org/2001/XMLSchema-instance')
+                'xsi': 'http://www.w3.org/2001/XMLSchema-instance')
             GSRL {
                 GSRLMSGSRQV1 {
                     SUBJUPDTRNRQ {
                         addTrnUID(builder)
                         SUBJUPDRQ {
-                            topics.each{ topic -> mkp.yieldUnescaped topic }
+                            topics.each { topic -> mkp.yieldUnescaped topic }
                         }
                     }
                 }

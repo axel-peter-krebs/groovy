@@ -35,15 +35,14 @@ import java.util.List;
  */
 public class ClosureSignatureConflictResolver {
     /**
-     *
-     * @param candidates the list of signatures as determined after applying type hints and performing initial inference calculations
-     * @param receiver the receiver the method is being called on
-     * @param arguments the arguments for the closure
-     * @param closure the closure expression under analysis
-     * @param methodNode the method for which a {@link groovy.lang.Closure} parameter was annotated with {@link ClosureParams}
-     * @param sourceUnit the source unit of the file being compiled
+     * @param candidates      the list of signatures as determined after applying type hints and performing initial inference calculations
+     * @param receiver        the receiver the method is being called on
+     * @param arguments       the arguments for the closure
+     * @param closure         the closure expression under analysis
+     * @param methodNode      the method for which a {@link groovy.lang.Closure} parameter was annotated with {@link ClosureParams}
+     * @param sourceUnit      the source unit of the file being compiled
      * @param compilationUnit the compilation unit of the file being compiled
-     * @param options the options, corresponding to the {@link ClosureParams#options()} found on the annotation
+     * @param options         the options, corresponding to the {@link ClosureParams#options()} found on the annotation
      * @return a non-null list of signatures, where a signature corresponds to an array of class nodes, each of them matching a parameter. A list with more than one element indicates that all ambiguities haven't yet been resolved.
      */
     public List<ClassNode[]> resolve(List<ClassNode[]> candidates, ClassNode receiver, Expression arguments, ClosureExpression closure,

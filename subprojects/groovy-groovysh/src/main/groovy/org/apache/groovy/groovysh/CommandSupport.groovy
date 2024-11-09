@@ -31,8 +31,7 @@ import org.codehaus.groovy.tools.shell.util.MessageSource
  * Support for {@link Command} instances.
  */
 abstract class CommandSupport
-    implements Command
-{
+    implements Command {
     protected static final String NEWLINE = System.lineSeparator()
 
     /** Instance logger for the command, initialized late to include the command name. */
@@ -125,8 +124,8 @@ abstract class CommandSupport
         return name
     }
 /**
-     * Override to provide custom completion semantics for the command.
-     */
+ * Override to provide custom completion semantics for the command.
+ */
     protected List<Completer> createCompleters() {
         return []
     }
@@ -154,7 +153,7 @@ abstract class CommandSupport
 
         if (completers) {
             // replace null/empty with NullCompleter
-            completers.each {Completer it ->
+            completers.each { Completer it ->
                 if (it) {
                     list << it
                 } else {

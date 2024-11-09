@@ -231,7 +231,8 @@ final class Groovy10133 {
         '''
     }
 
-    @Test // GROOVY-9382
+    @Test
+    // GROOVY-9382
     void testGetterVersusIsser8() {
         shouldFail MissingPropertyException, '''
             class C {

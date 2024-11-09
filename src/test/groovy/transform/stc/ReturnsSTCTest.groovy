@@ -102,12 +102,12 @@ class ReturnsSTCTest extends StaticTypeCheckingTestCase {
                 }
             }
         ''',
-        'Cannot return value of type java.lang.String for method returning int', // first branch
-        'Cannot return value of type java.lang.String for method returning int' // second branch
+            'Cannot return value of type java.lang.String for method returning int', // first branch
+            'Cannot return value of type java.lang.String for method returning int' // second branch
     }
 
     void testImplicitReturnFailureWithSwitch() {
-         shouldFailWithMessages '''
+        shouldFailWithMessages '''
              int method(int x) {
                  switch (x) {
                     case 1:
@@ -121,7 +121,7 @@ class ReturnsSTCTest extends StaticTypeCheckingTestCase {
                  }
              }
          ''',
-         'Cannot return value of type java.lang.String for method returning int'
+            'Cannot return value of type java.lang.String for method returning int'
     }
 
     void testImplicitReturnFailureWithSwitch2() {
@@ -197,7 +197,7 @@ class ReturnsSTCTest extends StaticTypeCheckingTestCase {
             }
             methodWithImplicitConversion().years
         ''',
-        'No such property: years for class: java.lang.String'
+            'No such property: years for class: java.lang.String'
     }
 
     // GROOVY-10079

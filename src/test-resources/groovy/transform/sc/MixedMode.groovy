@@ -22,7 +22,7 @@ methodNotFound { receiver, name, argumentList, argTypes, call ->
 
 unresolvedProperty { pexp ->
     def lhs = getType(pexp.objectExpression)
-    if (lhs==classNodeFor(MetaClass)) {
+    if (lhs == classNodeFor(MetaClass)) {
         makeDynamic(pexp, CLOSURE_TYPE)
     } else {
         makeDynamic(pexp, int_TYPE)

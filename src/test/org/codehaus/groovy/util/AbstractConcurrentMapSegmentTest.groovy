@@ -61,7 +61,7 @@ class AbstractConcurrentMapSegmentTest {
 
     @Test
     public void testSegmentWillRehashAndExpandManyTimes() {
-        int elementCount = (SEGMENT_THRESHOLD + 1 ) * 6
+        int elementCount = (SEGMENT_THRESHOLD + 1) * 6
         whenIAddElements(elementCount)
         //456 elements fit into segment of size 800, which is 100 * 2 * 2 * 2
         thenSegmentSizeIs(INITIAL_SEGMENT_SIZE * 2 * 2 * 2)

@@ -186,6 +186,14 @@ public class DefaultTableModel extends AbstractTableModel {
         return InvokerHelper.asList(value);
     }
 
+    public ValueModel getRowModel() {
+        return rowModel;
+    }
+
+    public ValueModel getRowsModel() {
+        return rowsModel;
+    }
+
     protected static class MyTableColumnModel extends DefaultTableColumnModel {
         public List getColumnList() {
             return tableColumns;
@@ -205,18 +213,10 @@ public class DefaultTableModel extends AbstractTableModel {
 
         public void renumberTableColumns() {
             for (int i = tableColumns.size() - 1; i >= 0; i--) {
-                ((DefaultTableColumn)tableColumns.get(i)).setModelIndex(i);
+                ((DefaultTableColumn) tableColumns.get(i)).setModelIndex(i);
             }
         }
 
-    }
-
-    public ValueModel getRowModel() {
-        return rowModel;
-    }
-
-    public ValueModel getRowsModel() {
-        return rowsModel;
     }
 
 

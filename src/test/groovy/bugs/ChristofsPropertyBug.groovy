@@ -26,7 +26,7 @@ class ChristofsPropertyBug extends GroovyTestCase {
 
     void testChristofsPropertyBug() {
         this.mixedCaseProperty = "test"
-        shouldFail({this.mixedcaseproperty = "test"})
+        shouldFail({ this.mixedcaseproperty = "test" })
     }
 
     def getMixedCaseProperty() { mixedCaseProperty }

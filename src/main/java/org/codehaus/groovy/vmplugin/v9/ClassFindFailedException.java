@@ -19,8 +19,9 @@
 package org.codehaus.groovy.vmplugin.v9;
 
 /**
- *  Represents error occurred during finding classes
- *  @since 3.0.3
+ * Represents error occurred during finding classes
+ *
+ * @since 3.0.3
  */
 public class ClassFindFailedException extends RuntimeException {
     public ClassFindFailedException(String msg, Throwable t) {

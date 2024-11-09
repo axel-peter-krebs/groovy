@@ -161,7 +161,8 @@ class FileNameCompleter extends jline.console.completer.FileNameCompleter {
         return index + sizeAdjust
     }
 
-    @PackageScope CharSequence render(CharSequence name) {
+    @PackageScope
+    CharSequence render(CharSequence name) {
         String temp = name.toString().replace('"', '\\"').replace('\'', '\\\'')
         if (escapeBackslash) {
             temp = temp.replace('\\', '\\\\')

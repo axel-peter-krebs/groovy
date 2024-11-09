@@ -18,9 +18,13 @@
  */
 
 def a = 9
-def result = switch(a) {
-    case 6 -> { yield 'a' }
-    default -> { yield 'z' }
+def result = switch (a) {
+    case 6 -> {
+        yield 'a'
+    }
+    default -> {
+        yield 'z'
+    }
 }
 assert 'z' == result
 

@@ -189,8 +189,7 @@ public class InvokeMethodTest extends GroovyTestCase {
         try {
             invoke(this, "badOverload", new Object[]{"a", "b"});
             fail("Should fail as an unambiguous method is invoked");
-        }
-        catch (GroovyRuntimeException e) {
+        } catch (GroovyRuntimeException e) {
             System.out.println("Caught: " + e);
         }
     }
@@ -315,8 +314,7 @@ public class InvokeMethodTest extends GroovyTestCase {
         try {
             Object value = invoke(this, "unknownMethod", "abc");
             fail("Should have thrown an exception");
-        }
-        catch (GroovyRuntimeException e) {
+        } catch (GroovyRuntimeException e) {
             // worked
         }
     }
@@ -326,8 +324,7 @@ public class InvokeMethodTest extends GroovyTestCase {
             Object[] args = {"a", "b"};
             invoke(this, "unknownMethod", args);
             fail("Should have thrown an exception");
-        }
-        catch (GroovyRuntimeException e) {
+        } catch (GroovyRuntimeException e) {
             // worked
         }
     }
@@ -336,8 +333,7 @@ public class InvokeMethodTest extends GroovyTestCase {
         try {
             invoke(null, "mockCallWithNoParams", null);
             fail("Should have thrown an exception");
-        }
-        catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             // worked
         }
     }
@@ -440,8 +436,7 @@ public class InvokeMethodTest extends GroovyTestCase {
     protected Object invoke(Object object, String method, Object args) throws Throwable {
         try {
             return InvokerHelper.invokeMethod(object, method, args);
-        }
-        catch (InvokerInvocationException e) {
+        } catch (InvokerInvocationException e) {
             throw e.getCause();
         }
     }

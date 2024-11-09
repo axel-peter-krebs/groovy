@@ -69,15 +69,16 @@ public class MetaClassRegistryImpl implements MetaClassRegistry {
      */
     @Deprecated
     public static final String MODULE_META_INF_FILE = "META-INF/services/org.codehaus.groovy.runtime.ExtensionModule";
+    public static final String EXTENSION_DISABLE_PROPERTY = "groovy.extension.disable";
+    public static final int LOAD_DEFAULT = 0;
+    public static final int DONT_LOAD_DEFAULT = 1;
     private static final MetaClass[] EMPTY_METACLASS_ARRAY = new MetaClass[0];
     private static final MetaClassRegistryChangeEventListener[] EMPTY_METACLASSREGISTRYCHANGEEVENTLISTENER_ARRAY = new MetaClassRegistryChangeEventListener[0];
-    public static final String EXTENSION_DISABLE_PROPERTY = "groovy.extension.disable";
-
+    private static MetaClassRegistry instanceInclude;
+    private static MetaClassRegistry instanceExclude;
     private final boolean useAccessible;
-
     private final FastArray instanceMethods = new FastArray();
     private final FastArray staticMethods = new FastArray();
-
     private final LinkedList<MetaClassRegistryChangeEventListener> changeListenerList = new LinkedList<MetaClassRegistryChangeEventListener>();
     private final LinkedList<MetaClassRegistryChangeEventListener> nonRemoveableChangeListenerList = new LinkedList<MetaClassRegistryChangeEventListener>();
     private final ManagedConcurrentLinkedQueue<MetaClass> metaClassInfo = new ManagedConcurrentLinkedQueue<MetaClass>(ReferenceBundle.getWeakBundle());
@@ -85,11 +86,7 @@ public class MetaClassRegistryImpl implements MetaClassRegistry {
     private final String disabledString = SystemUtil.getSystemPropertySafe(EXTENSION_DISABLE_PROPERTY);
     private final boolean disabling = disabledString != null;
     private final Set<String> disabledNames = disabling ? new HashSet<>(Arrays.asList(disabledString.split(","))) : null;
-
-    public static final int LOAD_DEFAULT = 0;
-    public static final int DONT_LOAD_DEFAULT = 1;
-    private static MetaClassRegistry instanceInclude;
-    private static MetaClassRegistry instanceExclude;
+    private volatile MetaClassCreationHandle metaClassCreationHandle = new MetaClassCreationHandle();
 
     public MetaClassRegistryImpl() {
         this(LOAD_DEFAULT, true);
@@ -149,26 +146,46 @@ public class MetaClassRegistryImpl implements MetaClassRegistry {
             // ordered. Even though metaClassInfo is thread-safe, it is included in the block
             // so the metaclasses are added to the queue in the same order.
             synchronized (metaClassInfo) {
-               metaClassInfo.add(cmcu.getNewMetaClass());
-               DefaultMetaClassInfo.getNewConstantMetaClassVersioning();
-               Class c = cmcu.getClassToUpdate();
-               DefaultMetaClassInfo.setPrimitiveMeta(c, cmcu.getNewMetaClass()==null);
-               Field sdyn;
-               try {
-                   sdyn = c.getDeclaredField(Verifier.STATIC_METACLASS_BOOL);
-                   sdyn.setBoolean(null, cmcu.getNewMetaClass()!=null);
-               } catch (Throwable e) {
-                   //DO NOTHING
-               }
+                metaClassInfo.add(cmcu.getNewMetaClass());
+                DefaultMetaClassInfo.getNewConstantMetaClassVersioning();
+                Class c = cmcu.getClassToUpdate();
+                DefaultMetaClassInfo.setPrimitiveMeta(c, cmcu.getNewMetaClass() == null);
+                Field sdyn;
+                try {
+                    sdyn = c.getDeclaredField(Verifier.STATIC_METACLASS_BOOL);
+                    sdyn.setBoolean(null, cmcu.getNewMetaClass() != null);
+                } catch (Throwable e) {
+                    //DO NOTHING
+                }
 
             }
         });
-   }
+    }
 
     private static void refreshMopMethods(final Map<CachedClass, List<MetaMethod>> map) {
         for (Map.Entry<CachedClass, List<MetaMethod>> e : map.entrySet()) {
             CachedClass cls = e.getKey();
             cls.setNewMopMethods(e.getValue());
+        }
+    }
+
+    /**
+     * Singleton of MetaClassRegistry.
+     *
+     * @param includeExtension
+     * @return the registry
+     */
+    public static synchronized MetaClassRegistry getInstance(int includeExtension) {
+        if (includeExtension != DONT_LOAD_DEFAULT) {
+            if (instanceInclude == null) {
+                instanceInclude = new MetaClassRegistryImpl();
+            }
+            return instanceInclude;
+        } else {
+            if (instanceExclude == null) {
+                instanceExclude = new MetaClassRegistryImpl(DONT_LOAD_DEFAULT);
+            }
+            return instanceExclude;
         }
     }
 
@@ -188,15 +205,15 @@ public class MetaClassRegistryImpl implements MetaClassRegistry {
      * @see groovy.lang.MetaClassRegistry.MetaClassCreationHandle
      */
     private void installMetaClassCreationHandle() {
-           try {
-               final Class customMetaClassHandle = Class.forName("groovy.runtime.metaclass.CustomMetaClassCreationHandle");
-               final Constructor customMetaClassHandleConstructor = customMetaClassHandle.getConstructor();
-                 this.metaClassCreationHandle = (MetaClassCreationHandle)customMetaClassHandleConstructor.newInstance();
-           } catch (final ClassNotFoundException e) {
-               this.metaClassCreationHandle = new MetaClassCreationHandle();
-           } catch (final Exception e) {
-               throw new GroovyRuntimeException("Could not instantiate custom Metaclass creation handle: "+ e, e);
-           }
+        try {
+            final Class customMetaClassHandle = Class.forName("groovy.runtime.metaclass.CustomMetaClassCreationHandle");
+            final Constructor customMetaClassHandleConstructor = customMetaClassHandle.getConstructor();
+            this.metaClassCreationHandle = (MetaClassCreationHandle) customMetaClassHandleConstructor.newInstance();
+        } catch (final ClassNotFoundException e) {
+            this.metaClassCreationHandle = new MetaClassCreationHandle();
+        } catch (final Exception e) {
+            throw new GroovyRuntimeException("Could not instantiate custom Metaclass creation handle: " + e, e);
+        }
     }
 
     private void registerMethods(final Class theClass, final boolean useMethodWrapper, final boolean useInstanceMethods, Map<CachedClass, List<MetaMethod>> map) {
@@ -213,11 +230,11 @@ public class MetaClassRegistryImpl implements MetaClassRegistry {
                     System.arraycopy(record.parameters, 1, newParams, 0, newParams.length);
 
                     MetaMethod method = new GeneratedMetaMethod.Proxy(
-                            record.className,
-                            record.methodName,
-                            ReflectionCache.getCachedClass(record.parameters[0]),
-                            record.returnType,
-                            newParams
+                        record.className,
+                        record.methodName,
+                        ReflectionCache.getCachedClass(record.parameters[0]),
+                        record.returnType,
+                        newParams
                     );
                     final CachedClass declClass = method.getDeclaringClass();
                     List<MetaMethod> arr = map.computeIfAbsent(declClass, k -> new ArrayList<MetaMethod>(4));
@@ -262,7 +279,8 @@ public class MetaClassRegistryImpl implements MetaClassRegistry {
             List<MetaMethod> arr = map.computeIfAbsent(declClass, k -> new ArrayList<MetaMethod>(4));
             arr.add(method);
             instanceMethods.add(method);
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) { /* ignore */
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                 InvocationTargetException e) { /* ignore */
         }
     }
 
@@ -306,15 +324,14 @@ public class MetaClassRegistryImpl implements MetaClassRegistry {
     }
 
     public void setMetaClass(Object obj, MetaClass theMetaClass) {
-        Class theClass = obj instanceof Class ? (Class)obj : obj.getClass();
+        Class theClass = obj instanceof Class ? (Class) obj : obj.getClass();
         ClassInfo info = ClassInfo.getClassInfo(theClass);
         MetaClass mc;
         info.lock();
         try {
             mc = info.getPerInstanceMetaClass(obj);
             info.setPerInstanceMetaClass(obj, theMetaClass);
-        }
-        finally {
+        } finally {
             info.unlock();
         }
         fireConstantMetaClassUpdate(obj, theClass, mc, theMetaClass);
@@ -324,11 +341,10 @@ public class MetaClassRegistryImpl implements MetaClassRegistry {
         return useAccessible;
     }
 
-    private volatile MetaClassCreationHandle metaClassCreationHandle = new MetaClassCreationHandle();
-
     /**
      * Gets a handle internally used to create MetaClass implementations
      * WARNING: experimental code, likely to change soon
+     *
      * @return the handle
      */
     @Override
@@ -342,11 +358,12 @@ public class MetaClassRegistryImpl implements MetaClassRegistry {
      * reuse the old handle to keep custom logic and to use the
      * default logic as fall back.
      * WARNING: experimental code, likely to change soon
+     *
      * @param handle the handle
      */
     @Override
     public void setMetaClassCreationHandle(MetaClassCreationHandle handle) {
-        if(handle == null) throw new IllegalArgumentException("Cannot set MetaClassCreationHandle to null value!");
+        if (handle == null) throw new IllegalArgumentException("Cannot set MetaClassCreationHandle to null value!");
         ClassInfo.clearModifiedExpandos();
         handle.setDisableCustomMetaClassLookup(metaClassCreationHandle.isDisableCustomMetaClassLookup());
         metaClassCreationHandle = handle;
@@ -354,6 +371,7 @@ public class MetaClassRegistryImpl implements MetaClassRegistry {
 
     /**
      * Adds a listener for constant metaclasses.
+     *
      * @param listener the listener
      */
     @Override
@@ -363,9 +381,9 @@ public class MetaClassRegistryImpl implements MetaClassRegistry {
         }
     }
 
-
     /**
      * Adds a listener for constant metaclasses. This listener cannot be removed!
+     *
      * @param listener the listener
      */
     @Override
@@ -377,6 +395,7 @@ public class MetaClassRegistryImpl implements MetaClassRegistry {
 
     /**
      * Removes a constant metaclass listener.
+     *
      * @param listener the listener
      */
     @Override
@@ -391,13 +410,13 @@ public class MetaClassRegistryImpl implements MetaClassRegistry {
      * internal to kick of the listener notification. It can also be used by subclasses
      * to achieve the same.
      *
-     * @param obj object instance if the MetaClass change is on a per-instance metaclass (or null if global)
-     * @param c the class
+     * @param obj   object instance if the MetaClass change is on a per-instance metaclass (or null if global)
+     * @param c     the class
      * @param oldMC the old MetaClass
      * @param newMc the new MetaClass
      */
     protected void fireConstantMetaClassUpdate(Object obj, Class c, final MetaClass oldMC, MetaClass newMc) {
-        MetaClassRegistryChangeEventListener[]  listener = getMetaClassRegistryChangeEventListeners();
+        MetaClassRegistryChangeEventListener[] listener = getMetaClassRegistryChangeEventListeners();
         MetaClassRegistryChangeEvent cmcu = new MetaClassRegistryChangeEvent(this, obj, c, oldMC, newMc);
         for (MetaClassRegistryChangeEventListener metaClassRegistryChangeEventListener : listener) {
             metaClassRegistryChangeEventListener.updateConstantMetaClass(cmcu);
@@ -411,30 +430,10 @@ public class MetaClassRegistryImpl implements MetaClassRegistry {
     public MetaClassRegistryChangeEventListener[] getMetaClassRegistryChangeEventListeners() {
         synchronized (changeListenerList) {
             ArrayList<MetaClassRegistryChangeEventListener> ret =
-                    new ArrayList<MetaClassRegistryChangeEventListener>(changeListenerList.size()+nonRemoveableChangeListenerList.size());
+                new ArrayList<MetaClassRegistryChangeEventListener>(changeListenerList.size() + nonRemoveableChangeListenerList.size());
             ret.addAll(nonRemoveableChangeListenerList);
             ret.addAll(changeListenerList);
             return ret.toArray(EMPTY_METACLASSREGISTRYCHANGEEVENTLISTENER_ARRAY);
-        }
-    }
-
-    /**
-     * Singleton of MetaClassRegistry.
-     *
-     * @param includeExtension
-     * @return the registry
-     */
-    public static synchronized MetaClassRegistry getInstance(int includeExtension) {
-        if (includeExtension != DONT_LOAD_DEFAULT) {
-            if (instanceInclude == null) {
-                instanceInclude = new MetaClassRegistryImpl();
-            }
-            return instanceInclude;
-        } else {
-            if (instanceExclude == null) {
-                instanceExclude = new MetaClassRegistryImpl(DONT_LOAD_DEFAULT);
-            }
-            return instanceExclude;
         }
     }
 
@@ -475,7 +474,7 @@ public class MetaClassRegistryImpl implements MetaClassRegistry {
             public boolean hasNext() {
                 if (hasNextCalled) return hasNext;
                 hasNextCalled = true;
-                if(index < refs.length) {
+                if (index < refs.length) {
                     hasNext = true;
                     currentMeta = refs[index];
                     index++;
@@ -523,7 +522,7 @@ public class MetaClassRegistryImpl implements MetaClassRegistry {
                     return;
                 } else {
                     throw new GroovyRuntimeException("Conflicting module versions. Module [" + module.getName() + " is loaded in version " +
-                            loadedModule.getVersion() + " and you are trying to load version " + module.getVersion());
+                        loadedModule.getVersion() + " and you are trying to load version " + module.getVersion());
                 }
             }
             moduleRegistry.addModule(module);

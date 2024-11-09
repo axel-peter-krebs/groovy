@@ -22,8 +22,8 @@ onMethodSelection { expr, node ->
     if (node.declaringClass.name == 'java.lang.String') {
         // calling a method on 'String'
         // let’s perform additional checks!
-        if (++count>2) {
-            addStaticTypeError("You can use only 2 calls on String in your source code",expr)
+        if (++count > 2) {
+            addStaticTypeError("You can use only 2 calls on String in your source code", expr)
         }
     }
 }

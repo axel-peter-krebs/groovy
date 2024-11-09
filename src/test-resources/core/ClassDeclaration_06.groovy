@@ -16,6 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 public class OuterA {
     class InnerB {}
 }
@@ -31,7 +32,9 @@ class AA {
     class Inner {
         public def innerMethod() {}
     }
+
     private class PrivateInner {}
+
     protected final class ProtectedFinalInner {
         ProtectedFinalInner() {
 
@@ -50,7 +53,6 @@ class AA {
         0
     }
 }
-
 
 
 interface A {

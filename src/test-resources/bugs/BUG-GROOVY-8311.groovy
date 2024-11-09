@@ -16,8 +16,10 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 def greet(args) {
     [args.name, args.age]
 }
+
 def name = 'age'
 assert greet(name: 'Doe', (name): 8) == ['Doe', 8]

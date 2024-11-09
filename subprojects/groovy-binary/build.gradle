@@ -26,43 +26,43 @@ plugins {
 
 docAggregation {
     excludeFromJavadoc '**/*.html',
-            '**/*.groovy',
-            '*.g4',
-            '**/GroovyRecognizer.java', // generated file
-            '**/*.tokens', // Antlr generated file
-            '**/*.interp' // Antlr generated file
+        '**/*.groovy',
+        '*.g4',
+        '**/GroovyRecognizer.java', // generated file
+        '**/*.tokens', // Antlr generated file
+        '**/*.interp' // Antlr generated file
 }
 
 tasks.named('asciidoctor') {
     attributes reldir_root: '.',
-            reldir_jmx: '.',
-            reldir_swing: '.',
-            reldir_console: '.'
+        reldir_jmx: '.',
+        reldir_swing: '.',
+        reldir_console: '.'
 }
 
 distribution {
     docs ':', 'org.codehaus.groovy.runtime.ArrayGroovyMethods',
-            'org.codehaus.groovy.runtime.DefaultGroovyMethods',
-            'org.codehaus.groovy.runtime.DefaultGroovyStaticMethods',
-            'org.codehaus.groovy.runtime.EncodingGroovyMethods',
-            'org.codehaus.groovy.runtime.IOGroovyMethods',
-            'org.codehaus.groovy.runtime.ProcessGroovyMethods',
-            'org.codehaus.groovy.runtime.ResourceGroovyMethods',
-            'org.codehaus.groovy.runtime.SocketGroovyMethods',
-            'org.codehaus.groovy.runtime.StreamGroovyMethods',
-            'org.codehaus.groovy.runtime.StringGroovyMethods',
-            'org.codehaus.groovy.vmplugin.v8.PluginDefaultGroovyMethods',
-            'org.codehaus.groovy.vmplugin.v9.PluginDefaultGroovyMethods',
-            'org.codehaus.groovy.vmplugin.v10.PluginDefaultGroovyMethods'
+        'org.codehaus.groovy.runtime.DefaultGroovyMethods',
+        'org.codehaus.groovy.runtime.DefaultGroovyStaticMethods',
+        'org.codehaus.groovy.runtime.EncodingGroovyMethods',
+        'org.codehaus.groovy.runtime.IOGroovyMethods',
+        'org.codehaus.groovy.runtime.ProcessGroovyMethods',
+        'org.codehaus.groovy.runtime.ResourceGroovyMethods',
+        'org.codehaus.groovy.runtime.SocketGroovyMethods',
+        'org.codehaus.groovy.runtime.StreamGroovyMethods',
+        'org.codehaus.groovy.runtime.StringGroovyMethods',
+        'org.codehaus.groovy.vmplugin.v8.PluginDefaultGroovyMethods',
+        'org.codehaus.groovy.vmplugin.v9.PluginDefaultGroovyMethods',
+        'org.codehaus.groovy.vmplugin.v10.PluginDefaultGroovyMethods'
     docs ':groovy-dateutil', 'org.apache.groovy.dateutil.extensions.DateUtilExtensions'
     docs ':groovy-datetime', 'org.apache.groovy.datetime.extensions.DateTimeExtensions',
-            'org.apache.groovy.datetime.extensions.DateTimeStaticExtensions'
+        'org.apache.groovy.datetime.extensions.DateTimeStaticExtensions'
     docs ':groovy-sql', 'org.apache.groovy.sql.extensions.SqlExtensions'
     docs ':groovy-swing', 'org.apache.groovy.swing.extensions.SwingExtensions'
     docs ':groovy-xml', 'org.apache.groovy.xml.extensions.XmlExtensions'
     docs ':groovy-nio', 'org.apache.groovy.nio.extensions.NioExtensions'
     docs ':groovy-jsr223', 'org.codehaus.groovy.jsr223.ScriptExtensions',
-            'org.codehaus.groovy.jsr223.ScriptStaticExtensions'
+        'org.codehaus.groovy.jsr223.ScriptStaticExtensions'
 
     distSpec = copySpec {
         from rootProject.file("licenses/LICENSE-BINZIP")
@@ -72,12 +72,12 @@ distribution {
             from(configurations.distributionsRuntimeClasspath) {
                 exclude {
                     it.file.name.contains('activation') ||
-                            it.file.name.contains('groovy-raw') ||
-                            it.file.name.contains('livetribe-jsr223') ||
-                            it.file.name.startsWith('openbeans-') ||
-                            it.file.name.startsWith('asm-') ||
-                            it.file.name.startsWith('antlr4-') ||
-                            it.file.name.startsWith('picocli-')
+                        it.file.name.contains('groovy-raw') ||
+                        it.file.name.contains('livetribe-jsr223') ||
+                        it.file.name.startsWith('openbeans-') ||
+                        it.file.name.startsWith('asm-') ||
+                        it.file.name.startsWith('antlr4-') ||
+                        it.file.name.startsWith('picocli-')
                 }
             }
             from rootProject.file('src/bin/groovy.icns')
@@ -149,14 +149,14 @@ distribution {
             into("subprojects/${project.projectDir.name}") {
                 from(project.projectDir) {
                     exclude 'build',
-                            'target',
-                            'out',             // used by Intellij IDEA
-                            '**/*.iml',        // used by Intellij IDEA
-                            '**/*.ipr',        // used by Intellij IDEA
-                            '**/*.iws',        // used by Intellij IDEA
-                            '.settings',       // used by Eclipse
-                            '.classpath',      // used by Eclipse
-                            '.gradle'          // used by Gradle
+                        'target',
+                        'out',             // used by Intellij IDEA
+                        '**/*.iml',        // used by Intellij IDEA
+                        '**/*.ipr',        // used by Intellij IDEA
+                        '**/*.iws',        // used by Intellij IDEA
+                        '.settings',       // used by Eclipse
+                        '.classpath',      // used by Eclipse
+                        '.gradle'          // used by Gradle
                 }
             }
         }
@@ -181,15 +181,15 @@ distribution {
                 if (file.directory) {
                     into file.name
                     exclude 'build',
-                            'target',
-                            'wrapper',        // used by Gradle
-                            '**/*.iml',       // used by Intellij IDEA
-                            '**/*.ipr',       // used by Intellij IDEA
-                            '**/*.iws',       // used by Intellij IDEA
-                            '.settings',      // used by Eclipse
-                            '.classpath',     // used by Eclipse
-                            '.gradle',        // used by Gradle
-                            '*.gpg'           // used by Gradle
+                        'target',
+                        'wrapper',        // used by Gradle
+                        '**/*.iml',       // used by Intellij IDEA
+                        '**/*.ipr',       // used by Intellij IDEA
+                        '**/*.iws',       // used by Intellij IDEA
+                        '.settings',      // used by Eclipse
+                        '.classpath',     // used by Eclipse
+                        '.gradle',        // used by Gradle
+                        '*.gpg'           // used by Gradle
                 }
             }
         }

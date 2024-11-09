@@ -71,25 +71,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ClassInfo implements Finalizable {
 
-    private final LazyCachedClassRef cachedClassRef;
-    private final LazyClassLoaderRef artifactClassLoader;
-    private final LockableObject lock = new LockableObject();
-    public final int hash = -1;
-    private final WeakReference<Class<?>> classRef;
-    private final AtomicInteger version = new AtomicInteger();
-    private MetaClass strongMetaClass;
-    private ManagedReference<MetaClass> weakMetaClass;
-    MetaMethod[] dgmMetaMethods = MetaMethod.EMPTY_ARRAY;
-    MetaMethod[] newMetaMethods = MetaMethod.EMPTY_ARRAY;
-    private ManagedIdentityConcurrentMap<Object, MetaClass> perInstanceMetaClassMap;
-
     private static final ReferenceBundle softBundle = ReferenceBundle.getSoftBundle();
     private static final ReferenceBundle weakBundle = ReferenceBundle.getWeakBundle();
-
     private static final ManagedConcurrentLinkedQueue<ClassInfo> modifiedExpandos =
-            new ManagedConcurrentLinkedQueue<ClassInfo>(weakBundle);
-
-    private static final GroovyClassValue<ClassInfo> globalClassValue = GroovyClassValueFactory.createGroovyClassValue(new ComputeValue<ClassInfo>(){
+        new ManagedConcurrentLinkedQueue<ClassInfo>(weakBundle);
+    private static final GlobalClassSet globalClassSet = new GlobalClassSet();
+    private static final GroovyClassValue<ClassInfo> globalClassValue = GroovyClassValueFactory.createGroovyClassValue(new ComputeValue<ClassInfo>() {
         @Override
         public ClassInfo computeValue(Class<?> type) {
             ClassInfo ret = new ClassInfo(type);
@@ -97,13 +84,143 @@ public class ClassInfo implements Finalizable {
             return ret;
         }
     });
-
-    private static final GlobalClassSet globalClassSet = new GlobalClassSet();
+    public final int hash = -1;
+    private final LazyCachedClassRef cachedClassRef;
+    private final LazyClassLoaderRef artifactClassLoader;
+    private final LockableObject lock = new LockableObject();
+    private final WeakReference<Class<?>> classRef;
+    private final AtomicInteger version = new AtomicInteger();
+    MetaMethod[] dgmMetaMethods = MetaMethod.EMPTY_ARRAY;
+    MetaMethod[] newMetaMethods = MetaMethod.EMPTY_ARRAY;
+    private MetaClass strongMetaClass;
+    private ManagedReference<MetaClass> weakMetaClass;
+    private ManagedIdentityConcurrentMap<Object, MetaClass> perInstanceMetaClassMap;
 
     ClassInfo(Class klazz) {
         this.classRef = new WeakReference<Class<?>>(klazz);
         cachedClassRef = new LazyCachedClassRef(softBundle, this);
         artifactClassLoader = new LazyClassLoaderRef(softBundle, this);
+    }
+
+    public static void clearModifiedExpandos() {
+        for (Iterator<ClassInfo> itr = modifiedExpandos.iterator(); itr.hasNext(); ) {
+            ClassInfo info = itr.next();
+            itr.remove();
+            info.setStrongMetaClass(null);
+        }
+    }
+
+    public static ClassInfo getClassInfo(Class cls) {
+        return globalClassValue.get(cls);
+    }
+
+    /**
+     * Removes a {@code ClassInfo} from the cache.
+     * <p>
+     * This is useful in cases where the Class is parsed from a script, such as when
+     * using GroovyClassLoader#parseClass, and is executed for its result but the Class
+     * is not retained or cached.  Removing the {@code ClassInfo} associated with the Class
+     * will make the Class and its ClassLoader eligible for garbage collection sooner that
+     * it would otherwise.
+     *
+     * @param cls the Class associated with the ClassInfo to remove
+     *            from cache
+     */
+    public static void remove(Class<?> cls) {
+        globalClassValue.remove(cls);
+    }
+
+    public static Collection<ClassInfo> getAllClassInfo() {
+        return getAllGlobalClassInfo();
+    }
+
+    public static void onAllClassInfo(ClassInfoAction action) {
+        for (ClassInfo classInfo : getAllGlobalClassInfo()) {
+            action.onClassInfo(classInfo);
+        }
+    }
+
+    private static Collection<ClassInfo> getAllGlobalClassInfo() {
+        return globalClassSet.values();
+    }
+
+    private static boolean isValidWeakMetaClass(MetaClass metaClass) {
+        return isValidWeakMetaClass(metaClass, GroovySystem.getMetaClassRegistry().getMetaClassCreationHandler());
+    }
+
+    /**
+     * if EMC.enableGlobally() is OFF, return whatever the cached answer is.
+     * but if EMC.enableGlobally() is ON and the cached answer is not an EMC, come up with a fresh answer
+     */
+    private static boolean isValidWeakMetaClass(MetaClass metaClass, MetaClassRegistry.MetaClassCreationHandle mccHandle) {
+        if (metaClass == null) return false;
+        boolean enableGloballyOn = (mccHandle instanceof ExpandoMetaClassCreationHandle);
+        boolean cachedAnswerIsEMC = (metaClass instanceof ExpandoMetaClass);
+        return (!enableGloballyOn || cachedAnswerIsEMC);
+    }
+
+    public static int size() {
+        return globalClassSet.size();
+    }
+
+    public static int fullSize() {
+        return globalClassSet.fullSize();
+    }
+
+    private static CachedClass createCachedClass(Class klazz, ClassInfo classInfo) {
+        if (klazz == Object.class)
+            return new ObjectCachedClass(classInfo);
+
+        if (klazz == String.class)
+            return new StringCachedClass(classInfo);
+
+        CachedClass cachedClass;
+        if (Number.class.isAssignableFrom(klazz) || klazz.isPrimitive()) {
+            if (klazz == Number.class) {
+                cachedClass = new NumberCachedClass(klazz, classInfo);
+            } else if (klazz == Integer.class || klazz == Integer.TYPE) {
+                cachedClass = new IntegerCachedClass(klazz, classInfo, klazz == Integer.class);
+            } else if (klazz == Double.class || klazz == Double.TYPE) {
+                cachedClass = new DoubleCachedClass(klazz, classInfo, klazz == Double.class);
+            } else if (klazz == BigDecimal.class) {
+                cachedClass = new BigDecimalCachedClass(klazz, classInfo);
+            } else if (klazz == Long.class || klazz == Long.TYPE) {
+                cachedClass = new LongCachedClass(klazz, classInfo, klazz == Long.class);
+            } else if (klazz == Float.class || klazz == Float.TYPE) {
+                cachedClass = new FloatCachedClass(klazz, classInfo, klazz == Float.class);
+            } else if (klazz == Short.class || klazz == Short.TYPE) {
+                cachedClass = new ShortCachedClass(klazz, classInfo, klazz == Short.class);
+            } else if (klazz == Boolean.TYPE) {
+                cachedClass = new BooleanCachedClass(klazz, classInfo, false);
+            } else if (klazz == Character.TYPE) {
+                cachedClass = new CharacterCachedClass(klazz, classInfo, false);
+            } else if (klazz == BigInteger.class) {
+                cachedClass = new BigIntegerCachedClass(klazz, classInfo);
+            } else if (klazz == Byte.class || klazz == Byte.TYPE) {
+                cachedClass = new ByteCachedClass(klazz, classInfo, klazz == Byte.class);
+            } else {
+                cachedClass = new CachedClass(klazz, classInfo);
+            }
+        } else {
+            if (klazz.isArray())
+                cachedClass = new ArrayCachedClass(klazz, classInfo);
+            else if (klazz == Boolean.class) {
+                cachedClass = new BooleanCachedClass(klazz, classInfo, true);
+            } else if (klazz == Character.class) {
+                cachedClass = new CharacterCachedClass(klazz, classInfo, true);
+            } else if (Closure.class.isAssignableFrom(klazz)) {
+                cachedClass = new CachedClosureClass(klazz, classInfo);
+            } else if (isSAM(klazz)) {
+                cachedClass = new CachedSAMClass(klazz, classInfo);
+            } else {
+                cachedClass = new CachedClass(klazz, classInfo);
+            }
+        }
+        return cachedClass;
+    }
+
+    private static boolean isSAM(Class<?> c) {
+        return CachedSAMClass.getSAMMethod(c) != null;
     }
 
     public int getVersion() {
@@ -119,15 +236,7 @@ public class ClassInfo implements Finalizable {
         // safe value here to avoid multiple reads with possibly
         // differing values due to concurrency
         MetaClass strongRef = strongMetaClass;
-        return strongRef == null ? null : strongRef instanceof ExpandoMetaClass ? (ExpandoMetaClass)strongRef : null;
-    }
-
-    public static void clearModifiedExpandos() {
-        for (Iterator<ClassInfo> itr = modifiedExpandos.iterator(); itr.hasNext(); ) {
-            ClassInfo info = itr.next();
-            itr.remove();
-            info.setStrongMetaClass(null);
-        }
+        return strongRef == null ? null : strongRef instanceof ExpandoMetaClass ? (ExpandoMetaClass) strongRef : null;
     }
 
     /**
@@ -151,40 +260,6 @@ public class ClassInfo implements Finalizable {
         return artifactClassLoader.get();
     }
 
-    public static ClassInfo getClassInfo (Class cls) {
-        return globalClassValue.get(cls);
-    }
-
-    /**
-     * Removes a {@code ClassInfo} from the cache.
-     *
-     * This is useful in cases where the Class is parsed from a script, such as when
-     * using GroovyClassLoader#parseClass, and is executed for its result but the Class
-     * is not retained or cached.  Removing the {@code ClassInfo} associated with the Class
-     * will make the Class and its ClassLoader eligible for garbage collection sooner that
-     * it would otherwise.
-     *
-     * @param cls the Class associated with the ClassInfo to remove
-     *            from cache
-     */
-    public static void remove(Class<?> cls) {
-        globalClassValue.remove(cls);
-    }
-
-    public static Collection<ClassInfo> getAllClassInfo () {
-        return getAllGlobalClassInfo();
-    }
-
-    public static void onAllClassInfo(ClassInfoAction action) {
-        for (ClassInfo classInfo : getAllGlobalClassInfo()) {
-            action.onClassInfo(classInfo);
-        }
-    }
-
-    private static Collection<ClassInfo> getAllGlobalClassInfo() {
-        return globalClassSet.values();
-    }
-
     public MetaClass getStrongMetaClass() {
         return strongMetaClass;
     }
@@ -197,10 +272,10 @@ public class ClassInfo implements Finalizable {
         MetaClass strongRef = strongMetaClass;
 
         if (strongRef instanceof ExpandoMetaClass) {
-            ((ExpandoMetaClass)strongRef).inRegistry = false;
+            ((ExpandoMetaClass) strongRef).inRegistry = false;
             for (Iterator<ClassInfo> itr = modifiedExpandos.iterator(); itr.hasNext(); ) {
                 ClassInfo info = itr.next();
-                if(info == this) {
+                if (info == this) {
                     itr.remove();
                 }
             }
@@ -209,7 +284,7 @@ public class ClassInfo implements Finalizable {
         strongMetaClass = answer;
 
         if (answer instanceof ExpandoMetaClass) {
-            ((ExpandoMetaClass)answer).inRegistry = true;
+            ((ExpandoMetaClass) answer).inRegistry = true;
             modifiedExpandos.add(this);
         }
 
@@ -229,7 +304,7 @@ public class ClassInfo implements Finalizable {
         strongMetaClass = null;
         ManagedReference<MetaClass> newRef = null;
         if (answer != null) {
-            newRef = new ManagedReference<MetaClass> (softBundle,answer);
+            newRef = new ManagedReference<MetaClass>(softBundle, answer);
         }
         replaceWeakMetaClassRef(newRef);
     }
@@ -248,7 +323,7 @@ public class ClassInfo implements Finalizable {
         // safe value here to avoid multiple reads with possibly
         // differing values due to concurrency
         MetaClass strongMc = strongMetaClass;
-        if (strongMc!=null) return strongMc;
+        if (strongMc != null) return strongMc;
         MetaClass weakMc = getWeakMetaClass();
         if (isValidWeakMetaClass(weakMc)) {
             return weakMc;
@@ -258,7 +333,7 @@ public class ClassInfo implements Finalizable {
 
     private MetaClass getMetaClassUnderLock() {
         MetaClass answer = getStrongMetaClass();
-        if (answer!=null) return answer;
+        if (answer != null) return answer;
 
         answer = getWeakMetaClass();
         final MetaClassRegistry metaClassRegistry = GroovySystem.getMetaClassRegistry();
@@ -277,21 +352,6 @@ public class ClassInfo implements Finalizable {
             setWeakMetaClass(answer);
         }
         return answer;
-    }
-
-    private static boolean isValidWeakMetaClass(MetaClass metaClass) {
-        return isValidWeakMetaClass(metaClass, GroovySystem.getMetaClassRegistry().getMetaClassCreationHandler());
-    }
-
-    /**
-     * if EMC.enableGlobally() is OFF, return whatever the cached answer is.
-     * but if EMC.enableGlobally() is ON and the cached answer is not an EMC, come up with a fresh answer
-     */
-    private static boolean isValidWeakMetaClass(MetaClass metaClass, MetaClassRegistry.MetaClassCreationHandle mccHandle) {
-        if(metaClass==null) return false;
-        boolean enableGloballyOn = (mccHandle instanceof ExpandoMetaClassCreationHandle);
-        boolean cachedAnswerIsEMC = (metaClass instanceof ExpandoMetaClass);
-        return (!enableGloballyOn || cachedAnswerIsEMC);
     }
 
     /**
@@ -324,81 +384,17 @@ public class ClassInfo implements Finalizable {
         return getMetaClass();
     }
 
-    public static int size () {
-        return globalClassSet.size();
-    }
-
-    public static int fullSize () {
-        return globalClassSet.fullSize();
-    }
-
-    private static CachedClass createCachedClass(Class klazz, ClassInfo classInfo) {
-        if (klazz == Object.class)
-            return new ObjectCachedClass(classInfo);
-
-        if (klazz == String.class)
-            return new StringCachedClass(classInfo);
-
-        CachedClass cachedClass;
-        if (Number.class.isAssignableFrom(klazz) || klazz.isPrimitive()) {
-            if (klazz == Number.class) {
-                cachedClass = new NumberCachedClass(klazz, classInfo);
-            } else if (klazz == Integer.class || klazz ==  Integer.TYPE) {
-                cachedClass = new IntegerCachedClass(klazz, classInfo, klazz==Integer.class);
-            } else if (klazz == Double.class || klazz == Double.TYPE) {
-                cachedClass = new DoubleCachedClass(klazz, classInfo, klazz==Double.class);
-            } else if (klazz == BigDecimal.class) {
-                cachedClass = new BigDecimalCachedClass(klazz, classInfo);
-            } else if (klazz == Long.class || klazz == Long.TYPE) {
-                cachedClass = new LongCachedClass(klazz, classInfo, klazz==Long.class);
-            } else if (klazz == Float.class || klazz == Float.TYPE) {
-                cachedClass = new FloatCachedClass(klazz, classInfo, klazz==Float.class);
-            } else if (klazz == Short.class || klazz == Short.TYPE) {
-                cachedClass = new ShortCachedClass(klazz, classInfo, klazz==Short.class);
-            } else if (klazz == Boolean.TYPE) {
-                cachedClass = new BooleanCachedClass(klazz, classInfo, false);
-            } else if (klazz == Character.TYPE) {
-                cachedClass = new CharacterCachedClass(klazz, classInfo, false);
-            } else if (klazz == BigInteger.class) {
-                cachedClass = new BigIntegerCachedClass(klazz, classInfo);
-            } else if (klazz == Byte.class || klazz == Byte.TYPE) {
-                cachedClass = new ByteCachedClass(klazz, classInfo, klazz==Byte.class);
-            } else {
-                cachedClass = new CachedClass(klazz, classInfo);
-            }
-        } else {
-            if (klazz.isArray())
-              cachedClass = new ArrayCachedClass(klazz, classInfo);
-            else if (klazz == Boolean.class) {
-                cachedClass = new BooleanCachedClass(klazz, classInfo, true);
-            } else if (klazz == Character.class) {
-                cachedClass = new CharacterCachedClass(klazz, classInfo, true);
-            } else if (Closure.class.isAssignableFrom(klazz)) {
-                cachedClass = new CachedClosureClass (klazz, classInfo);
-            } else if (isSAM(klazz)) {
-                cachedClass = new CachedSAMClass(klazz, classInfo);
-            } else {
-                cachedClass = new CachedClass(klazz, classInfo);
-            }
-        }
-        return cachedClass;
-    }
-
-    private static boolean isSAM(Class<?> c) {
-        return CachedSAMClass.getSAMMethod(c) !=null;
-    }
-
-    public void lock () {
+    public void lock() {
         lock.lock();
     }
 
-    public void unlock () {
+    public void unlock() {
         lock.unlock();
     }
 
     public MetaClass getPerInstanceMetaClass(Object obj) {
         if (perInstanceMetaClassMap == null)
-          return null;
+            return null;
 
         return perInstanceMetaClassMap.get(obj);
     }
@@ -408,19 +404,29 @@ public class ClassInfo implements Finalizable {
 
         if (metaClass != null) {
             if (perInstanceMetaClassMap == null)
-              perInstanceMetaClassMap = new ManagedIdentityConcurrentMap<>();
+                perInstanceMetaClassMap = new ManagedIdentityConcurrentMap<>();
 
             perInstanceMetaClassMap.put(obj, metaClass);
-        }
-        else {
+        } else {
             if (perInstanceMetaClassMap != null) {
-              perInstanceMetaClassMap.remove(obj);
+                perInstanceMetaClassMap.remove(obj);
             }
         }
     }
 
-    public boolean hasPerInstanceMetaClasses () {
+    public boolean hasPerInstanceMetaClasses() {
         return perInstanceMetaClassMap != null;
+    }
+
+    @Override
+    public void finalizeReference() {
+        setStrongMetaClass(null);
+        cachedClassRef.clear();
+        artifactClassLoader.clear();
+    }
+
+    public interface ClassInfoAction {
+        void onClassInfo(ClassInfo classInfo);
     }
 
     private static class LazyCachedClassRef extends LazyReference<CachedClass> {
@@ -448,42 +454,32 @@ public class ClassInfo implements Finalizable {
         }
 
         @Override
-        @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
+        @SuppressWarnings("removal")
+        // TODO a future Groovy version should perform the operation not as a privileged action
         public ClassLoaderForClassArtifacts initValue() {
             return java.security.AccessController.doPrivileged((PrivilegedAction<ClassLoaderForClassArtifacts>) () -> new ClassLoaderForClassArtifacts(info.classRef.get()));
         }
-    }
-
-    @Override
-    public void finalizeReference() {
-        setStrongMetaClass(null);
-        cachedClassRef.clear();
-        artifactClassLoader.clear();
     }
 
     private static class GlobalClassSet {
 
         private final ManagedConcurrentLinkedQueue<ClassInfo> items = new ManagedConcurrentLinkedQueue<ClassInfo>(weakBundle);
 
-        public int size(){
+        public int size() {
             return values().size();
         }
 
-        public int fullSize(){
+        public int fullSize() {
             return values().size();
         }
 
-        public Collection<ClassInfo> values(){
+        public Collection<ClassInfo> values() {
             return items.values();
         }
 
-        public void add(ClassInfo value){
+        public void add(ClassInfo value) {
             items.add(value);
         }
 
-    }
-
-    public interface ClassInfoAction {
-        void onClassInfo(ClassInfo classInfo);
     }
 }

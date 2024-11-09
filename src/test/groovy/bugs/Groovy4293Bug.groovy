@@ -35,7 +35,7 @@ class Groovy4293Bug extends GroovyTestCase {
                 Eval.x(el[0],"x[1]="+ el[2] ? trendMap[params.newValue.toInteger()] : params.newValue.toInteger() )
             """
             fail('Eval call should have failed as null script is passed to it')
-        } catch(IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             assert ex.message.contains('Script text to compile cannot be null!')
         }
     }

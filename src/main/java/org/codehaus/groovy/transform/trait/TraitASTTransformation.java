@@ -120,6 +120,194 @@ public class TraitASTTransformation extends AbstractASTTransformation implements
 
     private CompilationUnit compilationUnit;
 
+    private static void replaceExtendsByImplements(final ClassNode cNode) {
+        ClassNode superClass = cNode.getUnresolvedSuperClass(false);
+        if (Traits.isTrait(superClass)) {
+            // move from super class to interface
+            cNode.setSuperClass(OBJECT_TYPE);
+            cNode.addInterface(superClass);
+        }
+    }
+
+    private static void generateMethodsWithDefaultArgs(final ClassNode cNode) {
+        new Verifier() {
+            @Override
+            public void addDefaultParameterMethods(final ClassNode cn) {
+                setClassNode(cn);
+                super.addDefaultParameterMethods(cn);
+            }
+        }.addDefaultParameterMethods(cNode);
+    }
+
+    private static void addMopMethods(final ClassNode helper) {
+        var interfaces = helper.getOuterClass().getInterfaces();
+        var delegates = new ArrayList<String>(interfaces.length);
+        for (int i = interfaces.length; i > 0; ) {
+            var maybeTrait = interfaces[--i];
+            if (Traits.isTrait(maybeTrait)) delegates.add(Traits.helperClassName(maybeTrait));
+        }
+        if (!delegates.isEmpty()) {
+            var bs = new BlockStatement();
+            var e1 = localVarX("e1", classX(MissingMethodException.class).getType());
+            var e2 = new Parameter(classX(GroovyRuntimeException.class).getType(), "e2");
+            Parameter[] params = {new Parameter(STRING_TYPE, "name"), new Parameter(OBJECT_TYPE, "args")};
+            helper.addSyntheticMethod("$static_methodMissing", ACC_PUBLIC | ACC_STATIC, OBJECT_TYPE, params, new ClassNode[]{e1.getType()}, bs);
+
+            /* public static Object $static_methodMissing(String name, Object args) throws MissingMethodException {
+             *   MissingMethodException e1 = new MissingMethodException(name, TheTrait.class, args.tail())
+             *   for (Class delegate in [...]) {
+             *     try {
+             *       delegate.(name)(*args)
+             *     } catch (GroovyRuntimeException e2) {
+             *       e1.addSuppressed(e2)
+             *     }
+             *   }
+             *   throw e1
+             * }
+             */
+
+            bs.addStatement(declS(e1, ctorX(e1.getType(), args(varX(params[0]), classX(helper.getOuterClass()), callX(varX(params[1]), "tail")))));
+
+            Parameter delegate = new Parameter(CLASS_Type, "delegate");
+            Statement callName = returnS(callX(varX(delegate), varX(params[0]), new SpreadExpression(varX(params[1]))));
+            bs.addStatement(forS(delegate, classList2args(delegates), tryCatchS(callName).addCatch(catchS(e2, stmt(callX(varX(e1), "addSuppressed", varX(e2)))))));
+
+            bs.addStatement(throwS(varX(e1)));
+        }
+    }
+
+    /**
+     * Copies annotations from the trait to the helper, excluding non-applicable
+     * items such as {@link Trait @Trait} and {@link Sealed @Sealed}.
+     */
+    private static void copyClassAnnotations(final ClassNode helper) {
+        for (AnnotationNode annotation : helper.getOuterClass().getAnnotations()) {
+            ClassNode annotationType = annotation.getClassNode();
+            if (!annotationType.equals(Traits.TRAIT_CLASSNODE)
+                && !annotationType.equals(SEALED_TYPE)) {
+                helper.addAnnotation(annotation);
+            }
+        }
+    }
+
+    private static MethodNode createInitMethod(final boolean isStatic, final ClassNode helper) {
+        MethodNode initializer = new MethodNode(
+            isStatic ? Traits.STATIC_INIT_METHOD : Traits.INIT_METHOD,
+            ACC_PUBLIC | ACC_STATIC | ACC_SYNTHETIC,
+            VOID_TYPE,
+            new Parameter[]{createSelfParameter(helper.getOuterClass(), isStatic)},
+            ClassNode.EMPTY_ARRAY,
+            new BlockStatement()
+        );
+        helper.addMethod(initializer);
+
+        // Cannot add static compilation of init method because of GROOVY-7217, see example 2 of test case
+        //AnnotationNode an = new AnnotationNode(TraitComposer.COMPILESTATIC_CLASSNODE);
+        //initializer.addAnnotation(an);
+        //cNode.addTransform(StaticCompileTransformation.class, an);
+
+        return initializer;
+    }
+
+    private static ClassNode createReceiverType(final boolean isStatic, final ClassNode cNode) {
+        ClassNode type;
+        if (isStatic) {
+            // Class<TraitClass>
+            type = GenericsUtils.makeClassSafe0(CLASS_Type, new GenericsType(cNode));
+        } else {
+            // TraitClass
+            type = cNode;
+        }
+        return type;
+    }
+
+    private static Parameter createSelfParameter(final ClassNode cNode, final boolean isStatic) {
+        ClassNode type = createReceiverType(isStatic, cNode.getPlainNodeReference());
+        return new Parameter(type, isStatic ? Traits.STATIC_THIS_OBJECT : Traits.THIS_OBJECT);
+    }
+
+    private static BlockStatement getBlockStatement(final MethodNode initMethod, final Statement initCode) {
+        BlockStatement block;
+        if (initCode instanceof BlockStatement) {
+            block = (BlockStatement) initCode;
+        } else {
+            block = new BlockStatement();
+            block.addStatement(initCode);
+            initMethod.setCode(block);
+        }
+        return block;
+    }
+
+    /**
+     * Mostly copied from the {@link Verifier} class but does *not* generate bytecode.
+     */
+    private static void processProperty(final ClassNode cNode, final PropertyNode node) {
+        String name = node.getName();
+        FieldNode field = node.getField();
+
+        String getterName = node.getGetterName();
+        if (getterName == null) { // GROOVY-11512
+            getterName = "get" + capitalize(name);
+        }
+        String setterName = node.getSetterNameOrDefault();
+
+        Statement getterBlock = node.getGetterBlock();
+        if (getterBlock == null && !node.isPrivate()) {
+            MethodNode getter = cNode.getGetterMethod(getterName, !node.isStatic());
+            if (getter == null && isPrimitiveBoolean(node.getType())) {
+                getter = cNode.getGetterMethod("is" + capitalize(name), !node.isStatic());
+            }
+            if (methodNeedsReplacement(cNode, getter)) {
+                getterBlock = stmt(fieldX(field));
+            }
+        }
+        Statement setterBlock = node.getSetterBlock();
+        if (setterBlock == null && !node.isPrivate() && !node.isFinal()) {
+            MethodNode setter = cNode.getSetterMethod(setterName, /*void-only:*/false);
+            if (methodNeedsReplacement(cNode, setter)) {
+                setterBlock = assignS(fieldX(field), varX(name));
+            }
+        }
+
+        int methodModifiers = adjustPropertyModifiersForMethod(node); // GROOVY-3726
+
+        if (getterBlock != null) {
+            MethodNode getter = new MethodNode(getterName, methodModifiers, node.getType(), Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, getterBlock);
+            getter.setSynthetic(true);
+            // copyAnnotations(cNode, getter);
+            addGeneratedMethod(cNode, getter);
+
+            if (node.getGetterName() == null && isPrimitiveBoolean(node.getType())) {
+                getter = new MethodNode("is" + capitalize(name), methodModifiers, node.getType(), Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, getterBlock);
+                getter.setSynthetic(true);
+                // copyAnnotations(cNode, getter);
+                addGeneratedMethod(cNode, getter);
+            }
+        }
+        if (setterBlock != null) {
+            VariableExpression var = (VariableExpression) ((BinaryExpression) ((ExpressionStatement) setterBlock).getExpression()).getRightExpression();
+            Parameter setterParameter = new Parameter(node.getType(), name);
+            var.setAccessedVariable(setterParameter);
+
+            MethodNode setter = new MethodNode(setterName, methodModifiers, VOID_TYPE, new Parameter[]{setterParameter}, ClassNode.EMPTY_ARRAY, setterBlock);
+            setter.setSynthetic(true);
+            // copyAnnotations(cNode, setter);
+            addGeneratedMethod(cNode, setter);
+        }
+    }
+
+    //--------------------------------------------------------------------------
+
+    private static boolean methodNeedsReplacement(final ClassNode cNode, final MethodNode mNode) {
+        // no method found, we need to replace
+        if (mNode == null) return true;
+        // method is in current class, nothing to be done
+        if (mNode.getDeclaringClass() == cNode) return false;
+        // do not overwrite final
+        if ((mNode.getModifiers() & ACC_FINAL) != 0) return false;
+        return true;
+    }
+
     @Override
     public void setCompilationUnit(final CompilationUnit unit) {
         this.compilationUnit = unit;
@@ -145,7 +333,8 @@ public class TraitASTTransformation extends AbstractASTTransformation implements
     }
 
     private void checkInnerClasses(final ClassNode cNode) {
-        for (Iterator<InnerClassNode> it = cNode.getInnerClasses(); it.hasNext(); ) { InnerClassNode ic = it.next();
+        for (Iterator<InnerClassNode> it = cNode.getInnerClasses(); it.hasNext(); ) {
+            InnerClassNode ic = it.next();
             if ((ic.getModifiers() & ACC_STATIC) == 0) {
                 sourceUnit.addError(new SyntaxException("Cannot have non-static inner class inside a trait (" + ic.getName() + ")", ic.getLineNumber(), ic.getColumnNumber()));
             }
@@ -165,34 +354,16 @@ public class TraitASTTransformation extends AbstractASTTransformation implements
         }
     }
 
-    private static void replaceExtendsByImplements(final ClassNode cNode) {
-        ClassNode superClass = cNode.getUnresolvedSuperClass(false);
-        if (Traits.isTrait(superClass)) {
-            // move from super class to interface
-            cNode.setSuperClass(OBJECT_TYPE);
-            cNode.addInterface(superClass);
-        }
-    }
-
-    private static void generateMethodsWithDefaultArgs(final ClassNode cNode) {
-        new Verifier() {
-            @Override
-            public void addDefaultParameterMethods(final ClassNode cn) {
-                setClassNode(cn); super.addDefaultParameterMethods(cn);
-            }
-        }.addDefaultParameterMethods(cNode);
-    }
-
     private ClassNode createHelperClass(final ClassNode cNode) {
         cNode.setModifiers(ACC_PUBLIC | ACC_ABSTRACT | ACC_INTERFACE);
 
         ClassNode helper = new InnerClassNode(
-                cNode,
-                Traits.helperClassName(cNode),
-                ACC_PUBLIC | ACC_STATIC | ACC_ABSTRACT | ACC_SYNTHETIC,
-                OBJECT_TYPE,
-                ClassNode.EMPTY_ARRAY,
-                null
+            cNode,
+            Traits.helperClassName(cNode),
+            ACC_PUBLIC | ACC_STATIC | ACC_ABSTRACT | ACC_SYNTHETIC,
+            OBJECT_TYPE,
+            ClassNode.EMPTY_ARRAY,
+            null
         );
         helper.setStaticClass(true); // GROOVY-7242, GROOVY-7456, etc.
 
@@ -221,18 +392,18 @@ public class TraitASTTransformation extends AbstractASTTransformation implements
         ClassNode staticFieldHelper = null;
         if (!fields.isEmpty()) {
             fieldHelper = new InnerClassNode(
-                    cNode,
-                    Traits.fieldHelperClassName(cNode),
-                    ACC_PUBLIC | ACC_STATIC | ACC_ABSTRACT | ACC_INTERFACE | ACC_SYNTHETIC,
-                    OBJECT_TYPE
+                cNode,
+                Traits.fieldHelperClassName(cNode),
+                ACC_PUBLIC | ACC_STATIC | ACC_ABSTRACT | ACC_INTERFACE | ACC_SYNTHETIC,
+                OBJECT_TYPE
             );
             fieldHelper.setStaticClass(true);
             if (hasStatic) {
                 staticFieldHelper = new InnerClassNode(
-                        cNode,
-                        Traits.staticFieldHelperClassName(cNode),
-                        ACC_PUBLIC | ACC_STATIC | ACC_ABSTRACT | ACC_INTERFACE | ACC_SYNTHETIC,
-                        OBJECT_TYPE
+                    cNode,
+                    Traits.staticFieldHelperClassName(cNode),
+                    ACC_PUBLIC | ACC_STATIC | ACC_ABSTRACT | ACC_INTERFACE | ACC_SYNTHETIC,
+                    OBJECT_TYPE
                 );
                 staticFieldHelper.setStaticClass(true);
             }
@@ -249,7 +420,7 @@ public class TraitASTTransformation extends AbstractASTTransformation implements
         for (MethodNode methodNode : cNode.getMethods()) {
             if (!methodNode.isSynthetic() && (methodNode.isProtected() || methodNode.isPackageScope())) {
                 sourceUnit.addError(new SyntaxException("Cannot have protected/package-private method in a trait (" + cNode.getName() + "#" + methodNode.getTypeDescriptor() + ")",
-                        methodNode.getLineNumber(), methodNode.getColumnNumber()));
+                    methodNode.getLineNumber(), methodNode.getColumnNumber()));
                 return null;
             }
             if (!methodNode.isAbstract()) {
@@ -328,63 +499,14 @@ public class TraitASTTransformation extends AbstractASTTransformation implements
         }
     }
 
-    //--------------------------------------------------------------------------
+    //
 
     private void resolveScope(final ClassNode cNode) {
         new VariableScopeVisitor(sourceUnit).visitClass(cNode);
     }
 
-    private static void addMopMethods(final ClassNode helper) {
-        var interfaces = helper.getOuterClass().getInterfaces();
-        var delegates = new ArrayList<String>(interfaces.length);
-        for (int i = interfaces.length; i > 0; ) { var maybeTrait = interfaces[--i];
-            if (Traits.isTrait(maybeTrait)) delegates.add(Traits.helperClassName(maybeTrait));
-        }
-        if (!delegates.isEmpty()) {
-            var bs = new BlockStatement();
-            var e1 = localVarX("e1", classX(MissingMethodException.class).getType());
-            var e2 = new Parameter(  classX(GroovyRuntimeException.class).getType(), "e2");
-            Parameter[] params = {new Parameter(STRING_TYPE, "name"), new Parameter(OBJECT_TYPE, "args")};
-            helper.addSyntheticMethod("$static_methodMissing", ACC_PUBLIC | ACC_STATIC, OBJECT_TYPE, params, new ClassNode[]{e1.getType()}, bs);
-
-            /* public static Object $static_methodMissing(String name, Object args) throws MissingMethodException {
-             *   MissingMethodException e1 = new MissingMethodException(name, TheTrait.class, args.tail())
-             *   for (Class delegate in [...]) {
-             *     try {
-             *       delegate.(name)(*args)
-             *     } catch (GroovyRuntimeException e2) {
-             *       e1.addSuppressed(e2)
-             *     }
-             *   }
-             *   throw e1
-             * }
-             */
-
-            bs.addStatement(declS(e1, ctorX(e1.getType(), args(varX(params[0]), classX(helper.getOuterClass()), callX(varX(params[1]), "tail")))));
-
-            Parameter delegate = new Parameter(CLASS_Type, "delegate");
-            Statement callName = returnS(callX(varX(delegate), varX(params[0]), new SpreadExpression(varX(params[1]))));
-            bs.addStatement(forS(delegate, classList2args(delegates), tryCatchS(callName).addCatch(catchS(e2, stmt(callX(varX(e1), "addSuppressed", varX(e2)))))));
-
-            bs.addStatement(throwS(varX(e1)));
-        }
-    }
-
-    /**
-     * Copies annotations from the trait to the helper, excluding non-applicable
-     * items such as {@link Trait @Trait} and {@link Sealed @Sealed}.
-     */
-    private static void copyClassAnnotations(final ClassNode helper) {
-        for (AnnotationNode annotation : helper.getOuterClass().getAnnotations()) {
-            ClassNode annotationType = annotation.getClassNode();
-            if (!annotationType.equals(Traits.TRAIT_CLASSNODE)
-                    && !annotationType.equals(SEALED_TYPE)) {
-                helper.addAnnotation(annotation);
-            }
-        }
-    }
-
-    private /****/ void registerASTTransformations(final ClassNode helper) {
+    private /****/
+    void registerASTTransformations(final ClassNode helper) {
         ASTTransformationVisitor.addNewPhaseOperation(compilationUnit, sourceUnit, helper);
         // perform an additional operation which has to be done *after* static type checking
         compilationUnit.addPhaseOperation((final SourceUnit source, final GeneratorContext context, final ClassNode classNode) -> {
@@ -395,130 +517,12 @@ public class TraitASTTransformation extends AbstractASTTransformation implements
         }, CompilePhase.INSTRUCTION_SELECTION.getPhaseNumber());
     }
 
-    private static MethodNode createInitMethod(final boolean isStatic, final ClassNode helper) {
-        MethodNode initializer = new MethodNode(
-                isStatic ? Traits.STATIC_INIT_METHOD : Traits.INIT_METHOD,
-                ACC_PUBLIC | ACC_STATIC | ACC_SYNTHETIC,
-                VOID_TYPE,
-                new Parameter[]{createSelfParameter(helper.getOuterClass(), isStatic)},
-                ClassNode.EMPTY_ARRAY,
-                new BlockStatement()
-        );
-        helper.addMethod(initializer);
-
-        // Cannot add static compilation of init method because of GROOVY-7217, see example 2 of test case
-        //AnnotationNode an = new AnnotationNode(TraitComposer.COMPILESTATIC_CLASSNODE);
-        //initializer.addAnnotation(an);
-        //cNode.addTransform(StaticCompileTransformation.class, an);
-
-        return initializer;
-    }
-
-    private static ClassNode createReceiverType(final boolean isStatic, final ClassNode cNode) {
-        ClassNode type;
-        if (isStatic) {
-            // Class<TraitClass>
-            type = GenericsUtils.makeClassSafe0(CLASS_Type, new GenericsType(cNode));
-        } else {
-            // TraitClass
-            type = cNode;
-        }
-        return type;
-    }
-
-    private static Parameter createSelfParameter(final ClassNode cNode, final boolean isStatic) {
-        ClassNode type = createReceiverType(isStatic, cNode.getPlainNodeReference());
-        return new Parameter(type, isStatic ? Traits.STATIC_THIS_OBJECT : Traits.THIS_OBJECT);
-    }
-
-    private static BlockStatement getBlockStatement(final MethodNode initMethod, final Statement initCode) {
-        BlockStatement block;
-        if (initCode instanceof BlockStatement) {
-            block = (BlockStatement) initCode;
-        } else {
-            block = new BlockStatement();
-            block.addStatement(initCode);
-            initMethod.setCode(block);
-        }
-        return block;
-    }
-
-    //
-
-    /**
-     * Mostly copied from the {@link Verifier} class but does *not* generate bytecode.
-     */
-    private static void processProperty(final ClassNode cNode, final PropertyNode node) {
-        String name = node.getName();
-        FieldNode field = node.getField();
-
-        String getterName = node.getGetterName();
-        if (getterName == null) { // GROOVY-11512
-            getterName = "get" + capitalize(name);
-        }
-        String setterName = node.getSetterNameOrDefault();
-
-        Statement getterBlock = node.getGetterBlock();
-        if (getterBlock == null && !node.isPrivate()) {
-            MethodNode getter = cNode.getGetterMethod(getterName, !node.isStatic());
-            if (getter == null && isPrimitiveBoolean(node.getType())) {
-                getter = cNode.getGetterMethod("is" + capitalize(name), !node.isStatic());
-            }
-            if (methodNeedsReplacement(cNode, getter)) {
-                getterBlock = stmt(fieldX(field));
-            }
-        }
-        Statement setterBlock = node.getSetterBlock();
-        if (setterBlock == null && !node.isPrivate() && !node.isFinal()) {
-            MethodNode setter = cNode.getSetterMethod(setterName, /*void-only:*/false);
-            if (methodNeedsReplacement(cNode, setter)) {
-                setterBlock = assignS(fieldX(field), varX(name));
-            }
-        }
-
-        int methodModifiers = adjustPropertyModifiersForMethod(node); // GROOVY-3726
-
-        if (getterBlock != null) {
-            MethodNode getter = new MethodNode(getterName, methodModifiers, node.getType(), Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, getterBlock);
-            getter.setSynthetic(true);
-            // copyAnnotations(cNode, getter);
-            addGeneratedMethod(cNode, getter);
-
-            if (node.getGetterName() == null && isPrimitiveBoolean(node.getType())) {
-                getter = new MethodNode("is" + capitalize(name), methodModifiers, node.getType(), Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, getterBlock);
-                getter.setSynthetic(true);
-                // copyAnnotations(cNode, getter);
-                addGeneratedMethod(cNode, getter);
-            }
-        }
-        if (setterBlock != null) {
-            VariableExpression var = (VariableExpression) ((BinaryExpression) ((ExpressionStatement) setterBlock).getExpression()).getRightExpression();
-            Parameter setterParameter = new Parameter(node.getType(), name);
-            var.setAccessedVariable(setterParameter);
-
-            MethodNode setter = new MethodNode(setterName, methodModifiers, VOID_TYPE, new Parameter[]{setterParameter}, ClassNode.EMPTY_ARRAY, setterBlock);
-            setter.setSynthetic(true);
-            // copyAnnotations(cNode, setter);
-            addGeneratedMethod(cNode, setter);
-        }
-    }
-
-    private static boolean methodNeedsReplacement(final ClassNode cNode, final MethodNode mNode) {
-        // no method found, we need to replace
-        if (mNode == null) return true;
-        // method is in current class, nothing to be done
-        if (mNode.getDeclaringClass() == cNode) return false;
-        // do not overwrite final
-        if ((mNode.getModifiers() & ACC_FINAL) != 0) return false;
-        return true;
-    }
-
     private void processField(final FieldNode field, final MethodNode initializer, final MethodNode staticInitializer,
                               final ClassNode fieldHelper, final ClassNode helper, final ClassNode staticFieldHelper, final ClassNode trait,
                               final Set<String> knownFields) {
         if (field.isProtected()) {
             sourceUnit.addError(new SyntaxException("Cannot have protected field in a trait (" + trait.getName() + "#" + field.getName() + ")",
-                    field.getLineNumber(), field.getColumnNumber()));
+                field.getLineNumber(), field.getColumnNumber()));
             return;
         }
 
@@ -532,12 +536,12 @@ public class TraitASTTransformation extends AbstractASTTransformation implements
             if (field.isFinal()) {
                 String baseName = field.isStatic() ? Traits.STATIC_INIT_METHOD : Traits.INIT_METHOD;
                 MethodNode fieldInitializer = new MethodNode(
-                        baseName + Traits.remappedFieldName(trait, field.getName()),
-                        ACC_PUBLIC | ACC_STATIC | ACC_SYNTHETIC,
-                        field.getOriginType(),
-                        new Parameter[]{createSelfParameter(trait, field.isStatic())},
-                        ClassNode.EMPTY_ARRAY,
-                        returnS(initCode.getExpression())
+                    baseName + Traits.remappedFieldName(trait, field.getName()),
+                    ACC_PUBLIC | ACC_STATIC | ACC_SYNTHETIC,
+                    field.getOriginType(),
+                    new Parameter[]{createSelfParameter(trait, field.isStatic())},
+                    ClassNode.EMPTY_ARRAY,
+                    returnS(initCode.getExpression())
                 );
                 helper.addMethod(fieldInitializer);
             } else {
@@ -548,19 +552,19 @@ public class TraitASTTransformation extends AbstractASTTransformation implements
                         target = staticFieldHelper;
                     }
                     mce = callX(
-                            classX(InvokerHelper.class),
-                            "invokeStaticMethod",
-                            args(
-                                    thisObject,
-                                    constX(Traits.helperSetterName(field)),
-                                    initCode.getExpression()
-                            )
+                        classX(InvokerHelper.class),
+                        "invokeStaticMethod",
+                        args(
+                            thisObject,
+                            constX(Traits.helperSetterName(field)),
+                            initCode.getExpression()
+                        )
                     );
                 } else {
                     mce = callX(
-                            castX(createReceiverType(field.isStatic(), fieldHelper), thisObject),
-                            Traits.helperSetterName(field),
-                            castX(field.getOriginType(), initCode.getExpression())
+                        castX(createReceiverType(field.isStatic(), fieldHelper), thisObject),
+                        Traits.helperSetterName(field),
+                        castX(field.getOriginType(), initCode.getExpression())
                     );
                 }
                 mce.setImplicitThis(false);
@@ -570,20 +574,20 @@ public class TraitASTTransformation extends AbstractASTTransformation implements
         }
         // define setter/getter helper methods (setter added even for final fields for legacy compatibility)
         addGeneratedMethod(target,
-                Traits.helperSetterName(field),
-                ACC_PUBLIC | ACC_ABSTRACT,
-                field.getOriginType(),
-                new Parameter[]{new Parameter(field.getOriginType(), "val")},
-                ClassNode.EMPTY_ARRAY,
-                null
+            Traits.helperSetterName(field),
+            ACC_PUBLIC | ACC_ABSTRACT,
+            field.getOriginType(),
+            new Parameter[]{new Parameter(field.getOriginType(), "val")},
+            ClassNode.EMPTY_ARRAY,
+            null
         );
         addGeneratedMethod(target,
-                Traits.helperGetterName(field),
-                ACC_PUBLIC | ACC_ABSTRACT,
-                field.getOriginType(),
-                Parameter.EMPTY_ARRAY,
-                ClassNode.EMPTY_ARRAY,
-                null
+            Traits.helperGetterName(field),
+            ACC_PUBLIC | ACC_ABSTRACT,
+            field.getOriginType(),
+            Parameter.EMPTY_ARRAY,
+            ClassNode.EMPTY_ARRAY,
+            null
         );
 
         // dummy fields are only used to carry annotations if instance field
@@ -591,11 +595,11 @@ public class TraitASTTransformation extends AbstractASTTransformation implements
         int mods = field.getModifiers() & Traits.FIELD_PREFIX_MASK;
         String dummyFieldName = String.format("$0x%04x", mods) + Traits.remappedFieldName(field.getOwner(), field.getName());
         FieldNode dummyField = new FieldNode(
-                dummyFieldName,
-                ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC,
-                field.getOriginType(),
-                fieldHelper,
-                null
+            dummyFieldName,
+            ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC,
+            field.getOriginType(),
+            fieldHelper,
+            null
         );
         dummyField.setSynthetic(true);
         // copy annotations from field to dummy field
@@ -607,14 +611,14 @@ public class TraitASTTransformation extends AbstractASTTransformation implements
 
         // retain legacy field (will be given lower precedence than above)
         dummyFieldName = (field.isStatic() ? Traits.STATIC_FIELD_PREFIX : Traits.FIELD_PREFIX) +
-                (field.isPublic() ? Traits.PUBLIC_FIELD_PREFIX : Traits.PRIVATE_FIELD_PREFIX) +
-                Traits.remappedFieldName(field.getOwner(), field.getName());
+            (field.isPublic() ? Traits.PUBLIC_FIELD_PREFIX : Traits.PRIVATE_FIELD_PREFIX) +
+            Traits.remappedFieldName(field.getOwner(), field.getName());
         dummyField = new FieldNode(
-                dummyFieldName,
-                ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC,
-                field.getOriginType().getPlainNodeReference(),
-                fieldHelper,
-                null
+            dummyFieldName,
+            ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC,
+            field.getOriginType().getPlainNodeReference(),
+            fieldHelper,
+            null
         );
         dummyField.setSynthetic(true);
         dummyField.addAnnotations(copy);
@@ -624,16 +628,16 @@ public class TraitASTTransformation extends AbstractASTTransformation implements
     private MethodNode processMethod(final ClassNode traitClass, final ClassNode traitHelperClass, final MethodNode methodNode, final ClassNode fieldHelper, final Collection<String> knownFields) {
         Parameter[] methodParams = methodNode.getParameters();
         Parameter[] helperParams = new Parameter[methodParams.length + 1];
-        helperParams[0] = createSelfParameter(traitClass,methodNode.isStatic());
+        helperParams[0] = createSelfParameter(traitClass, methodNode.isStatic());
         System.arraycopy(methodParams, 0, helperParams, 1, methodParams.length);
 
         MethodNode mNode = new MethodNode(
-                methodNode.getName(),
-                (methodNode.isPrivate() ? ACC_PRIVATE : ACC_PUBLIC) | (methodNode.isFinal() ? ACC_FINAL : 0) | ACC_STATIC,
-                methodNode.getReturnType(),
-                helperParams,
-                methodNode.getExceptions(),
-                processBody(varX(helperParams[0]), methodNode.getCode(), traitClass, traitHelperClass, fieldHelper, knownFields)
+            methodNode.getName(),
+            (methodNode.isPrivate() ? ACC_PRIVATE : ACC_PUBLIC) | (methodNode.isFinal() ? ACC_FINAL : 0) | ACC_STATIC,
+            methodNode.getReturnType(),
+            helperParams,
+            methodNode.getExceptions(),
+            processBody(varX(helperParams[0]), methodNode.getCode(), traitClass, traitHelperClass, fieldHelper, knownFields)
         );
         for (AnnotationNode annotation : methodNode.getAnnotations()) {
             if (!annotation.getClassNode().equals(OVERRIDE_TYPE)) {

@@ -862,10 +862,12 @@ assert new UnitCylinder().volume == 0.7853981633974483d
 
     static class PrintCategory {
         static StringBuilder BUFFER = new StringBuilder()
+
         static void println(Object self, String message) {
-            if (BUFFER.length()>0) BUFFER.append('\n')
+            if (BUFFER.length() > 0) BUFFER.append('\n')
             BUFFER.append(message)
         }
+
         static void reset() { BUFFER.setLength(0) }
     }
 }

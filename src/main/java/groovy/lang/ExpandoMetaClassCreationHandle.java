@@ -39,38 +39,10 @@ public class ExpandoMetaClassCreationHandle extends MetaClassCreationHandle {
 
     public static final ExpandoMetaClassCreationHandle instance = new ExpandoMetaClassCreationHandle();
 
-    /* (non-Javadoc)
-     * @see groovy.lang.MetaClassRegistry.MetaClassCreationHandle#create(java.lang.Class, groovy.lang.MetaClassRegistry)
-     */
-    @Override
-    protected MetaClass createNormalMetaClass(Class theClass, MetaClassRegistry registry) {
-        if(theClass != ExpandoMetaClass.class) {
-            return new ExpandoMetaClass(theClass, true, true);
-        }
-        else {
-            return super.createNormalMetaClass(theClass, registry);
-        }
-    }
-
-    /**
-     * Registers a modified ExpandoMetaClass with the creation handle
-     *
-     * @param emc The EMC
-     */
-    public void registerModifiedMetaClass(ExpandoMetaClass emc) {
-        final Class klazz = emc.getJavaClass();
-        GroovySystem.getMetaClassRegistry().setMetaClass(klazz,emc);
-    }
-
-    public boolean hasModifiedMetaClass(ExpandoMetaClass emc) {
-        return emc.getClassInfo().getModifiedExpando() != null;
-    }
-
     /**
      * <p>Enables the ExpandoMetaClassCreationHandle with the registry
      *
      * <code>ExpandoMetaClassCreationHandle.enable();</code>
-     *
      */
     public static void enable() {
         final MetaClassRegistry metaClassRegistry = GroovySystem.getMetaClassRegistry();
@@ -90,5 +62,31 @@ public class ExpandoMetaClassCreationHandle extends MetaClassCreationHandle {
                 metaClassRegistry.setMetaClassCreationHandle(new MetaClassCreationHandle());
             }
         }
+    }
+
+    /* (non-Javadoc)
+     * @see groovy.lang.MetaClassRegistry.MetaClassCreationHandle#create(java.lang.Class, groovy.lang.MetaClassRegistry)
+     */
+    @Override
+    protected MetaClass createNormalMetaClass(Class theClass, MetaClassRegistry registry) {
+        if (theClass != ExpandoMetaClass.class) {
+            return new ExpandoMetaClass(theClass, true, true);
+        } else {
+            return super.createNormalMetaClass(theClass, registry);
+        }
+    }
+
+    /**
+     * Registers a modified ExpandoMetaClass with the creation handle
+     *
+     * @param emc The EMC
+     */
+    public void registerModifiedMetaClass(ExpandoMetaClass emc) {
+        final Class klazz = emc.getJavaClass();
+        GroovySystem.getMetaClassRegistry().setMetaClass(klazz, emc);
+    }
+
+    public boolean hasModifiedMetaClass(ExpandoMetaClass emc) {
+        return emc.getClassInfo().getModifiedExpando() != null;
     }
 }

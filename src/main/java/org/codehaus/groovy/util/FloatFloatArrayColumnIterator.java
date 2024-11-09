@@ -38,7 +38,7 @@ public class FloatFloatArrayColumnIterator implements Iterator<float[]> {
         Objects.requireNonNull(array);
         this.array = array;
         numColumns = Integer.MAX_VALUE;
-        for (float[] row: array) {
+        for (float[] row : array) {
             if (row.length < numColumns) numColumns = row.length;
         }
         if (numColumns == Integer.MAX_VALUE) numColumns = 0;

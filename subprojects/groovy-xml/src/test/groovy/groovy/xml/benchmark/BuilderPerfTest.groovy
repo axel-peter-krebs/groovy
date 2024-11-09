@@ -38,7 +38,7 @@ class BuilderPerfTest extends GroovyTestCase {
         }
     }
 
-    void testMe () {
+    void testMe() {
         long start = System.currentTimeMillis()
         def writer
         5000.times({

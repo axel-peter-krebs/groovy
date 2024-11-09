@@ -32,7 +32,7 @@ import java.util.TimeZone;
 
 /**
  * Generates JSON from objects.
- *
+ * <p>
  * The {@link Options} builder can be used to configure an instance of a JsonGenerator.
  *
  * @see Options#build()
@@ -79,7 +79,7 @@ public interface JsonGenerator {
          *
          * @param type the type of the object to convert
          * @return {@code true} if this converter can successfully convert values of
-         *      the given type, else {@code false}
+         * the given type, else {@code false}
          */
         boolean handles(Class<?> type);
 
@@ -87,7 +87,7 @@ public interface JsonGenerator {
          * Converts a given object.
          *
          * @param value the object to convert
-         * @param key the key name for the value, may be {@code null}
+         * @param key   the key name for the value, may be {@code null}
          * @return the converted object
          */
         Object convert(Object value, String key);
@@ -122,17 +122,17 @@ public interface JsonGenerator {
         protected static final String JSON_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
         protected static final Locale JSON_DATE_FORMAT_LOCALE = Locale.US;
         protected static final String DEFAULT_TIMEZONE = "GMT";
-
+        protected final Set<Converter> converters = new LinkedHashSet<Converter>();
+        protected final Set<String> excludedFieldNames = new HashSet<String>();
+        protected final Set<Class<?>> excludedFieldTypes = new HashSet<Class<?>>();
         protected boolean excludeNulls;
         protected boolean disableUnicodeEscaping;
         protected String dateFormat = JSON_DATE_FORMAT;
         protected Locale dateLocale = JSON_DATE_FORMAT_LOCALE;
         protected TimeZone timezone = TimeZone.getTimeZone(DEFAULT_TIMEZONE);
-        protected final Set<Converter> converters = new LinkedHashSet<Converter>();
-        protected final Set<String> excludedFieldNames = new HashSet<String>();
-        protected final Set<Class<?>> excludedFieldTypes = new HashSet<Class<?>>();
 
-        public Options() {}
+        public Options() {
+        }
 
         /**
          * Do not serialize {@code null} values.
@@ -161,8 +161,8 @@ public interface JsonGenerator {
          *
          * @param format date format pattern used to serialize dates
          * @return a reference to this {@code Options} instance
-         * @exception NullPointerException if the given pattern is null
-         * @exception IllegalArgumentException if the given pattern is invalid
+         * @throws NullPointerException     if the given pattern is null
+         * @throws IllegalArgumentException if the given pattern is invalid
          */
         public Options dateFormat(String format) {
             return dateFormat(format, JSON_DATE_FORMAT_LOCALE);
@@ -175,7 +175,7 @@ public interface JsonGenerator {
          * @param format date format pattern used to serialize dates
          * @param locale the locale whose date format symbols will be used
          * @return a reference to this {@code Options} instance
-         * @exception IllegalArgumentException if the given pattern is invalid
+         * @throws IllegalArgumentException if the given pattern is invalid
          */
         public Options dateFormat(String format, Locale locale) {
             // validate date format pattern
@@ -190,7 +190,7 @@ public interface JsonGenerator {
          *
          * @param timezone used to serialize dates
          * @return a reference to this {@code Options} instance
-         * @exception NullPointerException if the given timezone is null
+         * @throws NullPointerException if the given timezone is null
          */
         public Options timezone(String timezone) {
             this.timezone = TimeZone.getTimeZone(timezone);
@@ -241,19 +241,18 @@ public interface JsonGenerator {
          * given and the closure for the first suitable type will be called.  Therefore, it is
          * important to register more specific types first.
          *
-         * @param type the type to convert
+         * @param type    the type to convert
          * @param closure called when the registered type or any type assignable to the given
          *                type is encountered
-         * @param <T> the type this converter is registered to handle
+         * @param <T>     the type this converter is registered to handle
          * @return a reference to this {@code Options} instance
-         * @exception NullPointerException if the given type or closure is null
-         * @exception IllegalArgumentException if the given closure does not accept
-         *                  a parameter of the given type
+         * @throws NullPointerException     if the given type or closure is null
+         * @throws IllegalArgumentException if the given closure does not accept
+         *                                  a parameter of the given type
          */
         public <T> Options addConverter(Class<T> type,
-                                        @ClosureParams(value=FromString.class, options={"T","T,String"})
-                                        Closure<?> closure)
-        {
+                                        @ClosureParams(value = FromString.class, options = {"T", "T,String"})
+                                        Closure<?> closure) {
             Converter converter = new DefaultJsonGenerator.ClosureConverter(type, closure);
             converters.remove(converter);
             return addConverter(converter);

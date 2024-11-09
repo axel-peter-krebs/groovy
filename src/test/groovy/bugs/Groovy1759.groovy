@@ -44,6 +44,7 @@ final class Groovy1759 {
 
     static class A {
         void a() { b() }
-        void b() {     }
+
+        void b() {}
     }
 }

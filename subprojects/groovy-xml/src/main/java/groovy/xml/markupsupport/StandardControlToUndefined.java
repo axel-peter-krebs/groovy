@@ -31,6 +31,6 @@ public class StandardControlToUndefined implements Function<Character, Optional<
     }
 
     private boolean isXmlAllowedControl(char ch) {
-        return ch ==  9 || ch == 10 || ch == 12 || ch == 13;
+        return ch == 9 || ch == 10 || ch == 12 || ch == 13;
     }
 }

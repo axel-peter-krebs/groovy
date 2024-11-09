@@ -37,12 +37,6 @@ import java.util.List;
  */
 public class Groovy8008Bug extends TestCase {
 
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface TestAnno1 {}
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface TestAnno2 {}
-
     public void testConstructorParamAnnotationsWithSyntheticParam() throws Exception {
         Class<Inner> innerClass = Inner.class;
         Constructor<Inner> ctor = innerClass.getDeclaredConstructor(Groovy8008Bug.class, String.class, Date.class, String.class);
@@ -104,11 +98,21 @@ public class Groovy8008Bug extends TestCase {
         assertEquals(TestAnno2.class.getName(), param2.getAnnotations().get(1).getClassNode().getName());
     }
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface TestAnno1 {
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface TestAnno2 {
+    }
+
     private class Inner {
-        private Inner(String arg1, @TestAnno1 @TestAnno2 Date arg2, @TestAnno2 String arg3) { }
+        private Inner(String arg1, @TestAnno1 @TestAnno2 Date arg2, @TestAnno2 String arg3) {
+        }
 
         private class InnerInner {
-            private InnerInner(String arg1, @TestAnno1 @TestAnno2 Date arg2, @TestAnno2 String arg3) { }
+            private InnerInner(String arg1, @TestAnno1 @TestAnno2 Date arg2, @TestAnno2 String arg3) {
+            }
         }
     }
 }

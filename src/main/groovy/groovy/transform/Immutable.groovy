@@ -176,17 +176,7 @@ import java.lang.annotation.Target
  * assert mrhaki.toString() == 'Person(mrhaki)'
  * </pre>
  *
- * @see ToString
- * @see EqualsAndHashCode
- * @see ImmutableBase
- * @see ImmutableOptions
- * @see PropertyOptions
- * @see TupleConstructor
- * @see MapConstructor
- * @see Final
- * @see KnownImmutable
- * @see Canonical
- * @since 1.7
+ * @see ToString* @see EqualsAndHashCode* @see ImmutableBase* @see ImmutableOptions* @see PropertyOptions* @see TupleConstructor* @see MapConstructor* @see Final* @see KnownImmutable* @see Canonical* @since 1.7
  */
 @ToString(cache = true, includeSuperProperties = true)
 @EqualsAndHashCode(cache = true)

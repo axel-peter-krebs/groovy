@@ -33,7 +33,7 @@ import static org.codehaus.groovy.runtime.DefaultGroovyMethodsSupport.closeQuiet
  * A module extension scanner is responsible for searching classpath modules,
  * loading metadata from module descriptors, then perform custom tasks for each
  * module.
- *
+ * <p>
  * This class was introduced as a fix for GROOVY-6008
  *
  * @since 2.1.2

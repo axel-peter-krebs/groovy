@@ -16,4 +16,4 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-@Test2 (int c, int d) = [1, 2]
+@Test2(int c, int d) = [1, 2]

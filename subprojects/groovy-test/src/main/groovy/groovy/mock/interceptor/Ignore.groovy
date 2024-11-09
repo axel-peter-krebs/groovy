@@ -35,7 +35,7 @@ class Ignore {
                 parent.ignore(methodName, (Closure) args[0])
             else
                 throw new IllegalArgumentException(
-                        "Optional parameter to ignored method '$methodName' must be a Closure but instead found a ${args[0].getClass().simpleName}.")
+                    "Optional parameter to ignored method '$methodName' must be a Closure but instead found a ${args[0].getClass().simpleName}.")
         } else {
             parent.ignore(methodName, null)
         }

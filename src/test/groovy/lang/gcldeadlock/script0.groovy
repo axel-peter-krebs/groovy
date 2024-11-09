@@ -16,6 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-def plus(a, b){ return a + b }
+
+def plus(a, b) { return a + b }
 
 number + "+" + number + "=" + plus(number, number)

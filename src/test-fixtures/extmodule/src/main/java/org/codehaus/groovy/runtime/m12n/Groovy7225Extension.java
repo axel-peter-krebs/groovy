@@ -22,7 +22,7 @@ import groovy.lang.Closure;
 
 public class Groovy7225Extension {
     public static String groovy7225(String self) {
-        return self+": ok";
+        return self + ": ok";
     }
 
     public static String groovy7225(Closure closure) {

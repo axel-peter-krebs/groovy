@@ -14,10 +14,39 @@ public class magicsquares {
     static int n;
     static int mn;
 
+    public magicsquares() {
+    }
+
+    public static void main(String[] args) {
+        n = 3;
+        if (args.length > 0)
+            n = Integer.parseInt(args[0]);
+        mn = n * (1 + n * n) / 2;
+        PriorityQueue<magicsquares.PQNode> pq = new PriorityQueue<magicsquares.PQNode>();
+        pq.offer(new magicsquares.PQNode());
+        while (!pq.isEmpty()) {
+            PQNode topSquare = pq.poll();
+            if (topSquare.getPriority() == 0) {
+                System.out.println(topSquare);
+                break;
+            }
+            magicsquares.FfmResult result = topSquare.findFewestMoves();
+
+            int ind = result.x + result.y * n;
+            for (int move : result.moves) {
+                magicsquares.PQNode newSquare = new magicsquares.PQNode(topSquare);
+                newSquare.grid[ind] = move;
+                pq.offer(newSquare);
+            }
+        }
+
+    }
+
     public static class FfmResult {
         public int x;
         public int y;
         public int[] moves;
+
         public FfmResult(int ix, int iy, int[] imoves) {
             x = ix;
             y = iy;
@@ -26,19 +55,20 @@ public class magicsquares {
     }
 
     public static class PQNode implements Comparable {
-        public int [] grid;
+        public int[] grid;
         boolean priorityCalculated;
         private int priority;
         private FfmResult ffm;
 
         public PQNode() {
-            grid = new int [n * n];
+            grid = new int[n * n];
             int i;
             for (i = 0; i < n * n; i++)
                 grid[i] = 0;
             priorityCalculated = false;
             ffm = null;
         }
+
         public PQNode(PQNode other) {
             grid = (int[]) other.grid.clone();
             priorityCalculated = false;
@@ -77,7 +107,7 @@ public class magicsquares {
             int zerocount, sum, highest, j, i;
 
             if (grid[x + y * n] != 0)
-                return ( new int [] { });
+                return (new int[]{});
             ArrayList<int[]> cellGroups = new ArrayList<int[]>();
             cellGroups.add(gridCol(x));
             cellGroups.add(gridRow(y));
@@ -90,10 +120,10 @@ public class magicsquares {
                 usedNumbers.add(new Integer(grid[i]));
             HashSet<Integer> onePossible = new HashSet<Integer>();
             highest = n * n;
-            for (int[] group: cellGroups) {
+            for (int[] group : cellGroups) {
                 zerocount = 0;
                 sum = 0;
-                for (int num: group) {
+                for (int num : group) {
                     if (num == 0)
                         zerocount++;
                     sum += num;
@@ -106,23 +136,23 @@ public class magicsquares {
             if (onePossible.size() == 1) {
                 Integer onlyPossibleMove = (Integer) onePossible.iterator().next();
                 int opmint = onlyPossibleMove.intValue();
-                if (opmint >= 1 && 
-                        opmint <= n * n && 
-                        ! usedNumbers.contains(onlyPossibleMove))
-                    return (new int[] { opmint });
+                if (opmint >= 1 &&
+                    opmint <= n * n &&
+                    !usedNumbers.contains(onlyPossibleMove))
+                    return (new int[]{opmint});
                 else
-                    return ( new int [] { });
+                    return (new int[]{});
             } else if (onePossible.size() > 1)
-                return ( new int [] { });
+                return (new int[]{});
             ArrayList<Integer> moves = new ArrayList<Integer>();
             for (i = 1; i <= highest; i++) {
                 Integer ii = new Integer(i);
-                if (! usedNumbers.contains(ii))
+                if (!usedNumbers.contains(ii))
                     moves.add(ii);
             }
             int[] r = new int[moves.size()];
             i = 0;
-            for (Integer move: moves) {
+            for (Integer move : moves) {
                 r[i++] = move.intValue();
             }
             return r;
@@ -132,14 +162,14 @@ public class magicsquares {
             if (ffm != null)
                 return ffm;
             int x, y, mx, my, ind;
-            int[] minmoves = (new int[] { });
+            int[] minmoves = (new int[]{});
             int[] moves;
             mx = my = -1;
             for (y = 0; y < n; y++)
                 for (x = 0; x < n; x++) {
                     ind = x + y * n;
                     if (grid[ind] == 0) {
-                        moves = possibleMoves(x,y);
+                        moves = possibleMoves(x, y);
                         if (mx == -1 || moves.length < minmoves.length) {
                             mx = x;
                             my = y;
@@ -151,19 +181,17 @@ public class magicsquares {
             return ffm;
         }
 
-        public void calculatePriority()
-        {
+        public void calculatePriority() {
             int i, zerocount;
             zerocount = 0;
-            for (int cell: grid)
+            for (int cell : grid)
                 if (cell == 0)
                     zerocount++;
             priority = zerocount + findFewestMoves().moves.length;
             priorityCalculated = true;
         }
 
-        public int getPriority()
-        {
+        public int getPriority() {
             if (priorityCalculated)
                 return priority;
             else {
@@ -193,42 +221,15 @@ public class magicsquares {
             for (y = 0; y < n; y++) {
                 for (x = 0; x < n; x++) {
                     sb.append(grid[x + y * n]);
-                    if (x < n-1)
+                    if (x < n - 1)
                         sb.append(' ');
                 }
-                if (y < n-1)
+                if (y < n - 1)
                     sb.append('\n');
             }
             return sb.toString();
         }
 
-
-    }
-
-    public magicsquares() { }
-
-    public static void main(String[] args) {
-        n = 3;
-        if (args.length > 0) 
-            n = Integer.parseInt(args[0]);
-        mn = n * (1 + n * n) / 2;
-        PriorityQueue<magicsquares.PQNode> pq = new PriorityQueue<magicsquares.PQNode>(); 
-        pq.offer(new magicsquares.PQNode() );
-        while (! pq.isEmpty()) {
-            PQNode topSquare = pq.poll();
-            if (topSquare.getPriority() == 0) {
-                System.out.println(topSquare);
-                break;
-            }
-            magicsquares.FfmResult result = topSquare.findFewestMoves();
-
-            int ind = result.x + result.y * n;
-            for (int move: result.moves) {
-                magicsquares.PQNode newSquare = new magicsquares.PQNode(topSquare);
-                newSquare.grid[ind] = move;
-                pq.offer(newSquare);
-            }
-        }
 
     }
 }

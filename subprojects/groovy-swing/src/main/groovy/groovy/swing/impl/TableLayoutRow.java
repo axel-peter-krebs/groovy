@@ -37,6 +37,7 @@ public class TableLayoutRow {
 
     /**
      * Adds a new cell to this row
+     *
      * @param tag the td element
      */
     public void addCell(groovy.swing.impl.TableLayoutCell tag) {

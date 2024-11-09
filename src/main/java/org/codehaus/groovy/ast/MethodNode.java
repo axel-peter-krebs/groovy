@@ -41,6 +41,7 @@ import static org.objectweb.asm.Opcodes.ACC_STATIC;
 public class MethodNode extends AnnotatedNode {
 
     private final String name;
+    private final ClassNode[] exceptions;
     private int modifiers;
     private boolean syntheticPublic;
     private ClassNode returnType;
@@ -49,8 +50,6 @@ public class MethodNode extends AnnotatedNode {
     private Statement code;
     private boolean dynamicReturnType;
     private VariableScope variableScope;
-    private final ClassNode[] exceptions;
-
     // type spec for generics
     private GenericsType[] genericsTypes;
 
@@ -294,18 +293,19 @@ public class MethodNode extends AnnotatedNode {
     @Override
     public String getText() {
         int mask = this instanceof ConstructorNode ? Modifier.constructorModifiers() : Modifier.methodModifiers();
-        String name = getName(); if (name.indexOf(' ') != -1) name = "\"" + name + "\""; // GROOVY-10417
+        String name = getName();
+        if (name.indexOf(' ') != -1) name = "\"" + name + "\""; // GROOVY-10417
         return AstToTextHelper.getModifiersText(getModifiers() & mask) +
-                ' ' +
-                toGenericTypesString(getGenericsTypes()) +
-                AstToTextHelper.getClassText(getReturnType()) +
-                ' ' +
-                name +
-                '(' +
-                AstToTextHelper.getParametersText(getParameters()) +
-                ')' +
-                AstToTextHelper.getThrowsClauseText(getExceptions()) +
-                " { ... }";
+            ' ' +
+            toGenericTypesString(getGenericsTypes()) +
+            AstToTextHelper.getClassText(getReturnType()) +
+            ' ' +
+            name +
+            '(' +
+            AstToTextHelper.getParametersText(getParameters()) +
+            ')' +
+            AstToTextHelper.getThrowsClauseText(getExceptions()) +
+            " { ... }";
     }
 
     @Override

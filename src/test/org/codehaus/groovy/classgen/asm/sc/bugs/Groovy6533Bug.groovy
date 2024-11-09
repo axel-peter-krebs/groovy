@@ -23,8 +23,8 @@ import org.codehaus.groovy.classgen.asm.sc.StaticCompilationTestSupport
 
 class Groovy6533Bug extends StaticTypeCheckingTestCase implements StaticCompilationTestSupport {
 
-     void testSelectedMethodShouldBeTheSameWithAndWithoutWildcard() {
-         assertScript '''
+    void testSelectedMethodShouldBeTheSameWithAndWithoutWildcard() {
+        assertScript '''
 class ShowMcStatic {
     MetaClass findMc(Class someClass) {
         def mc = someClass.metaClass
@@ -40,10 +40,10 @@ def mcByStatic = new ShowMcStatic().findMc(String)
 def mcByStatic2 = new ShowMcStatic().findMcWithGenericsParam(String)
 assert mcByStatic.theClass==String
 assert mcByStatic2.theClass==String'''
-     }
+    }
 
-     void testSelectedMethodShouldBeTheSameWithAndWithoutWildcardUsingMethodCall() {
-         assertScript '''
+    void testSelectedMethodShouldBeTheSameWithAndWithoutWildcardUsingMethodCall() {
+        assertScript '''
 class ShowMcStatic {
     MetaClass findMc(Class someClass) {
         def mc = someClass.getMetaClass()
@@ -59,5 +59,5 @@ def mcByStatic = new ShowMcStatic().findMc(String)
 def mcByStatic2 = new ShowMcStatic().findMcWithGenericsParam(String)
 assert mcByStatic.theClass==String
 assert mcByStatic2.theClass==String'''
-     }
+    }
 }

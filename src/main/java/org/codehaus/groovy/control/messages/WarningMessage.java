@@ -32,33 +32,25 @@ public class WarningMessage extends LocatedMessage {
     //--------------------------------------------------------------------------
     // WARNING LEVELS
 
-    /** Ignore all (for querying) */
+    /**
+     * Ignore all (for querying)
+     */
     public static final int NONE = 0;
-    /** Warning indicates likely error */
+    /**
+     * Warning indicates likely error
+     */
     public static final int LIKELY_ERRORS = 1;
-    /** Warning indicates possible error */
+    /**
+     * Warning indicates possible error
+     */
     public static final int POSSIBLE_ERRORS = 2;
-    /** Warning indicates paranoia on the part of the compiler */
+    /**
+     * Warning indicates paranoia on the part of the compiler
+     */
     public static final int PARANOIA = 3;
-
     /**
-     * Returns true if a warning would be relevant to the specified level.
+     * The warning level (for filtering).
      */
-    public static boolean isRelevant(final int actual, final int limit) {
-        return actual <= limit;
-    }
-
-    /**
-     * Returns true if this message is as or more important than the
-     * specified importance level.
-     */
-    public boolean isRelevant(final int importance) {
-        return isRelevant(this.importance, importance);
-    }
-
-    //--------------------------------------------------------------------------
-
-    /** The warning level (for filtering). */
     private final int importance;
 
     /**
@@ -73,6 +65,8 @@ public class WarningMessage extends LocatedMessage {
         this.importance = importance;
     }
 
+    //--------------------------------------------------------------------------
+
     /**
      * Creates a new warning message.
      *
@@ -84,6 +78,21 @@ public class WarningMessage extends LocatedMessage {
     public WarningMessage(final int importance, final String message, final Object data, final CSTNode context, final SourceUnit owner) {
         super(message, data, context, owner);
         this.importance = importance;
+    }
+
+    /**
+     * Returns true if a warning would be relevant to the specified level.
+     */
+    public static boolean isRelevant(final int actual, final int limit) {
+        return actual <= limit;
+    }
+
+    /**
+     * Returns true if this message is as or more important than the
+     * specified importance level.
+     */
+    public boolean isRelevant(final int importance) {
+        return isRelevant(this.importance, importance);
     }
 
     @Override

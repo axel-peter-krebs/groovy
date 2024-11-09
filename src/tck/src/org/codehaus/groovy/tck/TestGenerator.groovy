@@ -21,11 +21,11 @@ package org.codehaus.groovy.tck
 /**
  * This will take a groovy test file and turn it into a Java TestCase
  */
-class TestGenerator{
-    String generate(realOutputPath, targetDir, srcName,srcText) {
+class TestGenerator {
+    String generate(realOutputPath, targetDir, srcName, srcText) {
 //        System.out.println('single \\\\')
 //        System.out.println("double \\\\")
-        srcText = srcText.replaceAll('\\\\','\\\\\\\\') // need to escape a slash with slash slash
+        srcText = srcText.replaceAll('\\\\', '\\\\\\\\') // need to escape a slash with slash slash
 
         def resultWriter = new StringWriter()
         def result = new PrintWriter(resultWriter)
@@ -33,16 +33,19 @@ class TestGenerator{
         def fileName = srcName
         def fileStem = fileName.tokenize(".")[0]
 
-        def comments = scrape(srcText," * ",".") // Take the first javadoc sentence, if it exists, for use as method name
-        if (comments == null || comments[0] == null) {comments = [""]}
+        def comments = scrape(srcText, " * ", ".")
+        // Take the first javadoc sentence, if it exists, for use as method name
+        if (comments == null || comments[0] == null) {
+            comments = [""]
+        }
         def behaviourDescription = comments[0].trim()
 
         if ("" != realOutputPath) {
             def realOutputPackage = ''
             if (File.separator != '\\')
-                realOutputPackage = realOutputPath.replaceAll(File.separator,'.')
+                realOutputPackage = realOutputPath.replaceAll(File.separator, '.')
             else
-                realOutputPackage = realOutputPath.replaceAll('\\\\','.')
+                realOutputPackage = realOutputPath.replaceAll('\\\\', '.')
             result.println("package ${realOutputPackage};")
         }
         result.println("import junit.framework.*;")
@@ -55,7 +58,7 @@ class TestGenerator{
         methodName = "test${methodName}"
 
         // test for the source 'as is'
-        printCommonTestMethodStart(result, "${methodName}Pass",srcText)
+        printCommonTestMethodStart(result, "${methodName}Pass", srcText)
         result.println('        Object result = helper.evaluate(srcBuffer.toString(),"' + "${methodName}Pass" + '");')
         result.println('        if (result instanceof TestResult) {')
         result.println('            TestResult testResult = (TestResult)result;')
@@ -71,11 +74,11 @@ class TestGenerator{
         result.println("    }")
 
         // test for each of the '@pass' alternatives
-        def passAlternatives = generateAlternatives(srcText,"@pass")
+        def passAlternatives = generateAlternatives(srcText, "@pass")
 
-        passAlternatives.eachWithIndex{anAlternative,i ->
-            printCommonTestMethodStart(result, "${methodName}Pass${i+1}",anAlternative[0]);
-            result.println('        Object result = helper.evaluate(srcBuffer.toString(),"' + "${methodName}Pass${i+1}" + '");')
+        passAlternatives.eachWithIndex { anAlternative, i ->
+            printCommonTestMethodStart(result, "${methodName}Pass${i + 1}", anAlternative[0]);
+            result.println('        Object result = helper.evaluate(srcBuffer.toString(),"' + "${methodName}Pass${i + 1}" + '");')
             result.println('        if (result instanceof TestResult) {')
             result.println('            TestResult testResult = (TestResult)result;')
             result.println('            if (testResult.errorCount() > 0) {')
@@ -92,11 +95,11 @@ class TestGenerator{
         }
 
         // test for each of the '@fail:parse' alternatives
-        def failureToParseAlternatives = generateAlternatives(srcText,"@fail:parse")
-        failureToParseAlternatives.eachWithIndex{anAlternative,i ->
-            printCommonTestMethodStart(result, "${methodName}FailParse${i+1}",anAlternative[0]);
+        def failureToParseAlternatives = generateAlternatives(srcText, "@fail:parse")
+        failureToParseAlternatives.eachWithIndex { anAlternative, i ->
+            printCommonTestMethodStart(result, "${methodName}FailParse${i + 1}", anAlternative[0]);
             result.println("        try {")
-            result.println('            helper.parse(srcBuffer.toString(),"' + "${methodName}FailParse${i+1}" + '");')
+            result.println('            helper.parse(srcBuffer.toString(),"' + "${methodName}FailParse${i + 1}" + '");')
 
 
             result.println('            fail("This line did not fail to parse: ' + anAlternative[1] + '");')
@@ -107,11 +110,11 @@ class TestGenerator{
         }
 
         // test for each of the '@fail' alternatives, i.e. without being followed by a colon
-        def failureAlternatives = generateAlternatives(srcText,"@fail(?!:)")
-        failureAlternatives.eachWithIndex{anAlternative,i ->
-            printCommonTestMethodStart(result, "${methodName}Fail${i+1}",anAlternative[0]);
+        def failureAlternatives = generateAlternatives(srcText, "@fail(?!:)")
+        failureAlternatives.eachWithIndex { anAlternative, i ->
+            printCommonTestMethodStart(result, "${methodName}Fail${i + 1}", anAlternative[0]);
             result.println("        try {")
-            result.println('            helper.evaluate(srcBuffer.toString(),"' + "${methodName}Fail${i+1}" + '");')
+            result.println('            helper.evaluate(srcBuffer.toString(),"' + "${methodName}Fail${i + 1}" + '");')
             result.println('            fail("This line did not fail to evaluate: ' + anAlternative[1] + '");')
             result.println("        } catch (Exception e) {")
             result.println("            // ignore an exception as that is what we're hoping for in this case.")
@@ -148,7 +151,7 @@ class TestGenerator{
         def m = java.util.regex.Pattern.compile("//(.*?//\\s*" + tag + "\\S*)\\s").matcher(srcText)
         while (m.find()) {
             def foundText = m.group(1)
-            def uncommentedSrcText = (srcText.substring(0,m.start()) + "  " + srcText.substring(m.start() + 2))
+            def uncommentedSrcText = (srcText.substring(0, m.start()) + "  " + srcText.substring(m.start() + 2))
             alternatives << [uncommentedSrcText, foundText.replaceAll('"', '\\\\"')]
         }
         return alternatives
@@ -158,17 +161,17 @@ class TestGenerator{
     /**
      * Common setup code for each test method
      */
-    void printCommonTestMethodStart(result, fullMethodName,someSrcText) {
+    void printCommonTestMethodStart(result, fullMethodName, someSrcText) {
         def buffer = new StringReader(someSrcText)
 
         result.println("    public void ${fullMethodName}() throws Throwable {")
         result.println("        StringBuffer srcBuffer = new StringBuffer();")
 
         // append each line to the buffer
-        buffer.eachLine {line ->
+        buffer.eachLine { line ->
             // escape double quotes
-            line = line.replaceAll('"','\\\\"')
-            result.println ('        srcBuffer.append("' + line + '").append(lineSep);')
+            line = line.replaceAll('"', '\\\\"')
+            result.println('        srcBuffer.append("' + line + '").append(lineSep);')
         }
     }
 
@@ -181,14 +184,14 @@ class TestGenerator{
         def methodName = ""
         for (t in tokens) {
             if (t.size() > 1) {
-                methodName += ( t[0].toUpperCase() + t[1..<t.size()].toLowerCase() )
+                methodName += (t[0].toUpperCase() + t[1..<t.size()].toLowerCase())
             } else if (t.size() == 1) {
                 methodName += t[0].toUpperCase()
             }
         }
 
         //remove non-alphanumeric characters
-        methodName = methodName.replaceAll("[^A-Za-z0-9]","")
+        methodName = methodName.replaceAll("[^A-Za-z0-9]", "")
 
         return methodName
     }
@@ -197,7 +200,7 @@ class TestGenerator{
      * Fetches a list of all the occurrences of text between a string delimiter.
      */
     List scrape(String txt, String tag) {
-        return scrape(txt,tag,tag)
+        return scrape(txt, tag, tag)
     }
 
     /**
@@ -207,14 +210,14 @@ class TestGenerator{
         def i = 0; def j = 0; def k = 0;
         def contents = []
         if (txt != null) {
-            while (i> -1 && k > -1) {
-              i = txt.indexOf(openTag,k)
+            while (i > -1 && k > -1) {
+                i = txt.indexOf(openTag, k)
                 if (i > -1) {
-                  j = i + openTag.length()
+                    j = i + openTag.length()
                     if (j > -1) {
-                      k = txt.indexOf(closeTag,j)
+                        k = txt.indexOf(closeTag, j)
                         if (k > -1) {
-                          contents << txt.substring(j,k)
+                            contents << txt.substring(j, k)
                         }
                     }
                 }

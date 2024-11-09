@@ -151,28 +151,28 @@ controller.rootElement = inputArea.document.defaultRootElement
 
 
 def dtListener = [
-        dragEnter        : { DropTargetDragEvent evt ->
-            if (evt.dropTargetContext.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                evt.acceptDrag(DnDConstants.ACTION_COPY)
-            } else {
-                evt.rejectDrag()
-            }
-        },
-        dragOver         : { DropTargetDragEvent evt ->
-            //dragEnter(evt)
-        },
-        dropActionChanged: { DropTargetDragEvent evt ->
-            //dragEnter(evt)
-        },
-        dragExit         : { DropTargetEvent evt ->
-        },
-        drop             : { DropTargetDropEvent evt ->
-            evt.acceptDrop DnDConstants.ACTION_COPY
-            //println "Dropping! ${evt.transferable.getTransferData(DataFlavor.javaFileListFlavor)}"
-            if (controller.askToSaveFile()) {
-                controller.loadScriptFile(evt.transferable.getTransferData(DataFlavor.javaFileListFlavor)[0])
-            }
-        },
+    dragEnter        : { DropTargetDragEvent evt ->
+        if (evt.dropTargetContext.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+            evt.acceptDrag(DnDConstants.ACTION_COPY)
+        } else {
+            evt.rejectDrag()
+        }
+    },
+    dragOver         : { DropTargetDragEvent evt ->
+        //dragEnter(evt)
+    },
+    dropActionChanged: { DropTargetDragEvent evt ->
+        //dragEnter(evt)
+    },
+    dragExit         : { DropTargetEvent evt ->
+    },
+    drop             : { DropTargetDropEvent evt ->
+        evt.acceptDrop DnDConstants.ACTION_COPY
+        //println "Dropping! ${evt.transferable.getTransferData(DataFlavor.javaFileListFlavor)}"
+        if (controller.askToSaveFile()) {
+            controller.loadScriptFile(evt.transferable.getTransferData(DataFlavor.javaFileListFlavor)[0])
+        }
+    },
 ] as DropTargetListener
 
 [consoleFrame, inputArea, outputArea].each {

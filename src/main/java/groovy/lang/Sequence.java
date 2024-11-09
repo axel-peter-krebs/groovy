@@ -32,8 +32,8 @@ import java.util.List;
 public class Sequence extends ArrayList implements GroovyObject {
 
     private static final long serialVersionUID = 5697409354934589471L;
-    private transient MetaClass metaClass = InvokerHelper.getMetaClass(getClass());
     private final Class type;
+    private transient MetaClass metaClass = InvokerHelper.getMetaClass(getClass());
     private int hashCode;
 
     public Sequence() {
@@ -222,10 +222,10 @@ public class Sequence extends ArrayList implements GroovyObject {
         if (type != null) {
             if (!type.isInstance(object)) {
                 throw new IllegalArgumentException(
-                        "Invalid type of argument for sequence of type: "
-                                + type.getName()
-                                + " cannot add object: "
-                                + object);
+                    "Invalid type of argument for sequence of type: "
+                        + type.getName()
+                        + " cannot add object: "
+                        + object);
             }
         }
     }

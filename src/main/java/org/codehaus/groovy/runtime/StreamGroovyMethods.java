@@ -75,7 +75,6 @@ public class StreamGroovyMethods {
      * </pre>
      *
      * @throws IllegalArgumentException if {@code index} is negative
-     *
      * @since 5.0.0
      */
     public static <T> T getAt(final Stream<T> self, final int index) {
@@ -117,7 +116,6 @@ public class StreamGroovyMethods {
      * </pre>
      *
      * @throws IllegalArgumentException for negative index or reverse range
-     *
      * @since 5.0.0
      */
     public static <T> List<T> getAt(final Stream<T> self, final IntRange range) {
@@ -178,7 +176,6 @@ public class StreamGroovyMethods {
      * </pre>
      *
      * @throws IllegalArgumentException for negative index or reverse range
-     *
      * @since 5.0.0
      */
     public static <T> Stream<T> from(final Stream<T> self, final IntRange range) {
@@ -270,10 +267,9 @@ public class StreamGroovyMethods {
      * Returns a sequential {@link Stream} with the specified array as its
      * source.
      *
-     * @param <T> The type of the array elements
+     * @param <T>  The type of the array elements
      * @param self The array, assumed to be unmodified during use
      * @return a {@code Stream} for the array
-     *
      * @since 2.5.0
      */
     public static <T> Stream<T> stream(final T[] self) {
@@ -286,7 +282,6 @@ public class StreamGroovyMethods {
      *
      * @param self The array, assumed to be unmodified during use
      * @return a {@code Stream} for the array
-     *
      * @since 2.5.0
      */
     public static Stream<Integer> stream(final int[] self) {
@@ -299,7 +294,6 @@ public class StreamGroovyMethods {
      *
      * @param self The array, assumed to be unmodified during use
      * @return a {@code Stream} for the array
-     *
      * @since 2.5.0
      */
     public static Stream<Long> stream(final long[] self) {
@@ -312,7 +306,6 @@ public class StreamGroovyMethods {
      *
      * @param self The array, assumed to be unmodified during use
      * @return a {@code Stream} for the array
-     *
      * @since 2.5.0
      */
     public static Stream<Double> stream(final double[] self) {
@@ -325,7 +318,6 @@ public class StreamGroovyMethods {
      *
      * @param self The array, assumed to be unmodified during use
      * @return a {@code Stream} for the array
-     *
      * @since 2.5.0
      */
     public static Stream<Character> stream(final char[] self) {
@@ -338,7 +330,6 @@ public class StreamGroovyMethods {
      *
      * @param self The array, assumed to be unmodified during use
      * @return a {@code Stream} for the array
-     *
      * @since 2.5.0
      */
     public static Stream<Byte> stream(final byte[] self) {
@@ -351,7 +342,6 @@ public class StreamGroovyMethods {
      *
      * @param self The array, assumed to be unmodified during use
      * @return a {@code Stream} for the array
-     *
      * @since 2.5.0
      */
     public static Stream<Short> stream(final short[] self) {
@@ -364,7 +354,6 @@ public class StreamGroovyMethods {
      *
      * @param self The array, assumed to be unmodified during use
      * @return a {@code Stream} for the array
-     *
      * @since 2.5.0
      */
     public static Stream<Boolean> stream(final boolean[] self) {
@@ -377,7 +366,6 @@ public class StreamGroovyMethods {
      *
      * @param self The array, assumed to be unmodified during use
      * @return a {@code Stream} for the array
-     *
      * @since 2.5.0
      */
     public static Stream<Float> stream(final float[] self) {
@@ -402,6 +390,7 @@ public class StreamGroovyMethods {
                     action.accept(self.nextElement());
                 }
             }
+
             @Override
             public boolean tryAdvance(final Consumer<? super T> action) {
                 if (self.hasMoreElements()) {
@@ -535,7 +524,6 @@ public class StreamGroovyMethods {
      *
      * @param self The array, assumed to be unmodified during use
      * @return a {@code Stream} for the array
-     *
      * @since 3.0.8
      */
     public static IntStream intStream(final int[] self) {
@@ -548,7 +536,6 @@ public class StreamGroovyMethods {
      *
      * @param self The array, assumed to be unmodified during use
      * @return a {@code Stream} for the array
-     *
      * @since 3.0.8
      */
     public static LongStream longStream(final long[] self) {
@@ -561,7 +548,6 @@ public class StreamGroovyMethods {
      *
      * @param self The array, assumed to be unmodified during use
      * @return a {@code Stream} for the array
-     *
      * @since 3.0.8
      */
     public static DoubleStream doubleStream(final double[] self) {
@@ -600,7 +586,6 @@ public class StreamGroovyMethods {
      *
      * @param self the stream
      * @param type the array element type
-     *
      * @since 3.0.4
      */
     public static <T> T[] toArray(final Stream<? extends T> self, final Class<T> type) {
@@ -612,9 +597,8 @@ public class StreamGroovyMethods {
      * Accumulates the elements of stream into a new List.
      *
      * @param self the stream
-     * @param <T> the type of element
+     * @param <T>  the type of element
      * @return a new {@code java.util.List} instance
-     *
      * @since 2.5.0
      */
     public static <T> List<T> toList(final Stream<T> self) {
@@ -625,9 +609,8 @@ public class StreamGroovyMethods {
      * Accumulates the elements of stream into a new List.
      *
      * @param self the {@code java.util.stream.BaseStream}
-     * @param <T> the type of element
+     * @param <T>  the type of element
      * @return a new {@code java.util.List} instance
-     *
      * @since 2.5.0
      */
     public static <T> List<T> toList(final BaseStream<T, ? extends BaseStream> self) {
@@ -638,9 +621,8 @@ public class StreamGroovyMethods {
      * Accumulates the elements of stream into a new Set.
      *
      * @param self the stream
-     * @param <T> the type of element
+     * @param <T>  the type of element
      * @return a new {@code java.util.Set} instance
-     *
      * @since 2.5.0
      */
     public static <T> Set<T> toSet(final Stream<T> self) {
@@ -651,9 +633,8 @@ public class StreamGroovyMethods {
      * Accumulates the elements of stream into a new Set.
      *
      * @param self the {@code java.util.stream.BaseStream}
-     * @param <T> the type of element
+     * @param <T>  the type of element
      * @return a new {@code java.util.Set} instance
-     *
      * @since 2.5.0
      */
     public static <T> Set<T> toSet(final BaseStream<T, ? extends BaseStream> self) {

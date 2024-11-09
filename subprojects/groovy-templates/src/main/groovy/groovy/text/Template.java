@@ -28,5 +28,6 @@ import java.util.Map;
  */
 public interface Template {
     Writable make();
+
     Writable make(Map binding);
 }

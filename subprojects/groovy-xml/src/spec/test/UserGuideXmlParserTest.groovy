@@ -63,9 +63,9 @@ class UserGuideXmlParserTest extends GroovyTestCase {
         def parser = new XmlParser()
         def response = parser.parseText(xml)
         def numberOfResults = parser.createNode(
-                response,
-                new QName("numberOfResults"),
-                [:]
+            response,
+            new QName("numberOfResults"),
+            [:]
         )
 
         numberOfResults.value = "1"
@@ -79,9 +79,9 @@ class UserGuideXmlParserTest extends GroovyTestCase {
         def response = parser.parseText(xml)
 
         response.appendNode(
-                new QName("numberOfResults"),
-                [:],
-                "1"
+            new QName("numberOfResults"),
+            [:],
+            "1"
         )
 
         response.numberOfResults.text() == "1"

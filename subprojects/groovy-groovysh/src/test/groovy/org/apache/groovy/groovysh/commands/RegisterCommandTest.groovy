@@ -40,8 +40,8 @@ class RegisterCommandTest extends CommandTestSupport {
     }
 
     void testRegisterFail() {
-            shell.execute(RegisterCommand.COMMAND_NAME)
-        }
+        shell.execute(RegisterCommand.COMMAND_NAME)
+    }
 }
 
 class EchoCommand extends CommandSupport {

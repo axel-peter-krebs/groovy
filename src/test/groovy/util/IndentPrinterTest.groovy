@@ -27,7 +27,7 @@ class IndentPrinterTest extends GroovyTestCase {
 
     Writer out
 
-    void setUp(){
+    void setUp() {
         out = new StringWriter()
     }
 

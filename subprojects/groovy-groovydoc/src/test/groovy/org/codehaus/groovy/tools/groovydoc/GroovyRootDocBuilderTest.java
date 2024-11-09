@@ -24,34 +24,34 @@ import java.util.ArrayList;
 
 public class GroovyRootDocBuilderTest extends GroovyTestCase {
     private String src = "/**\n" +
-            " * <h1>Description</h1>\n" +
-            " * This class is used by an application to process the command line\n" +
-            " * that invokes it. The processing of the command line proceeds in\n" +
-            " * the following steps.\n" +
-            " * <ol>\n" +
-            " * <li>Create an <code>CmdLine</code> object specifying the properties\n" +
-            " * that control how the command line is to be processed and what\n" +
-            " * options the program supports.</li>\n" +
-            " * <li>Call \n" +
-            " * {@link org.dummy.cmdline.CmdLine#processCmdLine()}\n" +
-            " * to process the command line.</li>\n" +
-            " */\n" +
-            "package org.dummy.cmdline;";
+        " * <h1>Description</h1>\n" +
+        " * This class is used by an application to process the command line\n" +
+        " * that invokes it. The processing of the command line proceeds in\n" +
+        " * the following steps.\n" +
+        " * <ol>\n" +
+        " * <li>Create an <code>CmdLine</code> object specifying the properties\n" +
+        " * that control how the command line is to be processed and what\n" +
+        " * options the program supports.</li>\n" +
+        " * <li>Call \n" +
+        " * {@link org.dummy.cmdline.CmdLine#processCmdLine()}\n" +
+        " * to process the command line.</li>\n" +
+        " */\n" +
+        "package org.dummy.cmdline;";
 
     public void testCommentExtraction() throws Exception {
         GroovyRootDocBuilder builder = new GroovyRootDocBuilder(null, new ArrayList<LinkArgument>(), null);
         SimpleGroovyPackageDoc doc = new SimpleGroovyPackageDoc("org.dummy.cmdline");
         builder.processPackageInfo(src, "package-info.groovy", doc);
         assertEquals("<h1>Description</h1>\n" +
-                " This class is used by an application to process the command line\n" +
-                " that invokes it. The processing of the command line proceeds in\n" +
-                " the following steps.\n" +
-                " <ol>\n" +
-                " <li>Create an <code>CmdLine</code> object specifying the properties\n" +
-                " that control how the command line is to be processed and what\n" +
-                " options the program supports.</li>\n" +
-                " <li>Call \n" +
-                " org.dummy.cmdline.CmdLine#processCmdLine()\n" +
-                " to process the command line.</li>", doc.description().trim());
+            " This class is used by an application to process the command line\n" +
+            " that invokes it. The processing of the command line proceeds in\n" +
+            " the following steps.\n" +
+            " <ol>\n" +
+            " <li>Create an <code>CmdLine</code> object specifying the properties\n" +
+            " that control how the command line is to be processed and what\n" +
+            " options the program supports.</li>\n" +
+            " <li>Call \n" +
+            " org.dummy.cmdline.CmdLine#processCmdLine()\n" +
+            " to process the command line.</li>", doc.description().trim());
     }
 }

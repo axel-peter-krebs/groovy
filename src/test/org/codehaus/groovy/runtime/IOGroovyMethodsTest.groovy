@@ -101,9 +101,11 @@ class IOGroovyMethodsTest extends GroovyTestCase {
     static class DummyAutoCloseable implements AutoCloseable {
         Exception throwOnClose
         boolean closed
-        DummyAutoCloseable(Exception throwOnClose=null) {
+
+        DummyAutoCloseable(Exception throwOnClose = null) {
             this.throwOnClose = throwOnClose
         }
+
         @Override
         void close() throws Exception {
             closed = true
@@ -116,9 +118,11 @@ class IOGroovyMethodsTest extends GroovyTestCase {
     static class DummyCloseable implements Closeable {
         Exception throwOnClose
         boolean closed
-        DummyCloseable(Exception throwOnClose=null) {
+
+        DummyCloseable(Exception throwOnClose = null) {
             this.throwOnClose = throwOnClose
         }
+
         @Override
         void close() throws IOException {
             closed = true

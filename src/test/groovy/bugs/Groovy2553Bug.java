@@ -32,7 +32,7 @@ class Autobox {
 
 public class Groovy2553Bug extends TestCase {
 
-    public void testMe () {
+    public void testMe() {
         new GroovyShell().evaluate("groovy.bugs.Autobox.Util.printByte(\"1\", Byte.valueOf((byte)1));");
         new GroovyShell().evaluate("groovy.bugs.Autobox.Util.printByte(\"1\", (byte)1);");
     }

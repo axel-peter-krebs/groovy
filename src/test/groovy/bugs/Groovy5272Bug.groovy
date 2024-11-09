@@ -58,7 +58,7 @@ class Groovy5272Bug extends GroovyTestCase {
 
     void testResolvingAmbiguousStaticFieldShouldAlwaysReturnTheSameValue() {
         10.times {
-        assertScript '''
+            assertScript '''
             public interface InterfaceA {
                 String FOO="Foo A";
             }

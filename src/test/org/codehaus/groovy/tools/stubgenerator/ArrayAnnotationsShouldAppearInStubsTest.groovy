@@ -34,7 +34,7 @@ class ArrayAnnotationsShouldAppearInStubsTest extends StringSourcesStubTestCase 
                     @ArrayAnnotation(['baz']) method2() {}
                 }
             ''',
-            'ArrayAnnotation.java': '''
+            'ArrayAnnotation.java' : '''
             public @interface ArrayAnnotation {
                 String[] value() default {};
             }

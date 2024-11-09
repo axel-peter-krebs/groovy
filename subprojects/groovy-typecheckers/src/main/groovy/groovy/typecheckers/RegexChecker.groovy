@@ -268,14 +268,14 @@ class RegexChecker extends GroovyTypeCheckingExtensionSupport.TypeCheckingDSL {
 
     private boolean isMatcher(Expression obj) {
         obj.type == MATCHER_TYPE ||
-                obj.getNodeMetaData(StaticTypesMarker.INFERRED_TYPE) == MATCHER_TYPE ||
-                obj.getNodeMetaData(StaticTypesMarker.INFERRED_RETURN_TYPE) == MATCHER_TYPE
+            obj.getNodeMetaData(StaticTypesMarker.INFERRED_TYPE) == MATCHER_TYPE ||
+            obj.getNodeMetaData(StaticTypesMarker.INFERRED_RETURN_TYPE) == MATCHER_TYPE
     }
 
     private boolean isPattern(Expression obj) {
         obj.type == PATTERN_TYPE ||
-                obj.getNodeMetaData(StaticTypesMarker.INFERRED_TYPE) == PATTERN_TYPE ||
-                obj.getNodeMetaData(StaticTypesMarker.INFERRED_RETURN_TYPE) == PATTERN_TYPE
+            obj.getNodeMetaData(StaticTypesMarker.INFERRED_TYPE) == PATTERN_TYPE ||
+            obj.getNodeMetaData(StaticTypesMarker.INFERRED_RETURN_TYPE) == PATTERN_TYPE
     }
 
     private void checkRegex(ConstantExpression regex, Expression target) {

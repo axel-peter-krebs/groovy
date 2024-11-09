@@ -67,6 +67,27 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.params;
 @GroovyASTTransformation
 public class CategoryASTTransformation implements ASTTransformation {
 
+    private static boolean ensureNoInstanceFieldOrProperty(final ClassNode sourceClass, final SourceUnit sourceUnit) {
+        boolean valid = true;
+        for (FieldNode fieldNode : sourceClass.getFields()) {
+            if (!fieldNode.isStatic() && fieldNode.getLineNumber() > 0) { // if < 1, probably an AST transform or internal code (like generated metaclass field, ...)
+                addUnsupportedInstanceMemberError(fieldNode.getName(), fieldNode, sourceUnit);
+                valid = false;
+            }
+        }
+        for (PropertyNode propertyNode : sourceClass.getProperties()) {
+            if (!propertyNode.isStatic() && propertyNode.getLineNumber() > 0) { // if < 1, probably an AST transform or internal code (like generated metaclass field, ...)
+                addUnsupportedInstanceMemberError(propertyNode.getName(), propertyNode, sourceUnit);
+                valid = false;
+            }
+        }
+        return valid;
+    }
+
+    private static void addUnsupportedInstanceMemberError(final String name, final ASTNode node, final SourceUnit unit) {
+        unit.addErrorAndContinue(new SyntaxException("The @Category transformation does not support instance " + (node instanceof FieldNode ? "fields" : "properties") + " but found [" + name + "]", node));
+    }
+
     @Override
     public void visit(final ASTNode[] nodes, final SourceUnit sourceUnit) {
         if (nodes.length != 2 || !(nodes[0] instanceof AnnotationNode) || !(nodes[1] instanceof ClassNode)) {
@@ -87,27 +108,6 @@ public class CategoryASTTransformation implements ASTTransformation {
             transformReferencesToThis(targetClass, sourceClass, sourceUnit);
             new VariableScopeVisitor(sourceUnit, true).visitClass(sourceClass);
         }
-    }
-
-    private static boolean ensureNoInstanceFieldOrProperty(final ClassNode sourceClass, final SourceUnit sourceUnit) {
-        boolean valid = true;
-        for (FieldNode fieldNode : sourceClass.getFields()) {
-            if (!fieldNode.isStatic() && fieldNode.getLineNumber() > 0) { // if < 1, probably an AST transform or internal code (like generated metaclass field, ...)
-                addUnsupportedInstanceMemberError(fieldNode.getName(), fieldNode,  sourceUnit);
-                valid = false;
-            }
-        }
-        for (PropertyNode propertyNode : sourceClass.getProperties()) {
-            if (!propertyNode.isStatic() && propertyNode.getLineNumber() > 0) { // if < 1, probably an AST transform or internal code (like generated metaclass field, ...)
-                addUnsupportedInstanceMemberError(propertyNode.getName(), propertyNode, sourceUnit);
-                valid = false;
-            }
-        }
-        return valid;
-    }
-
-    private static void addUnsupportedInstanceMemberError(final String name, final ASTNode node, final SourceUnit unit) {
-        unit.addErrorAndContinue(new SyntaxException("The @Category transformation does not support instance " + (node instanceof FieldNode ? "fields" : "properties") + " but found [" + name + "]", node));
     }
 
     //--------------------------------------------------------------------------
@@ -167,7 +167,8 @@ public class CategoryASTTransformation implements ASTTransformation {
                     addVariablesToStack(hasImplicitParameter(ce) ? params(param(ClassHelper.OBJECT_TYPE, "it")) : getParametersSafe(ce));
                     ce.getVariableScope().putReferencedLocalVariable(selfParameter.get());
                     addAll(varStack.getLast(), "owner", "delegate", "thisObject");
-                    boolean closure = inClosure; inClosure = true;
+                    boolean closure = inClosure;
+                    inClosure = true;
                     ce.getCode().visit(this);
                     varStack.removeLast();
                     inClosure = closure;

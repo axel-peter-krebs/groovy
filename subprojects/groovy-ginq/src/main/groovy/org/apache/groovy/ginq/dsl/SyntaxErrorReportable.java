@@ -34,10 +34,10 @@ public interface SyntaxErrorReportable {
         SourceUnit sourceUnit = getSourceUnit();
 
         SyntaxException e = new SyntaxException(
-                ginqSyntaxError.getMessage(),
-                ginqSyntaxError,
-                ginqSyntaxError.getLine(),
-                ginqSyntaxError.getColumn());
+            ginqSyntaxError.getMessage(),
+            ginqSyntaxError,
+            ginqSyntaxError.getLine(),
+            ginqSyntaxError.getColumn());
         sourceUnit.getErrorCollector().addFatalError(new SyntaxErrorMessage(e, sourceUnit));
     }
 }

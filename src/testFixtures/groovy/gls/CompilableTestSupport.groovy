@@ -23,7 +23,8 @@ import groovy.transform.AutoFinal
 import groovy.transform.CompileStatic
 import org.codehaus.groovy.control.CompilationFailedException
 
-@AutoFinal @CompileStatic
+@AutoFinal
+@CompileStatic
 abstract class CompilableTestSupport extends GroovyTestCase {
 
     protected String shouldNotCompile(String script) {

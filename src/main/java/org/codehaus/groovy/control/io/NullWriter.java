@@ -21,17 +21,20 @@ package org.codehaus.groovy.control.io;
 import java.io.Writer;
 
 /**
- *  A Writer that eats its input.
+ * A Writer that eats its input.
  */
 public class NullWriter extends Writer {
     public static final NullWriter DEFAULT = new NullWriter();
 
     @Override
-    public void close() {}
+    public void close() {
+    }
 
     @Override
-    public void flush() {}
+    public void flush() {
+    }
 
     @Override
-    public void write(char[] cbuf, int off, int len ) {}
+    public void write(char[] cbuf, int off, int len) {
+    }
 }

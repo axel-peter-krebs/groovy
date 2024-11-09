@@ -25,23 +25,23 @@ import org.codehaus.groovy.runtime.ScriptBytecodeAdapter;
 
 /**
  * Call site for GroovyInterceptable
-*/
+ */
 public class PogoInterceptableSite extends AbstractCallSite {
     public PogoInterceptableSite(CallSite site) {
         super(site);
     }
 
     public final Object invoke(Object receiver, Object[] args) throws Throwable {
-      try {
-        return ((GroovyObject)receiver).invokeMethod(name, InvokerHelper.asUnwrappedArray(args));
-      } catch (GroovyRuntimeException gre) {
-          throw ScriptBytecodeAdapter.unwrap(gre);
-      }
+        try {
+            return ((GroovyObject) receiver).invokeMethod(name, InvokerHelper.asUnwrappedArray(args));
+        } catch (GroovyRuntimeException gre) {
+            throw ScriptBytecodeAdapter.unwrap(gre);
+        }
     }
 
     @Override
     public final Object call(Object receiver, Object[] args) throws Throwable {
-        if(receiver instanceof GroovyObject) {
+        if (receiver instanceof GroovyObject) {
             try {
                 return ((GroovyObject) receiver).invokeMethod(name, InvokerHelper.asUnwrappedArray(args));
             } catch (GroovyRuntimeException gre) {
@@ -53,7 +53,7 @@ public class PogoInterceptableSite extends AbstractCallSite {
     }
 
     @Override
-    public Object callCurrent (GroovyObject receiver, Object [] args) throws Throwable {
+    public Object callCurrent(GroovyObject receiver, Object[] args) throws Throwable {
         return call(receiver, args);
     }
 }

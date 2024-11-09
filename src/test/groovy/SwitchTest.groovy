@@ -107,25 +107,25 @@ class SwitchTest extends GroovyTestCase {
 
     void testSwitchWithClosure() {
         switch (0) {
-            case {true}: break
+            case { true }: break
             default: assert false
         }
         switch (0) {
-            case {false}: assert false
+            case { false }: assert false
         }
         switch (0) {
-            case {it == 0}: break
+            case { it == 0 }: break
             default: assert false
         }
         switch (0) {
-            case {candidate -> candidate == 0}: break
+            case { candidate -> candidate == 0 }: break
             default: assert false
         }
     }
 
     /** older versions of groovy produced a ListExpression for a
-        fall through. the result was that it worked in some cases
-        and in other cases not. For example not for patterns */
+     fall through. the result was that it worked in some cases
+     and in other cases not. For example not for patterns */
     void testFallthroughToOtherCaseWithNoCode() {
         def a = ['FileName.java', 'AnotherFileName.groovy', 'foo']
         def i = 0

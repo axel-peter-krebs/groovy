@@ -20,6 +20,7 @@ package org.codehaus.groovy.runtime.memoize;
 
 /**
  * Represents a memoize cache with its essential methods
+ *
  * @param <K> type of the keys
  * @param <V> type of the values
  */
@@ -27,7 +28,8 @@ public interface MemoizeCache<K, V> {
 
     /**
      * Associates the specified value with the specified key in the cache.
-     * @param key key with which the specified value is to be associated
+     *
+     * @param key   key with which the specified value is to be associated
      * @param value value to be associated with the specified key
      * @return null, or the old value if the key associated with the specified key.
      */
@@ -35,6 +37,7 @@ public interface MemoizeCache<K, V> {
 
     /**
      * Gets a value from the cache
+     *
      * @param key the key whose associated value is to be returned
      * @return the value, or null, if it does not exist.
      */
@@ -44,7 +47,7 @@ public interface MemoizeCache<K, V> {
      * Try to get the value from cache.
      * If not found, create the value by {@link ValueProvider} and put it into the cache, at last return the value.
      *
-     * @param key the key to look up
+     * @param key           the key to look up
      * @param valueProvider provide the value if the associated value not found
      * @return the cached value
      */
@@ -68,6 +71,7 @@ public interface MemoizeCache<K, V> {
 
     /**
      * Represents a provider used to create value
+     *
      * @param <K> type of the key
      * @param <V> type of the value
      */

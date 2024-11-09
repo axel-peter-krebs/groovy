@@ -23,7 +23,7 @@ import groovy.test.GroovyTestCase
 class ManagedConcurrentMapTest extends GroovyTestCase {
 
     ManagedConcurrentMap<Object, String> map =
-            new ManagedConcurrentMap<Object, String>(ReferenceBundle.getHardBundle())
+        new ManagedConcurrentMap<Object, String>(ReferenceBundle.getHardBundle())
 
     void testEntriesRemoveSelfFromMapWhenFinalized() {
         List<ManagedReference<Object>> entries = []

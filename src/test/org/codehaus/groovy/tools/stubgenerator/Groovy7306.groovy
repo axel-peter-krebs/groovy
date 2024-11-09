@@ -38,7 +38,7 @@ final class Groovy7306 extends StringSourcesStubTestCase {
                     }
                 }
             ''',
-            'Main.java': '''
+            'Main.java'   : '''
                 public class Main {
                     public static void main(String[] args) {
                         new C7306(1234);
@@ -50,7 +50,7 @@ final class Groovy7306 extends StringSourcesStubTestCase {
 
     @Override
     void verifyStubs() {
-        compile([new File(stubDir,'A7306.java'), new File(stubDir,'C7306.java')])
+        compile([new File(stubDir, 'A7306.java'), new File(stubDir, 'C7306.java')])
 
         def specialCtorCall = (stubJavaSourceFor('C7306') =~ /super\s*\((.+?)\);/)
         assert specialCtorCall.find() && specialCtorCall.group(1) == '(java.lang.Integer)null'

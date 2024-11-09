@@ -34,7 +34,7 @@ final class Groovy9367 {
     @Test
     void testPlusNull() {
         use(Groovy9367) {
-            int i= 1+null
+            int i = 1 + null
             assert i == 1
         }
     }

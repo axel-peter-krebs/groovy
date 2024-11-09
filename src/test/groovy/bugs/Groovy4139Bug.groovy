@@ -22,7 +22,7 @@ import groovy.test.GroovyTestCase
 
 class Groovy4139Bug extends GroovyTestCase {
     void testEmptyStringAsMapEntryKey() {
-        use (groovy.time.TimeCategory) {
+        use(groovy.time.TimeCategory) {
             def topics = [:]
             topics[''] = 100
 
@@ -30,7 +30,7 @@ class Groovy4139Bug extends GroovyTestCase {
 
             assert topics[''] == 100
 
-            topics.keySet().each {assert it == ''}
+            topics.keySet().each { assert it == '' }
         }
     }
 }

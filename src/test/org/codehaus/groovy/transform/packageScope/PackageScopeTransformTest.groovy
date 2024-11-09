@@ -184,7 +184,8 @@ final class PackageScopeTransformTest {
         '''
     }
 
-    @Test // GROOVY-9043
+    @Test
+    // GROOVY-9043
     void testStaticFieldAccessFromInnerClassCS() {
         assertScript '''
             import groovy.transform.CompileStatic

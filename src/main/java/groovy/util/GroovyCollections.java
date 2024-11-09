@@ -44,7 +44,7 @@ public class GroovyCollections {
      * @return A list of the combinations found.
      * @see #combinations(Iterable)
      */
-    public static List<List> combinations(Object[]    collections) {
+    public static List<List> combinations(Object[] collections) {
         return combinations(Arrays.asList(collections));
     }
 
@@ -288,7 +288,7 @@ public class GroovyCollections {
      * </pre>
      *
      * @param comparator a Comparator
-     * @param iterables the sources of items
+     * @param iterables  the sources of items
      * @return the ordered list of unique values found
      * @since 4.0.0
      */
@@ -305,7 +305,7 @@ public class GroovyCollections {
      * assert GroovyCollections.union([['a', 'A'], ['B', 'a', 'c', 'b']], w -&gt; w.toUpperCase()) == ['a', 'B', 'c']
      * </pre>
      *
-     * @param iterables the list of source items
+     * @param iterables  the list of source items
      * @param comparator a Comparator
      * @return the ordered list of unique values found
      * @since 4.0.0
@@ -336,7 +336,7 @@ public class GroovyCollections {
      * @return the ordered list of unique values found
      * @since 4.0.0
      */
-    public static <T> List<T> union(@ClosureParams(value= FromString.class, options={"T","T,T"}) Closure condition, Iterable<T>... iterables) {
+    public static <T> List<T> union(@ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure condition, Iterable<T>... iterables) {
         return union(Arrays.asList(iterables), condition);
     }
 
@@ -352,10 +352,10 @@ public class GroovyCollections {
      * @return the ordered list of unique values found
      * @since 4.0.0
      */
-    public static <T> List<T> union(List<Iterable<T>> iterables, @ClosureParams(value= FromString.class, options={"T","T,T"}) Closure condition) {
+    public static <T> List<T> union(List<Iterable<T>> iterables, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure condition) {
         Comparator<T> comparator = condition.getMaximumNumberOfParameters() == 1
-                ? new OrderBy<>(condition, true)
-                : new ClosureComparator<>(condition);
+            ? new OrderBy<>(condition, true)
+            : new ClosureComparator<>(condition);
         return union(iterables, comparator);
     }
 }

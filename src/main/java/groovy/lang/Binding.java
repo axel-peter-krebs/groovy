@@ -112,8 +112,7 @@ public class Binding extends GroovyObjectSupport {
         /** @todo we should check if we have the property with the metaClass instead of try/catch  */
         try {
             return super.getProperty(property);
-        }
-        catch (MissingPropertyException e) {
+        } catch (MissingPropertyException e) {
             return getVariable(property);
         }
     }
@@ -126,8 +125,7 @@ public class Binding extends GroovyObjectSupport {
         /** @todo we should check if we have the property with the metaClass instead of try/catch  */
         try {
             super.setProperty(property, newValue);
-        }
-        catch (MissingPropertyException e) {
+        } catch (MissingPropertyException e) {
             setVariable(property, newValue);
         }
     }

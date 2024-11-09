@@ -29,8 +29,8 @@ public abstract class Java<N extends Number & Comparable<? extends Number>> {
      *
      * @param <A> Doc.
      * @param <B> Doc.
-     * @param a Doc.
-     * @param b Doc.
+     * @param a   Doc.
+     * @param b   Doc.
      * @return Doc.
      */
     public static <A, B> int compareS(Class<A> a, Class<B> b) {
@@ -42,8 +42,8 @@ public abstract class Java<N extends Number & Comparable<? extends Number>> {
      *
      * @param <C> Doc.
      * @param <D> Doc.
-     * @param c Doc.
-     * @param d Doc.
+     * @param c   Doc.
+     * @param d   Doc.
      * @return Doc.
      */
     public <C, D> int compare(Class<C> c, Class<D> d) {

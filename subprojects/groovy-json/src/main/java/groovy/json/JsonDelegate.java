@@ -37,38 +37,6 @@ public class JsonDelegate extends GroovyObjectSupport {
 
     private final Map<String, Object> content = new LinkedHashMap<String, Object>();
 
-    /**
-     * Intercepts calls for setting a key and value for a JSON object
-     *
-     * @param name the key name
-     * @param args the value associated with the key
-     */
-    @Override
-    public Object invokeMethod(String name, Object args) {
-        Object val = null;
-        if (args != null && Object[].class.isAssignableFrom(args.getClass())) {
-            Object[] arr = (Object[]) args;
-
-            if (arr.length == 1) {
-                val = arr[0];
-            } else if (isIterableOrArrayAndClosure(arr)) {
-                Closure<?> closure = (Closure<?>) arr[1];
-                Iterator<?> iterator = (arr[0] instanceof Iterable) ?
-                        ((Iterable) arr[0]).iterator() : Arrays.asList((Object[])arr[0]).iterator();
-                List<Object> list = new ArrayList<Object>();
-                while (iterator.hasNext()) {
-                    list.add(curryDelegateAndGetContent(closure, iterator.next()));
-                }
-                val = list;
-            } else {
-                val = Arrays.asList(arr);
-            }
-        }
-        content.put(name, val);
-
-        return val;
-    }
-
     private static boolean isIterableOrArrayAndClosure(Object[] args) {
         if (args.length != 2 || !(args[1] instanceof Closure)) {
             return false;
@@ -108,6 +76,38 @@ public class JsonDelegate extends GroovyObjectSupport {
         curried.call();
 
         return delegate.getContent();
+    }
+
+    /**
+     * Intercepts calls for setting a key and value for a JSON object
+     *
+     * @param name the key name
+     * @param args the value associated with the key
+     */
+    @Override
+    public Object invokeMethod(String name, Object args) {
+        Object val = null;
+        if (args != null && Object[].class.isAssignableFrom(args.getClass())) {
+            Object[] arr = (Object[]) args;
+
+            if (arr.length == 1) {
+                val = arr[0];
+            } else if (isIterableOrArrayAndClosure(arr)) {
+                Closure<?> closure = (Closure<?>) arr[1];
+                Iterator<?> iterator = (arr[0] instanceof Iterable) ?
+                    ((Iterable) arr[0]).iterator() : Arrays.asList((Object[]) arr[0]).iterator();
+                List<Object> list = new ArrayList<Object>();
+                while (iterator.hasNext()) {
+                    list.add(curryDelegateAndGetContent(closure, iterator.next()));
+                }
+                val = list;
+            } else {
+                val = Arrays.asList(arr);
+            }
+        }
+        content.put(name, val);
+
+        return val;
     }
 
     public Map<String, Object> getContent() {

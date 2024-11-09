@@ -76,13 +76,13 @@ class StaticCompilationIntroTest extends GroovyTestCase {
 
     void testTypeSafeProgram() {
         def shell = new GroovyShell()
-        shell.evaluate(TYPESAFE_PROGRAM+RUN)
+        shell.evaluate(TYPESAFE_PROGRAM + RUN)
     }
 
     void testTypeSafeProgramBroken() {
         def shell = new GroovyShell()
         try {
-            shell.evaluate(TYPESAFE_PROGRAM+RUNTIME_MAGIC+RUN)
+            shell.evaluate(TYPESAFE_PROGRAM + RUNTIME_MAGIC + RUN)
             assert false
         } catch (MissingMethodException e) {
             assert e.message.contains('No signature of method: Computer.compute() is applicable for argument types: (Date)')
@@ -91,6 +91,6 @@ class StaticCompilationIntroTest extends GroovyTestCase {
 
     void testTypeSafeProgramFixedWithCompileStatic() {
         def shell = new GroovyShell()
-        shell.evaluate(TYPESAFE_COMPILESTATIC_PROGRAM+RUNTIME_MAGIC+RUN)
+        shell.evaluate(TYPESAFE_COMPILESTATIC_PROGRAM + RUNTIME_MAGIC + RUN)
     }
 }

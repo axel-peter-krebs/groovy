@@ -145,8 +145,8 @@ class ReferenceManagerTest extends GroovyTestCase {
     }
 
     private class TestReference<T>
-            extends java.lang.ref.SoftReference<T>
-            implements Reference<T, Finalizable> {
+        extends java.lang.ref.SoftReference<T>
+        implements Reference<T, Finalizable> {
 
         final Finalizable handler
 

@@ -25,8 +25,8 @@ import org.codehaus.groovy.transform.stc.StaticTypeCheckingVisitor
  */
 class MiscSTCTest extends StaticTypeCheckingTestCase {
 
-     void testFibonacci() {
-         assertScript '''
+    void testFibonacci() {
+        assertScript '''
             long sd = System.currentTimeMillis()
             int fib(int i) {
                 i < 2 ? 1 : fib(i - 2) + fib(i - 1);
@@ -35,7 +35,7 @@ class MiscSTCTest extends StaticTypeCheckingTestCase {
             long dur = System.currentTimeMillis()-sd
             println "${dur}ms"
          '''
-     }
+    }
 
     void testGreeter() {
         assertScript '''
@@ -213,7 +213,7 @@ class MiscSTCTest extends StaticTypeCheckingTestCase {
                 E(String s) { }
             }
         ''',
-        'Cannot find matching constructor E()'
+            'Cannot find matching constructor E()'
 
         shouldFailWithMessages '''
             enum E {
@@ -221,14 +221,14 @@ class MiscSTCTest extends StaticTypeCheckingTestCase {
                 E(String s) { }
             }
         ''',
-        'Cannot find matching constructor E(java.lang.Object)'
+            'Cannot find matching constructor E(java.lang.Object)'
 
         shouldFailWithMessages '''
             enum E {
                 CONST(new Object())
             }
         ''',
-        'Cannot find matching constructor E(java.lang.Object)'
+            'Cannot find matching constructor E(java.lang.Object)'
 
         assertScript '''
             @ASTTest(phase=INSTRUCTION_SELECTION, value={
@@ -261,7 +261,7 @@ class MiscSTCTest extends StaticTypeCheckingTestCase {
             import groovy.transform.stc.MiscSTCTest.MiscSTCTestSupport as A
             A.foo().toInteger()
         ''',
-        'Cannot find matching method java.lang.Object#toInteger()'
+            'Cannot find matching method java.lang.Object#toInteger()'
     }
 
     void testClassLiteralAsArgument() {
@@ -325,19 +325,19 @@ class MiscSTCTest extends StaticTypeCheckingTestCase {
         // too bad we're not using Spock!
 
         def tests = [
-                ['get','getName', 'name'],
-                ['get','getFullName', 'fullName'],
-                ['get','getname', null],
-                ['is', 'isFlag', 'flag'],
-                ['is', 'isflag', null],
-                ['is', 'is', null],
-                ['is', 'i', null],
-                ['get', 'getXYZ', 'XYZ'],
-                ['get', 'get_foo', '_foo'],
-                [null, 'foo', null],
-                ['foo', null, null],
-                [null,null,null],
-                ['get', 'getaList', 'aList']
+            ['get', 'getName', 'name'],
+            ['get', 'getFullName', 'fullName'],
+            ['get', 'getname', null],
+            ['is', 'isFlag', 'flag'],
+            ['is', 'isflag', null],
+            ['is', 'is', null],
+            ['is', 'i', null],
+            ['get', 'getXYZ', 'XYZ'],
+            ['get', 'get_foo', '_foo'],
+            [null, 'foo', null],
+            ['foo', null, null],
+            [null, null, null],
+            ['get', 'getaList', 'aList']
         ]
         tests.each { prefix, methodName, expectation ->
             assert StaticTypeCheckingVisitor.extractPropertyNameFromMethodName(prefix, methodName) == expectation
@@ -461,7 +461,7 @@ class MiscSTCTest extends StaticTypeCheckingTestCase {
                 }
             }
         ''',
-        'Cannot find ',' static method Foo#newInstance2(CustomNumber)'
+            'Cannot find ', ' static method Foo#newInstance2(CustomNumber)'
     }
 
     // GROOVY-8380

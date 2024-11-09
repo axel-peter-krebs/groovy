@@ -45,7 +45,7 @@ class ReproducibleBytecodeBugs extends StaticTypeCheckingTestCase implements Sta
                 def c = new Check()
             '''
 
-            assert astTrees['Check'][1].contains('INVOKEINTERFACE FileOperations.file ()Ljava/io/File;') : "Incorrect bytecode found in iteration $it"
+            assert astTrees['Check'][1].contains('INVOKEINTERFACE FileOperations.file ()Ljava/io/File;'): "Incorrect bytecode found in iteration $it"
         }
     }
 
@@ -70,10 +70,10 @@ class ReproducibleBytecodeBugs extends StaticTypeCheckingTestCase implements Sta
 
             def bytecode = astTrees['Check$_test_closure1'][1]
             assertOrdered it, bytecode,
-                    'PUTFIELD Check$_test_closure1.xx',
-                    'PUTFIELD Check$_test_closure1.moot',
-                    'PUTFIELD Check$_test_closure1.kr',
-                    'PUTFIELD Check$_test_closure1.zorg'
+                'PUTFIELD Check$_test_closure1.xx',
+                'PUTFIELD Check$_test_closure1.moot',
+                'PUTFIELD Check$_test_closure1.kr',
+                'PUTFIELD Check$_test_closure1.zorg'
         }
     }
 

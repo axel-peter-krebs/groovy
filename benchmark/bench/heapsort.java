@@ -7,8 +7,9 @@ import java.lang.reflect.Array;
 public class heapsort {
 
     public static final long IM = 139968;
-    public static final long IA =   3877;
-    public static final long IC =  29573;
+    public static final long IA = 3877;
+    public static final long IC = 29573;
+    public static long last = 42;
 
     public static void main(String args[]) {
         int N = Integer.parseInt(args[0]);
@@ -16,17 +17,16 @@ public class heapsort {
         nf.setMaximumFractionDigits(10);
         nf.setMinimumFractionDigits(10);
         nf.setGroupingUsed(false);
-        double []ary = (double[])Array.newInstance(double.class, N+1);
-        for (int i=1; i<=N; i++) {
+        double[] ary = (double[]) Array.newInstance(double.class, N + 1);
+        for (int i = 1; i <= N; i++) {
             ary[i] = gen_random(1);
         }
         heapsort(N, ary);
         System.out.print(nf.format(ary[N]) + "\n");
     }
 
-    public static long last = 42;
     public static double gen_random(double max) {
-        return( max * (last = (last * IA + IC) % IM) / IM );
+        return (max * (last = (last * IA + IC) % IM) / IM);
     }
 
     public static void heapsort(int n, double ra[]) {
@@ -35,7 +35,7 @@ public class heapsort {
 
         l = (n >> 1) + 1;
         ir = n;
-        for (;;) {
+        for (; ; ) {
             if (l > 1) {
                 rra = ra[--l];
             } else {
@@ -49,7 +49,9 @@ public class heapsort {
             i = l;
             j = l << 1;
             while (j <= ir) {
-                if (j < ir && ra[j] < ra[j+1]) { ++j; }
+                if (j < ir && ra[j] < ra[j + 1]) {
+                    ++j;
+                }
                 if (rra < ra[j]) {
                     ra[i] = ra[j];
                     j += (i = j);

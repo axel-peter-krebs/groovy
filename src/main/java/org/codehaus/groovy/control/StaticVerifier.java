@@ -40,6 +40,23 @@ public class StaticVerifier extends ClassCodeVisitorSupport {
     private MethodNode methodNode;
     private SourceUnit sourceUnit;
 
+    private static FieldNode getDeclaredOrInheritedField(ClassNode cn, String fieldName) {
+        ClassNode node = cn;
+        while (node != null) {
+            FieldNode fn = node.getDeclaredField(fieldName);
+            if (fn != null) return fn;
+            List<ClassNode> interfacesToCheck = new ArrayList<>(Arrays.asList(node.getInterfaces()));
+            while (!interfacesToCheck.isEmpty()) {
+                ClassNode nextInterface = interfacesToCheck.remove(0);
+                fn = nextInterface.getDeclaredField(fieldName);
+                if (fn != null) return fn;
+                interfacesToCheck.addAll(Arrays.asList(nextInterface.getInterfaces()));
+            }
+            node = node.getSuperClass();
+        }
+        return null;
+    }
+
     @Override
     protected SourceUnit getSourceUnit() {
         return sourceUnit;
@@ -96,26 +113,9 @@ public class StaticVerifier extends ClassCodeVisitorSupport {
                 }
             }
             addError("Apparent variable '" + ve.getName() + "' was found in a static scope but doesn't refer to a local variable, static field or class. Possible causes:\n" +
-                    "You attempted to reference a variable in the binding or an instance variable from a static context.\n" +
-                    "You misspelled a classname or statically imported field. Please check the spelling.\n" +
-                    "You attempted to use a method '" + ve.getName() + "' but left out brackets in a place not allowed by the grammar.", ve);
+                "You attempted to reference a variable in the binding or an instance variable from a static context.\n" +
+                "You misspelled a classname or statically imported field. Please check the spelling.\n" +
+                "You attempted to use a method '" + ve.getName() + "' but left out brackets in a place not allowed by the grammar.", ve);
         }
-    }
-
-    private static FieldNode getDeclaredOrInheritedField(ClassNode cn, String fieldName) {
-        ClassNode node = cn;
-        while (node != null) {
-            FieldNode fn = node.getDeclaredField(fieldName);
-            if (fn != null) return fn;
-            List<ClassNode> interfacesToCheck = new ArrayList<>(Arrays.asList(node.getInterfaces()));
-            while (!interfacesToCheck.isEmpty()) {
-                ClassNode nextInterface = interfacesToCheck.remove(0);
-                fn = nextInterface.getDeclaredField(fieldName);
-                if (fn != null) return fn;
-                interfacesToCheck.addAll(Arrays.asList(nextInterface.getInterfaces()));
-            }
-            node = node.getSuperClass();
-        }
-        return null;
     }
 }

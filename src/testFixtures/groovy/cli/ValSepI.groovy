@@ -23,9 +23,16 @@ import groovy.cli.Unparsed
 
 // tag::multipleArgsInterfaceSpec[]
 interface ValSepI {
-    @Option(numberOfArguments=2) String[] a()
-    @Option(numberOfArgumentsString='2', valueSeparator=',') String[] b()
-    @Option(numberOfArgumentsString='+', valueSeparator=',') String[] c()
-    @Unparsed remaining()
+    @Option(numberOfArguments = 2)
+    String[] a()
+
+    @Option(numberOfArgumentsString = '2', valueSeparator = ',')
+    String[] b()
+
+    @Option(numberOfArgumentsString = '+', valueSeparator = ',')
+    String[] c()
+
+    @Unparsed
+    remaining()
 }
 // end::multipleArgsInterfaceSpec[]

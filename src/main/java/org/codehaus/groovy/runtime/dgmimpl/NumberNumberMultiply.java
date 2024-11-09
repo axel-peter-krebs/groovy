@@ -24,16 +24,6 @@ import org.codehaus.groovy.runtime.callsite.CallSite;
 import org.codehaus.groovy.runtime.typehandling.NumberMath;
 
 public final class NumberNumberMultiply extends NumberNumberMetaMethod {
-    @Override
-    public String getName() {
-        return "multiply";
-    }
-
-    @Override
-    public Object invoke(Object object, Object[] arguments) {
-        return NumberMath.multiply((Number) object, (Number) arguments[0]);
-    }
-
     /**
      * Multiply two Numbers.
      *
@@ -47,6 +37,15 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
         return NumberMath.multiply(left, right);
     }
 
+    @Override
+    public String getName() {
+        return "multiply";
+    }
+
+    @Override
+    public Object invoke(Object object, Object[] arguments) {
+        return NumberMath.multiply((Number) object, (Number) arguments[0]);
+    }
 
     @Override
     public CallSite createIntegerInteger(CallSite site, MetaClassImpl metaClass, MetaMethod metaMethod, Class[] params, Object receiver, Object[] args) {
@@ -144,8 +143,7 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Double) receiver * (Double) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -162,8 +160,7 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Double) receiver * ((Float) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -180,8 +177,7 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Double) receiver * ((Long) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -198,8 +194,7 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Double) receiver * (Integer) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -216,8 +211,7 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Float) receiver).doubleValue() * (Double) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -234,8 +228,7 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Float) receiver).doubleValue() * ((Float) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -252,8 +245,7 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Float) receiver).doubleValue() * ((Long) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -270,8 +262,7 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Float) receiver).doubleValue() * ((Integer) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -288,8 +279,7 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Long) receiver).doubleValue() * (Double) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -306,8 +296,7 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Long) receiver).doubleValue() * ((Float) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -324,8 +313,7 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Long) receiver * (Long) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -342,8 +330,7 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return (Long) receiver * ((Integer) arg).longValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -360,8 +347,7 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Integer) receiver).doubleValue() * (Double) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -378,8 +364,7 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Integer) receiver).doubleValue() * ((Float) arg).doubleValue();
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -396,8 +381,7 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
                 if (checkCall(receiver, arg)) {
                     return ((Integer) receiver).longValue() * (Long) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -412,10 +396,9 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
         public final Object call(Object receiver, Object arg) throws Throwable {
             try {
                 if (checkCall(receiver, arg)) {
-                  return (Integer) receiver * (Integer) arg;
+                    return (Integer) receiver * (Integer) arg;
                 }
-            }
-            catch (ClassCastException e) {//
+            } catch (ClassCastException e) {//
             }
             return super.call(receiver, arg);
         }
@@ -428,11 +411,11 @@ public final class NumberNumberMultiply extends NumberNumberMetaMethod {
 
         @Override
         public final Object invoke(Object receiver, Object[] args) {
-            return math.multiplyImpl((Number)receiver,(Number)args[0]);
+            return math.multiplyImpl((Number) receiver, (Number) args[0]);
         }
 
         public final Object invoke(Object receiver, Object arg) {
-            return math.multiplyImpl((Number)receiver,(Number)arg);
+            return math.multiplyImpl((Number) receiver, (Number) arg);
         }
     }
 }

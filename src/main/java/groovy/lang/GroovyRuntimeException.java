@@ -51,12 +51,12 @@ public class GroovyRuntimeException extends RuntimeException {
         initCause(t);
     }
 
-    public void setModule(ModuleNode module) {
-        this.module = module;
-    }
-
     public ModuleNode getModule() {
         return module;
+    }
+
+    public void setModule(ModuleNode module) {
+        this.module = module;
     }
 
     @Override

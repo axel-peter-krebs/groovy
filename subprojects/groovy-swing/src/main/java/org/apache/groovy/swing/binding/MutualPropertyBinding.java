@@ -55,11 +55,6 @@ public class MutualPropertyBinding implements FullBinding {
     }
 
     @Override
-    public TargetBinding getTargetBinding() {
-        return targetBinding;
-    }
-
-    @Override
     public void setSourceBinding(SourceBinding sourceBinding) {
         try {
             if (sourceBinding == null) {
@@ -72,6 +67,11 @@ public class MutualPropertyBinding implements FullBinding {
             throw new UnsupportedOperationException("Mutual Bindings may only change source bindings to other PropertyBindings");
         }
         rebuildBindings();
+    }
+
+    @Override
+    public TargetBinding getTargetBinding() {
+        return targetBinding;
     }
 
     @Override
@@ -90,19 +90,13 @@ public class MutualPropertyBinding implements FullBinding {
     }
 
     @Override
-    public void setValidator(Closure validator) {
-        this.validator = validator;
-        rebuildBindings();
-    }
-
-    @Override
     public Closure getValidator() {
         return validator;
     }
 
     @Override
-    public void setConverter(Closure converter) {
-        this.converter = converter;
+    public void setValidator(Closure validator) {
+        this.validator = validator;
         rebuildBindings();
     }
 
@@ -112,14 +106,20 @@ public class MutualPropertyBinding implements FullBinding {
     }
 
     @Override
-    public void setReverseConverter(Closure reverseConverter) {
-       this.reverseConverter = reverseConverter;
+    public void setConverter(Closure converter) {
+        this.converter = converter;
         rebuildBindings();
     }
 
     @Override
     public Closure getReverseConverter() {
         return reverseConverter;
+    }
+
+    @Override
+    public void setReverseConverter(Closure reverseConverter) {
+        this.reverseConverter = reverseConverter;
+        rebuildBindings();
     }
 
     protected void rebuildBindings() {
@@ -168,7 +168,7 @@ public class MutualPropertyBinding implements FullBinding {
             // both converter and reverseConverter must be set or not
             if ((converter == null) != (reverseConverter == null)) {
                 throw new RuntimeException("Both converter or reverseConverter must be set or unset to bind.  Only "
-                        + ((converter != null) ? "converter": "reverseConverter") + " is set.");
+                    + ((converter != null) ? "converter" : "reverseConverter") + " is set.");
             }
             // don't bind if we are half set up, quietly stop
             if (forwardBinding == null || reverseBinding == null) {

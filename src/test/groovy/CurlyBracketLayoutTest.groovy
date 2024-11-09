@@ -20,25 +20,20 @@ package groovy
 
 import groovy.test.GroovyTestCase
 
-class CurlyBracketLayoutTest extends GroovyTestCase
-{
-    void testBracketPlacement()
-    {
+class CurlyBracketLayoutTest extends GroovyTestCase {
+    void testBracketPlacement() {
         def foo = "abc"
 
-        if (foo.contains("b"))
-        {
+        if (foo.contains("b")) {
             // expected
-        }
-        else
-        {
+        } else {
             fail("Should have found 'b' inside $foo")
         }
 
         def list = [1, 2, 3]
         list.each
-        {
-            assert it >= 1 && it <= 3
-        }
+            {
+                assert it >= 1 && it <= 3
+            }
     }
 }

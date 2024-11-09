@@ -32,16 +32,16 @@ public class FormatHelperTest {
         objects = new Object[0];
         assertEquals("", FormatHelper.toTypeString(objects, 42));
 
-        objects = new Object[] {null};
+        objects = new Object[]{null};
         assertEquals("null", FormatHelper.toTypeString(objects, 42));
 
-        objects = new Object[] {0};
+        objects = new Object[]{0};
         assertEquals("Integer", FormatHelper.toTypeString(objects, 42));
 
-        objects = new Object[] {0, 1d};
+        objects = new Object[]{0, 1d};
         assertEquals("Integer, Double", FormatHelper.toTypeString(objects, 42));
 
-        objects = new Object[] {new DummyBean(), new DummyBean()}; // GROOVY-11270
+        objects = new Object[]{new DummyBean(), new DummyBean()}; // GROOVY-11270
         assertEquals("o.c.g.r.DummyBean, o.c.g.r.DummyBean", FormatHelper.toTypeString(objects, 42));
     }
 }

@@ -24,7 +24,8 @@ import org.junit.Test
 import static groovy.test.GroovyAssert.assertScript
 
 final class Groovy9805 {
-    @NotYetImplemented @Test
+    @NotYetImplemented
+    @Test
     void testNoVerifyErrorForStatementsOnSameLine() {
         assertScript '''
             def x; try { x = System.nanoTime(); x = "ok" } catch (e) { }

@@ -23,6 +23,7 @@ import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.syntax.RuntimeParserException;
 
 /**
+ *
  */
 public class VerifierCodeVisitorTest extends TestCase {
     public void testValidNames() {
@@ -49,8 +50,7 @@ public class VerifierCodeVisitorTest extends TestCase {
         try {
             VerifierCodeVisitor.assertValidIdentifier(name, "variable name", new ASTNode());
             fail("Should have thrown exception due to invalid name: " + name);
-        }
-        catch (RuntimeParserException e) {
+        } catch (RuntimeParserException e) {
             System.out.println("Caught invalid exception: " + e);
         }
     }

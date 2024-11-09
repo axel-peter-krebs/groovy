@@ -25,12 +25,12 @@ public class SimpleModel {
         s = "Hi!";
     }
 
-    public void show() {
-        System.out.println(s);
-    }
-
     public static void main(String[] args) {
         SimpleModel simp = new SimpleModel();
         simp.show();
+    }
+
+    public void show() {
+        System.out.println(s);
     }
 }

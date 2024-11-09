@@ -111,22 +111,22 @@ return handler
 def jdk9plus = VMPluginFactory.getPlugin().getVersion() > 8
 // JDK <= 8 only
 def macOsRuntimeForJavaPresent = classExists('com.apple.mrj.MRJApplicationUtils')
-        && classExists('com.apple.mrj.MRJQuitHandler')
-        && classExists('com.apple.mrj.MRJAboutHandler')
-        && classExists('com.apple.mrj.MRJPrefsHandler')
+    && classExists('com.apple.mrj.MRJQuitHandler')
+    && classExists('com.apple.mrj.MRJAboutHandler')
+    && classExists('com.apple.mrj.MRJPrefsHandler')
 // JDK <= 8 only
 def appleAwtExtensionPresent = classExists('com.apple.eawt.Application')
-        && classExists('com.apple.eawt.QuitHandler')
-        && classExists('com.apple.eawt.AboutHandler')
-        && classExists('com.apple.eawt.PreferencesHandler')
+    && classExists('com.apple.eawt.QuitHandler')
+    && classExists('com.apple.eawt.AboutHandler')
+    && classExists('com.apple.eawt.PreferencesHandler')
 // TODO Desktop handlers are supposed to work cross platform, should we do version check at a higher layer
 // TODO there is also an open files handler, should we also be using that?
 try {
     // select handler version
     def scriptSource = jdk9plus ? JDK9PLUS_SCRIPT :
-            macOsRuntimeForJavaPresent ? MRJ_SCRIPT :
+        macOsRuntimeForJavaPresent ? MRJ_SCRIPT :
             appleAwtExtensionPresent ? EAWT_SCRIPT :
-            null
+                null
     @Field
     static boolean handlersInstalled = false
 
@@ -151,40 +151,40 @@ try {
 
 menuBar {
     menu(text: 'File', mnemonic: 'F') {
-        menuItem(newFileAction, icon:null)
-        menuItem(newWindowAction, icon:null)
-        menuItem(openAction, icon:null)
+        menuItem(newFileAction, icon: null)
+        menuItem(newWindowAction, icon: null)
+        menuItem(openAction, icon: null)
         separator()
-        menuItem(saveAction, icon:null)
-        menuItem(saveAsAction, icon:null)
+        menuItem(saveAction, icon: null)
+        menuItem(saveAsAction, icon: null)
         separator()
-        menuItem(printAction, icon:null)
+        menuItem(printAction, icon: null)
     }
 
     menu(text: 'Edit', mnemonic: 'E') {
-        menuItem(undoAction, icon:null)
-        menuItem(redoAction, icon:null)
+        menuItem(undoAction, icon: null)
+        menuItem(redoAction, icon: null)
         separator()
-        menuItem(cutAction, icon:null)
-        menuItem(copyAction, icon:null)
-        menuItem(pasteAction, icon:null)
+        menuItem(cutAction, icon: null)
+        menuItem(copyAction, icon: null)
+        menuItem(pasteAction, icon: null)
         separator()
-        menuItem(findAction, icon:null)
-        menuItem(findNextAction, icon:null)
-        menuItem(findPreviousAction, icon:null)
-        menuItem(replaceAction, icon:null)
+        menuItem(findAction, icon: null)
+        menuItem(findNextAction, icon: null)
+        menuItem(findPreviousAction, icon: null)
+        menuItem(replaceAction, icon: null)
         separator()
-        menuItem(selectAllAction, icon:null)
-	separator()
-	menuItem(commentAction, icon:null)
-        menuItem(selectBlockAction, icon:null)
+        menuItem(selectAllAction, icon: null)
+        separator()
+        menuItem(commentAction, icon: null)
+        menuItem(selectBlockAction, icon: null)
     }
 
     menu(text: 'View', mnemonic: 'V') {
-        menuItem(clearOutputAction, icon:null)
+        menuItem(clearOutputAction, icon: null)
         separator()
-        menuItem(largerFontAction, icon:null)
-        menuItem(smallerFontAction, icon:null)
+        menuItem(largerFontAction, icon: null)
+        menuItem(smallerFontAction, icon: null)
         separator()
         checkBoxMenuItem(captureStdOutAction, selected: controller.captureStdOut)
         checkBoxMenuItem(captureStdErrAction, selected: controller.captureStdErr)
@@ -198,32 +198,32 @@ menuBar {
     }
 
     menu(text: 'History', mnemonic: 'I') {
-        menuItem(historyPrevAction, icon:null)
-        menuItem(historyNextAction, icon:null)
+        menuItem(historyPrevAction, icon: null)
+        menuItem(historyNextAction, icon: null)
     }
 
     menu(text: 'Script', mnemonic: 'S') {
-        menuItem(runAction, icon:null)
-        menuItem(runJavaAction, icon:null)
+        menuItem(runAction, icon: null)
+        menuItem(runJavaAction, icon: null)
         checkBoxMenuItem(loopModeAction, selected: controller.loopMode)
         checkBoxMenuItem(saveOnRunAction, selected: controller.saveOnRun)
-        menuItem(runSelectionAction, icon:null)
-        menuItem(runJavaSelectionAction, icon:null)
+        menuItem(runSelectionAction, icon: null)
+        menuItem(runJavaSelectionAction, icon: null)
         checkBoxMenuItem(threadInterruptAction, selected: controller.threadInterrupt)
-        menuItem(interruptAction, icon:null)
-        menuItem(compileAction, icon:null)
-        menuItem(compileJavaAction, icon:null)
+        menuItem(interruptAction, icon: null)
+        menuItem(compileAction, icon: null)
+        menuItem(compileJavaAction, icon: null)
         separator()
         menuItem(addClasspathJar)
         menuItem(addClasspathDir)
         menuItem(listClasspath)
         menuItem(clearClassloader)
         separator()
-        menuItem(inspectLastAction, icon:null)
-        menuItem(inspectVariablesAction, icon:null)
-        menuItem(inspectAstAction, icon:null)
-        menuItem(inspectCstAction, icon:null)
-        menuItem(inspectTokensAction, icon:null)
+        menuItem(inspectLastAction, icon: null)
+        menuItem(inspectVariablesAction, icon: null)
+        menuItem(inspectAstAction, icon: null)
+        menuItem(inspectCstAction, icon: null)
+        menuItem(inspectTokensAction, icon: null)
     }
 }
 

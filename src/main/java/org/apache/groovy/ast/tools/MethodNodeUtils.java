@@ -38,7 +38,8 @@ import static org.objectweb.asm.Opcodes.ACC_ABSTRACT;
  */
 public class MethodNodeUtils {
 
-    private MethodNodeUtils() { }
+    private MethodNodeUtils() {
+    }
 
     /**
      * Return the method node's descriptor including its
@@ -71,7 +72,7 @@ public class MethodNodeUtils {
      * Return the method node's descriptor which includes its return type,
      * name and parameter types without generics.
      *
-     * @param mNode the method node
+     * @param mNode  the method node
      * @param pretty whether to quote a name with spaces
      * @return the method node's descriptor
      */
@@ -109,21 +110,21 @@ public class MethodNodeUtils {
         final int nameLength = name.length();
         if (nameLength > 2) {
             switch (name.charAt(0)) {
-              case 'g':
-                if (nameLength > 3 && name.charAt(1) == 'e' && name.charAt(2) == 't' && mNode.getParameters().length == 0 && !mNode.isVoidMethod()) {
-                    return decapitalize(name.substring(3));
-                }
-                break;
-              case 's':
-                if (nameLength > 3 && name.charAt(1) == 'e' && name.charAt(2) == 't' && mNode.getParameters().length == 1 /*&& mNode.isVoidMethod()*/) {
-                    return decapitalize(name.substring(3));
-                }
-                break;
-              case 'i':
-                if (name.charAt(1) == 's' && mNode.getParameters().length == 0 && (isPrimitiveBoolean(mNode.getReturnType()) /*|| isWrapperBoolean(mNode.getReturnType())*/)) {
-                    return decapitalize(name.substring(2));
-                }
-                break;
+                case 'g':
+                    if (nameLength > 3 && name.charAt(1) == 'e' && name.charAt(2) == 't' && mNode.getParameters().length == 0 && !mNode.isVoidMethod()) {
+                        return decapitalize(name.substring(3));
+                    }
+                    break;
+                case 's':
+                    if (nameLength > 3 && name.charAt(1) == 'e' && name.charAt(2) == 't' && mNode.getParameters().length == 1 /*&& mNode.isVoidMethod()*/) {
+                        return decapitalize(name.substring(3));
+                    }
+                    break;
+                case 'i':
+                    if (name.charAt(1) == 's' && mNode.getParameters().length == 0 && (isPrimitiveBoolean(mNode.getReturnType()) /*|| isWrapperBoolean(mNode.getReturnType())*/)) {
+                        return decapitalize(name.substring(2));
+                    }
+                    break;
             }
         }
         return null;
@@ -161,7 +162,7 @@ public class MethodNodeUtils {
     public static boolean isGetterCandidate(final MethodNode mNode) {
         Parameter[] parameters = mNode.getParameters();
         return (parameters == null || parameters.length == 0)
-                && mNode.isPublic() && !mNode.isStatic() && !mNode.isAbstract() && !mNode.isVoidMethod();
+            && mNode.isPublic() && !mNode.isStatic() && !mNode.isAbstract() && !mNode.isVoidMethod();
     }
 
     /**

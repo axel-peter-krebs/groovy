@@ -51,27 +51,6 @@ public class NodeList extends ArrayList {
         super(size);
     }
 
-    /**
-     * Creates a new NodeList containing the same elements as the
-     * original (but cloned in the case of Nodes).
-     *
-     * @return the clone
-     */
-    @Override
-    public Object clone() {
-        NodeList result = new NodeList(size());
-        for (int i = 0; i < size(); i++) {
-            Object next = get(i);
-            if (next instanceof Node) {
-                Node n = (Node) next;
-                result.add(n.clone());
-            } else {
-                result.add(next);
-            }
-        }
-        return result;
-    }
-
     protected static void setMetaClass(final Class nodeListClass, final MetaClass metaClass) {
         GroovySystem.getMetaClassRegistry().setMetaClass(nodeListClass, new DelegatingMetaClass(metaClass) {
 
@@ -119,6 +98,27 @@ public class NodeList extends ArrayList {
                 return super.getProperty(sender, object, property, isSuper, isInner);
             }
         });
+    }
+
+    /**
+     * Creates a new NodeList containing the same elements as the
+     * original (but cloned in the case of Nodes).
+     *
+     * @return the clone
+     */
+    @Override
+    public Object clone() {
+        NodeList result = new NodeList(size());
+        for (int i = 0; i < size(); i++) {
+            Object next = get(i);
+            if (next instanceof Node) {
+                Node n = (Node) next;
+                result.add(n.clone());
+            } else {
+                result.add(next);
+            }
+        }
+        return result;
     }
 
     /**
@@ -200,9 +200,9 @@ public class NodeList extends ArrayList {
     public Node replaceNode(Closure c) {
         if (size() != 1) {
             throw new GroovyRuntimeException(
-                    "replaceNode() can only be used to replace a single node, but was applied to " + size() + " nodes");
+                "replaceNode() can only be used to replace a single node, but was applied to " + size() + " nodes");
         }
-        return ((Node)get(0)).replaceNode(c);
+        return ((Node) get(0)).replaceNode(c);
     }
 
     public void plus(Closure c) {

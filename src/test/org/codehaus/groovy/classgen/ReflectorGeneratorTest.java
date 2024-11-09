@@ -23,12 +23,12 @@ import org.codehaus.groovy.reflection.CachedMethod;
 import java.lang.reflect.InvocationTargetException;
 
 class A_GroovyReflector {
-    static void doIt () {
+    static void doIt() {
 
-        new A ().protectedMethod();
+        new A().protectedMethod();
 
         try {
-            CachedMethod m = CachedMethod.find(A.class.getDeclaredMethod("protectedMethod", new Class [0] ));
+            CachedMethod m = CachedMethod.find(A.class.getDeclaredMethod("protectedMethod", new Class[0]));
             Object[] arguments = new Object[0];
             m.setAccessible().invoke(new A(), arguments);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
@@ -36,6 +36,7 @@ class A_GroovyReflector {
     }
 
     static class A {
-        protected void protectedMethod() {}
+        protected void protectedMethod() {
+        }
     }
 }

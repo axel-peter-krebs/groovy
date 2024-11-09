@@ -53,10 +53,14 @@ class ResolveStrategyPropertyTest extends GroovyTestCase {
             assert runOwnerFirst { runDelegateFirst { m1 + m2 + m3 + m4 } } == 12340000
             assert runDelegateFirst { runOwnerFirst { m1 + m2 + m3 + m4 } } == 12340000
             assert runDelegateFirst { runDelegateFirst { m1 + m2 + m3 + m4 } } == 12340000
-            assert runOwnerFirst { runOwnerFirst { m1 + m2 + m3 + m4 + m5 + m6 } } == 301238 // owner: m4 m5, delegate: m6
-            assert runOwnerFirst { runDelegateFirst { m1 + m2 + m3 + m4 + m5 + m6 } } == 12640004 // owner: m5, delegate: m3 m6
-            assert runDelegateFirst { runOwnerFirst { m1 + m2 + m3 + m4 + m5 + m6 } } == 12640004 // owner: m5, delegate: m3 m6
-            assert runDelegateFirst { runDelegateFirst { m1 + m2 + m3 + m4 + m5 + m6 } } == 12640004 // owner: m5, delegate: m3 m6
+            assert runOwnerFirst { runOwnerFirst { m1 + m2 + m3 + m4 + m5 + m6 } } == 301238
+            // owner: m4 m5, delegate: m6
+            assert runOwnerFirst { runDelegateFirst { m1 + m2 + m3 + m4 + m5 + m6 } } == 12640004
+            // owner: m5, delegate: m3 m6
+            assert runDelegateFirst { runOwnerFirst { m1 + m2 + m3 + m4 + m5 + m6 } } == 12640004
+            // owner: m5, delegate: m3 m6
+            assert runDelegateFirst { runDelegateFirst { m1 + m2 + m3 + m4 + m5 + m6 } } == 12640004
+            // owner: m5, delegate: m3 m6
         }
     }
 

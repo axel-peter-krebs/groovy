@@ -106,6 +106,13 @@ public class IO implements Closeable {
         this.err = err;
     }
 
+    /**
+     * Construct a new IO container using system streams.
+     */
+    public IO() {
+        this(System.in, System.out, System.err);
+    }
+
     protected PrintWriter tryConstructRenderWriter(OutputStream stream) {
         // load via reflection to avoid hard-coded dependency on jansi jar
         try {
@@ -116,10 +123,10 @@ public class IO implements Closeable {
     }
 
     /**
-     * Construct a new IO container using system streams.
+     * Returns the verbosity level.
      */
-    public IO() {
-        this(System.in, System.out, System.err);
+    public Verbosity getVerbosity() {
+        return Preferences.verbosity;
     }
 
     /**
@@ -129,13 +136,6 @@ public class IO implements Closeable {
         assert verbosity != null;
 
         Preferences.verbosity = verbosity;
-    }
-
-    /**
-     * Returns the verbosity level.
-     */
-    public Verbosity getVerbosity() {
-        return Preferences.verbosity;
     }
 
     /**
@@ -205,11 +205,6 @@ public class IO implements Closeable {
             this.name = name;
         }
 
-        @Override
-        public String toString() {
-            return name;
-        }
-
         public static Verbosity forName(final String name) {
             assert name != null;
 
@@ -227,6 +222,11 @@ public class IO implements Closeable {
             }
 
             throw new IllegalArgumentException("Invalid verbosity name: " + name);
+        }
+
+        @Override
+        public String toString() {
+            return name;
         }
     }
 }

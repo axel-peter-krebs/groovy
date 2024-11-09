@@ -48,6 +48,14 @@ import static org.apache.groovy.json.internal.Exceptions.die;
 public class LazyValueMap extends AbstractMap<String, Object> implements ValueMap<String, Object> {
 
     /**
+     * Holds whether we are in lazy chop mode.
+     */
+    private final boolean lazyChop;
+    /**
+     * Keep track if this map has already been chopped so we don't waste time trying to chop it again.
+     */
+    boolean mapChopped = false;
+    /**
      * holds the map that gets lazily created on first access.
      */
     private Map<String, Object> map = null;
@@ -59,15 +67,6 @@ public class LazyValueMap extends AbstractMap<String, Object> implements ValueMa
      * Holds the current number mapping managed by this map.
      */
     private int len = 0;
-    /**
-     * Holds whether we are in lazy chop mode.
-     */
-    private final boolean lazyChop;
-
-    /**
-     * Keep track if this map has already been chopped so we don't waste time trying to chop it again.
-     */
-    boolean mapChopped = false;
 
     @SuppressWarnings("unchecked")
     public LazyValueMap(boolean lazyChop) {
@@ -79,6 +78,18 @@ public class LazyValueMap extends AbstractMap<String, Object> implements ValueMa
     public LazyValueMap(boolean lazyChop, int initialSize) {
         this.items = new Entry[initialSize];
         this.lazyChop = lazyChop;
+    }
+
+    /* We need to chop up this child container. */
+    private static void chopContainer(Value value) {
+        Object obj = value.toValue();
+        if (obj instanceof LazyValueMap) {
+            LazyValueMap map = (LazyValueMap) obj;
+            map.chopMap();
+        } else if (obj instanceof ValueList) {
+            ValueList list = (ValueList) obj;
+            list.chopList();
+        }
     }
 
     /**
@@ -174,18 +185,6 @@ public class LazyValueMap extends AbstractMap<String, Object> implements ValueMa
                     list.chopList();
                 }
             }
-        }
-    }
-
-    /* We need to chop up this child container. */
-    private static void chopContainer(Value value) {
-        Object obj = value.toValue();
-        if (obj instanceof LazyValueMap) {
-            LazyValueMap map = (LazyValueMap) obj;
-            map.chopMap();
-        } else if (obj instanceof ValueList) {
-            ValueList list = (ValueList) obj;
-            list.chopList();
         }
     }
 

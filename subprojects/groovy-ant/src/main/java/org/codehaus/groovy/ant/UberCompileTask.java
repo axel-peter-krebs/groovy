@@ -31,7 +31,7 @@ import java.io.IOException;
 
 /**
  * Compiles Java and Groovy source files.
- *
+ * <p>
  * This works by invoking the {@link GenerateStubsTask} task, then the
  * {@link Javac} task and then the {@link GroovycTask}.  Each task can be
  * configured by creating a nested element.  Common configuration such as
@@ -57,19 +57,18 @@ public class UberCompileTask extends Task {
         return src.createPath();
     }
 
+    public Path getSrcdir() {
+        return src;
+    }
+
     public void setSrcdir(final Path dir) {
         assert dir != null;
 
         if (src == null) {
             src = dir;
-        }
-        else {
+        } else {
             src.append(dir);
         }
-    }
-
-    public Path getSrcdir() {
-        return src;
     }
 
     public void setDestdir(final File dir) {
@@ -78,19 +77,18 @@ public class UberCompileTask extends Task {
         this.destdir = dir;
     }
 
+    public Path getClasspath() {
+        return classpath;
+    }
+
     public void setClasspath(final Path path) {
         assert path != null;
 
         if (classpath == null) {
             classpath = path;
-        }
-        else {
+        } else {
             classpath.append(path);
         }
-    }
-
-    public Path getClasspath() {
-        return classpath;
     }
 
     public Path createClasspath() {
@@ -198,11 +196,10 @@ public class UberCompileTask extends Task {
         groovyc.execute();
     }
 
-    private File createTempDir()  {
+    private File createTempDir() {
         try {
             return DefaultGroovyStaticMethods.createTempDir(null, "groovy-", "stubs");
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new BuildException(e, getLocation());
         }
     }

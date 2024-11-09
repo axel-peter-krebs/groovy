@@ -28,4 +28,6 @@ class Groovy4046Bug extends GroovyTestCase {
     }
 }
 
-enum MyEnum4046 { A, B, C }
+enum MyEnum4046 {
+    A, B, C
+}

@@ -121,90 +121,8 @@ import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
  */
 public class InitializerStrategy extends BuilderASTTransformation.AbstractBuilderStrategy {
 
-    /**
-     * Internal phantom type used by the {@code InitializerStrategy} to indicate that a property has been set. It is used in conjunction with the generated parameterized type helper class.
-     */
-    public abstract static class SET {
-    }
-
-    /**
-     * Internal phantom type used by the {@code InitializerStrategy} to indicate that a property remains unset. It is used in conjunction with the generated parameterized type helper class.
-     */
-    public abstract static class UNSET {
-    }
-
     private static final Expression DEFAULT_INITIAL_VALUE = null;
     private static final ClassNode TUPLECONS_TYPE = ClassHelper.make(TupleConstructor.class);
-
-    @Override
-    public void build(BuilderASTTransformation transform, AnnotatedNode annotatedNode, AnnotationNode anno) {
-        if (unsupportedAttribute(transform, anno, "forClass")) return;
-        if (unsupportedAttribute(transform, anno, "allProperties")) return;
-        boolean useSetters = transform.memberHasValue(anno, "useSetters", true);
-        boolean allNames = transform.memberHasValue(anno, "allNames", true);
-        boolean force = transform.memberHasValue(anno, "force", true);
-        if (annotatedNode instanceof ClassNode) {
-            createBuilderForAnnotatedClass(transform, (ClassNode) annotatedNode, anno, useSetters, allNames, force);
-        } else if (annotatedNode instanceof MethodNode) {
-            if (annotatedNode.getNodeMetaData("PSEUDO_CONSTRUCTOR") != null) {
-                transform.addError("Error during " + BuilderASTTransformation.MY_TYPE_NAME +
-                    " processing: building for the canonical constructor of records not supported by " + getClass().getSimpleName(), annotatedNode);
-                return;
-            }
-            createBuilderForAnnotatedMethod(transform, (MethodNode) annotatedNode, anno, useSetters);
-        }
-    }
-
-    private void createBuilderForAnnotatedClass(BuilderASTTransformation transform, ClassNode buildee, AnnotationNode anno, boolean useSetters, boolean allNames, boolean force) {
-        List<String> excludes = new ArrayList<>();
-        List<String> includes = new ArrayList<>();
-        includes.add(Undefined.STRING);
-        if (!getIncludeExclude(transform, anno, buildee, excludes, includes)) return;
-        if (includes.size() == 1 && Undefined.isUndefined(includes.get(0))) includes = null;
-        List<FieldNode> fields = getFields(transform, anno, buildee);
-        List<FieldNode> filteredFields = filterFields(fields, includes, excludes, allNames);
-        if (filteredFields.isEmpty()) {
-            transform.addError("Error during " + BuilderASTTransformation.MY_TYPE_NAME +
-                " processing: at least one property is required for this strategy", anno);
-        }
-        ClassNode builder = createInnerHelperClass(buildee, getBuilderClassName(buildee, anno), filteredFields.size());
-        filteredFields = addFields(buildee, filteredFields, builder);
-
-        buildCommon(buildee, anno, filteredFields, builder);
-        boolean needsConstructor = !AnnotatedNodeUtils.hasAnnotation(buildee, TUPLECONS_TYPE) || force;
-        createBuildeeConstructors(buildee, builder, filteredFields, needsConstructor, useSetters);
-    }
-
-    private void createBuilderForAnnotatedMethod(BuilderASTTransformation transform, MethodNode mNode, AnnotationNode anno, boolean useSetters) {
-        if (transform.getMemberValue(anno, "includes") != null || transform.getMemberValue(anno, "excludes") != null) {
-            transform.addError("Error during " + BuilderASTTransformation.MY_TYPE_NAME +
-                " processing: includes/excludes only allowed on classes", anno);
-        }
-        if (mNode instanceof ConstructorNode) {
-            mNode.setModifiers(ACC_PRIVATE);
-        } else {
-            if (!mNode.isStatic()) {
-                transform.addError("Error during " + BuilderASTTransformation.MY_TYPE_NAME +
-                    " processing: method builders only allowed on static methods", anno);
-            }
-            mNode.setModifiers(ACC_SYNTHETIC | ACC_PRIVATE | ACC_STATIC);
-        }
-        ClassNode buildee = mNode.getDeclaringClass();
-        Parameter[] parameters = mNode.getParameters();
-        if (parameters.length == 0) {
-            transform.addError("Error during " + BuilderASTTransformation.MY_TYPE_NAME +
-                " processing: at least one parameter is required for this strategy", anno);
-        }
-        ClassNode builder = createInnerHelperClass(buildee, getBuilderClassName(buildee, anno), parameters.length);
-        List<FieldNode> convertedFields = convertParamsToFields(builder, parameters);
-
-        buildCommon(buildee, anno, convertedFields, builder);
-        if (mNode instanceof ConstructorNode) {
-            createBuildeeConstructors(buildee, builder, convertedFields, false, useSetters);
-        } else {
-            createBuildeeMethods(buildee, mNode, builder, convertedFields);
-        }
-    }
 
     private static String getBuilderClassName(ClassNode buildee, AnnotationNode anno) {
         return getMemberStringValue(anno, "builderClassName", buildee.getNameWithoutPackage() + "Initializer");
@@ -218,19 +136,6 @@ public class InitializerStrategy extends BuilderASTTransformation.AbstractBuilde
             result.add(fieldCopy);
         }
         return result;
-    }
-
-    private void buildCommon(ClassNode buildee, AnnotationNode anno, List<FieldNode> fieldNodes, ClassNode builder) {
-        String prefix = getMemberStringValue(anno, "prefix", "");
-        String buildMethodName = getMemberStringValue(anno, "buildMethodName", "create");
-        addGeneratedInnerClass(buildee, builder);
-        createBuilderConstructors(builder, buildee, fieldNodes);
-        String builderMethodName = getMemberStringValue(anno, "builderMethodName", "createInitializer");
-        addGeneratedMethod(buildee, createBuilderMethod(buildMethodName, builder, fieldNodes.size(), builderMethodName));
-        for (int i = 0; i < fieldNodes.size(); i++) {
-            addGeneratedMethod(builder, createBuilderMethodForField(builder, fieldNodes, prefix, i));
-        }
-        addGeneratedMethod(builder, createBuildMethod(builder, buildMethodName, fieldNodes));
     }
 
     private static List<FieldNode> convertParamsToFields(ClassNode builder, Parameter[] parameters) {
@@ -342,27 +247,6 @@ public class InitializerStrategy extends BuilderASTTransformation.AbstractBuilde
         return new MethodNode(buildMethodName, ACC_PUBLIC | ACC_STATIC, returnType, NO_PARAMS, NO_EXCEPTIONS, block(returnS(ctorX(returnType))));
     }
 
-    private MethodNode createBuilderMethodForField(ClassNode builder, List<FieldNode> fields, String prefix, int fieldPos) {
-        String fieldName = fields.get(fieldPos).getName();
-        String baseName = fieldName.substring(1);
-        String setterName = getSetterName(prefix, baseName);
-        GenericsType[] gtypes = new GenericsType[fields.size()];
-        List<Expression> argList = new ArrayList<>();
-        for (int i = 0; i < fields.size(); i++) {
-            gtypes[i] = i == fieldPos ? new GenericsType(ClassHelper.make(SET.class)) : makePlaceholder(i);
-            argList.add(propX(varX("this"), constX(fields.get(i).getName())));
-        }
-        ClassNode returnType = makeClassSafeWithGenerics(builder, gtypes);
-        FieldNode fNode = fields.get(fieldPos);
-        Map<String, ClassNode> genericsSpec = createGenericsSpec(fNode.getDeclaringClass());
-        extractSuperClassGenerics(fNode.getType(), builder, genericsSpec);
-        ClassNode correctedType = correctToGenericsSpecRecurse(genericsSpec, fNode.getType());
-        return new MethodNode(setterName, ACC_PUBLIC, returnType, params(param(correctedType, baseName)), NO_EXCEPTIONS, block(
-            stmt(assignX(propX(varX("this"), constX(fieldName)), varX(baseName, correctedType))),
-            returnS(ctorX(returnType, args(argList)))
-        ));
-    }
-
     private static GenericsType makePlaceholder(int i) {
         ClassNode type = ClassHelper.makeWithoutCaching("T" + i);
         type.setRedirect(OBJECT_TYPE);
@@ -398,5 +282,121 @@ public class InitializerStrategy extends BuilderASTTransformation.AbstractBuilde
                 )
             );
         }
+    }
+
+    @Override
+    public void build(BuilderASTTransformation transform, AnnotatedNode annotatedNode, AnnotationNode anno) {
+        if (unsupportedAttribute(transform, anno, "forClass")) return;
+        if (unsupportedAttribute(transform, anno, "allProperties")) return;
+        boolean useSetters = transform.memberHasValue(anno, "useSetters", true);
+        boolean allNames = transform.memberHasValue(anno, "allNames", true);
+        boolean force = transform.memberHasValue(anno, "force", true);
+        if (annotatedNode instanceof ClassNode) {
+            createBuilderForAnnotatedClass(transform, (ClassNode) annotatedNode, anno, useSetters, allNames, force);
+        } else if (annotatedNode instanceof MethodNode) {
+            if (annotatedNode.getNodeMetaData("PSEUDO_CONSTRUCTOR") != null) {
+                transform.addError("Error during " + BuilderASTTransformation.MY_TYPE_NAME +
+                    " processing: building for the canonical constructor of records not supported by " + getClass().getSimpleName(), annotatedNode);
+                return;
+            }
+            createBuilderForAnnotatedMethod(transform, (MethodNode) annotatedNode, anno, useSetters);
+        }
+    }
+
+    private void createBuilderForAnnotatedClass(BuilderASTTransformation transform, ClassNode buildee, AnnotationNode anno, boolean useSetters, boolean allNames, boolean force) {
+        List<String> excludes = new ArrayList<>();
+        List<String> includes = new ArrayList<>();
+        includes.add(Undefined.STRING);
+        if (!getIncludeExclude(transform, anno, buildee, excludes, includes)) return;
+        if (includes.size() == 1 && Undefined.isUndefined(includes.get(0))) includes = null;
+        List<FieldNode> fields = getFields(transform, anno, buildee);
+        List<FieldNode> filteredFields = filterFields(fields, includes, excludes, allNames);
+        if (filteredFields.isEmpty()) {
+            transform.addError("Error during " + BuilderASTTransformation.MY_TYPE_NAME +
+                " processing: at least one property is required for this strategy", anno);
+        }
+        ClassNode builder = createInnerHelperClass(buildee, getBuilderClassName(buildee, anno), filteredFields.size());
+        filteredFields = addFields(buildee, filteredFields, builder);
+
+        buildCommon(buildee, anno, filteredFields, builder);
+        boolean needsConstructor = !AnnotatedNodeUtils.hasAnnotation(buildee, TUPLECONS_TYPE) || force;
+        createBuildeeConstructors(buildee, builder, filteredFields, needsConstructor, useSetters);
+    }
+
+    private void createBuilderForAnnotatedMethod(BuilderASTTransformation transform, MethodNode mNode, AnnotationNode anno, boolean useSetters) {
+        if (transform.getMemberValue(anno, "includes") != null || transform.getMemberValue(anno, "excludes") != null) {
+            transform.addError("Error during " + BuilderASTTransformation.MY_TYPE_NAME +
+                " processing: includes/excludes only allowed on classes", anno);
+        }
+        if (mNode instanceof ConstructorNode) {
+            mNode.setModifiers(ACC_PRIVATE);
+        } else {
+            if (!mNode.isStatic()) {
+                transform.addError("Error during " + BuilderASTTransformation.MY_TYPE_NAME +
+                    " processing: method builders only allowed on static methods", anno);
+            }
+            mNode.setModifiers(ACC_SYNTHETIC | ACC_PRIVATE | ACC_STATIC);
+        }
+        ClassNode buildee = mNode.getDeclaringClass();
+        Parameter[] parameters = mNode.getParameters();
+        if (parameters.length == 0) {
+            transform.addError("Error during " + BuilderASTTransformation.MY_TYPE_NAME +
+                " processing: at least one parameter is required for this strategy", anno);
+        }
+        ClassNode builder = createInnerHelperClass(buildee, getBuilderClassName(buildee, anno), parameters.length);
+        List<FieldNode> convertedFields = convertParamsToFields(builder, parameters);
+
+        buildCommon(buildee, anno, convertedFields, builder);
+        if (mNode instanceof ConstructorNode) {
+            createBuildeeConstructors(buildee, builder, convertedFields, false, useSetters);
+        } else {
+            createBuildeeMethods(buildee, mNode, builder, convertedFields);
+        }
+    }
+
+    private void buildCommon(ClassNode buildee, AnnotationNode anno, List<FieldNode> fieldNodes, ClassNode builder) {
+        String prefix = getMemberStringValue(anno, "prefix", "");
+        String buildMethodName = getMemberStringValue(anno, "buildMethodName", "create");
+        addGeneratedInnerClass(buildee, builder);
+        createBuilderConstructors(builder, buildee, fieldNodes);
+        String builderMethodName = getMemberStringValue(anno, "builderMethodName", "createInitializer");
+        addGeneratedMethod(buildee, createBuilderMethod(buildMethodName, builder, fieldNodes.size(), builderMethodName));
+        for (int i = 0; i < fieldNodes.size(); i++) {
+            addGeneratedMethod(builder, createBuilderMethodForField(builder, fieldNodes, prefix, i));
+        }
+        addGeneratedMethod(builder, createBuildMethod(builder, buildMethodName, fieldNodes));
+    }
+
+    private MethodNode createBuilderMethodForField(ClassNode builder, List<FieldNode> fields, String prefix, int fieldPos) {
+        String fieldName = fields.get(fieldPos).getName();
+        String baseName = fieldName.substring(1);
+        String setterName = getSetterName(prefix, baseName);
+        GenericsType[] gtypes = new GenericsType[fields.size()];
+        List<Expression> argList = new ArrayList<>();
+        for (int i = 0; i < fields.size(); i++) {
+            gtypes[i] = i == fieldPos ? new GenericsType(ClassHelper.make(SET.class)) : makePlaceholder(i);
+            argList.add(propX(varX("this"), constX(fields.get(i).getName())));
+        }
+        ClassNode returnType = makeClassSafeWithGenerics(builder, gtypes);
+        FieldNode fNode = fields.get(fieldPos);
+        Map<String, ClassNode> genericsSpec = createGenericsSpec(fNode.getDeclaringClass());
+        extractSuperClassGenerics(fNode.getType(), builder, genericsSpec);
+        ClassNode correctedType = correctToGenericsSpecRecurse(genericsSpec, fNode.getType());
+        return new MethodNode(setterName, ACC_PUBLIC, returnType, params(param(correctedType, baseName)), NO_EXCEPTIONS, block(
+            stmt(assignX(propX(varX("this"), constX(fieldName)), varX(baseName, correctedType))),
+            returnS(ctorX(returnType, args(argList)))
+        ));
+    }
+
+    /**
+     * Internal phantom type used by the {@code InitializerStrategy} to indicate that a property has been set. It is used in conjunction with the generated parameterized type helper class.
+     */
+    public abstract static class SET {
+    }
+
+    /**
+     * Internal phantom type used by the {@code InitializerStrategy} to indicate that a property remains unset. It is used in conjunction with the generated parameterized type helper class.
+     */
+    public abstract static class UNSET {
     }
 }

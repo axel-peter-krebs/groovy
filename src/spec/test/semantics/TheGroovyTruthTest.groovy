@@ -49,7 +49,7 @@ class TheGroovyTruthTest extends GroovyTestCase {
         // end::iterator_enumeration_truth[]
 
         // tag::map_truth[]
-        assert ['one' : 1]
+        assert ['one': 1]
         assert ![:]
         // end::map_truth[]
 
@@ -81,7 +81,7 @@ class TheGroovyTruthTest extends GroovyTestCase {
                 String name
 
                 boolean asBoolean(){
-                    name == 'green' ? true : false 
+                    name == 'green' ? true : false
                 }
             }
             // end::asBoolean_object[]

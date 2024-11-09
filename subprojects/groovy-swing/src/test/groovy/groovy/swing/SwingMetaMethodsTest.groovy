@@ -36,7 +36,7 @@ class SwingMetaMethodsTest extends GroovySwingTestCase {
             assert container.size() == 2
             assert container[0] == c0
             assert container[1] == c1
-            assert container.collect([]) {it} == [c0, c1]
+            assert container.collect([]) { it } == [c0, c1]
             container.clear()
             assert container.size() == 0
         }
@@ -55,7 +55,7 @@ class SwingMetaMethodsTest extends GroovySwingTestCase {
             assert buttonGroup.size() == 2
             assert buttonGroup[0] == c0
             assert buttonGroup[1] == c1
-            assert buttonGroup.collect([]) {it} == [c0, c1]
+            assert buttonGroup.collect([]) { it } == [c0, c1]
         }
     }
 
@@ -63,8 +63,8 @@ class SwingMetaMethodsTest extends GroovySwingTestCase {
         testInEDT {
             def list = [1, 2, 3, 4, 5]
             def model = [
-                    getSize: {-> list.size() },
-                    getElementAt: {int i -> list[i] }
+                getSize     : { -> list.size() },
+                getElementAt: { int i -> list[i] }
             ] as AbstractListModel
 
             assert model.size() == list.size()
@@ -101,7 +101,7 @@ class SwingMetaMethodsTest extends GroovySwingTestCase {
             assert combo.size() == 2
             assert combo[0] == item0
             assert combo[1] == item1
-            assert combo.collect([]) {it} == [item0, item1]
+            assert combo.collect([]) { it } == [item0, item1]
             combo.clear()
             assert combo.size() == 0
         }
@@ -127,19 +127,19 @@ class SwingMetaMethodsTest extends GroovySwingTestCase {
     void testTableModel() {
         testInEDT {
             def data = [
-                    [1, 11, 111, 1111],
-                    [2, 22, 222, 2222],
-                    [3, 33, 333, 3333]
+                [1, 11, 111, 1111],
+                [2, 22, 222, 2222],
+                [3, 33, 333, 3333]
             ]
             def model = [
-                    getColumnCount: {-> 4 },
-                    getRowCount: {-> 3 },
-                    getValueAt: {int r, int c -> data[r][c] }
+                getColumnCount: { -> 4 },
+                getRowCount   : { -> 3 },
+                getValueAt    : { int r, int c -> data[r][c] }
             ] as AbstractTableModel
 
             assert model.size() == 3
             assert model[1] == [2, 22, 222, 2222]
-            assert [1, 2, 3] == model.collect([]) {row -> row[0] }
+            assert [1, 2, 3] == model.collect([]) { row -> row[0] }
         }
     }
 
@@ -190,12 +190,12 @@ class SwingMetaMethodsTest extends GroovySwingTestCase {
             def path = new TreePath(["A", "B"] as Object[])
             assert path.size() == 2
             assert "A" == path[0]
-            assert ["A", "B"] == path.collect([]) {it}
+            assert ["A", "B"] == path.collect([]) { it }
 
             path = path << "C"
             assert path.size() == 3
             assert "C" == path[2]
-            assert ["A", "B", "C"] == path.collect([]) {it}
+            assert ["A", "B", "C"] == path.collect([]) { it }
         }
     }
 
@@ -239,7 +239,7 @@ class SwingMetaMethodsTest extends GroovySwingTestCase {
             def i = 4
             menu << "item$i"
             assert menu.size() == 5
-            assert label == menu.find {it instanceof JLabel}
+            assert label == menu.find { it instanceof JLabel }
         }
     }
 
@@ -274,7 +274,7 @@ class SwingMetaMethodsTest extends GroovySwingTestCase {
             def i = 4
             popupMenu << "item$i"
             assert popupMenu.size() == 5
-            assert popupMenu.find {it.text == "item3"}
+            assert popupMenu.find { it.text == "item3" }
         }
     }
 
@@ -289,7 +289,7 @@ class SwingMetaMethodsTest extends GroovySwingTestCase {
             tabbedPane << c1
             assert tabbedPane.size() == 2
             assert tabbedPane[0] == c0
-            assert [c0, c1] == tabbedPane.collect([]) {it}
+            assert [c0, c1] == tabbedPane.collect([]) { it }
             tabbedPane.clear()
             assert tabbedPane.size() == 0
         }
@@ -306,7 +306,7 @@ class SwingMetaMethodsTest extends GroovySwingTestCase {
             toolBar << c1
             assert toolBar.size() == 2
             assert toolBar[0] == c0
-            assert [c0, c1] == toolBar.collect([]) {it}
+            assert [c0, c1] == toolBar.collect([]) { it }
         }
     }
 }

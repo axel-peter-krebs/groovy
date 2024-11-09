@@ -18,47 +18,48 @@ import groovy.test.GroovyTestCase
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 class ClosuresSpecTest extends GroovyTestCase {
     static void sink(Closure cl) {}
 
     void testClosureSyntax() {
         sink
-                // tag::closure_syntax_1[]
-                { item++ }                                          // <1>
-                // end::closure_syntax_1[]
+            // tag::closure_syntax_1[]
+            { item++ }                                          // <1>
+        // end::closure_syntax_1[]
         sink
-                // tag::closure_syntax_1bis[]
-                { -> item++ }                                       // <2>
-                // end::closure_syntax_1bis[]
+            // tag::closure_syntax_1bis[]
+            { -> item++ }                                       // <2>
+        // end::closure_syntax_1bis[]
         sink
-                // tag::closure_syntax_2[]
-                { println it }                                      // <3>
-                // end::closure_syntax_2[]
+            // tag::closure_syntax_2[]
+            { println it }                                      // <3>
+        // end::closure_syntax_2[]
 
         sink
-                // tag::closure_syntax_3[]
-                { it -> println it }                                // <4>
-                // end::closure_syntax_3[]
+            // tag::closure_syntax_3[]
+            { it -> println it }                                // <4>
+        // end::closure_syntax_3[]
 
         sink
-                // tag::closure_syntax_4[]
-                { name -> println name }                            // <5>
-                // end::closure_syntax_4[]
+            // tag::closure_syntax_4[]
+            { name -> println name }                            // <5>
+        // end::closure_syntax_4[]
 
         sink
-                // tag::closure_syntax_5[]
-                { String x, int y ->                                // <6>
-                    println "hey ${x} the value is ${y}"
-                }
-                // end::closure_syntax_5[]
+            // tag::closure_syntax_5[]
+            { String x, int y ->                                // <6>
+                println "hey ${x} the value is ${y}"
+            }
+        // end::closure_syntax_5[]
 
         sink
-                // tag::closure_syntax_6[]
-                { reader ->                                         // <7>
-                    def line = reader.readLine()
-                    line.trim()
-                }
-                // end::closure_syntax_6[]
+            // tag::closure_syntax_6[]
+            { reader ->                                         // <7>
+                def line = reader.readLine()
+                line.trim()
+            }
+        // end::closure_syntax_6[]
     }
 
     void testAssignClosureToAVariable() {
@@ -84,11 +85,11 @@ class ClosuresSpecTest extends GroovyTestCase {
         // end::closure_call_1_explicit[]
 
         // tag::closure_call_2[]
-        def isOdd = { int i -> i%2 != 0 }                           // <1>
+        def isOdd = { int i -> i % 2 != 0 }                           // <1>
         assert isOdd(3) == true                                     // <2>
         assert isOdd.call(2) == false                               // <3>
 
-        def isEven = { it%2 == 0 }                                  // <4>
+        def isEven = { it % 2 == 0 }                                  // <4>
         assert isEven(3) == false                                   // <5>
         assert isEven.call(2) == true                               // <6>
         // end::closure_call_2[]
@@ -102,16 +103,16 @@ class ClosuresSpecTest extends GroovyTestCase {
         def closureWithOneArgAndExplicitType = { String str -> str.toUpperCase() }
         assert closureWithOneArgAndExplicitType('groovy') == 'GROOVY'
 
-        def closureWithTwoArgs = { a,b -> a+b }
-        assert closureWithTwoArgs(1,2) == 3
+        def closureWithTwoArgs = { a, b -> a + b }
+        assert closureWithTwoArgs(1, 2) == 3
 
-        def closureWithTwoArgsAndExplicitTypes = { int a, int b -> a+b }
-        assert closureWithTwoArgsAndExplicitTypes(1,2) == 3
+        def closureWithTwoArgsAndExplicitTypes = { int a, int b -> a + b }
+        assert closureWithTwoArgsAndExplicitTypes(1, 2) == 3
 
-        def closureWithTwoArgsAndOptionalTypes = { a, int b -> a+b }
-        assert closureWithTwoArgsAndOptionalTypes(1,2) == 3
+        def closureWithTwoArgsAndOptionalTypes = { a, int b -> a + b }
+        assert closureWithTwoArgsAndOptionalTypes(1, 2) == 3
 
-        def closureWithTwoArgAndDefaultValue = { int a, int b=2 -> a+b }
+        def closureWithTwoArgAndDefaultValue = { int a, int b = 2 -> a + b }
         assert closureWithTwoArgAndDefaultValue(1) == 3
         // end::closure_param_declaration[]
     }
@@ -149,14 +150,14 @@ class ClosuresSpecTest extends GroovyTestCase {
     void testClosureVargs() {
         // tag::closure_vargs[]
         def concat1 = { String... args -> args.join('') }           // <1>
-        assert concat1('abc','def') == 'abcdef'                     // <2>
+        assert concat1('abc', 'def') == 'abcdef'                     // <2>
         def concat2 = { String[] args -> args.join('') }            // <3>
         assert concat2('abc', 'def') == 'abcdef'
 
         def multiConcat = { int n, String... args ->                // <4>
-            args.join('')*n
+            args.join('') * n
         }
-        assert multiConcat(2, 'abc','def') == 'abcdefabcdef'
+        assert multiConcat(2, 'abc', 'def') == 'abcdefabcdef'
         // end::closure_vargs[]
 
     }
@@ -476,7 +477,7 @@ class ClosuresSpecTest extends GroovyTestCase {
 
     void testLeftCurry() {
         // tag::left_curry[]
-        def nCopies = { int n, String str -> str*n }    // <1>
+        def nCopies = { int n, String str -> str * n }    // <1>
         def twice = nCopies.curry(2)                    // <2>
         assert twice('bla') == 'blabla'                 // <3>
         assert twice('bla') == nCopies(2, 'bla')        // <4>
@@ -485,7 +486,7 @@ class ClosuresSpecTest extends GroovyTestCase {
 
     void testRightCurry() {
         // tag::right_curry[]
-        def nCopies = { int n, String str -> str*n }    // <1>
+        def nCopies = { int n, String str -> str * n }    // <1>
         def blah = nCopies.rcurry('bla')                // <2>
         assert blah(2) == 'blabla'                      // <3>
         assert blah(2) == nCopies(2, 'bla')             // <4>
@@ -494,7 +495,7 @@ class ClosuresSpecTest extends GroovyTestCase {
 
     void testNCurry() {
         // tag::ncurry[]
-        def volume = { double l, double w, double h -> l*w*h }      // <1>
+        def volume = { double l, double w, double h -> l * w * h }      // <1>
         def fixedWidthVolume = volume.ncurry(1, 2d)                 // <2>
         assert volume(3d, 2d, 4d) == fixedWidthVolume(3d, 4d)       // <3>
         def fixedWidthAndHeight = volume.ncurry(1, 2d, 4d)          // <4>
@@ -505,18 +506,18 @@ class ClosuresSpecTest extends GroovyTestCase {
     void testMemoize() {
         // tag::naive_fib[]
         def fib
-        fib = { long n -> n<2?n:fib(n-1)+fib(n-2) }
+        fib = { long n -> n < 2 ? n : fib(n - 1) + fib(n - 2) }
         assert fib(15) == 610 // slow!
         // end::naive_fib[]
         // tag::memoized_fib[]
-        fib = { long n -> n<2?n:fib(n-1)+fib(n-2) }.memoize()
+        fib = { long n -> n < 2 ? n : fib(n - 1) + fib(n - 2) }.memoize()
         assert fib(25) == 75025 // fast!
         // end::memoized_fib[]
     }
 
     void testComposition() {
         // tag::closure_composition[]
-        def plus2  = { it + 2 }
+        def plus2 = { it + 2 }
         def times3 = { it * 3 }
 
         def times3plus2 = plus2 << times3
@@ -542,8 +543,8 @@ class ClosuresSpecTest extends GroovyTestCase {
         }
         factorial = factorial.trampoline()
 
-        assert factorial(1)    == 1
-        assert factorial(3)    == 1 * 2 * 3
+        assert factorial(1) == 1
+        assert factorial(3) == 1 * 2 * 3
         assert factorial(1000) // == 402387260.. plus another 2560 digits
         // end::trampoline[]
     }

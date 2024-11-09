@@ -36,21 +36,21 @@ public class ArrayOperations {
 }
 """
 
-def genInners () {
+def genInners() {
     def res = ''
 
     final Map primitives = [
-            'boolean': 'Boolean',
-            'byte': 'Byte',
-            'char': 'Character',
-            'short': 'Short',
-            'int': 'Integer',
-            'long': 'Long',
-            'float': 'Float',
-            'double': 'Double'
+        'boolean': 'Boolean',
+        'byte'   : 'Byte',
+        'char'   : 'Character',
+        'short'  : 'Short',
+        'int'    : 'Integer',
+        'long'   : 'Long',
+        'float'  : 'Float',
+        'double' : 'Double'
     ]
 
-    primitives.each {primName, clsName ->
+    primitives.each { primName, clsName ->
         res += """
          public static class ${clsName}ArrayGetAtMetaMethod extends ArrayGetAtMetaMethod {
             private static final CachedClass ARR_CLASS = ReflectionCache.getCachedClass(${primName}[].class);

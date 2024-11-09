@@ -172,68 +172,58 @@ import static groovy.lang.groovydoc.Groovydoc.EMPTY_GROOVYDOC;
 public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
 
     public static final Class[] ADDITIONAL_CLASSES = {
-            NumberNumberPlus.class,
-            NumberNumberMultiply.class,
-            NumberNumberMinus.class,
-            NumberNumberDiv.class,
-            ObjectArrayGetAtMetaMethod.class,
-            ObjectArrayPutAtMetaMethod.class,
-            BooleanArrayGetAtMetaMethod.class,
-            BooleanArrayPutAtMetaMethod.class,
-            ByteArrayGetAtMetaMethod.class,
-            ByteArrayPutAtMetaMethod.class,
-            CharacterArrayGetAtMetaMethod.class,
-            CharacterArrayPutAtMetaMethod.class,
-            ShortArrayGetAtMetaMethod.class,
-            ShortArrayPutAtMetaMethod.class,
-            IntegerArrayGetAtMetaMethod.class,
-            IntegerArrayPutAtMetaMethod.class,
-            LongArrayGetAtMetaMethod.class,
-            LongArrayPutAtMetaMethod.class,
-            FloatArrayGetAtMetaMethod.class,
-            FloatArrayPutAtMetaMethod.class,
-            DoubleArrayGetAtMetaMethod.class,
-            DoubleArrayPutAtMetaMethod.class,
+        NumberNumberPlus.class,
+        NumberNumberMultiply.class,
+        NumberNumberMinus.class,
+        NumberNumberDiv.class,
+        ObjectArrayGetAtMetaMethod.class,
+        ObjectArrayPutAtMetaMethod.class,
+        BooleanArrayGetAtMetaMethod.class,
+        BooleanArrayPutAtMetaMethod.class,
+        ByteArrayGetAtMetaMethod.class,
+        ByteArrayPutAtMetaMethod.class,
+        CharacterArrayGetAtMetaMethod.class,
+        CharacterArrayPutAtMetaMethod.class,
+        ShortArrayGetAtMetaMethod.class,
+        ShortArrayPutAtMetaMethod.class,
+        IntegerArrayGetAtMetaMethod.class,
+        IntegerArrayPutAtMetaMethod.class,
+        LongArrayGetAtMetaMethod.class,
+        LongArrayPutAtMetaMethod.class,
+        FloatArrayGetAtMetaMethod.class,
+        FloatArrayPutAtMetaMethod.class,
+        DoubleArrayGetAtMetaMethod.class,
+        DoubleArrayPutAtMetaMethod.class,
     };
     public static final Class[] DGM_LIKE_CLASSES = {
-            ArrayGroovyMethods.class,
-            DefaultGroovyMethods.class,
-            EncodingGroovyMethods.class,
-            IOGroovyMethods.class,
-            ProcessGroovyMethods.class,
-            ResourceGroovyMethods.class,
-            SocketGroovyMethods.class,
-            StreamGroovyMethods.class,
-            StringGroovyMethods.class,
-            /* registered extensions:
-            DateUtilExtensions.class,
-            DateTimeExtensions.class,
-            DateTimeStaticExtensions.class,
-            NioExtensions.class,
-            SqlExtensions.class,
-            SwingGroovyMethods.class,
-            XmlExtensions.class,
-            */
+        ArrayGroovyMethods.class,
+        DefaultGroovyMethods.class,
+        EncodingGroovyMethods.class,
+        IOGroovyMethods.class,
+        ProcessGroovyMethods.class,
+        ResourceGroovyMethods.class,
+        SocketGroovyMethods.class,
+        StreamGroovyMethods.class,
+        StringGroovyMethods.class,
+        /* registered extensions:
+        DateUtilExtensions.class,
+        DateTimeExtensions.class,
+        DateTimeStaticExtensions.class,
+        NioExtensions.class,
+        SqlExtensions.class,
+        SwingGroovyMethods.class,
+        XmlExtensions.class,
+        */
     };
 
     private static final BigInteger BI_INT_MAX = BigInteger.valueOf(Integer.MAX_VALUE);
     private static final BigInteger BI_INT_MIN = BigInteger.valueOf(Integer.MIN_VALUE);
-    private static final BigInteger BI_LONG_MAX = BigInteger.valueOf(  Long.MAX_VALUE);
-    private static final BigInteger BI_LONG_MIN = BigInteger.valueOf(  Long.MIN_VALUE);
-
-    private static class NumberAwareValueComparator<K, V> implements Comparator<Map.Entry<K, V>> {
-        private final Comparator<V> delegate = new NumberAwareComparator<>();
-
-        @Override
-        public int compare(Map.Entry<K, V> e1, Map.Entry<K, V> e2) {
-            return delegate.compare(e1.getValue(), e2.getValue());
-        }
-    }
-
+    private static final BigInteger BI_LONG_MAX = BigInteger.valueOf(Long.MAX_VALUE);
+    private static final BigInteger BI_LONG_MIN = BigInteger.valueOf(Long.MIN_VALUE);
     private static final NumberAwareComparator<Comparable> COMPARABLE_NUMBER_AWARE_COMPARATOR = new NumberAwareComparator<>();
 
     // internal helper method
-    protected static <T> T callClosureForLine(@ClosureParams(value=FromString.class, options={"String","String,Integer"}) Closure<T> closure, String line, int counter) {
+    protected static <T> T callClosureForLine(@ClosureParams(value = FromString.class, options = {"String", "String,Integer"}) Closure<T> closure, String line, int counter) {
         if (closure.getMaximumNumberOfParameters() == 2) {
             return closure.call(line, counter);
         }
@@ -241,7 +231,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     // internal helper method
-    protected static <T, K, V> T callClosureForMapEntry(@ClosureParams(value=FromString.class, options={"K,V","Map.Entry<K,V>"}) Closure<T> closure, Map.Entry<K,V> entry) {
+    protected static <T, K, V> T callClosureForMapEntry(@ClosureParams(value = FromString.class, options = {"K,V", "Map.Entry<K,V>"}) Closure<T> closure, Map.Entry<K, V> entry) {
         if (closure.getMaximumNumberOfParameters() == 2) {
             return closure.call(entry.getKey(), entry.getValue());
         }
@@ -249,7 +239,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     // internal helper method
-    protected static <T, K, V> T callClosureForMapEntryAndCounter(@ClosureParams(value=FromString.class, options={"K,V,Integer", "K,V","Map.Entry<K,V>"}) Closure<T> closure, Map.Entry<K,V> entry, int counter) {
+    protected static <T, K, V> T callClosureForMapEntryAndCounter(@ClosureParams(value = FromString.class, options = {"K,V,Integer", "K,V", "Map.Entry<K,V>"}) Closure<T> closure, Map.Entry<K, V> entry, int counter) {
         if (closure.getMaximumNumberOfParameters() == 3) {
             return closure.call(entry.getKey(), entry.getValue(), counter);
         }
@@ -264,22 +254,18 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         if (object == NullObject.getNullObject()) {
             object = null; // GROOVY-4526, et al.
         }
-        @SuppressWarnings("unchecked")
-        final Closure<T> clone = (Closure<T>) closure.clone();
+        @SuppressWarnings("unchecked") final Closure<T> clone = (Closure<T>) closure.clone();
         clone.setResolveStrategy(Closure.DELEGATE_FIRST);
         clone.setDelegate(object);
         T result = clone.call(object);
         return new Tuple2<>(result, object);
     }
 
-    //--------------------------------------------------------------------------
-    // abs
-
     /**
      * Gets the absolute value.
      * <p>
      * Note: This method is NOT called if number is a BigInteger or BigDecimal,
-     *       because those classes implement a method with a better exact match.
+     * because those classes implement a method with a better exact match.
      *
      * @param number a Number
      * @return the absolute value of that Number
@@ -288,6 +274,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static int abs(Number number) {
         return Math.abs(number.intValue());
     }
+
+    //--------------------------------------------------------------------------
+    // abs
 
     /**
      * Gets the absolute value.
@@ -322,29 +311,29 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return Math.abs(number);
     }
 
-    //--------------------------------------------------------------------------
-    // addAll
-
     /**
      * Adds all items from the iterator to the Collection.
      *
-     * @param self the collection
+     * @param self  the collection
      * @param items the items to add
      * @return true if the collection changed
      */
     public static <T> boolean addAll(Collection<T> self, Iterator<? extends T> items) {
         boolean changed = false;
         while (items.hasNext()) {
-            T next =  items.next();
+            T next = items.next();
             if (self.add(next)) changed = true;
         }
         return changed;
     }
 
+    //--------------------------------------------------------------------------
+    // addAll
+
     /**
      * Adds all items from the iterable to the Collection.
      *
-     * @param self the collection
+     * @param self  the collection
      * @param items the items to add
      * @return true if the collection changed
      */
@@ -364,10 +353,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * See also {@code plus} or the '+' operator if wanting to produce a new collection
      * containing additional items but while leaving the original collection unchanged.
      *
-     * @param  self  a Collection to be modified
-     * @param  items array containing elements to be added to this collection
+     * @param self  a Collection to be modified
+     * @param items array containing elements to be added to this collection
      * @return <tt>true</tt> if this collection changed as a result of the call
-     * @see    Collections#addAll
+     * @see Collections#addAll
      * @since 1.7.2
      */
     public static <T> boolean addAll(Collection<T> self, T[] items) {
@@ -382,7 +371,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * will appear in this list in the order that they occur in the array.
      * The behavior of this operation is undefined if the specified array
      * is modified while the operation is in progress.
-     *
+     * <p>
      * See also <code>plus</code> for similar functionality with copy semantics, i.e. which produces a new
      * list after adding the additional items at the specified position but leaves the original list unchanged.
      *
@@ -391,15 +380,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param index index at which to insert the first element from the
      *              specified array
      * @return <tt>true</tt> if this collection changed as a result of the call
-     * @see    List#addAll(int, Collection)
+     * @see List#addAll(int, Collection)
      * @since 1.7.2
      */
     public static <T> boolean addAll(List<T> self, int index, T[] items) {
         return self.addAll(index, Arrays.asList(items));
     }
-
-    //--------------------------------------------------------------------------
-    // addShutdownHook
 
     /**
      * Allows the usage of addShutdownHook without getting the runtime first.
@@ -413,7 +399,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // and
+    // addShutdownHook
 
     /**
      * Bitwise AND together two Numbers.
@@ -426,6 +412,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Number and(Number left, Number right) {
         return NumberMath.and(left, right);
     }
+
+    //--------------------------------------------------------------------------
+    // and
 
     /**
      * Bitwise AND together two BitSets.
@@ -444,7 +433,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     /**
      * Logical conjunction of two boolean operators.
      *
-     * @param left left operator
+     * @param left  left operator
      * @param right right operator
      * @return result of logical conjunction
      * @since 1.0
@@ -465,7 +454,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * def b = [3,4,5,6] as Set
      * assert (a &amp; b) == [3,4] as Set
      * </pre>
-     *
+     * <p>
      * By default, Groovy uses a {@link NumberAwareComparator} when determining if an
      * element exists in both sets.
      *
@@ -490,8 +479,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [3,4] as Set == ([1,2,3,4] as Set).and([3,4,5,6], Comparator.naturalOrder())
      * </pre>
      *
-     * @param left  a Set
-     * @param right an Iterable
+     * @param left       a Set
+     * @param right      an Iterable
      * @param comparator a Comparator
      * @return a Set as an intersection of a Set and an Iterable
      * @see #intersect(Set, Iterable, Comparator)
@@ -513,7 +502,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * def b = [3,4,5,6] as Set
      * assert (a &amp; b) == [3,4] as SortedSet
      * </pre>
-     *
+     * <p>
      * By default, Groovy uses a {@link NumberAwareComparator} when determining if an
      * element exists in both sets.
      *
@@ -538,8 +527,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [3,4] as SortedSet == ([1,2,3,4] as SortedSet).and([3,4,5,6], Comparator.naturalOrder())
      * </pre>
      *
-     * @param left  a SortedSet
-     * @param right an Iterable
+     * @param left       a SortedSet
+     * @param right      an Iterable
      * @param comparator a Comparator
      * @return a SortedSet as an intersection of a SortedSet and an Iterable
      * @see #intersect(SortedSet, Iterable, Comparator)
@@ -548,9 +537,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> SortedSet<T> and(SortedSet<T> left, Iterable<T> right, Comparator<? super T> comparator) {
         return intersect(left, right, comparator);
     }
-
-    //--------------------------------------------------------------------------
-    // any
 
     /**
      * Iterates over the elements of a collection, and checks whether at least
@@ -575,6 +561,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return false;
     }
+
+    //--------------------------------------------------------------------------
+    // any
 
     /**
      * Iterates over the contents of an object or collection, and checks whether a
@@ -649,7 +638,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return true if any entry in the map matches the closure predicate
      * @since 1.5.0
      */
-    public static <K, V> boolean any(Map<K,V> self, @ClosureParams(MapEntryOrKeyValue.class) Closure<?> predicate) {
+    public static <K, V> boolean any(Map<K, V> self, @ClosureParams(MapEntryOrKeyValue.class) Closure<?> predicate) {
         BooleanClosureWrapper bcw = new BooleanClosureWrapper(predicate);
         for (var entry : self.entrySet()) {
             if (bcw.callForMap(entry)) {
@@ -658,9 +647,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return false;
     }
-
-    //--------------------------------------------------------------------------
-    // asBoolean
 
     /**
      * Coerce an object instance to a boolean value.
@@ -673,6 +659,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static boolean asBoolean(Object object) {
         return object != null;
     }
+
+    //--------------------------------------------------------------------------
+    // asBoolean
 
     /**
      * Coerce a Boolean instance to a boolean value.
@@ -808,9 +797,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return number != null && number.doubleValue() != 0;
     }
 
-    //--------------------------------------------------------------------------
-    // asChecked
-
     /**
      * Creates a checked view of a List.
      *
@@ -820,6 +806,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> List<T> asChecked(List<T> self, Class<T> type) {
         return Collections.checkedList(self, type);
     }
+
+    //--------------------------------------------------------------------------
+    // asChecked
 
     /**
      * Creates a checked view of a Queue.
@@ -877,7 +866,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see Collections#checkedMap
      * @since 5.0.0
      */
-    public static <K,V> Map<K,V> asChecked(Map<K,V> self, Class<K> keyType, Class<V> valueType) {
+    public static <K, V> Map<K, V> asChecked(Map<K, V> self, Class<K> keyType, Class<V> valueType) {
         return Collections.checkedMap(self, keyType, valueType);
     }
 
@@ -887,7 +876,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see Collections#checkedSortedMap
      * @since 5.0.0
      */
-    public static <K,V> SortedMap<K,V> asChecked(SortedMap<K,V> self, Class<K> keyType, Class<V> valueType) {
+    public static <K, V> SortedMap<K, V> asChecked(SortedMap<K, V> self, Class<K> keyType, Class<V> valueType) {
         return Collections.checkedSortedMap(self, keyType, valueType);
     }
 
@@ -897,12 +886,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see Collections#checkedNavigableMap
      * @since 5.0.0
      */
-    public static <K,V> NavigableMap<K,V> asChecked(NavigableMap<K,V> self, Class<K> keyType, Class<V> valueType) {
+    public static <K, V> NavigableMap<K, V> asChecked(NavigableMap<K, V> self, Class<K> keyType, Class<V> valueType) {
         return Collections.checkedNavigableMap(self, keyType, valueType);
     }
-
-    //--------------------------------------------------------------------------
-    // asCollection
 
     /**
      * Converts this Iterable to a Collection. Returns the original argument
@@ -926,7 +912,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // asImmutable (really toImmutable)
+    // asCollection
 
     /**
      * A convenience method for creating an immutable Map.
@@ -937,9 +923,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see #asUnmodifiable(java.util.Map)
      * @since 1.0
      */
-    public static <K,V> Map<K,V> asImmutable(Map<K,V> self) {
+    public static <K, V> Map<K, V> asImmutable(Map<K, V> self) {
         return asUnmodifiable(new LinkedHashMap<>(self));
     }
+
+    //--------------------------------------------------------------------------
+    // asImmutable (really toImmutable)
 
     /**
      * A convenience method for creating an immutable SortedMap.
@@ -950,7 +939,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see #asUnmodifiable(java.util.SortedMap)
      * @since 1.0
      */
-    public static <K,V> SortedMap<K,V> asImmutable(SortedMap<K,V> self) {
+    public static <K, V> SortedMap<K, V> asImmutable(SortedMap<K, V> self) {
         return asUnmodifiable(new TreeMap<>(self));
     }
 
@@ -1018,9 +1007,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return asUnmodifiable((Collection<T>) new ArrayList<>(self));
     }
 
-    //--------------------------------------------------------------------------
-    // asList
-
     /**
      * Converts this Iterable to a List. Returns the original Iterable
      * if it is already a List.
@@ -1043,7 +1029,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // asReversed
+    // asList
 
     /**
      * Creates a view list with reversed order, and the order of original list will not change.
@@ -1054,13 +1040,16 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * </pre>
      *
      * @param self a list
-     * @param <T> the type of element
+     * @param <T>  the type of element
      * @return the reversed list
      * @since 4.0.0
      */
     public static <T> List<T> asReversed(List<T> self) {
         return new ReversedList<>(self);
     }
+
+    //--------------------------------------------------------------------------
+    // asReversed
 
     /**
      * Creates a reverse order view of the set. The order of original list will not change.
@@ -1070,16 +1059,13 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * </pre>
      *
      * @param self a NavigableSet
-     * @param <T> the type of element
+     * @param <T>  the type of element
      * @return the reversed view NavigableSet
      * @since 4.0.11
      */
     public static <T> NavigableSet<T> asReversed(NavigableSet<T> self) {
         return self.descendingSet();
     }
-
-    //--------------------------------------------------------------------------
-    // asString
 
     /**
      * Get the detail information of {@link Throwable} instance's stack trace
@@ -1097,7 +1083,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // asSynchronized
+    // asString
 
     /**
      * Creates a synchronized view of a Map.
@@ -1107,9 +1093,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see java.util.Collections#synchronizedMap(java.util.Map)
      * @since 1.0
      */
-    public static <K,V> Map<K,V> asSynchronized(Map<K,V> self) {
+    public static <K, V> Map<K, V> asSynchronized(Map<K, V> self) {
         return Collections.synchronizedMap(self);
     }
+
+    //--------------------------------------------------------------------------
+    // asSynchronized
 
     /**
      * Creates a synchronized view of a SortedMap.
@@ -1119,7 +1108,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see java.util.Collections#synchronizedSortedMap(java.util.SortedMap)
      * @since 1.0
      */
-    public static <K,V> SortedMap<K,V> asSynchronized(SortedMap<K,V> self) {
+    public static <K, V> SortedMap<K, V> asSynchronized(SortedMap<K, V> self) {
         return Collections.synchronizedSortedMap(self);
     }
 
@@ -1131,7 +1120,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see java.util.Collections#synchronizedNavigableMap(java.util.NavigableMap)
      * @since 5.0.0
      */
-    public static <K,V> NavigableMap<K,V> asSynchronized(NavigableMap<K,V> self) {
+    public static <K, V> NavigableMap<K, V> asSynchronized(NavigableMap<K, V> self) {
         return Collections.synchronizedNavigableMap(self);
     }
 
@@ -1195,9 +1184,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return Collections.synchronizedNavigableSet(self);
     }
 
-    //--------------------------------------------------------------------------
-    // asType
-
     /**
      * Converts the given iterable to another type.
      *
@@ -1216,11 +1202,14 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return asType((Object) iterable, clazz);
     }
 
+    //--------------------------------------------------------------------------
+    // asType
+
     /**
      * Converts the given collection to another type. A default concrete
      * type is used for List, Set, or SortedSet. If the given type has
      * a constructor taking a collection, that is used. Otherwise, the
-     * call is deferred to {@link #asType(Object,Class)}.  If this
+     * call is deferred to {@link #asType(Object, Class)}.  If this
      * collection is already of the given type, the same instance is
      * returned.
      *
@@ -1257,7 +1246,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             return (T) stack;
         }
 
-        if (clazz!=String[].class && clazz.isArray()) {
+        if (clazz != String[].class && clazz.isArray()) {
             try {
                 return (T) asArrayType(col, clazz);
             } catch (GroovyCastException e) {
@@ -1275,7 +1264,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             try {
                 Collection result = (Collection) InvokerHelper.invokeConstructorOf(clazz, null);
                 result.addAll(col);
-                return (T)result;
+                return (T) result;
             } catch (Exception e) {
                 // ignore, the no arg constructor might not exist.
             }
@@ -1292,7 +1281,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param impl the implementation of the single method
      * @param type the target type
      * @return A proxy of the given type which wraps this closure.
-     *
      * @since 1.0
      */
     @SuppressWarnings("unchecked")
@@ -1326,9 +1314,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> T asType(Map map, Class<T> clazz) {
         if (!(clazz.isInstance(map)) && clazz.isInterface() && !Traits.isTrait(clazz)) {
             return (T) Proxy.newProxyInstance(
-                    clazz.getClassLoader(),
-                    new Class[]{clazz},
-                    new ConvertedMap(map));
+                clazz.getClassLoader(),
+                new Class[]{clazz},
+                new ConvertedMap(map));
         }
         try {
             return asType((Object) map, clazz);
@@ -1337,7 +1325,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
                 return (T) ProxyGenerator.INSTANCE.instantiateAggregateFromBaseClass(map, clazz);
             } catch (GroovyRuntimeException cause) {
                 throw new GroovyCastException("Error casting map to " + clazz.getName() +
-                        ", Reason: " + cause.getMessage());
+                    ", Reason: " + cause.getMessage());
             }
         }
     }
@@ -1352,6 +1340,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *  <li>Double</li>
      *  <li>Float</li>
      * </ul>
+     *
      * @param self this number
      * @param type the desired type of the transformed result
      * @return an instance of the given type
@@ -1389,8 +1378,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         // fall back to cast
         try {
             return (T) DefaultTypeTransformation.castToType(obj, type);
-        }
-        catch (GroovyCastException e) {
+        } catch (GroovyCastException e) {
             MetaClass mc = InvokerHelper.getMetaClass(obj);
             if (mc instanceof ExpandoMetaClass) {
                 ExpandoMetaClass emc = (ExpandoMetaClass) mc;
@@ -1474,9 +1462,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return InvokerHelper.invokeStaticMethod(target, "asType", new Object[]{element, elementType});
     }
 
-    //--------------------------------------------------------------------------
-    // asUnmodifiable
-
     /**
      * Creates an unmodifiable view of a Map.
      *
@@ -1486,9 +1471,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see #asUnmodifiable(java.util.List)
      * @since 2.5.0
      */
-    public static <K,V> Map<K,V> asUnmodifiable(Map<K,V> self) {
+    public static <K, V> Map<K, V> asUnmodifiable(Map<K, V> self) {
         return Collections.unmodifiableMap(self);
     }
+
+    //--------------------------------------------------------------------------
+    // asUnmodifiable
 
     /**
      * Creates an unmodifiable view of a SortedMap.
@@ -1499,7 +1487,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see #asUnmodifiable(java.util.List)
      * @since 2.5.0
      */
-    public static <K,V> SortedMap<K,V> asUnmodifiable(SortedMap<K,V> self) {
+    public static <K, V> SortedMap<K, V> asUnmodifiable(SortedMap<K, V> self) {
         return Collections.unmodifiableSortedMap(self);
     }
 
@@ -1512,7 +1500,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see #asUnmodifiable(java.util.List)
      * @since 5.0.0
      */
-    public static <K,V> SortedMap<K,V> asUnmodifiable(NavigableMap<K,V> self) {
+    public static <K, V> SortedMap<K, V> asUnmodifiable(NavigableMap<K, V> self) {
         return Collections.unmodifiableNavigableMap(self);
     }
 
@@ -1592,9 +1580,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return Collections.unmodifiableCollection(self);
     }
 
-    //--------------------------------------------------------------------------
-    // average
-
     /**
      * Averages the items in an Iterable. This is equivalent to invoking the
      * "plus" method on all items in the Iterable and then dividing by the
@@ -1611,6 +1596,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Object average(Iterable<?> self) {
         return average(self.iterator());
     }
+
+    //--------------------------------------------------------------------------
+    // average
 
     /**
      * Averages the items from an Iterator. This is equivalent to invoking the
@@ -1674,7 +1662,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self    an Iterable
      * @param closure a single parameter closure that returns a (typically) numeric value.
      * @return The average of the values returned by applying the closure to each
-     *         item of the Iterable.
+     * item of the Iterable.
      * @since 3.0.0
      */
     public static <T> Object average(Iterable<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure closure) {
@@ -1690,7 +1678,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self    An Iterator
      * @param closure a single parameter closure that returns a (typically) numeric value.
      * @return The average of the values returned by applying the closure to each
-     *         item from the Iterator.
+     * item from the Iterator.
      * @since 3.0.0
      */
     public static <T> Object average(Iterator<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure closure) {
@@ -1714,9 +1702,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return result;
     }
 
-    //--------------------------------------------------------------------------
-    // bitwiseNegate
-
     /**
      * Bitwise NEGATE a BitSet.
      *
@@ -1730,6 +1715,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return result;
     }
 
+    //--------------------------------------------------------------------------
+    // bitwiseNegate
+
     /**
      * Bitwise NEGATE a Number.
      *
@@ -1740,9 +1728,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Number bitwiseNegate(Number left) {
         return NumberMath.bitwiseNegate(left);
     }
-
-    //--------------------------------------------------------------------------
-    // buffered
 
     /**
      * Returns a <code>BufferedIterator</code> that allows examining the next element without
@@ -1764,7 +1749,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // bufferedIterator
+    // buffered
 
     /**
      * Returns a <code>BufferedIterator</code> that allows examining the next element without
@@ -1781,6 +1766,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return new IteratorBufferedIterator<>(self.iterator());
     }
 
+    //--------------------------------------------------------------------------
+    // bufferedIterator
+
     /**
      * Returns a <code>BufferedIterator</code> that allows examining the next element without
      * consuming it.
@@ -1795,9 +1783,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> BufferedIterator<T> bufferedIterator(List<T> self) {
         return new ListBufferedIterator<>(self);
     }
-
-    //--------------------------------------------------------------------------
-    // chop
 
     /**
      * Chops the Iterable into pieces, returning lists with sizes corresponding to the supplied chop sizes.
@@ -1824,6 +1809,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return chop(self.iterator(), chopSizes);
     }
 
+    //--------------------------------------------------------------------------
+    // chop
+
     /**
      * Chops the iterator items into pieces, returning lists with sizes corresponding to the supplied chop sizes.
      * If the iterator is exhausted early, truncated (possibly empty) pieces are returned.
@@ -1848,9 +1836,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return result;
     }
 
-    //--------------------------------------------------------------------------
-    // collate
-
     /**
      * Collates this iterable into sub-lists of length <code>size</code>.
      * Example:
@@ -1858,14 +1843,17 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * def coll = list.collate( 3 )
      * assert coll == [ [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7 ] ]</pre>
      *
-     * @param self          an Iterable
-     * @param size          the length of each sub-list in the returned list
+     * @param self an Iterable
+     * @param size the length of each sub-list in the returned list
      * @return a List containing the data collated into sub-lists
      * @since 2.4.0
      */
     public static <T> List<List<T>> collate(Iterable<T> self, int size) {
         return collate(self, size, true);
     }
+
+    //--------------------------------------------------------------------------
+    // collate
 
     /**
      * Collates this iterable into sub-lists of length <code>size</code> stepping through the code <code>step</code>
@@ -1875,9 +1863,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * def coll = list.collate( 3, 1 )
      * assert coll == [ [ 1, 2, 3 ], [ 2, 3, 4 ], [ 3, 4 ], [ 4 ] ]</pre>
      *
-     * @param self          an Iterable
-     * @param size          the length of each sub-list in the returned list
-     * @param step          the number of elements to step through for each sub-list
+     * @param self an Iterable
+     * @param size the length of each sub-list in the returned list
+     * @param step the number of elements to step through for each sub-list
      * @return a List containing the data collated into sub-lists
      * @since 2.4.0
      */
@@ -1947,9 +1935,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return answer;
     }
 
-    //--------------------------------------------------------------------------
-    // collect
-
     /**
      * Iterates through this aggregate Object transforming each item into a new value using Closure.IDENTITY
      * as a transformer, basically returning a list of items copied from the original object.
@@ -1965,6 +1950,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Collection collect(Object self) {
         return collect(self, Closure.IDENTITY);
     }
+
+    //--------------------------------------------------------------------------
+    // collect
 
     /**
      * Iterates through this aggregate Object transforming each item into a new value using the
@@ -2115,7 +2103,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [3:20, 2:30].collect { entry -&gt; entry.key * entry.value } == [60, 60]
      * </pre>
      *
-     * @param self    a Map
+     * @param self      a Map
      * @param transform the transformation closure which can take one (Map.Entry) or two (key, value) parameters
      * @return the resultant list of transformed values
      * @since 1.0
@@ -2123,9 +2111,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T, K, V> List<T> collect(Map<K, V> self, @ClosureParams(MapEntryOrKeyValue.class) Closure<T> transform) {
         return collect(self, new ArrayList<>(self.size()), transform);
     }
-
-    //--------------------------------------------------------------------------
-    // collectEntries
 
     /**
      * Iterates through this Map transforming each map entry using the <code>transform</code> closure
@@ -2135,7 +2120,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [a:1, b:2].collectEntries([:]) { k, v -&gt; Map.entry(v, k) } == [1:'a', 2:'b']
      * assert [a:1, b:2].collectEntries([30:'C']) { key, value -&gt; [(value*10): key.toUpperCase()] } == [10:'A', 20:'B', 30:'C']
      * </pre>
-     *
+     * <p>
      * Note: When using the list-style of result, the behavior is '<code>def (key, value) = listResultFromClosure</code>'.
      * While we strongly discourage using a list of size other than 2, Groovy's normal semantics apply in this case;
      * throwing away elements after the second one and using null for the key or value for the case of a shortened list.
@@ -2156,6 +2141,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return collector;
     }
 
+    //--------------------------------------------------------------------------
+    // collectEntries
+
     /**
      * Iterates through this Map transforming each entry using the <code>transform</code> closure
      * and returning a map of the transformed entries.
@@ -2164,7 +2152,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [a:1, b:2].collectEntries { key, value -&gt; [value, key] } == [1:'a', 2:'b']
      * assert [a:1, b:2].collectEntries { key, value -&gt; [(value*10): key.toUpperCase()] } == [10:'A', 20:'B']
      * </pre>
-     *
+     * <p>
      * Note: When using the list-style of result, the behavior is '<code>def (key, value) = listResultFromClosure</code>'.
      * While we strongly discourage using a list of size other than 2, Groovy's normal semantics apply in this case;
      * throwing away elements after the second one and using null for the key or value for the case of a shortened list.
@@ -2177,7 +2165,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see #collect(Map, Collection, Closure)
      * @since 1.7.9
      */
-    @SuppressWarnings({"rawtypes","unchecked"})
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static <K, V, X, Y> Map<K, V> collectEntries(Map<X, Y> self, @ClosureParams(MapEntryOrKeyValue.class) Closure<?> transform) {
         return collectEntries(self, (Map) createSimilarMap(self), transform);
     }
@@ -2207,7 +2195,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * // collect letters with index using map style
      * assert (0..2).collectEntries { index -&gt; [(index): letters[index]] } == [0:'a', 1:'b', 2:'c']
      * </pre>
-     *
+     * <p>
      * Note: When using the list-style of result, the behavior is '<code>def (key, value) = listResultFromClosure</code>'.
      * While we strongly discourage using a list of size other than 2, Groovy's normal semantics apply in this case;
      * throwing away elements after the second one and using null for the key or value for the case of a shortened list.
@@ -2385,7 +2373,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert (0..2).collectEntries( [:] ) { index -&gt; [index, letters[index]] } == [0:'a', 1:'b', 2:'c']
      * assert (0..2).collectEntries( [4:'d'] ) { index -&gt; [(index+1): letters[index]] } == [1:'a', 2:'b', 3:'c', 4:'d']
      * </pre>
-     *
+     * <p>
      * Note: When using the list-style of result, the behavior is '<code>def (key, value) = listResultFromClosure</code>'.
      * While we strongly discourage using a list of size other than 2, Groovy's normal semantics apply in this case;
      * throwing away elements after the second one and using null for the key or value for the case of a shortened list.
@@ -2431,9 +2419,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return collectEntries(self.iterator(), collector, Closure.IDENTITY);
     }
 
-    //
-
-    @SuppressWarnings({"rawtypes","unchecked"})
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private static void addEntry(Map target, Object entrySpec) {
         if (entrySpec == null) {
             // GROOVY-10893: insert nothing
@@ -2458,8 +2444,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
     }
 
-    //--------------------------------------------------------------------------
-    // collectKeys
+    //
 
     /**
      * Transform a Maps' keys leaving the values unchanged.
@@ -2484,6 +2469,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return collector;
     }
 
+    //--------------------------------------------------------------------------
+    // collectKeys
+
     /**
      * Transform a Maps' keys leaving the values unchanged.
      * Similar to {@link #withCollectedKeys(Iterable, Function)} but for Maps.
@@ -2502,9 +2490,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <K, V> Map<K, V> collectKeys(Map<K, V> keys, Function<? super K, K> keyTransform) {
         return collectKeys(keys, new LinkedHashMap<>(), keyTransform);
     }
-
-    //--------------------------------------------------------------------------
-    // collectMany
 
     /**
      * Projects each item from a source Iterable to a collection and concatenates (flattens) the resulting collections into a single list.
@@ -2533,6 +2518,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T, E> List<T> collectMany(Iterable<E> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure<? extends Collection<? extends T>> projection) {
         return collectMany(self, new ArrayList<>(), projection);
     }
+
+    //--------------------------------------------------------------------------
+    // collectMany
 
     /**
      * Projects each item from a source collection to a result collection and concatenates (flattens) the resulting
@@ -2661,9 +2649,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return collectMany(self, new ArrayList<>(), projection);
     }
 
-    //--------------------------------------------------------------------------
-    // collectNested
-
     /**
      * Recursively iterates through this collection transforming each non-Collection value
      * into a new value using the closure as a transformer. Returns a potentially nested
@@ -2680,6 +2665,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static List collectNested(Collection self, Closure transform) {
         return collectNested(self, new ArrayList<>(self.size()), transform);
     }
+
+    //--------------------------------------------------------------------------
+    // collectNested
 
     /**
      * Recursively iterates through this Iterable transforming each non-Collection value
@@ -2730,9 +2718,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return collector;
     }
 
-    //--------------------------------------------------------------------------
-    // collectValues
-
     /**
      * Transform a Maps' values leaving the keys unchanged.
      * Similar to {@link #withCollectedValues(Iterable, Map, Function)} but for Maps.
@@ -2757,6 +2742,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return collector;
     }
 
+    //--------------------------------------------------------------------------
+    // collectValues
+
     /**
      * Transform a Maps' values leaving the keys unchanged.
      * Similar to {@link #withCollectedValues(Iterable, Function)} but for Maps.
@@ -2776,9 +2764,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return collectValues(keys, new LinkedHashMap<>(), valueTransform);
     }
 
-    //--------------------------------------------------------------------------
-    // combinations
-
     /**
      * Finds all combinations of items from the given aggregate of collections.
      * <p>
@@ -2797,6 +2782,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return GroovyCollections.combinations(self);
     }
 
+    //--------------------------------------------------------------------------
+    // combinations
+
     /**
      * Finds all combinations of items from the given aggregate of collections,
      * then returns the results of the supplied transform.
@@ -2807,19 +2795,16 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert result == [8, 12, 10, 15, 12, 18]
      * </pre>
      *
-     * @param self an iterable of collections
+     * @param self     an iterable of collections
      * @param function a closure to be called on each combination (list)
      * @return A list of the results of applying the closure to each combination.
      * @see GroovyCollections#combinations(Iterable)
-     * @see #collect(Iterable,Closure)
+     * @see #collect(Iterable, Closure)
      * @since 2.2.0
      */
-    public static <T> List<T> combinations(Iterable self, @ClosureParams(value=FromString.class, options="List") Closure<T> function) {
+    public static <T> List<T> combinations(Iterable self, @ClosureParams(value = FromString.class, options = "List") Closure<T> function) {
         return collect(GroovyCollections.combinations(self), function);
     }
-
-    //--------------------------------------------------------------------------
-    // compareTo
 
     /**
      * Compares a Character and a Number. The ordinal value of the Character
@@ -2834,6 +2819,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static int compareTo(Character left, Number right) {
         return compareTo(Integer.valueOf(left), right);
     }
+
+    //--------------------------------------------------------------------------
+    // compareTo
 
     /**
      * Compares a Number and a Character. The ordinal value of the Character
@@ -2876,16 +2864,13 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return NumberMath.compareTo(left, right);
     }
 
-    //--------------------------------------------------------------------------
-    // contains
-
     /**
      * Returns <tt>true</tt> if this iterable contains the item.
      *
-     * @param  self an Iterable to be checked for containment
-     * @param  item an Object to be checked for containment in this iterable
+     * @param self an Iterable to be checked for containment
+     * @param item an Object to be checked for containment in this iterable
      * @return <tt>true</tt> if this iterable contains the item
-     * @see    Collection#contains(Object)
+     * @see Collection#contains(Object)
      * @since 2.4.0
      */
     public static boolean contains(Iterable self, Object item) {
@@ -2898,17 +2883,17 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // containsAll
+    // contains
 
     /**
      * Returns <tt>true</tt> if this iterable contains all the elements
      * in the specified array.
      *
-     * @param  self  an Iterable to be checked for containment
-     * @param  items array to be checked for containment in this iterable
+     * @param self  an Iterable to be checked for containment
+     * @param items array to be checked for containment in this iterable
      * @return <tt>true</tt> if this collection contains all the elements
-     *           in the specified array
-     * @see    Collection#containsAll(Collection)
+     * in the specified array
+     * @see Collection#containsAll(Collection)
      * @since 2.4.0
      */
     public static boolean containsAll(Iterable<?> self, Object[] items) {
@@ -2916,7 +2901,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // count
+    // containsAll
 
     /**
      * Counts the number of occurrences of the given value from the
@@ -2943,6 +2928,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return answer;
     }
 
+    //--------------------------------------------------------------------------
+    // count
+
     /**
      * Counts the number of occurrences which satisfy the given closure from the
      * items within this Iterator.
@@ -2953,7 +2941,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [2,4,2,1,3,5,2,4,3].toSet().iterator().count{ it % 2 == 0 } == 2
      * </pre>
      *
-     * @param self  the Iterator from which we count the number of matching occurrences
+     * @param self    the Iterator from which we count the number of matching occurrences
      * @param closure a closure condition
      * @return the number of occurrences
      * @since 1.8.0
@@ -2975,9 +2963,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [2,4,2,1,3,5,2,4,3].toSet().iterator().count(100){ it % 2 == 0 } == 102
      * </pre>
      *
-     * @param self  the Iterator from which we count the number of matching occurrences
+     * @param self         the Iterator from which we count the number of matching occurrences
      * @param initialCount start counting from this value
-     * @param closure a closure condition
+     * @param closure      a closure condition
      * @return the number of occurrences
      * @since 4.0.14
      */
@@ -3019,7 +3007,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [2,4,2,1,3,5,2,4,3].count{ it % 2 == 0 } == 5
      * </pre>
      *
-     * @param self  the Iterable within which we count the number of occurrences
+     * @param self    the Iterable within which we count the number of occurrences
      * @param closure a closure condition
      * @return the number of occurrences
      * @since 2.2.0
@@ -3036,9 +3024,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [2,4,2,1,3,5,2,4,3].count(100L){ it % 2 == 0 } == 105L
      * </pre>
      *
-     * @param self  the Iterable within which we count the number of occurrences
+     * @param self         the Iterable within which we count the number of occurrences
      * @param initialCount start counting from this value
-     * @param closure a closure condition
+     * @param closure      a closure condition
      * @return the number of occurrences
      * @since 4.0.14
      */
@@ -3056,7 +3044,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [a:1, b:1, c:2, d:2].count{ k,v {@code ->} k == 'a' {@code ||} v == 2 } == 3
      * </pre>
      *
-     * @param self  the map within which we count the number of occurrences
+     * @param self    the map within which we count the number of occurrences
      * @param closure a 1 or 2 arg Closure condition applying on the entries
      * @return the number of occurrences
      * @since 1.8.0
@@ -3078,9 +3066,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [a:1, b:1, c:2, d:2].count(100G){ k,v {@code ->} k == 'a' {@code ||} v == 2 } == 103G
      * </pre>
      *
-     * @param self  the map within which we count the number of occurrences
+     * @param self         the map within which we count the number of occurrences
      * @param initialCount start counting from this value
-     * @param closure a 1 or 2 arg Closure condition applying on the entries
+     * @param closure      a 1 or 2 arg Closure condition applying on the entries
      * @return the number of occurrences
      * @since 4.0.14
      */
@@ -3094,9 +3082,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return count;
     }
-
-    //--------------------------------------------------------------------------
-    // countBy
 
     /**
      * Sorts all collection members into groups determined by the supplied mapping
@@ -3113,9 +3098,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return a new Map grouped by keys with frequency counts
      * @since 2.2.0
      */
-    public static <K,E> Map<K, Integer> countBy(Iterable<E> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure<K> closure) {
+    public static <K, E> Map<K, Integer> countBy(Iterable<E> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure<K> closure) {
         return countBy(self.iterator(), closure);
     }
+
+    //--------------------------------------------------------------------------
+    // countBy
 
     /**
      * Creates a multiset-like map of the collection members.
@@ -3123,7 +3111,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * Example usage:
      * <pre class="groovyTestCase">assert [1:2, 2:2, 3:1] == [1,2,1,2,3].countBy()</pre>
      *
-     * @param self    a collection to group and count
+     * @param self a collection to group and count
      * @return a new Map where the keys are the set of values in the collection and the values are the frequency counts
      * @since 5.0.0
      */
@@ -3146,7 +3134,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return a new Map grouped by keys with frequency counts
      * @since 1.8.0
      */
-    public static <K,E> Map<K, Integer> countBy(Iterator<E> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure<K> closure) {
+    public static <K, E> Map<K, Integer> countBy(Iterator<E> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure<K> closure) {
         Map<K, Integer> answer = new LinkedHashMap<>();
         while (self.hasNext()) {
             K value = closure.call(self.next());
@@ -3161,7 +3149,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * Example usage:
      * <pre class="groovyTestCase">assert [1:2, 2:2, 3:1] == [1,2,1,2,3].iterator().countBy()</pre>
      *
-     * @param self    an iterator to group and count
+     * @param self an iterator to group and count
      * @return a new Map where the keys are the set of values produced by the iterator and the values are the frequency counts
      * @since 5.0.0
      */
@@ -3186,9 +3174,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return a new Map grouped by keys with frequency counts
      * @since 1.8.0
      */
-    public static <K,U,V> Map<K, Integer> countBy(Map<U,V> self, @ClosureParams(MapEntryOrKeyValue.class) Closure<K> closure) {
+    public static <K, U, V> Map<K, Integer> countBy(Map<U, V> self, @ClosureParams(MapEntryOrKeyValue.class) Closure<K> closure) {
         Map<K, Integer> answer = new LinkedHashMap<>();
-        for (Map.Entry<U,V> entry : self.entrySet()) {
+        for (Map.Entry<U, V> entry : self.entrySet()) {
             countAnswer(answer, callClosureForMapEntry(closure, entry));
         }
         return answer;
@@ -3204,9 +3192,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         answer.put(mappedKey, current + 1);
     }
 
-    //--------------------------------------------------------------------------
-    // disjoint
-
     /**
      * Returns <code>true</code> if the intersection of two iterables is empty.
      * <pre class="groovyTestCase">assert [1,2,3].disjoint([3,4,5]) == false</pre>
@@ -3215,7 +3200,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param left  an Iterable
      * @param right an Iterable
      * @return boolean   <code>true</code> if the intersection of two iterables
-     *         is empty, <code>false</code> otherwise.
+     * is empty, <code>false</code> otherwise.
      * @since 2.4.0
      */
     @SuppressWarnings("unchecked")
@@ -3237,7 +3222,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // div
+    // disjoint
 
     /**
      * Divide a Character by a Number. The ordinal value of the Character
@@ -3252,6 +3237,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Number div(Character left, Number right) {
         return NumberNumberDiv.div(Integer.valueOf(left), right);
     }
+
+    //--------------------------------------------------------------------------
+    // div
 
     /**
      * Divide a Number by a Character. The ordinal value of the Character
@@ -3281,9 +3269,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return div(Integer.valueOf(left), right);
     }
 
-    //--------------------------------------------------------------------------
-    // downto
-
     /**
      * Iterates from this number down to the given number, inclusive,
      * decrementing by one each time.
@@ -3302,15 +3287,18 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to downto() cannot be greater than the value (" + self + ") it's called on.");
+                ") to downto() cannot be greater than the value (" + self + ") it's called on.");
     }
+
+    //--------------------------------------------------------------------------
+    // downto
 
     /**
      * Iterates from this number down to the given number, inclusive,
      * decrementing by one each time.
      *
      * @param self    a long
-     * @param to the end number
+     * @param to      the end number
      * @param closure the code to execute for each number
      * @since 1.0
      */
@@ -3322,7 +3310,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to downto() cannot be greater than the value (" + self + ") it's called on.");
+                ") to downto() cannot be greater than the value (" + self + ") it's called on.");
     }
 
     /**
@@ -3330,7 +3318,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * decrementing by one each time.
      *
      * @param self    a Long
-     * @param to the end number
+     * @param to      the end number
      * @param closure the code to execute for each number
      * @since 1.0
      */
@@ -3342,7 +3330,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to downto() cannot be greater than the value (" + self + ") it's called on.");
+                ") to downto() cannot be greater than the value (" + self + ") it's called on.");
     }
 
     /**
@@ -3350,7 +3338,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * decrementing by one each time.
      *
      * @param self    a float
-     * @param to the end number
+     * @param to      the end number
      * @param closure the code to execute for each number
      * @since 1.0
      */
@@ -3362,14 +3350,15 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to downto() cannot be greater than the value (" + self + ") it's called on.");    }
+                ") to downto() cannot be greater than the value (" + self + ") it's called on.");
+    }
 
     /**
      * Iterates from this number down to the given number, inclusive,
      * decrementing by one each time.
      *
      * @param self    a Float
-     * @param to the end number
+     * @param to      the end number
      * @param closure the code to execute for each number
      * @since 1.0
      */
@@ -3381,14 +3370,15 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to downto() cannot be greater than the value (" + self + ") it's called on.");    }
+                ") to downto() cannot be greater than the value (" + self + ") it's called on.");
+    }
 
     /**
      * Iterates from this number down to the given number, inclusive,
      * decrementing by one each time.
      *
      * @param self    a double
-     * @param to the end number
+     * @param to      the end number
      * @param closure the code to execute for each number
      * @since 1.0
      */
@@ -3400,14 +3390,15 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to downto() cannot be greater than the value (" + self + ") it's called on.");    }
+                ") to downto() cannot be greater than the value (" + self + ") it's called on.");
+    }
 
     /**
      * Iterates from this number down to the given number, inclusive,
      * decrementing by one each time.
      *
      * @param self    a Double
-     * @param to the end number
+     * @param to      the end number
      * @param closure the code to execute for each number
      * @since 1.0
      */
@@ -3419,14 +3410,15 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to downto() cannot be greater than the value (" + self + ") it's called on.");    }
+                ") to downto() cannot be greater than the value (" + self + ") it's called on.");
+    }
 
     /**
      * Iterates from this number down to the given number, inclusive,
      * decrementing by one each time.
      *
      * @param self    a BigInteger
-     * @param to the end number
+     * @param to      the end number
      * @param closure the code to execute for each number
      * @since 1.0
      */
@@ -3441,9 +3433,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
                 }
             } else
                 throw new GroovyRuntimeException(
-                        MessageFormat.format(
-                                "The argument ({0}) to downto() cannot be greater than the value ({1}) it''s called on.",
-                                to, self));
+                    MessageFormat.format(
+                        "The argument ({0}) to downto() cannot be greater than the value ({1}) it''s called on.",
+                        to, self));
         } else if (to instanceof BigInteger) {
             final BigInteger one = BigInteger.valueOf(1);
             final BigInteger to1 = (BigInteger) to;
@@ -3453,9 +3445,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
                 }
             } else
                 throw new GroovyRuntimeException(
-                        MessageFormat.format(
-                                "The argument ({0}) to downto() cannot be greater than the value ({1}) it''s called on.",
-                                to, self));
+                    MessageFormat.format(
+                        "The argument ({0}) to downto() cannot be greater than the value ({1}) it''s called on.",
+                        to, self));
         } else {
             final BigInteger one = BigInteger.valueOf(1);
             final BigInteger to1 = new BigInteger(to.toString());
@@ -3465,8 +3457,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
                 }
             } else
                 throw new GroovyRuntimeException(
-                        MessageFormat.format("The argument ({0}) to downto() cannot be greater than the value ({1}) it''s called on.",
-                                to, self));
+                    MessageFormat.format("The argument ({0}) to downto() cannot be greater than the value ({1}) it''s called on.",
+                        to, self));
         }
     }
 
@@ -3482,7 +3474,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * Prints numbers 10.5, 9.5 ... to 0.5.
      *
      * @param self    a BigDecimal
-     * @param to the end number
+     * @param to      the end number
      * @param closure the code to execute for each number
      * @since 1.0
      */
@@ -3506,7 +3498,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
                 }
             } else
                 throw new GroovyRuntimeException("The argument (" + to +
-                        ") to downto() cannot be greater than the value (" + self + ") it's called on.");        } else {
+                    ") to downto() cannot be greater than the value (" + self + ") it's called on.");
+        } else {
             BigDecimal to1 = NumberMath.toBigDecimal(to);
             if (self.compareTo(to1) >= 0) {
                 for (BigDecimal i = self; i.compareTo(to1) >= 0; i = i.subtract(one)) {
@@ -3514,11 +3507,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
                 }
             } else
                 throw new GroovyRuntimeException("The argument (" + to +
-                        ") to downto() cannot be greater than the value (" + self + ") it's called on.");        }
+                    ") to downto() cannot be greater than the value (" + self + ") it's called on.");
+        }
     }
-
-    //--------------------------------------------------------------------------
-    // drop
 
     /**
      * Drops the given number of elements from the head of this List.
@@ -3532,12 +3523,15 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original SortedSet
      * @param num  the number of elements to drop from this Iterable
      * @return a SortedSet consisting of all the elements of this Iterable minus the first <code>num</code> elements,
-     *         or an empty list if it has less than <code>num</code> elements.
+     * or an empty list if it has less than <code>num</code> elements.
      * @since 2.4.0
      */
     public static <T> SortedSet<T> drop(SortedSet<T> self, int num) {
         return (SortedSet<T>) drop((Iterable<T>) self, num);
     }
+
+    //--------------------------------------------------------------------------
+    // drop
 
     /**
      * Drops the given number of elements from the head of this List.
@@ -3551,7 +3545,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original List
      * @param num  the number of elements to drop from this Iterable
      * @return a List consisting of all the elements of this Iterable minus the first <code>num</code> elements,
-     *         or an empty list if it has less than <code>num</code> elements.
+     * or an empty list if it has less than <code>num</code> elements.
      * @since 1.8.1
      */
     public static <T> List<T> drop(List<T> self, int num) {
@@ -3579,7 +3573,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original Iterable
      * @param num  the number of elements to drop from this Iterable
      * @return a Collection consisting of all the elements of this Iterable minus the first <code>num</code> elements,
-     *         or an empty list if it has less than <code>num</code> elements.
+     * or an empty list if it has less than <code>num</code> elements.
      * @since 1.8.7
      */
     public static <T> Collection<T> drop(Iterable<T> self, int num) {
@@ -3602,8 +3596,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original map
      * @param num  the number of elements to drop from this map
      * @return a map consisting of all key/value pairs of this map except the first
-     *         <code>num</code> ones, or else the empty map, if this map has
-     *         less than <code>num</code> elements.
+     * <code>num</code> ones, or else the empty map, if this map has
+     * less than <code>num</code> elements.
      * @since 1.8.1
      */
     public static <K, V> Map<K, V> drop(Map<K, V> self, int num) {
@@ -3652,9 +3646,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return self;
     }
 
-    //--------------------------------------------------------------------------
-    // dropRight
-
     /**
      * Drops the given number of elements from the tail of this SortedSet.
      * <pre class="groovyTestCase">
@@ -3667,12 +3658,15 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original SortedSet
      * @param num  the number of elements to drop from this SortedSet
      * @return a List consisting of all the elements of this SortedSet minus the last <code>num</code> elements,
-     *         or an empty SortedSet if it has less than <code>num</code> elements.
+     * or an empty SortedSet if it has less than <code>num</code> elements.
      * @since 2.4.0
      */
     public static <T> SortedSet<T> dropRight(SortedSet<T> self, int num) {
         return (SortedSet<T>) dropRight((Iterable<T>) self, num);
     }
+
+    //--------------------------------------------------------------------------
+    // dropRight
 
     /**
      * Drops the given number of elements from the tail of this List.
@@ -3686,7 +3680,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original List
      * @param num  the number of elements to drop from this List
      * @return a List consisting of all the elements of this List minus the last <code>num</code> elements,
-     *         or an empty List if it has less than <code>num</code> elements.
+     * or an empty List if it has less than <code>num</code> elements.
      * @since 2.4.0
      */
     public static <T> List<T> dropRight(List<T> self, int num) {
@@ -3714,7 +3708,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original Iterable
      * @param num  the number of elements to drop from this Iterable
      * @return a Collection consisting of all the elements of this Iterable minus the last <code>num</code> elements,
-     *         or an empty list if it has less than <code>num</code> elements.
+     * or an empty list if it has less than <code>num</code> elements.
      * @since 2.4.0
      */
     public static <T> Collection<T> dropRight(Iterable<T> self, int num) {
@@ -3748,7 +3742,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original Iterator
      * @param num  the number of elements to drop
      * @return an Iterator consisting of all the elements of this Iterator minus the last <code>num</code> elements,
-     *         or an empty Iterator if it has less than <code>num</code> elements.
+     * or an empty Iterator if it has less than <code>num</code> elements.
      * @since 2.4.0
      */
     public static <T> Iterator<T> dropRight(Iterator<T> self, int num) {
@@ -3757,51 +3751,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return new DropRightIterator<>(self, num);
     }
-
-    private static final class DropRightIterator<E> implements Iterator<E> {
-        private final Iterator<E> delegate;
-        private final LinkedList<E> discards;
-        private boolean exhausted;
-        private int num;
-
-        private DropRightIterator(Iterator<E> delegate, int num) {
-            this.delegate = delegate;
-            this.num = num;
-            discards = new LinkedList<>();
-            advance();
-        }
-
-        @Override
-        public boolean hasNext() {
-            return !exhausted;
-        }
-
-        @Override
-        public E next() {
-            if (exhausted) throw new NoSuchElementException();
-            E result = discards.removeFirst();
-            advance();
-            return result;
-        }
-
-        @Override
-        public void remove() {
-            if (exhausted) throw new NoSuchElementException();
-            delegate.remove();
-        }
-
-        private void advance() {
-            while (discards.size() <= num && !exhausted) {
-                exhausted = !delegate.hasNext();
-                if (!exhausted) {
-                    discards.add(delegate.next());
-                }
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // dropWhile
 
     /**
      * Returns a suffix of this SortedSet where elements are dropped from the front
@@ -3819,7 +3768,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self      the original SortedSet
      * @param condition the closure that must evaluate to true to continue dropping elements
      * @return the shortest suffix of the given SortedSet such that the given closure condition
-     *         evaluates to true for each element dropped from the front of the SortedSet
+     * evaluates to true for each element dropped from the front of the SortedSet
      * @since 2.4.0
      */
     public static <T> SortedSet<T> dropWhile(SortedSet<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure condition) {
@@ -3842,7 +3791,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self      the original list
      * @param condition the closure that must evaluate to true to continue dropping elements
      * @return the shortest suffix of the given List such that the given closure condition
-     *         evaluates to true for each element dropped from the front of the List
+     * evaluates to true for each element dropped from the front of the List
      * @since 1.8.7
      */
     public static <T> List<T> dropWhile(List<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure condition) {
@@ -3857,6 +3806,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return drop(self, num);
     }
+
+    //--------------------------------------------------------------------------
+    // dropWhile
 
     /**
      * Returns a suffix of this Iterable where elements are dropped from the front
@@ -3873,7 +3825,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self      an Iterable
      * @param condition the closure that must evaluate to true to continue dropping elements
      * @return a Collection containing the shortest suffix of the given Iterable such that the given closure condition
-     *         evaluates to true for each element dropped from the front of the Iterable
+     * evaluates to true for each element dropped from the front of the Iterable
      * @since 1.8.7
      */
     public static <T> Collection<T> dropWhile(Iterable<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure condition) {
@@ -3900,7 +3852,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param condition a 1 (or 2) arg Closure that must evaluate to true for the
      *                  entry (or key and value) to continue dropping elements
      * @return the shortest suffix of the given Map such that the given closure condition
-     *         evaluates to true for each element dropped from the front of the Map
+     * evaluates to true for each element dropped from the front of the Map
      * @since 1.8.7
      */
     public static <K, V> Map<K, V> dropWhile(Map<K, V> self, @ClosureParams(MapEntryOrKeyValue.class) Closure condition) {
@@ -3932,67 +3884,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self      the Iterator
      * @param condition the closure that must evaluate to true to continue dropping elements
      * @return the shortest suffix of elements from the given Iterator such that the given closure condition
-     *         evaluates to true for each element dropped from the front of the Iterator
+     * evaluates to true for each element dropped from the front of the Iterator
      * @since 1.8.7
      */
     public static <T> Iterator<T> dropWhile(Iterator<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure<?> condition) {
         return new DropWhileIterator<>(self, condition);
     }
-
-    private static final class DropWhileIterator<E> implements Iterator<E> {
-        private final Iterator<E> delegate;
-        private final Closure condition;
-        private boolean buffering = false;
-        private E buffer = null;
-
-        private DropWhileIterator(Iterator<E> delegate, Closure condition) {
-            this.delegate = delegate;
-            this.condition = condition;
-            prepare();
-        }
-
-        @Override
-        public boolean hasNext() {
-            return buffering || delegate.hasNext();
-        }
-
-        @Override
-        public E next() {
-            if (buffering) {
-                E result = buffer;
-                buffering = false;
-                buffer = null;
-                return result;
-            } else {
-                return delegate.next();
-            }
-        }
-
-        @Override
-        public void remove() {
-            if (buffering) {
-                buffering = false;
-                buffer = null;
-            } else {
-                delegate.remove();
-            }
-        }
-
-        private void prepare() {
-            BooleanClosureWrapper bcw = new BooleanClosureWrapper(condition);
-            while (delegate.hasNext()) {
-                E next = delegate.next();
-                if (!bcw.call(next)) {
-                    buffer = next;
-                    buffering = true;
-                    break;
-                }
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // dump
 
     /**
      * Generates a detailed dump string of an object showing its class,
@@ -4022,7 +3919,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
                 buffer.append("=");
                 if (!field.canAccess(self)) { // GROOVY-9144
                     if (!SystemUtil.getBooleanSafe("groovy.force.illegal.access")
-                            || ReflectionUtils.makeAccessibleInPrivilegedAction(field).isEmpty()) {
+                        || ReflectionUtils.makeAccessibleInPrivilegedAction(field).isEmpty()) {
                         buffer.append("inaccessible");
                         continue;
                     }
@@ -4038,9 +3935,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         buffer.append(">");
         return buffer.toString();
     }
-
-    //--------------------------------------------------------------------------
-    // each
 
     /**
      * Iterates through an aggregate type or data structure,
@@ -4058,7 +3952,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self Object
      * @since 1.0
      */
-    public static <T> T each(T self, @ClosureParams(value=FromString.class, options="?") Closure closure) {
+    public static <T> T each(T self, @ClosureParams(value = FromString.class, options = "?") Closure closure) {
         each(InvokerHelper.asIterator(self), closure);
         return self;
     }
@@ -4075,6 +3969,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return self;
     }
 
+    //--------------------------------------------------------------------------
+    // dump
+
     /**
      * Iterates through an Iterator, passing each item to the given closure.
      *
@@ -4090,6 +3987,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return self;
     }
+
+    //--------------------------------------------------------------------------
+    // each
 
     /**
      * Iterates through a Collection, passing each item to the given closure.
@@ -4150,7 +4050,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * <pre class="groovyTestCase">def result = ""
      * [a:1, b:3].each { entry {@code ->} result += entry }
      * assert result == "a=1b=3"</pre>
-     *
+     * <p>
      * In general, the order in which the map contents are processed
      * cannot be guaranteed. In practise, specialized forms of Map,
      * e.g. a TreeMap will have its contents processed according to
@@ -4168,16 +4068,13 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return self;
     }
 
-    //--------------------------------------------------------------------------
-    // eachCombination
-
     /**
      * Applies a function on each combination of the input lists.
      * <p>
      * Example usage:
      * <pre class="groovyTestCase">[[2, 3],[4, 5, 6]].eachCombination { println "Found $it" }</pre>
      *
-     * @param self a Collection of lists
+     * @param self     a Collection of lists
      * @param function a closure to be called on each combination
      * @see groovy.util.GroovyCollections#combinations(Iterable)
      * @since 2.2.0
@@ -4187,9 +4084,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         each(GroovyCollections.combinations(self), function);
     }
 
-    //--------------------------------------------------------------------------
-    // eachPermutation
-
     /**
      * Iterates over all permutations of a collection, running a closure for each iteration.
      * <p>
@@ -4198,7 +4092,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * [1, 2, 3].eachPermutation{ permutations &lt;&lt; it }
      * assert permutations == [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]</pre>
      *
-     * @param self the Collection of items
+     * @param self    the Collection of items
      * @param closure the closure to call for each permutation
      * @return the permutations from the list
      * @since 1.7.0
@@ -4210,9 +4104,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return generator;
     }
-
-    //--------------------------------------------------------------------------
-    // eachWithIndex
 
     /**
      * Iterates through an aggregate type or data structure,
@@ -4229,7 +4120,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self Object
      * @since 1.0
      */
-    public static <T> T eachWithIndex(T self, @ClosureParams(value=FromString.class, options="?,Integer") Closure closure) {
+    public static <T> T eachWithIndex(T self, @ClosureParams(value = FromString.class, options = "?,Integer") Closure closure) {
         final Object[] args = new Object[2];
         int counter = 0;
         for (Iterator iter = InvokerHelper.asIterator(self); iter.hasNext(); ) {
@@ -4239,6 +4130,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return self;
     }
+
+    //--------------------------------------------------------------------------
+    // eachCombination
 
     /**
      * Iterates through an iterable type,
@@ -4250,10 +4144,13 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self Iterable
      * @since 2.3.0
      */
-    public static <T> Iterable<T> eachWithIndex(Iterable<T> self, @ClosureParams(value=FromString.class, options="T,Integer") Closure closure) {
+    public static <T> Iterable<T> eachWithIndex(Iterable<T> self, @ClosureParams(value = FromString.class, options = "T,Integer") Closure closure) {
         eachWithIndex(self.iterator(), closure);
         return self;
     }
+
+    //--------------------------------------------------------------------------
+    // eachPermutation
 
     /**
      * Iterates through an iterator type,
@@ -4265,7 +4162,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self Iterator (now exhausted)
      * @since 2.3.0
      */
-    public static <T> Iterator<T> eachWithIndex(Iterator<T> self, @ClosureParams(value=FromString.class, options="T,Integer") Closure closure) {
+    public static <T> Iterator<T> eachWithIndex(Iterator<T> self, @ClosureParams(value = FromString.class, options = "T,Integer") Closure closure) {
         final Object[] args = new Object[2];
         int counter = 0;
         while (self.hasNext()) {
@@ -4275,6 +4172,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return self;
     }
+
+    //--------------------------------------------------------------------------
+    // eachWithIndex
 
     /**
      * Iterates through a Collection,
@@ -4286,7 +4186,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self Collection
      * @since 2.4.0
      */
-    public static <T> Collection<T> eachWithIndex(Collection<T> self, @ClosureParams(value=FromString.class, options="T,Integer") Closure closure) {
+    public static <T> Collection<T> eachWithIndex(Collection<T> self, @ClosureParams(value = FromString.class, options = "T,Integer") Closure closure) {
         return (Collection<T>) eachWithIndex((Iterable<T>) self, closure);
     }
 
@@ -4300,7 +4200,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self List
      * @since 2.4.0
      */
-    public static <T> List<T> eachWithIndex(List<T> self, @ClosureParams(value=FromString.class, options="T,Integer") Closure closure) {
+    public static <T> List<T> eachWithIndex(List<T> self, @ClosureParams(value = FromString.class, options = "T,Integer") Closure closure) {
         return (List<T>) eachWithIndex((Iterable<T>) self, closure);
     }
 
@@ -4314,7 +4214,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self Set
      * @since 2.4.0
      */
-    public static <T> Set<T> eachWithIndex(Set<T> self, @ClosureParams(value=FromString.class, options="T,Integer") Closure closure) {
+    public static <T> Set<T> eachWithIndex(Set<T> self, @ClosureParams(value = FromString.class, options = "T,Integer") Closure closure) {
         return (Set<T>) eachWithIndex((Iterable<T>) self, closure);
     }
 
@@ -4328,7 +4228,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self SortedSet
      * @since 2.4.0
      */
-    public static <T> SortedSet<T> eachWithIndex(SortedSet<T> self, @ClosureParams(value=FromString.class, options="T,Integer") Closure closure) {
+    public static <T> SortedSet<T> eachWithIndex(SortedSet<T> self, @ClosureParams(value = FromString.class, options = "T,Integer") Closure closure) {
         return (SortedSet<T>) eachWithIndex((Iterable<T>) self, closure);
     }
 
@@ -4350,16 +4250,13 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self Object
      * @since 1.5.0
      */
-    public static <K, V> Map<K, V> eachWithIndex(Map<K, V> self, @ClosureParams(value=MapEntryOrKeyValue.class, options="index=true") Closure<?> closure) {
+    public static <K, V> Map<K, V> eachWithIndex(Map<K, V> self, @ClosureParams(value = MapEntryOrKeyValue.class, options = "index=true") Closure<?> closure) {
         int counter = 0;
         for (Map.Entry<K, V> entry : self.entrySet()) {
             callClosureForMapEntryAndCounter(closure, entry, counter++);
         }
         return self;
     }
-
-    //--------------------------------------------------------------------------
-    // equals
 
     /**
      * Determines if the contents of this list are equal to the
@@ -4389,7 +4286,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param left  a List
      * @param right the List being compared to
      * @return boolean   <code>true</code> if the contents of both lists are identical,
-     *         <code>false</code> otherwise.
+     * <code>false</code> otherwise.
      * @since 1.0
      */
     public static boolean equals(List left, List right) {
@@ -4477,6 +4374,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return otherItems.isEmpty();
     }
 
+    //--------------------------------------------------------------------------
+    // equals
+
     /**
      * Compares two Maps treating coerced numerical values as identical.
      * <p>
@@ -4547,9 +4447,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return true;
     }
 
-    //--------------------------------------------------------------------------
-    // equalsIgnoreZeroSign
-
     /**
      * Compares this object against the specified object returning the same result
      * as {@link Float#equals(Object)} but returning true if this object
@@ -4576,9 +4473,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return number.equals(other);
     }
 
-    //--------------------------------------------------------------------------
-    // every
-
     /**
      * Used to determine if the given predicate closure is valid (i.e. returns
      * <code>true</code> for all items in this data structure).
@@ -4595,6 +4489,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static boolean every(Object self, Closure predicate) {
         return every(InvokerHelper.asIterator(self), predicate);
     }
+
+    //--------------------------------------------------------------------------
+    // equalsIgnoreZeroSign
 
     /**
      * Used to determine if the given predicate closure is valid (i.e. returns
@@ -4635,6 +4532,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> boolean every(Iterable<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure predicate) {
         return every(self.iterator(), predicate);
     }
+
+    //--------------------------------------------------------------------------
+    // every
 
     /**
      * Iterates over the entries of a map, and checks whether a predicate is
@@ -4685,9 +4585,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return true;
     }
 
-    //--------------------------------------------------------------------------
-    // find
-
     /**
      * Finds the first value matching the closure condition.
      *
@@ -4704,7 +4601,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      */
     public static Object find(Object self, Closure closure) {
         BooleanClosureWrapper bcw = new BooleanClosureWrapper(closure);
-        for (Iterator iter = InvokerHelper.asIterator(self); iter.hasNext();) {
+        for (Iterator iter = InvokerHelper.asIterator(self); iter.hasNext(); ) {
             Object value = iter.next();
             if (bcw.call(value)) {
                 return value;
@@ -4722,10 +4619,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert items.find() == 42
      * </pre>
      *
-     * @param self    an Object with an Iterator returning its values
+     * @param self an Object with an Iterator returning its values
      * @return the first Object found or null if none was found
-     * @since 1.8.1
      * @see Closure#IDENTITY
+     * @since 1.8.1
      */
     public static Object find(Object self) {
         return find(self, Closure.IDENTITY);
@@ -4752,6 +4649,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return null;
     }
 
+    //--------------------------------------------------------------------------
+    // find
+
     /**
      * Finds the first item matching the IDENTITY Closure (i.e.&#160;matching Groovy truth).
      * <p>
@@ -4761,10 +4661,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert items.find() == 42
      * </pre>
      *
-     * @param self    a Collection
+     * @param self a Collection
      * @return the first Object found or null if none was found
-     * @since 1.8.1
      * @see Closure#IDENTITY
+     * @since 1.8.1
      */
     public static <T> T find(Collection<T> self) {
         return find(self, Closure.IDENTITY);
@@ -4790,9 +4690,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return null;
     }
-
-    //--------------------------------------------------------------------------
-    // findAll
 
     /**
      * Finds all entries matching the closure condition. If the
@@ -4854,6 +4751,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return (List<T>) findAll((Collection<T>) self, closure);
     }
 
+    //--------------------------------------------------------------------------
+    // findAll
+
     /**
      * Finds all values matching the closure condition.
      * <pre class="groovyTestCase">assert [2,4] == [1,2,3,4].findAll { it % 2 == 0 }</pre>
@@ -4878,8 +4778,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *
      * @param self a Set
      * @return a Set of the truthy values
-     * @since 2.4.0
      * @see Closure#IDENTITY
+     * @since 2.4.0
      */
     public static <T> Set<T> findAll(Set<T> self) {
         return findAll(self, Closure.IDENTITY);
@@ -4896,8 +4796,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *
      * @param self a List
      * @return a List of the truthy values
-     * @since 2.4.0
      * @see Closure#IDENTITY
+     * @since 2.4.0
      */
     public static <T> List<T> findAll(List<T> self) {
         return findAll(self, Closure.IDENTITY);
@@ -4914,8 +4814,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *
      * @param self a Collection
      * @return a Collection of the truthy values
-     * @since 1.8.1
      * @see Closure#IDENTITY
+     * @since 1.8.1
      */
     public static <T> Collection<T> findAll(Collection<T> self) {
         return findAll(self, Closure.IDENTITY);
@@ -4945,8 +4845,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *
      * @param self an Object with an Iterator returning its values
      * @return a List of the truthy values
-     * @since 1.8.1
      * @see Closure#IDENTITY
+     * @since 1.8.1
      */
     public static List findAll(Object self) {
         return findAll(self, Closure.IDENTITY);
@@ -4962,9 +4862,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return collector;
     }
-
-    //--------------------------------------------------------------------------
-    // findIndexOf
 
     /**
      * Iterates over the elements of an aggregate of items and returns
@@ -5017,6 +4914,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> int findIndexOf(Iterator<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure condition) {
         return findIndexOf(self, 0, condition);
     }
+
+    //--------------------------------------------------------------------------
+    // findIndexOf
 
     /**
      * Iterates over the elements of an Iterator, starting from a
@@ -5074,9 +4974,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return findIndexOf(self.iterator(), startIndex, condition);
     }
 
-    //--------------------------------------------------------------------------
-    // findIndexValues
-
     /**
      * Iterates over the elements of an aggregate of items and returns
      * the index values of the items that match the condition specified in the closure.
@@ -5117,6 +5014,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> List<Number> findIndexValues(Iterator<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure condition) {
         return findIndexValues(self, 0, condition);
     }
+
+    //--------------------------------------------------------------------------
+    // findIndexValues
 
     /**
      * Iterates over the elements of an Iterator, starting from
@@ -5174,9 +5074,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return findIndexValues(self.iterator(), startIndex, condition);
     }
 
-    //--------------------------------------------------------------------------
-    // findLastIndexOf
-
     /**
      * Iterates over the elements of an aggregate of items and returns
      * the index of the last item that matches the condition specified in the closure.
@@ -5226,6 +5123,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> int findLastIndexOf(Iterator<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure condition) {
         return findLastIndexOf(self, 0, condition);
     }
+
+    //--------------------------------------------------------------------------
+    // findLastIndexOf
 
     /**
      * Iterates over the elements of an Iterator, starting
@@ -5282,9 +5182,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return findLastIndexOf(self.iterator(), startIndex, condition);
     }
 
-    //--------------------------------------------------------------------------
-    // findResult
-
     /**
      * Treats the object as iterable, iterating through the values it represents and returns the first non-null result obtained from calling the closure, otherwise returns null.
      * <p>
@@ -5324,7 +5221,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert new Foo(items: [null, null]).findResult() == null
      * </pre>
      *
-     * @param self      an Object with an iterator returning its values
+     * @param self an Object with an iterator returning its values
      * @return the first non-null result of the closure
      * @since 4.0.9
      */
@@ -5352,6 +5249,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         if (result == null) return defaultResult;
         return result;
     }
+
+    //--------------------------------------------------------------------------
+    // findResult
 
     /**
      * Treats the object as iterable, iterating through the values it represents and returns the first non-null result, otherwise returns the defaultResult.
@@ -5445,7 +5345,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * Iterates through the Iterator stopping once the first non-null
      * result is found and returning that result. If all results are null, null is returned.
      *
-     * @param self      an Iterator
+     * @param self an Iterator
      * @return the first non-null result from the iterator, or null
      * @since 4.0.9
      */
@@ -5514,7 +5414,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * Iterates through the Iterable stopping once the first non-null
      * result is found and returning that result. If all results are null, null is returned.
      *
-     * @param self      an Iterable
+     * @param self an Iterable
      * @return the first non-null element from the iterable, or null
      * @since 4.0.9
      */
@@ -5568,9 +5468,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         if (result == null) return defaultResult;
         return result;
     }
-
-    //--------------------------------------------------------------------------
-    // findResults
 
     /**
      * Iterates through the Iterable transforming items using the supplied closure
@@ -5629,6 +5526,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return result;
     }
 
+    //--------------------------------------------------------------------------
+    // findResults
+
     /**
      * Iterates through the Iterator collecting any non-null results.
      *
@@ -5668,9 +5568,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return result;
     }
-
-    //--------------------------------------------------------------------------
-    // first
 
     /**
      * Returns the first item from the List.
@@ -5718,9 +5615,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return iterator.next();
     }
 
-    //--------------------------------------------------------------------------
-    // flatten
-
     /**
      * Flatten a Collection. This Collection and any nested arrays or
      * collections have their contents (recursively) added to the new collection.
@@ -5733,6 +5627,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> Collection<T> flatten(Collection<T> self) {
         return flatten(self, createSimilarCollection(self), true);
     }
+
+    //--------------------------------------------------------------------------
+    // first
 
     /**
      * Flatten an Iterable. This Iterable and any nested arrays or
@@ -5759,7 +5656,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert items.flatten(false) == [1, 2, 3, 4, Optional.of(5), Optional.empty()]
      * </pre>
      *
-     * @param self an Iterable to flatten
+     * @param self             an Iterable to flatten
      * @param flattenOptionals whether to treat an Optional as a container to flatten
      * @return a flattened Collection
      * @since 5.0.0
@@ -5767,6 +5664,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> Collection<T> flatten(Iterable<T> self, boolean flattenOptionals) {
         return flatten(self, createSimilarCollection(self), flattenOptionals);
     }
+
+    //--------------------------------------------------------------------------
+    // flatten
 
     /**
      * Flatten a List. This List and any nested arrays or
@@ -5864,7 +5764,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [[a:1], [b:2]].flatten{ it.keySet() + it.values() } == ['a', 1, 'b', 2]
      * </pre>
      *
-     * @param self an Iterable
+     * @param self         an Iterable
      * @param flattenUsing a closure to determine how to flatten non-Array, non-Collection elements
      * @return a flattened Collection
      * @see #flattenMany(Iterable, Closure)
@@ -5898,9 +5798,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert items.flatten(false, unknown) == ['A', 'B', 'C', 'd', 'Unknown']
      * </pre>
      *
-     * @param self an Iterable
+     * @param self             an Iterable
      * @param flattenOptionals whether to treat an Optional as a container to flatten or a leaf
-     * @param flattenUsing a closure to determine how to flatten leaf elements
+     * @param flattenUsing     a closure to determine how to flatten leaf elements
      * @return a flattened Collection
      * @since 5.0.0
      */
@@ -5957,9 +5857,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
     }
 
-    //--------------------------------------------------------------------------
-    // flattenMany
-
     /**
      * Flatten an Iterable. This Iterable and any nested arrays, collections or
      * optionals have their contents (recursively) added to a new collection.
@@ -5980,7 +5877,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * Consider using {@code collectMany} if you return only collections in the transform, since
      * you will have better type inference in static typing scenarios.
      *
-     * @param self an Iterable
+     * @param self      an Iterable
      * @param transform a transform applied to any leaf elements
      * @return a flattened Collection
      * @see #collectMany(Iterable, Closure)
@@ -6011,7 +5908,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // get
+    // flattenMany
 
     /**
      * Looks up an item in a Map for the given key and returns the corresponding value.
@@ -6031,7 +5928,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param defaultValue the value to return and add to the map for this key if
      *                     there is no entry for the given key
      * @return the value of the given key or the default value, added to the map if the
-     *         key did not exist
+     * key did not exist
      * @since 1.0
      */
     public static <K, V> V get(Map<K, V> map, K key, V defaultValue) {
@@ -6040,9 +5937,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return map.get(key);
     }
-
-    //--------------------------------------------------------------------------
-    // getAt
 
     /**
      * Allows the subscript operator to be used to lookup dynamic property values.
@@ -6067,7 +5961,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self  a List
      * @param range a Range indicating the items to get
      * @return a new list instance based on range borders
-     *
      * @since 1.0
      */
     public static <T> List<T> getAt(List<T> self, Range range) {
@@ -6085,6 +5978,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return answer;
     }
 
+    //--------------------------------------------------------------------------
+    // get
+
     /**
      * Select a List of items from an eager or lazy List using a Collection to
      * identify the indices to be selected.
@@ -6093,7 +5989,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *
      * @param self    a ListWithDefault
      * @param indices a Collection of indices
-     *
      * @return a new eager or lazy list of the values at the given indices
      */
     @SuppressWarnings("unchecked")
@@ -6110,6 +6005,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return answer;
     }
 
+    //--------------------------------------------------------------------------
+    // getAt
+
     /**
      * Support the range subscript operator for an eager or lazy List.
      * <pre class="groovyTestCase">def list = [].withDefault { 42 }
@@ -6117,7 +6015,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *
      * @param self  a ListWithDefault
      * @param range a Range indicating the items to get
-     *
      * @return a new eager or lazy list instance based on range borders
      */
     public static <T> List<T> getAt(ListWithDefault<T> self, Range range) {
@@ -6131,10 +6028,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
 
         List<T> answer = self.subList(info.from, info.to);
         if (info.reverse) {
-            answer =  ListWithDefault.newInstance(reverse(answer), self.isLazyDefaultValues(), self.getInitClosure());
+            answer = ListWithDefault.newInstance(reverse(answer), self.isLazyDefaultValues(), self.getInitClosure());
         } else {
             // instead of using the SubList backed by the parent list, a new ArrayList instance is used
-            answer =  ListWithDefault.newInstance(new ArrayList<>(answer), self.isLazyDefaultValues(), self.getInitClosure());
+            answer = ListWithDefault.newInstance(new ArrayList<>(answer), self.isLazyDefaultValues(), self.getInitClosure());
         }
 
         return answer;
@@ -6149,9 +6046,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *
      * @param self  a ListWithDefault
      * @param range a Range indicating the items to get
-     *
      * @return a new list instance based on range borders
-     *
      */
     public static <T> List<T> getAt(ListWithDefault<T> self, EmptyRange range) {
         return ListWithDefault.newInstance(new ArrayList<>(), self.isLazyDefaultValues(), self.getInitClosure());
@@ -6167,7 +6062,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self  a List
      * @param range a Range indicating the items to get
      * @return a new list instance based on range borders
-     *
      * @since 1.0
      */
     public static <T> List<T> getAt(List<T> self, EmptyRange range) {
@@ -6309,7 +6203,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the value corresponding to the given key
      * @since 1.0
      */
-    public static <K,V> V getAt(Map<K,V> self, Object key) {
+    public static <K, V> V getAt(Map<K, V> self, Object key) {
         return self.get(key);
     }
 
@@ -6382,15 +6276,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             } catch (MissingPropertyExceptionNoStack mpe) {
                 String causeString = new MissingPropertyException(mpe.getProperty(), mpe.getType()).toString();
                 throw new MissingPropertyException("Exception evaluating property '" + property +
-                        "' for " + coll.getClass().getName() + ", Reason: " + causeString);
+                    "' for " + coll.getClass().getName() + ", Reason: " + causeString);
             }
             answer.add(value);
         }
         return answer;
     }
-
-    //--------------------------------------------------------------------------
-    // getGroovydoc
 
     /**
      * Gets runtime groovydoc.
@@ -6402,9 +6293,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return groovydocAnnotation == null ? EMPTY_GROOVYDOC :
             new groovy.lang.groovydoc.Groovydoc(groovydocAnnotation.value(), holder);
     }
-
-    //--------------------------------------------------------------------------
-    // getIndices
 
     /**
      * Returns indices of the collection.
@@ -6422,9 +6310,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return new IntRange(false, 0, self.size());
     }
 
-    //--------------------------------------------------------------------------
-    // getLocation
-
     /**
      * Gets the url of the jar file/source file containing the specified class.
      *
@@ -6438,7 +6323,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // getMetaClass
+    // getGroovydoc
 
     /**
      * Adds a "metaClass" property to all class objects so you can use the syntax
@@ -6452,12 +6337,15 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         MetaClassRegistry metaClassRegistry = GroovySystem.getMetaClassRegistry();
         MetaClass mc = metaClassRegistry.getMetaClass(c);
         if (mc instanceof ExpandoMetaClass
-                || mc instanceof DelegatingMetaClass && ((DelegatingMetaClass) mc).getAdaptee() instanceof ExpandoMetaClass)
+            || mc instanceof DelegatingMetaClass && ((DelegatingMetaClass) mc).getAdaptee() instanceof ExpandoMetaClass)
             return mc;
         else {
             return new HandleMetaClass(mc);
         }
     }
+
+    //--------------------------------------------------------------------------
+    // getIndices
 
     /**
      * Obtains a MetaClass for an object either from the registry or in the case of
@@ -6472,6 +6360,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return new HandleMetaClass(mc, obj);
     }
 
+    //--------------------------------------------------------------------------
+    // getLocation
+
     /**
      * Obtains a MetaClass for an object either from the registry or in the case of
      * a GroovyObject from the object itself.
@@ -6482,11 +6373,11 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      */
     public static MetaClass getMetaClass(GroovyObject obj) {
         // we need this method as trick to guarantee correct method selection
-        return getMetaClass((Object)obj);
+        return getMetaClass((Object) obj);
     }
 
     //--------------------------------------------------------------------------
-    // getMetaProperties
+    // getMetaClass
 
     /**
      * Retrieves the list of {@link groovy.lang.MetaProperty} objects for 'self' and wraps it
@@ -6507,9 +6398,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return props;
     }
-
-    //--------------------------------------------------------------------------
-    // getProperties
 
     /**
      * Convenience method that calls {@link #getMetaPropertyValues(java.lang.Object)}(self)
@@ -6535,9 +6423,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return props;
     }
 
-    //--------------------------------------------------------------------------
-    // getRootLoader
-
     /**
      * Iterates through the classloader parents until it finds a loader with a class
      * named "org.codehaus.groovy.tools.RootLoader". If there is no such class
@@ -6558,10 +6443,13 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
     }
 
+    //--------------------------------------------------------------------------
+    // getMetaProperties
+
     private static boolean isRootLoaderClassOrSubClass(ClassLoader self) {
         Class current = self.getClass();
-        while(!current.getName().equals(Object.class.getName())) {
-            if(current.getName().equals(RootLoader.class.getName())) return true;
+        while (!current.getName().equals(Object.class.getName())) {
+            if (current.getName().equals(RootLoader.class.getName())) return true;
             current = current.getSuperclass();
         }
 
@@ -6569,7 +6457,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // grep
+    // getProperties
 
     /**
      * Iterates over the collection of items which this Object represents and returns each item that matches
@@ -6594,7 +6482,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Collection grep(Object self, Object filter) {
         Collection answer = createSimilarOrDefaultCollection(self);
         BooleanReturningMethodInvoker bmi = new BooleanReturningMethodInvoker("isCase");
-        for (Iterator iter = InvokerHelper.asIterator(self); iter.hasNext();) {
+        for (Iterator iter = InvokerHelper.asIterator(self); iter.hasNext(); ) {
             Object object = iter.next();
             if (bmi.invoke(filter, object)) {
                 answer.add(object);
@@ -6602,6 +6490,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return answer;
     }
+
+    //--------------------------------------------------------------------------
+    // getRootLoader
 
     /**
      * Iterates over the collection of items and returns each item that matches
@@ -6656,6 +6547,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return (List<T>) grep((Collection<T>) self, filter);
     }
 
+    //--------------------------------------------------------------------------
+    // grep
+
     /**
      * Iterates over the collection of items and returns each item that matches
      * the given filter - calling the <code>{@link #isCase(java.lang.Object, java.lang.Object)}</code>
@@ -6689,10 +6583,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert items.grep() == [1, 2, true, 'foo', [4, 5]]
      * </pre>
      *
-     * @param self   the object over which we iterate
+     * @param self the object over which we iterate
      * @return a collection of objects which match the filter
-     * @since 1.8.1
      * @see Closure#IDENTITY
+     * @since 1.8.1
      */
     public static Collection grep(Object self) {
         return grep(self, Closure.IDENTITY);
@@ -6755,9 +6649,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return grep(self, Closure.IDENTITY);
     }
 
-    //--------------------------------------------------------------------------
-    // groupBy
-
     /**
      * Sorts all Iterable members into groups determined by the supplied mapping closure.
      * The closure should return the key that this item should be grouped by. The returned
@@ -6789,11 +6680,11 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * should be grouped by. The returned LinkedHashMap will have an entry for each
      * distinct 'key path' returned from the closures, with each value being a list
      * of items for that 'group path'.
-     *
+     * <p>
      * Example usage:
      * <pre class="groovyTestCase">def result = [1,2,3,4,5,6].groupBy({ it % 2 }, { it {@code <} 4 })
      * assert result == [1:[(true):[1, 3], (false):[5]], 0:[(true):[2], (false):[4, 6]]]</pre>
-     *
+     * <p>
      * Another example:
      * <pre>def sql = groovy.sql.Sql.newInstance(/&ast; ... &ast;/)
      * def data = sql.rows("SELECT * FROM a_table").groupBy({ it.column1 }, { it.column2 }, { it.column3 })
@@ -6810,8 +6701,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self     a collection to group
      * @param closures an array of closures, each mapping entries on keys
      * @return a new Map grouped by keys on each criterion
-     * @since 2.2.0
      * @see Closure#IDENTITY
+     * @since 2.2.0
      */
     public static Map groupBy(Iterable self, Object... closures) {
         final Closure head = closures.length == 0 ? Closure.IDENTITY : (Closure) closures[0];
@@ -6839,13 +6730,13 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * should be grouped by. The returned LinkedHashMap will have an entry for each
      * distinct 'key path' returned from the closures, with each value being a list
      * of items for that 'group path'.
-     *
+     * <p>
      * Example usage:
      * <pre class="groovyTestCase">
      * def result = [1,2,3,4,5,6].groupBy([{ it % 2 }, { it {@code <} 4 }])
      * assert result == [1:[(true):[1, 3], (false):[5]], 0:[(true):[2], (false):[4, 6]]]
      * </pre>
-     *
+     * <p>
      * Another example:
      * <pre>
      * def sql = groovy.sql.Sql.newInstance(/&ast; ... &ast;/)
@@ -6864,12 +6755,15 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self     a collection to group
      * @param closures a list of closures, each mapping entries on keys
      * @return a new Map grouped by keys on each criterion
-     * @since 2.2.0
      * @see Closure#IDENTITY
+     * @since 2.2.0
      */
     public static Map groupBy(Iterable self, List<Closure> closures) {
         return groupBy(self, closures.toArray());
     }
+
+    //--------------------------------------------------------------------------
+    // groupBy
 
     /**
      * Groups the members of a map into sub maps determined by the
@@ -6913,7 +6807,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * resulting map will have an entry for each 'group path' returned by all
      * closures, with values being the map members from the original map that
      * belong to each such 'group path'.
-     *
+     * <p>
      * If the <code>self</code> map is one of TreeMap, Hashtable, or Properties,
      * the returned Map will preserve that type, otherwise a LinkedHashMap will
      * be returned.
@@ -6925,12 +6819,11 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self     a map to group
      * @param closures an array of closures that map entries on keys
      * @return a new map grouped by keys on each criterion
-     * @since 1.8.1
      * @see Closure#IDENTITY
+     * @since 1.8.1
      */
     public static Map<Object, Map> groupBy(Map self, Object... closures) {
-        @SuppressWarnings("unchecked")
-        final Closure<Object> head = closures.length == 0 ? Closure.IDENTITY : (Closure) closures[0];
+        @SuppressWarnings("unchecked") final Closure<Object> head = closures.length == 0 ? Closure.IDENTITY : (Closure) closures[0];
 
         @SuppressWarnings("unchecked")
         Map<Object, Map> first = groupBy(self, head);
@@ -6941,7 +6834,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         System.arraycopy(closures, 1, tail, 0, closures.length - 1); // Arrays.copyOfRange only since JDK 1.6
 
         Map<Object, Map> acc = new LinkedHashMap<>();
-        for (Map.Entry<Object, Map> item: first.entrySet()) {
+        for (Map.Entry<Object, Map> item : first.entrySet()) {
             acc.put(item.getKey(), groupBy(item.getValue(), tail));
         }
 
@@ -6956,7 +6849,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * resulting map will have an entry for each 'group path' returned by all
      * closures, with values being the map members from the original map that
      * belong to each such 'group path'.
-     *
+     * <p>
      * If the <code>self</code> map is one of TreeMap, Hashtable, or Properties,
      * the returned Map will preserve that type, otherwise a LinkedHashMap will
      * be returned.
@@ -6968,8 +6861,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self     a map to group
      * @param closures a list of closures that map entries on keys
      * @return a new map grouped by keys on each criterion
-     * @since 1.8.1
      * @see Closure#IDENTITY
+     * @since 1.8.1
      */
     public static Map<Object, Map> groupBy(Map self, List<Closure> closures) {
         return groupBy(self, closures.toArray());
@@ -6988,9 +6881,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
 
         groupedElements.add(element);
     }
-
-    //--------------------------------------------------------------------------
-    // groupEntriesBy
 
     /**
      * Groups all map entries into groups determined by the
@@ -7019,9 +6909,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return answer;
     }
 
-    //--------------------------------------------------------------------------
-    // hasProperty
-
     /**
      * <p>Returns true of the implementing MetaClass has a property of the given name
      *
@@ -7037,9 +6924,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static MetaProperty hasProperty(Object self, String name) {
         return InvokerHelper.getMetaClass(self).hasProperty(self, name);
     }
-
-    //--------------------------------------------------------------------------
-    // head
 
     /**
      * Returns the first item from the Iterable.
@@ -7062,6 +6946,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return first(self);
     }
 
+    //--------------------------------------------------------------------------
+    // groupEntriesBy
+
     /**
      * Returns the first item from the List.
      * <pre class="groovyTestCase">def list = [3, 4, 2]
@@ -7078,7 +6965,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // identity (aka `with`)
+    // hasProperty
 
     /**
      * Allows the closure to be called for the object reference self.
@@ -7090,14 +6977,14 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.0
      */
     public static <T, U> T identity(
-            @DelegatesTo.Target U self,
-            @DelegatesTo(strategy=Closure.DELEGATE_FIRST)
-            @ClosureParams(FirstParam.class) Closure<T> closure) {
-        return callWithDelegateAndParameter(closure,self).getV1();
+        @DelegatesTo.Target U self,
+        @DelegatesTo(strategy = Closure.DELEGATE_FIRST)
+        @ClosureParams(FirstParam.class) Closure<T> closure) {
+        return callWithDelegateAndParameter(closure, self).getV1();
     }
 
     //--------------------------------------------------------------------------
-    // implies
+    // head
 
     /**
      * Logical implication of two boolean operands.
@@ -7107,9 +6994,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Boolean implies(Boolean left, Boolean right) {
         return !left || Boolean.TRUE.equals(right);
     }
-
-    //--------------------------------------------------------------------------
-    // indexed
 
     /**
      * Zips an Iterable with indices in (index, value) order.
@@ -7128,6 +7012,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <E> Map<Integer, E> indexed(Iterable<E> self) {
         return indexed(self, 0);
     }
+
+    //--------------------------------------------------------------------------
+    // identity (aka `with`)
 
     /**
      * Zips an Iterable with indices in (index, value) order.
@@ -7155,6 +7042,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return result;
     }
 
+    //--------------------------------------------------------------------------
+    // implies
+
     /**
      * Zips an iterator with indices in (index, value) order.
      * <p/>
@@ -7172,6 +7062,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <E> Iterator<Tuple2<Integer, E>> indexed(Iterator<E> self) {
         return indexed(self, 0);
     }
+
+    //--------------------------------------------------------------------------
+    // indexed
 
     /**
      * Zips an iterator with indices in (index, value) order.
@@ -7191,35 +7084,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <E> Iterator<Tuple2<Integer, E>> indexed(Iterator<E> self, int offset) {
         return new ZipPreIterator<>(self, offset);
     }
-
-    private static final class ZipPreIterator<E> implements Iterator<Tuple2<Integer, E>> {
-        private final Iterator<E> delegate;
-        private int index;
-
-        private ZipPreIterator(Iterator<E> delegate, int offset) {
-            this.delegate = delegate;
-            this.index = offset;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return delegate.hasNext();
-        }
-
-        @Override
-        public Tuple2<Integer, E> next() {
-            if (!hasNext()) throw new NoSuchElementException();
-            return new Tuple2<>(index++, delegate.next());
-        }
-
-        @Override
-        public void remove() {
-            delegate.remove();
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // init
 
     /**
      * Returns the items from the Iterable excluding the last item. Leaves the original Iterable unchanged.
@@ -7303,43 +7167,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return new InitIterator<>(self);
     }
 
-    private static final class InitIterator<E> implements Iterator<E> {
-        private final Iterator<E> delegate;
-        private boolean exhausted;
-        private E next;
-
-        private InitIterator(Iterator<E> delegate) {
-            this.delegate = delegate;
-            advance();
-        }
-
-        @Override
-        public boolean hasNext() {
-            return !exhausted;
-        }
-
-        @Override
-        public E next() {
-            if (exhausted) throw new NoSuchElementException();
-            E result = next;
-            advance();
-            return result;
-        }
-
-        @Override
-        public void remove() {
-            if (exhausted) throw new NoSuchElementException();
-            advance();
-        }
-
-        private void advance() {
-            next = delegate.next();
-            exhausted = !delegate.hasNext();
-        }
-    }
-
     //--------------------------------------------------------------------------
-    // inits
+    // init
 
     /**
      * Calculates the init values of this Iterable: the first value will be this list of all items from the iterable and the final one will be an empty list, with the intervening values the results of successive applications of init on the items.
@@ -7355,22 +7184,19 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return GroovyCollections.inits(self);
     }
 
-    //--------------------------------------------------------------------------
-    // inject
-
     /**
      * Iterates through the given object, passing the first two elements to the
      * closure. The result is passed back (injected) to the closure along with
      * the third element and so on until all elements have been consumed.
      *
-     * @param self         an object
-     * @param closure      a closure
+     * @param self    an object
+     * @param closure a closure
      * @return the result of the last closure call
      * @throws NoSuchElementException if the iterator is empty
      * @see #inject(Object, Object, Closure)
      * @since 1.8.7
      */
-    public static <T, V extends T> T inject(Object self, @ClosureParams(value=FromString.class,options="T,?") Closure<V> closure) {
+    public static <T, V extends T> T inject(Object self, @ClosureParams(value = FromString.class, options = "T,?") Closure<V> closure) {
         Iterator<?> iter = InvokerHelper.asIterator(self);
         if (!iter.hasNext()) {
             throw new NoSuchElementException("Cannot call inject() on an empty iterable without passing an initial value.");
@@ -7397,22 +7223,20 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert value == 'join'
      * </pre>
      *
-     * @param self         an iterable
-     * @param closure      a closure
+     * @param self    an iterable
+     * @param closure a closure
      * @return the result of the last closure call
      * @throws NoSuchElementException if the iterator is empty
      * @see #inject(Iterable, Object, Closure)
      * @since 5.0.0
      */
-    public static <E extends T, T, V extends T> T inject(Iterable<E> self, @ClosureParams(value=FromString.class,options="T,E") Closure<V> closure) {
+    public static <E extends T, T, V extends T> T inject(Iterable<E> self, @ClosureParams(value = FromString.class, options = "T,E") Closure<V> closure) {
         Iterator<E> iter = self.iterator();
         if (!iter.hasNext()) {
             throw new NoSuchElementException("Cannot call inject() on an empty iterable without passing an initial value.");
         }
         return (T) inject(iter, iter.next(), closure);
     }
-
-    //
 
     /**
      * Iterates through the given object, passing in the initial value to
@@ -7430,7 +7254,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see #inject(Iterator, Object, Closure)
      * @since 1.5.0
      */
-    public static <T, U extends T, V extends T> T inject(Object self, U initialValue, @ClosureParams(value=FromString.class,options="T,?") Closure<V> closure) {
+    public static <T, U extends T, V extends T> T inject(Object self, U initialValue, @ClosureParams(value = FromString.class, options = "T,?") Closure<V> closure) {
         Iterator iter = InvokerHelper.asIterator(self);
         return (T) inject(iter, initialValue, closure);
     }
@@ -7443,7 +7267,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * not possible.
      * <p>
      * Also known as <tt>foldLeft</tt> or <tt>reduce</tt> in functional parlance.
-     *
+     * <p>
      * Examples:
      * <pre class="groovyTestCase">
      * assert 1*1*2*3*4 == [1,2,3,4].inject(1) { acc, val {@code ->} acc * val }
@@ -7477,9 +7301,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the result of the last closure call
      * @since 5.0.0
      */
-    public static <E, T, U extends T, V extends T> T inject(Iterable<E> self, U initialValue, @ClosureParams(value=FromString.class,options="T,E") Closure<V> closure) {
+    public static <E, T, U extends T, V extends T> T inject(Iterable<E> self, U initialValue, @ClosureParams(value = FromString.class, options = "T,E") Closure<V> closure) {
         return inject(self.iterator(), initialValue, closure);
     }
+
+    //--------------------------------------------------------------------------
+    // inits
 
     /**
      * Iterates through the given iterator, passing in the initial value to
@@ -7496,7 +7323,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the result of the last closure call
      * @since 1.5.0
      */
-    public static <E, T, U extends T, V extends T> T inject(Iterator<E> self, U initialValue, @ClosureParams(value=FromString.class,options="T,E") Closure<V> closure) {
+    public static <E, T, U extends T, V extends T> T inject(Iterator<E> self, U initialValue, @ClosureParams(value = FromString.class, options = "T,E") Closure<V> closure) {
         T value = initialValue;
         Object[] params = new Object[2];
         while (self.hasNext()) {
@@ -7507,6 +7334,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return value;
     }
 
+    //--------------------------------------------------------------------------
+    // inject
+
     /**
      * Iterates through the given map, passing in the initial value to
      * the 2-arg Closure along with the first item (or 3-arg Closure along with the first key and value).
@@ -7516,7 +7346,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * not possible.
      * <p>
      * Also known as <tt>foldLeft</tt> or <tt>reduce</tt> in functional parlance.
-     *
+     * <p>
      * Examples:
      * <pre class="groovyTestCase">
      * def map = [a:1, b:2, c:3]
@@ -7531,7 +7361,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the result of the last closure call
      * @since 1.8.1
      */
-    public static <K, V, T, U extends T, W extends T> T inject(Map<K, V> self, U initialValue, @ClosureParams(value=FromString.class,options={"T,Map.Entry<K,V>","T,K,V"}) Closure<W> closure) {
+    public static <K, V, T, U extends T, W extends T> T inject(Map<K, V> self, U initialValue, @ClosureParams(value = FromString.class, options = {"T,Map.Entry<K,V>", "T,K,V"}) Closure<W> closure) {
         T value = initialValue;
         for (Map.Entry<K, V> entry : self.entrySet()) {
             if (closure.getMaximumNumberOfParameters() == 3) {
@@ -7543,24 +7373,20 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return value;
     }
 
-    //--------------------------------------------------------------------------
-    // inspect
-
     /**
      * Inspects returns the String that matches what would be typed into a
      * terminal to create this object.
      *
      * @param self any Object
      * @return a String that matches what would be typed into a terminal to
-     *         create this object. e.g. [1, 'hello'].inspect() {@code ->} [1, 'hello']
+     * create this object. e.g. [1, 'hello'].inspect() {@code ->} [1, 'hello']
      * @since 1.0
      */
     public static String inspect(Object self) {
         return FormatHelper.inspect(self);
     }
 
-    //--------------------------------------------------------------------------
-    // intdiv
+    //
 
     /**
      * Integer Divide a Character by a Number. The ordinal value of the Character
@@ -7617,7 +7443,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // intersect
+    // inspect
 
     /**
      * Create a Collection composed of the intersection of both collections.  Any
@@ -7637,6 +7463,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return intersect(left, right, new NumberAwareComparator<>());
     }
 
+    //--------------------------------------------------------------------------
+    // intdiv
+
     /**
      * Create a Collection composed of the intersection of both collections.  Any
      * elements that exist in both collections are added to the resultant collection.
@@ -7655,8 +7484,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert two.intersect(one, compareIgnoreCase) == ['b', 'C', 'd']
      * </pre>
      *
-     * @param left  a Collection
-     * @param right a Collection
+     * @param left       a Collection
+     * @param right      a Collection
      * @param comparator a Comparator
      * @return a Collection as an intersection of both collections
      * @since 2.5.0
@@ -7705,8 +7534,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [3,4] == [1,2,3,4].intersect([3,4,5,6], Comparator.naturalOrder())
      * </pre>
      *
-     * @param left  an Iterable
-     * @param right an Iterable
+     * @param left       an Iterable
+     * @param right      an Iterable
      * @param comparator a Comparator
      * @return a Collection as an intersection of both iterables
      * @since 2.5.0
@@ -7732,18 +7561,21 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert two.intersect(one, compareIgnoreCase) == ['b', 'C', 'd']
      * </pre>
      *
-     * @param left  an Iterable
-     * @param right an Iterable
+     * @param left      an Iterable
+     * @param right     an Iterable
      * @param condition a Closure used to determine unique items
      * @return a Collection as an intersection of both iterables
      * @since 4.0.0
      */
-    public static <T> Collection<T> intersect(Iterable<T> left, Iterable<T> right, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure condition) {
+    public static <T> Collection<T> intersect(Iterable<T> left, Iterable<T> right, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure condition) {
         Comparator<T> comparator = condition.getMaximumNumberOfParameters() == 1
-                ? new OrderBy<>(condition, true)
-                : new ClosureComparator<>(condition);
+            ? new OrderBy<>(condition, true)
+            : new ClosureComparator<>(condition);
         return intersect(left, right, comparator);
     }
+
+    //--------------------------------------------------------------------------
+    // intersect
 
     /**
      * Create a List composed of the intersection of a List and an Iterable.  Any
@@ -7771,8 +7603,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [3,4] == [1,2,3,4].intersect([3,4,5,6])
      * </pre>
      *
-     * @param left  a List
-     * @param right an Iterable
+     * @param left       a List
+     * @param right      an Iterable
      * @param comparator a Comparator
      * @return a List as an intersection of a List and an Iterable
      * @since 2.5.0
@@ -7807,8 +7639,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [3,4] as Set == ([1,2,3,4] as Set).intersect([3,4,5,6], Comparator.naturalOrder())
      * </pre>
      *
-     * @param left  a Set
-     * @param right an Iterable
+     * @param left       a Set
+     * @param right      an Iterable
      * @param comparator a Comparator
      * @return a Set as an intersection of a Set and an Iterable
      * @since 2.5.0
@@ -7843,8 +7675,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [4,5] as SortedSet == ([1,2,3,4,5] as SortedSet).intersect([4,5,6,7,8])
      * </pre>
      *
-     * @param left  a SortedSet
-     * @param right an Iterable
+     * @param left       a SortedSet
+     * @param right      an Iterable
      * @param comparator a Comparator
      * @return a Set as an intersection of a SortedSet and an Iterable
      * @since 2.5.0
@@ -7859,13 +7691,13 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * <pre class="groovyTestCase">assert [4:4,5:5] == [1:1,2:2,3:3,4:4,5:5].intersect([4:4,5:5,6:6,7:7,8:8])</pre>
      * <pre class="groovyTestCase">assert [1: 1, 2: 2, 3: 3, 4: 4].intersect( [1: 1.0, 2: 2, 5: 5] ) == [1:1, 2:2]</pre>
      *
-     * @param left     a map
-     * @param right    a map
+     * @param left  a map
+     * @param right a map
      * @return a Map as an intersection of both maps
      * @since 1.7.4
      */
-    public static <K,V> Map<K,V> intersect(Map<K,V> left, Map<K,V> right) {
-        final Map<K,V> ansMap = createSimilarMap(left);
+    public static <K, V> Map<K, V> intersect(Map<K, V> left, Map<K, V> right) {
+        final Map<K, V> ansMap = createSimilarMap(left);
         if (right != null && !right.isEmpty()) {
             for (Map.Entry<K, V> e1 : left.entrySet()) {
                 for (Map.Entry<K, V> e2 : right.entrySet()) {
@@ -7877,9 +7709,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return ansMap;
     }
-
-    //--------------------------------------------------------------------------
-    // invokeMethod
 
     /**
      * Provide a dynamic method invocation method which can be overloaded in
@@ -7895,9 +7724,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return InvokerHelper.invokeMethod(object, method, arguments);
     }
 
-    //--------------------------------------------------------------------------
-    // is
-
     /**
      * Identity check. Since == is overridden in Groovy with the meaning of equality
      * we need some fallback to check for object identity.  Invoke using the
@@ -7906,15 +7732,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self  an object
      * @param other an object to compare identity with
      * @return true if self and other are both references to the same
-     *         instance, false otherwise
+     * instance, false otherwise
      * @since 1.0
      */
     public static boolean is(Object self, Object other) {
         return self == other;
     }
-
-    //-------------------------------------------------------------------------
-    // isAtLeast
 
     /**
      * Compare a BigDecimal to another.
@@ -7942,9 +7765,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return isAtLeast(left, new BigDecimal(right));
     }
 
-    //-------------------------------------------------------------------------
-    // isCase
-
     /**
      * Method for overloading the behavior of the 'case' method in switch statements.
      * The default implementation handles arrays types but otherwise simply delegates
@@ -7967,10 +7787,13 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return caseValue.equals(switchValue);
     }
 
+    //--------------------------------------------------------------------------
+    // invokeMethod
+
     /**
      * Special 'Case' implementation for Class, which allows testing
      * whether some switch value is assignable from the given case class.
-     *
+     * <p>
      * If the switch value is an object, {@code isCase} will return true if the
      * switch value is assignment compatible with the class (case value),
      * i.e.&nbsp;is an {@code instanceof} the class, for example:
@@ -7988,7 +7811,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *     break
      * }
      * </pre>
-     *
+     * <p>
      * If the switch value is a class, {@code isCase} will return true if the
      * switch value is assignable from the given class (case value), i.e.&nbsp;the case class
      * is the same as, or a superclass, or a super-interface of the switch class, for example:
@@ -8020,6 +7843,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return caseValue.isInstance(switchValue);
     }
 
+    //--------------------------------------------------------------------------
+    // is
+
     /**
      * 'Case' implementation for collections which tests if the 'switch'
      * operand is contained in any of the 'case' values.
@@ -8042,6 +7868,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return caseValue.contains(switchValue);
     }
 
+    //-------------------------------------------------------------------------
+    // isAtLeast
+
     /**
      * 'Case' implementation for iterable types which tests if the 'switch'
      * operand is contained in any of the 'case' values.
@@ -8063,7 +7892,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param caseValue   the case value
      * @param switchValue the switch value
      * @return true if the caseValue is deemed to contain the switchValue
-     * @see #contains(Iterable,Object)
+     * @see #contains(Iterable, Object)
      * @since 5.0.0
      */
     public static boolean isCase(Iterable caseValue, Object switchValue) {
@@ -8091,6 +7920,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultTypeTransformation.castToBoolean(caseValue.get(switchValue));
     }
 
+    //-------------------------------------------------------------------------
+    // isCase
+
     /**
      * Special 'case' implementation for all numbers, which delegates to the
      * <code>compareTo()</code> method for comparing numbers of different
@@ -8105,9 +7937,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return NumberMath.compareTo(caseValue, switchValue) == 0;
     }
 
-    //--------------------------------------------------------------------------
-    // isDigit
-
     /**
      * Determines if a character is a digit.
      * Synonym for 'Character.isDigit(this)'.
@@ -8120,9 +7949,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static boolean isDigit(Character self) {
         return Character.isDigit(self);
     }
-
-    //-------------------------------------------------------------------------
-    // isEmpty
 
     /**
      * Check whether an <code>Iterable</code> has elements
@@ -8142,9 +7968,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return !self.iterator().hasNext();
     }
 
-    //--------------------------------------------------------------------------
-    // isLetter
-
     /**
      * Determines if a character is a letter.
      * Synonym for 'Character.isLetter(this)'.
@@ -8157,9 +7980,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static boolean isLetter(Character self) {
         return Character.isLetter(self);
     }
-
-    //--------------------------------------------------------------------------
-    // isLetterOrDigit
 
     /**
      * Determines if a character is a letter or digit.
@@ -8174,9 +7994,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return Character.isLetterOrDigit(self);
     }
 
-    //--------------------------------------------------------------------------
-    // isLowerCase
-
     /**
      * Determines if a Character is lowercase.
      * Synonym for 'Character.isLowerCase(this)'.
@@ -8190,8 +8007,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return Character.isLowerCase(self);
     }
 
-    //-------------------------------------------------------------------------
-    // isNotCase
+    //--------------------------------------------------------------------------
+    // isDigit
 
     /**
      * @since 4.0.0
@@ -8200,12 +8017,18 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return !isCase(caseValue, switchValue);
     }
 
+    //-------------------------------------------------------------------------
+    // isEmpty
+
     /**
      * @since 4.0.0
      */
     public static boolean isNotCase(Object caseValue, Object switchValue) {
         return !isCase(caseValue, switchValue);
     }
+
+    //--------------------------------------------------------------------------
+    // isLetter
 
     /**
      * @since 4.0.0
@@ -8214,12 +8037,18 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return !isCase(caseValue, switchValue);
     }
 
+    //--------------------------------------------------------------------------
+    // isLetterOrDigit
+
     /**
      * @since 4.0.0
      */
     public static boolean isNotCase(Closure<?> caseValue, Object switchValue) {
         return !caseValue.isCase(switchValue);
     }
+
+    //--------------------------------------------------------------------------
+    // isLowerCase
 
     /**
      * @since 4.0.0
@@ -8228,15 +8057,15 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return !isCase(caseValue, switchValue);
     }
 
+    //-------------------------------------------------------------------------
+    // isNotCase
+
     /**
      * @since 4.0.0
      */
-    public static boolean isNotCase(Map<?, ?>     caseValue, Object switchValue) {
+    public static boolean isNotCase(Map<?, ?> caseValue, Object switchValue) {
         return !isCase(caseValue, switchValue);
     }
-
-    //--------------------------------------------------------------------------
-    // isUpperCase
 
     /**
      * Determines if a Character is uppercase.
@@ -8251,9 +8080,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return Character.isUpperCase(self);
     }
 
-    //--------------------------------------------------------------------------
-    // isWhitespace
-
     /**
      * Determines if a character is a whitespace character.
      * Synonym for 'Character.isWhitespace(this)'.
@@ -8266,9 +8092,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static boolean isWhitespace(Character self) {
         return Character.isWhitespace(self);
     }
-
-    //--------------------------------------------------------------------------
-    // iterator
 
     /**
      * Creates an Iterator for the given Object by converting it to a Collection.
@@ -8323,17 +8146,20 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         };
     }
 
+    //--------------------------------------------------------------------------
+    // isUpperCase
+
     /**
      * Returns an Iterator for the given Map's entry set.
      *
      * @since 5.0.0
      */
-    public static <K,V> Iterator<Map.Entry<K,V>> iterator(final Map<K,V> self) {
+    public static <K, V> Iterator<Map.Entry<K, V>> iterator(final Map<K, V> self) {
         return self.entrySet().iterator();
     }
 
     //--------------------------------------------------------------------------
-    // join
+    // isWhitespace
 
     /**
      * Concatenates the <code>toString()</code> representation of each item from
@@ -8346,6 +8172,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static String join(final Iterator<?> self) {
         return join(self, null);
     }
+
+    //--------------------------------------------------------------------------
+    // iterator
 
     /**
      * Concatenates the <code>toString()</code> representation of each item from
@@ -8397,9 +8226,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return join(self.iterator(), separator);
     }
 
-    //--------------------------------------------------------------------------
-    // last
-
     /**
      * Returns the last item from the List.
      * <pre class="groovyTestCase">
@@ -8420,6 +8246,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return self.get(self.size() - 1);
     }
+
+    //--------------------------------------------------------------------------
+    // join
 
     /**
      * An optimized version of {@link #last(List)}.
@@ -8462,9 +8291,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return result;
     }
 
-    //--------------------------------------------------------------------------
-    // leftShift
-
     /**
      * Overloads the left shift operator to provide an easy way to append
      * objects to a Collection.
@@ -8497,6 +8323,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> List<T> leftShift(List<T> self, T value) {
         return (List<T>) leftShift((Collection<T>) self, value);
     }
+
+    //--------------------------------------------------------------------------
+    // last
 
     /**
      * Overloads the left shift operator to provide an easy way to append
@@ -8547,6 +8376,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         self.put(value);
         return self;
     }
+
+    //--------------------------------------------------------------------------
+    // leftShift
 
     /**
      * Overloads the left shift operator to provide an easy way to append
@@ -8615,9 +8447,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return result;
     }
 
-    //--------------------------------------------------------------------------
-    // max
-
     /**
      * Adds max() method to Iterable objects.
      * <pre class="groovyTestCase">
@@ -8644,7 +8473,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> T max(Iterator<T> self) {
         T answer = null;
         while (self.hasNext()) {
-            T value =  self.next();
+            T value = self.next();
             if (value != null && (answer == null || ScriptBytecodeAdapter.compareGreaterThan(value, answer))) {
                 answer = value;
             }
@@ -8714,9 +8543,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return an item from the Iterable having the maximum value returned by calling the supplied closure with that item as parameter or null for an empty Iterable
      * @since 2.2.0
      */
-    public static <T> T max(Iterable<T> self, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure closure) {
+    public static <T> T max(Iterable<T> self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         return max(self.iterator(), closure);
     }
+
+    //--------------------------------------------------------------------------
+    // max
 
     /**
      * Selects the maximum value found from the Iterator
@@ -8737,7 +8569,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the maximum value
      * @since 1.5.5
      */
-    public static <T> T max(Iterator<T> self, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure closure) {
+    public static <T> T max(Iterator<T> self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         int params = closure.getMaximumNumberOfParameters();
         if (params != 1) {
             return max(self, new ClosureComparator<>(closure));
@@ -8794,54 +8626,47 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the Map.Entry having the maximum value as determined by the closure
      * @since 1.7.6
      */
-    public static <K, V> Map.Entry<K, V> max(Map<K, V> self, @ClosureParams(value=FromString.class, options={"Map.Entry<K,V>", "Map.Entry<K,V>,Map.Entry<K,V>"}) Closure closure) {
+    public static <K, V> Map.Entry<K, V> max(Map<K, V> self, @ClosureParams(value = FromString.class, options = {"Map.Entry<K,V>", "Map.Entry<K,V>,Map.Entry<K,V>"}) Closure closure) {
         return max(self.entrySet(), closure);
     }
-
-    //--------------------------------------------------------------------------
-    // metaClass
 
     /**
      * Sets/updates the metaclass for a given class to a closure.
      *
-     * @param self the class whose metaclass we wish to update
+     * @param self    the class whose metaclass we wish to update
      * @param closure the closure representing the new metaclass
      * @return the new metaclass value
      * @throws GroovyRuntimeException if the metaclass can't be set for this class
      * @since 1.6.0
      */
-    public static MetaClass metaClass(Class self, @ClosureParams(value=SimpleType.class, options="java.lang.Object")
-            @DelegatesTo(type="groovy.lang.ExpandoMetaClass.DefiningClosure", strategy=Closure.DELEGATE_ONLY) Closure closure) {
+    public static MetaClass metaClass(Class self, @ClosureParams(value = SimpleType.class, options = "java.lang.Object")
+    @DelegatesTo(type = "groovy.lang.ExpandoMetaClass.DefiningClosure", strategy = Closure.DELEGATE_ONLY) Closure closure) {
         MetaClassRegistry metaClassRegistry = GroovySystem.getMetaClassRegistry();
         MetaClass mc = metaClassRegistry.getMetaClass(self);
 
         if (mc instanceof ExpandoMetaClass) {
             ((ExpandoMetaClass) mc).define(closure);
             return mc;
-        }
-        else {
+        } else {
             if (mc instanceof DelegatingMetaClass && ((DelegatingMetaClass) mc).getAdaptee() instanceof ExpandoMetaClass) {
-                ((ExpandoMetaClass)((DelegatingMetaClass) mc).getAdaptee()).define(closure);
+                ((ExpandoMetaClass) ((DelegatingMetaClass) mc).getAdaptee()).define(closure);
                 return mc;
-            }
-            else {
+            } else {
                 if (mc instanceof DelegatingMetaClass && ((DelegatingMetaClass) mc).getAdaptee().getClass() == MetaClassImpl.class) {
-                    ExpandoMetaClass emc =  new ExpandoMetaClass(self, false, true);
+                    ExpandoMetaClass emc = new ExpandoMetaClass(self, false, true);
                     emc.initialize();
                     emc.define(closure);
                     ((DelegatingMetaClass) mc).setAdaptee(emc);
                     return mc;
-                }
-                else {
+                } else {
                     if (mc.getClass() == MetaClassImpl.class) {
                         // default case
                         mc = new ExpandoMetaClass(self, false, true);
                         mc.initialize();
-                        ((ExpandoMetaClass)mc).define(closure);
+                        ((ExpandoMetaClass) mc).define(closure);
                         metaClassRegistry.setMetaClass(self, mc);
                         return mc;
-                    }
-                    else {
+                    } else {
                         throw new GroovyRuntimeException("Can't add methods to custom meta class " + mc);
                     }
                 }
@@ -8852,37 +8677,34 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     /**
      * Sets/updates the metaclass for a given object to a closure.
      *
-     * @param self the object whose metaclass we wish to update
+     * @param self    the object whose metaclass we wish to update
      * @param closure the closure representing the new metaclass
      * @return the new metaclass value
      * @throws GroovyRuntimeException if the metaclass can't be set for this object
      * @since 1.6.0
      */
-    public static MetaClass metaClass(Object self, @ClosureParams(value=SimpleType.class, options="java.lang.Object")
-            @DelegatesTo(type="groovy.lang.ExpandoMetaClass.DefiningClosure", strategy=Closure.DELEGATE_ONLY) Closure closure) {
+    public static MetaClass metaClass(Object self, @ClosureParams(value = SimpleType.class, options = "java.lang.Object")
+    @DelegatesTo(type = "groovy.lang.ExpandoMetaClass.DefiningClosure", strategy = Closure.DELEGATE_ONLY) Closure closure) {
         MetaClass emc = hasPerInstanceMetaClass(self);
         if (emc == null) {
             final ExpandoMetaClass metaClass = new ExpandoMetaClass(self.getClass(), false, true);
             metaClass.initialize();
             metaClass.define(closure);
             if (self instanceof GroovyObject) {
-                setMetaClass((GroovyObject)self, metaClass);
+                setMetaClass((GroovyObject) self, metaClass);
             } else {
                 setMetaClass(self, metaClass);
             }
             return metaClass;
-        }
-        else {
+        } else {
             if (emc instanceof ExpandoMetaClass) {
-                ((ExpandoMetaClass)emc).define(closure);
+                ((ExpandoMetaClass) emc).define(closure);
                 return emc;
-            }
-            else {
-                if (emc instanceof DelegatingMetaClass && ((DelegatingMetaClass)emc).getAdaptee() instanceof ExpandoMetaClass) {
-                    ((ExpandoMetaClass)((DelegatingMetaClass)emc).getAdaptee()).define(closure);
+            } else {
+                if (emc instanceof DelegatingMetaClass && ((DelegatingMetaClass) emc).getAdaptee() instanceof ExpandoMetaClass) {
+                    ((ExpandoMetaClass) ((DelegatingMetaClass) emc).getAdaptee()).define(closure);
                     return emc;
-                }
-                else {
+                } else {
                     throw new RuntimeException("Can't add methods to non-ExpandoMetaClass " + emc);
                 }
             }
@@ -8891,26 +8713,21 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
 
     private static MetaClass hasPerInstanceMetaClass(Object object) {
         if (object instanceof GroovyObject) {
-            MetaClass mc = ((GroovyObject)object).getMetaClass();
+            MetaClass mc = ((GroovyObject) object).getMetaClass();
             if (mc == GroovySystem.getMetaClassRegistry().getMetaClass(object.getClass()) || mc.getClass() == MetaClassImpl.class)
                 return null;
             else
                 return mc;
-        }
-        else {
+        } else {
             ClassInfo info = ClassInfo.getClassInfo(object.getClass());
             info.lock();
             try {
                 return info.getPerInstanceMetaClass(object);
-            }
-            finally {
+            } finally {
                 info.unlock();
             }
         }
     }
-
-    //--------------------------------------------------------------------------
-    // min
 
     /**
      * Adds min() method to Collection objects.
@@ -8937,13 +8754,16 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> T min(Iterator<T> self) {
         T answer = null;
         while (self.hasNext()) {
-            T value =  self.next();
+            T value = self.next();
             if (value != null && (answer == null || ScriptBytecodeAdapter.compareLessThan(value, answer))) {
                 answer = value;
             }
         }
         return answer;
     }
+
+    //--------------------------------------------------------------------------
+    // metaClass
 
     /**
      * Selects the minimum value found in the Iterable using the given comparator.
@@ -9015,9 +8835,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see #min(Iterator)
      * @since 1.0
      */
-    public static <T> T min(Iterable<T> self, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure closure) {
+    public static <T> T min(Iterable<T> self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         return min(self.iterator(), closure);
     }
+
+    //--------------------------------------------------------------------------
+    // min
 
     /**
      * Selects the minimum value found from the Iterator
@@ -9039,7 +8862,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the minimum value
      * @since 1.5.5
      */
-    public static <T> T min(Iterator<T> self, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure closure) {
+    public static <T> T min(Iterator<T> self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         int params = closure.getMaximumNumberOfParameters();
         if (params != 1) {
             return min(self, new ClosureComparator<>(closure));
@@ -9097,12 +8920,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the Map.Entry having the minimum value as determined by the closure
      * @since 1.7.6
      */
-    public static <K, V> Map.Entry<K, V> min(Map<K, V> self, @ClosureParams(value=FromString.class, options={"Map.Entry<K,V>", "Map.Entry<K,V>,Map.Entry<K,V>"}) Closure closure) {
+    public static <K, V> Map.Entry<K, V> min(Map<K, V> self, @ClosureParams(value = FromString.class, options = {"Map.Entry<K,V>", "Map.Entry<K,V>,Map.Entry<K,V>"}) Closure closure) {
         return min(self.entrySet(), closure);
     }
-
-    //--------------------------------------------------------------------------
-    // minus
 
     /**
      * Create a Set composed of the elements of the first Set minus the
@@ -9157,7 +8977,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         Comparator comparator = (self instanceof SortedSet) ? ((SortedSet) self).comparator() : null;
         final Set<T> ansSet = createSimilarSet(self);
         for (T t : self) {
-            boolean areEqual = (comparator != null)? (comparator.compare(t, removeMe) == 0) : coercedEquals(t, removeMe);
+            boolean areEqual = (comparator != null) ? (comparator.compare(t, removeMe) == 0) : coercedEquals(t, removeMe);
             if (!areEqual) ansSet.add(t);
         }
         return ansSet;
@@ -9188,6 +9008,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> SortedSet<T> minus(SortedSet<T> self, Iterable<?> removeMe) {
         return (SortedSet<T>) minus((Set<T>) self, removeMe);
     }
+
+    //--------------------------------------------------------------------------
+    // minus
 
     /**
      * Create a SortedSet composed of the elements of the first SortedSet minus the given element.
@@ -9266,16 +9089,16 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert ['a', 'B', 'c', 'D', 'E'].minus(['b', 'C', 'D']) { it.toLowerCase() } == ['a', 'E']
      * </pre>
      *
-     * @param self     an Iterable
-     * @param removeMe an Iterable of elements to remove
+     * @param self      an Iterable
+     * @param removeMe  an Iterable of elements to remove
      * @param condition a Closure used to determine unique items
      * @return a new Collection with the given elements removed
      * @since 4.0.0
      */
-    public static <T> Collection<T> minus(Iterable<T> self, Iterable<?> removeMe, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure condition) {
+    public static <T> Collection<T> minus(Iterable<T> self, Iterable<?> removeMe, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure condition) {
         Comparator<T> comparator = condition.getMaximumNumberOfParameters() == 1
-                ? new OrderBy<>(condition, true)
-                : new ClosureComparator<>(condition);
+            ? new OrderBy<>(condition, true)
+            : new ClosureComparator<>(condition);
         return minus(self, removeMe, comparator);
     }
 
@@ -9286,8 +9109,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert ['a', 'B', 'c', 'D', 'E'].minus(['b', 'C', 'D'], {@code (i, j) -> i.toLowerCase() <=> j.toLowerCase()}) == ['a', 'E']
      * </pre>
      *
-     * @param self     an Iterable
-     * @param removeMe an Iterable of elements to remove
+     * @param self       an Iterable
+     * @param removeMe   an Iterable of elements to remove
      * @param comparator a Comparator
      * @return a new Collection with the given elements removed
      * @since 4.0.0
@@ -9307,7 +9130,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         if (nlgnSort && (head instanceof Comparable)) {
             //n*LOG(n) version
             Set<T> removeMe2 = new TreeSet<>(comparator);
-            for(Object o: removeMe) {
+            for (Object o : removeMe) {
                 removeMe2.add((T) o);
             }
             for (T o : self) {
@@ -9317,10 +9140,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         } else {
             //n*n version
             Collection<T> tmpAnswer = asCollection(self);
-            for (Iterator<T> iter = self.iterator(); iter.hasNext();) {
+            for (Iterator<T> iter = self.iterator(); iter.hasNext(); ) {
                 T element = iter.next();
                 boolean elementRemoved = false;
-                for (Iterator<?> iterator = removeMe.iterator(); iterator.hasNext() && !elementRemoved;) {
+                for (Iterator<?> iterator = removeMe.iterator(); iterator.hasNext() && !elementRemoved; ) {
                     Object elt = iterator.next();
                     if (DefaultTypeTransformation.compareEqual(element, elt)) {
                         iter.remove();
@@ -9377,8 +9200,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the resulting map
      * @since 1.7.4
      */
-    public static <K,V> Map<K,V> minus(Map<K,V> self, Map removeMe) {
-        final Map<K,V> ansMap = createSimilarMap(self);
+    public static <K, V> Map<K, V> minus(Map<K, V> self, Map removeMe) {
+        final Map<K, V> ansMap = createSimilarMap(self);
         ansMap.putAll(self);
         if (removeMe != null && !removeMe.isEmpty()) {
             for (Map.Entry<K, V> e1 : self.entrySet()) {
@@ -9434,14 +9257,11 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return minus(Integer.valueOf(left), right);
     }
 
-    //--------------------------------------------------------------------------
-    // mixin
-
     /**
      * Extend object with category methods.
      * All methods for given class and all super classes will be added to the object.
      *
-     * @param self          any Class
+     * @param self            any Class
      * @param categoryClasses a category classes to use
      * @since 1.6.0
      */
@@ -9453,7 +9273,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * Extend class globally with category methods.
      * All methods for given class and all super classes will be added to the class.
      *
-     * @param self          any Class
+     * @param self            any Class
      * @param categoryClasses a category classes to use
      * @since 1.6.0
      */
@@ -9494,6 +9314,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         mixin(self, Collections.singletonList(categoryClass));
     }
 
+    //--------------------------------------------------------------------------
+    // mixin
+
     /**
      * Extend class globally with category methods.
      *
@@ -9504,9 +9327,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static void mixin(MetaClass self, Class[] categoryClass) {
         mixin(self, Arrays.asList(categoryClass));
     }
-
-    //--------------------------------------------------------------------------
-    // mod
 
     /**
      * Performs a division modulus operation.
@@ -9520,15 +9340,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return NumberMath.mod(left, right);
     }
 
-    //--------------------------------------------------------------------------
-    // multiply
-
     /**
      * Create a Collection composed of the elements of this Iterable, repeated
      * a certain number of times.  Note that for non-primitive
      * elements, multiple references to the same instance will be added.
      * <pre class="groovyTestCase">assert [1,2,3,1,2,3] == [1,2,3] * 2</pre>
-     *
+     * <p>
      * Note: if the Iterable happens to not support duplicates, e.g. a Set, then the
      * method will effectively return a Collection with a single copy of the Iterable's items.
      *
@@ -9552,7 +9369,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * a certain number of times.  Note that for non-primitive
      * elements, multiple references to the same instance will be added.
      * <pre class="groovyTestCase">assert [1,2,3,1,2,3] == [1,2,3] * 2</pre>
-     *
+     * <p>
      * Note: if the Iterable happens to not support duplicates, e.g. a Set, then the
      * method will effectively return a Collection with a single copy of the Iterable's items.
      *
@@ -9593,6 +9410,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return NumberNumberMultiply.multiply(Integer.valueOf(right), left);
     }
 
+    //--------------------------------------------------------------------------
+    // mod
+
     /**
      * Multiply two Characters. The ordinal values of the Characters
      * are used in the multiplication (the ordinal value is the unicode
@@ -9606,6 +9426,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Number multiply(Character left, Character right) {
         return multiply(Integer.valueOf(left), right);
     }
+
+    //--------------------------------------------------------------------------
+    // multiply
 
     /**
      * Multiply a BigDecimal and a Double.
@@ -9644,9 +9467,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return NumberMath.multiply(left, right);
     }
 
-    //--------------------------------------------------------------------------
-    // newInstance
-
     /**
      * Convenience method to dynamically create a new instance of this
      * class.  Calls the default constructor.
@@ -9677,9 +9497,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return (T) InvokerHelper.invokeConstructorOf(c, args);
     }
 
-    //--------------------------------------------------------------------------
-    // next
-
     /**
      * Increment a Character by one.
      *
@@ -9702,14 +9519,11 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return NumberNumberPlus.plus(self, 1);
     }
 
-    //--------------------------------------------------------------------------
-    // numberAwareCompareTo
-
     /**
      * Provides a method that compares two comparables using Groovy's
      * default number aware comparator.
      *
-     * @param self a Comparable
+     * @param self  a Comparable
      * @param other another Comparable
      * @return a -ve number, 0 or a +ve number according to Groovy's compareTo contract
      * @since 1.6.0
@@ -9719,7 +9533,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // or
+    // newInstance
 
     /**
      * Bitwise OR together two numbers.
@@ -9748,10 +9562,13 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return result;
     }
 
+    //--------------------------------------------------------------------------
+    // next
+
     /**
      * Logical disjunction of two boolean operators
      *
-     * @param left left operator
+     * @param left  left operator
      * @param right right operator
      * @return result of logical disjunction
      * @since 1.0
@@ -9776,12 +9593,15 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param left  the left Set
      * @param right the right Iterable
      * @return the merged Set
-     * @since 5.0.0
      * @see #plus(Set, Iterable)
+     * @since 5.0.0
      */
     public static <T> Set<T> or(Set<T> left, Iterable<T> right) {
         return plus(left, right);
     }
+
+    //--------------------------------------------------------------------------
+    // numberAwareCompareTo
 
     /**
      * Create a SortedSet as a union of a SortedSet and an Iterable.  Any
@@ -9799,15 +9619,15 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param left  the left SortedSet
      * @param right the right Iterable
      * @return the merged SortedSet
-     * @since 5.0.0
      * @see #plus(SortedSet, Iterable)
+     * @since 5.0.0
      */
     public static <T> SortedSet<T> or(SortedSet<T> left, Iterable<T> right) {
         return plus(left, right);
     }
 
     //--------------------------------------------------------------------------
-    // permutations
+    // or
 
     /**
      * Finds all permutations of an iterable.
@@ -9837,17 +9657,14 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * <pre class="groovyTestCase">Set result = [1, 2, 3].permutations { it.collect { v {@code ->} 2*v }}
      * assert result == [[6, 4, 2], [6, 2, 4], [2, 6, 4], [4, 6, 2], [4, 2, 6], [2, 4, 6]] as Set</pre>
      *
-     * @param self the Iterable of items
+     * @param self     the Iterable of items
      * @param function the function to apply on each permutation
      * @return the list of results of the application of the function on each permutation
      * @since 2.2.0
      */
-    public static <T,V> List<V> permutations(Iterable<T> self, Closure<V> function) {
+    public static <T, V> List<V> permutations(Iterable<T> self, Closure<V> function) {
         return collect(permutations(self), function);
     }
-
-    //--------------------------------------------------------------------------
-    // plus
 
     /**
      * Create a Collection as a union of two collections. If the left collection
@@ -9892,12 +9709,15 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param left  the left Collection
      * @param right the right Iterable
      * @return the merged Collection
-     * @since 1.8.7
      * @see #plus(Collection, Collection)
+     * @since 1.8.7
      */
     public static <T> Collection<T> plus(Collection<T> left, Iterable<T> right) {
         return plus(left, asCollection(right));
     }
+
+    //--------------------------------------------------------------------------
+    // permutations
 
     /**
      * Create a List as a union of a List and an Iterable.
@@ -9907,8 +9727,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param left  the left List
      * @param right the right Iterable
      * @return the merged List
-     * @since 2.4.0
      * @see #plus(Collection, Collection)
+     * @since 2.4.0
      */
     public static <T> List<T> plus(List<T> left, Iterable<T> right) {
         return (List<T>) plus((Collection<T>) left, asCollection(right));
@@ -9922,12 +9742,15 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param left  the left List
      * @param right the right Collection
      * @return the merged List
-     * @since 2.4.0
      * @see #plus(Collection, Collection)
+     * @since 2.4.0
      */
     public static <T> List<T> plus(List<T> left, Collection<T> right) {
         return (List<T>) plus((Collection<T>) left, right);
     }
+
+    //--------------------------------------------------------------------------
+    // plus
 
     /**
      * Create a Set as a union of a Set and an Iterable.
@@ -9937,8 +9760,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param left  the left Set
      * @param right the right Iterable
      * @return the merged Set
-     * @since 2.4.0
      * @see #plus(Collection, Collection)
+     * @since 2.4.0
      */
     public static <T> Set<T> plus(Set<T> left, Iterable<T> right) {
         return (Set<T>) plus((Collection<T>) left, asCollection(right));
@@ -9952,8 +9775,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param left  the left Set
      * @param right the right Collection
      * @return the merged Set
-     * @since 2.4.0
      * @see #plus(Collection, Collection)
+     * @since 2.4.0
      */
     public static <T> Set<T> plus(Set<T> left, Collection<T> right) {
         return (Set<T>) plus((Collection<T>) left, right);
@@ -9967,8 +9790,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param left  the left SortedSet
      * @param right the right Iterable
      * @return the merged SortedSet
-     * @since 2.4.0
      * @see #plus(Collection, Collection)
+     * @since 2.4.0
      */
     public static <T> SortedSet<T> plus(SortedSet<T> left, Iterable<T> right) {
         return (SortedSet<T>) plus((Collection<T>) left, asCollection(right));
@@ -9982,8 +9805,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param left  the left SortedSet
      * @param right the right Collection
      * @return the merged SortedSet
-     * @since 2.4.0
      * @see #plus(Collection, Collection)
+     * @since 2.4.0
      */
     public static <T> SortedSet<T> plus(SortedSet<T> left, Collection<T> right) {
         return (SortedSet<T>) plus((Collection<T>) left, right);
@@ -10006,7 +9829,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert newItems == [1, 2, 'a', 'b', 'c', 3]
      * assert items == [1, 2, 3]
      * </pre>
-     *
+     * <p>
      * See also <code>addAll</code> for similar functionality with modify semantics, i.e. which performs
      * the changes on the original list itself.
      *
@@ -10036,7 +9859,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert newItems == [1, 2, 'a', 'b', 'c', 3]
      * assert items == [1, 2, 3]
      * </pre>
-     *
+     * <p>
      * See also <code>addAll</code> for similar functionality with modify semantics, i.e. which performs
      * the changes on the original list itself.
      *
@@ -10060,8 +9883,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param additions an Iterable containing elements to be merged with the elements from the original List
      * @param index     index at which to insert the first element from the given additions Iterable
      * @return the new list
-     * @since 1.8.7
      * @see #plus(List, int, List)
+     * @since 1.8.7
      */
     public static <T> List<T> plus(List<T> self, int index, Iterable<T> additions) {
         return plus(self, index, toList(additions));
@@ -10198,10 +10021,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * This operation will always create a new object for the result,
      * while the operands remain unchanged.
      *
-     * @see java.lang.Integer#valueOf(int)
      * @param left  a Character
      * @param right a Number
      * @return the Number corresponding to the addition of left and right
+     * @see java.lang.Integer#valueOf(int)
      * @since 1.0
      */
     public static Number plus(Character left, Number right) {
@@ -10213,10 +10036,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * is used in the addition (the ordinal value is the unicode
      * value which for simple character sets is the ASCII value).
      *
-     * @see java.lang.Integer#valueOf(int)
      * @param left  a Number
      * @param right a Character
      * @return The Number corresponding to the addition of left and right
+     * @see java.lang.Integer#valueOf(int)
      * @since 1.0
      */
     public static Number plus(Number left, Character right) {
@@ -10230,10 +10053,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * This operation will always create a new object for the result,
      * while the operands remain unchanged.
      *
-     * @see #plus(java.lang.Number, java.lang.Character)
      * @param left  a Character
      * @param right a Character
      * @return the Number corresponding to the addition of left and right
+     * @see #plus(java.lang.Number, java.lang.Character)
      * @since 1.0
      */
     public static Number plus(Character left, Character right) {
@@ -10272,9 +10095,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.toString(left) + right;
     }
 
-    //--------------------------------------------------------------------------
-    // pop
-
     /**
      * Removes the initial item from the List.
      *
@@ -10283,10 +10103,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert list.pop() == 'a'
      * assert list == [false, 2]
      * </pre>
-     *
+     * <p>
      * This is similar to pop on a Stack where the first item in the list
      * represents the top of the stack.
-     *
+     * <p>
      * Note: The behavior of this method changed in Groovy 2.5 to align with Java.
      * If you need the old behavior use 'removeLast'.
      *
@@ -10301,9 +10121,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return self.remove(0);
     }
-
-    //--------------------------------------------------------------------------
-    // power
 
     /**
      * Power of a Number to a certain exponent. Called by the '**' operator.
@@ -10350,9 +10167,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * exponent is positive, call the BigInteger.pow(int) method to
      * maintain precision. Called by the '**' operator.
      *
-     *  @param self     a BigInteger
-     *  @param exponent an Integer exponent
-     *  @return a Number to the power of the exponent
+     * @param self     a BigInteger
+     * @param exponent an Integer exponent
+     * @return a Number to the power of the exponent
      */
     public static Number power(BigInteger self, Integer exponent) {
         if (exponent >= 0) {
@@ -10368,9 +10185,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * BigInteger.pow(int) method to maintain precision. Called by the
      * '**' operator.
      *
-     *  @param self     an Integer
-     *  @param exponent an Integer exponent
-     *  @return a Number to the power of the exponent
+     * @param self     an Integer
+     * @param exponent an Integer exponent
+     * @return a Number to the power of the exponent
      */
     public static Number power(Integer self, Integer exponent) {
         if (exponent >= 0) {
@@ -10384,6 +10201,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             return power(self, (double) exponent);
         }
     }
+
+    //--------------------------------------------------------------------------
+    // pop
 
     /**
      * Power of a long to an integer certain exponent. If the
@@ -10408,6 +10228,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
     }
 
+    //--------------------------------------------------------------------------
+    // power
+
     /**
      * Power of a BigInteger to a BigInteger certain exponent. Called by the '**' operator.
      *
@@ -10423,9 +10246,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             return BigDecimal.valueOf(Math.pow(self.doubleValue(), exponent.doubleValue())).toBigInteger();
         }
     }
-
-    //--------------------------------------------------------------------------
-    // previous
 
     /**
      * Decrement a Character by one.
@@ -10448,9 +10268,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Number previous(Number self) {
         return NumberNumberMinus.minus(self, 1);
     }
-
-    //--------------------------------------------------------------------------
-    // print
 
     /**
      * Print a value formatted Groovy style to self if it
@@ -10495,6 +10312,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         self.print(FormatHelper.toString(value));
     }
 
+    //--------------------------------------------------------------------------
+    // previous
+
     /**
      * Print to a console in interactive format.
      *
@@ -10522,16 +10342,16 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         InvokerHelper.invokeMethod(owner, "print", new Object[]{value});
     }
 
+    //--------------------------------------------------------------------------
+    // print
+
     private static Object getClosureOwner(Closure<?> cl) {
         Object owner = cl.getOwner();
         while (owner instanceof GeneratedClosure) {
-            owner = ((Closure<?>)owner).getOwner();
+            owner = ((Closure<?>) owner).getOwner();
         }
         return owner;
     }
-
-    //--------------------------------------------------------------------------
-    // printf
 
     /**
      * Printf to the standard output stream.
@@ -10543,7 +10363,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      */
     public static void printf(Object self, String format, Object[] values) {
         if (self instanceof PrintStream)
-            ((PrintStream)self).printf(format, values);
+            ((PrintStream) self).printf(format, values);
         else
             System.out.printf(format, values);
     }
@@ -10622,6 +10442,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         self.print(sprintf(self, format, arg));
     }
 
+    //--------------------------------------------------------------------------
+    // printf
+
     private static void printf(Writer self, String format, Object arg) {
         try {
             self.write(sprintf(self, format, arg));
@@ -10629,9 +10452,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             printf(System.out, format, arg);
         }
     }
-
-    //--------------------------------------------------------------------------
-    // println
 
     /**
      * Print a linebreak to the standard output stream.
@@ -10653,7 +10473,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * Print a linebreak to the standard output stream.
      * This method delegates to the owner to execute the method.
      *
-     * @param self  a closure
+     * @param self a closure
      * @since 1.0
      */
     public static void println(Closure self) {
@@ -10701,6 +10521,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         self.println(FormatHelper.toString(value));
     }
 
+    //--------------------------------------------------------------------------
+    // println
+
     /**
      * Print a value (followed by a newline) to the standard output stream.
      * This method delegates to the owner to execute the method.
@@ -10728,9 +10551,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         out.println(FormatHelper.toString(self));
     }
 
-    //--------------------------------------------------------------------------
-    // push
-
     /**
      * Prepends an item to the start of the List.
      *
@@ -10739,14 +10559,14 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * list.push("x")
      * assert list == ['x', 3, 4, 2]
      * </pre>
-     *
+     * <p>
      * This is similar to push on a Stack where the first item in the list
      * represents the top of the stack.
-     *
+     * <p>
      * Note: The behavior of this method changed in Groovy 2.5 to align with Java.
      * If you need the old behavior use 'add'.
      *
-     * @param self a List
+     * @param self  a List
      * @param value element to be prepended to this list.
      * @return <tt>true</tt> (for legacy compatibility reasons).
      * @since 1.5.5
@@ -10755,9 +10575,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         self.add(0, value);
         return true;
     }
-
-    //--------------------------------------------------------------------------
-    // putAll
 
     /**
      * Provides an easy way to append multiple Map.Entry values to a Map.
@@ -10773,9 +10590,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return self;
     }
-
-    //--------------------------------------------------------------------------
-    // putAt
 
     /**
      * Allows the subscript operator to be used to set dynamically named property values.
@@ -10823,6 +10637,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         putAt(self, idx.intValue(), value);
     }
 
+    //--------------------------------------------------------------------------
+    // push
+
     /**
      * A helper method to allow lists to work with subscript operators.
      * <pre class="groovyTestCase">
@@ -10850,6 +10667,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
     }
 
+    //--------------------------------------------------------------------------
+    // putAll
+
     /**
      * A helper method to allow lists to work with subscript operators.
      * <pre class="groovyTestCase">
@@ -10861,12 +10681,15 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self  a List
      * @param range the (in this case empty) subset of the list to set
      * @param value the Collection of values
-     * @since 1.0
      * @see #putAt(java.util.List, groovy.lang.EmptyRange, java.lang.Object)
+     * @since 1.0
      */
     public static void putAt(List self, EmptyRange range, Collection value) {
-        putAt(self, range, (Object)value);
+        putAt(self, range, (Object) value);
     }
+
+    //--------------------------------------------------------------------------
+    // putAt
 
     private static <T> List<T> resizeListWithRangeAndGetSublist(List<T> self, IntRange range) {
         RangeInfo info = subListBorders(self.size(), range);
@@ -10887,7 +10710,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * Example: <pre class="groovyTestCase">def myList = [4, 3, 5, 1, 2, 8, 10]
      * myList[3..5] = ["a", true]
      * assert myList == [4, 3, 5, "a", true, 10]</pre>
-     *
+     * <p>
      * Items in the given
      * range are replaced with items from the collection.
      *
@@ -10908,7 +10731,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * Example: <pre class="groovyTestCase">def myList = [4, 3, 5, 1, 2, 8, 10]
      * myList[3..5] = "b"
      * assert myList == [4, 3, 5, "b", 10]</pre>
-     *
+     * <p>
      * Items in the given
      * range are replaced with the operand.  The <code>value</code> operand is
      * always treated as a single value.
@@ -10977,7 +10800,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
                 self.set((Integer) index, value);
             }
         } else {
-            throw new IllegalArgumentException("Can only index a List with another List of Integers, not a List of "+first.getClass().getName());
+            throw new IllegalArgumentException("Can only index a List with another List of Integers, not a List of " + first.getClass().getName());
         }
     }
 
@@ -10990,7 +10813,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the value corresponding to the given key
      * @since 1.0
      */
-    public static <K,V> V putAt(Map<K,V> self, K key, V value) {
+    public static <K, V> V putAt(Map<K, V> self, K key, V value) {
         self.put(key, value);
         return value;
     }
@@ -11023,9 +10846,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         self.set(index, value);
     }
 
-    //--------------------------------------------------------------------------
-    // remainder
-
     /**
      * Performs a division modulus operation.  Called by the '%' operator.
      *
@@ -11038,20 +10858,17 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return NumberMath.remainder(left, right);
     }
 
-    //--------------------------------------------------------------------------
-    // removeAll
-
     /**
      * Modifies this collection by removing its elements that are contained
      * within the specified object array.
-     *
+     * <p>
      * See also <code>findAll</code> and <code>grep</code> when wanting to produce a new list
      * containing items which don't match some criteria while leaving the original collection unchanged.
      *
-     * @param  self  a Collection to be modified
-     * @param  items array containing elements to be removed from this collection
+     * @param self  a Collection to be modified
+     * @param items array containing elements to be removed from this collection
      * @return <tt>true</tt> if this collection changed as a result of the call
-     * @see    Collection#removeAll(Collection)
+     * @see Collection#removeAll(Collection)
      * @since 1.7.2
      */
     @SuppressWarnings("unchecked")
@@ -11068,14 +10885,14 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * <pre class="groovyTestCase">def list = ['a', 'b']
      * list.removeAll { it == 'b' }
      * assert list == ['a']</pre>
-     *
+     * <p>
      * See also <code>findAll</code> and <code>grep</code> when wanting to produce a new list
      * containing items which match some criteria but leaving the original collection unchanged.
      *
-     * @param  self a Collection to be modified
-     * @param  condition a closure condition
+     * @param self      a Collection to be modified
+     * @param condition a closure condition
      * @return <tt>true</tt> if this collection changed as a result of the call
-     * @see    Iterator#remove()
+     * @see Iterator#remove()
      * @since 1.7.2
      */
     public static <T> boolean removeAll(Collection<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure condition) {
@@ -11091,11 +10908,11 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * <pre class="groovyTestCase">def map = [a:1, b:2]
      * map.removeAll { k,v {@code ->} k == 'b' }
      * assert map == [a:1]</pre>
-     *
+     * <p>
      * See also <code>findAll</code> when wanting to produce a new map containing items
      * which match some criteria but leaving the original map unchanged.
      *
-     * @param self a Map to be modified
+     * @param self      a Map to be modified
      * @param condition a 1 or 2 arg Closure condition applying on the entries
      * @return <tt>true</tt> if this map changed as a result of the call
      * @since 2.5.0
@@ -11103,9 +10920,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <K, V> boolean removeAll(Map<K, V> self, @ClosureParams(MapEntryOrKeyValue.class) Closure condition) {
         return self.entrySet().removeIf(new BooleanClosureForMapPredicate<>(condition));
     }
-
-    //--------------------------------------------------------------------------
-    // removeAt
 
     /**
      * Modifies this list by removing the element at the specified position
@@ -11119,7 +10933,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [1, 3] == list
      * </pre>
      *
-     * @param self a List
+     * @param self  a List
      * @param index the index of the element to be removed
      * @return the element previously at the specified position
      * @since 2.4.0
@@ -11129,7 +10943,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // removeElement
+    // remainder
 
     /**
      * Modifies this collection by removing a single instance of the specified
@@ -11144,7 +10958,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * </pre>
      *
      * @param self a Collection
-     * @param o element to be removed from this collection, if present
+     * @param o    element to be removed from this collection, if present
      * @return true if an element was removed as a result of this call
      * @since 2.4.0
      */
@@ -11153,7 +10967,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // removeLast
+    // removeAll
 
     /**
      * Removes the last item from the List.
@@ -11163,7 +10977,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert list.removeLast() == 2
      * assert list == ["a", false]
      * </pre>
-     *
+     * <p>
      * Using add() and removeLast() is similar to push and pop on a Stack
      * where the last item in the list represents the top of the stack.
      *
@@ -11179,9 +10993,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return self.remove(self.size() - 1);
     }
 
-    //--------------------------------------------------------------------------
-    // respondsTo
-
     /**
      * <p>Returns an object satisfying Groovy truth if the implementing MetaClass responds to
      * a method with the given name and arguments types.
@@ -11191,8 +11002,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *
      * <p>This method is "safe" in that it will always return a value and never throw an exception
      *
-     * @param self The object to inspect
-     * @param name The name of the method of interest
+     * @param self     The object to inspect
+     * @param name     The name of the method of interest
      * @param argTypes The argument types to match against
      * @return A List of MetaMethods matching the argument types which will be empty if no matching methods exist
      * @see groovy.lang.MetaObjectProtocol#respondsTo(java.lang.Object, java.lang.String, java.lang.Object[])
@@ -11222,20 +11033,20 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // retainAll
+    // removeAt
 
     /**
      * Modifies this collection so that it retains only its elements that are contained
      * in the specified array.  In other words, removes from this collection all of
      * its elements that are not contained in the specified array.
-     *
+     * <p>
      * See also <code>grep</code> and <code>findAll</code> when wanting to produce a new list
      * containing items which match some specified items but leaving the original collection unchanged.
      *
-     * @param  self  a Collection to be modified
-     * @param  items array containing elements to be retained from this collection
+     * @param self  a Collection to be modified
+     * @param items array containing elements to be retained from this collection
      * @return <tt>true</tt> if this collection changed as a result of the call
-     * @see    Collection#retainAll(Collection)
+     * @see Collection#retainAll(Collection)
      * @since 1.7.2
      */
     @SuppressWarnings("unchecked")
@@ -11245,6 +11056,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return self.retainAll(pickFrom);
     }
 
+    //--------------------------------------------------------------------------
+    // removeElement
+
     /**
      * Modifies this collection so that it retains only its elements
      * that are matched according to the specified closure condition.  In other words,
@@ -11253,14 +11067,14 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * <pre class="groovyTestCase">def list = ['a', 'b']
      * list.retainAll { it == 'b' }
      * assert list == ['b']</pre>
-     *
+     * <p>
      * See also <code>findAll</code> and <code>grep</code> when wanting to produce a new list
      * containing items which match some criteria but leaving the original collection unchanged.
      *
-     * @param  self      a Collection to be modified
-     * @param  condition a closure condition
+     * @param self      a Collection to be modified
+     * @param condition a closure condition
      * @return <tt>true</tt> if this collection changed as a result of the call
-     * @see    Iterator#remove()
+     * @see Iterator#remove()
      * @since 1.7.2
      */
     public static <T> boolean retainAll(Collection<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure condition) {
@@ -11277,6 +11091,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return result;
     }
 
+    //--------------------------------------------------------------------------
+    // removeLast
+
     /**
      * Modifies this map so that it retains only its elements that are matched
      * according to the specified closure condition.  In other words, removes from
@@ -11287,11 +11104,11 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * <pre class="groovyTestCase">def map = [a:1, b:2]
      * map.retainAll { k,v {@code ->} k == 'b' }
      * assert map == [b:2]</pre>
-     *
+     * <p>
      * See also <code>findAll</code> when wanting to produce a new map containing items
      * which match some criteria but leaving the original map unchanged.
      *
-     * @param self a Map to be modified
+     * @param self      a Map to be modified
      * @param condition a 1 or 2 arg Closure condition applying on the entries
      * @return <tt>true</tt> if this map changed as a result of the call
      * @since 2.5.0
@@ -11311,7 +11128,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // reverse
+    // respondsTo
 
     /**
      * Creates a new List with the identical contents to this list
@@ -11342,7 +11159,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert list == [false, 4, "a"]
      * </pre>
      *
-     * @param self a List
+     * @param self   a List
      * @param mutate true if the list itself should be reversed in place and returned, false if a new list should be created
      * @return a reversed List
      * @since 1.8.1
@@ -11361,6 +11178,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return answer;
     }
 
+    //--------------------------------------------------------------------------
+    // retainAll
+
     /**
      * Reverses the iterator. The original iterator will become
      * exhausted of elements after determining the reversed values.
@@ -11374,12 +11194,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return new ReverseListIterator<>(toList(self));
     }
 
-    //--------------------------------------------------------------------------
-    // reverseEach
-
     /**
      * Allows a Map to be iterated through in reverse order using a closure.
-     *
+     * <p>
      * In general, the order in which the map contents are processed
      * cannot be guaranteed. In practise, specialized forms of Map,
      * e.g. a TreeMap will have its contents processed according to the
@@ -11416,6 +11233,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return self;
     }
 
+    //--------------------------------------------------------------------------
+    // reverse
+
     /**
      * Iterate over each element of the set in reverse order.
      * <pre class="groovyTestCase">
@@ -11434,9 +11254,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         each(self.descendingIterator(), closure);
         return self;
     }
-
-    //--------------------------------------------------------------------------
-    // rightShift
 
     /**
      * Implementation of the right shift operator for integral types.  Non-integral
@@ -11469,7 +11286,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // rightShiftUnsigned
+    // reverseEach
 
     /**
      * Implementation of the right shift (unsigned) operator for integral types.  Non-integral
@@ -11498,10 +11315,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return self.get(operand.intValue(), Math.max(operand.intValue(), self.length()));
     }
 
-
-    //--------------------------------------------------------------------------
-    // round
-
     /**
      * Round the value
      *
@@ -11513,16 +11326,19 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return Math.round(number);
     }
 
+    //--------------------------------------------------------------------------
+    // rightShift
+
     /**
      * Round the value
      *
-     * @param number a Float
+     * @param number    a Float
      * @param precision the number of decimal places to keep
      * @return the Float rounded to the number of decimal places specified by precision
      * @since 1.6.0
      */
     public static float round(Float number, int precision) {
-        return (float)(Math.floor(number.doubleValue()*Math.pow(10,precision)+0.5)/Math.pow(10,precision));
+        return (float) (Math.floor(number.doubleValue() * Math.pow(10, precision) + 0.5) / Math.pow(10, precision));
     }
 
     /**
@@ -11536,16 +11352,19 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return Math.round(number);
     }
 
+    //--------------------------------------------------------------------------
+    // rightShiftUnsigned
+
     /**
      * Round the value
      *
-     * @param number a Double
+     * @param number    a Double
      * @param precision the number of decimal places to keep
      * @return the Double rounded to the number of decimal places specified by precision
      * @since 1.6.4
      */
     public static double round(Double number, int precision) {
-        return Math.floor(number *Math.pow(10,precision)+0.5)/Math.pow(10,precision);
+        return Math.floor(number * Math.pow(10, precision) + 0.5) / Math.pow(10, precision);
     }
 
     /**
@@ -11565,6 +11384,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return round(number, 0);
     }
 
+
+    //--------------------------------------------------------------------------
+    // round
+
     /**
      * Round the value
      * <p>
@@ -11574,7 +11397,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * the precision argument specifies the number of digits to the right of
      * the decimal point to retain.
      *
-     * @param number a BigDecimal
+     * @param number    a BigDecimal
      * @param precision the number of decimal places to keep
      * @return a BigDecimal rounded to the number of decimal places specified by precision
      * @see #round(java.math.BigDecimal)
@@ -11584,9 +11407,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static BigDecimal round(BigDecimal number, int precision) {
         return number.setScale(precision, RoundingMode.HALF_UP);
     }
-
-    //--------------------------------------------------------------------------
-    // runAfter
 
     /**
      * Allows a simple syntax for using timers. This timer will execute the
@@ -11609,13 +11429,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return timerTask;
     }
 
-    //--------------------------------------------------------------------------
-    // setMetaClass
-
     /**
      * Sets the metaclass for a given class.
      *
-     * @param self the class whose metaclass we wish to set
+     * @param self      the class whose metaclass we wish to set
      * @param metaClass the new MetaClass
      * @since 1.6.0
      */
@@ -11624,8 +11441,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             GroovySystem.getMetaClassRegistry().removeMetaClass(self);
         } else {
             MetaClass mc = metaClass instanceof HandleMetaClass
-              ? ((HandleMetaClass)metaClass).getAdaptee() : metaClass;
-            GroovySystem.getMetaClassRegistry().setMetaClass(self,mc);
+                ? ((HandleMetaClass) metaClass).getAdaptee() : metaClass;
+            GroovySystem.getMetaClassRegistry().setMetaClass(self, mc);
             if (NullObject.class.equals(self)) { // GROOVY-3803
                 NullObject.getNullObject().setMetaClass(metaClass);
             }
@@ -11635,25 +11452,25 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     /**
      * Sets the metaclass for an object.
      *
-     * @param self the object whose metaclass we want to set
+     * @param self      the object whose metaclass we want to set
      * @param metaClass the new metaclass value
      * @since 1.6.0
      */
     public static void setMetaClass(Object self, MetaClass metaClass) {
         if (metaClass instanceof HandleMetaClass)
-            metaClass = ((HandleMetaClass)metaClass).getAdaptee();
+            metaClass = ((HandleMetaClass) metaClass).getAdaptee();
 
         if (self instanceof Class) {
-            GroovySystem.getMetaClassRegistry().setMetaClass((Class)self, metaClass);
+            GroovySystem.getMetaClassRegistry().setMetaClass((Class) self, metaClass);
         } else {
-            ((MetaClassRegistryImpl)GroovySystem.getMetaClassRegistry()).setMetaClass(self, metaClass);
+            ((MetaClassRegistryImpl) GroovySystem.getMetaClassRegistry()).setMetaClass(self, metaClass);
         }
     }
 
     /**
      * Sets the metaclass for a {@code GroovyObject}.
      *
-     * @param self the object whose metaclass we want to set
+     * @param self      the object whose metaclass we want to set
      * @param metaClass the new metaclass value
      * @since 2.0.0
      */
@@ -11671,9 +11488,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         } catch (Throwable ignore) {
         }
     }
-
-    //--------------------------------------------------------------------------
-    // shuffle
 
     /**
      * Randomly reorders the elements of the specified list.
@@ -11693,6 +11507,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static void shuffle(List<?> self) {
         Collections.shuffle(self);
     }
+
+    //--------------------------------------------------------------------------
+    // runAfter
 
     /**
      * Randomly reorders the elements of the specified list using the
@@ -11716,7 +11533,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // shuffled
+    // setMetaClass
 
     /**
      * Creates a new list containing the elements of the specified list
@@ -11763,9 +11580,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return copy;
     }
 
-    //--------------------------------------------------------------------------
-    // size
-
     /**
      * Provide the standard Groovy <code>size()</code> method for <code>Iterator</code>.
      * The iterator will become exhausted of elements after determining the size value.
@@ -11783,6 +11597,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return count;
     }
 
+    //--------------------------------------------------------------------------
+    // shuffle
+
     /**
      * Provide the standard Groovy <code>size()</code> method for <code>Iterable</code>.
      * <pre class="groovyTestCase">
@@ -11798,9 +11615,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static int size(Iterable self) {
         return size(self.iterator());
     }
-
-    //--------------------------------------------------------------------------
-    // sort
 
     /**
      * Sorts the Collection. Assumes that the collection items are comparable
@@ -11818,6 +11632,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> List<T> sort(Iterable<T> self) {
         return sort(self, true);
     }
+
+    //--------------------------------------------------------------------------
+    // shuffled
 
     /**
      * Sorts the Iterable. Assumes that the Iterable items are
@@ -11851,12 +11668,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * <pre class="groovyTestCase">def map = [a:5, b:3, c:6, d:4].sort { a, b {@code ->} a.value {@code <=>} b.value }
      * assert map == [b:3, d:4, a:5, c:6]</pre>
      *
-     * @param self the original unsorted map
+     * @param self    the original unsorted map
      * @param closure a Closure used as a comparator
      * @return the sorted map
      * @since 1.6.0
      */
-    public static <K, V> Map<K, V> sort(Map<K, V> self, @ClosureParams(value=FromString.class, options={"Map.Entry<K,V>","Map.Entry<K,V>,Map.Entry<K,V>"}) Closure closure) {
+    public static <K, V> Map<K, V> sort(Map<K, V> self, @ClosureParams(value = FromString.class, options = {"Map.Entry<K,V>", "Map.Entry<K,V>,Map.Entry<K,V>"}) Closure closure) {
         Map<K, V> result = new LinkedHashMap<>();
         List<Map.Entry<K, V>> entries = asList(self.entrySet());
         sort((Iterable<Map.Entry<K, V>>) entries, closure);
@@ -11866,6 +11683,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return result;
     }
 
+    //--------------------------------------------------------------------------
+    // size
+
     /**
      * Sorts the elements from the given map into a new ordered Map using
      * the specified key comparator to determine the ordering.
@@ -11873,7 +11693,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * <pre class="groovyTestCase">def map = [ba:3, cz:6, ab:5].sort({ a, b {@code ->} a[-1] {@code <=>} b[-1] } as Comparator)
      * assert map*.value == [3, 5, 6]</pre>
      *
-     * @param self the original unsorted map
+     * @param self       the original unsorted map
      * @param comparator a Comparator
      * @return the sorted map
      * @since 1.7.2
@@ -11899,6 +11719,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <K, V> Map<K, V> sort(Map<K, V> self) {
         return new TreeMap<>(self);
     }
+
+    //--------------------------------------------------------------------------
+    // sort
 
     /**
      * Sorts the given iterator items into a sorted iterator. The items are
@@ -11970,7 +11793,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the sorted items as an Iterator
      * @since 1.5.5
      */
-    public static <T> Iterator<T> sort(Iterator<T> self, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure closure) {
+    public static <T> Iterator<T> sort(Iterator<T> self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         return sort((Iterable<T>) toList(self), closure).listIterator();
     }
 
@@ -11996,7 +11819,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see #sort(Iterable, boolean, Closure)
      * @since 2.2.0
      */
-    public static <T> List<T> sort(Iterable<T> self, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure closure) {
+    public static <T> List<T> sort(Iterable<T> self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         return sort(self, true, closure);
     }
 
@@ -12028,7 +11851,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return a newly created sorted List
      * @since 2.2.0
      */
-    public static <T> List<T> sort(Iterable<T> self, boolean mutate, @ClosureParams(value=FromString.class, options={"T","T,T"})  Closure closure) {
+    public static <T> List<T> sort(Iterable<T> self, boolean mutate, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         List<T> list = mutate ? asList(self) : toList(self);
         // use a comparator of one item or two
         int params = closure.getMaximumNumberOfParameters();
@@ -12061,9 +11884,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <K, V> SortedMap<K, V> sort(SortedMap<K, V> self) {
         return self;
     }
-
-    //--------------------------------------------------------------------------
-    // split
 
     /**
      * Splits all items into two lists based on the closure condition.
@@ -12155,7 +11975,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // spread
+    // split
 
     /**
      * Synonym for {@link #toSpreadMap(java.util.Map)}.
@@ -12167,9 +11987,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static SpreadMap spread(Map self) {
         return toSpreadMap(self);
     }
-
-    //--------------------------------------------------------------------------
-    // sprintf
 
     /**
      * Sprintf to a string.
@@ -12279,9 +12096,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return sprintf(self, format, ans);
     }
 
-    //--------------------------------------------------------------------------
-    // step
-
     /**
      * Iterates from this number up to the given number using a step increment.
      * Each intermediate number is passed to the given closure.  Example:
@@ -12312,7 +12126,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
                 for (BigDecimal i = self1; i.compareTo(to1) > 0; i = i.add(stepNumber1)) {
                     closure.call(i);
                 }
-            } else if(self1.compareTo(to1) != 0)
+            } else if (self1.compareTo(to1) != 0)
                 throw new GroovyRuntimeException("Infinite loop in " + self1 + ".step(" + to1 + ", " + stepNumber1 + ")");
         } else if (self instanceof BigInteger || to instanceof BigInteger || stepNumber instanceof BigInteger) {
             final BigInteger zero = BigInteger.valueOf(0);
@@ -12327,7 +12141,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
                 for (BigInteger i = self1; i.compareTo(to1) > 0; i = i.add(stepNumber1)) {
                     closure.call(i);
                 }
-            } else if(self1.compareTo(to1) != 0)
+            } else if (self1.compareTo(to1) != 0)
                 throw new GroovyRuntimeException("Infinite loop in " + self1 + ".step(" + to1 + ", " + stepNumber1 + ")");
         } else {
             int self1 = self.intValue();
@@ -12341,13 +12155,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
                 for (int i = self1; i > to1; i += stepNumber1) {
                     closure.call(i);
                 }
-            } else if(self1 != to1)
+            } else if (self1 != to1)
                 throw new GroovyRuntimeException("Infinite loop in " + self1 + ".step(" + to1 + ", " + stepNumber1 + ")");
         }
     }
-
-    //--------------------------------------------------------------------------
-    // subMap
 
     /**
      * Creates a sub-Map containing the given keys. This method is similar to
@@ -12368,6 +12179,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return answer;
     }
+
+    //--------------------------------------------------------------------------
+    // spread
 
     /**
      * Creates a sub-Map containing the given keys. This method is similar to
@@ -12396,7 +12210,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // subsequences
+    // sprintf
 
     /**
      * Finds all non-null subsequences of a list.
@@ -12413,9 +12227,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return GroovyCollections.subsequences(self);
     }
 
-    //--------------------------------------------------------------------------
-    // sum
-
     /**
      * Sums the items in an Iterable. This is equivalent to invoking the
      * "plus" method on all items in the Iterable.
@@ -12430,6 +12241,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return sum(self.iterator(), null, true);
     }
 
+    //--------------------------------------------------------------------------
+    // step
+
     /**
      * Sums the items from an Iterator. This is equivalent to invoking the
      * "plus" method on all items from the Iterator. The iterator will become
@@ -12442,6 +12256,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Object sum(Iterator<Object> self) {
         return sum(self, null, true);
     }
+
+    //--------------------------------------------------------------------------
+    // subMap
 
     /**
      * Sums the items in an Iterable, adding the result to some initial value.
@@ -12473,6 +12290,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return sum(self, initialValue, false);
     }
 
+    //--------------------------------------------------------------------------
+    // subsequences
+
     static Object sum(Iterator<?> self, Object initialValue, boolean first) {
         Object result = initialValue;
         Object[] param = new Object[1];
@@ -12490,6 +12310,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return result;
     }
 
+    //--------------------------------------------------------------------------
+    // sum
+
     /**
      * Sums the result of applying a closure to each item of an Iterable.
      * <code>coll.sum(closure)</code> is equivalent to:
@@ -12499,7 +12322,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self    an Iterable
      * @param closure a single parameter closure that returns a (typically) numeric value.
      * @return The sum of the values returned by applying the closure to each
-     *         item of the Iterable.
+     * item of the Iterable.
      * @since 2.2.0
      */
     public static <T> Object sum(Iterable<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure closure) {
@@ -12515,7 +12338,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self    An Iterator
      * @param closure a single parameter closure that returns a (typically) numeric value.
      * @return The sum of the values returned by applying the closure to each
-     *         item from the Iterator.
+     * item from the Iterator.
      * @since 1.7.1
      */
     public static <T> Object sum(Iterator<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure closure) {
@@ -12532,7 +12355,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param closure      a single parameter closure that returns a (typically) numeric value.
      * @param initialValue the closure results will be summed to this initial value
      * @return The sum of the values returned by applying the closure to each
-     *         item of the collection.
+     * item of the collection.
      * @since 1.5.0
      */
     public static <T> Object sum(Iterable<T> self, Object initialValue, @ClosureParams(FirstParam.FirstGenericType.class) Closure closure) {
@@ -12549,7 +12372,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param closure      a single parameter closure that returns a (typically) numeric value.
      * @param initialValue the closure results will be summed to this initial value
      * @return The sum of the values returned by applying the closure to each
-     *         item from the Iterator.
+     * item from the Iterator.
      * @since 1.7.1
      */
     public static <T> Object sum(Iterator<T> self, Object initialValue, @ClosureParams(FirstParam.FirstGenericType.class) Closure closure) {
@@ -12574,9 +12397,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return result;
     }
 
-    //--------------------------------------------------------------------------
-    // swap
-
     /**
      * Swaps two elements at the specified positions.
      * <p>
@@ -12586,8 +12406,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * </pre>
      *
      * @param self a List
-     * @param i a position
-     * @param j a position
+     * @param i    a position
+     * @param j    a position
      * @return self
      * @see Collections#swap(List, int, int)
      * @since 2.4.0
@@ -12596,9 +12416,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         Collections.swap(self, i, j);
         return self;
     }
-
-    //--------------------------------------------------------------------------
-    // tail
 
     /**
      * Returns the items from the List excluding the first item.
@@ -12614,7 +12431,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.5.6
      */
     public static <T> List<T> tail(List<T> self) {
-        return (List<T>) tail((Iterable<T>)self);
+        return (List<T>) tail((Iterable<T>) self);
     }
 
     /**
@@ -12670,6 +12487,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return result;
     }
 
+    //--------------------------------------------------------------------------
+    // swap
+
     /**
      * Returns the original iterator after throwing away the first element.
      *
@@ -12687,7 +12507,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // take
+    // tail
 
     /**
      * Returns the first <code>num</code> elements from the head of this List.
@@ -12701,11 +12521,11 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original List
      * @param num  the number of elements to take from this List
      * @return a List consisting of the first <code>num</code> elements from this List,
-     *         or else all the elements from the List if it has less than <code>num</code> elements.
+     * or else all the elements from the List if it has less than <code>num</code> elements.
      * @since 1.8.1
      */
     public static <T> List<T> take(List<T> self, int num) {
-        return (List<T>) take((Iterable<T>)self, num);
+        return (List<T>) take((Iterable<T>) self, num);
     }
 
     /**
@@ -12720,7 +12540,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original SortedSet
      * @param num  the number of elements to take from this SortedSet
      * @return a SortedSet consisting of the first <code>num</code> elements from this List,
-     *         or else all the elements from the SortedSet if it has less than <code>num</code> elements.
+     * or else all the elements from the SortedSet if it has less than <code>num</code> elements.
      * @since 2.4.0
      */
     public static <T> SortedSet<T> take(SortedSet<T> self, int num) {
@@ -12748,7 +12568,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original Iterable
      * @param num  the number of elements to take from this Iterable
      * @return a Collection consisting of the first <code>num</code> elements from this Iterable,
-     *         or else all the elements from the Iterable if it has less than <code>num</code> elements.
+     * or else all the elements from the Iterable if it has less than <code>num</code> elements.
      * @since 1.8.7
      */
     public static <T> Collection<T> take(Iterable<T> self, int num) {
@@ -12771,7 +12591,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original map
      * @param num  the number of elements to take from this map
      * @return a new map consisting of the first <code>num</code> elements of this map,
-     *         or else the whole map if it has less than <code>num</code> elements.
+     * or else the whole map if it has less than <code>num</code> elements.
      * @since 1.8.1
      */
     public static <K, V> Map<K, V> take(Map<K, V> self, int num) {
@@ -12814,35 +12634,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return new TakeIterator<>(self, num);
     }
 
-    private static final class TakeIterator<E> implements Iterator<E> {
-        private final Iterator<E> delegate;
-        private Integer num;
-
-        private TakeIterator(Iterator<E> delegate, Integer num) {
-            this.delegate = delegate;
-            this.num = num;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return num > 0 && delegate.hasNext();
-        }
-
-        @Override
-        public E next() {
-            if (num <= 0) throw new NoSuchElementException();
-            num--;
-            return delegate.next();
-        }
-
-        @Override
-        public void remove() {
-            delegate.remove();
-        }
-    }
-
     //--------------------------------------------------------------------------
-    // takeRight
+    // take
 
     /**
      * Returns the last <code>num</code> elements from the tail of this Iterable.
@@ -12865,7 +12658,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original Iterable
      * @param num  the number of elements to take from this Iterable
      * @return a Collection consisting of the last <code>num</code> elements from this Iterable,
-     *         or else all the elements from the Iterable if it has less than <code>num</code> elements.
+     * or else all the elements from the Iterable if it has less than <code>num</code> elements.
      * @since 2.4.0
      */
     public static <T> Collection<T> takeRight(Iterable<T> self, int num) {
@@ -12895,7 +12688,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original List
      * @param num  the number of elements to take from this List
      * @return a List consisting of the last <code>num</code> elements from this List,
-     *         or else all the elements from the List if it has less than <code>num</code> elements.
+     * or else all the elements from the List if it has less than <code>num</code> elements.
      * @since 2.4.0
      */
     public static <T> List<T> takeRight(List<T> self, int num) {
@@ -12914,15 +12707,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original SortedSet
      * @param num  the number of elements to take from this SortedSet
      * @return a SortedSet consisting of the last <code>num</code> elements from this SortedSet,
-     *         or else all the elements from the SortedSet if it has less than <code>num</code> elements.
+     * or else all the elements from the SortedSet if it has less than <code>num</code> elements.
      * @since 2.4.0
      */
     public static <T> SortedSet<T> takeRight(SortedSet<T> self, int num) {
         return (SortedSet<T>) takeRight((Iterable<T>) self, num);
     }
-
-    //--------------------------------------------------------------------------
-    // takeWhile
 
     /**
      * Returns the longest prefix of this list where each element
@@ -12940,7 +12730,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param condition the closure that must evaluate to true to
      *                  continue taking elements
      * @return a prefix of the given list where each element passed to
-     *         the given closure evaluates to true
+     * the given closure evaluates to true
      * @since 1.8.7
      */
     public static <T> List<T> takeWhile(List<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure condition) {
@@ -12972,7 +12762,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param condition the closure that must evaluate to true to
      *                  continue taking elements
      * @return a Collection containing a prefix of the elements from the given Iterable where
-     *         each element passed to the given closure evaluates to true
+     * each element passed to the given closure evaluates to true
      * @since 1.8.7
      */
     public static <T> Collection<T> takeWhile(Iterable<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure condition) {
@@ -12997,12 +12787,15 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param condition the closure that must evaluate to true to
      *                  continue taking elements
      * @return a prefix of the given SortedSet where each element passed to
-     *         the given closure evaluates to true
+     * the given closure evaluates to true
      * @since 2.4.0
      */
     public static <T> SortedSet<T> takeWhile(SortedSet<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure condition) {
         return (SortedSet<T>) takeWhile((Iterable<T>) self, condition);
     }
+
+    //--------------------------------------------------------------------------
+    // takeRight
 
     /**
      * Returns the longest prefix of this Map where each entry (or key/value pair) when
@@ -13020,7 +12813,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param condition a 1 (or 2) arg Closure that must evaluate to true for the
      *                  entry (or key and value) to continue taking elements
      * @return a prefix of the given Map where each entry (or key/value pair) passed to
-     *         the given closure evaluates to true
+     * the given closure evaluates to true
      * @since 1.8.7
      */
     public static <K, V> Map<K, V> takeWhile(Map<K, V> self, @ClosureParams(MapEntryOrKeyValue.class) Closure condition) {
@@ -13053,58 +12846,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param condition the closure that must evaluate to true to
      *                  continue taking elements
      * @return a prefix of elements in the given iterator where each
-     *         element passed to the given closure evaluates to true
+     * element passed to the given closure evaluates to true
      * @since 1.8.7
      */
     public static <T> Iterator<T> takeWhile(Iterator<T> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure condition) {
         return new TakeWhileIterator<>(self, condition);
     }
-
-    private static final class TakeWhileIterator<E> implements Iterator<E> {
-        private final Iterator<E> delegate;
-        private final BooleanClosureWrapper condition;
-        private boolean exhausted;
-        private E next;
-
-        private TakeWhileIterator(Iterator<E> delegate, Closure condition) {
-            this.delegate = delegate;
-            this.condition = new BooleanClosureWrapper(condition);
-            advance();
-        }
-
-        @Override
-        public boolean hasNext() {
-            return !exhausted;
-        }
-
-        @Override
-        public E next() {
-            if (exhausted) throw new NoSuchElementException();
-            E result = next;
-            advance();
-            return result;
-        }
-
-        @Override
-        public void remove() {
-            if (exhausted) throw new NoSuchElementException();
-            delegate.remove();
-        }
-
-        private void advance() {
-            exhausted = !delegate.hasNext();
-            if (!exhausted) {
-                next = delegate.next();
-                if (!condition.call(next)) {
-                    exhausted = true;
-                    next = null;
-                }
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // tap
 
     /**
      * Allows the closure to be called for the object reference self (similar
@@ -13136,14 +12883,14 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 2.5.0
      */
     public static <T, U> U tap(
-            @DelegatesTo.Target U self,
-            @DelegatesTo(strategy=Closure.DELEGATE_FIRST)
-            @ClosureParams(FirstParam.class) Closure<T> closure) {
-        return callWithDelegateAndParameter(closure,self).getV2();
+        @DelegatesTo.Target U self,
+        @DelegatesTo(strategy = Closure.DELEGATE_FIRST)
+        @ClosureParams(FirstParam.class) Closure<T> closure) {
+        return callWithDelegateAndParameter(closure, self).getV2();
     }
 
     //--------------------------------------------------------------------------
-    // times
+    // takeWhile
 
     /**
      * Executes the closure this many times, starting from zero.  The current
@@ -13158,7 +12905,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param closure the closure to call a number of times
      * @since 1.0
      */
-    public static void times(Number self, @ClosureParams(value=SimpleType.class,options="int")  Closure closure) {
+    public static void times(Number self, @ClosureParams(value = SimpleType.class, options = "int") Closure closure) {
         for (int i = 0, size = self.intValue(); i < size; i++) {
             closure.call(i);
             if (closure.getDirective() == Closure.DONE) {
@@ -13166,9 +12913,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             }
         }
     }
-
-    //--------------------------------------------------------------------------
-    // toBoolean
 
     /**
      * Identity conversion which returns Boolean.TRUE for a true Boolean and Boolean.FALSE for a false Boolean.
@@ -13181,9 +12925,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return self;
     }
 
-    //--------------------------------------------------------------------------
-    // toBigDecimal
-
     /**
      * Transforms a Number into a BigDecimal.
      *
@@ -13194,9 +12935,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static BigDecimal toBigDecimal(Number self) {
         return NumberMath.toBigDecimal(self);
     }
-
-    //--------------------------------------------------------------------------
-    // toBigInteger
 
     /**
      * Transforms this Number into a BigInteger.
@@ -13209,9 +12947,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return NumberMath.toBigInteger(self);
     }
 
-    //--------------------------------------------------------------------------
-    // toDouble
-
     /**
      * Transforms a Number into a Double.
      *
@@ -13222,11 +12957,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Double toDouble(Number self) {
         // Conversions in which all decimal digits are known to be good.
         if ((self instanceof Double)
-                || (self instanceof Long)
-                || (self instanceof Integer)
-                || (self instanceof Short)
-                || (self instanceof Byte))
-        {
+            || (self instanceof Long)
+            || (self instanceof Integer)
+            || (self instanceof Short)
+            || (self instanceof Byte)) {
             return self.doubleValue();
         }
 
@@ -13240,9 +12974,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return Double.valueOf(self.toString());
     }
 
-    //--------------------------------------------------------------------------
-    // toFloat
-
     /**
      * Transforms a Number into a Float.
      *
@@ -13255,7 +12986,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // toInteger
+    // tap
 
     /**
      * Transforms a Number into an Integer.
@@ -13269,7 +13000,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // toList
+    // times
 
     /**
      * Convert an iterator to a List. The iterator will become
@@ -13288,6 +13019,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return answer;
     }
 
+    //--------------------------------------------------------------------------
+    // toBoolean
+
     /**
      * Convert an Iterable to a List. The Iterable's iterator will
      * become exhausted of elements after making this conversion.
@@ -13305,6 +13039,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return toList(self.iterator());
     }
 
+    //--------------------------------------------------------------------------
+    // toBigDecimal
+
     /**
      * Convert an enumeration to a List.
      *
@@ -13321,7 +13058,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // toListString
+    // toBigInteger
 
     /**
      * Returns the string representation of the given list.  The string
@@ -13336,12 +13073,15 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return toListString(self, -1);
     }
 
+    //--------------------------------------------------------------------------
+    // toDouble
+
     /**
      * Returns the string representation of the given list.  The string
      * displays the contents of the list, similar to a list literal, i.e.
      * <code>[1, 2, a]</code>.
      *
-     * @param self a Collection
+     * @param self    a Collection
      * @param maxSize stop after approximately this many characters and append '...'
      * @return the string representation
      * @since 1.7.3
@@ -13351,7 +13091,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // toLong
+    // toFloat
 
     /**
      * Transforms a Number into a Long.
@@ -13365,17 +13105,17 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // toLowerCase
+    // toInteger
 
     /**
      * Converts the character to lowercase.
      * Synonym for 'Character.toLowerCase(this)'.
      *
      * @param self a Character to convert
-     * @return  the lowercase equivalent of the character, if any;
-     *          otherwise, the character itself.
-     * @see     java.lang.Character#isLowerCase(char)
-     * @see     java.lang.String#toLowerCase()
+     * @return the lowercase equivalent of the character, if any;
+     * otherwise, the character itself.
+     * @see java.lang.Character#isLowerCase(char)
+     * @see java.lang.String#toLowerCase()
      * @since 1.5.7
      */
     public static char toLowerCase(Character self) {
@@ -13383,7 +13123,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // toMapString
+    // toList
 
     /**
      * Returns the string representation of this map.  The string displays the
@@ -13401,7 +13141,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * Returns the string representation of this map.  The string displays the
      * contents of the map, i.e. <code>[one:1, two:2, three:3]</code>.
      *
-     * @param self a Map
+     * @param self    a Map
      * @param maxSize stop after approximately this many characters and append '...'
      * @return the string representation
      * @since 1.0
@@ -13409,9 +13149,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static String toMapString(Map self, int maxSize) {
         return (self == null) ? "null" : FormatHelper.toMapString(self, maxSize);
     }
-
-    //--------------------------------------------------------------------------
-    // toSet
 
     /**
      * Convert a Collection to a Set. Always returns a new Set
@@ -13433,6 +13170,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         answer.addAll(self);
         return answer;
     }
+
+    //--------------------------------------------------------------------------
+    // toListString
 
     /**
      * Convert an Iterable to a Set. Always returns a new Set
@@ -13469,6 +13209,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return answer;
     }
 
+    //--------------------------------------------------------------------------
+    // toLong
+
     /**
      * Convert an enumeration to a Set.
      *
@@ -13485,7 +13228,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // toSorted
+    // toLowerCase
 
     /**
      * Sorts the Iterable. Assumes that the Iterable elements are
@@ -13500,7 +13243,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert sorted == [1, 2, 3]
      * </pre>
      *
-     * @param self   the Iterable to be sorted
+     * @param self the Iterable to be sorted
      * @return the sorted iterable as a List
      * @see #toSorted(Iterable, Comparator)
      * @since 2.4.0
@@ -13508,6 +13251,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> List<T> toSorted(Iterable<T> self) {
         return toSorted(self, new NumberAwareComparator<>());
     }
+
+    //--------------------------------------------------------------------------
+    // toMapString
 
     /**
      * Sorts the Iterable using the given Comparator. The elements are first placed
@@ -13551,11 +13297,14 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see #toSorted(Iterable, Comparator)
      * @since 2.4.0
      */
-    public static <T> List<T> toSorted(Iterable<T> self, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure closure) {
+    public static <T> List<T> toSorted(Iterable<T> self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         Comparator<T> comparator = (closure.getMaximumNumberOfParameters() == 1) ? new OrderBy<>(closure) : new ClosureComparator<>(
             closure);
         return toSorted(self, comparator);
     }
+
+    //--------------------------------------------------------------------------
+    // toSet
 
     /**
      * Sorts the Iterator. Assumes that the Iterator elements are
@@ -13564,7 +13313,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * natural ordering of the Iterator elements.
      * A new iterator is produced that traverses the items in sorted order.
      *
-     * @param self       the Iterator to be sorted
+     * @param self the Iterator to be sorted
      * @return the sorted items as an Iterator
      * @see #toSorted(Iterator, Comparator)
      * @since 2.4.0
@@ -13604,7 +13353,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see #toSorted(Iterator, Comparator)
      * @since 2.4.0
      */
-    public static <T> Iterator<T> toSorted(Iterator<T> self, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure closure) {
+    public static <T> Iterator<T> toSorted(Iterator<T> self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         Comparator<T> comparator = (closure.getMaximumNumberOfParameters() == 1) ? new OrderBy<>(closure) : new ClosureComparator<>(
             closure);
         return toSorted(self, comparator);
@@ -13628,6 +13377,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return toSorted(self, new NumberAwareValueComparator<>());
     }
 
+    //--------------------------------------------------------------------------
+    // toSorted
+
     /**
      * Sorts the elements from the given map into a new ordered map using
      * the supplied comparator to determine the ordering. The original map is unchanged.
@@ -13640,7 +13392,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert map2.toString() == '[b:3, d:4, a:5, c:6]'
      * </pre>
      *
-     * @param self the original unsorted map
+     * @param self       the original unsorted map
      * @param comparator a Comparator used for the comparison
      * @return the sorted map
      * @since 2.4.0
@@ -13668,13 +13420,13 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert map.toString() == '[b:3, d:4, a:5, c:6]'
      * </pre>
      *
-     * @param self the original unsorted map
+     * @param self      the original unsorted map
      * @param condition a Closure used as a comparator
      * @return the sorted map
      * @since 2.4.0
      */
-    public static <K, V> Map<K, V> toSorted(Map<K, V> self, @ClosureParams(value=FromString.class, options={"Map.Entry<K,V>","Map.Entry<K,V>,Map.Entry<K,V>"}) Closure condition) {
-        Comparator<Map.Entry<K,V>> comparator = (condition.getMaximumNumberOfParameters() == 1) ? new OrderBy<>(
+    public static <K, V> Map<K, V> toSorted(Map<K, V> self, @ClosureParams(value = FromString.class, options = {"Map.Entry<K,V>", "Map.Entry<K,V>,Map.Entry<K,V>"}) Closure condition) {
+        Comparator<Map.Entry<K, V>> comparator = (condition.getMaximumNumberOfParameters() == 1) ? new OrderBy<>(
             condition) : new ClosureComparator<>(condition);
         return toSorted(self, comparator);
     }
@@ -13700,9 +13452,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <K, V> Map<K, V> toSorted(SortedMap<K, V> self) {
         return new LinkedHashMap<>(self);
     }
-
-    //--------------------------------------------------------------------------
-    // toSpreadMap
 
     /**
      * Returns a new <code>SpreadMap</code> from this map.
@@ -13735,6 +13484,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     /**
      * Creates a spreadable map from this list.
      * <p>
+     *
      * @param self a list
      * @return a newly created SpreadMap
      * @see groovy.lang.SpreadMap#SpreadMap(java.util.List)
@@ -13753,6 +13503,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     /**
      * Creates a spreadable map from this iterable.
      * <p>
+     *
      * @param self an iterable
      * @return a newly created SpreadMap
      * @see groovy.lang.SpreadMap#SpreadMap(java.util.List)
@@ -13766,9 +13517,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         else
             return toSpreadMap(asList(self));
     }
-
-    //--------------------------------------------------------------------------
-    // toString
 
     /**
      * Returns the string representation of the given map.
@@ -13798,6 +13546,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
 
     /**
      * Create a String representation of this object.
+     *
      * @param value an object
      * @return a string.
      * @since 1.0
@@ -13805,9 +13554,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static String toString(Object value) {
         return FormatHelper.toString(value);
     }
-
-    //--------------------------------------------------------------------------
-    // toUnique
 
     /**
      * Returns an iterator equivalent to this iterator but with all duplicated items
@@ -13828,24 +13574,27 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * <pre class="groovyTestCase">assert [1,4] == [1,3,4,5].toUnique { it % 2 }</pre>
      * <pre class="groovyTestCase">assert [2,3,4] == [2,3,3,4].toUnique { a, b {@code ->} a {@code <=>} b }</pre>
      *
-     * @param self an Iterator
+     * @param self      an Iterator
      * @param condition a Closure used to determine unique items
      * @return an Iterator with no duplicate items
      * @since 2.4.0
      */
-    public static <T> Iterator<T> toUnique(Iterator<T> self, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure condition) {
+    public static <T> Iterator<T> toUnique(Iterator<T> self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure condition) {
         return toUnique(self, condition.getMaximumNumberOfParameters() == 1
-                ? new OrderBy<>(condition, true)
-                : new ClosureComparator<>(condition));
+            ? new OrderBy<>(condition, true)
+            : new ClosureComparator<>(condition));
     }
+
+    //--------------------------------------------------------------------------
+    // toSpreadMap
 
     /**
      * Returns an iterator equivalent to this iterator with all duplicated
      * items removed by using the supplied comparator.
      *
-     * @param self an Iterator
+     * @param self       an Iterator
      * @param comparator a Comparator used to determine unique (equal) items
-     *        If {@code null}, the Comparable natural ordering of the elements will be used.
+     *                   If {@code null}, the Comparable natural ordering of the elements will be used.
      * @return an Iterator with no duplicate items
      * @since 2.4.0
      */
@@ -13906,7 +13655,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *
      * @param self       an Iterable
      * @param comparator a Comparator used to determine unique (equal) items
-     *        If {@code null}, the Comparable natural ordering of the elements will be used.
+     *                   If {@code null}, the Comparable natural ordering of the elements will be used.
      * @return the Collection of non-duplicate items
      * @since 2.4.0
      */
@@ -13915,6 +13664,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         addAll(result, toUnique(self.iterator(), comparator));
         return result;
     }
+
+    //--------------------------------------------------------------------------
+    // toString
 
     /**
      * Returns a List containing the items from the List but with duplicates removed.
@@ -13957,7 +13709,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      *
      * @param self       a List
      * @param comparator a Comparator used to determine unique (equal) items
-     *        If {@code null}, the Comparable natural ordering of the elements will be used.
+     *                   If {@code null}, the Comparable natural ordering of the elements will be used.
      * @return the List of non-duplicate items
      * @since 2.4.0
      */
@@ -13975,7 +13727,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert letters.toUnique() == expected
      * </pre>
      *
-     * @param self       an Iterable
+     * @param self an Iterable
      * @return the Collection of non-duplicate items
      * @since 2.4.0
      */
@@ -13993,13 +13745,16 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert letters.toUnique() == expected
      * </pre>
      *
-     * @param self       a List
+     * @param self a List
      * @return the List of non-duplicate items
      * @since 2.4.0
      */
     public static <T> List<T> toUnique(List<T> self) {
         return toUnique(self, (Comparator<T>) null);
     }
+
+    //--------------------------------------------------------------------------
+    // toUnique
 
     /**
      * Returns a Collection containing the items from the Iterable but with duplicates removed.
@@ -14040,8 +13795,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      */
     public static <T> Collection<T> toUnique(Iterable<T> self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure condition) {
         Comparator<T> comparator = condition.getMaximumNumberOfParameters() == 1
-                ? new OrderBy<>(condition, true)
-                : new ClosureComparator<>(condition);
+            ? new OrderBy<>(condition, true)
+            : new ClosureComparator<>(condition);
         return toUnique(self, comparator);
     }
 
@@ -14086,69 +13841,20 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return (List<T>) toUnique((Iterable<T>) self, condition);
     }
 
-    private static final class ToUniqueIterator<E> implements Iterator<E> {
-        private final Iterator<E> delegate;
-        private final Set<E> seen;
-        private boolean exhausted;
-        private E next;
-
-        private ToUniqueIterator(Iterator<E> delegate, Comparator<? super E> comparator) {
-            this.seen = new TreeSet<>(comparator);
-            this.delegate = delegate;
-            advance();
-        }
-
-        @Override
-        public boolean hasNext() {
-            return !exhausted;
-        }
-
-        @Override
-        public E next() {
-            if (exhausted) throw new NoSuchElementException();
-            E result = next;
-            advance();
-            return result;
-        }
-
-        @Override
-        public void remove() {
-            if (exhausted) throw new NoSuchElementException();
-            delegate.remove();
-        }
-
-        private void advance() {
-            boolean foundNext = false;
-            while (!foundNext && !exhausted) {
-                exhausted = !delegate.hasNext();
-                if (!exhausted) {
-                    next = delegate.next();
-                    foundNext = seen.add(next);
-                }
-            }
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // toUpperCase
-
     /**
      * Converts the character to uppercase.
      * Synonym for 'Character.toUpperCase(this)'.
      *
      * @param self a Character to convert
-     * @return  the uppercase equivalent of the character, if any;
-     *          otherwise, the character itself.
-     * @see     java.lang.Character#isUpperCase(char)
-     * @see     java.lang.String#toUpperCase()
+     * @return the uppercase equivalent of the character, if any;
+     * otherwise, the character itself.
+     * @see java.lang.Character#isUpperCase(char)
+     * @see java.lang.String#toUpperCase()
      * @since 1.5.7
      */
     public static char toUpperCase(Character self) {
         return Character.toUpperCase(self);
     }
-
-    //--------------------------------------------------------------------------
-    // transpose
 
     /**
      * Adds GroovyCollections#transpose(List) as a method on lists.
@@ -14175,13 +13881,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return GroovyCollections.transpose(self);
     }
 
-    //--------------------------------------------------------------------------
-    // trunc
-
     /**
      * Truncate the value
      *
-     * @param number a Float
+     * @param number    a Float
      * @param precision the number of decimal places to keep
      * @return the Float truncated to the number of decimal places specified by precision
      * @since 1.6.0
@@ -14204,9 +13907,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      */
     public static float trunc(Float number) {
         if (number < 0f) {
-            return (float)Math.ceil(number.doubleValue());
+            return (float) Math.ceil(number.doubleValue());
         }
-        return (float)Math.floor(number.doubleValue());
+        return (float) Math.floor(number.doubleValue());
     }
 
     /**
@@ -14226,16 +13929,16 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     /**
      * Truncate the value
      *
-     * @param number a Double
+     * @param number    a Double
      * @param precision the number of decimal places to keep
      * @return the Double truncated to the number of decimal places specified by precision
      * @since 1.6.4
      */
     public static double trunc(Double number, int precision) {
         if (number < 0d) {
-            return Math.ceil(number *Math.pow(10,precision))/Math.pow(10,precision);
+            return Math.ceil(number * Math.pow(10, precision)) / Math.pow(10, precision);
         }
-        return Math.floor(number *Math.pow(10,precision))/Math.pow(10,precision);
+        return Math.floor(number * Math.pow(10, precision)) / Math.pow(10, precision);
     }
 
     /**
@@ -14253,7 +13956,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     /**
      * Truncate the value
      *
-     * @param number a BigDecimal
+     * @param number    a BigDecimal
      * @param precision the number of decimal places to keep
      * @return a BigDecimal truncated to the number of decimal places specified by precision
      * @see #trunc(java.math.BigDecimal)
@@ -14264,7 +13967,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // unaryMinus
+    // toUpperCase
 
     /**
      * Negates the number.  Equivalent to the '-' operator when it precedes
@@ -14279,7 +13982,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // unaryPlus
+    // transpose
 
     /**
      * Returns the number, effectively being a noop for numbers.
@@ -14295,7 +13998,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // union
+    // trunc
 
     /**
      * Create a Collection composed of the union of both collections.  Any
@@ -14335,8 +14038,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert two.union(one, compareIgnoreCase) == ['b', 'C', 'd', 'e', 'a']
      * </pre>
      *
-     * @param left  a Collection
-     * @param right a Collection
+     * @param left       a Collection
+     * @param right      a Collection
      * @param comparator a Comparator
      * @return a Collection as a union of both collections
      * @since 5.0.0
@@ -14394,8 +14097,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [1,2,3,4,5,6] == [1,2,3,4].union([3,4,5,6], Comparator.naturalOrder())
      * </pre>
      *
-     * @param left  an Iterable
-     * @param right an Iterable
+     * @param left       an Iterable
+     * @param right      an Iterable
      * @param comparator a Comparator
      * @return a Collection as a union of both iterables
      * @since 5.0.0
@@ -14422,13 +14125,13 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert two.union(one, compareIgnoreCase) == ['b', 'C', 'd', 'e', 'a']
      * </pre>
      *
-     * @param left  an Iterable
-     * @param right an Iterable
+     * @param left      an Iterable
+     * @param right     an Iterable
      * @param condition a Closure used to determine unique items
      * @return a Collection as a union of both iterables
      * @since 5.0.0
      */
-    public static <T> Collection<T> union(Iterable<T> left, Iterable<T> right, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure condition) {
+    public static <T> Collection<T> union(Iterable<T> left, Iterable<T> right, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure condition) {
         Comparator<T> comparator = condition.getMaximumNumberOfParameters() == 1
             ? new OrderBy<>(condition, true)
             : new ClosureComparator<>(condition);
@@ -14455,6 +14158,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return (List<T>) union((Collection<T>) left, asCollection(right));
     }
 
+    //--------------------------------------------------------------------------
+    // unaryMinus
+
     /**
      * Create a List composed of the union of a List and an Iterable.  Any
      * elements that exist in either iterables are added to the resultant collection, such
@@ -14463,8 +14169,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [1,2,3,4,5,6] == [1,2,3,4].union([3,4,5,6])
      * </pre>
      *
-     * @param left  a List
-     * @param right an Iterable
+     * @param left       a List
+     * @param right      an Iterable
      * @param comparator a Comparator
      * @return a List as a union of a List and an Iterable
      * @since 5.0.0
@@ -14472,6 +14178,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> List<T> union(List<T> left, Iterable<T> right, Comparator<? super T> comparator) {
         return (List<T>) union((Collection<T>) left, asCollection(right), comparator);
     }
+
+    //--------------------------------------------------------------------------
+    // unaryPlus
 
     /**
      * Create a Set composed of the union of a Set and an Iterable.  Any
@@ -14493,6 +14202,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return (Set<T>) union((Collection<T>) left, asCollection(right));
     }
 
+    //--------------------------------------------------------------------------
+    // union
+
     /**
      * Create a Set composed of the union of a Set and an Iterable.  Any
      * elements that exist in either iterables are added to the resultant collection, such
@@ -14501,8 +14213,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [1,2,3,4,5,6] as Set == ([1,2,3,4] as Set).union([3,4,5,6], Comparator.naturalOrder())
      * </pre>
      *
-     * @param left  a Set
-     * @param right an Iterable
+     * @param left       a Set
+     * @param right      an Iterable
      * @param comparator a Comparator
      * @return a Set as a union of a Set and an Iterable
      * @since 5.0.0
@@ -14539,8 +14251,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [1,2,3,4,5,6,7,8] as SortedSet == ([1,2,3,4,5] as SortedSet).union([4,5,6,7,8])
      * </pre>
      *
-     * @param left  a SortedSet
-     * @param right an Iterable
+     * @param left       a SortedSet
+     * @param right      an Iterable
      * @param comparator a Comparator
      * @return a Set as a union of a SortedSet and an Iterable
      * @since 2.5.0
@@ -14548,9 +14260,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> SortedSet<T> union(SortedSet<T> left, Iterable<T> right, Comparator<? super T> comparator) {
         return (SortedSet<T>) union((Collection<T>) left, asCollection(right), comparator);
     }
-
-    //--------------------------------------------------------------------------
-    // unique
 
     /**
      * Returns an iterator equivalent to this iterator with all duplicated items removed
@@ -14608,7 +14317,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert uniq == [1, 3, 2]
      * </pre>
      *
-     * @param self a collection
+     * @param self   a collection
      * @param mutate false will return a new collection containing the unique items from the collection, true will mutate collections in place and return the original collection
      * @return a collection with unique elements
      * @since 1.8.1
@@ -14642,7 +14351,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert uniq == [1, 3, 2]
      * </pre>
      *
-     * @param self a List
+     * @param self   a List
      * @param mutate false will cause a new List containing unique items from the List to be created, true will mutate List in place
      * @return the now modified List
      * @since 2.4.0
@@ -14668,10 +14377,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the modified Iterator
      * @since 1.5.5
      */
-    public static <T> Iterator<T> unique(Iterator<T> self, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure condition) {
+    public static <T> Iterator<T> unique(Iterator<T> self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure condition) {
         Comparator<T> comparator = condition.getMaximumNumberOfParameters() == 1
-                ? new OrderBy<>(condition, true)
-                : new ClosureComparator<>(condition);
+            ? new OrderBy<>(condition, true)
+            : new ClosureComparator<>(condition);
         return unique(self, comparator);
     }
 
@@ -14695,7 +14404,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see #unique(Collection, boolean, Closure)
      * @since 1.0
      */
-    public static <T> Collection<T> unique(Collection<T> self, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure closure) {
+    public static <T> Collection<T> unique(Collection<T> self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         return unique(self, true, closure);
     }
 
@@ -14719,9 +14428,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see #unique(Collection, boolean, Closure)
      * @since 2.4.0
      */
-    public static <T> List<T> unique(List<T> self, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure closure) {
+    public static <T> List<T> unique(List<T> self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         return (List<T>) unique((Collection<T>) self, true, closure);
     }
+
+    //--------------------------------------------------------------------------
+    // unique
 
     /**
      * A convenience method for making a collection unique using a Closure to determine duplicate (equal) items.
@@ -14750,7 +14462,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return self   without any duplicates
      * @since 1.8.1
      */
-    public static <T> Collection<T> unique(Collection<T> self, boolean mutate, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure closure) {
+    public static <T> Collection<T> unique(Collection<T> self, boolean mutate, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         // use a comparator of one item or two
         int params = closure.getMaximumNumberOfParameters();
         if (params == 1) {
@@ -14788,7 +14500,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return self   without any duplicates
      * @since 2.4.0
      */
-    public static <T> List<T> unique(List<T> self, boolean mutate, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure closure) {
+    public static <T> List<T> unique(List<T> self, boolean mutate, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         return (List<T>) unique((Collection<T>) self, mutate, closure);
     }
 
@@ -14797,7 +14509,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * items removed by using the supplied comparator. The original iterator
      * will be exhausted upon returning.
      *
-     * @param self an Iterator
+     * @param self       an Iterator
      * @param comparator a Comparator
      * @return the modified Iterator
      * @since 1.5.5
@@ -14854,7 +14566,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.0
      */
     public static <T> Collection<T> unique(Collection<T> self, Comparator<? super T> comparator) {
-        return unique(self, true, comparator) ;
+        return unique(self, true, comparator);
     }
 
     /**
@@ -15047,22 +14759,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return answer;
     }
 
-    private static final class IteratorIterableAdapter<T> implements Iterable<T> {
-        private final Iterator<T> self;
-
-        private IteratorIterableAdapter(Iterator<T> self) {
-            this.self = self;
-        }
-
-        @Override
-        public Iterator<T> iterator() {
-            return self;
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // upto
-
     /**
      * Iterates from this number up to the given number, inclusive,
      * incrementing by one each time.
@@ -15081,7 +14777,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to upto() cannot be less than the value (" + self + ") it's called on.");
+                ") to upto() cannot be less than the value (" + self + ") it's called on.");
     }
 
     /**
@@ -15089,7 +14785,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * incrementing by one each time.
      *
      * @param self    a long
-     * @param to the end number
+     * @param to      the end number
      * @param closure the code to execute for each number
      * @since 1.0
      */
@@ -15101,7 +14797,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to upto() cannot be less than the value (" + self + ") it's called on.");
+                ") to upto() cannot be less than the value (" + self + ") it's called on.");
     }
 
     /**
@@ -15109,7 +14805,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * incrementing by one each time.
      *
      * @param self    a Long
-     * @param to the end number
+     * @param to      the end number
      * @param closure the code to execute for each number
      * @since 1.0
      */
@@ -15121,7 +14817,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to upto() cannot be less than the value (" + self + ") it's called on.");
+                ") to upto() cannot be less than the value (" + self + ") it's called on.");
     }
 
     /**
@@ -15129,7 +14825,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * incrementing by one each time.
      *
      * @param self    a float
-     * @param to the end number
+     * @param to      the end number
      * @param closure the code to execute for each number
      * @since 1.0
      */
@@ -15141,7 +14837,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to upto() cannot be less than the value (" + self + ") it's called on.");
+                ") to upto() cannot be less than the value (" + self + ") it's called on.");
     }
 
     /**
@@ -15149,7 +14845,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * incrementing by one each time.
      *
      * @param self    a Float
-     * @param to the end number
+     * @param to      the end number
      * @param closure the code to execute for each number
      * @since 1.0
      */
@@ -15161,7 +14857,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to upto() cannot be less than the value (" + self + ") it's called on.");
+                ") to upto() cannot be less than the value (" + self + ") it's called on.");
     }
 
     /**
@@ -15169,7 +14865,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * incrementing by one each time.
      *
      * @param self    a double
-     * @param to the end number
+     * @param to      the end number
      * @param closure the code to execute for each number
      * @since 1.0
      */
@@ -15181,7 +14877,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to upto() cannot be less than the value (" + self + ") it's called on.");
+                ") to upto() cannot be less than the value (" + self + ") it's called on.");
     }
 
     /**
@@ -15189,7 +14885,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * incrementing by one each time.
      *
      * @param self    a Double
-     * @param to the end number
+     * @param to      the end number
      * @param closure the code to execute for each number
      * @since 1.0
      */
@@ -15201,7 +14897,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to upto() cannot be less than the value (" + self + ") it's called on.");
+                ") to upto() cannot be less than the value (" + self + ") it's called on.");
     }
 
     /**
@@ -15213,7 +14909,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * Prints numbers 0 to 10
      *
      * @param self    a BigInteger
-     * @param to the end number
+     * @param to      the end number
      * @param closure the code to execute for each number
      * @since 1.0
      */
@@ -15228,9 +14924,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
                 }
             } else
                 throw new GroovyRuntimeException(
-                        MessageFormat.format(
-                                "The argument ({0}) to upto() cannot be less than the value ({1}) it''s called on.",
-                                to, self));
+                    MessageFormat.format(
+                        "The argument ({0}) to upto() cannot be less than the value ({1}) it''s called on.",
+                        to, self));
         } else if (to instanceof BigInteger) {
             final BigInteger one = BigInteger.valueOf(1);
             BigInteger to1 = (BigInteger) to;
@@ -15240,8 +14936,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
                 }
             } else
                 throw new GroovyRuntimeException(
-                        MessageFormat.format("The argument ({0}) to upto() cannot be less than the value ({1}) it''s called on.",
-                                to, self));
+                    MessageFormat.format("The argument ({0}) to upto() cannot be less than the value ({1}) it''s called on.",
+                        to, self));
         } else {
             final BigInteger one = BigInteger.valueOf(1);
             BigInteger to1 = new BigInteger(to.toString());
@@ -15251,8 +14947,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
                 }
             } else
                 throw new GroovyRuntimeException(MessageFormat.format(
-                        "The argument ({0}) to upto() cannot be less than the value ({1}) it''s called on.",
-                        to, self));
+                    "The argument ({0}) to upto() cannot be less than the value ({1}) it''s called on.",
+                    to, self));
         }
     }
 
@@ -15265,7 +14961,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * Prints numbers 0.1, 1.1, 2.1... to 9.1
      *
      * @param self    a BigDecimal
-     * @param to the end number
+     * @param to      the end number
      * @param closure the code to execute for each number
      * @since 1.0
      */
@@ -15279,7 +14975,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
                 }
             } else
                 throw new GroovyRuntimeException("The argument (" + to +
-                        ") to upto() cannot be less than the value (" + self + ") it's called on.");
+                    ") to upto() cannot be less than the value (" + self + ") it's called on.");
         } else if (to instanceof BigInteger) {
             BigDecimal to1 = new BigDecimal((BigInteger) to);
             if (self.compareTo(to1) <= 0) {
@@ -15288,7 +14984,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
                 }
             } else
                 throw new GroovyRuntimeException("The argument (" + to +
-                        ") to upto() cannot be less than the value (" + self + ") it's called on.");
+                    ") to upto() cannot be less than the value (" + self + ") it's called on.");
         } else {
             BigDecimal to1 = NumberMath.toBigDecimal(to);
             if (self.compareTo(to1) <= 0) {
@@ -15297,12 +14993,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
                 }
             } else
                 throw new GroovyRuntimeException("The argument (" + to +
-                        ") to upto() cannot be less than the value (" + self + ") it's called on.");
+                    ") to upto() cannot be less than the value (" + self + ") it's called on.");
         }
     }
 
     //--------------------------------------------------------------------------
-    // use
+    // upto
 
     /**
      * Scoped use method
@@ -15345,7 +15041,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Object use(Object self, Object[] array) {
         if (array.length < 2)
             throw new IllegalArgumentException(
-                    "Expecting at least 2 arguments, a category class and a Closure");
+                "Expecting at least 2 arguments, a category class and a Closure");
         Closure closure;
         try {
             closure = (Closure) array[array.length - 1];
@@ -15364,9 +15060,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return GroovyCategorySupport.use(list, closure);
     }
-
-    //--------------------------------------------------------------------------
-    // with
 
     /**
      * Allows the closure to be called for the object reference self.
@@ -15403,10 +15096,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 1.5.0
      */
     public static <T, U> T with(
-            @DelegatesTo.Target U self,
-            @DelegatesTo(strategy=Closure.DELEGATE_FIRST)
-            @ClosureParams(FirstParam.class) Closure<T> closure) {
-        return callWithDelegateAndParameter(closure,self).getV1();
+        @DelegatesTo.Target U self,
+        @DelegatesTo(strategy = Closure.DELEGATE_FIRST)
+        @ClosureParams(FirstParam.class) Closure<T> closure) {
+        return callWithDelegateAndParameter(closure, self).getV1();
     }
 
     /**
@@ -15432,7 +15125,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * }
      * </pre>
      * Alternatively, 'tap' is an alias for 'with(true)', so that method can be used instead.
-     *
+     * <p>
      * The other main use case for with is when returning a value calculated using self as shown here:
      * <pre>
      * def fullName = person.with(false){ "$firstName $lastName" }
@@ -15448,10 +15141,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 2.5.0
      */
     public static <T, U extends T, V extends T> T with(
-            @DelegatesTo.Target U self, boolean returnIt,
-            @DelegatesTo(strategy=Closure.DELEGATE_FIRST)
-            @ClosureParams(FirstParam.class) Closure<V> closure) {
-        var response = callWithDelegateAndParameter(closure,self);
+        @DelegatesTo.Target U self, boolean returnIt,
+        @DelegatesTo(strategy = Closure.DELEGATE_FIRST)
+        @ClosureParams(FirstParam.class) Closure<V> closure) {
+        var response = callWithDelegateAndParameter(closure, self);
         if (returnIt) return response.getV2(); // self or null
         return response.getV1();
     }
@@ -15460,15 +15153,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * A utility method for calling a method closure on an object.
      *
      * @param self the object
-     * @param mc the method closure
+     * @param mc   the method closure
      * @return the result of calling the method closure
      */
     public static Object withMethodClosure(Object self, MethodClosure mc) {
         return mc.call(self);
     }
-
-    //--------------------------------------------------------------------------
-    // withCollectedKeys
 
     /**
      * A variant of withCollectedKeys for Iterators.
@@ -15520,6 +15210,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return collectEntries(values.iterator(), collector, keyTransform, Function.identity());
     }
 
+    //--------------------------------------------------------------------------
+    // use
+
     /**
      * Transform Iterable elements into Map entries with values unchanged
      * and keys transformed using the supplied function.
@@ -15540,9 +15233,6 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <K, V> Map<K, V> withCollectedKeys(Iterable<V> values, Function<? super V, K> keyTransform) {
         return withCollectedKeys(values.iterator(), new LinkedHashMap<>(), keyTransform);
     }
-
-    //--------------------------------------------------------------------------
-    // withCollectedValues
 
     /**
      * A variant of withCollectedValues for Iterators.
@@ -15570,6 +15260,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <K, V> Map<K, V> withCollectedValues(Iterator<K> keys, Function<? super K, V> valueTransform) {
         return withCollectedValues(keys, new LinkedHashMap<>(), valueTransform);
     }
+
+    //--------------------------------------------------------------------------
+    // with
 
     /**
      * Transform Iterable elements into Map entries with keys unchanged
@@ -15613,15 +15306,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return withCollectedValues(keys.iterator(), new LinkedHashMap<>(), valueTransform);
     }
 
-    //--------------------------------------------------------------------------
-    // withDefault
-
     /**
      * Wraps a map using the decorator pattern with a wrapper that intercepts all calls
      * to <code>get(key)</code>. If an unknown key is found, a default value will be
      * stored into the Map before being returned. The default value stored will be the
      * result of calling the supplied Closure with the key as the parameter to the Closure.
-     *
+     * <p>
      * Example usage:
      * <pre class="groovyTestCase">
      * def map = [a:1, b:2].withDefault{ k {@code ->} k.toCharacter().isLowerCase() ? 10 : -10 }
@@ -15636,12 +15326,15 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self a Map
      * @param init a Closure which is passed the unknown key
      * @return the wrapped Map
-     * @since 1.7.1
      * @see #withDefault(Map, boolean, boolean, Closure)
+     * @since 1.7.1
      */
     public static <K, V> Map<K, V> withDefault(Map<K, V> self, @ClosureParams(FirstParam.FirstGenericType.class) Closure<V> init) {
         return MapWithDefault.newInstance(self, true, false, init);
     }
+
+    //--------------------------------------------------------------------------
+    // withCollectedKeys
 
     /**
      * Wraps a map using the decorator pattern with a wrapper that intercepts all calls
@@ -15650,21 +15343,21 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * The default value will be the result of calling the supplied Closure with the key
      * as the parameter to the Closure.
      * If <code>autoGrow</code> is set, the value will be stored into the map.
-     *
+     * <p>
      * If <code>autoShrink</code> is set, then an attempt to <code>put</code> the default value
      * into the map is ignored and indeed any existing value would be removed.
-     *
+     * <p>
      * If you wish the backing map to be as small as possible, consider setting <code>autoGrow</code>
      * to <code>false</code> and <code>autoShrink</code> to <code>true</code>.
      * This keeps the backing map as small as possible, i.e. sparse, but also means that
      * <code>containsKey</code>, <code>keySet</code>, <code>size</code>, and other methods
      * will only reflect the sparse values.
-     *
+     * <p>
      * If you are wrapping an immutable map, you should set <code>autoGrow</code>
      * and <code>autoShrink</code> to <code>false</code>.
      * In this scenario, the <code>get</code> method is essentially a shorthand
      * for calling <code>getOrDefault</code> with the default value supplied once as a Closure.
-     *
+     * <p>
      * Example usage:
      * <pre class="groovyTestCase">
      * // sparse map example
@@ -15683,10 +15376,10 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert certainties.size() == 2
      * </pre>
      *
-     * @param self a Map
-     * @param autoGrow whether calling get could potentially grow the map if the key isn't found
+     * @param self       a Map
+     * @param autoGrow   whether calling get could potentially grow the map if the key isn't found
      * @param autoShrink whether calling put with the default value could potentially shrink the map
-     * @param init a Closure which is passed the unknown key
+     * @param init       a Closure which is passed the unknown key
      * @return the wrapped Map
      * @since 4.0.1
      */
@@ -15705,12 +15398,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see #withEagerDefault(java.util.List, groovy.lang.Closure)
      * @since 1.8.7
      */
-    public static <T> ListWithDefault<T> withDefault(List<T> self, @ClosureParams(value=SimpleType.class, options = "int") Closure<T> init) {
+    public static <T> ListWithDefault<T> withDefault(List<T> self, @ClosureParams(value = SimpleType.class, options = "int") Closure<T> init) {
         return withLazyDefault(self, init);
     }
-
-    //--------------------------------------------------------------------------
-    // withEagerDefault
 
     /**
      * Decorates a list allowing it to grow when called with a non-existent index value.
@@ -15748,12 +15438,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the wrapped List
      * @since 1.8.7
      */
-    public static <T> ListWithDefault<T> withEagerDefault(List<T> self, @ClosureParams(value=SimpleType.class, options="int") Closure<T> init) {
+    public static <T> ListWithDefault<T> withEagerDefault(List<T> self, @ClosureParams(value = SimpleType.class, options = "int") Closure<T> init) {
         return ListWithDefault.newInstance(self, false, init);
     }
-
-    //--------------------------------------------------------------------------
-    // withLazyDefault
 
     /**
      * Decorates a list allowing it to grow when called with a non-existent index value.
@@ -15797,12 +15484,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the decorated List
      * @since 1.8.7
      */
-    public static <T> ListWithDefault<T> withLazyDefault(List<T> self, @ClosureParams(value=SimpleType.class, options="int") Closure<T> init) {
+    public static <T> ListWithDefault<T> withLazyDefault(List<T> self, @ClosureParams(value = SimpleType.class, options = "int") Closure<T> init) {
         return ListWithDefault.newInstance(self, true, init);
     }
 
     //--------------------------------------------------------------------------
-    // withIndex
+    // withCollectedValues
 
     /**
      * Zips an Iterable with indices in (value, index) order.
@@ -15878,34 +15565,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return new ZipPostIterator<>(self, offset);
     }
 
-    private static final class ZipPostIterator<E> implements Iterator<Tuple2<E, Integer>> {
-        private final Iterator<E> delegate;
-        private int index;
-
-        private ZipPostIterator(Iterator<E> delegate, int offset) {
-            this.delegate = delegate;
-            this.index = offset;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return delegate.hasNext();
-        }
-
-        @Override
-        public Tuple2<E, Integer> next() {
-            if (!hasNext()) throw new NoSuchElementException();
-            return new Tuple2<>(delegate.next(), index++);
-        }
-
-        @Override
-        public void remove() {
-            delegate.remove();
-        }
-    }
-
     //--------------------------------------------------------------------------
-    // zip
+    // withDefault
 
     /**
      * An iterator of all the pairs of two Iterables.
@@ -15916,7 +15577,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [one, two].transpose() == one.zip(two).toList()
      * </pre>
      *
-     * @param self an Iterable
+     * @param self  an Iterable
      * @param other another Iterable
      * @return an iterator of all the pairs from self and other
      * @since 5.0.0
@@ -15934,7 +15595,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [small.toList(), large.toList()].transpose() == small.zip(large).toList()
      * </pre>
      *
-     * @param self an Iterator
+     * @param self  an Iterator
      * @param other another Iterator
      * @return an iterator of all the pairs from self and other
      * @since 5.0.0
@@ -15943,41 +15604,13 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return new ZipIterator<>(self, other);
     }
 
-    private static final class ZipIterator<U, V> implements Iterator<Tuple2<U, V>> {
-        private final Iterator<U> delegate;
-        private final Iterator<V> other;
-
-        private ZipIterator(Iterator<U> delegate, Iterator<V> other) {
-            this.delegate = delegate;
-            this.other = other;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return delegate.hasNext() && other.hasNext();
-        }
-
-        @Override
-        public Tuple2<U, V> next() {
-            if (!hasNext()) throw new NoSuchElementException();
-            return new Tuple2<>(delegate.next(), other.next());
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // withTraits
-
     /**
      * Dynamically wraps an instance into something which implements the
      * supplied trait classes. It is guaranteed that the returned object
      * will implement the trait interfaces, but the original type of the
      * object is lost (replaced with a proxy).
-     * @param self object to be wrapped
+     *
+     * @param self   object to be wrapped
      * @param traits a list of trait classes
      * @return a proxy implementing the trait interfaces
      */
@@ -15988,7 +15621,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // xor
+    // withEagerDefault
 
     /**
      * Bitwise XOR together two Numbers.  Called when the '^' operator is used.
@@ -16001,6 +15634,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Number xor(Number left, Number right) {
         return NumberMath.xor(left, right);
     }
+
+    //--------------------------------------------------------------------------
+    // withLazyDefault
 
     /**
      * Bitwise XOR together two BitSets.  Called when the '^' operator is used
@@ -16017,10 +15653,13 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return result;
     }
 
+    //--------------------------------------------------------------------------
+    // withIndex
+
     /**
      * Exclusive disjunction of two boolean operators
      *
-     * @param left left operator
+     * @param left  left operator
      * @param right right operator
      * @return result of exclusive disjunction
      * @since 1.0
@@ -16041,7 +15680,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * def b = [3,4,5,6] as Set
      * assert (a ^ b) == [1,2,5,6] as Set
      * </pre>
-     *
+     * <p>
      * By default, Groovy uses a {@link NumberAwareComparator} when determining if an
      * element exists in both sets.
      *
@@ -16066,8 +15705,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [1,2,5,6] as Set == ([1,2,3,4] as Set).xor([3,4,5,6], Comparator.naturalOrder())
      * </pre>
      *
-     * @param left  a Set
-     * @param right an Iterable
+     * @param left       a Set
+     * @param right      an Iterable
      * @param comparator a Comparator
      * @return a Set as a symmetric difference of a Set and an Iterable
      * @since 5.0.0
@@ -16089,7 +15728,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * def b = [3,4,5,6] as Set
      * assert (a ^ b) == [1,2,5,6] as SortedSet
      * </pre>
-     *
+     * <p>
      * By default, Groovy uses a {@link NumberAwareComparator} when determining if an
      * element exists in both sets.
      *
@@ -16114,8 +15753,8 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [1,2,5,6] as SortedSet == ([1,2,3,4] as SortedSet).xor([3,4,5,6], Comparator.naturalOrder())
      * </pre>
      *
-     * @param left  a SortedSet
-     * @param right an Iterable
+     * @param left       a SortedSet
+     * @param right      an Iterable
      * @param comparator a Comparator
      * @return a SortedSet as a symmetric difference of a SortedSet and an Iterable
      * @since 5.0.0
@@ -16126,7 +15765,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // attic
+    // zip
 
     @Deprecated(since = "5.0.0")
     public static <T> boolean any(T[] self, @ClosureParams(FirstParam.Component.class) Closure predicate) {
@@ -16143,10 +15782,16 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
         return ArrayGroovyMethods.asBoolean(self);
     }
 
+    //--------------------------------------------------------------------------
+    // withTraits
+
     @Deprecated(since = "5.0.0")
     public static boolean asBoolean(char[] self) {
         return ArrayGroovyMethods.asBoolean(self);
     }
+
+    //--------------------------------------------------------------------------
+    // xor
 
     @Deprecated(since = "5.0.0")
     public static boolean asBoolean(short[] self) {
@@ -16182,6 +15827,9 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> T asType(Object[] self, Class<T> type) {
         return ArrayGroovyMethods.asType(self, type);
     }
+
+    //--------------------------------------------------------------------------
+    // attic
 
     @Deprecated(since = "5.0.0")
     public static BigDecimal average(byte[] self) {
@@ -16389,7 +16037,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     @Deprecated(since = "5.0.0")
-    public static <K,E> Map<K, Integer> countBy(E[] self, @ClosureParams(FirstParam.Component.class) Closure<K> closure) {
+    public static <K, E> Map<K, Integer> countBy(E[] self, @ClosureParams(FirstParam.Component.class) Closure<K> closure) {
         return ArrayGroovyMethods.countBy(self, closure);
     }
 
@@ -16424,7 +16072,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     @Deprecated(since = "5.0.0")
-    public static <T> T[] eachWithIndex(T[] self, @ClosureParams(value=FromString.class, options="T,Integer") Closure closure) {
+    public static <T> T[] eachWithIndex(T[] self, @ClosureParams(value = FromString.class, options = "T,Integer") Closure closure) {
         return ArrayGroovyMethods.eachWithIndex(self, closure);
     }
 
@@ -16884,22 +16532,22 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     @Deprecated(since = "5.0.0")
-    public static <E extends T, T, V extends T> T inject(E[] self, @ClosureParams(value=FromString.class,options="T,E") Closure<V> closure) {
+    public static <E extends T, T, V extends T> T inject(E[] self, @ClosureParams(value = FromString.class, options = "T,E") Closure<V> closure) {
         return ArrayGroovyMethods.inject(self, closure);
     }
 
     @Deprecated(since = "5.0.0")
-    public static <E extends T, T, V extends T> T inject(Collection<E> self, @ClosureParams(value=FromString.class,options="T,E") Closure<V> closure) {
+    public static <E extends T, T, V extends T> T inject(Collection<E> self, @ClosureParams(value = FromString.class, options = "T,E") Closure<V> closure) {
         return inject((Iterable<E>) self, closure);
     }
 
     @Deprecated(since = "5.0.0")
-    public static <E, T, U extends T, V extends T> T inject(E[] self, U initialValue, @ClosureParams(value=FromString.class,options="T,E") Closure<V> closure) {
+    public static <E, T, U extends T, V extends T> T inject(E[] self, U initialValue, @ClosureParams(value = FromString.class, options = "T,E") Closure<V> closure) {
         return ArrayGroovyMethods.inject(self, initialValue, closure);
     }
 
     @Deprecated(since = "5.0.0")
-    public static <E, T, U extends T, V extends T> T inject(Collection<E> self, U initialValue, @ClosureParams(value=FromString.class,options="T,E") Closure<V> closure) {
+    public static <E, T, U extends T, V extends T> T inject(Collection<E> self, U initialValue, @ClosureParams(value = FromString.class, options = "T,E") Closure<V> closure) {
         return inject((Iterable<E>) self, initialValue, closure);
     }
 
@@ -16984,7 +16632,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     @Deprecated(since = "5.0.0")
-    public static <T> T max(T[] self, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure closure) {
+    public static <T> T max(T[] self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         return ArrayGroovyMethods.max(self, closure);
     }
 
@@ -17014,7 +16662,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     @Deprecated(since = "5.0.0")
-    public static <T> T min(T[] self, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure closure) {
+    public static <T> T min(T[] self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         return ArrayGroovyMethods.min(self, closure);
     }
 
@@ -17231,12 +16879,12 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     @Deprecated(since = "5.0.0")
-    public static <T> T[] sort(T[] self, @ClosureParams(value=FromString.class,options={"T","T,T"}) Closure closure) {
+    public static <T> T[] sort(T[] self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         return ArrayGroovyMethods.sort(self, closure);
     }
 
     @Deprecated(since = "5.0.0")
-    public static <T> T[] sort(T[] self, boolean mutate, @ClosureParams(value=FromString.class,options={"T","T,T"}) Closure closure) {
+    public static <T> T[] sort(T[] self, boolean mutate, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         return ArrayGroovyMethods.sort(self, mutate, closure);
     }
 
@@ -17337,47 +16985,47 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
 
     @Deprecated(since = "5.0.0")
     public static boolean[] swap(boolean[] self, int i, int j) {
-        return ArrayGroovyMethods.swap(self, i,  j);
+        return ArrayGroovyMethods.swap(self, i, j);
     }
 
     @Deprecated(since = "5.0.0")
     public static byte[] swap(byte[] self, int i, int j) {
-        return ArrayGroovyMethods.swap(self, i,  j);
+        return ArrayGroovyMethods.swap(self, i, j);
     }
 
     @Deprecated(since = "5.0.0")
     public static char[] swap(char[] self, int i, int j) {
-        return ArrayGroovyMethods.swap(self, i,  j);
+        return ArrayGroovyMethods.swap(self, i, j);
     }
 
     @Deprecated(since = "5.0.0")
     public static short[] swap(short[] self, int i, int j) {
-        return ArrayGroovyMethods.swap(self, i,  j);
+        return ArrayGroovyMethods.swap(self, i, j);
     }
 
     @Deprecated(since = "5.0.0")
     public static int[] swap(int[] self, int i, int j) {
-        return ArrayGroovyMethods.swap(self, i,  j);
+        return ArrayGroovyMethods.swap(self, i, j);
     }
 
     @Deprecated(since = "5.0.0")
     public static long[] swap(long[] self, int i, int j) {
-        return ArrayGroovyMethods.swap(self, i,  j);
+        return ArrayGroovyMethods.swap(self, i, j);
     }
 
     @Deprecated(since = "5.0.0")
     public static float[] swap(float[] self, int i, int j) {
-        return ArrayGroovyMethods.swap(self, i,  j);
+        return ArrayGroovyMethods.swap(self, i, j);
     }
 
     @Deprecated(since = "5.0.0")
     public static double[] swap(double[] self, int i, int j) {
-        return ArrayGroovyMethods.swap(self, i,  j);
+        return ArrayGroovyMethods.swap(self, i, j);
     }
 
     @Deprecated(since = "5.0.0")
     public static <T> T[] swap(T[] self, int i, int j) {
-        return ArrayGroovyMethods.swap(self, i,  j);
+        return ArrayGroovyMethods.swap(self, i, j);
     }
 
     @Deprecated(since = "5.0.0")
@@ -17501,7 +17149,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     @Deprecated(since = "5.0.0")
-    public static <T> T[] toSorted(T[] self, @ClosureParams(value=FromString.class,options={"T","T,T"}) Closure closure) {
+    public static <T> T[] toSorted(T[] self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         return ArrayGroovyMethods.toSorted(self, closure);
     }
 
@@ -17566,7 +17214,7 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     @Deprecated(since = "5.0.0")
-    public static <T> T[] toUnique(T[] self, @ClosureParams(value=FromString.class, options={"T","T,T"}) Closure closure) {
+    public static <T> T[] toUnique(T[] self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure closure) {
         return ArrayGroovyMethods.toUnique(self, closure);
     }
 
@@ -17606,17 +17254,359 @@ public class DefaultGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     @Deprecated
-    public static <T> List<T> withDefault$$bridge(List<T> self, @ClosureParams(value=SimpleType.class, options = "int") Closure<T> init) {
+    public static <T> List<T> withDefault$$bridge(List<T> self, @ClosureParams(value = SimpleType.class, options = "int") Closure<T> init) {
         return withDefault(self, init);
     }
 
     @Deprecated
-    public static <T> List<T> withLazyDefault$$bridge(List<T> self, @ClosureParams(value=SimpleType.class, options = "int") Closure<T> init) {
+    public static <T> List<T> withLazyDefault$$bridge(List<T> self, @ClosureParams(value = SimpleType.class, options = "int") Closure<T> init) {
         return ListWithDefault.newInstance(self, true, init);
     }
 
     @Deprecated
-    public static <T> List<T> withEagerDefault$$bridge(List<T> self, @ClosureParams(value=SimpleType.class, options = "int") Closure<T> init) {
+    public static <T> List<T> withEagerDefault$$bridge(List<T> self, @ClosureParams(value = SimpleType.class, options = "int") Closure<T> init) {
         return ListWithDefault.newInstance(self, false, init);
+    }
+
+    private static class NumberAwareValueComparator<K, V> implements Comparator<Map.Entry<K, V>> {
+        private final Comparator<V> delegate = new NumberAwareComparator<>();
+
+        @Override
+        public int compare(Map.Entry<K, V> e1, Map.Entry<K, V> e2) {
+            return delegate.compare(e1.getValue(), e2.getValue());
+        }
+    }
+
+    private static final class DropRightIterator<E> implements Iterator<E> {
+        private final Iterator<E> delegate;
+        private final LinkedList<E> discards;
+        private boolean exhausted;
+        private int num;
+
+        private DropRightIterator(Iterator<E> delegate, int num) {
+            this.delegate = delegate;
+            this.num = num;
+            discards = new LinkedList<>();
+            advance();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !exhausted;
+        }
+
+        @Override
+        public E next() {
+            if (exhausted) throw new NoSuchElementException();
+            E result = discards.removeFirst();
+            advance();
+            return result;
+        }
+
+        @Override
+        public void remove() {
+            if (exhausted) throw new NoSuchElementException();
+            delegate.remove();
+        }
+
+        private void advance() {
+            while (discards.size() <= num && !exhausted) {
+                exhausted = !delegate.hasNext();
+                if (!exhausted) {
+                    discards.add(delegate.next());
+                }
+            }
+        }
+    }
+
+    private static final class DropWhileIterator<E> implements Iterator<E> {
+        private final Iterator<E> delegate;
+        private final Closure condition;
+        private boolean buffering = false;
+        private E buffer = null;
+
+        private DropWhileIterator(Iterator<E> delegate, Closure condition) {
+            this.delegate = delegate;
+            this.condition = condition;
+            prepare();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return buffering || delegate.hasNext();
+        }
+
+        @Override
+        public E next() {
+            if (buffering) {
+                E result = buffer;
+                buffering = false;
+                buffer = null;
+                return result;
+            } else {
+                return delegate.next();
+            }
+        }
+
+        @Override
+        public void remove() {
+            if (buffering) {
+                buffering = false;
+                buffer = null;
+            } else {
+                delegate.remove();
+            }
+        }
+
+        private void prepare() {
+            BooleanClosureWrapper bcw = new BooleanClosureWrapper(condition);
+            while (delegate.hasNext()) {
+                E next = delegate.next();
+                if (!bcw.call(next)) {
+                    buffer = next;
+                    buffering = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    private static final class ZipPreIterator<E> implements Iterator<Tuple2<Integer, E>> {
+        private final Iterator<E> delegate;
+        private int index;
+
+        private ZipPreIterator(Iterator<E> delegate, int offset) {
+            this.delegate = delegate;
+            this.index = offset;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return delegate.hasNext();
+        }
+
+        @Override
+        public Tuple2<Integer, E> next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            return new Tuple2<>(index++, delegate.next());
+        }
+
+        @Override
+        public void remove() {
+            delegate.remove();
+        }
+    }
+
+    private static final class InitIterator<E> implements Iterator<E> {
+        private final Iterator<E> delegate;
+        private boolean exhausted;
+        private E next;
+
+        private InitIterator(Iterator<E> delegate) {
+            this.delegate = delegate;
+            advance();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !exhausted;
+        }
+
+        @Override
+        public E next() {
+            if (exhausted) throw new NoSuchElementException();
+            E result = next;
+            advance();
+            return result;
+        }
+
+        @Override
+        public void remove() {
+            if (exhausted) throw new NoSuchElementException();
+            advance();
+        }
+
+        private void advance() {
+            next = delegate.next();
+            exhausted = !delegate.hasNext();
+        }
+    }
+
+    private static final class TakeIterator<E> implements Iterator<E> {
+        private final Iterator<E> delegate;
+        private Integer num;
+
+        private TakeIterator(Iterator<E> delegate, Integer num) {
+            this.delegate = delegate;
+            this.num = num;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return num > 0 && delegate.hasNext();
+        }
+
+        @Override
+        public E next() {
+            if (num <= 0) throw new NoSuchElementException();
+            num--;
+            return delegate.next();
+        }
+
+        @Override
+        public void remove() {
+            delegate.remove();
+        }
+    }
+
+    private static final class TakeWhileIterator<E> implements Iterator<E> {
+        private final Iterator<E> delegate;
+        private final BooleanClosureWrapper condition;
+        private boolean exhausted;
+        private E next;
+
+        private TakeWhileIterator(Iterator<E> delegate, Closure condition) {
+            this.delegate = delegate;
+            this.condition = new BooleanClosureWrapper(condition);
+            advance();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !exhausted;
+        }
+
+        @Override
+        public E next() {
+            if (exhausted) throw new NoSuchElementException();
+            E result = next;
+            advance();
+            return result;
+        }
+
+        @Override
+        public void remove() {
+            if (exhausted) throw new NoSuchElementException();
+            delegate.remove();
+        }
+
+        private void advance() {
+            exhausted = !delegate.hasNext();
+            if (!exhausted) {
+                next = delegate.next();
+                if (!condition.call(next)) {
+                    exhausted = true;
+                    next = null;
+                }
+            }
+        }
+    }
+
+    private static final class ToUniqueIterator<E> implements Iterator<E> {
+        private final Iterator<E> delegate;
+        private final Set<E> seen;
+        private boolean exhausted;
+        private E next;
+
+        private ToUniqueIterator(Iterator<E> delegate, Comparator<? super E> comparator) {
+            this.seen = new TreeSet<>(comparator);
+            this.delegate = delegate;
+            advance();
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !exhausted;
+        }
+
+        @Override
+        public E next() {
+            if (exhausted) throw new NoSuchElementException();
+            E result = next;
+            advance();
+            return result;
+        }
+
+        @Override
+        public void remove() {
+            if (exhausted) throw new NoSuchElementException();
+            delegate.remove();
+        }
+
+        private void advance() {
+            boolean foundNext = false;
+            while (!foundNext && !exhausted) {
+                exhausted = !delegate.hasNext();
+                if (!exhausted) {
+                    next = delegate.next();
+                    foundNext = seen.add(next);
+                }
+            }
+        }
+    }
+
+    private static final class IteratorIterableAdapter<T> implements Iterable<T> {
+        private final Iterator<T> self;
+
+        private IteratorIterableAdapter(Iterator<T> self) {
+            this.self = self;
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return self;
+        }
+    }
+
+    private static final class ZipPostIterator<E> implements Iterator<Tuple2<E, Integer>> {
+        private final Iterator<E> delegate;
+        private int index;
+
+        private ZipPostIterator(Iterator<E> delegate, int offset) {
+            this.delegate = delegate;
+            this.index = offset;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return delegate.hasNext();
+        }
+
+        @Override
+        public Tuple2<E, Integer> next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            return new Tuple2<>(delegate.next(), index++);
+        }
+
+        @Override
+        public void remove() {
+            delegate.remove();
+        }
+    }
+
+    private static final class ZipIterator<U, V> implements Iterator<Tuple2<U, V>> {
+        private final Iterator<U> delegate;
+        private final Iterator<V> other;
+
+        private ZipIterator(Iterator<U> delegate, Iterator<V> other) {
+            this.delegate = delegate;
+            this.other = other;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return delegate.hasNext() && other.hasNext();
+        }
+
+        @Override
+        public Tuple2<U, V> next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            return new Tuple2<>(delegate.next(), other.next());
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 }

@@ -22,18 +22,18 @@ import groovy.test.GroovyTestCase
 
 class Groovy3163Test extends GroovyTestCase {
 
-void testSuperOverStatic() {
-    def siws = new Groovy3163SomeImplementorWithStatic()
+    void testSuperOverStatic() {
+        def siws = new Groovy3163SomeImplementorWithStatic()
 
-    assert (1 == siws.build(1)[0])
+        assert (1 == siws.build(1)[0])
 
-    def c = { -> 'foo ' }
+        def c = { -> 'foo ' }
 
 //    def s = c as Script
 //    assert s.is(siws.build(s)[0])
 
-    assert c.is(siws.build(c)[0])
-}
+        assert c.is(siws.build(c)[0])
+    }
 
 }
 

@@ -39,13 +39,11 @@ public class ProcessingContextInformation {
     private final Contract contract;
     private final SourceUnit sourceUnit;
     private final ReaderSource source;
-
+    private final Map<String, Object> extra = new HashMap<>();
     private boolean constructorAssertionsEnabled = true;
     private boolean preconditionsEnabled = true;
     private boolean postconditionsEnabled = true;
     private boolean classInvariantsEnabled = true;
-
-    private final Map<String, Object> extra = new HashMap<>();
 
     public ProcessingContextInformation(ClassNode classNode, SourceUnit sourceUnit, ReaderSource source) {
         Validate.notNull(classNode);
@@ -55,12 +53,12 @@ public class ProcessingContextInformation {
         this.source = source;
     }
 
-    public void setConstructorAssertionsEnabled(boolean other) {
-        constructorAssertionsEnabled = other;
-    }
-
     public boolean isConstructorAssertionsEnabled() {
         return constructorAssertionsEnabled;
+    }
+
+    public void setConstructorAssertionsEnabled(boolean other) {
+        constructorAssertionsEnabled = other;
     }
 
     public boolean isPreconditionsEnabled() {
@@ -104,7 +102,7 @@ public class ProcessingContextInformation {
         int col = expr.getColumnNumber();
         SourceUnit source = sourceUnit();
         source.getErrorCollector().addErrorAndContinue(
-                new SyntaxErrorMessage(new SyntaxException(msg + '\n', line, col), source)
+            new SyntaxErrorMessage(new SyntaxException(msg + '\n', line, col), source)
         );
     }
 }

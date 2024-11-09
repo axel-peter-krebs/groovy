@@ -56,32 +56,47 @@ import static org.codehaus.groovy.runtime.DefaultGroovyMethods.asBoolean;
  */
 public class TryWithResourcesASTTransformation {
 
+    private AstBuilder astBuilder;
+    private int resourceCount;
+    private int throwableCount;
+    private int primaryExCount;
+    private int suppressedExCount;
+
     public TryWithResourcesASTTransformation(final AstBuilder astBuilder) {
         this.astBuilder = astBuilder;
     }
-    private AstBuilder astBuilder;
 
-    private int resourceCount;
+    private static Statement createCloseResourceStatement(final String resourceIdentifierName) {
+        MethodCallExpression closeMethodCallExpression = callX(varX(resourceIdentifierName), "close");
+        closeMethodCallExpression.setImplicitThis(false);
+        closeMethodCallExpression.setSafe(true);
+        return stmt(closeMethodCallExpression);
+    }
+
+    private static Statement createAddSuppressedStatement(final String primaryException, final String suppressedException) {
+        MethodCallExpression addSuppressedMethodCallExpression = callX(varX(primaryException), "addSuppressed", varX(suppressedException));
+        addSuppressedMethodCallExpression.setImplicitThis(false);
+        addSuppressedMethodCallExpression.setSafe(true);
+        return stmt(addSuppressedMethodCallExpression);
+    }
+
     private String nextResourceName() {
         return "__$$resource" + resourceCount++;
     }
 
-    private int throwableCount;
     private String nextThrowableName() {
         return "__$$t" + throwableCount++;
     }
 
-    private int primaryExCount;
+    //--------------------------------------------------------------------------
+
     private String nextPrimaryExName() {
         return "__$$primaryExc" + primaryExCount++;
     }
 
-    private int suppressedExCount;
     private String nextSuppressedExName() {
         return "__$$suppressedExc" + suppressedExCount++;
     }
-
-    //--------------------------------------------------------------------------
 
     /**
      * @param tryCatchStatement the try-with-resources statement to transform
@@ -159,8 +174,8 @@ public class TryWithResourcesASTTransformation {
          * Finallyopt
          */
         TryCatchStatement newTryCatchFinally = tryCatchS(
-                block(transform(newTryWithResources)),
-                tryCatchFinally.getFinallyStatement()
+            block(transform(newTryWithResources)),
+            tryCatchFinally.getFinallyStatement()
         );
         tryCatchFinally.getCatchStatements().forEach(newTryCatchFinally::addCatch);
         return newTryCatchFinally;
@@ -208,15 +223,15 @@ public class TryWithResourcesASTTransformation {
         // Throwable #primaryException = null;
         String primaryExceptionName = nextPrimaryExName();
         blockStatement.addStatement(declS(
-                localVarX(primaryExceptionName, ClassHelper.THROWABLE_TYPE.getPlainNodeReference()),
-                nullX()
+            localVarX(primaryExceptionName, ClassHelper.THROWABLE_TYPE.getPlainNodeReference()),
+            nullX()
         ));
 
         String firstResourceIdentifier = ((DeclarationExpression) firstResourceDeclaration.getExpression()).getLeftExpression().getText();
 
         TryCatchStatement newTryCatchFinally = tryCatchS(
-                tryWithResources.getTryStatement(), // Block
-                createFinallyBlockForNewTryCatchStatement(primaryExceptionName, firstResourceIdentifier) // close resource and propagate throwable(s)
+            tryWithResources.getTryStatement(), // Block
+            createFinallyBlockForNewTryCatchStatement(primaryExceptionName, firstResourceIdentifier) // close resource and propagate throwable(s)
         );
         // 2nd, 3rd, ..., n'th resources declared in resources
         tryWithResources.getResourceStatements().stream().skip(1).forEach(newTryCatchFinally::addResource);
@@ -232,8 +247,8 @@ public class TryWithResourcesASTTransformation {
         Parameter catchParameter = new Parameter(ClassHelper.THROWABLE_TYPE.getPlainNodeReference(), throwableName);
 
         return catchS(catchParameter, block( // catch (Throwable #t) {
-                assignS(varX(primaryExceptionName), varX(throwableName)), // #primaryException = #t;
-                throwS(varX(throwableName)) // throw #t;
+            assignS(varX(primaryExceptionName), varX(throwableName)), // #primaryException = #t;
+            throwS(varX(throwableName)) // throw #t;
         )); // }
     }
 
@@ -272,41 +287,27 @@ public class TryWithResourcesASTTransformation {
         String suppressedExceptionName = nextSuppressedExName();
         TryCatchStatement newTryCatch = tryCatchS(block(createCloseResourceStatement(firstResourceIdentifierName)));
         newTryCatch.addCatch(catchS(
-                new Parameter(ClassHelper.THROWABLE_TYPE.getPlainNodeReference(), suppressedExceptionName),
-                block(createAddSuppressedStatement(primaryExceptionName, suppressedExceptionName))
+            new Parameter(ClassHelper.THROWABLE_TYPE.getPlainNodeReference(), suppressedExceptionName),
+            block(createAddSuppressedStatement(primaryExceptionName, suppressedExceptionName))
         ));
 
         return block(ifElseS(notNullX(varX(primaryExceptionName)), // if (#primaryException != null)
-                newTryCatch, // try { #resource?.close() } catch (Throwable #suppressed) { #primary.addSuppressed(#suppressed) }
-                createCloseResourceStatement(firstResourceIdentifierName) // else #resource?.close()
+            newTryCatch, // try { #resource?.close() } catch (Throwable #suppressed) { #primary.addSuppressed(#suppressed) }
+            createCloseResourceStatement(firstResourceIdentifierName) // else #resource?.close()
         ));
-    }
-
-    private static Statement createCloseResourceStatement(final String resourceIdentifierName) {
-        MethodCallExpression closeMethodCallExpression = callX(varX(resourceIdentifierName), "close");
-        closeMethodCallExpression.setImplicitThis(false);
-        closeMethodCallExpression.setSafe(true);
-        return stmt(closeMethodCallExpression);
-    }
-
-    private static Statement createAddSuppressedStatement(final String primaryException, final String suppressedException) {
-        MethodCallExpression addSuppressedMethodCallExpression = callX(varX(primaryException), "addSuppressed", varX(suppressedException));
-        addSuppressedMethodCallExpression.setImplicitThis(false);
-        addSuppressedMethodCallExpression.setSafe(true);
-        return stmt(addSuppressedMethodCallExpression);
     }
 
     /**
      * See https://docs.oracle.com/javase/specs/jls/se9/html/jls-14.html
      * 14.20.3.1. Basic try-with-resources
-     *
+     * <p>
      * If a basic try-with-resource statement is of the form:
      * try (VariableAccess ...)
-     *      Block
-     *
+     * Block
+     * <p>
      * then the resource is first converted to a local variable declaration by the following translation:
      * try (T #r = VariableAccess ...) {
-     *      Block
+     * Block
      * }
      */
     public BinaryExpression transformResourceAccess(final Expression variableExpression) {

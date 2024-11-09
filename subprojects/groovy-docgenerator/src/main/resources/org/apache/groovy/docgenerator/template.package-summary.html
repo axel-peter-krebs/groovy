@@ -26,7 +26,7 @@
     int dotCount = docPackage.name.count('.')
     String pathPref = '../' * (dotCount + 1)
     %>
-    <link rel="stylesheet" type="text/css" href="${pathPref}stylesheet.css" title="Style">
+    <link href="${pathPref}stylesheet.css" rel="stylesheet" title="Style" type="text/css">
     <script type="text/javascript">
         function windowTitle() {
             parent.document.title = document.title;
@@ -58,7 +58,8 @@
     <h2 title="Interfaces">Interfaces</h2>
     <ul>
         <% docPackage.docTypes.findAll { it.interface }.each { docType -> %>
-        <li><a href="${docType.simpleClassName}.html" title="interface in ${docType.packageName}" target="classFrame"><i>${docType.simpleClassName}</i></a></li>
+        <li><a href="${docType.simpleClassName}.html" target="classFrame"
+               title="interface in ${docType.packageName}"><i>${docType.simpleClassName}</i></a></li>
         <% } %>
     </ul>
 </div>
@@ -69,7 +70,8 @@
     <h2 title="Classes">Classes</h2>
     <ul>
         <% docPackage.docTypes.findAll { !it.interface }.each { docType -> %>
-        <li><a href="${docType.simpleClassName}.html" title="class in ${docType.packageName}" target="classFrame">${docType.simpleClassName}</a></li>
+        <li><a href="${docType.simpleClassName}.html" target="classFrame" title="class in ${docType.packageName}">${docType.simpleClassName}</a>
+        </li>
         <% } %>
     </ul>
 </div>

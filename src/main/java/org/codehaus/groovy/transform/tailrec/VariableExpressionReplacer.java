@@ -52,6 +52,10 @@ import java.lang.reflect.Method;
  * - to swap the access of iteration variables with the access of temp vars
  */
 public class VariableExpressionReplacer extends CodeVisitorSupport {
+    private Closure<Boolean> when;
+    private Closure<VariableExpression> replaceWith;
+    private ExpressionTransformer transformer;
+
     public VariableExpressionReplacer(Closure<Boolean> when, Closure<VariableExpression> replaceWith) {
         this.when = when;
         this.replaceWith = replaceWith;
@@ -203,8 +207,4 @@ public class VariableExpressionReplacer extends CodeVisitorSupport {
     public void setReplaceWith(Closure<VariableExpression> replaceWith) {
         this.replaceWith = replaceWith;
     }
-
-    private Closure<Boolean> when;
-    private Closure<VariableExpression> replaceWith;
-    private ExpressionTransformer transformer;
 }

@@ -51,7 +51,7 @@ public final class InvokerHelperTest {
         try (GroovyClassLoader classLoader = new GroovyClassLoader()) {
             String controlProperty = "text", controlValue = "I am a script";
             Class<?> scriptClass = classLoader.parseClass(new GroovyCodeSource(
-                    controlProperty + " = '" + controlValue + "'", "testscript", "/groovy/shell"), false);
+                controlProperty + " = '" + controlValue + "'", "testscript", "/groovy/shell"), false);
 
             Script script = InvokerHelper.createScript(scriptClass, new Binding(variables));
 
@@ -74,9 +74,9 @@ public final class InvokerHelperTest {
             System.setOut(new PrintStream(baos));
             String source =
                 "class Person {\n" +
-                "    static String first, last, unused\n" +
-                "    static main(args) { print \"$first $last\" }\n" +
-                "}\n";
+                    "    static String first, last, unused\n" +
+                    "    static main(args) { print \"$first $last\" }\n" +
+                    "}\n";
             new GroovyShell(new Binding(variables)).parse(source).run();
 
             assertEquals("John Smith", baos.toString());
@@ -102,13 +102,13 @@ public final class InvokerHelperTest {
     @Test
     public void testInitialCapacity() {
         assertEquals(16, InvokerHelper.initialCapacity(0));
-        assertEquals( 2, InvokerHelper.initialCapacity(1));
-        assertEquals( 4, InvokerHelper.initialCapacity(2));
-        assertEquals( 4, InvokerHelper.initialCapacity(3));
-        assertEquals( 8, InvokerHelper.initialCapacity(4));
-        assertEquals( 8, InvokerHelper.initialCapacity(5));
-        assertEquals( 8, InvokerHelper.initialCapacity(6));
-        assertEquals( 8, InvokerHelper.initialCapacity(7));
+        assertEquals(2, InvokerHelper.initialCapacity(1));
+        assertEquals(4, InvokerHelper.initialCapacity(2));
+        assertEquals(4, InvokerHelper.initialCapacity(3));
+        assertEquals(8, InvokerHelper.initialCapacity(4));
+        assertEquals(8, InvokerHelper.initialCapacity(5));
+        assertEquals(8, InvokerHelper.initialCapacity(6));
+        assertEquals(8, InvokerHelper.initialCapacity(7));
         assertEquals(16, InvokerHelper.initialCapacity(8));
         assertEquals(16, InvokerHelper.initialCapacity(9));
         assertEquals(16, InvokerHelper.initialCapacity(10));

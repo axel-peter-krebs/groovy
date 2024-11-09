@@ -128,7 +128,7 @@ class DynamicTargetClass {
     def stringSize(aString, int size = 0) {
         if (!aString)
             return size
-        stringSize(aString.substring(1), 1+size)
+        stringSize(aString.substring(1), 1 + size)
     }
 
     @TailRecursive

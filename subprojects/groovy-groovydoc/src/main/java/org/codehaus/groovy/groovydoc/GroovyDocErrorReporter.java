@@ -18,8 +18,10 @@
  */
 package org.codehaus.groovy.groovydoc;
 
-public interface GroovyDocErrorReporter{
+public interface GroovyDocErrorReporter {
     void printError(String arg0);
+
     void printNotice(String arg0);
+
     void printWarning(String arg0);
 }

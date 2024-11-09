@@ -33,7 +33,7 @@ import java.beans.PropertyChangeListener;
 public class TextUndoManager extends UndoManager {
 
     private SwingPropertyChangeSupport propChangeSupport =
-            new SwingPropertyChangeSupport(this);
+        new SwingPropertyChangeSupport(this);
 
     private StructuredEdit compoundEdit = new StructuredEdit();
 
@@ -143,7 +143,7 @@ public class TextUndoManager extends UndoManager {
 
         UndoableEdit edit = editToBeUndone();
         if (((StructuredEdit) editToBeUndone()).editedTime() ==
-                firstModified) {
+            firstModified) {
             firstModified = 0;
         } else if (firstModified == 0) {
             firstModified = ((StructuredEdit) editToBeUndone()).editedTime();
@@ -163,14 +163,14 @@ public class TextUndoManager extends UndoManager {
         long editTime = System.currentTimeMillis();
 
         if (firstModified == 0 ||
-                editTime - compoundEdit.editedTime() > 700) {
+            editTime - compoundEdit.editedTime() > 700) {
             compoundEdit.end();
             compoundEdit = new StructuredEdit();
         }
         compoundEdit.addEdit(edit);
 
         firstModified = firstModified == 0 ?
-                compoundEdit.editedTime() : firstModified;
+            compoundEdit.editedTime() : firstModified;
 
         if (lastEdit() != compoundEdit) {
             boolean changed = hasChanged();

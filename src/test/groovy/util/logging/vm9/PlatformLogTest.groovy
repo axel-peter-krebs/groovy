@@ -37,10 +37,10 @@ class PlatformLogTest extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == 'log' &&
-                    Modifier.isPrivate(field.getModifiers()) &&
-                    Modifier.isStatic(field.getModifiers()) &&
-                    Modifier.isTransient(field.getModifiers()) &&
-                    Modifier.isFinal(field.getModifiers())
+                Modifier.isPrivate(field.getModifiers()) &&
+                Modifier.isStatic(field.getModifiers()) &&
+                Modifier.isTransient(field.getModifiers()) &&
+                Modifier.isFinal(field.getModifiers())
         }
     }
 
@@ -52,10 +52,10 @@ class PlatformLogTest extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == 'logger' &&
-                    Modifier.isPrivate(field.getModifiers()) &&
-                    Modifier.isStatic(field.getModifiers()) &&
-                    Modifier.isTransient(field.getModifiers()) &&
-                    Modifier.isFinal(field.getModifiers())
+                Modifier.isPrivate(field.getModifiers()) &&
+                Modifier.isStatic(field.getModifiers()) &&
+                Modifier.isTransient(field.getModifiers()) &&
+                Modifier.isFinal(field.getModifiers())
         }
     }
 
@@ -69,10 +69,10 @@ class PlatformLogTest extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == 'log' &&
-                    Modifier.isPrivate(field.getModifiers()) &&
-                    Modifier.isStatic(field.getModifiers()) &&
-                    Modifier.isTransient(field.getModifiers()) &&
-                    Modifier.isFinal(field.getModifiers())
+                Modifier.isPrivate(field.getModifiers()) &&
+                Modifier.isStatic(field.getModifiers()) &&
+                Modifier.isTransient(field.getModifiers()) &&
+                Modifier.isFinal(field.getModifiers())
         }
     }
 
@@ -86,12 +86,12 @@ class PlatformLogTest extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == 'log' &&
-                    !Modifier.isPrivate(field.getModifiers()) &&
-                    !Modifier.isProtected(field.getModifiers()) &&
-                    !Modifier.isPublic(field.getModifiers()) &&
-                    Modifier.isStatic(field.getModifiers()) &&
-                    Modifier.isTransient(field.getModifiers()) &&
-                    Modifier.isFinal(field.getModifiers())
+                !Modifier.isPrivate(field.getModifiers()) &&
+                !Modifier.isProtected(field.getModifiers()) &&
+                !Modifier.isPublic(field.getModifiers()) &&
+                Modifier.isStatic(field.getModifiers()) &&
+                Modifier.isTransient(field.getModifiers()) &&
+                Modifier.isFinal(field.getModifiers())
         }
     }
 
@@ -105,10 +105,10 @@ class PlatformLogTest extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == 'log' &&
-                    Modifier.isProtected(field.getModifiers()) &&
-                    Modifier.isStatic(field.getModifiers()) &&
-                    Modifier.isTransient(field.getModifiers()) &&
-                    Modifier.isFinal(field.getModifiers())
+                Modifier.isProtected(field.getModifiers()) &&
+                Modifier.isStatic(field.getModifiers()) &&
+                Modifier.isTransient(field.getModifiers()) &&
+                Modifier.isFinal(field.getModifiers())
         }
     }
 
@@ -122,10 +122,10 @@ class PlatformLogTest extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == 'log' &&
-                    Modifier.isPublic(field.getModifiers()) &&
-                    Modifier.isStatic(field.getModifiers()) &&
-                    Modifier.isTransient(field.getModifiers()) &&
-                    Modifier.isFinal(field.getModifiers())
+                Modifier.isPublic(field.getModifiers()) &&
+                Modifier.isStatic(field.getModifiers()) &&
+                Modifier.isTransient(field.getModifiers()) &&
+                Modifier.isFinal(field.getModifiers())
         }
     }
 
@@ -159,7 +159,7 @@ class PlatformLogTest extends GroovyTestCase {
     @PlatformLog
     static class MyClassLogFromStaticMethods {
         static loggingMethod() {
-            log.info ('info    called')
+            log.info('info    called')
         }
     }
 
@@ -168,7 +168,7 @@ class PlatformLogTest extends GroovyTestCase {
         def finder = System.LoggerFinder.getLoggerFinder()
         assert finder instanceof LoggerSpyFinder
         def logSpy = finder.spy
-        assert logSpy.infoParameter    == 'info    called'
+        assert logSpy.infoParameter == 'info    called'
     }
 
     void testLogInfo() {
@@ -190,10 +190,10 @@ class PlatformLogTest extends GroovyTestCase {
         assert finder instanceof LoggerSpyFinder
         def logSpy = finder.spy
         assert logSpy.warningParameter == 'warning called'
-        assert logSpy.infoParameter    == 'info    called'
-        assert logSpy.debugParameter   == 'debug   called'
-        assert logSpy.traceParameter   == 'trace   called'
-        assert logSpy.errorParameter   == 'error   called'
+        assert logSpy.infoParameter == 'info    called'
+        assert logSpy.debugParameter == 'debug   called'
+        assert logSpy.traceParameter == 'trace   called'
+        assert logSpy.errorParameter == 'error   called'
         logSpy.reset()
     }
 
@@ -201,8 +201,8 @@ class PlatformLogTest extends GroovyTestCase {
     static class MyClassLogInfoWithName {
         def loggingMethod() {
             logger.error('error   called')
-            logger.warn ('warning called')
-            logger.info ('info    called')
+            logger.warn('warning called')
+            logger.info('info    called')
             logger.debug('debug   called')
             logger.trace('trace   called')
         }
@@ -214,10 +214,10 @@ class PlatformLogTest extends GroovyTestCase {
         assert finder instanceof LoggerSpyFinder
         def logSpy = finder.spy
         assert logSpy.warningParameter == 'warning called'
-        assert logSpy.infoParameter    == 'info    called'
-        assert logSpy.debugParameter   == 'debug   called'
-        assert logSpy.traceParameter   == 'trace   called'
-        assert logSpy.errorParameter   == 'error   called'
+        assert logSpy.infoParameter == 'info    called'
+        assert logSpy.debugParameter == 'debug   called'
+        assert logSpy.traceParameter == 'trace   called'
+        assert logSpy.errorParameter == 'error   called'
     }
 
     void testInheritancePrivateNoShadowingIssue() {
@@ -241,10 +241,10 @@ class PlatformLogTest extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == 'log' &&
-                    Modifier.isPrivate(field.getModifiers()) &&
-                    Modifier.isStatic(field.getModifiers()) &&
-                    Modifier.isTransient(field.getModifiers()) &&
-                    Modifier.isFinal(field.getModifiers())
+                Modifier.isPrivate(field.getModifiers()) &&
+                Modifier.isStatic(field.getModifiers()) &&
+                Modifier.isTransient(field.getModifiers()) &&
+                Modifier.isFinal(field.getModifiers())
         }
     }
 

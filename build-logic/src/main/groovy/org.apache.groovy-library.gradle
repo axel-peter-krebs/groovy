@@ -29,6 +29,7 @@ dependencies {
     testImplementation testFixtures(project(":"))
 }
 
+// override 'jarjar' task registered in 'groovy-base', cmp. 'groovy-core'
 tasks.named('jarjar') { JarJarTask it ->
     def groovyBundleVersion = sharedConfiguration.groovyBundleVersion.get()
     def symbolicName = project.name
@@ -48,4 +49,9 @@ tasks.named('jarjar') { JarJarTask it ->
             }
         }
     }
+}
+
+compileGroovy {
+    groovyOptions.fork = true
+    options.compilerArgs << '-Xlint:unchecked'
 }

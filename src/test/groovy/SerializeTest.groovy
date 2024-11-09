@@ -22,7 +22,7 @@ import groovy.test.GroovyTestCase
 
 class SerializeTest extends GroovyTestCase {
 
-    void testGString () {
+    void testGString() {
         def a = 2, b = 2
         def gs = "${a + b} = ${b * a}"
 
@@ -35,7 +35,7 @@ class SerializeTest extends GroovyTestCase {
         assertEquals "4 = 4", res
     }
 
-    void testGStringField () {
+    void testGStringField() {
         def a = 2, b = 2
 
         def obj = new WithGStringField()
@@ -56,7 +56,7 @@ class SerializeTest extends GroovyTestCase {
         def object = read(buffer)
 
         assert object != null
-        assert object.metaClass != null , "Should have a metaclass!"
+        assert object.metaClass != null, "Should have a metaclass!"
         assert object.name == "Gromit"
         assert object.location == "Moon"
         assert object.class.name == "groovy.Foo"
@@ -82,7 +82,7 @@ class SerializeTest extends GroovyTestCase {
 
 }
 
-class WithGStringField implements Serializable{
+class WithGStringField implements Serializable {
     private static final long serialVersionUID = 1L;
 
     GString f;

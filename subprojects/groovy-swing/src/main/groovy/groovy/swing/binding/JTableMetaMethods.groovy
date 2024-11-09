@@ -30,7 +30,7 @@ class JTableMetaMethods {
     static void enhanceMetaClass(table) {
         AbstractSyntheticMetaMethods.enhance(table, [
 
-            getElements:{->
+            getElements        : { ->
                 def model = delegate.model;
                 if (model instanceof javax.swing.table.DefaultTableModel) {
                     return Collections.unmodifiableList(model.getDataVector())
@@ -38,10 +38,10 @@ class JTableMetaMethods {
                     return Collections.unmodifiableList(model.rows)
                 }
             },
-            getSelectedElement:{->
+            getSelectedElement : { ->
                 return getElement(delegate, delegate.selectedRow)
             },
-            getSelectedElements:{->
+            getSelectedElements: { ->
                 def myTable = delegate
                 return myTable.getSelectedRows().collect { getElement(myTable, it) }
             }

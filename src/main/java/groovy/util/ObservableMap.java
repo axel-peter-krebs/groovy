@@ -62,13 +62,12 @@ import java.util.Set;
  * </ul>
  */
 public class ObservableMap implements Map {
-    private final Map delegate;
-    private final PropertyChangeSupport pcs;
-    private final Closure test;
-
     public static final String SIZE_PROPERTY = "size";
     public static final String CONTENT_PROPERTY = "content";
     public static final String CLEARED_PROPERTY = "cleared";
+    private final Map delegate;
+    private final PropertyChangeSupport pcs;
+    private final Closure test;
 
     public ObservableMap() {
         this(new LinkedHashMap(), null);
@@ -418,7 +417,7 @@ public class ObservableMap implements Map {
                 this.events = new PropertyEvent[events.length];
                 System.arraycopy(events, 0, this.events, 0, events.length);
             } else {
-            	this.events = EMPTY_PROPERTY_EVENTS;
+                this.events = EMPTY_PROPERTY_EVENTS;
             }
         }
 

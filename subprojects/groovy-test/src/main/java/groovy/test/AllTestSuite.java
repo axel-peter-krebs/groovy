@@ -79,9 +79,9 @@ public class AllTestSuite extends TestSuite {
 
     @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
     private static final GroovyClassLoader GROOVY_LOADER =
-            java.security.AccessController.doPrivileged(
-                    (PrivilegedAction<GroovyClassLoader>) () -> new GroovyClassLoader(JAVA_LOADER)
-            );
+        java.security.AccessController.doPrivileged(
+            (PrivilegedAction<GroovyClassLoader>) () -> new GroovyClassLoader(JAVA_LOADER)
+        );
 
     private static final String[] EMPTY_ARGS = new String[]{};
     private static IFileNameFinder finder = null;
@@ -109,8 +109,8 @@ public class AllTestSuite extends TestSuite {
     public static Test suite(String basedir, String pattern, String excludesPattern) {
         AllTestSuite suite = new AllTestSuite();
         List<String> filenames = excludesPattern.length() > 0
-                ? finder.getFileNames(basedir, pattern, excludesPattern)
-                : finder.getFileNames(basedir, pattern);
+            ? finder.getFileNames(basedir, pattern, excludesPattern)
+            : finder.getFileNames(basedir, pattern);
         for (String filename : filenames) {
             LOG.finest("trying to load " + filename);
             try {
@@ -129,7 +129,7 @@ public class AllTestSuite extends TestSuite {
     protected void loadTest(String filename) throws CompilationFailedException, IOException {
         Class type = compile(filename);
         if (TestCase.class.isAssignableFrom(type)) {
-            addTestSuite((Class<? extends TestCase>)type);
+            addTestSuite((Class<? extends TestCase>) type);
         } else if (Script.class.isAssignableFrom(type)) {
             addTest(new ScriptTestAdapter(type, EMPTY_ARGS));
         } else {

@@ -37,7 +37,7 @@ class WhileLoopTest extends GroovyTestCase {
         def x = 0
         def y = 5
 
-        while ( y > 0 ) {
+        while (y > 0) {
             x = x + 1
             y = y - 1
         }
@@ -46,7 +46,7 @@ class WhileLoopTest extends GroovyTestCase {
     }
 
     def doWhileMethod(x, m) {
-        while ( x < m ) {
+        while (x < m) {
             x = increment(x)
         }
 

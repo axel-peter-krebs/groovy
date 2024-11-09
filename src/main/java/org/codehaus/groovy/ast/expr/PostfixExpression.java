@@ -35,12 +35,12 @@ public class PostfixExpression extends Expression {
         setExpression(expression);
     }
 
-    public void setExpression(final Expression expression) {
-        this.expression = expression;
-    }
-
     public Expression getExpression() {
         return expression;
+    }
+
+    public void setExpression(final Expression expression) {
+        this.expression = expression;
     }
 
     public Token getOperation() {

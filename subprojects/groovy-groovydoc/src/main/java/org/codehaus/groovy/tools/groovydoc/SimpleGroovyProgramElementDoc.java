@@ -28,6 +28,7 @@ import java.util.List;
 
 public class SimpleGroovyProgramElementDoc extends SimpleGroovyDoc implements GroovyProgramElementDoc {
     private static final GroovyAnnotationRef[] EMPTY_GROOVYANNOTATIONREF_ARRAY = new GroovyAnnotationRef[0];
+    private final List<GroovyAnnotationRef> annotationRefs;
     private GroovyPackageDoc packageDoc;
     private boolean staticElement;
     private boolean finalElement;
@@ -35,7 +36,6 @@ public class SimpleGroovyProgramElementDoc extends SimpleGroovyDoc implements Gr
     private boolean protectedScope;
     private boolean packagePrivateScope;
     private boolean privateScope;
-    private final List<GroovyAnnotationRef> annotationRefs;
 
     public SimpleGroovyProgramElementDoc(String name) {
         super(name);
@@ -51,17 +51,13 @@ public class SimpleGroovyProgramElementDoc extends SimpleGroovyDoc implements Gr
         this.packageDoc = packageDoc;
     }
 
-    public void setStatic(boolean b) {
-        staticElement = b;
-    }
-
     @Override
     public boolean isStatic() {
         return staticElement;
     }
 
-    public void setFinal(boolean b) {
-        this.finalElement = b;
+    public void setStatic(boolean b) {
+        staticElement = b;
     }
 
     @Override
@@ -69,8 +65,8 @@ public class SimpleGroovyProgramElementDoc extends SimpleGroovyDoc implements Gr
         return finalElement;
     }
 
-    public void setPublic(boolean b) {
-        publicScope = b;
+    public void setFinal(boolean b) {
+        this.finalElement = b;
     }
 
     @Override
@@ -78,8 +74,8 @@ public class SimpleGroovyProgramElementDoc extends SimpleGroovyDoc implements Gr
         return publicScope;
     }
 
-    public void setProtected(boolean b) {
-        protectedScope = b;
+    public void setPublic(boolean b) {
+        publicScope = b;
     }
 
     @Override
@@ -87,8 +83,8 @@ public class SimpleGroovyProgramElementDoc extends SimpleGroovyDoc implements Gr
         return protectedScope;
     }
 
-    public void setPackagePrivate(boolean b) {
-        packagePrivateScope = b;
+    public void setProtected(boolean b) {
+        protectedScope = b;
     }
 
     @Override
@@ -96,13 +92,17 @@ public class SimpleGroovyProgramElementDoc extends SimpleGroovyDoc implements Gr
         return packagePrivateScope;
     }
 
-    public void setPrivate(boolean b) {
-        privateScope = b;
+    public void setPackagePrivate(boolean b) {
+        packagePrivateScope = b;
     }
 
     @Override
     public boolean isPrivate() {
         return privateScope;
+    }
+
+    public void setPrivate(boolean b) {
+        privateScope = b;
     }
 
     @Override
@@ -115,14 +115,22 @@ public class SimpleGroovyProgramElementDoc extends SimpleGroovyDoc implements Gr
     }
 
     @Override
-    public GroovyClassDoc containingClass() {/*todo*/return null;}
+    public GroovyClassDoc containingClass() {/*todo*/
+        return null;
+    }
 
     @Override
-    public String modifiers() {/*todo*/return null;}
+    public String modifiers() {/*todo*/
+        return null;
+    }
 
     @Override
-    public int modifierSpecifier() {/*todo*/return 0;}
+    public int modifierSpecifier() {/*todo*/
+        return 0;
+    }
 
     @Override
-    public String qualifiedName() {/*todo*/return null;}
+    public String qualifiedName() {/*todo*/
+        return null;
+    }
 }

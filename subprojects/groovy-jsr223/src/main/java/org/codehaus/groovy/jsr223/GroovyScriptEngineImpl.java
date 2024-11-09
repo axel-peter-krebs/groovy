@@ -83,12 +83,18 @@ import java.security.PrivilegedAction;
 
 /**
  * JSR-223 Engine implementation.
- *
+ * <p>
  * Adapted from original by Mike Grogan and A. Sundararajan
  */
 public class GroovyScriptEngineImpl extends AbstractScriptEngine implements Compilable, Invocable {
 
     private static boolean debug = false;
+    // counter used to generate unique global Script class names
+    private static int counter;
+
+    static {
+        counter = 0;
+    }
 
     // script-string-to-generated Class map
     private final ManagedConcurrentValueMap<String, Class<?>> classMap = new ManagedConcurrentValueMap<>(ReferenceBundle.getSoftBundle());
@@ -100,25 +106,8 @@ public class GroovyScriptEngineImpl extends AbstractScriptEngine implements Comp
     // lazily initialized factory
     private volatile GroovyScriptEngineFactory factory;
 
-    // counter used to generate unique global Script class names
-    private static int counter;
-
-    static {
-        counter = 0;
-    }
-
     public GroovyScriptEngineImpl() {
         this(createClassLoader());
-    }
-
-    @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
-    private static GroovyClassLoader createClassLoader() {
-        return java.security.AccessController.doPrivileged(new PrivilegedAction<GroovyClassLoader>() {
-            @Override
-            public GroovyClassLoader run() {
-                return new GroovyClassLoader(getParentLoader(), new CompilerConfiguration(CompilerConfiguration.DEFAULT));
-            }
-        });
     }
 
     public GroovyScriptEngineImpl(GroovyClassLoader classLoader) {
@@ -131,15 +120,69 @@ public class GroovyScriptEngineImpl extends AbstractScriptEngine implements Comp
         this.factory = factory;
     }
 
+    @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
+    private static GroovyClassLoader createClassLoader() {
+        return java.security.AccessController.doPrivileged(new PrivilegedAction<GroovyClassLoader>() {
+            @Override
+            public GroovyClassLoader run() {
+                return new GroovyClassLoader(getParentLoader(), new CompilerConfiguration(CompilerConfiguration.DEFAULT));
+            }
+        });
+    }
+
+    // generate a unique name for top-level Script classes
+    private static synchronized String generateScriptName(ScriptContext context) {
+        // If context is available, and contains FILENAME,
+        // use it as script name
+        if (context != null) {
+            Object filename = context.getAttribute(ScriptEngine.FILENAME);
+            if (filename != null) {
+                return filename.toString();
+            }
+        }
+        return "Script" + (++counter) + ".groovy";
+    }
+
+    // determine appropriate class loader to serve as parent loader
+    // for GroovyClassLoader instance
+    private static ClassLoader getParentLoader() {
+        // check whether thread context loader can "see" Groovy Script class
+        ClassLoader ctxtLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Class<?> c = ctxtLoader.loadClass(Script.class.getName());
+            if (c == Script.class) {
+                return ctxtLoader;
+            }
+        } catch (ClassNotFoundException cnfe) {
+            /* ignore */
+        }
+        // exception was thrown or we get wrong class
+        return Script.class.getClassLoader();
+    }
+
+    private static String readFully(Reader reader) throws ScriptException {
+        char[] arr = new char[8 * 1024]; // 8K at a time
+        StringBuilder buf = new StringBuilder();
+        int numChars;
+        try {
+            while ((numChars = reader.read(arr, 0, arr.length)) > 0) {
+                buf.append(arr, 0, numChars);
+            }
+        } catch (IOException exp) {
+            throw new ScriptException(exp);
+        }
+        return buf.toString();
+    }
+
     @Override
     public Object eval(Reader reader, ScriptContext ctx)
-            throws ScriptException {
+        throws ScriptException {
         return eval(readFully(reader), ctx);
     }
 
     @Override
     public Object eval(String script, ScriptContext ctx)
-            throws ScriptException {
+        throws ScriptException {
         try {
             String val = (String) ctx.getAttribute("#jsr223.groovy.engine.keep.globals", ScriptContext.ENGINE_SCOPE);
             ReferenceBundle bundle = ReferenceBundle.getHardBundle();
@@ -187,7 +230,7 @@ public class GroovyScriptEngineImpl extends AbstractScriptEngine implements Comp
     public CompiledScript compile(String scriptSource) throws ScriptException {
         try {
             return new GroovyCompiledScript(this,
-                    getScriptClass(scriptSource, context));
+                getScriptClass(scriptSource, context));
         } catch (CompilationFailedException ee) {
             throw new ScriptException(ee);
         }
@@ -201,13 +244,13 @@ public class GroovyScriptEngineImpl extends AbstractScriptEngine implements Comp
     // javax.script.Invokable methods.
     @Override
     public Object invokeFunction(String name, Object... args)
-            throws ScriptException, NoSuchMethodException {
+        throws ScriptException, NoSuchMethodException {
         return invokeImpl(null, name, args);
     }
 
     @Override
     public Object invokeMethod(Object thiz, String name, Object... args)
-            throws ScriptException, NoSuchMethodException {
+        throws ScriptException, NoSuchMethodException {
         if (thiz == null) {
             throw new IllegalArgumentException("script object is null");
         }
@@ -246,8 +289,8 @@ public class GroovyScriptEngineImpl extends AbstractScriptEngine implements Comp
                         Writer writer = ctx.getWriter();
                         if (writer != null) {
                             return (writer instanceof PrintWriter) ?
-                                    (PrintWriter) writer :
-                                    new PrintWriter(writer, true);
+                                (PrintWriter) writer :
+                                new PrintWriter(writer, true);
                         }
                     }
                     // Provide access to engine context, if context var is not already provided
@@ -289,10 +332,10 @@ public class GroovyScriptEngineImpl extends AbstractScriptEngine implements Comp
                 MetaClass oldMetaClass = scriptObject.getMetaClass();
 
                 /*
-                * We override the MetaClass of this script object so that we can
-                * forward calls to global closures (of previous or future "eval" calls)
-                * This gives the illusion of working on the same "global" scope.
-                */
+                 * We override the MetaClass of this script object so that we can
+                 * forward calls to global closures (of previous or future "eval" calls)
+                 * This gives the illusion of working on the same "global" scope.
+                 */
                 scriptObject.setMetaClass(new DelegatingMetaClass(oldMetaClass) {
                     @Override
                     public Object invokeMethod(Object object, String name, Object args) {
@@ -336,12 +379,14 @@ public class GroovyScriptEngineImpl extends AbstractScriptEngine implements Comp
     }
 
     Class<?> getScriptClass(String script)
-            throws CompilationFailedException {
+        throws CompilationFailedException {
         return getScriptClass(script, null);
     }
 
+    //-- Internals only below this point
+
     Class<?> getScriptClass(String script, ScriptContext context)
-            throws CompilationFailedException {
+        throws CompilationFailedException {
         Class<?> clazz = classMap.get(script);
         if (clazz != null) {
             return clazz;
@@ -352,19 +397,17 @@ public class GroovyScriptEngineImpl extends AbstractScriptEngine implements Comp
         return clazz;
     }
 
-    public void setClassLoader(GroovyClassLoader classLoader) {
-        this.loader = classLoader;
-    }
-
     public GroovyClassLoader getClassLoader() {
         return this.loader;
     }
 
-    //-- Internals only below this point
+    public void setClassLoader(GroovyClassLoader classLoader) {
+        this.loader = classLoader;
+    }
 
     // invokes the specified method/function on the given object.
     private Object invokeImpl(Object thiz, String name, Object... args)
-            throws ScriptException, NoSuchMethodException {
+        throws ScriptException, NoSuchMethodException {
         if (name == null) {
             throw new NullPointerException("method name is null");
         }
@@ -418,19 +461,6 @@ public class GroovyScriptEngineImpl extends AbstractScriptEngine implements Comp
         throw new MissingMethodException(name, getClass(), args);
     }
 
-    // generate a unique name for top-level Script classes
-    private static synchronized String generateScriptName(ScriptContext	context) {
-        // If context is available, and contains FILENAME,
-        // use it as script name
-        if (context != null) {
-            Object filename = context.getAttribute(ScriptEngine.FILENAME);
-            if (filename != null) {
-                return filename.toString();
-            }
-        }
-        return "Script" + (++counter) + ".groovy";
-    }
-
     @SuppressWarnings("unchecked")
     private <T> T makeInterface(Object obj, Class<T> clazz) {
         final Object thiz = obj;
@@ -438,39 +468,8 @@ public class GroovyScriptEngineImpl extends AbstractScriptEngine implements Comp
             throw new IllegalArgumentException("interface Class expected");
         }
         return (T) Proxy.newProxyInstance(
-                clazz.getClassLoader(),
-                new Class<?>[]{clazz},
-                (proxy, m, args) -> invokeImplSafe(thiz, m.getName(), args));
-    }
-
-    // determine appropriate class loader to serve as parent loader
-    // for GroovyClassLoader instance
-    private static ClassLoader getParentLoader() {
-        // check whether thread context loader can "see" Groovy Script class
-        ClassLoader ctxtLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Class<?> c = ctxtLoader.loadClass(Script.class.getName());
-            if (c == Script.class) {
-                return ctxtLoader;
-            }
-        } catch (ClassNotFoundException cnfe) {
-            /* ignore */
-        }
-        // exception was thrown or we get wrong class
-        return Script.class.getClassLoader();
-    }
-
-    private static String readFully(Reader reader) throws ScriptException {
-        char[] arr = new char[8 * 1024]; // 8K at a time
-        StringBuilder buf = new StringBuilder();
-        int numChars;
-        try {
-            while ((numChars = reader.read(arr, 0, arr.length)) > 0) {
-                buf.append(arr, 0, numChars);
-            }
-        } catch (IOException exp) {
-            throw new ScriptException(exp);
-        }
-        return buf.toString();
+            clazz.getClassLoader(),
+            new Class<?>[]{clazz},
+            (proxy, m, args) -> invokeImplSafe(thiz, m.getName(), args));
     }
 }

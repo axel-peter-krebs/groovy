@@ -43,7 +43,86 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class GroovyCategorySupport {
 
+    private static final MyThreadLocal THREAD_INFO = new MyThreadLocal();
     private static int categoriesInUse = 0;
+
+    public static AtomicInteger getCategoryNameUsage(String name) {
+        return THREAD_INFO.getUsage(name);
+    }
+
+    /**
+     * Create a scope based on given categoryClass and invoke closure within that scope.
+     *
+     * @param categoryClass the class containing category methods
+     * @param closure       the closure during which to make the category class methods available
+     * @return the value returned from the closure
+     */
+    public static <T> T use(Class categoryClass, Closure<T> closure) {
+        return THREAD_INFO.getInfo().use(categoryClass, closure);
+    }
+
+    /**
+     * Create a scope based on given categoryClasses and invoke closure within that scope.
+     *
+     * @param categoryClasses the list of classes containing category methods
+     * @param closure         the closure during which to make the category class methods available
+     * @return the value returned from the closure
+     */
+    public static <T> T use(List<Class> categoryClasses, Closure<T> closure) {
+        return THREAD_INFO.getInfo().use(categoryClasses, closure);
+    }
+
+    public static boolean hasCategoryInCurrentThread() {
+        /*
+         * Synchronization is avoided here for performance reasons since
+         * this method is called frequently from callsite locations. For
+         * a typical case when no Categories are in use the initialized
+         * value of 0 will be correctly read. For cases where multiple
+         * Threads are using Categories it is possible that a stale
+         * non-zero value may be read but in that case the ThreadLocal
+         * check will produce the correct result. When the current Thread
+         * is using Categories, it would have incremented the counter
+         * so whatever version of the value it observes here should be
+         * non-zero and good enough for the purposes of this quick exit
+         * check.
+         */
+        if (categoriesInUse == 0) {
+            return false;
+        }
+        ThreadCategoryInfo infoNullable = THREAD_INFO.getInfoNullable();
+        return infoNullable != null && infoNullable.level != 0;
+    }
+
+    /**
+     * @deprecated use {@link #hasCategoryInCurrentThread()}
+     */
+    @Deprecated
+    public static boolean hasCategoryInAnyThread() {
+        synchronized (ThreadCategoryInfo.LOCK) {
+            return categoriesInUse != 0;
+        }
+    }
+
+    /**
+     * This method is used to pull all the new methods out of the local thread context with a particular name.
+     *
+     * @param name the method name of interest
+     * @return the list of methods
+     */
+    public static CategoryMethodList getCategoryMethods(String name) {
+        final ThreadCategoryInfo categoryInfo = THREAD_INFO.getInfoNullable();
+        return categoryInfo == null ? null : categoryInfo.getCategoryMethods(name);
+    }
+
+    public static String getPropertyCategoryGetterName(String propertyName) {
+        final ThreadCategoryInfo categoryInfo = THREAD_INFO.getInfoNullable();
+        return categoryInfo == null ? null : categoryInfo.getPropertyCategoryGetterName(propertyName);
+    }
+
+    public static String getPropertyCategorySetterName(String propertyName) {
+        final ThreadCategoryInfo categoryInfo = THREAD_INFO.getInfoNullable();
+        return categoryInfo == null ? null : categoryInfo.getPropertyCategorySetterName(propertyName);
+    }
 
     public static class CategoryMethodList extends ArrayList<CategoryMethod> {
         private static final long serialVersionUID = 1631799972200881802L;
@@ -57,9 +136,8 @@ public class GroovyCategorySupport {
             if (previous != null) {
                 addAll(previous);
                 usage = previous.usage;
-            }
-            else {
-                usage = getCategoryNameUsage (name);
+            } else {
+                usage = getCategoryNameUsage(name);
             }
         }
 
@@ -70,7 +148,7 @@ public class GroovyCategorySupport {
         }
     }
 
-    public static class ThreadCategoryInfo extends HashMap<String, CategoryMethodList>{
+    public static class ThreadCategoryInfo extends HashMap<String, CategoryMethodList> {
 
         private static final Object LOCK = new Object();
         private static final long serialVersionUID = 1348443374952726263L;
@@ -80,7 +158,7 @@ public class GroovyCategorySupport {
         private Map<String, String> propertyGetterMap;
         private Map<String, String> propertySetterMap;
 
-        private void newScope () {
+        private void newScope() {
             synchronized (LOCK) {
                 categoriesInUse++;
                 DefaultMetaClassInfo.setCategoryUsed(true);
@@ -89,19 +167,18 @@ public class GroovyCategorySupport {
             level++;
         }
 
-        private void endScope () {
+        private void endScope() {
             for (Iterator<Map.Entry<String, CategoryMethodList>> it = entrySet().iterator(); it.hasNext(); ) {
                 final Map.Entry<String, CategoryMethodList> e = it.next();
                 final CategoryMethodList list = e.getValue();
                 if (list.level == level) {
                     final CategoryMethodList prev = list.previous;
                     if (prev == null) {
-                      it.remove();
-                      list.usage.addAndGet(-list.size());
-                    }
-                    else {
-                      e.setValue(prev);
-                      list.usage.addAndGet(prev.size()-list.size());
+                        it.remove();
+                        list.usage.addAndGet(-list.size());
+                    } else {
+                        e.setValue(prev);
+                        list.usage.addAndGet(prev.size() - list.size());
                     }
                 }
             }
@@ -162,18 +239,18 @@ public class GroovyCategorySupport {
         }
 
         private void cachePropertyAccessor(final CategoryMethod method) {
-             final String name = method.getName();
-             final int nameLength = name.length();
-             final int parameterCount = method.getParameterTypes().length;
+            final String name = method.getName();
+            final int nameLength = name.length();
+            final int parameterCount = method.getParameterTypes().length;
 
-             if (name.startsWith("get") && nameLength > 3 && parameterCount == 0) {
-                 propertyGetterMap = putPropertyAccessor(3, name, propertyGetterMap);
-             } else if (name.startsWith("is") && nameLength > 2 && parameterCount == 0
-                     && method.getReturnType().equals(boolean.class)) { // GROOVY-5245
-                 propertyGetterMap = putPropertyAccessor(2, name, propertyGetterMap);
-             } else if (name.startsWith("set") && nameLength > 3 && parameterCount == 1) {
-                 propertySetterMap = putPropertyAccessor(3, name, propertySetterMap);
-             }
+            if (name.startsWith("get") && nameLength > 3 && parameterCount == 0) {
+                propertyGetterMap = putPropertyAccessor(3, name, propertyGetterMap);
+            } else if (name.startsWith("is") && nameLength > 2 && parameterCount == 0
+                && method.getReturnType().equals(boolean.class)) { // GROOVY-5245
+                propertyGetterMap = putPropertyAccessor(2, name, propertyGetterMap);
+            } else if (name.startsWith("set") && nameLength > 3 && parameterCount == 1) {
+                propertySetterMap = putPropertyAccessor(3, name, propertySetterMap);
+            }
         }
 
         // Precondition: accessorName.length() > prefixLength
@@ -216,8 +293,6 @@ public class GroovyCategorySupport {
         }
     }
 
-    private static final MyThreadLocal THREAD_INFO = new MyThreadLocal();
-
     public static class CategoryMethod extends NewInstanceMetaMethod implements Comparable {
         private final Class metaClass;
 
@@ -227,7 +302,9 @@ public class GroovyCategorySupport {
         }
 
         @Override
-        public boolean isCacheable() { return false; }
+        public boolean isCacheable() {
+            return false;
+        }
 
         /**
          * Sort by most specific to least specific.
@@ -247,99 +324,20 @@ public class GroovyCategorySupport {
         }
     }
 
-    public static AtomicInteger getCategoryNameUsage (String name) {
-        return THREAD_INFO.getUsage (name);
-    }
-
-    /**
-     * Create a scope based on given categoryClass and invoke closure within that scope.
-     *
-     * @param categoryClass the class containing category methods
-     * @param closure the closure during which to make the category class methods available
-     * @return the value returned from the closure
-     */
-    public static <T> T use(Class categoryClass, Closure<T> closure) {
-        return THREAD_INFO.getInfo().use(categoryClass, closure);
-    }
-
-    /**
-     * Create a scope based on given categoryClasses and invoke closure within that scope.
-     *
-     * @param categoryClasses the list of classes containing category methods
-     * @param closure the closure during which to make the category class methods available
-     * @return the value returned from the closure
-     */
-    public static <T> T use(List<Class> categoryClasses, Closure<T> closure) {
-        return THREAD_INFO.getInfo().use(categoryClasses, closure);
-    }
-
-    public static boolean hasCategoryInCurrentThread() {
-        /*
-         * Synchronization is avoided here for performance reasons since
-         * this method is called frequently from callsite locations. For
-         * a typical case when no Categories are in use the initialized
-         * value of 0 will be correctly read. For cases where multiple
-         * Threads are using Categories it is possible that a stale
-         * non-zero value may be read but in that case the ThreadLocal
-         * check will produce the correct result. When the current Thread
-         * is using Categories, it would have incremented the counter
-         * so whatever version of the value it observes here should be
-         * non-zero and good enough for the purposes of this quick exit
-         * check.
-         */
-        if (categoriesInUse == 0) {
-            return false;
-        }
-        ThreadCategoryInfo infoNullable = THREAD_INFO.getInfoNullable();
-        return infoNullable != null && infoNullable.level != 0;
-    }
-
-    /**
-     * @deprecated use {@link #hasCategoryInCurrentThread()}
-     */
-    @Deprecated
-    public static boolean hasCategoryInAnyThread() {
-        synchronized (ThreadCategoryInfo.LOCK) {
-            return categoriesInUse != 0;
-        }
-    }
-
-    /**
-     * This method is used to pull all the new methods out of the local thread context with a particular name.
-     *
-     * @param name the method name of interest
-     * @return the list of methods
-     */
-    public static CategoryMethodList getCategoryMethods(String name) {
-        final ThreadCategoryInfo categoryInfo = THREAD_INFO.getInfoNullable();
-        return categoryInfo == null ? null : categoryInfo.getCategoryMethods(name);
-    }
-
-    public static String getPropertyCategoryGetterName(String propertyName) {
-         final ThreadCategoryInfo categoryInfo = THREAD_INFO.getInfoNullable();
-         return categoryInfo == null ? null : categoryInfo.getPropertyCategoryGetterName(propertyName);
-    }
-
-    public static String getPropertyCategorySetterName(String propertyName) {
-         final ThreadCategoryInfo categoryInfo = THREAD_INFO.getInfoNullable();
-         return categoryInfo == null ? null : categoryInfo.getPropertyCategorySetterName(propertyName);
-   }
-
     private static class MyThreadLocal extends ThreadLocal<SoftReference> {
 
-        final ConcurrentHashMap<String,AtomicInteger> usage = new ConcurrentHashMap<String,AtomicInteger> ();
+        final ConcurrentHashMap<String, AtomicInteger> usage = new ConcurrentHashMap<String, AtomicInteger>();
 
         public ThreadCategoryInfo getInfo() {
             final SoftReference reference = get();
             ThreadCategoryInfo tcinfo;
             if (reference != null) {
                 tcinfo = (ThreadCategoryInfo) reference.get();
-                if( tcinfo == null ) {
+                if (tcinfo == null) {
                     tcinfo = new ThreadCategoryInfo();
                     set(new SoftReference(tcinfo));
                 }
-            }
-            else {
+            } else {
                 tcinfo = new ThreadCategoryInfo();
                 set(new SoftReference(tcinfo));
             }
@@ -351,7 +349,7 @@ public class GroovyCategorySupport {
             return reference == null ? null : (ThreadCategoryInfo) reference.get();
         }
 
-        public AtomicInteger getUsage (String name) {
+        public AtomicInteger getUsage(String name) {
             AtomicInteger u = usage.get(name);
             if (u != null) {
                 return u;

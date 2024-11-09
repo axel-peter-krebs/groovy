@@ -33,6 +33,7 @@ import java.util.TreeMap;
 public class ViolationTracker {
 
     public static final ThreadLocal<ViolationTracker> INSTANCE = new ThreadLocal<>();
+    private final NavigableMap<Long, AssertionViolation> violations = new TreeMap<>();
 
     public static void init() {
         INSTANCE.set(new ViolationTracker());
@@ -53,8 +54,6 @@ public class ViolationTracker {
     public static void rethrowLast() {
         throw INSTANCE.get().last();
     }
-
-    private final NavigableMap<Long, AssertionViolation> violations = new TreeMap<>();
 
     public void track(final AssertionViolation assertionViolation) {
         Validate.notNull(assertionViolation);

@@ -23,7 +23,8 @@ import java.lang.ref.WeakReference;
 
 public class GCUtils {
 
-    private GCUtils() { }
+    private GCUtils() {
+    }
 
     public static void gc() {
         Reference<Object> dummy = new WeakReference<Object>(new Object());

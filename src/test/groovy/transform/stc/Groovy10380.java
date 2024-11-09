@@ -18,12 +18,12 @@
  */
 package groovy.transform.stc;
 
-public abstract class Groovy10380 implements I10380 {
-    // m() should be callable
-}
-
 interface I10380 {
     default String m() {
         return "works";
     }
+}
+
+public abstract class Groovy10380 implements I10380 {
+    // m() should be callable
 }

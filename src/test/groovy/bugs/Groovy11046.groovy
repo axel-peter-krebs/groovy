@@ -45,6 +45,6 @@ final class Groovy11046 {
         '''
         assert err instanceof NoClassDefFoundError // CompilationFailedException (previously)
         assert err =~ /com.lmax.disruptor.EventTranslatorVararg/
-        assert err.asString() =~ /at org.apache.logging.log4j.LogManager.getLogger\(/ : 'script should have failed at runtime'
+        assert err.asString() =~ /at org.apache.logging.log4j.LogManager.getLogger\(/: 'script should have failed at runtime'
     }
 }

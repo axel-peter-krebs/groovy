@@ -28,8 +28,8 @@ final class Groovy9197 {
 
     @Test
     void testJointCompilationClasspathPropagation() {
-        def uris = resolve(autoDownload:true, classLoader:new GroovyClassLoader(null),
-            [groupId:'org.apache.commons', artifactId:'commons-lang3', version:'3.9'])
+        def uris = resolve(autoDownload: true, classLoader: new GroovyClassLoader(null),
+            [groupId: 'org.apache.commons', artifactId: 'commons-lang3', version: '3.9'])
 
         def config = new CompilerConfiguration(
             classpath: new File(uris[0]).path,

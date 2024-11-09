@@ -101,7 +101,7 @@ import java.util.function.LongUnaryOperator;
  */
 public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
 
-    private ArrayGroovyMethods() {}
+    private static Random r;
 
     /* Arrangement of each method (skip any inapplicable types for the methods):
      * 1. boolean[]
@@ -117,6 +117,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
 
     //--------------------------------------------------------------------------
     // any
+
+    private ArrayGroovyMethods() {
+    }
 
     /**
      * Iterates over the contents of a boolean Array, and checks whether
@@ -324,6 +327,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return false;
     }
 
+    //--------------------------------------------------------------------------
+    // asBoolean
+
     /**
      * Iterates over the contents of an Array, and checks whether a
      * predicate is valid for at least one element.
@@ -341,9 +347,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return false;
     }
-
-    //--------------------------------------------------------------------------
-    // asBoolean
 
     /**
      * Coerces a boolean array to a boolean value.
@@ -455,6 +458,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return self != null && self.length > 0;
     }
 
+    //--------------------------------------------------------------------------
+    // asType
+
     /**
      * Coerces an object array to a boolean value.
      * An Object array is false if the array is of length 0.
@@ -469,11 +475,11 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // asType
+    // average
 
     /**
      * Converts the given array to either a List, Set, or SortedSet. If the given class is
-     * something else, the call is deferred to {@link DefaultGroovyMethods#asType(Object,Class)}.
+     * something else, the call is deferred to {@link DefaultGroovyMethods#asType(Object, Class)}.
      *
      * @param self an array
      * @param type the desired class
@@ -493,9 +499,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return DefaultGroovyMethods.asType((Object) self, type);
     }
-
-    //--------------------------------------------------------------------------
-    // average
 
     /**
      * Calculates the average of the bytes in the array.
@@ -619,6 +622,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return result;
     }
 
+    //--------------------------------------------------------------------------
+    // chop
+
     /**
      * Averages the result of applying a closure to each item of an array.
      * <code>array.average(closure)</code> is equivalent to:
@@ -633,15 +639,12 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self    An array
      * @param closure a single parameter closure that returns a (typically) numeric value.
      * @return The average of the values returned by applying the closure to each
-     *         item of the array.
+     * item of the array.
      * @since 3.0.0
      */
     public static <T> Object average(T[] self, @ClosureParams(FirstParam.Component.class) Closure<?> closure) {
         return DefaultGroovyMethods.average(new ArrayIterator<>(self), closure);
     }
-
-    //--------------------------------------------------------------------------
-    // chop
 
     /**
      * Chops the boolean array into pieces, returning lists with sizes corresponding to the supplied chop sizes.
@@ -795,6 +798,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.chop(new DoubleArrayIterator(self), chopSizes);
     }
 
+    //--------------------------------------------------------------------------
+    // collate
+
     /**
      * Chops the array into pieces, returning lists with sizes corresponding to the supplied chop sizes.
      * If the array isn't large enough, truncated (possibly empty) pieces are returned.
@@ -810,14 +816,11 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.chop(Arrays.asList(self), chopSizes);
     }
 
-    //--------------------------------------------------------------------------
-    // collate
-
     /**
      * Collates an array.
      *
-     * @param self          an array
-     * @param size          the length of each sub-list in the returned list
+     * @param self an array
+     * @param size the length of each sub-list in the returned list
      * @return a List containing the array values collated into sub-lists
      * @see DefaultGroovyMethods#collate(Iterable, int)
      * @since 2.5.0
@@ -829,9 +832,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     /**
      * Collates an array into sub-lists.
      *
-     * @param self          an array
-     * @param size          the length of each sub-list in the returned list
-     * @param step          the number of elements to step through for each sub-list
+     * @param self an array
+     * @param size the length of each sub-list in the returned list
+     * @param step the number of elements to step through for each sub-list
      * @return a List containing the array elements collated into sub-lists
      * @see DefaultGroovyMethods#collate(Iterable, int, int)
      * @since 2.5.0
@@ -853,6 +856,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> List<List<T>> collate(T[] self, int size, boolean keepRemainder) {
         return collate(self, size, size, keepRemainder);
     }
+
+    //--------------------------------------------------------------------------
+    // collect
 
     /**
      * Collates this array into sub-lists.
@@ -887,9 +893,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return answer;
     }
 
-    //--------------------------------------------------------------------------
-    // collect
-
     /**
      * Iterates through this Array transforming each item into a new value using the
      * <code>transform</code> closure, returning a list of transformed values.
@@ -902,6 +905,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <E, T> List<T> collect(E[] self, @ClosureParams(FirstParam.Component.class) Closure<T> transform) {
         return DefaultGroovyMethods.collect(new ArrayIterator<>(self), transform);
     }
+
+    //--------------------------------------------------------------------------
+    // collectEntries
 
     /**
      * Iterates through this Array transforming each item into a new value using the <code>transform</code> closure
@@ -924,13 +930,10 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.collect(new ArrayIterator<>(self), collector, transform);
     }
 
-    //--------------------------------------------------------------------------
-    // collectEntries
-
     /**
      * A variant of collectEntries using the identity closure as the transform.
      *
-     * @param self      an array
+     * @param self an array
      * @return the collector with all transformed values added to it
      * @see #collectEntries(Object[], Closure)
      * @since 1.8.5
@@ -964,7 +967,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * // collect letters with index using map style
      * assert nums.collectEntries { index -&gt; [(index): letters[index]] } == [0:'a', 1:'b', 2:'c']
      * </pre>
-     *
+     * <p>
      * Note: When using the list-style of result, the behavior is '<code>def (key, value) = listResultFromClosure</code>'.
      * While we strongly discourage using a list of size other than 2, Groovy's normal semantics apply in this case;
      * throwing away elements after the second one and using null for the key or value for the case of a shortened list.
@@ -991,7 +994,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert nums.collectEntries( [:] ) { index -&gt; [index, letters[index]] } == [0:'a', 1:'b', 2:'c']
      * assert nums.collectEntries( [4:'d'] ) { index -&gt; [(index+1): letters[index]] } == [1:'a', 2:'b', 3:'c', 4:'d']
      * </pre>
-     *
+     * <p>
      * Note: When using the list-style of result, the behavior is '<code>def (key, value) = listResultFromClosure</code>'.
      * While we strongly discourage using a list of size other than 2, Groovy's normal semantics apply in this case;
      * throwing away elements after the second one and using null for the key or value for the case of a shortened list.
@@ -1028,6 +1031,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.collectEntries(new ArrayIterator<>(self), new LinkedHashMap<>(), keyTransform, valueTransform);
     }
 
+    //--------------------------------------------------------------------------
+    // collectMany
+
     /**
      * A variant of collectEntries for arrays with separate functions for transforming the keys and values.
      * The supplied collector map is used as the destination for transformed entries.
@@ -1042,9 +1048,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <K, V, E> Map<K, V> collectEntries(E[] self, Map<K, V> collector, Function<? super E, K> keyTransform, Function<? super E, V> valueTransform) {
         return DefaultGroovyMethods.collectEntries(new ArrayIterator<>(self), collector, keyTransform, valueTransform);
     }
-
-    //--------------------------------------------------------------------------
-    // collectMany
 
     /**
      * Projects each item from a source array to a collection and concatenates (flattens) the resulting collections into a single list.
@@ -1063,6 +1066,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return collectMany(self, new ArrayList<>(), projection);
     }
 
+    //--------------------------------------------------------------------------
+    // columns
+
     /**
      * Projects each item from a source array to a collection and concatenates (flattens) the resulting collections into a single list.
      * <pre class="groovyTestCase">
@@ -1080,9 +1086,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T, E, C extends Collection<T>> C collectMany(E[] self, C collector, @ClosureParams(FirstParam.Component.class) Closure<? extends Collection<? extends T>> projection) {
         return DefaultGroovyMethods.collectMany(new ArrayIterable<>(self), collector, projection);
     }
-
-    //--------------------------------------------------------------------------
-    // columns
 
     /**
      * An iterator of the columns of the array.
@@ -1127,6 +1130,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return new IntIntArrayColumnIterator(self);
     }
 
+    //--------------------------------------------------------------------------
+    // contains
+
     /**
      * An iterator of the columns of the array.
      * <pre class="groovyTestCase">
@@ -1141,9 +1147,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Iterator<long[]> columns(long[][] self) {
         return new LongLongArrayColumnIterator(self);
     }
-
-    //--------------------------------------------------------------------------
-    // contains
 
     /**
      * Checks whether the array contains the given value.
@@ -1273,6 +1276,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return false;
     }
 
+    //--------------------------------------------------------------------------
+    // count
+
     /**
      * Checks whether the array contains the given value.
      *
@@ -1288,9 +1294,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return false;
     }
-
-    //--------------------------------------------------------------------------
-    // count
 
     /**
      * Counts the number of occurrences of the given value inside this array.
@@ -1458,6 +1461,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.count(Arrays.asList(self), value);
     }
 
+    //-------------------------------------------------------------------------
+    // countBy
+
     /**
      * Counts the number of occurrences which satisfy the given closure from inside this array.
      *
@@ -1469,9 +1475,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> Number count(T[] self, @ClosureParams(FirstParam.Component.class) Closure<?> predicate) {
         return DefaultGroovyMethods.count(Arrays.asList(self), predicate);
     }
-
-    //-------------------------------------------------------------------------
-    // countBy
 
     /**
      * Sorts all array members into groups determined by the supplied mapping
@@ -1493,6 +1496,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.countBy(new ArrayIterator<>(self), closure);
     }
 
+    //-------------------------------------------------------------------------
+    // drop
+
     /**
      * Creates a multiset-like map of the array members.
      * <p>
@@ -1501,7 +1507,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [1:2, 2:2, 3:1] == ([1,2,1,2,3] as Object[]).countBy()
      * </pre>
      *
-     * @param self    an array to group and count
+     * @param self an array to group and count
      * @return a new Map where the keys are the set of values in the array and the values are the frequency counts
      * @since 5.0.0
      */
@@ -1509,8 +1515,8 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return countBy(self, (Closure<E>) Closure.IDENTITY);
     }
 
-    //-------------------------------------------------------------------------
-    // drop
+    //--------------------------------------------------------------------------
+    // dropRight
 
     /**
      * Drops the given number of elements from the head of this array
@@ -1525,8 +1531,8 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original array
      * @param num  the number of elements to drop from this array
      * @return An array consisting of all elements of this array except the
-     *         first <code>num</code> ones, or else the empty array, if this
-     *         array has less than <code>num</code> elements.
+     * first <code>num</code> ones, or else the empty array, if this
+     * array has less than <code>num</code> elements.
      * @since 1.8.1
      */
     public static <T> T[] drop(T[] self, int num) {
@@ -1545,7 +1551,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // dropRight
+    // dropWhile
 
     /**
      * Drops the given number of elements from the tail of this array
@@ -1560,8 +1566,8 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original array
      * @param num  the number of elements to drop from this array
      * @return An array consisting of all elements of this array except the
-     *         last <code>num</code> ones, or else the empty array, if this
-     *         array has less than <code>num</code> elements.
+     * last <code>num</code> ones, or else the empty array, if this
+     * array has less than <code>num</code> elements.
      * @since 2.4.0
      */
     public static <T> T[] dropRight(T[] self, int num) {
@@ -1580,7 +1586,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // dropWhile
+    // each
 
     /**
      * Create a suffix of the given array by dropping as many elements as possible from the
@@ -1598,7 +1604,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param condition the closure that must evaluate to true to
      *                  continue dropping elements
      * @return The shortest suffix of the given array such that the given closure condition
-     *         evaluates to true for each element dropped from the front of the array.
+     * evaluates to true for each element dropped from the front of the array.
      * @since 1.8.7
      */
     public static <T> T[] dropWhile(T[] self, @ClosureParams(FirstParam.Component.class) Closure<?> condition) {
@@ -1613,9 +1619,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return drop(self, num);
     }
-
-    //--------------------------------------------------------------------------
-    // each
 
     /**
      * Iterates through a boolean[] passing each boolean to the given consumer.
@@ -1801,6 +1804,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return self;
     }
 
+    //--------------------------------------------------------------------------
+    // eachByte
+
     /**
      * Iterates through an array passing each array entry to the given closure.
      * <pre class="groovyTestCase">
@@ -1822,9 +1828,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return self;
     }
 
-    //--------------------------------------------------------------------------
-    // eachByte
-
     /**
      * Traverses through each byte of this byte array.
      *
@@ -1839,6 +1842,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         }
     }
 
+    //--------------------------------------------------------------------------
+    // eachWithIndex
+
     /**
      * Traverses through each byte of this Byte array. Alias for each.
      *
@@ -1849,9 +1855,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static void eachByte(Byte[] self, @ClosureParams(FirstParam.Component.class) Closure<?> closure) {
         each(self, closure);
     }
-
-    //--------------------------------------------------------------------------
-    // eachWithIndex
 
     /**
      * Iterates through a boolean[],
@@ -1869,7 +1872,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self array
      * @since 5.0.0
      */
-    public static boolean[] eachWithIndex(boolean[] self, @ClosureParams(value=FromString.class,options="Boolean,Integer") Closure<?> closure) {
+    public static boolean[] eachWithIndex(boolean[] self, @ClosureParams(value = FromString.class, options = "Boolean,Integer") Closure<?> closure) {
         Objects.requireNonNull(self);
         final Object[] args = new Object[2];
         for (int i = 0, n = self.length; i < n; i += 1) {
@@ -1896,7 +1899,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self array
      * @since 5.0.0
      */
-    public static byte[] eachWithIndex(byte[] self, @ClosureParams(value=FromString.class,options="Byte,Integer") Closure<?> closure) {
+    public static byte[] eachWithIndex(byte[] self, @ClosureParams(value = FromString.class, options = "Byte,Integer") Closure<?> closure) {
         Objects.requireNonNull(self);
         final Object[] args = new Object[2];
         for (int i = 0, n = self.length; i < n; i += 1) {
@@ -1923,7 +1926,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self array
      * @since 5.0.0
      */
-    public static char[] eachWithIndex(char[] self, @ClosureParams(value=FromString.class,options="Character,Integer") Closure<?> closure) {
+    public static char[] eachWithIndex(char[] self, @ClosureParams(value = FromString.class, options = "Character,Integer") Closure<?> closure) {
         Objects.requireNonNull(self);
         final Object[] args = new Object[2];
         for (int i = 0, n = self.length; i < n; i += 1) {
@@ -1950,7 +1953,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self array
      * @since 5.0.0
      */
-    public static short[] eachWithIndex(short[] self, @ClosureParams(value=FromString.class,options="Short,Integer") Closure<?> closure) {
+    public static short[] eachWithIndex(short[] self, @ClosureParams(value = FromString.class, options = "Short,Integer") Closure<?> closure) {
         Objects.requireNonNull(self);
         final Object[] args = new Object[2];
         for (int i = 0, n = self.length; i < n; i += 1) {
@@ -1977,7 +1980,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self array
      * @since 5.0.0
      */
-    public static int[] eachWithIndex(int[] self, @ClosureParams(value=FromString.class,options="Integer,Integer") Closure<?> closure) {
+    public static int[] eachWithIndex(int[] self, @ClosureParams(value = FromString.class, options = "Integer,Integer") Closure<?> closure) {
         Objects.requireNonNull(self);
         final Object[] args = new Object[2];
         for (int i = 0, n = self.length; i < n; i += 1) {
@@ -2004,7 +2007,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self array
      * @since 5.0.0
      */
-    public static long[] eachWithIndex(long[] self, @ClosureParams(value=FromString.class,options="Long,Integer") Closure<?> closure) {
+    public static long[] eachWithIndex(long[] self, @ClosureParams(value = FromString.class, options = "Long,Integer") Closure<?> closure) {
         Objects.requireNonNull(self);
         final Object[] args = new Object[2];
         for (int i = 0, n = self.length; i < n; i += 1) {
@@ -2031,7 +2034,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self array
      * @since 5.0.0
      */
-    public static float[] eachWithIndex(float[] self, @ClosureParams(value=FromString.class,options="Float,Integer") Closure<?> closure) {
+    public static float[] eachWithIndex(float[] self, @ClosureParams(value = FromString.class, options = "Float,Integer") Closure<?> closure) {
         Objects.requireNonNull(self);
         final Object[] args = new Object[2];
         for (int i = 0, n = self.length; i < n; i += 1) {
@@ -2058,7 +2061,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self array
      * @since 5.0.0
      */
-    public static double[] eachWithIndex(double[] self, @ClosureParams(value=FromString.class,options="Double,Integer") Closure<?> closure) {
+    public static double[] eachWithIndex(double[] self, @ClosureParams(value = FromString.class, options = "Double,Integer") Closure<?> closure) {
         Objects.requireNonNull(self);
         final Object[] args = new Object[2];
         for (int i = 0, n = self.length; i < n; i += 1) {
@@ -2068,6 +2071,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return self;
     }
+
+    //--------------------------------------------------------------------------
+    // equals
 
     /**
      * Iterates through an array, passing each array element and the element's
@@ -2084,19 +2090,16 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the self array
      * @since 2.5.0
      */
-    public static <T> T[] eachWithIndex(T[] self, @ClosureParams(value=FromString.class,options="T,Integer") Closure<?> closure) {
+    public static <T> T[] eachWithIndex(T[] self, @ClosureParams(value = FromString.class, options = "T,Integer") Closure<?> closure) {
         final Object[] args = new Object[2];
         int counter = 0;
-        for(T item : self) {
+        for (T item : self) {
             args[0] = item;
             args[1] = counter++;
             closure.call(args);
         }
         return self;
     }
-
-    //--------------------------------------------------------------------------
-    // equals
 
     /**
      * Compares the contents of this array to the contents of the given array.
@@ -2258,6 +2261,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return Arrays.equals(self, right);
     }
 
+    //--------------------------------------------------------------------------
+    // every
+
     /**
      * Determines if the contents of this array are equal to the
      * contents of the given list, in the same order. This returns
@@ -2271,9 +2277,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static boolean equals(Object[] left, List<?> right) {
         return DefaultGroovyMethods.equals(right, left);
     }
-
-    //--------------------------------------------------------------------------
-    // every
 
     /**
      * Iterates over the contents of a boolean Array, and checks whether
@@ -2481,6 +2484,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return true;
     }
 
+    //--------------------------------------------------------------------------
+    // find
+
     /**
      * Used to determine if the given predicate closure is valid (i.e. returns
      * <code>true</code> for all items in this Array).
@@ -2500,7 +2506,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // find
+    // findAll
 
     /**
      * Finds the first element in the array that matches the given closure condition.
@@ -2526,9 +2532,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return null;
     }
 
-    //--------------------------------------------------------------------------
-    // findAll
-
     /**
      * Finds the elements of the array matching the IDENTITY Closure (i.e.&#160;matching Groovy truth).
      * <pre class="groovyTestCase">
@@ -2544,6 +2547,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> List<T> findAll(T[] self) {
         return findAll(self, Closure.IDENTITY);
     }
+
+    //--------------------------------------------------------------------------
+    // findIndexOf
 
     /**
      * Finds all elements of the array matching the given Closure condition.
@@ -2561,9 +2567,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.findMany(new ArrayList<>(), new ArrayIterator<>(self), condition);
     }
 
-    //--------------------------------------------------------------------------
-    // findIndexOf
-
     /**
      * Iterates over the elements of an array and returns the index of the first
      * item that satisfies the condition specified by the closure.
@@ -2576,6 +2579,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> int findIndexOf(T[] self, @ClosureParams(FirstParam.Component.class) Closure<?> condition) {
         return findIndexOf(self, 0, condition);
     }
+
+    //--------------------------------------------------------------------------
+    // findIndexValues
 
     /**
      * Iterates over the elements of an array, starting from a specified index,
@@ -2592,9 +2598,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.findIndexOf(new ArrayIterator<>(self), startIndex, condition);
     }
 
-    //--------------------------------------------------------------------------
-    // findIndexValues
-
     /**
      * Iterates over the elements of an array and returns the index values of
      * the items that match the condition specified in the closure.
@@ -2607,6 +2610,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> List<Number> findIndexValues(T[] self, @ClosureParams(FirstParam.Component.class) Closure<?> condition) {
         return findIndexValues(self, 0, condition);
     }
+
+    //--------------------------------------------------------------------------
+    // findLastIndexOf
 
     /**
      * Iterates over the elements of an array, starting from a specified index,
@@ -2622,9 +2628,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> List<Number> findIndexValues(T[] self, Number startIndex, @ClosureParams(FirstParam.Component.class) Closure<?> condition) {
         return DefaultGroovyMethods.findIndexValues(new ArrayIterator<>(self), startIndex, condition);
     }
-
-    //--------------------------------------------------------------------------
-    // findLastIndexOf
 
     /**
      * Returns the index of the last item that matches the specified condition.
@@ -2647,6 +2650,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> int findLastIndexOf(T[] self, @ClosureParams(FirstParam.Component.class) Closure<?> condition) {
         return findLastIndexOf(self, 0, condition);
     }
+
+    //--------------------------------------------------------------------------
+    // findResult
 
     /**
      * Returns the index of the last item that matches the specified condition
@@ -2679,9 +2685,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return -1;
     }
-
-    //--------------------------------------------------------------------------
-    // findResult
 
     /**
      * Iterates through the Array stopping once the first non-null
@@ -2721,6 +2724,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.findResult(new ArrayIterator<>(self), condition);
     }
 
+    //--------------------------------------------------------------------------
+    // findResults
+
     /**
      * Iterates through the Array calling the given closure condition for each item but stopping once the first non-null
      * result is found and returning that result. If all are null, the defaultResult is returned.
@@ -2735,9 +2741,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.findResult(new ArrayIterator<>(self), defaultResult, condition);
     }
 
-    //--------------------------------------------------------------------------
-    // findResults
-
     /**
      * Iterates through the Array collecting any non-null results.
      *
@@ -2748,6 +2751,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> Collection<T> findResults(T[] self) {
         return DefaultGroovyMethods.findResults(new ArrayIterator<>(self));
     }
+
+    //--------------------------------------------------------------------------
+    // first
 
     /**
      * Iterates through the Array transforming items using the supplied closure
@@ -2761,9 +2767,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T, U> Collection<T> findResults(U[] self, @ClosureParams(FirstParam.Component.class) Closure<T> filteringTransform) {
         return DefaultGroovyMethods.findResults(new ArrayIterator<>(self), filteringTransform);
     }
-
-    //--------------------------------------------------------------------------
-    // first
 
     /**
      * Returns the first item from the boolean array.
@@ -2917,6 +2920,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return self[0];
     }
 
+    //--------------------------------------------------------------------------
+    // flatten
+
     /**
      * Returns the first item from the array.
      * <pre class="groovyTestCase">
@@ -2934,9 +2940,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         throwNoSuchElementIfEmpty(self.length, "first");
         return self[0];
     }
-
-    //--------------------------------------------------------------------------
-    // flatten
 
     /**
      * Flattens an array. This array is added to a new collection.
@@ -3074,6 +3077,8 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return toList(self);
     }
 
+    //
+
     /**
      * Flattens an array. This array and any nested arrays or
      * collections have their contents (recursively) added to the new collection.
@@ -3085,8 +3090,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static List<Object> flatten(Object[] self) {
         return DefaultGroovyMethods.flatten(Arrays.asList(self));
     }
-
-    //
 
     /**
      * Flattens a 2D array into a new collection.
@@ -3249,6 +3252,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return result;
     }
 
+    //--------------------------------------------------------------------------
+    // flattenMany
+
     /**
      * Flattens a 2D array into a new collection.
      * The items are copied row by row.
@@ -3273,14 +3279,14 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // flattenMany
+    // getAt
 
     /**
      * Flatten an array. This array and any nested arrays, collections or
      * optionals have their contents (recursively) added to a new collection.
      * A transform is applied to any leaf nodes before further flattening.
      *
-     * @param self an array
+     * @param self      an array
      * @param transform a transform applied to any leaf elements
      * @return a flattened Collection
      * @since 5.0.0
@@ -3288,9 +3294,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Collection flattenMany(Object[] self, Closure<?> transform) {
         return DefaultGroovyMethods.flattenMany(new ArrayIterable<>(self), transform);
     }
-
-    //--------------------------------------------------------------------------
-    // getAt
 
     /**
      * Supports the subscript operator for a boolean array with a range giving the desired indices.
@@ -3444,20 +3447,20 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return primitiveArrayGet(array, range);
     }
 
+    //
+
     /**
      * Supports the subscript operator for an object array with a range giving the desired indices.
      *
      * @param array an Array of Objects
      * @param range a Range
      * @return a range of a list from the range's from index up to but not
-     *         including the range's to value
+     * including the range's to value
      * @since 1.0
      */
     public static <T> List<T> getAt(T[] array, Range<?> range) {
         return DefaultGroovyMethods.getAt(Arrays.asList(array), range);
     }
-
-    //
 
     /**
      * Supports the subscript operator for a boolean array with an IntRange giving the desired indices.
@@ -3627,20 +3630,20 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return info.reverse ? DefaultGroovyMethods.reverse(answer) : answer;
     }
 
+    //
+
     /**
      * Supports the subscript operator for an object array with an IntRange giving the desired indices.
      *
      * @param array an object array
      * @param range an IntRange
      * @return a range of a list from the range's from index up to but not
-     *         including the range's to value
+     * including the range's to value
      * @since 1.0
      */
     public static <T> List<T> getAt(T[] array, IntRange range) {
         return DefaultGroovyMethods.getAt(Arrays.asList(array), range);
     }
-
-    //
 
     /**
      * Supports the subscript operator for a boolean array with an ObjectRange giving the desired indices.
@@ -3786,13 +3789,15 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return primitiveArrayGet(array, range);
     }
 
+    //
+
     /**
      * Supports the subscript operator for an object array with an ObjectRange giving the desired indices.
      *
      * @param array an Array of Objects
      * @param range an ObjectRange
      * @return a range of a list from the range's from index up to but not
-     *         including the range's to value
+     * including the range's to value
      * @since 1.0
      */
     public static <T> List<T> getAt(T[] array, ObjectRange range) {
@@ -3812,8 +3817,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> List<T> getAt(T[] array, EmptyRange<?> range) {
         return new ArrayList<>();
     }
-
-    //
 
     /**
      * Supports the subscript operator for a boolean array
@@ -3967,6 +3970,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return primitiveArrayGet(array, indices);
     }
 
+    //--------------------------------------------------------------------------
+    // getIndices
+
     /**
      * Selects a List of items from an array using a Collection to
      * identify the indices to be selected.
@@ -3990,9 +3996,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return answer;
     }
-
-    //--------------------------------------------------------------------------
-    // getIndices
 
     /**
      * Returns indices of the boolean array.
@@ -4114,6 +4117,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return new IntRange(false, 0, self.length);
     }
 
+    //--------------------------------------------------------------------------
+    // grep
+
     /**
      * Returns indices of the array.
      * <p>
@@ -4130,9 +4136,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> IntRange getIndices(T[] self) {
         return new IntRange(false, 0, self.length);
     }
-
-    //--------------------------------------------------------------------------
-    // grep
 
     /**
      * Iterates over the array returning each element that matches
@@ -4153,9 +4156,12 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return grep(self, Closure.IDENTITY);
     }
 
+    //--------------------------------------------------------------------------
+    // groupBy
+
     /**
      * Iterates over the array of items and returns a collection of items that match
-     * the given filter - calling the {@link DefaultGroovyMethods#isCase(Object,Object)}
+     * the given filter - calling the {@link DefaultGroovyMethods#isCase(Object, Object)}
      * method used by switch statements. This method can be used with different
      * kinds of filters like regular expressions, classes, ranges etc.
      * Example:
@@ -4182,9 +4188,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return answer;
     }
-
-    //--------------------------------------------------------------------------
-    // groupBy
 
     /**
      * Sorts all array members into groups determined by the supplied mapping closure.
@@ -4220,6 +4223,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.groupBy(new ArrayIterable<>(self), closures);
     }
 
+    //--------------------------------------------------------------------------
+    // head
+
     /**
      * Sorts all array members into (sub)groups determined by the supplied
      * mapping closures as per the list variant of this method.
@@ -4232,9 +4238,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Map groupBy(Object[] self, List<Closure<?>> closures) {
         return DefaultGroovyMethods.groupBy(new ArrayIterable<>(self), closures);
     }
-
-    //--------------------------------------------------------------------------
-    // head
 
     /**
      * Returns the first item from the boolean array.
@@ -4388,6 +4391,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return self[0];
     }
 
+    //--------------------------------------------------------------------------
+    // indexOf
+
     /**
      * Returns the first item from the Object array.
      * <pre class="groovyTestCase">def array = [3, 4, 2].toArray()
@@ -4405,7 +4411,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // indexOf
+    // indexed
 
     /**
      * Returns the index of the first occurrence of the specified element in the
@@ -4430,9 +4436,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return -1;
     }
-
-    //--------------------------------------------------------------------------
-    // indexed
 
     /**
      * Zips an int[] with indices in (index, value) order starting from index 0.
@@ -4466,6 +4469,8 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return indexed(self, 0);
     }
 
+    //
+
     /**
      * Zips a double[] with indices in (index, value) order starting from index 0.
      * <p/>
@@ -4481,8 +4486,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Map<Integer, Double> indexed(double[] self) {
         return indexed(self, 0);
     }
-
-    //
 
     /**
      * Zips an int[] with indices in (index, value) order.
@@ -4523,6 +4526,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.indexed(new LongArrayIterable(self), offset);
     }
 
+    //--------------------------------------------------------------------------
+    // init
+
     /**
      * Zips a double[] with indices in (index, value) order.
      * <p/>
@@ -4541,9 +4547,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static Map<Integer, Double> indexed(double[] self, int offset) {
         return DefaultGroovyMethods.indexed(new DoubleArrayIterable(self), offset);
     }
-
-    //--------------------------------------------------------------------------
-    // init
 
     /**
      * Returns the items from the boolean array excluding the last item.
@@ -4705,6 +4708,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return Arrays.copyOfRange(self, 0, self.length - 1);
     }
 
+    //--------------------------------------------------------------------------
+    // inject
+
     /**
      * Returns the items from the Object array excluding the last item.
      * <pre class="groovyTestCase">
@@ -4724,9 +4730,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         throwNoSuchElementIfEmpty(self.length, "init");
         return Arrays.copyOfRange(self, 0, self.length - 1);
     }
-
-    //--------------------------------------------------------------------------
-    // inject
 
     /**
      * Iterates through the given array, passing the first two elements to the
@@ -4754,7 +4757,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see #inject(Object[], Object, Closure)
      * @since 1.8.7
      */
-    public static <E extends T, T, V extends T> T inject(E[] self, @ClosureParams(value=FromString.class,options="T,E") Closure<V> closure) {
+    public static <E extends T, T, V extends T> T inject(E[] self, @ClosureParams(value = FromString.class, options = "T,E") Closure<V> closure) {
         if (self.length == 0) {
             throw new NoSuchElementException("Cannot call inject() on an empty array without passing an initial value.");
         }
@@ -4767,6 +4770,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return value;
     }
+
+    //--------------------------------------------------------------------------
+    // iterator
 
     /**
      * Iterates through the given array, passing in the initial value and the
@@ -4794,7 +4800,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return base value for empty array or the result of the last closure call
      * @since 1.5.0
      */
-    public static <E, T, U extends T, V extends T> T inject(E[] self, U initialValue, @ClosureParams(value=FromString.class,options="T,E") Closure<V> closure) {
+    public static <E, T, U extends T, V extends T> T inject(E[] self, U initialValue, @ClosureParams(value = FromString.class, options = "T,E") Closure<V> closure) {
         T value = initialValue;
         Object[] params = new Object[2];
         for (E e : self) {
@@ -4806,7 +4812,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // iterator
+    // join
 
     /**
      * Returns an Iterator which traverses the given array in index order.
@@ -4819,9 +4825,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> Iterator<T> iterator(final T[] self) {
         return new ArrayIterator<>(self);
     }
-
-    //--------------------------------------------------------------------------
-    // join
 
     /**
      * Concatenates the string representation of each item in this array.
@@ -4911,6 +4914,8 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return join(self, null);
     }
 
+    //
+
     /**
      * Concatenates the string representation of each item in this array.
      *
@@ -4926,8 +4931,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static String join(Object[] self) {
         return join(self, null);
     }
-
-    //
 
     /**
      * Concatenates the string representation of each item in this array,
@@ -5033,6 +5036,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.join(new DoubleArrayIterator(self), separator);
     }
 
+    //--------------------------------------------------------------------------
+    // last
+
     /**
      * Concatenates the string representation of each item in this array,
      * with the given String as a separator between each item.
@@ -5050,9 +5056,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static String join(Object[] self, String separator) {
         return DefaultGroovyMethods.join(new ArrayIterator<>(self), separator);
     }
-
-    //--------------------------------------------------------------------------
-    // last
 
     /**
      * Returns the last item from the boolean array.
@@ -5198,6 +5201,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return self[self.length - 1];
     }
 
+    //--------------------------------------------------------------------------
+    // lastIndexOf
+
     /**
      * Returns the last item from the array.
      * <pre class="groovyTestCase">
@@ -5218,7 +5224,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     }
 
     //--------------------------------------------------------------------------
-    // lastIndexOf
+    // max
 
     /**
      * Returns the index of the last occurrence of the specified element in the
@@ -5243,9 +5249,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return -1;
     }
-
-    //--------------------------------------------------------------------------
-    // max
 
     /**
      * Adds max() method to int arrays.
@@ -5319,6 +5322,8 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return answer;
     }
 
+    //
+
     /**
      * Adds max() method to Object arrays.
      *
@@ -5331,8 +5336,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.max(new ArrayIterator<>(self));
     }
 
-    //
-
     /**
      * Selects the maximum value found from the int array
      * using the supplied IntComparator to determine the maximum of any two values.
@@ -5344,7 +5347,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * </pre>
      * <p>
      *
-     * @param self     an int array
+     * @param self       an int array
      * @param comparator a comparator, i.e. returns a negative value if the first parameter is less than the second
      * @return the maximum value
      * @throws UnsupportedOperationException if the array is empty
@@ -5409,7 +5412,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * </pre>
      * <p>
      *
-     * @param self     a long array
+     * @param self       a long array
      * @param comparator a comparator, i.e. returns a negative value if the first parameter is less than the second
      * @return the maximum value
      * @throws UnsupportedOperationException if the array is empty
@@ -5541,6 +5544,8 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.max(new ArrayIterator<>(self), comparator);
     }
 
+    //
+
     /**
      * Selects the maximum value found from the Object array
      * using the closure to determine the correct ordering.
@@ -5559,11 +5564,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the maximum value
      * @since 1.5.5
      */
-    public static <T> T max(T[] self, @ClosureParams(value=FromString.class,options={"T","T,T"}) Closure<?> closure) {
+    public static <T> T max(T[] self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure<?> closure) {
         return DefaultGroovyMethods.max(new ArrayIterator<>(self), closure);
     }
-
-    //
 
     /**
      * Selects the maximum value found from the int array
@@ -5609,6 +5612,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.max(new LongArrayIterator(self), comparator);
     }
 
+    //--------------------------------------------------------------------------
+    // min
+
     /**
      * Selects the maximum value found from the double array
      * using the comparator to determine the maximum of any two values.
@@ -5630,9 +5636,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static double maxComparing(double[] self, Comparator<Double> comparator) {
         return DefaultGroovyMethods.max(new DoubleArrayIterator(self), comparator);
     }
-
-    //--------------------------------------------------------------------------
-    // min
 
     /**
      * Adds min() method to int arrays.
@@ -5706,6 +5709,8 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return answer;
     }
 
+    //
+
     /**
      * Adds min() method to Object arrays.
      *
@@ -5717,8 +5722,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> T min(T[] self) {
         return DefaultGroovyMethods.min(new ArrayIterator<>(self));
     }
-
-    //
 
     /**
      * Selects the minimum value found from the int array
@@ -5928,6 +5931,8 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.min(new ArrayIterator<>(self), comparator);
     }
 
+    //
+
     /**
      * Selects the minimum value found from the Object array
      * using the closure to determine the correct ordering.
@@ -5947,11 +5952,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @see DefaultGroovyMethods#min(Iterator, groovy.lang.Closure)
      * @since 1.5.5
      */
-    public static <T> T min(T[] self, @ClosureParams(value=FromString.class,options={"T","T,T"}) Closure<?> closure) {
+    public static <T> T min(T[] self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure<?> closure) {
         return DefaultGroovyMethods.min(new ArrayIterator<>(self), closure);
     }
-
-    //
 
     /**
      * Selects the minimum value found from the int array
@@ -5997,6 +6000,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return DefaultGroovyMethods.min(new LongArrayIterator(self), comparator);
     }
 
+    //--------------------------------------------------------------------------
+    // minus
+
     /**
      * Selects the minimum value found from the double array
      * using the comparator to determine the minimum of any two values.
@@ -6018,9 +6024,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static double minComparing(double[] self, Comparator<Double> comparator) {
         return DefaultGroovyMethods.min(new DoubleArrayIterator(self), comparator);
     }
-
-    //--------------------------------------------------------------------------
-    // minus
 
     /**
      * Creates a new array composed of the elements of the first array minus the
@@ -6073,15 +6076,18 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      */
     public static <T> T[] minus(T[] self, Object[] removeMe) {
         switch (removeMe.length) {
-          case 0:
-            return self.clone();
-          case 1:
-            return ArrayGroovyMethods.minus(self, removeMe[0]);
-          default:
-            Collection<T> temp = DefaultGroovyMethods.minus((Collection<T>) toList(self), Arrays.asList(removeMe));
-            return temp.toArray(createSimilarArray(self, temp.size()));
+            case 0:
+                return self.clone();
+            case 1:
+                return ArrayGroovyMethods.minus(self, removeMe[0]);
+            default:
+                Collection<T> temp = DefaultGroovyMethods.minus((Collection<T>) toList(self), Arrays.asList(removeMe));
+                return temp.toArray(createSimilarArray(self, temp.size()));
         }
     }
+
+    //--------------------------------------------------------------------------
+    // plus
 
     /**
      * Creates a new array composed of the elements of the given array minus every occurrence the given object.
@@ -6117,9 +6123,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return result;
     }
-
-    //--------------------------------------------------------------------------
-    // plus
 
     /**
      * Creates an array containing elements from an original array plus those from a Collection.
@@ -6220,6 +6223,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return result;
     }
 
+    //--------------------------------------------------------------------------
+    // reverse
+
     /**
      * Creates an array containing elements from an original array plus an additional appended element.
      * <pre class="groovyTestCase">
@@ -6248,9 +6254,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         result[left.length] = (T) DefaultTypeTransformation.castToType(right, left.getClass().getComponentType());
         return result;
     }
-
-    //--------------------------------------------------------------------------
-    // reverse
 
     /**
      * Creates a new boolean array containing items which are the same as this array but in reverse order.
@@ -6291,7 +6294,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static boolean[] reverse(boolean[] self, boolean mutate) {
         int len = self.length;
         if (!mutate) self = self.clone();
-        for (int i=0, mid=len>>1, j=len-1; i<mid; i++, j--)
+        for (int i = 0, mid = len >> 1, j = len - 1; i < mid; i++, j--)
             swap(self, i, j);
         return self;
     }
@@ -6335,7 +6338,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static byte[] reverse(byte[] self, boolean mutate) {
         int len = self.length;
         if (!mutate) self = self.clone();
-        for (int i=0, mid=len>>1, j=len-1; i<mid; i++, j--)
+        for (int i = 0, mid = len >> 1, j = len - 1; i < mid; i++, j--)
             swap(self, i, j);
         return self;
     }
@@ -6379,7 +6382,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static char[] reverse(char[] self, boolean mutate) {
         int len = self.length;
         if (!mutate) self = self.clone();
-        for (int i=0, mid=len>>1, j=len-1; i<mid; i++, j--)
+        for (int i = 0, mid = len >> 1, j = len - 1; i < mid; i++, j--)
             swap(self, i, j);
         return self;
     }
@@ -6423,7 +6426,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static short[] reverse(short[] self, boolean mutate) {
         int len = self.length;
         if (!mutate) self = self.clone();
-        for (int i=0, mid=len>>1, j=len-1; i<mid; i++, j--)
+        for (int i = 0, mid = len >> 1, j = len - 1; i < mid; i++, j--)
             swap(self, i, j);
         return self;
     }
@@ -6467,7 +6470,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static int[] reverse(int[] self, boolean mutate) {
         int len = self.length;
         if (!mutate) self = self.clone();
-        for (int i=0, mid=len>>1, j=len-1; i<mid; i++, j--)
+        for (int i = 0, mid = len >> 1, j = len - 1; i < mid; i++, j--)
             swap(self, i, j);
         return self;
     }
@@ -6511,7 +6514,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static long[] reverse(long[] self, boolean mutate) {
         int len = self.length;
         if (!mutate) self = self.clone();
-        for (int i=0, mid=len>>1, j=len-1; i<mid; i++, j--)
+        for (int i = 0, mid = len >> 1, j = len - 1; i < mid; i++, j--)
             swap(self, i, j);
         return self;
     }
@@ -6555,7 +6558,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static float[] reverse(float[] self, boolean mutate) {
         int len = self.length;
         if (!mutate) self = self.clone();
-        for (int i=0, mid=len>>1, j=len-1; i<mid; i++, j--)
+        for (int i = 0, mid = len >> 1, j = len - 1; i < mid; i++, j--)
             swap(self, i, j);
         return self;
     }
@@ -6599,7 +6602,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static double[] reverse(double[] self, boolean mutate) {
         int len = self.length;
         if (!mutate) self = self.clone();
-        for (int i=0, mid=len>>1, j=len-1; i<mid; i++, j--)
+        for (int i = 0, mid = len >> 1, j = len - 1; i < mid; i++, j--)
             swap(self, i, j);
         return self;
     }
@@ -6607,7 +6610,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     /**
      * Creates a new array containing items which are the same as this array but in reverse order.
      *
-     * @param self    an array
+     * @param self an array
      * @return An array containing the reversed items.
      * @see #reverse(Object[], boolean)
      * @since 1.5.5
@@ -6615,6 +6618,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     public static <T> T[] reverse(T[] self) {
         return reverse(self, false);
     }
+
+    //--------------------------------------------------------------------------
+    // reverseEach
 
     /**
      * Reverses the items in an array. If mutate is true, the original array is modified in place and returned.
@@ -6641,9 +6647,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         Collections.reverse(Arrays.asList(self));
         return self;
     }
-
-    //--------------------------------------------------------------------------
-    // reverseEach
 
     /**
      * Iterates through a boolean[] in reverse order passing each boolean to the given closure.
@@ -6821,6 +6824,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         return self;
     }
 
+    //--------------------------------------------------------------------------
+    // shuffle
+
     /**
      * Iterates over each element of the array in the reverse order.
      *
@@ -6836,11 +6842,6 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
         }
         return self;
     }
-
-    //--------------------------------------------------------------------------
-    // shuffle
-
-    private static Random r;
 
     /**
      * Randomly reorders the elements of the specified array.
@@ -6880,7 +6881,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @since 3.0.0
      */
     public static <T> void shuffle(T[] self, Random rnd) {
-        for (int i = 0; i < self.length-1; i++) {
+        for (int i = 0; i < self.length - 1; i++) {
             int nextIndex = rnd.nextInt(self.length);
             T tmp = self[i];
             self[i] = self[nextIndex];
@@ -7086,7 +7087,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     /**
      * Sorts the given array into sorted order using the given comparator.
      *
-     * @param self the array to be sorted
+     * @param self       the array to be sorted
      * @param comparator a Comparator used for the comparison
      * @return the sorted array
      * @since 1.5.5
@@ -7130,12 +7131,12 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * the Closure is assumed to take a single parameter and return a Comparable (typically an Integer)
      * which is then used for further comparison.
      *
-     * @param self the array containing the elements to be sorted
+     * @param self    the array containing the elements to be sorted
      * @param closure a Closure used to determine the correct ordering
      * @return the sorted array
      * @since 1.5.5
      */
-    public static <T> T[] sort(T[] self, @ClosureParams(value=FromString.class,options={"T","T,T"}) Closure<?> closure) {
+    public static <T> T[] sort(T[] self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure<?> closure) {
         return sort(self, false, closure);
     }
 
@@ -7164,7 +7165,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @return the sorted array
      * @since 1.8.1
      */
-    public static <T> T[] sort(T[] self, boolean mutate, @ClosureParams(value=FromString.class,options={"T","T,T"}) Closure<?> closure) {
+    public static <T> T[] sort(T[] self, boolean mutate, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure<?> closure) {
         if (!mutate) self = self.clone();
         Comparator<T> c = closure.getMaximumNumberOfParameters() == 1 ? new OrderBy<>(closure) : new ClosureComparator<>(closure);
         Arrays.sort(self, c);
@@ -7435,7 +7436,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self    An array
      * @param closure a single parameter closure that returns a (typically) numeric value.
      * @return The sum of the values returned by applying the closure to each
-     *         item of the array.
+     * item of the array.
      * @since 1.7.1
      */
     public static <T> Object sum(T[] self, @ClosureParams(FirstParam.Component.class) Closure<?> closure) {
@@ -7451,7 +7452,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param closure      a single parameter closure that returns a (typically) numeric value.
      * @param initialValue the closure results will be summed to this initial value
      * @return The sum of the values returned by applying the closure to each
-     *         item of the array.
+     * item of the array.
      * @since 1.7.1
      */
     public static <T> Object sum(T[] self, Object initialValue, @ClosureParams(FirstParam.Component.class) Closure<?> closure) {
@@ -7646,8 +7647,8 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * </pre>
      *
      * @param self an array
-     * @param i a position
-     * @param j a position
+     * @param i    a position
+     * @param j    a position
      * @return self
      * @since 2.4.0
      */
@@ -7857,7 +7858,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original array
      * @param num  the number of elements to take from this array
      * @return an array consisting of the first <code>num</code> elements of this array,
-     *         or else the whole array if it has less than <code>num</code> elements.
+     * or else the whole array if it has less than <code>num</code> elements.
      * @since 1.8.1
      */
     public static <T> T[] take(T[] self, int num) {
@@ -7891,7 +7892,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param self the original array
      * @param num  the number of elements to take from this array
      * @return an array consisting of the last <code>num</code> elements of this array,
-     *         or else the whole array if it has less than <code>num</code> elements.
+     * or else the whole array if it has less than <code>num</code> elements.
      * @since 2.4.0
      */
     public static <T> T[] takeRight(T[] self, int num) {
@@ -7927,7 +7928,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * @param condition the closure that must evaluate to true to
      *                  continue taking elements
      * @return A prefix of the given array where each element passed to
-     *         the given closure evaluates to true.
+     * the given closure evaluates to true.
      * @since 1.8.7
      */
     public static <T> T[] takeWhile(T[] self, @ClosureParams(FirstParam.Component.class) Closure<?> condition) {
@@ -8238,7 +8239,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert result == [222, 7000, 44, 9]
      * </pre>
      *
-     * @param self the array to be sorted
+     * @param self       the array to be sorted
      * @param comparator a Comparator used for the comparison
      * @return the sorted array
      * @since 2.4.0
@@ -8259,13 +8260,13 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * the Closure is assumed to take a single parameter and return a Comparable (typically an Integer)
      * which is then used for further comparison.
      *
-     * @param self the array containing the elements to be sorted
+     * @param self    the array containing the elements to be sorted
      * @param closure a Closure used to determine the correct ordering
      * @return a sorted array
      * @see #toSorted(Object[], Comparator)
      * @since 2.4.0
      */
-    public static <T> T[] toSorted(T[] self, @ClosureParams(value=FromString.class,options={"T","T,T"}) Closure<?> closure) {
+    public static <T> T[] toSorted(T[] self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure<?> closure) {
         return sort(self, false, closure);
     }
 
@@ -8275,6 +8276,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     /**
      * Creates a spreadable map from this array.
      * <p>
+     *
      * @param self an object array
      * @return a newly created SpreadMap
      * @see groovy.lang.SpreadMap#SpreadMap(java.lang.Object[])
@@ -8459,9 +8461,9 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert letters.toUnique(new LowerComparator()) == lower
      * </pre>
      *
-     * @param self an array
+     * @param self       an array
      * @param comparator a Comparator used to determine unique (equal) items
-     *        If {@code null}, the Comparable natural ordering of the elements will be used.
+     *                   If {@code null}, the Comparable natural ordering of the elements will be used.
      * @return the unique items from the array
      */
     public static <T> T[] toUnique(T[] self, Comparator<? super T> comparator) {
@@ -8480,14 +8482,14 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert letters.toUnique{ it.toLowerCase() } == expected
      * </pre>
      *
-     * @param self an array
+     * @param self    an array
      * @param closure a Closure used to determine unique items
      * @return the unique items from the array
      */
-    public static <T> T[] toUnique(T[] self, @ClosureParams(value=FromString.class,options={"T","T,T"}) Closure<?> closure) {
+    public static <T> T[] toUnique(T[] self, @ClosureParams(value = FromString.class, options = {"T", "T,T"}) Closure<?> closure) {
         Comparator<T> comparator = closure.getMaximumNumberOfParameters() == 1
-                ? new OrderBy<>(closure, true)
-                : new ClosureComparator<>(closure);
+            ? new OrderBy<>(closure, true)
+            : new ClosureComparator<>(closure);
         return toUnique(self, comparator);
     }
 
@@ -8877,7 +8879,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [small, large].transpose() == small.zip(large).toList()
      * </pre>
      *
-     * @param self a double[]
+     * @param self  a double[]
      * @param other another double[]
      * @return an iterator of all the pairs from self and other
      */
@@ -8893,7 +8895,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [small, large].transpose() == small.zip(large).toList()
      * </pre>
      *
-     * @param self a float[]
+     * @param self  a float[]
      * @param other another float[]
      * @return an iterator of all the pairs from self and other
      */
@@ -8910,7 +8912,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [small, large].transpose() == small.zip(large).toList()
      * </pre>
      *
-     * @param self an int[]
+     * @param self  an int[]
      * @param other another int[]
      * @return an iterator of all the pairs from self and other
      */
@@ -8927,7 +8929,7 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
      * assert [small, large].transpose() == small.zip(large).toList()
      * </pre>
      *
-     * @param self a long[]
+     * @param self  a long[]
      * @param other another long[]
      * @return an iterator of all the pairs from self and other
      */
@@ -8940,8 +8942,8 @@ public class ArrayGroovyMethods extends DefaultGroovyMethodsSupport {
     /**
      * Implements the getAt(int) method for primitive type arrays.
      *
-     * @param self an array object
-     * @param index  the index of interest
+     * @param self  an array object
+     * @param index the index of interest
      * @return the returned value from the array
      * @since 1.5.0
      */

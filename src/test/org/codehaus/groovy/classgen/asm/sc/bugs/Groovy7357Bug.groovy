@@ -18,23 +18,13 @@
  */
 
 
-
-
-
-
-
-
-
-
-
-
 package org.codehaus.groovy.classgen.asm.sc.bugs
 
 import groovy.transform.stc.StaticTypeCheckingTestCase
 import org.codehaus.groovy.classgen.asm.sc.StaticCompilationTestSupport
 
 class Groovy7357Bug extends StaticTypeCheckingTestCase implements StaticCompilationTestSupport {
-        void testOptimizedArrayForLoopShouldPerformImplicitNullCheck() {
+    void testOptimizedArrayForLoopShouldPerformImplicitNullCheck() {
         assertScript '''
 
             private void foo(String[] arr) {

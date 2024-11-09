@@ -34,24 +34,24 @@ class DOMTest extends GroovyTestCase {
 
     void testDOMBuilder() {
         def html = DOMBuilder.newInstance().
-                html {
-                    head {
-                        title(class: "mytitle", "Test")
-                    }
-                    body {
-                        p(class: "mystyle", "This is a test.")
-                    }
+            html {
+                head {
+                    title(class: "mytitle", "Test")
                 }
+                body {
+                    p(class: "mystyle", "This is a test.")
+                }
+            }
         if (!benchmark) assertCorrect html
     }
 
     void testDOMBuilderWithNullValue() {
         def html = DOMBuilder.newInstance().
-                html {
-                    head {
-                        title(testAttr: null, "Test")
-                    }
+            html {
+                head {
+                    title(testAttr: null, "Test")
                 }
+            }
         use(DOMCategory) {
             assert html.head.title[0].'@testAttr' == ''
         }
@@ -95,8 +95,8 @@ class DOMTest extends GroovyTestCase {
         def standard = 0
         mydomtest.benchmark = true
         [{ mydomtest.testDOMParser() },
-                { mydomtest.testDOMBuilder() },
-                { mydomtest.testStreamingDOMBuilder() }].eachWithIndex { testMethod, index ->
+         { mydomtest.testDOMBuilder() },
+         { mydomtest.testStreamingDOMBuilder() }].eachWithIndex { testMethod, index ->
             // Run the method once to fill any caches and to load classes
             testMethod()
             def start = System.currentTimeMillis()

@@ -27,15 +27,15 @@ class Groovy6041Bug extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-                'Groovy6041Interface.java': '''
+            'Groovy6041Interface.java': '''
                     import java.util.List;
 
                     public interface Groovy6041Interface {
                         public <T> Promise<T> doExec(Promise<T>... callables);
                     }
                 ''',
-                'Promise.groovy': 'class Promise<T> {}',
-                'Tool.groovy': '''
+            'Promise.groovy'          : 'class Promise<T> {}',
+            'Tool.groovy'             : '''
                     class Tool implements Groovy6041Interface {
                         def <T> Promise<T> doExec(Promise<T>... callables) {
                             return null

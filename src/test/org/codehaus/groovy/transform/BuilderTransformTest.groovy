@@ -670,7 +670,8 @@ final class BuilderTransformTest {
         assert err =~ /.*SET.*SET.*UNSET.*/
     }
 
-    @Test // GROOVY-7501
+    @Test
+    // GROOVY-7501
     void testBuilderWithPackageName() {
         assertScript shell, '''
             package alfa.beta
@@ -683,7 +684,8 @@ final class BuilderTransformTest {
         '''
     }
 
-    @Test // GROOVY-7503
+    @Test
+    // GROOVY-7503
     void testInitializerStrategyEmptyCases() {
         def err = shouldFail shell, '''
             @Builder(builderStrategy=InitializerStrategy) class Foo {
@@ -708,7 +710,8 @@ final class BuilderTransformTest {
         assert err.message.contains('at least one parameter is required for this strategy')
     }
 
-    @Test // GROOVY-6454
+    @Test
+    // GROOVY-6454
     void testInternalFieldsAreIncludedIfRequestedForSimpleStrategy() {
         assertScript shell, '''
             @Builder(builderStrategy = SimpleStrategy, allNames = true)
@@ -719,7 +722,8 @@ final class BuilderTransformTest {
         '''
     }
 
-    @Test // GROOVY-6454
+    @Test
+    // GROOVY-6454
     void testInternalFieldsAreIncludedIfRequestedForExternalStrategy() {
         assertScript shell, '''
             class HasInternalProperty {
@@ -733,7 +737,8 @@ final class BuilderTransformTest {
         '''
     }
 
-    @Test // GROOVY-6454
+    @Test
+    // GROOVY-6454
     void testInternalFieldsAreIncludedIfRequestedForDefaultStrategy() {
         assertScript shell, '''
             @Builder(allNames = true)
@@ -745,7 +750,8 @@ final class BuilderTransformTest {
         '''
     }
 
-    @Test // GROOVY-6454
+    @Test
+    // GROOVY-6454
     void testInternalFieldsAreIncludedIfRequestedForInitializerStrategy() {
         assertScript shell, '''
             @Builder(builderStrategy = InitializerStrategy, allNames = true)
@@ -758,7 +764,8 @@ final class BuilderTransformTest {
         '''
     }
 
-    @Test // GROOVY-8186
+    @Test
+    // GROOVY-8186
     void testJavaBeanPropertiesAreProperlyProcessed() {
         assertScript shell, '''
             class Foo {
@@ -776,7 +783,8 @@ final class BuilderTransformTest {
         '''
     }
 
-    @Test // GROOVY-9472
+    @Test
+    // GROOVY-9472
     void testInnerClassReference() {
         def sourceDir = File.createTempDir()
         def config = new CompilerConfiguration(
@@ -817,7 +825,8 @@ final class BuilderTransformTest {
         }
     }
 
-    @Test // GROOVY-10955
+    @Test
+    // GROOVY-10955
     void testBuilderWithRecord() {
         assertScript shell, '''
         @Builder

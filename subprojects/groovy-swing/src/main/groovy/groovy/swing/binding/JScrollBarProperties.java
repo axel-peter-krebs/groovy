@@ -53,7 +53,7 @@ class JScrollBarValueBinding extends AbstractSyntheticBinding implements Propert
 
     @Override
     public synchronized void syntheticBind() {
-        boundScrollBar = (JScrollBar) ((PropertyBinding)sourceBinding).getBean();
+        boundScrollBar = (JScrollBar) ((PropertyBinding) sourceBinding).getBean();
         boundScrollBar.addPropertyChangeListener("model", this);
         boundScrollBar.getModel().addChangeListener(this);
     }

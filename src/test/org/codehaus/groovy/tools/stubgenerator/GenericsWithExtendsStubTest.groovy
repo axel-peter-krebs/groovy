@@ -25,7 +25,7 @@ class GenericsWithExtendsStubTest extends StringSourcesStubTestCase {
 
     Map<String, String> provideSources() {
         [
-                'Client.java': '''
+            'Client.java'               : '''
                     import java.util.*;
 
                     public class Client {
@@ -40,7 +40,7 @@ class GenericsWithExtendsStubTest extends StringSourcesStubTestCase {
                         }
                     }
                 ''',
-                'GroovyInterface4650.groovy': '''
+            'GroovyInterface4650.groovy': '''
                     public interface GroovyInterface4650 {
                         List<? extends CharSequence> getThings1()
                         List<?> getThings2()

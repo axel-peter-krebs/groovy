@@ -65,6 +65,7 @@ class C3830 {
             Integer i2 = i + 3
             Integer i3 = i * 3
         }
+
         interface I3830_2 {
             Integer i = 6
             Integer i2 = i + 3

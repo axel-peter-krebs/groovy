@@ -26,14 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MapItemValue implements Map.Entry<String, Value> {
 
-    final Value name;
-    final Value value;
-
-    private String key = null;
-
-    private static final boolean internKeys = Boolean.parseBoolean(System.getProperty("groovy.json.implementation.internKeys", "false"));
-
     protected static final ConcurrentHashMap<String, String> internedKeysCache;
+    private static final boolean internKeys = Boolean.parseBoolean(System.getProperty("groovy.json.implementation.internKeys", "false"));
 
     static {
         if (internKeys) {
@@ -42,6 +36,10 @@ public class MapItemValue implements Map.Entry<String, Value> {
             internedKeysCache = null;
         }
     }
+
+    final Value name;
+    final Value value;
+    private String key = null;
 
     public MapItemValue(Value name, Value value) {
         this.name = name;

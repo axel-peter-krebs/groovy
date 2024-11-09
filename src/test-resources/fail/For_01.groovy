@@ -16,4 +16,5 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-for (*a; a.size() < 10;) {}
+for ( * a; a.size() < 10; ) {
+}

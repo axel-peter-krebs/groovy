@@ -43,15 +43,15 @@ class DistributionExtension {
     }
 
     DistributionExtension docs(String p, String... classNames) {
-        project.tasks.named('docGDK').configure { DocGDK docgen ->
+        project.tasks.named('docGDK').configure { org.gradle.api.Task docgen -> // DocGDK
             docgeneratorClasses.set(docgeneratorClasses.get() +
-                    classNames.collect { className ->
-                        def src = project.project(p).layout.projectDirectory.file(
-                                "src/main/java/${className.replace('.', '/')}.java"
-                        ).asFile
-                        docgen.inputs.file(src).withPathSensitivity(PathSensitivity.RELATIVE)
-                        project.relativePath(src)
-                    }
+                classNames.collect { className ->
+                    def src = project.project(p).layout.projectDirectory.file(
+                        "src/main/java/${className.replace('.', '/')}.java"
+                    ).asFile
+                    docgen.inputs.file(src).withPathSensitivity(PathSensitivity.RELATIVE)
+                    project.relativePath(src)
+                }
             )
         }
         this

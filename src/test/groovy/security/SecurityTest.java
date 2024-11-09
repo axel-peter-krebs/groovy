@@ -35,8 +35,13 @@ import java.util.PropertyPermission;
  * Other tests run .groovy scripts under a secure environment and ensure that the proper permissions
  * are required for success.
  */
-@Ignore(value="Test doesn't work well when user home is changed, but we need to do it to make sure tests run in isolation")
+@Ignore(value = "Test doesn't work well when user home is changed, but we need to do it to make sure tests run in isolation")
 public class SecurityTest extends SecurityTestSupport {
+
+    @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
+    private static <T> T doPrivileged(PrivilegedAction<T> action) {
+        return java.security.AccessController.doPrivileged(action);
+    }
 
     public void testForbiddenProperty() {
         String script = "System.getProperty(\"user.home\")";
@@ -70,11 +75,6 @@ public class SecurityTest extends SecurityTestSupport {
         assertExecute(script, "/groovy/security/javax/print/deny", new RuntimePermission("accessClassInPackage.javax.print"));
         //This should not throw an ACE because groovy.policy grants the codeBase access to javax.print
         assertExecute(script, "/groovy/security/javax/print/allow", null);
-    }
-
-    @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
-    private static <T> T doPrivileged(PrivilegedAction<T> action) {
-        return java.security.AccessController.doPrivileged(action);
     }
 
     public void testBadScriptNameBug() {

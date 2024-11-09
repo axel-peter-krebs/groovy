@@ -30,7 +30,7 @@ class Groovy7912Bug extends GroovyTestCase {
     }
 
     void testClosureWithStaticImportMethod() {
-        Closure closure = { List list = emptyList() -> list.size() }
+        Closure closure = { List list = emptyList () -> list.size() }
         assert closure() == 0
     }
 }

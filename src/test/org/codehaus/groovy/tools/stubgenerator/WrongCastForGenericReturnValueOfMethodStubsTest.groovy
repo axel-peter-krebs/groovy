@@ -23,16 +23,16 @@ package org.codehaus.groovy.tools.stubgenerator
  *
  * (also covers GROOVY-5439)
  */
-final class WrongCastForGenericReturnValueOfMethodStubsTest extends StringSourcesStubTestCase  {
+final class WrongCastForGenericReturnValueOfMethodStubsTest extends StringSourcesStubTestCase {
 
     Map<String, String> provideSources() {
         [
-            'Task.java': '''
+            'Task.java'        : '''
                 public class Task {
                 }
             ''',
 
-            'Schedule.groovy': '''
+            'Schedule.groovy'  : '''
                 class Schedule<T extends ScheduleItem> extends HashSet<T> {
                     T getCurrentItem() {
                     }
@@ -44,7 +44,7 @@ final class WrongCastForGenericReturnValueOfMethodStubsTest extends StringSource
                 }
             ''',
 
-            'Utility.groovy': '''
+            'Utility.groovy'   : '''
                 class Utility {
                     final Map<String, String> test = new HashMap<String, String>()
                     static <T extends Task> T createTask(Class<T> type) { }
@@ -58,7 +58,7 @@ final class WrongCastForGenericReturnValueOfMethodStubsTest extends StringSource
         String stub = stubJavaSourceFor('Schedule')
         assert stub.contains("T getCurrentItem() { return null; }")
 
-               stub = stubJavaSourceFor('Utility')
+        stub = stubJavaSourceFor('Utility')
         assert stub.contains("static <T extends Task> T createTask(java.lang.Class<T> type) { return null; }")
         assert stub.contains("java.util.Map<java.lang.String, java.lang.String> getTest() { return null; }")
         assert stub.contains("<T extends java.util.List> T foo() { return null; }")

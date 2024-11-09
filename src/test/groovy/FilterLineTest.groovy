@@ -38,24 +38,24 @@ class FilterLineTest extends GroovyTestCase {
     }
 
     void testFilterLineOnFileReturningAWritable() {
-        def writable = myFile.filterLine() {it.contains("testFilterLineOnFileReturningAWritable")}
+        def writable = myFile.filterLine() { it.contains("testFilterLineOnFileReturningAWritable") }
         writable.writeTo(myOutput)
         assert 3 == myOutput.toString().count("testFilterLineOnFileReturningAWritable")
     }
 
     void testFilterLineOnFileUsingAnOutputStream() {
-        myFile.filterLine(myOutput) {it.contains("testFilterLineOnFileUsingAnOutputStream")}
+        myFile.filterLine(myOutput) { it.contains("testFilterLineOnFileUsingAnOutputStream") }
         assert 3 == myOutput.toString().count("testFilterLineOnFileUsingAnOutputStream")
     }
 
     void testFilterLineOnInputStreamReturningAWritable() {
-        def writable = myInput.filterLine() {it.contains("testFilterLineOnInputStreamReturningAWritable")}
+        def writable = myInput.filterLine() { it.contains("testFilterLineOnInputStreamReturningAWritable") }
         writable.writeTo(myOutput)
         assert 3 == myOutput.toString().count("testFilterLineOnInputStreamReturningAWritable")
     }
 
     void testFilterLineOnInputStreamUsingAnOutputStream() {
-        myInput.filterLine(myOutput) {it.contains("testFilterLineOnInputStreamUsingAnOutputStream")}
+        myInput.filterLine(myOutput) { it.contains("testFilterLineOnInputStreamUsingAnOutputStream") }
         assert 3 == myOutput.toString().count("testFilterLineOnInputStreamUsingAnOutputStream")
     }
 }

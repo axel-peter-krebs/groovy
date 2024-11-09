@@ -44,8 +44,8 @@ import static org.codehaus.groovy.tools.groovydoc.SimpleGroovyClassDoc.TAG_REGEX
  *  todo: order methods alphabetically (implement compareTo enough?)
  */
 public class GroovyRootDocBuilder {
-    private final Logger log = Logger.create(GroovyRootDocBuilder.class);
     private static final char FS = '/';
+    private final Logger log = Logger.create(GroovyRootDocBuilder.class);
     private final List<LinkArgument> links;
     private final String[] sourcepaths;
     private final SimpleGroovyRootDoc rootDoc;
@@ -61,6 +61,43 @@ public class GroovyRootDocBuilder {
         this.links = links;
         this.rootDoc = new SimpleGroovyRootDoc("root");
         this.properties = properties;
+    }
+
+    private static void calcThenSetSummary(String src, SimpleGroovyPackageDoc packageDoc) {
+        packageDoc.setSummary(SimpleGroovyDoc.calculateFirstSentence(src));
+    }
+
+    private static String trimPackageAndComments(String src) {
+        return src.replaceFirst("(?sm)^package.*", "")
+            .replaceFirst("(?sm)/.*\\*\\*(.*)\\*/", "$1")
+            .replaceAll("(?m)^\\s*\\*", "");
+    }
+
+    private static String scrubOffExcessiveTags(String src) {
+        String description = pruneTagFromFront(src, "html");
+        description = pruneTagFromFront(description, "/head");
+        description = pruneTagFromFront(description, "body");
+        description = pruneTagFromEnd(description, "/html");
+        return pruneTagFromEnd(description, "/body");
+    }
+
+    private static String pruneTagFromFront(String description, String tag) {
+        int index = Math.max(indexOfTag(description, tag.toLowerCase(Locale.ENGLISH)), indexOfTag(description, tag.toUpperCase(Locale.ENGLISH)));
+        if (index < 0) return description;
+        return description.substring(index);
+    }
+
+    private static String pruneTagFromEnd(String description, String tag) {
+        int index = Math.max(description.lastIndexOf("<" + tag.toLowerCase(Locale.ENGLISH) + ">"),
+            description.lastIndexOf("<" + tag.toUpperCase(Locale.ENGLISH) + ">"));
+        if (index < 0) return description;
+        return description.substring(0, index);
+    }
+
+    private static int indexOfTag(String text, String tag) {
+        int pos = text.indexOf("<" + tag + ">");
+        if (pos > 0) pos += tag.length() + 2;
+        return pos;
     }
 
     public void buildTree(List<String> filenames) throws IOException {
@@ -190,46 +227,9 @@ public class GroovyRootDocBuilder {
         return SimpleGroovyClassDoc.replaceAllTags(self, s1, s2, regex, links, relPath, rootDoc, null);
     }
 
-    private static void calcThenSetSummary(String src, SimpleGroovyPackageDoc packageDoc) {
-        packageDoc.setSummary(SimpleGroovyDoc.calculateFirstSentence(src));
-    }
-
     private void calcThenSetOverviewDescription(String src) {
         String description = scrubOffExcessiveTags(src);
         rootDoc.setDescription(description);
-    }
-
-    private static String trimPackageAndComments(String src) {
-        return src.replaceFirst("(?sm)^package.*", "")
-                .replaceFirst("(?sm)/.*\\*\\*(.*)\\*/", "$1")
-                .replaceAll("(?m)^\\s*\\*", "");
-    }
-
-    private static String scrubOffExcessiveTags(String src) {
-        String description = pruneTagFromFront(src, "html");
-        description = pruneTagFromFront(description, "/head");
-        description = pruneTagFromFront(description, "body");
-        description = pruneTagFromEnd(description, "/html");
-        return pruneTagFromEnd(description, "/body");
-    }
-
-    private static String pruneTagFromFront(String description, String tag) {
-        int index = Math.max(indexOfTag(description, tag.toLowerCase(Locale.ENGLISH)), indexOfTag(description, tag.toUpperCase(Locale.ENGLISH)));
-        if (index < 0) return description;
-        return description.substring(index);
-    }
-
-    private static String pruneTagFromEnd(String description, String tag) {
-        int index = Math.max(description.lastIndexOf("<" + tag.toLowerCase(Locale.ENGLISH) + ">"),
-                description.lastIndexOf("<" + tag.toUpperCase(Locale.ENGLISH) + ">"));
-        if (index < 0) return description;
-        return description.substring(0, index);
-    }
-
-    private static int indexOfTag(String text, String tag) {
-        int pos = text.indexOf("<" + tag + ">");
-        if (pos > 0) pos += tag.length() + 2;
-        return pos;
     }
 
     public GroovyRootDoc getRootDoc() {

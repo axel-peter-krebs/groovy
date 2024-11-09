@@ -48,7 +48,7 @@ public class MyIntegerAnnoTraceASTTransformation implements ASTTransformation {
         File f = new File("temp/log.txt");
         try {
             ResourceGroovyMethods.append(f, parent.getClass().getSimpleName() + " " +
-                    parent.getAnnotations().get(0).getMember("value").getText() + " ");
+                parent.getAnnotations().get(0).getMember("value").getText() + " ");
         } catch (IOException e) {
             e.printStackTrace();
         }

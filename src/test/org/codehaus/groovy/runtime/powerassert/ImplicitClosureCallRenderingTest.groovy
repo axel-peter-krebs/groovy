@@ -78,7 +78,8 @@ assert func(42) == null
         }
     }
 
-    @groovy.transform.PackageScope class FuncHolder {
+    @groovy.transform.PackageScope
+    class FuncHolder {
         def func = { it }
     }
 
@@ -101,7 +102,7 @@ assert holder.func(42) == null
     // complicates implementation, unclear how to
     // render in an intuitive way)
 
-     void testWithMethodCall() {
+    void testWithMethodCall() {
         isRendered """
 assert getFunc()(42) == null
        |             |

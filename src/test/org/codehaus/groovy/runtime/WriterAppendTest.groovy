@@ -78,14 +78,14 @@ class WriterAppendTest extends GroovyTestCase {
     void testAppendStringWithEncoding() {
         def expected
         // test new
-        file.withWriterAppend(UTF8_ENCODING) {writer ->
+        file.withWriterAppend(UTF8_ENCODING) { writer ->
             writer.write(text)
         }
         expected = text
         assert hasContents(file, expected, UTF8_ENCODING)
 
         // test existing
-        file.withWriterAppend(UTF8_ENCODING) {writer ->
+        file.withWriterAppend(UTF8_ENCODING) { writer ->
             writer.write(text)
         }
         expected += text
@@ -96,14 +96,14 @@ class WriterAppendTest extends GroovyTestCase {
         def expected
 
         // test new
-        file.withWriterAppend(UTF8_ENCODING) {writer ->
+        file.withWriterAppend(UTF8_ENCODING) { writer ->
             writer.write(gPathResult)
         }
         expected = gPathWriteTo
         assert hasContents(file, expected, UTF8_ENCODING)
 
         // test existing
-        file.withWriterAppend(UTF8_ENCODING) {writer ->
+        file.withWriterAppend(UTF8_ENCODING) { writer ->
             writer.write(gPathResult)
         }
         expected += gPathWriteTo
@@ -115,14 +115,14 @@ class WriterAppendTest extends GroovyTestCase {
         def expected
 
         // test new
-        file.withWriterAppend(UTF8_ENCODING) {writer ->
+        file.withWriterAppend(UTF8_ENCODING) { writer ->
             writer << text
         }
         expected = text
         assert hasContents(file, expected, UTF8_ENCODING)
 
         // test existing
-        file.withWriterAppend(UTF8_ENCODING) {writer ->
+        file.withWriterAppend(UTF8_ENCODING) { writer ->
             writer << text
         }
         expected += text
@@ -133,14 +133,14 @@ class WriterAppendTest extends GroovyTestCase {
         def expected
 
         // test new
-        file.withWriterAppend(UTF8_ENCODING) {writer ->
+        file.withWriterAppend(UTF8_ENCODING) { writer ->
             writer << gPathResult
         }
         expected = gPathWriteTo
         assert hasContents(file, expected, UTF8_ENCODING)
 
         // test existing
-        file.withWriterAppend(UTF8_ENCODING) {writer ->
+        file.withWriterAppend(UTF8_ENCODING) { writer ->
             writer << gPathResult
         }
         expected += gPathWriteTo
@@ -160,14 +160,14 @@ class WriterAppendTest extends GroovyTestCase {
     void testAppendStringDefaultEncoding() {
         def expected
         // test new
-        file.withWriterAppend {writer ->
+        file.withWriterAppend { writer ->
             writer.write(text)
         }
         expected = text
         assert hasContents(file, expected, defaultEncoding)
 
         // test existing
-        file.withWriterAppend {writer ->
+        file.withWriterAppend { writer ->
             writer.write(text)
         }
         expected += text
@@ -178,14 +178,14 @@ class WriterAppendTest extends GroovyTestCase {
         def expected
 
         // test new
-        file.withWriterAppend {writer ->
+        file.withWriterAppend { writer ->
             writer.write(gPathResult)
         }
         expected = gPathWriteTo
         assert hasContents(file, expected, defaultEncoding)
 
         // test existing
-        file.withWriterAppend {writer ->
+        file.withWriterAppend { writer ->
             writer.write(gPathResult)
         }
         expected += gPathWriteTo
@@ -197,14 +197,14 @@ class WriterAppendTest extends GroovyTestCase {
         def expected
 
         // test new
-        file.withWriterAppend {writer ->
+        file.withWriterAppend { writer ->
             writer << text
         }
         expected = text
         assert hasContents(file, expected, defaultEncoding)
 
         // test existing
-        file.withWriterAppend {writer ->
+        file.withWriterAppend { writer ->
             writer << text
         }
         expected += text
@@ -216,14 +216,14 @@ class WriterAppendTest extends GroovyTestCase {
         def expected
 
         // test new
-        file.withWriterAppend {writer ->
+        file.withWriterAppend { writer ->
             writer << gPathResult
         }
         expected = gPathWriteTo
         assert hasContents(file, expected, defaultEncoding)
 
         // test existing
-        file.withWriterAppend {writer ->
+        file.withWriterAppend { writer ->
             writer << gPathResult
         }
         expected += gPathWriteTo

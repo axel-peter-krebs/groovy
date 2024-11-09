@@ -23,7 +23,7 @@
 <html>
 <head>
     <title>Overview (${title})</title>
-    <link rel="stylesheet" type="text/css" href="stylesheet.css" title="Style">
+    <link href="stylesheet.css" rel="stylesheet" title="Style" type="text/css">
 </head>
 
 <body class="left">
@@ -35,9 +35,11 @@
 <div class="indexContainer">
     <h2 title="Packages">Packages</h2>
     <ul>
-        <li><a href="primitives-and-primitive-arrays/package-frame.html" title="Primitive types" target="packageFrame">Primitive types</a></li>
+        <li><a href="primitives-and-primitive-arrays/package-frame.html" target="packageFrame" title="Primitive types">Primitive
+            types</a></li>
         <% packages.grep().each { %>
-        <li><a href="${it.name.replace('.', '/')}/package-frame.html" title="${it.name}" target="packageFrame">${it.name}</a></li>
+        <li><a href="${it.name.replace('.', '/')}/package-frame.html" target="packageFrame" title="${it.name}">${it.name}</a>
+        </li>
         <% } %>
     </ul>
 </div>

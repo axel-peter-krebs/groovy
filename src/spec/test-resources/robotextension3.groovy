@@ -22,8 +22,8 @@ import typing.Robot
 methodNotFound { receiver, name, argList, argTypes, call ->
     if (isMethodCallExpression(call)
         && call.implicitThis
-        && 'move'==name
-        && argTypes.length==1
+        && 'move' == name
+        && argTypes.length == 1
         && argTypes[0] == classNodeFor(int)
     ) {
         makeDynamic(call, classNodeFor(Robot))              // <1>

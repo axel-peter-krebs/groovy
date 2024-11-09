@@ -63,65 +63,10 @@ public class ConsoleTextEditor extends JScrollPane {
     private static final Preferences PREFERENCES = Preferences.userNodeForPackage(Console.class);
     private static final String PREFERENCE_FONT_SIZE = "fontSize";
     private static final int DEFAULT_FONT_SIZE = 12;
-
-    public String getDefaultFamily() {
-        return defaultFamily;
-    }
-
-    public void setDefaultFamily(String defaultFamily) {
-        this.defaultFamily = defaultFamily;
-    }
-
-    private class LineNumbersPanel extends JPanel {
-
-        LineNumbersPanel() {
-            int initialSize = 3 * PREFERENCES.getInt(PREFERENCE_FONT_SIZE, DEFAULT_FONT_SIZE);
-            setMinimumSize(new Dimension(initialSize, initialSize));
-            setPreferredSize(new Dimension(initialSize, initialSize));
-        }
-
-        @Override
-        @SuppressWarnings("deprecation") // TODO switch viewToModel/modelToView once minimum JDK version for Groovy >= 9
-        public void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            // starting position in document
-            int start = textEditor.viewToModel(getViewport().getViewPosition());
-            // end position in document
-            int end = textEditor.viewToModel(new Point(10,
-                    getViewport().getViewPosition().y +
-                            (int) textEditor.getVisibleRect().getHeight())
-            );
-
-            // translate offsets to lines
-            Document doc = textEditor.getDocument();
-            int startline = doc.getDefaultRootElement().getElementIndex(start) + 1;
-            int endline = doc.getDefaultRootElement().getElementIndex(end) + 1;
-            Font f = textEditor.getFont();
-            int fontHeight = g.getFontMetrics(f).getHeight();
-            int fontDesc = g.getFontMetrics(f).getDescent();
-            int startingY = -1;
-
-            try {
-                startingY = textEditor.modelToView(start).y + fontHeight - fontDesc;
-            } catch (BadLocationException e1) {
-                System.err.println(e1.getMessage());
-            }
-            g.setFont(f);
-            for (int line = startline, y = startingY; line <= endline; y += fontHeight, line++) {
-                String lineNumber = StringGroovyMethods.padLeft((CharSequence)Integer.toString(line), 4, " ");
-                g.drawString(lineNumber, 0, y);
-            }
-        }
-    }
-
-    private String defaultFamily = "Monospaced";
-
     private static final PrinterJob PRINTER_JOB = PrinterJob.getPrinterJob();
-
+    private String defaultFamily = "Monospaced";
     private LineNumbersPanel numbersPanel = new LineNumbersPanel();
-
     private boolean documentChangedSinceLastRepaint = false;
-
     private TextEditor textEditor = new TextEditor(true, true, true) {
 
         @Override
@@ -136,13 +81,10 @@ public class ConsoleTextEditor extends JScrollPane {
             }
         }
     };
-
     private UndoAction undoAction = new UndoAction();
     private RedoAction redoAction = new RedoAction();
     private PrintAction printAction = new PrintAction();
-
     private boolean editable = true;
-
     private TextUndoManager undoManager;
     private int fontSize;
 
@@ -227,6 +169,14 @@ public class ConsoleTextEditor extends JScrollPane {
         am.put(StructuredSyntaxResources.PRINT, printAction);
     }
 
+    public String getDefaultFamily() {
+        return defaultFamily;
+    }
+
+    public void setDefaultFamily(String defaultFamily) {
+        this.defaultFamily = defaultFamily;
+    }
+
     public void setShowLineNumbers(boolean showLineNumbers) {
         if (showLineNumbers) {
             JPanel view = new JPanel(new BorderLayout());
@@ -256,6 +206,89 @@ public class ConsoleTextEditor extends JScrollPane {
         map.put(StructuredSyntaxResources.PRINT, new PrintAction());
     }
 
+    public Action getUndoAction() {
+        return undoAction;
+    }
+
+    public Action getRedoAction() {
+        return redoAction;
+    }
+
+    public Action getPrintAction() {
+        return printAction;
+    }
+
+    public void enableHighLighter(Class<? extends DocumentFilter> clazz) {
+        DefaultStyledDocument doc = (DefaultStyledDocument) textEditor.getDocument();
+
+        try {
+            DocumentFilter documentFilter = clazz.getConstructor(doc.getClass()).newInstance(doc);
+            doc.setDocumentFilter(documentFilter);
+
+            disableMatchingHighlighter();
+            if (documentFilter instanceof SmartDocumentFilter) {
+                final SmartDocumentFilter smartDocumentFilter = (SmartDocumentFilter) documentFilter;
+                enableMatchingHighlighter(smartDocumentFilter);
+            }
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void enableMatchingHighlighter(SmartDocumentFilter smartDocumentFilter) {
+        textEditor.addCaretListener(new MatchingHighlighter(smartDocumentFilter, textEditor));
+    }
+
+    private void disableMatchingHighlighter() {
+        for (CaretListener cl : textEditor.getCaretListeners()) {
+            if (cl instanceof MatchingHighlighter) {
+                textEditor.removeCaretListener(cl);
+            }
+        }
+    }
+
+    private class LineNumbersPanel extends JPanel {
+
+        LineNumbersPanel() {
+            int initialSize = 3 * PREFERENCES.getInt(PREFERENCE_FONT_SIZE, DEFAULT_FONT_SIZE);
+            setMinimumSize(new Dimension(initialSize, initialSize));
+            setPreferredSize(new Dimension(initialSize, initialSize));
+        }
+
+        @Override
+        @SuppressWarnings("deprecation") // TODO switch viewToModel/modelToView once minimum JDK version for Groovy >= 9
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            // starting position in document
+            int start = textEditor.viewToModel(getViewport().getViewPosition());
+            // end position in document
+            int end = textEditor.viewToModel(new Point(10,
+                getViewport().getViewPosition().y +
+                    (int) textEditor.getVisibleRect().getHeight())
+            );
+
+            // translate offsets to lines
+            Document doc = textEditor.getDocument();
+            int startline = doc.getDefaultRootElement().getElementIndex(start) + 1;
+            int endline = doc.getDefaultRootElement().getElementIndex(end) + 1;
+            Font f = textEditor.getFont();
+            int fontHeight = g.getFontMetrics(f).getHeight();
+            int fontDesc = g.getFontMetrics(f).getDescent();
+            int startingY = -1;
+
+            try {
+                startingY = textEditor.modelToView(start).y + fontHeight - fontDesc;
+            } catch (BadLocationException e1) {
+                System.err.println(e1.getMessage());
+            }
+            g.setFont(f);
+            for (int line = startline, y = startingY; line <= endline; y += fontHeight, line++) {
+                String lineNumber = StringGroovyMethods.padLeft((CharSequence) Integer.toString(line), 4, " ");
+                g.drawString(lineNumber, 0, y);
+            }
+        }
+    }
+
     private class PrintAction extends AbstractAction {
 
         PrintAction() {
@@ -270,8 +303,7 @@ public class ConsoleTextEditor extends JScrollPane {
                 if (PRINTER_JOB.printDialog()) {
                     PRINTER_JOB.print();
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -338,47 +370,6 @@ public class ConsoleTextEditor extends JScrollPane {
         @Override
         public void propertyChange(PropertyChangeEvent pce) {
             setEnabled(undoManager.canUndo());
-        }
-    }
-
-    public Action getUndoAction() {
-        return undoAction;
-    }
-
-    public Action getRedoAction() {
-        return redoAction;
-    }
-
-    public Action getPrintAction() {
-        return printAction;
-    }
-
-    public void enableHighLighter(Class<? extends DocumentFilter> clazz) {
-        DefaultStyledDocument doc = (DefaultStyledDocument) textEditor.getDocument();
-
-        try {
-            DocumentFilter documentFilter = clazz.getConstructor(doc.getClass()).newInstance(doc);
-            doc.setDocumentFilter(documentFilter);
-
-            disableMatchingHighlighter();
-            if (documentFilter instanceof SmartDocumentFilter) {
-                final SmartDocumentFilter smartDocumentFilter = (SmartDocumentFilter) documentFilter;
-                enableMatchingHighlighter(smartDocumentFilter);
-            }
-        } catch (ReflectiveOperationException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void enableMatchingHighlighter(SmartDocumentFilter smartDocumentFilter) {
-        textEditor.addCaretListener(new MatchingHighlighter(smartDocumentFilter, textEditor));
-    }
-
-    private void disableMatchingHighlighter() {
-        for (CaretListener cl : textEditor.getCaretListeners()) {
-            if (cl instanceof MatchingHighlighter) {
-                textEditor.removeCaretListener(cl);
-            }
         }
     }
 }

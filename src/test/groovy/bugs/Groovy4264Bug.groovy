@@ -33,7 +33,7 @@ class Groovy4264Bug extends GroovyTestCase {
                 class A4264 {}
             """
             fail('B4264 execution should have made the script fail')
-        } catch(RuntimeException ex) {
+        } catch (RuntimeException ex) {
             assert ex.message.contains('B4264#main() called correctly')
         }
     }
@@ -52,7 +52,7 @@ class Groovy4264Bug extends GroovyTestCase {
                 throw new RuntimeException('Script class executed correctly')
             """
             fail('Script class execution should have caused a failure')
-        } catch(RuntimeException ex) {
+        } catch (RuntimeException ex) {
             assert ex.message.contains('Script class executed correctly')
         }
     }
@@ -64,7 +64,7 @@ class Groovy4264Bug extends GroovyTestCase {
                 throw new RuntimeException('Script class executed correctly')
             """
             fail('Script class execution should have caused a failure')
-        } catch(RuntimeException ex) {
+        } catch (RuntimeException ex) {
             assert ex.message.contains('Script class executed correctly')
         }
     }

@@ -30,6 +30,7 @@ class VerifyErrorBug extends GroovyTestCase {
             }
         """
     }
+
     void testShouldNotThrowVerifyError2() {
         assertScript """
             for (int i = 1; i < 10; i++) {
@@ -38,6 +39,7 @@ class VerifyErrorBug extends GroovyTestCase {
             }
         """
     }
+
     void testShouldNotThrowVerifyError3() {
         assertScript """
             x = this.&println
@@ -47,6 +49,7 @@ class VerifyErrorBug extends GroovyTestCase {
             }
         """
     }
+
     void testShouldNotThrowVerifyError4() {
         assertScript """
             x = this.&println

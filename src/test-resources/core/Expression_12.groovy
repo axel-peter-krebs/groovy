@@ -18,10 +18,10 @@
  */
 !true
 !
-        true
+    true
 ~1
 ~
-        1
+    1
 (boolean) !false
 (int) (1 / 2)
 (int) 1 / 2
@@ -33,8 +33,8 @@
 (int) ~123
 (int) obj.someMethod()
 (int) (obj.someMethod())
-(String)'abc'
+(String) 'abc'
 (String) 'abc'
 (Object) (String) 'abc'
-(java.lang.String)'abc'
+(java.lang.String) 'abc'
 (java.lang.String) 'abc'

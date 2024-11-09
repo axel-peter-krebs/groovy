@@ -58,7 +58,7 @@ public class GroovyPrintStream extends PrintStream {
      * @see java.io.PrintStream#PrintStream(java.io.OutputStream, boolean, String)
      */
     public GroovyPrintStream(OutputStream out, boolean autoFlush, String encoding)
-            throws UnsupportedEncodingException {
+        throws UnsupportedEncodingException {
         super(out, autoFlush, encoding);
     }
 
@@ -79,7 +79,7 @@ public class GroovyPrintStream extends PrintStream {
      * @see java.io.PrintStream#PrintStream(String, String)
      */
     public GroovyPrintStream(String fileName, String csn)
-            throws FileNotFoundException, UnsupportedEncodingException {
+        throws FileNotFoundException, UnsupportedEncodingException {
         super(fileName, csn);
     }
 
@@ -100,7 +100,7 @@ public class GroovyPrintStream extends PrintStream {
      * @see java.io.PrintStream#PrintStream(File, String)
      */
     public GroovyPrintStream(File file, String csn)
-            throws FileNotFoundException, UnsupportedEncodingException {
+        throws FileNotFoundException, UnsupportedEncodingException {
         super(file, csn);
     }
 

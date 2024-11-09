@@ -59,54 +59,6 @@ public class TableSorter extends TableMap {
         setModel(model);
     }
 
-    @Override
-    public void setModel(TableModel model) {
-        super.setModel(model);
-        reallocateIndexes();
-    }
-
-    public int compareRowsByColumn(int row1, int row2, int column) {
-        Class<?> type = model.getColumnClass(column);
-        TableModel data = model;
-
-        // Check for nulls
-
-        Object o1 = data.getValueAt(row1, column);
-        Object o2 = data.getValueAt(row2, column);
-
-        // If both values are null return 0
-        if (o1 == null && o2 == null) {
-            return 0;
-        } else if (o1 == null) { // Define null less than everything.
-            return -1;
-        } else if (o2 == null) {
-            return 1;
-        }
-
-        /* We copy all returned values from the getValue call in case
-        an optimised model is reusing one object to return many values.
-        The Number subclasses in the JDK are immutable and so will not be used in
-        this way but other subclasses of Number might want to do this to save
-        space and avoid unnecessary heap allocation.
-        */
-        if (type.getSuperclass() == java.lang.Number.class) {
-            return compareNumbers(data, row1, column, row2);
-        }
-
-        if (type == java.util.Date.class) {
-            return compareDates(data, row1, column, row2);
-        }
-
-        if (type == String.class) {
-            return compareStrings(data, row1, column, row2);
-        }
-
-        if (type == Boolean.class) {
-            return compareBooleans(data, row1, column, row2);
-        }
-        return compareObjects(data, row1, column, row2);
-    }
-
     private static int compareObjects(TableModel data, int row1, int column, int row2) {
         Object v1 = data.getValueAt(row1, column);
         String s1 = v1.toString();
@@ -168,6 +120,54 @@ public class TableSorter extends TableMap {
         if (d1 > d2)
             return 1;
         return 0;
+    }
+
+    @Override
+    public void setModel(TableModel model) {
+        super.setModel(model);
+        reallocateIndexes();
+    }
+
+    public int compareRowsByColumn(int row1, int row2, int column) {
+        Class<?> type = model.getColumnClass(column);
+        TableModel data = model;
+
+        // Check for nulls
+
+        Object o1 = data.getValueAt(row1, column);
+        Object o2 = data.getValueAt(row2, column);
+
+        // If both values are null return 0
+        if (o1 == null && o2 == null) {
+            return 0;
+        } else if (o1 == null) { // Define null less than everything.
+            return -1;
+        } else if (o2 == null) {
+            return 1;
+        }
+
+        /* We copy all returned values from the getValue call in case
+        an optimised model is reusing one object to return many values.
+        The Number subclasses in the JDK are immutable and so will not be used in
+        this way but other subclasses of Number might want to do this to save
+        space and avoid unnecessary heap allocation.
+        */
+        if (type.getSuperclass() == java.lang.Number.class) {
+            return compareNumbers(data, row1, column, row2);
+        }
+
+        if (type == java.util.Date.class) {
+            return compareDates(data, row1, column, row2);
+        }
+
+        if (type == String.class) {
+            return compareStrings(data, row1, column, row2);
+        }
+
+        if (type == Boolean.class) {
+            return compareBooleans(data, row1, column, row2);
+        }
+        return compareObjects(data, row1, column, row2);
     }
 
     public int compare(int row1, int row2) {

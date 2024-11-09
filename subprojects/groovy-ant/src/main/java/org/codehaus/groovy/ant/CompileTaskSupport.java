@@ -36,8 +36,7 @@ import java.security.PrivilegedAction;
  * Support for compilation related tasks.
  */
 public abstract class CompileTaskSupport
-    extends MatchingTask
-{
+    extends MatchingTask {
     protected final LoggingHelper log = new LoggingHelper(this);
 
     protected Path src;
@@ -50,12 +49,12 @@ public abstract class CompileTaskSupport
 
     protected boolean failOnError = true;
 
-    public void setFailonerror(final boolean fail) {
-        failOnError = fail;
-    }
-
     public boolean getFailonerror() {
         return failOnError;
+    }
+
+    public void setFailonerror(final boolean fail) {
+        failOnError = fail;
     }
 
     public Path createSrc() {
@@ -65,19 +64,18 @@ public abstract class CompileTaskSupport
         return src.createPath();
     }
 
+    public Path getSrcdir() {
+        return src;
+    }
+
     public void setSrcdir(final Path dir) {
         assert dir != null;
 
         if (src == null) {
             src = dir;
-        }
-        else {
+        } else {
             src.append(dir);
         }
-    }
-
-    public Path getSrcdir() {
-        return src;
     }
 
     public void setDestdir(final File dir) {
@@ -86,19 +84,18 @@ public abstract class CompileTaskSupport
         this.destdir = dir;
     }
 
+    public Path getClasspath() {
+        return classpath;
+    }
+
     public void setClasspath(final Path path) {
         assert path != null;
 
         if (classpath == null) {
             classpath = path;
-        }
-        else {
+        } else {
             classpath.append(path);
         }
-    }
-
-    public Path getClasspath() {
-        return classpath;
     }
 
     public Path createClasspath() {
@@ -136,7 +133,7 @@ public abstract class CompileTaskSupport
     protected GroovyClassLoader createClassLoader() {
         @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
         GroovyClassLoader gcl = java.security.AccessController.doPrivileged((PrivilegedAction<GroovyClassLoader>) () ->
-                new GroovyClassLoader(ClassLoader.getSystemClassLoader(), config));
+            new GroovyClassLoader(ClassLoader.getSystemClassLoader(), config));
 
         Path path = getClasspath();
         if (path != null) {
@@ -158,8 +155,7 @@ public abstract class CompileTaskSupport
 
         if (failOnError) {
             throw new BuildException(message, e, getLocation());
-        }
-        else {
+        } else {
             log.error(message);
         }
     }
@@ -170,8 +166,7 @@ public abstract class CompileTaskSupport
 
         try {
             compile();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             handleException(e);
         }
     }

@@ -39,8 +39,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * to a given delegate.
  */
 public abstract class ConversionHandler implements InvocationHandler, Serializable {
-    private final Object delegate;
     private static final long serialVersionUID = 1162833717190835227L;
+    private final Object delegate;
     private final ConcurrentHashMap<Method, Object> handleCache = new ConcurrentHashMap<>(16, 0.9f, 2);
     private MetaClass metaClass;
 
@@ -55,6 +55,18 @@ public abstract class ConversionHandler implements InvocationHandler, Serializab
             throw new IllegalArgumentException("delegate must not be null");
         }
         this.delegate = delegate;
+    }
+
+    /**
+     * Checks whether a method is a core method from java.lang.Object.
+     * Such methods often receive special treatment because they are
+     * deemed fundamental enough to not be tampered with.
+     *
+     * @param method the method to check
+     * @return true if the method is deemed to be a core method
+     */
+    public static boolean isCoreObjectMethod(Method method) {
+        return Object.class.equals(method.getDeclaringClass());
     }
 
     /**
@@ -81,7 +93,8 @@ public abstract class ConversionHandler implements InvocationHandler, Serializab
      * </p><p>
      * In many scenarios, it is better to overwrite the invokeCustom method where
      * the core Object related methods are filtered out.
-     *</p>
+     * </p>
+     *
      * @param proxy  the proxy
      * @param method the method
      * @param args   the arguments
@@ -104,10 +117,10 @@ public abstract class ConversionHandler implements InvocationHandler, Serializab
             try {
                 if (method.getDeclaringClass() == GroovyObject.class) {
                     switch (method.getName()) {
-                    case "getMetaClass":
-                        return getMetaClass(proxy);
-                    case "setMetaClass":
-                        return setMetaClass((MetaClass) args[0]);
+                        case "getMetaClass":
+                            return getMetaClass(proxy);
+                        case "setMetaClass":
+                            return setMetaClass((MetaClass) args[0]);
                     }
                 }
                 return invokeCustom(proxy, method, args);
@@ -189,18 +202,6 @@ public abstract class ConversionHandler implements InvocationHandler, Serializab
     @Override
     public String toString() {
         return delegate.toString();
-    }
-
-    /**
-     * Checks whether a method is a core method from java.lang.Object.
-     * Such methods often receive special treatment because they are
-     * deemed fundamental enough to not be tampered with.
-     *
-     * @param method the method to check
-     * @return true if the method is deemed to be a core method
-     */
-    public static boolean isCoreObjectMethod(Method method) {
-        return Object.class.equals(method.getDeclaringClass());
     }
 
     private MetaClass setMetaClass(MetaClass mc) {

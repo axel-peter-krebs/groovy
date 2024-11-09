@@ -166,5 +166,5 @@ public @interface Synchronized {
     /**
      * @return if a user specified lock object with the given name should be used
      */
-    String value () default "";
+    String value() default "";
 }

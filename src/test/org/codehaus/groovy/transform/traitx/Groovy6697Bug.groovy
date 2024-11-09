@@ -66,7 +66,7 @@ c.bar = 'bar'
 assert c.yell() == 'FOO!!'
         '''
 
-    assertScript '''
+        assertScript '''
 trait A {
   String foo
 }
@@ -129,7 +129,7 @@ c.bar = 'bar'
 assert c.yell() == 'FOO!!'
         '''
 
-    assertScript '''
+        assertScript '''
 trait A {
   String foo
 }

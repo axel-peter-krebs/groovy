@@ -17,8 +17,9 @@
  *  under the License.
  */
 
-import org.asciidoctor.gradle.jvm.AbstractAsciidoctorTask
+
 import org.apache.groovy.gradle.ConcurrentExecutionControlBuildService
+import org.asciidoctor.gradle.jvm.AbstractAsciidoctorTask
 
 plugins {
     id 'org.asciidoctor.jvm.convert'
@@ -67,23 +68,23 @@ asciidoctor {
         jvmArgs("--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED", "--add-opens", "java.base/java.io=ALL-UNNAMED")
     }
     attributes 'source-highlighter': 'prettify',
-            groovyversion: groovyVersion,
-            'groovy-major-version': major,
-            'groovy-minor-version': minor,
-            'groovy-patch-version': patch,
-            'groovy-full-version': groovyVersion,
-            'groovy-short-version': "${major}.${minor}",
-            doctype: 'book',
-            revnumber: groovyVersion,
-            icons: 'font',
-            toc2: '',
-            linkcss: '',
-            stylesheet: "assets/css/style.css",
-            encoding: 'utf-8',
-            toclevels: 10,
-            numbered: '',
-            sectanchors: true,
-            sectlinks: true
+        groovyversion: groovyVersion,
+        'groovy-major-version': major,
+        'groovy-minor-version': minor,
+        'groovy-patch-version': patch,
+        'groovy-full-version': groovyVersion,
+        'groovy-short-version': "${major}.${minor}",
+        doctype: 'book',
+        revnumber: groovyVersion,
+        icons: 'font',
+        toc2: '',
+        linkcss: '',
+        stylesheet: "assets/css/style.css",
+        encoding: 'utf-8',
+        toclevels: 10,
+        numbered: '',
+        sectanchors: true,
+        sectlinks: true
 }
 
 asciidoctorj {
@@ -94,9 +95,9 @@ asciidoctorj {
         it.disableDependencyVerification()
     }
     def baseUrls = [
-        jdk: 'https://docs.oracle.com/en/java/javase/11/docs/api/index.html',
-        gjdk: "https://docs.groovy-lang.org/${vers}/html/groovy-jdk/index.html",
-        gapi: "https://docs.groovy-lang.org/${vers}/html/gapi/index.html",
+        jdk  : 'https://docs.oracle.com/en/java/javase/11/docs/api/index.html',
+        gjdk : "https://docs.groovy-lang.org/${vers}/html/groovy-jdk/index.html",
+        gapi : "https://docs.groovy-lang.org/${vers}/html/gapi/index.html",
         gapid: "https://docs.groovy-lang.org/${vers}/html/gapi/",
     ]
     for (def entry : baseUrls.entrySet()) {

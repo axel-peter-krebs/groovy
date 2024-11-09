@@ -61,12 +61,12 @@ public class ClosureListExpression extends ListExpression {
         return ret;
     }
 
-    public void setVariableScope(VariableScope scope) {
-        this.scope = scope;
-    }
-
     public VariableScope getVariableScope() {
         return scope;
+    }
+
+    public void setVariableScope(VariableScope scope) {
+        this.scope = scope;
     }
 
     @Override

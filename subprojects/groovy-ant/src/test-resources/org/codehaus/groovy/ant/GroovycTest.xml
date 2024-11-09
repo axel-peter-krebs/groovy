@@ -184,7 +184,8 @@
     </target>
 
     <target name="noForkNoAntRuntime">
-        <groovyc srcdir="${srcPath}" destdir="${destPath}" includes="GroovycTest1.groovy" fork="false" includeAntRuntime="false"/>
+        <groovyc srcdir="${srcPath}" destdir="${destPath}" includes="GroovycTest1.groovy" fork="false"
+                 includeAntRuntime="false"/>
     </target>
 
     <!-- GROOVY-9197 -->

@@ -41,7 +41,7 @@ class STCwithTransformationsTest extends StaticTypeCheckingTestCase {
     @Override
     protected void configure() {
         config.addCompilationCustomizers(
-                new ASTTransformationCustomizer(new TestTransformation())
+            new ASTTransformationCustomizer(new TestTransformation())
         )
     }
 

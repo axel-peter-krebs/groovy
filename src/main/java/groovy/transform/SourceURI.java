@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  * for the source of the script.  If you want to leave relative URIs as relative, then set <code>allowRelative</code>
  * to <code>true</code>.
  * </p>
- *
+ * <p>
  * Example usage:
  * <pre class="groovyTestCase">
  * {@code @groovy.transform.SourceURI} def sourceURI

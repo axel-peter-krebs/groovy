@@ -23,8 +23,11 @@ public class GenericsTestData {
     public interface TestInterface {
         CharSequence foo();
     }
+
     public static abstract class Abstract<T extends CharSequence> implements TestInterface {
-        public T foo() { return null; }
+        public T foo() {
+            return null;
+        }
     }
 
 }

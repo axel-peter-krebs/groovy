@@ -42,7 +42,8 @@ final class StaticCompileFlowTypingTest {
         '''
     }
 
-    @Test // GROOVY-9344
+    @Test
+    // GROOVY-9344
     void testFlowTyping2() {
         assertScript '''
             class A {}
@@ -61,7 +62,8 @@ final class StaticCompileFlowTypingTest {
         '''
     }
 
-    @Test // GROOVY-9344
+    @Test
+    // GROOVY-9344
     void testFlowTyping3() {
         assertScript '''
             class A {}

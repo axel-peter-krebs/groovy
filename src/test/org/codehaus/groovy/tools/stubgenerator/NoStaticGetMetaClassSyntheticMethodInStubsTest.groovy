@@ -26,8 +26,8 @@ class NoStaticGetMetaClassSyntheticMethodInStubsTest extends StringSourcesStubTe
 
     Map<String, String> provideSources() {
         [
-                'SimplePogo.groovy': 'class SimplePogo {}',
-                'PogoUser.java': 'class PogoUser { static void main(String[] args) { new SimplePogo(); } }'
+            'SimplePogo.groovy': 'class SimplePogo {}',
+            'PogoUser.java'    : 'class PogoUser { static void main(String[] args) { new SimplePogo(); } }'
         ]
     }
 

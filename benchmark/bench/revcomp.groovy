@@ -16,19 +16,19 @@ class ReversibleByteArray extends java.io.ByteArrayOutputStream {
     static {
         for (int i = 0; i < cmp.length; i++) cmp[i] = (byte) i
 
-        cmp[(byte)'t'] = cmp[(byte)'T'] = (byte)'A'
-        cmp[(byte)'a'] = cmp[(byte)'A'] = (byte)'T'
-        cmp[(byte)'g'] = cmp[(byte)'G'] = (byte)'C'
-        cmp[(byte)'c'] = cmp[(byte)'C'] = (byte)'G'
-        cmp[(byte)'v'] = cmp[(byte)'V'] = (byte)'B'
-        cmp[(byte)'h'] = cmp[(byte)'H'] = (byte)'D'
-        cmp[(byte)'r'] = cmp[(byte)'R'] = (byte)'Y'
-        cmp[(byte)'m'] = cmp[(byte)'M'] = (byte)'K'
-        cmp[(byte)'y'] = cmp[(byte)'Y'] = (byte)'R'
-        cmp[(byte)'k'] = cmp[(byte)'K'] = (byte)'M'
-        cmp[(byte)'b'] = cmp[(byte)'B'] = (byte)'V'
-        cmp[(byte)'d'] = cmp[(byte)'D'] = (byte)'H'
-        cmp[(byte)'u'] = cmp[(byte)'U'] = (byte)'A'
+        cmp[(byte) 't'] = cmp[(byte) 'T'] = (byte) 'A'
+        cmp[(byte) 'a'] = cmp[(byte) 'A'] = (byte) 'T'
+        cmp[(byte) 'g'] = cmp[(byte) 'G'] = (byte) 'C'
+        cmp[(byte) 'c'] = cmp[(byte) 'C'] = (byte) 'G'
+        cmp[(byte) 'v'] = cmp[(byte) 'V'] = (byte) 'B'
+        cmp[(byte) 'h'] = cmp[(byte) 'H'] = (byte) 'D'
+        cmp[(byte) 'r'] = cmp[(byte) 'R'] = (byte) 'Y'
+        cmp[(byte) 'm'] = cmp[(byte) 'M'] = (byte) 'K'
+        cmp[(byte) 'y'] = cmp[(byte) 'Y'] = (byte) 'R'
+        cmp[(byte) 'k'] = cmp[(byte) 'K'] = (byte) 'M'
+        cmp[(byte) 'b'] = cmp[(byte) 'B'] = (byte) 'V'
+        cmp[(byte) 'd'] = cmp[(byte) 'D'] = (byte) 'H'
+        cmp[(byte) 'u'] = cmp[(byte) 'U'] = (byte) 'A'
     }
 
     void reverse() throws Exception {

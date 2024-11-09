@@ -23,7 +23,7 @@ import groovy.test.GroovyTestCase
 class ArrayTypeTest extends GroovyTestCase {
 
     void testClosureWithTypedParam() {
-        def c = {String[] foo-> assert !foo}
+        def c = { String[] foo -> assert !foo }
         c(null)
     }
 
@@ -31,7 +31,6 @@ class ArrayTypeTest extends GroovyTestCase {
         Object[] foo = methodThatReturnsArray()
         assert !foo
     }
-
 
 
     Object[] methodThatReturnsArray() {

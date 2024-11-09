@@ -58,10 +58,10 @@ import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
 
 public class InnerClassVisitor extends InnerClassVisitorHelper {
 
+    private final SourceUnit sourceUnit;
     private ClassNode classNode;
     private FieldNode currentField;
     private MethodNode currentMethod;
-    private final SourceUnit sourceUnit;
     private boolean inClosure, processingObjInitStatements;
 
     public InnerClassVisitor(CompilationUnit cu, SourceUnit su) {
@@ -153,7 +153,7 @@ public class InnerClassVisitor extends InnerClassVisitorHelper {
         ClassNode outerClass = innerClass.getOuterClass();
         ClassNode upperClass = innerClass.getUnresolvedSuperClass(false);
         if (upperClass.getOuterClass() != null && !upperClass.isInterface()
-                && !(upperClass.isStaticClass() || (upperClass.getModifiers() & ACC_STATIC) != 0)) {
+            && !(upperClass.isStaticClass() || (upperClass.getModifiers() & ACC_STATIC) != 0)) {
             insertThis0ToSuperCall(call, innerClass);
         }
         if (!innerClass.getDeclaredConstructors().isEmpty()) return;
@@ -184,8 +184,8 @@ public class InnerClassVisitor extends InnerClassVisitorHelper {
 
         // add the super call
         ConstructorCallExpression cce = new ConstructorCallExpression(
-                ClassNode.SUPER,
-                new TupleExpression(superCallArguments)
+            ClassNode.SUPER,
+            new TupleExpression(superCallArguments)
         );
 
         block.addStatement(new ExpressionStatement(cce));
@@ -205,7 +205,7 @@ public class InnerClassVisitor extends InnerClassVisitorHelper {
         }
 
         // for each shared variable, add a Reference field
-        for (Iterator<Variable> it = scope.getReferencedLocalVariablesIterator(); it.hasNext();) {
+        for (Iterator<Variable> it = scope.getReferencedLocalVariablesIterator(); it.hasNext(); ) {
             Variable var = it.next();
 
             VariableExpression ve = new VariableExpression(var);

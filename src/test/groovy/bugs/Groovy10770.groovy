@@ -115,7 +115,8 @@ final class Groovy10770 {
         assert err =~ /Access to java.lang.String#baz is forbidden/ // passes STC but fails during compilation
     }
 
-    @Test @NotYetImplemented
+    @Test
+    @NotYetImplemented
     void testExtensions4() {
         def err = shouldFail shell, '''
             @TypeChecked(extensions='groovy/transform/stc/UndefinedVariableTestExtension.groovy')
@@ -133,7 +134,8 @@ final class Groovy10770 {
         assert err =~ /Access to java.lang.String#baz is forbidden/ // passes STC but fails during compilation
     }
 
-    @Test // annotate method
+    @Test
+    // annotate method
     void testExtensions5() {
         assertScript shell, '''
             @TypeChecked(extensions='groovy/transform/stc/UndefinedVariableTestExtension.groovy')

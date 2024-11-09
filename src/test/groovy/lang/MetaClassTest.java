@@ -95,14 +95,14 @@ public class MetaClassTest extends GroovyTestCase {
         DymmyClass dymmyClass = new DymmyClass();
         MetaClass metaClass = InvokerHelper.getMetaClass(dymmyClass);
         Double[][] matrix2 =
+            {
                 {
-                        {
-                                Double.valueOf(35), Double.valueOf(50), Double.valueOf(120)
-                        },
-                        {
-                                Double.valueOf(75), Double.valueOf(80), Double.valueOf(150)
-                        }
-                };
+                    Double.valueOf(35), Double.valueOf(50), Double.valueOf(120)
+                },
+                {
+                    Double.valueOf(75), Double.valueOf(80), Double.valueOf(150)
+                }
+            };
         metaClass.setProperty(dymmyClass, "matrix", matrix2);
         metaClass.setProperty(dymmyClass, "matrix2", matrix2);
     }
@@ -113,14 +113,14 @@ public class MetaClassTest extends GroovyTestCase {
 
         // test int[]
         int[] ints = new int[]{
-                0, 1, 2, 3
+            0, 1, 2, 3
         };
         metaClass.setProperty(dymmyClass, "ints", ints);
         assertEquals(ints, metaClass.getProperty(dymmyClass, "ints"));
 
         // test Integer[]
         Integer[] integers = new Integer[]{
-                Integer.valueOf(0), Integer.valueOf(1), Integer.valueOf(2), Integer.valueOf(3)
+            Integer.valueOf(0), Integer.valueOf(1), Integer.valueOf(2), Integer.valueOf(3)
         };
         metaClass.setProperty(dymmyClass, "integers", integers);
         assertEquals(integers, metaClass.getProperty(dymmyClass, "integers"));
@@ -146,10 +146,10 @@ public class MetaClassTest extends GroovyTestCase {
         MetaClass metaClass = InvokerHelper.getMetaClass("some String");
 
         List methods = metaClass.getMetaMethods();
-        for (Iterator iter = methods.iterator(); iter.hasNext();) {
+        for (Iterator iter = methods.iterator(); iter.hasNext(); ) {
             MetaMethod method = (MetaMethod) iter.next();
             int count = 0;
-            for (Iterator inner = methods.iterator(); inner.hasNext();) {
+            for (Iterator inner = methods.iterator(); inner.hasNext(); ) {
                 MetaMethod runner = (MetaMethod) inner.next();
                 if (method.equals(runner)) {
                     System.out.println("runner = " + runner);
@@ -172,12 +172,11 @@ public class MetaClassTest extends GroovyTestCase {
 class DymmyClass {
     public int x = 0;
     public String y = "none";
-
+    double[][] matrix2;
+    Double[][] matrix;
     private int anInt;
     private int[] ints;
     private Integer[] integers;
-    double[][] matrix2;
-    Double[][] matrix;
 
     public Integer[] getIntegers() {
         return integers;

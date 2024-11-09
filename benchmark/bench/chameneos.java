@@ -8,11 +8,36 @@
 
 public class chameneos {
 
+    public static final Colour[] COLOURS = {Colour.BLUE, Colour.RED, Colour.YELLOW, Colour.BLUE};
     private MeetingPlace mp;
-
-    public static final Colour[] COLOURS = { Colour.BLUE, Colour.RED, Colour.YELLOW, Colour.BLUE };
-
     private Creature[] creatures = new Creature[COLOURS.length];
+
+    public chameneos(int n) throws InterruptedException {
+        int meetings = 0;
+        mp = new MeetingPlace(n);
+
+        for (int i = 0; i < COLOURS.length; i++) {
+            creatures[i] = new Creature(COLOURS[i], mp);
+            creatures[i].start();
+        }
+
+        // wait for all threads to complete
+        for (int i = 0; i < COLOURS.length; i++)
+            creatures[i].join();
+
+        // sum all the meetings
+        for (int i = 0; i < COLOURS.length; i++) {
+            meetings += creatures[i].getCreaturesMet();
+        }
+
+        System.out.println(meetings);
+    }
+
+    public static void main(String[] args) throws Exception {
+        if (args.length < 1)
+            throw new IllegalArgumentException();
+        new chameneos(Integer.parseInt(args[0]));
+    }
 
     public enum Colour {
         RED, BLUE, YELLOW, FADED
@@ -50,14 +75,14 @@ public class chameneos {
             if (colour == other)
                 return colour;
             switch (colour) {
-            case BLUE:
-                return other == Colour.RED ? Colour.YELLOW : Colour.RED;
-            case RED:
-                return other == Colour.BLUE ? Colour.YELLOW : Colour.BLUE;
-            case YELLOW:
-                return other == Colour.BLUE ? Colour.RED : Colour.BLUE;
-            default:
-                return colour;
+                case BLUE:
+                    return other == Colour.RED ? Colour.YELLOW : Colour.RED;
+                case RED:
+                    return other == Colour.BLUE ? Colour.YELLOW : Colour.BLUE;
+                case YELLOW:
+                    return other == Colour.BLUE ? Colour.RED : Colour.BLUE;
+                default:
+                    return colour;
             }
         }
 
@@ -77,12 +102,12 @@ public class chameneos {
     public class MeetingPlace {
 
         int n;
+        Creature other = null;
 
         public MeetingPlace(int n) {
             this.n = n;
         }
 
-        Creature other = null;
         public void meet(Creature c) throws InterruptedException {
 
             synchronized (this) {
@@ -102,32 +127,5 @@ public class chameneos {
                 }
             }
         }
-    }
-
-    public chameneos(int n) throws InterruptedException {
-        int meetings = 0;
-        mp = new MeetingPlace(n);
-
-        for (int i = 0; i < COLOURS.length; i++) {
-            creatures[i] = new Creature(COLOURS[i], mp);
-            creatures[i].start();
-        }
-
-        // wait for all threads to complete
-        for (int i = 0; i < COLOURS.length; i++)
-            creatures[i].join();
-
-        // sum all the meetings
-        for (int i = 0; i < COLOURS.length; i++) {
-            meetings += creatures[i].getCreaturesMet();
-        }
-
-        System.out.println(meetings);
-    }
-
-    public static void main(String[] args) throws Exception {
-        if (args.length < 1)
-            throw new IllegalArgumentException();
-        new chameneos(Integer.parseInt(args[0]));
     }
 }

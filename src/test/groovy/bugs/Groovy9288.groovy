@@ -25,7 +25,8 @@ import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
 
-@CompileStatic @RunWith(Parameterized)
+@CompileStatic
+@RunWith(Parameterized)
 final class Groovy9288 {
 
     @Parameters

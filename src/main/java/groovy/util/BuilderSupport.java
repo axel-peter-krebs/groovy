@@ -34,9 +34,9 @@ import java.util.Map;
  */
 public abstract class BuilderSupport extends GroovyObjectSupport {
 
+    private final BuilderSupport proxyBuilder;
     private Object current;
     private Closure nameMappingClosure;
-    private final BuilderSupport proxyBuilder;
 
     public BuilderSupport() {
         this.proxyBuilder = this;
@@ -46,7 +46,7 @@ public abstract class BuilderSupport extends GroovyObjectSupport {
         this.proxyBuilder = proxyBuilder;
     }
 
-    public BuilderSupport(@ClosureParams(value=SimpleType.class, options="java.lang.String") final Closure nameMappingClosure, final BuilderSupport proxyBuilder) {
+    public BuilderSupport(@ClosureParams(value = SimpleType.class, options = "java.lang.String") final Closure nameMappingClosure, final BuilderSupport proxyBuilder) {
         this.nameMappingClosure = nameMappingClosure;
         this.proxyBuilder = proxyBuilder;
     }
@@ -84,58 +84,55 @@ public abstract class BuilderSupport extends GroovyObjectSupport {
             case 0:
                 node = proxyBuilder.createNode(name);
                 break;
-            case 1:
-                {
-                    Object object = list.get(0);
-                    if (object instanceof Map) {
-                        node = proxyBuilder.createNode(name, (Map) object);
-                    } else if (object instanceof Closure) {
-                        closure = (Closure) object;
-                        node = proxyBuilder.createNode(name);
-                    } else {
-                        node = proxyBuilder.createNode(name, object);
-                    }
+            case 1: {
+                Object object = list.get(0);
+                if (object instanceof Map) {
+                    node = proxyBuilder.createNode(name, (Map) object);
+                } else if (object instanceof Closure) {
+                    closure = (Closure) object;
+                    node = proxyBuilder.createNode(name);
+                } else {
+                    node = proxyBuilder.createNode(name, object);
                 }
-                break;
-            case 2:
-                {
-                    Object object1 = list.get(0);
-                    Object object2 = list.get(1);
-                    if (object1 instanceof Map) {
-                        if (object2 instanceof Closure) {
-                            closure = (Closure) object2;
-                            node = proxyBuilder.createNode(name, (Map) object1);
-                        } else {
-                            node = proxyBuilder.createNode(name, (Map) object1, object2);
-                        }
+            }
+            break;
+            case 2: {
+                Object object1 = list.get(0);
+                Object object2 = list.get(1);
+                if (object1 instanceof Map) {
+                    if (object2 instanceof Closure) {
+                        closure = (Closure) object2;
+                        node = proxyBuilder.createNode(name, (Map) object1);
                     } else {
-                        if (object2 instanceof Closure) {
-                            closure = (Closure) object2;
-                            node = proxyBuilder.createNode(name, object1);
-                        } else if (object2 instanceof Map) {
-                            node = proxyBuilder.createNode(name, (Map) object2, object1);
-                        } else {
-                            throw new MissingMethodException(name.toString(), getClass(), list.toArray(), false);
-                        }
+                        node = proxyBuilder.createNode(name, (Map) object1, object2);
                     }
-                }
-                break;
-            case 3:
-                {
-                    Object arg0 = list.get(0);
-                    Object arg1 = list.get(1);
-                    Object arg2 = list.get(2);
-                    if (arg0 instanceof Map && arg2 instanceof Closure) {
-                        closure = (Closure) arg2;
-                        node = proxyBuilder.createNode(name, (Map) arg0, arg1);
-                    } else if (arg1 instanceof Map && arg2 instanceof Closure) {
-                        closure = (Closure) arg2;
-                        node = proxyBuilder.createNode(name, (Map) arg1, arg0);
+                } else {
+                    if (object2 instanceof Closure) {
+                        closure = (Closure) object2;
+                        node = proxyBuilder.createNode(name, object1);
+                    } else if (object2 instanceof Map) {
+                        node = proxyBuilder.createNode(name, (Map) object2, object1);
                     } else {
                         throw new MissingMethodException(name.toString(), getClass(), list.toArray(), false);
                     }
                 }
-                break;
+            }
+            break;
+            case 3: {
+                Object arg0 = list.get(0);
+                Object arg1 = list.get(1);
+                Object arg2 = list.get(2);
+                if (arg0 instanceof Map && arg2 instanceof Closure) {
+                    closure = (Closure) arg2;
+                    node = proxyBuilder.createNode(name, (Map) arg0, arg1);
+                } else if (arg1 instanceof Map && arg2 instanceof Closure) {
+                    closure = (Closure) arg2;
+                    node = proxyBuilder.createNode(name, (Map) arg1, arg0);
+                } else {
+                    throw new MissingMethodException(name.toString(), getClass(), list.toArray(), false);
+                }
+            }
+            break;
             default:
                 throw new MissingMethodException(name.toString(), getClass(), list.toArray(), false);
         }

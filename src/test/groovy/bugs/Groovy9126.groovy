@@ -25,63 +25,63 @@ final class Groovy9126 extends AbstractBytecodeTestCase {
 
     @Test
     void testUnreachableBytecode() {
-        assert compile(method:'nonVoidMethod', '''@groovy.transform.CompileStatic
+        assert compile(method: 'nonVoidMethod', '''@groovy.transform.CompileStatic
             int nonVoidMethod() {
                 1 * 1
             }
         ''').hasStrictSequence([
-                'L0',
-                'LINENUMBER 3',
-                'ICONST_1',
-                'ICONST_1',
-                'IMUL',
-                'IRETURN'
-            ])
+            'L0',
+            'LINENUMBER 3',
+            'ICONST_1',
+            'ICONST_1',
+            'IMUL',
+            'IRETURN'
+        ])
     }
 
     @Test
     void testUnreachableBytecode2() {
-        assert compile(method:'nonVoidMethod', '''@groovy.transform.CompileStatic
+        assert compile(method: 'nonVoidMethod', '''@groovy.transform.CompileStatic
             def nonVoidMethod() {
                 println 123
                 567
             }
         ''').hasStrictSequence([
-                'L0',
-                'LINENUMBER 3',
-                'ALOAD 0',
-                'BIPUSH 123',
-                'INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;',
-                'INVOKEVIRTUAL script.println (Ljava/lang/Object;)V',
-                'L1',
-                'LINENUMBER 4',
-                'SIPUSH 567',
-                'INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;',
-                'ARETURN'
-            ])
+            'L0',
+            'LINENUMBER 3',
+            'ALOAD 0',
+            'BIPUSH 123',
+            'INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;',
+            'INVOKEVIRTUAL script.println (Ljava/lang/Object;)V',
+            'L1',
+            'LINENUMBER 4',
+            'SIPUSH 567',
+            'INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;',
+            'ARETURN'
+        ])
     }
 
     @Test
     void testUnreachableBytecode3() {
-        assert compile(method:'nonVoidMethod', '''@groovy.transform.CompileStatic
+        assert compile(method: 'nonVoidMethod', '''@groovy.transform.CompileStatic
             def nonVoidMethod() {
                 println 123
                 throw new RuntimeException()
             }
         ''').hasStrictSequence([
-                'L0',
-                'LINENUMBER 3',
-                'ALOAD 0',
-                'BIPUSH 123',
-                'INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;',
-                'INVOKEVIRTUAL script.println (Ljava/lang/Object;)V',
-                'L1',
-                'LINENUMBER 4',
-                'NEW java/lang/RuntimeException',
-                'DUP',
-                'INVOKESPECIAL java/lang/RuntimeException.<init> ()V',
-                'CHECKCAST java/lang/Throwable',
-                'ATHROW'
-            ])
+            'L0',
+            'LINENUMBER 3',
+            'ALOAD 0',
+            'BIPUSH 123',
+            'INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;',
+            'INVOKEVIRTUAL script.println (Ljava/lang/Object;)V',
+            'L1',
+            'LINENUMBER 4',
+            'NEW java/lang/RuntimeException',
+            'DUP',
+            'INVOKESPECIAL java/lang/RuntimeException.<init> ()V',
+            'CHECKCAST java/lang/Throwable',
+            'ATHROW'
+        ])
     }
 }

@@ -29,6 +29,10 @@ public class NamespaceBuilder {
 
     private BuilderSupport builder;
 
+    public NamespaceBuilder(BuilderSupport builder) {
+        this.builder = builder;
+    }
+
     public static NamespaceBuilderSupport newInstance(BuilderSupport builder, String uri) {
         return new NamespaceBuilder(builder).namespace(uri);
     }
@@ -43,10 +47,6 @@ public class NamespaceBuilder {
 
     public static NamespaceBuilderSupport newInstance(Map nsMap, BuilderSupport builder) {
         return new NamespaceBuilder(builder).declareNamespace(nsMap);
-    }
-
-    public NamespaceBuilder(BuilderSupport builder) {
-        this.builder = builder;
     }
 
     public NamespaceBuilderSupport namespace(String uri) {

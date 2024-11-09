@@ -73,8 +73,8 @@ class Groovy8144Bug extends AbstractBytecodeTestCase {
             config.optimizationOptions.putAll(getOptions())
         }
 
-        assert compile([conversionAction:action, method:'m'], code).hasSequence([
-                "INVOKEVIRTUAL org/codehaus/groovy/dummy/${testClassName}.answer ()I"
+        assert compile([conversionAction: action, method: 'm'], code).hasSequence([
+            "INVOKEVIRTUAL org/codehaus/groovy/dummy/${testClassName}.answer ()I"
         ])
 
         shell.evaluate(code)

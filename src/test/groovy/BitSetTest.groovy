@@ -20,7 +20,7 @@ package groovy
 
 import groovy.test.GroovyTestCase
 
-class BitSetTest extends GroovyTestCase{
+class BitSetTest extends GroovyTestCase {
 
     void testSubscriptOperator() {
         def bitSet = new BitSet()
@@ -30,8 +30,8 @@ class BitSetTest extends GroovyTestCase{
 
         assertBitFalse bitSet, 0
         assertBitFalse bitSet, 1
-        assertBitTrue  bitSet, 2
-        assertBitTrue  bitSet, 3
+        assertBitTrue bitSet, 2
+        assertBitTrue bitSet, 3
         assertBitFalse bitSet, 4
     }
 
@@ -42,9 +42,9 @@ class BitSetTest extends GroovyTestCase{
 
         assertBitFalse bitSet, 0
         assertBitFalse bitSet, 1
-        assertBitTrue  bitSet, 2
-        assertBitTrue  bitSet, 3
-        assertBitTrue  bitSet, 4
+        assertBitTrue bitSet, 2
+        assertBitTrue bitSet, 3
+        assertBitTrue bitSet, 4
         assertBitFalse bitSet, 5
     }
 
@@ -55,9 +55,9 @@ class BitSetTest extends GroovyTestCase{
 
         assertBitFalse bitSet, 0
         assertBitFalse bitSet, 1
-        assertBitTrue  bitSet, 2
-        assertBitTrue  bitSet, 3
-        assertBitTrue  bitSet, 4
+        assertBitTrue bitSet, 2
+        assertBitTrue bitSet, 3
+        assertBitTrue bitSet, 4
         assertBitFalse bitSet, 5
     }
 
@@ -78,11 +78,11 @@ class BitSetTest extends GroovyTestCase{
 
         assertBitFalse subSet, 0
         assertBitFalse subSet, 1
-        assertBitTrue  subSet, 2
+        assertBitTrue subSet, 2
         assertBitFalse subSet, 3
         assertBitFalse subSet, 4
         assertBitFalse subSet, 5
-        assertBitTrue  subSet, 6
+        assertBitTrue subSet, 6
     }
 
     void testSubscriptAccessWithReverseRange() {
@@ -104,8 +104,8 @@ class BitSetTest extends GroovyTestCase{
         assertBitFalse subSet, 1
         assertBitFalse subSet, 2
         assertBitFalse subSet, 3
-        assertBitTrue  subSet, 4
-        assertBitTrue  subSet, 5
+        assertBitTrue subSet, 4
+        assertBitTrue subSet, 5
         assertBitFalse subSet, 6
     }
 
@@ -120,7 +120,7 @@ class BitSetTest extends GroovyTestCase{
         assertBitFalse c, 0
         assertBitFalse c, 1
         assertBitFalse c, 2
-        assertBitTrue  c, 3
+        assertBitTrue c, 3
     }
 
     void testOr() {
@@ -132,9 +132,9 @@ class BitSetTest extends GroovyTestCase{
         b[3] = true
         def c = a | b
         assertBitFalse c, 0
-        assertBitTrue  c, 1
-        assertBitTrue  c, 2
-        assertBitTrue  c, 3
+        assertBitTrue c, 1
+        assertBitTrue c, 2
+        assertBitTrue c, 3
     }
 
     void testXor() {
@@ -146,8 +146,8 @@ class BitSetTest extends GroovyTestCase{
         b[3] = true
         def c = a ^ b
         assertBitFalse c, 0
-        assertBitTrue  c, 1
-        assertBitTrue  c, 2
+        assertBitTrue c, 1
+        assertBitTrue c, 2
         assertBitFalse c, 3
     }
 
@@ -156,8 +156,8 @@ class BitSetTest extends GroovyTestCase{
         a[2] = true
         a[3] = true
         def b = ~a
-        assertBitTrue  b, 0
-        assertBitTrue  b, 1
+        assertBitTrue b, 0
+        assertBitTrue b, 1
         assertBitFalse b, 2
         assertBitFalse b, 3
     }
@@ -166,8 +166,8 @@ class BitSetTest extends GroovyTestCase{
         def testCases = [
             [1, -12L],
             [3, 271],
-            [1, (Long.MAX_VALUE/2 - 10).longValue()],
-            [1, (Long.MAX_VALUE/2 + 10).longValue()]
+            [1, (Long.MAX_VALUE / 2 - 10).longValue()],
+            [1, (Long.MAX_VALUE / 2 + 10).longValue()]
         ]
         testCases.each { int operand, long value ->
             def a = BitSet.valueOf(value)
@@ -181,7 +181,7 @@ class BitSetTest extends GroovyTestCase{
     }
 
     private assertBitTrue(bitset, index) {
-        assertTrue  'index ' + index + ' should have been true',  bitset[index]
+        assertTrue 'index ' + index + ' should have been true', bitset[index]
     }
 
     private assertBitFalse(bitset, index) {

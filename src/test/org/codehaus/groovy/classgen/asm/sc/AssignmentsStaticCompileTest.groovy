@@ -25,10 +25,11 @@ import groovy.transform.stc.STCAssignmentTest
  */
 final class AssignmentsStaticCompileTest extends STCAssignmentTest implements StaticCompilationTestSupport {
 
-    @Override // GROOVY-8707
+    @Override
+    // GROOVY-8707
     void testPlusEqualsOnProperty() {
         super.testPlusEqualsOnProperty()
         String bytecode = astTrees['C'][1]
-        assert !bytecode.contains('ScriptBytecodeAdapter.setGroovyObjectProperty') : '"c.i += 10" should use setter, not dynamic property'
+        assert !bytecode.contains('ScriptBytecodeAdapter.setGroovyObjectProperty'): '"c.i += 10" should use setter, not dynamic property'
     }
 }

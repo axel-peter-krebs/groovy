@@ -76,9 +76,9 @@ class FormatStringChecker extends GroovyTypeCheckingExtensionSupport.TypeCheckin
         macro { _.format(a) }.withConstraints { varargPlaceholder a },
         macro { sprintf(a) }.withConstraints { varargPlaceholder a },
         macro { _.sprintf(a) }.withConstraints { varargPlaceholder a },
-        macro { printf(a) }.withConstraints{ varargPlaceholder a },
-        macro { _.printf(a) }.withConstraints{ varargPlaceholder a },
-        macro { _.formatted(a) }.withConstraints{ varargPlaceholder a }
+        macro { printf(a) }.withConstraints { varargPlaceholder a },
+        macro { _.printf(a) }.withConstraints { varargPlaceholder a },
+        macro { _.formatted(a) }.withConstraints { varargPlaceholder a }
     ]
 
     @Override

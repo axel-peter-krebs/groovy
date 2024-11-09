@@ -86,6 +86,29 @@ public class GStringImpl extends GString {
         this.frozen = frozen;
     }
 
+    private static boolean checkValuesStringConstant(Object[] values) {
+        for (Object value : values) {
+            if (null == value) continue;
+            if (!(ImmutablePropertyUtils.builtinOrMarkedImmutableClass(value.getClass())
+                || toStringMarkedPure(value.getClass())
+                || (value instanceof GStringImpl && ((GStringImpl) value).cacheable))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean toStringMarkedPure(Class<?> clazz) {
+        Method toStringMethod;
+        try {
+            toStringMethod = clazz.getMethod("toString");
+        } catch (NoSuchMethodException | SecurityException e) {
+            return false;
+        }
+        return toStringMethod.isAnnotationPresent(Pure.class);
+    }
+
     @Override
     public GString plus(GString that) {
         GString thatFrozen = that instanceof GStringImpl ? ((GStringImpl) that).freeze() : that;

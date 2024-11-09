@@ -26,7 +26,7 @@ class DuplicateMethodAdditionInStubsTest extends StringSourcesStubTestCase {
 
     Map<String, String> provideSources() {
         [
-            'de/me/App4453.java': '''
+            'de/me/App4453.java'    : '''
                 package de.me;
 
                 import de.app.User4453;

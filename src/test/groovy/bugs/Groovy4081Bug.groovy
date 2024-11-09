@@ -34,5 +34,5 @@ class Groovy4081Bug extends CompilableTestSupport {
 
             new Alphabet(2)
         """
-    }    
+    }
 }

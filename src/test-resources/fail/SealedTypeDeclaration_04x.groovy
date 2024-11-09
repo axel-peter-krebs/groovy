@@ -17,5 +17,5 @@
  *  under the License.
  */
 
-non-sealed enum ShapeI { }
+non-sealed enum ShapeI {}
 

@@ -27,64 +27,64 @@ import groovy.transform.CompileStatic
 class ImplicationOperatorTest extends GroovyTestCase {
 
     void testImplicationOperation() {
-        assert false ==> false
-        assert false ==> true
-        assert !(true ==> false)
-        assert true ==> true
+        assert false == > false
+        assert false == > true
+        assert !(true == > false)
+        assert true == > true
     }
 
     void testImplicationIsRightAssociative() {
-        assert false ==> false ==> false
-        assert false ==> (false ==> false)
-        assert !((false ==> false) ==> false)
+        assert false == > false == > false
+        assert false == > (false == > false)
+        assert !((false == > false) == > false)
     }
 
     @CompileStatic
     void testImplicationOperationCS() {
-        boolean result = (false ==> false) && (false ==> true) && !(true ==> false) && (true ==> true)
+        boolean result = (false == > false) && (false == > true) && !(true == > false) && (true == > true)
         assert result
     }
 
     void testPrecedence1() {
-        def result = false ==> false ? true ==> false : true ==> true
+        def result = false == > false ? true == > false : true == > true
         assert !result
     }
 
     void testPrecedence2() {
-        def result = true ==> true || false ==> false
+        def result = true == > true || false == > false
         assert !result
     }
 
     void testPrecedence3() {
-        def result = true ==> true | false ==> false
+        def result = true == > true | false == > false
         assert !result
     }
 
     void testPrecedence4() {
-        def result = true ==> false && true ==> false
+        def result = true == > false && true == > false
         assert result
     }
 
     void testPrecedence5() {
-        def result = true ==> false & true ==> false
+        def result = true == > false & true == > false
         assert result
     }
 
     void testPrecedence6() {
-        def result = 'abc' ==~ /[a-z]+/ ==> 'abc' ==~ /[a]+/
+        def result = 'abc' ==~ /[a-z]+/ == > 'abc' ==~ /[a]+/
         assert !result
     }
 
     void testPrecedence7() {
-        def result = 'abc' ==~ /[a]+/ ==> 'abc' ==~ /[a]+/ ==> 'abc' ==~ /[a]+/
+        def result = 'abc' ==~ /[a]+/ == > 'abc' ==~ /[a]+/ == > 'abc' ==~ /[a]+/
         assert result
     }
 
     void testShortCircuiting() {
         String str = null
-        assert str != null ==> 0 <= str.length()
+        assert str != null == > 0 <= str.length()
 
         str = "abc"
-        assert str != null ==> 0 <= str.length()
+        assert str != null == > 0 <= str.length()
     }
 }

@@ -24,7 +24,7 @@ import groovy.transform.stc.SimpleType
 
 abstract class AntTestCase extends GroovyTestCase {
 
-    protected void doInTmpDir(@ClosureParams(value=SimpleType, options=['groovy.ant.AntBuilder','groovy.util.FileTreeBuilder']) Closure<Void> block) {
+    protected void doInTmpDir(@ClosureParams(value = SimpleType, options = ['groovy.ant.AntBuilder', 'groovy.util.FileTreeBuilder']) Closure<Void> block) {
         // tag::create_zip_builder[]
         def ant = new AntBuilder()
         // end::create_zip_builder[]

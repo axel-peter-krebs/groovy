@@ -35,18 +35,26 @@ import static org.objectweb.asm.Opcodes.DSUB;
 public class BinaryDoubleExpressionHelper extends BinaryLongExpressionHelper {
 
 
+    private static final MethodCaller
+        doubleArrayGet = MethodCaller.newStatic(BytecodeInterface8.class, "dArrayGet"),
+        doubleArraySet = MethodCaller.newStatic(BytecodeInterface8.class, "dArraySet");
+    private static final int[] stdOperations = {
+        DADD,           //  PLUS        200
+        DSUB,           //  MINUS       201
+        DMUL,           //  MULTIPLY    202
+        DDIV,           //  DIV         203
+        DDIV,           //  INTDIV      204
+        DREM,           //  MOD         203
+    };
+
     public BinaryDoubleExpressionHelper(WriterController controller) {
         super(controller, doubleArraySet, doubleArrayGet);
     }
 
-    private static final MethodCaller 
-        doubleArrayGet = MethodCaller.newStatic(BytecodeInterface8.class, "dArrayGet"),
-        doubleArraySet = MethodCaller.newStatic(BytecodeInterface8.class, "dArraySet");
-
     @Override
     protected boolean writeBitwiseOp(int op, boolean simulate) {
         if (!simulate) throw new GroovyBugError("should not reach here");
-        return false;   
+        return false;
     }
 
     @Override
@@ -67,22 +75,13 @@ public class BinaryDoubleExpressionHelper extends BinaryLongExpressionHelper {
     @Override
     protected boolean writeShiftOp(int type, boolean simulate) {
         if (!simulate) throw new GroovyBugError("should not reach here");
-        return false;   
+        return false;
     }
 
     @Override
     protected int getShiftOperationBytecode(int type) {
         return -1;
     }
-
-    private static final int[] stdOperations = {
-        DADD,           //  PLUS        200
-        DSUB,           //  MINUS       201
-        DMUL,           //  MULTIPLY    202
-        DDIV,           //  DIV         203
-        DDIV,           //  INTDIV      204
-        DREM,           //  MOD         203
-    };
 
     @Override
     protected int getStandardOperationBytecode(int type) {

@@ -16,7 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-do
-println 123
-println 123
-while(false)
+do println 123
+println
+123
+while (false)

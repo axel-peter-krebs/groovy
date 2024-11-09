@@ -41,12 +41,10 @@ public class BlockStatement extends Statement {
     /**
      * Creates a BlockStatement with a scope and children statements.
      *
-     * @param statements
-     *      the statements, which cannot be null or an exception occurs. No reference
-     *      to the array is held, so modifying the array later has no effect on this
-     *      class.
-     * @param scope
-     *      the scope
+     * @param statements the statements, which cannot be null or an exception occurs. No reference
+     *                   to the array is held, so modifying the array later has no effect on this
+     *                   class.
+     * @param scope      the scope
      */
     public BlockStatement(final Statement[] statements, final VariableScope scope) {
         this(new ArrayList<>(Arrays.asList(statements)), scope);
@@ -55,12 +53,10 @@ public class BlockStatement extends Statement {
     /**
      * Creates a BlockStatement with a scope and children statements.
      *
-     * @param statements
-     *      the statements. Do not pass null. If you do, no exception will occur,
-     *      but a NullPointerException will eventually occur later. Also, a reference
-     *      to the list is kept, so modifying the List later does effect this class.
-     * @param scope
-     *      the scope
+     * @param statements the statements. Do not pass null. If you do, no exception will occur,
+     *                   but a NullPointerException will eventually occur later. Also, a reference
+     *                   to the list is kept, so modifying the List later does effect this class.
+     * @param scope      the scope
      */
     public BlockStatement(final List<Statement> statements, final VariableScope scope) {
         this.statements = statements;

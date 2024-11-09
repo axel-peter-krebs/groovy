@@ -59,11 +59,11 @@ public class AryBench {
 
             for (int i = 0; i < n; i++)
                 x[i] = i + 1;
-            for (int k = 0; k < 1000; k++ )
-                for (int j = n-1; j >= 0; j--)
+            for (int k = 0; k < 1000; k++)
+                for (int j = n - 1; j >= 0; j--)
                     y[j] += x[j];
 
-            return y[0] + y[n-1];
+            return y[0] + y[n - 1];
         }
     }
 

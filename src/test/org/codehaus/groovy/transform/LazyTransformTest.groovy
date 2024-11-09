@@ -28,7 +28,7 @@ import java.lang.reflect.Modifier
  */
 class LazyTransformTest extends GroovyShellTestCase {
 
-    void testProp () {
+    void testProp() {
         def res = evaluate("""
               class X {
                 private List list = []
@@ -45,7 +45,7 @@ class LazyTransformTest extends GroovyShellTestCase {
               new X ()
         """)
 
-        assertEquals([1,2,3], res.list)
+        assertEquals([1, 2, 3], res.list)
         assertEquals([], res.internalList)
     }
 
@@ -63,8 +63,8 @@ class LazyTransformTest extends GroovyShellTestCase {
         """)
 
         assertNull res.@'$list'
-        res.op ()
-        assertEquals([1,2,3], res.list)
+        res.op()
+        assertEquals([1, 2, 3], res.list)
     }
 
     void testInit() {
@@ -81,8 +81,8 @@ class LazyTransformTest extends GroovyShellTestCase {
         """)
 
         assertNull res.@'$list'
-        res.op ()
-        assertEquals([1,2,3], res.list)
+        res.op()
+        assertEquals([1, 2, 3], res.list)
     }
 
     void testInitCompileStatic() {
@@ -99,8 +99,8 @@ class LazyTransformTest extends GroovyShellTestCase {
               new X ()
         """)
         assertNull res.@'$list'
-        res.op ()
-        assertEquals([2,3,4], res.list)
+        res.op()
+        assertEquals([2, 3, 4], res.list)
     }
 
     void testInitWithClosure() {
@@ -117,8 +117,8 @@ class LazyTransformTest extends GroovyShellTestCase {
         """)
 
         assertNull res.@'$list'
-        res.op ()
-        assertEquals([1,2,3], res.list)
+        res.op()
+        assertEquals([1, 2, 3], res.list)
     }
 
     void testStatic() {
@@ -202,9 +202,9 @@ class LazyTransformTest extends GroovyShellTestCase {
         """)
 
         assertNull res.@'$list'
-        res.op ()
+        res.op()
         assertTrue res.@'$list' instanceof SoftReference
-        assertEquals([1,2,3], res.list)
+        assertEquals([1, 2, 3], res.list)
     }
 
     void testNestedLazyCalls() {
@@ -215,7 +215,7 @@ class LazyTransformTest extends GroovyShellTestCase {
             }
             new X().biggerSet
         """)
-        assertEquals([1,2,3,4,5,6], res)
+        assertEquals([1, 2, 3, 4, 5, 6], res)
     }
 
     void testNestedStaticLazyCalls() {
@@ -226,7 +226,7 @@ class LazyTransformTest extends GroovyShellTestCase {
             }
             X.BIGGER_SET
         """)
-        assertEquals([10,20,30,40,50,60], res)
+        assertEquals([10, 20, 30, 40, 50, 60], res)
     }
 
     // GROOVY-7940

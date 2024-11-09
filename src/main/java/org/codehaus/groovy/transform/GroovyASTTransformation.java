@@ -29,13 +29,13 @@ import java.lang.annotation.Target;
  * This is an annotation on a class, currently just {@link ASTTransformation}.
  * This provides information about how and when to apply the transformation,
  * such as what phase it should be applied in.
- *
+ * <p>
  * The allowed phase is a function of how the transformation is introduced
  * into the compile process.  If the transform is automatically added via a
  * marker annotation only the SEMANTIC_ANALYSIS and latter phases are legal
  * for the phase().  This is because the annotations are not inspected until
  * after the classes are all resolved.
- *
+ * <p>
  * Also, only annotation types present during the SEMANTIC_ANALYSIS phase
  * will be handled.  Transformations adding other annotations that are
  * transformable will have those new annotations only considered in

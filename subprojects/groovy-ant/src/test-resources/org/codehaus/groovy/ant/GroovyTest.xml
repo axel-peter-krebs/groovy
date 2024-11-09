@@ -63,7 +63,8 @@
 
     <target name="groovyCodeInExternalURLResource" depends="defineTask">
         <groovy>
-            <url url="https://raw.githubusercontent.com/apache/groovy/master/subprojects/groovy-ant/src/test-resources/org/codehaus/groovy/ant/GroovyTest1.groovy"/>
+            <url
+                url="https://raw.githubusercontent.com/apache/groovy/master/subprojects/groovy-ant/src/test-resources/org/codehaus/groovy/ant/GroovyTest1.groovy"/>
         </groovy>
     </target>
 
@@ -118,7 +119,7 @@
         <groovy>
             // should produce an error message
             def f = {
-                t.notExisting()
+            t.notExisting()
             }
             f()
         </groovy>

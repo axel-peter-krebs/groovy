@@ -40,37 +40,6 @@ import java.util.Set;
  * This interface is for internal use only!
  */
 public interface VMPlugin {
-    void setAdditionalClassInformation(ClassNode c);
-    Class[] getPluginDefaultGroovyMethods();
-    Class[] getPluginStaticGroovyMethods();
-    void configureAnnotationNodeFromDefinition(AnnotationNode definition, AnnotationNode root);
-    void configureAnnotation(AnnotationNode an);
-    void configureClassNode(CompileUnit compileUnit, ClassNode classNode);
-    void invalidateCallSites();
-    /**
-     * Returns a handle with bound receiver to invokeSpecial the given method.
-     * This method will require at least Java 7, but since the source has to compile
-     * on older Java versions as well it is not marked to return a MethodHandle and
-     * uses Object instead
-     * @return  null in case of jdk&lt;7, otherwise a handle that takes the method call
-     *          arguments for the invokespecial call
-     */
-    Object getInvokeSpecialHandle(Method m, Object receiver);
-
-    /**
-     * Invokes a handle produced by #getInvokeSpecialdHandle
-     * @param handle the handle
-     * @param args arguments for the method call, can be empty but not null
-     * @return the result of the method call
-     */
-    Object invokeHandle(Object handle, Object[] args) throws Throwable;
-
-    /**
-     * Gives the version the plugin is made for
-     * @return 7 for jdk7, 8 for jdk8, 9 for jdk9 or higher
-     */
-    int getVersion();
-
     /**
      * Returns java version, e.g. 1.8, 9, 11, 17
      *
@@ -102,20 +71,62 @@ public interface VMPlugin {
         }
     }
 
+    void setAdditionalClassInformation(ClassNode c);
+
+    Class[] getPluginDefaultGroovyMethods();
+
+    Class[] getPluginStaticGroovyMethods();
+
+    void configureAnnotationNodeFromDefinition(AnnotationNode definition, AnnotationNode root);
+
+    void configureAnnotation(AnnotationNode an);
+
+    void configureClassNode(CompileUnit compileUnit, ClassNode classNode);
+
+    void invalidateCallSites();
+
+    /**
+     * Returns a handle with bound receiver to invokeSpecial the given method.
+     * This method will require at least Java 7, but since the source has to compile
+     * on older Java versions as well it is not marked to return a MethodHandle and
+     * uses Object instead
+     *
+     * @return null in case of jdk&lt;7, otherwise a handle that takes the method call
+     * arguments for the invokespecial call
+     */
+    Object getInvokeSpecialHandle(Method m, Object receiver);
+
+    /**
+     * Invokes a handle produced by #getInvokeSpecialdHandle
+     *
+     * @param handle the handle
+     * @param args   arguments for the method call, can be empty but not null
+     * @return the result of the method call
+     */
+    Object invokeHandle(Object handle, Object[] args) throws Throwable;
+
+    /**
+     * Gives the version the plugin is made for
+     *
+     * @return 7 for jdk7, 8 for jdk8, 9 for jdk9 or higher
+     */
+    int getVersion();
+
     /**
      * Check whether invoking {@link AccessibleObject#setAccessible(boolean)} on the accessible object will be completed successfully
      *
      * @param accessibleObject the accessible object to check
-     * @param callerClass the callerClass to invoke {@code setAccessible}
+     * @param callerClass      the callerClass to invoke {@code setAccessible}
      * @return the check result
      */
     boolean checkCanSetAccessible(AccessibleObject accessibleObject, Class<?> callerClass);
 
     /**
      * check whether the member can be accessed or not
-     * @param callerClass callerClass the callerClass to invoke {@code setAccessible}
-     * @param declaringClass the type of member owner
-     * @param memberModifiers modifiers of member
+     *
+     * @param callerClass        callerClass the callerClass to invoke {@code setAccessible}
+     * @param declaringClass     the type of member owner
+     * @param memberModifiers    modifiers of member
      * @param allowIllegalAccess whether to allow illegal access
      * @return the result of checking
      */
@@ -127,7 +138,7 @@ public interface VMPlugin {
      *
      * @param ao the accessible object
      * @return {@code true} if the {@code accessible} flag is set to {@code true};
-     *         {@code false} if access cannot be enabled.
+     * {@code false} if access cannot be enabled.
      * @throws SecurityException if the request is denied by the security manager
      */
     boolean trySetAccessible(AccessibleObject ao);
@@ -135,9 +146,9 @@ public interface VMPlugin {
     /**
      * transform meta method
      *
-     * @param metaClass metaclass
+     * @param metaClass  metaclass
      * @param metaMethod the original meta method
-     * @param caller caller class, whose method sets accessible for methods
+     * @param caller     caller class, whose method sets accessible for methods
      * @return the transformed meta method
      */
     MetaMethod transformMetaMethod(MetaClass metaClass, MetaMethod metaMethod, Class<?> caller);
@@ -147,7 +158,7 @@ public interface VMPlugin {
      * which support that capability, otherwise the action is performed ignoring privileges.
      *
      * @param action the action to be performed
-     * @param <T> the type of the value returned by the PrivilegedAction's run method
+     * @param <T>    the type of the value returned by the PrivilegedAction's run method
      * @return the value returned by the action's run method
      */
     @Deprecated
@@ -158,7 +169,7 @@ public interface VMPlugin {
      * which support that capability, otherwise the action is performed ignoring privileges.
      *
      * @param action the action to be performed
-     * @param <T> the type of the value returned by the PrivilegedAction's run method
+     * @param <T>    the type of the value returned by the PrivilegedAction's run method
      * @return the value returned by the action's run method
      */
     @Deprecated
@@ -167,7 +178,7 @@ public interface VMPlugin {
     /**
      * transform meta method.
      *
-     * @param metaClass metaclass
+     * @param metaClass  metaclass
      * @param metaMethod the original meta method
      * @return the transformed meta method
      */

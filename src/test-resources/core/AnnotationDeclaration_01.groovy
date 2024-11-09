@@ -25,7 +25,7 @@ import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Target
 
 @Canonical(
-        includes = ['a', 'b'], excludes = ['c']
+    includes = ['a', 'b'], excludes = ['c']
 )
 @Documented
 @Retention(RetentionPolicy.SOURCE)
@@ -37,6 +37,7 @@ import java.lang.annotation.Target
 
     /* This is a comment
     */
+
     String name() default ""
 
     /**
@@ -45,7 +46,8 @@ import java.lang.annotation.Target
     boolean synchronize() default false
 
     boolean synchronize2() default
-            false
+
+    false
 }
 
 @interface a {

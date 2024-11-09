@@ -80,18 +80,6 @@ public class LazyASTTransformation extends AbstractASTTransformation {
 
     private static final ClassNode SOFT_REF = makeWithoutCaching(SoftReference.class, false);
 
-    @Override
-    public void visit(ASTNode[] nodes, SourceUnit source) {
-        init(nodes, source);
-        AnnotatedNode parent = (AnnotatedNode) nodes[1];
-        AnnotationNode node = (AnnotationNode) nodes[0];
-
-        if (parent instanceof FieldNode) {
-            final FieldNode fieldNode = (FieldNode) parent;
-            visitField(this, node, fieldNode);
-        }
-    }
-
     static void visitField(ErrorCollecting xform, AnnotationNode node, FieldNode fieldNode) {
         final Expression soft = node.getMember("soft");
         final Expression init = getInitExpr(xform, fieldNode);
@@ -141,9 +129,9 @@ public class LazyASTTransformation extends AbstractASTTransformation {
         // currently we have gone with (2) for simplicity with only a slight memory footprint increase in the declaring class
         final String initializeMethodName = (fullName + "_initExpr").replace('.', '_');
         addGeneratedMethod(declaringClass, initializeMethodName, ACC_PRIVATE | ACC_STATIC | ACC_FINAL, fieldType,
-                Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, returnS(initExpr));
+            Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, returnS(initExpr));
         holderClass.addField(innerFieldName, ACC_PRIVATE | ACC_STATIC | ACC_FINAL, fieldType,
-                callX(declaringClass, initializeMethodName));
+            callX(declaringClass, initializeMethodName));
 
         final Expression innerField = propX(classX(holderClass), innerFieldName);
         declaringClass.getModule().addClass(holderClass);
@@ -155,16 +143,16 @@ public class LazyASTTransformation extends AbstractASTTransformation {
         final VariableExpression localVar = localVarX(fieldNode.getName() + "_local");
         body.addStatement(declS(localVar, fieldExpr));
         body.addStatement(ifElseS(
-                notNullX(localVar),
-                returnS(localVar),
-                new SynchronizedStatement(
-                        syncTarget(fieldNode),
-                        ifElseS(
-                                notNullX(fieldExpr),
-                                returnS(fieldExpr),
-                                returnS(assignX(fieldExpr, initExpr))
-                        )
+            notNullX(localVar),
+            returnS(localVar),
+            new SynchronizedStatement(
+                syncTarget(fieldNode),
+                ifElseS(
+                    notNullX(fieldExpr),
+                    returnS(fieldExpr),
+                    returnS(assignX(fieldExpr, initExpr))
                 )
+            )
         ));
     }
 
@@ -214,18 +202,18 @@ public class LazyASTTransformation extends AbstractASTTransformation {
         body.addStatement(declS(resExpr, callExpression));
 
         final Statement mainIf = ifElseS(notNullX(resExpr), stmt(resExpr), block(
-                assignS(resExpr, initExpr),
-                assignS(fieldExpr, ctorX(SOFT_REF, resExpr)),
-                stmt(resExpr)));
+            assignS(resExpr, initExpr),
+            assignS(fieldExpr, ctorX(SOFT_REF, resExpr)),
+            stmt(resExpr)));
 
         if (fieldNode.isVolatile()) {
             body.addStatement(ifElseS(
-                    notNullX(resExpr),
-                    stmt(resExpr),
-                    new SynchronizedStatement(syncTarget(fieldNode), block(
-                            assignS(resExpr, callExpression),
-                            mainIf)
-                    )
+                notNullX(resExpr),
+                stmt(resExpr),
+                new SynchronizedStatement(syncTarget(fieldNode), block(
+                    assignS(resExpr, callExpression),
+                    mainIf)
+                )
             ));
         } else {
             body.addStatement(mainIf);
@@ -240,9 +228,9 @@ public class LazyASTTransformation extends AbstractASTTransformation {
         final Parameter parameter = param(type, "value");
         final Expression paramExpr = varX(parameter);
         body.addStatement(ifElseS(
-                notNullX(paramExpr),
-                assignS(fieldExpr, ctorX(SOFT_REF, paramExpr)),
-                assignS(fieldExpr, nullX())
+            notNullX(paramExpr),
+            assignS(fieldExpr, ctorX(SOFT_REF, paramExpr)),
+            assignS(fieldExpr, nullX())
         ));
         int visibility = ACC_PUBLIC;
         if (fieldNode.isStatic()) visibility |= ACC_STATIC;
@@ -261,11 +249,23 @@ public class LazyASTTransformation extends AbstractASTTransformation {
         if (initExpr == null || initExpr instanceof EmptyExpression) {
             if (fieldNode.getType().isAbstract()) {
                 xform.addError("You cannot lazily initialize '" + fieldNode.getName() + "' from the abstract class '" +
-                        fieldNode.getType().getName() + "'", fieldNode);
+                    fieldNode.getType().getName() + "'", fieldNode);
             }
             initExpr = ctorX(fieldNode.getType());
         }
 
         return initExpr;
+    }
+
+    @Override
+    public void visit(ASTNode[] nodes, SourceUnit source) {
+        init(nodes, source);
+        AnnotatedNode parent = (AnnotatedNode) nodes[1];
+        AnnotationNode node = (AnnotationNode) nodes[0];
+
+        if (parent instanceof FieldNode) {
+            final FieldNode fieldNode = (FieldNode) parent;
+            visitField(this, node, fieldNode);
+        }
     }
 }

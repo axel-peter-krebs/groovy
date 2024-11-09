@@ -20,24 +20,24 @@ package org.codehaus.groovy.runtime
 
 import groovy.test.GroovyTestCase
 
-class PerInstanceMetaClassTest extends GroovyTestCase{
+class PerInstanceMetaClassTest extends GroovyTestCase {
 
     protected void setUp() {
         Integer.metaClass = null
     }
 
-    void testEMC () {
+    void testEMC() {
         def x = Integer.valueOf(22)
         def FOUR = Integer.valueOf(4)
         ExpandoMetaClass emc = new ExpandoMetaClass(Integer, false, true).define {
-            plus {Number arg ->
+            plus { Number arg ->
                 Integer.metaClass.invokeMethod(delegate / 2, "plus", 2 * arg)
             }
 
             _100 = 100
 
-            'static'{
-                addTwice {Number u ->
+            'static' {
+                addTwice { Number u ->
                     delegate + 2 * u
                 }
 
@@ -50,13 +50,13 @@ class PerInstanceMetaClassTest extends GroovyTestCase{
                 }
             }
         }
-        emc.initialize ()
+        emc.initialize()
         x.metaClass = emc
 
         assertEquals 123, x + 6 + x._100
         assertEquals 211, x.addTwice(50)
         assertEquals 127, 5 + x + x._100
-        assertEquals 3, x.divFour (12)
+        assertEquals 3, x.divFour(12)
         assertEquals 55, x.mul(5)
 
         assertEquals 23, Integer.valueOf(10 + 12) + 6  // (10+12) == Integer.valueOf(22) !!!!!!
@@ -67,28 +67,28 @@ class PerInstanceMetaClassTest extends GroovyTestCase{
         assertEquals 28, x + 6
 
 
-        x.metaClass.static.addTwice = {Number u ->
-                    delegate + 2 * u
-                }
+        x.metaClass.static.addTwice = { Number u ->
+            delegate + 2 * u
+        }
 
         x.metaClass.static.mul = { u ->
-                    11 * u
-                }
+            11 * u
+        }
 
         x.metaClass.static.divFour << { u ->
             u / FOUR
         }
 
-        x.metaClass.plus = {Number arg ->
-                Integer.metaClass.invokeMethod(delegate / 2, "plus", 2 * arg)
-            }
+        x.metaClass.plus = { Number arg ->
+            Integer.metaClass.invokeMethod(delegate / 2, "plus", 2 * arg)
+        }
 
         x.metaClass._100 = 100
 
         assertEquals 123, x + 6 + x._100
         assertEquals 211, x.addTwice(50)
         assertEquals 127, 5 + x + x._100
-        assertEquals 3, x.divFour (12)
+        assertEquals 3, x.divFour(12)
         assertEquals 55, x.mul(5)
         assertEquals 23, Integer.valueOf(10 + 12) + 6  // (10+12) == Integer.valueOf(22) !!!!!!
 
@@ -99,15 +99,15 @@ class PerInstanceMetaClassTest extends GroovyTestCase{
 
     static def CONST = 2
 
-    void testMetaClassMethod () {
+    void testMetaClassMethod() {
         def x = Integer.valueOf(22)
         x.metaClass {
             // define method
             plus { Number arg ->
-               Integer.metaClass.invokeMethod( delegate / CONST, "plus", 2*arg )
+                Integer.metaClass.invokeMethod(delegate / CONST, "plus", 2 * arg)
             }
 
-             // define property
+            // define property
             _100 = 100
 
             'static' {
@@ -126,7 +126,7 @@ class PerInstanceMetaClassTest extends GroovyTestCase{
         x.metaClass {
             // add method
             minus { Number arg ->
-               delegate + arg
+                delegate + arg
             }
         }
 
@@ -138,7 +138,7 @@ class PerInstanceMetaClassTest extends GroovyTestCase{
         assertEquals 16, x - 6
     }
 
-    void testBean () {
+    void testBean() {
         def bean = new PimctBean()
 
         assertEquals 24, bean.value
@@ -157,7 +157,7 @@ class PerInstanceMetaClassTest extends GroovyTestCase{
             }
 
         }
-        bean.metaClass.setValue = { v -> delegate.@value = 2*v }
+        bean.metaClass.setValue = { v -> delegate.@value = 2 * v }
 
         assertEquals 24, bean.value
         bean.value = 10
@@ -166,7 +166,7 @@ class PerInstanceMetaClassTest extends GroovyTestCase{
         bean.metaClass = null
         shouldFail(GroovyRuntimeException) {
             bean.metaClass {
-                setValue << { v -> delegate.@value = 3*v }
+                setValue << { v -> delegate.@value = 3 * v }
             }
         }
 
@@ -175,20 +175,20 @@ class PerInstanceMetaClassTest extends GroovyTestCase{
             prop = 12
 
             foo << { ->
-                3*prop
+                3 * prop
             }
         }
         bean.prop = 7
-        assertEquals 21, bean.foo ()
+        assertEquals 21, bean.foo()
     }
 
-    void testClass () {
+    void testClass() {
         def FOUR = Integer.valueOf(4)
 
         Integer.metaClass {
             'static' {
                 fib { Number n ->
-                    Integer.valueOf(n.fib ())
+                    Integer.valueOf(n.fib())
                 }
             }
 
@@ -197,15 +197,15 @@ class PerInstanceMetaClassTest extends GroovyTestCase{
             fib { ->
                 def n = delegate
                 if (n == 0)
-                  return 1;
+                    return 1;
                 if (n == 1)
-                  return 1
+                    return 1
                 else
-                  return fib(Integer.valueOf(n-1)) + fib(Integer.valueOf(n-2))
+                    return fib(Integer.valueOf(n - 1)) + fib(Integer.valueOf(n - 2))
             }
         }
 
-        assertEquals( 3, Integer.fib(3))
+        assertEquals(3, Integer.fib(3))
 
         FOUR.metaClass {
             fib { ->
@@ -213,7 +213,7 @@ class PerInstanceMetaClassTest extends GroovyTestCase{
             }
         }
 
-        assertEquals( 13, Integer.fib(5))
+        assertEquals(13, Integer.fib(5))
 
         FOUR.metaClass {
             fib { ->
@@ -221,18 +221,18 @@ class PerInstanceMetaClassTest extends GroovyTestCase{
             }
         }
 
-        assertEquals( 8, Integer.fib(5))
+        assertEquals(8, Integer.fib(5))
         FOUR.metaClass = null
     }
 
-    void testCategory () {
+    void testCategory() {
         def FOUR = Integer.valueOf(4)
 
         Integer.metaClass {
             mixin Fib
         }
 
-        assertEquals (3, 3.fib())
+        assertEquals(3, 3.fib())
 
         Integer.metaClass = null
 
@@ -243,44 +243,44 @@ class PerInstanceMetaClassTest extends GroovyTestCase{
         FOUR.metaClass {
             mixin FibInst
         }
-        assertEquals (15, FOUR.fib())
+        assertEquals(15, FOUR.fib())
         FOUR.metaClass = null
     }
 
-    void testInteger () {
-       ExpandoMetaClass.enableGlobally()
+    void testInteger() {
+        ExpandoMetaClass.enableGlobally()
 
-       Integer.metaClass = null
+        Integer.metaClass = null
 
-       def foo =  { x ->
-           return x._100
-       }
-        shouldFail {
-          assert foo(1) == 100
+        def foo = { x ->
+            return x._100
         }
-       def x = Integer.valueOf(22)
-       ExpandoMetaClass emc = new ExpandoMetaClass(Integer, false, true).define {
-           _100 = 100
-       }
-       emc.initialize ()
         shouldFail {
-          assert foo(1) == 100
+            assert foo(1) == 100
+        }
+        def x = Integer.valueOf(22)
+        ExpandoMetaClass emc = new ExpandoMetaClass(Integer, false, true).define {
+            _100 = 100
+        }
+        emc.initialize()
+        shouldFail {
+            assert foo(1) == 100
         }
         x.metaClass = emc
         shouldFail {
-          assert foo(1) == 100
+            assert foo(1) == 100
         }
 
-       assert foo(x) == 100
-       assert x._100 == 100
-       shouldFail {
-         assert foo(1) == 100
-       }
-       shouldFail {
+        assert foo(x) == 100
+        assert x._100 == 100
+        shouldFail {
+            assert foo(1) == 100
+        }
+        shouldFail {
             assert 1._100 == 100
-       }
+        }
 
-       ExpandoMetaClass.disableGlobally()
+        ExpandoMetaClass.disableGlobally()
     }
 }
 
@@ -289,16 +289,16 @@ class PimctBean {
 }
 
 class Fib {
-    static int fib (Integer self) {
+    static int fib(Integer self) {
         if (self == 0 || self == 1)
-          return 1
+            return 1
         else
-          return (self-1).fib() + (self-2).fib ()
+            return (self - 1).fib() + (self - 2).fib()
     }
 }
 
 class FibInst {
-    static int fib (Integer self) {
+    static int fib(Integer self) {
         15
     }
 }

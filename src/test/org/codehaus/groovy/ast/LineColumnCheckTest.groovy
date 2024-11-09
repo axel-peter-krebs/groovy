@@ -185,7 +185,7 @@ class LineCheckVisitor extends ClassCodeVisitorSupport {
     protected void visitGenerics(ClassNode node) {
         if (node.isUsingGenerics()) {
             GenericsType[] generics = node.getGenericsTypes()
-            if(generics == null) return
+            if (generics == null) return
             for (GenericsType genericType : generics) {
                 visitNode(genericType)
                 visitType(genericType.getType())
@@ -208,7 +208,7 @@ class LineCheckVisitor extends ClassCodeVisitorSupport {
     protected void visitNode(ASTNode node) {
         String nodeName = node.getClass().getName()
         //get classname without package
-        nodeName = nodeName.substring(nodeName.lastIndexOf('.') + 1,nodeName.length())
+        nodeName = nodeName.substring(nodeName.lastIndexOf('.') + 1, nodeName.length())
         astString.append('[')
         astString.append(nodeName)
         astString.append(',(')
@@ -331,6 +331,7 @@ class LineCheckVisitor extends ClassCodeVisitorSupport {
     /*
      * Expressions
      */
+
     void visitMethodCallExpression(MethodCallExpression call) {
         visitNode(call)
         super.visitMethodCallExpression(call)

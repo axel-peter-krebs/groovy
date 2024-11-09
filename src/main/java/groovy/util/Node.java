@@ -52,36 +52,17 @@ import java.util.Stack;
  */
 public class Node implements Serializable, Cloneable {
 
+    private static final long serialVersionUID = 4121134753270542643L;
+
     static {
         // wrap the standard MetaClass with the delegate
         setMetaClass(GroovySystem.getMetaClassRegistry().getMetaClass(Node.class), Node.class);
     }
 
-    private static final long serialVersionUID = 4121134753270542643L;
-
-    private Node parent;
-
     private final Object name;
-
     private final Map attributes;
-
+    private Node parent;
     private Object value;
-
-    /**
-     * Creates a new Node with the same name, no parent, shallow cloned attributes
-     * and if the value is a NodeList, a (deep) clone of those nodes.
-     *
-     * @return the clone
-     */
-    @Override
-    public Object clone() {
-        Object newValue = value;
-        if (value instanceof NodeList) {
-            NodeList nodes = (NodeList) value;
-            newValue = nodes.clone();
-        }
-        return new Node(null, name, new HashMap(attributes), newValue);
-    }
 
     /**
      * Creates a new Node named <code>name</code> and if a parent is supplied, adds
@@ -151,134 +132,6 @@ public class Node implements Serializable, Cloneable {
             parent.setValue(parentList);
         }
         return parentList;
-    }
-
-    /**
-     * Appends a child to the current node.
-     *
-     * @param child the child to append
-     * @return <code>true</code>
-     */
-    public boolean append(Node child) {
-        child.setParent(this);
-        return getParentList(this).add(child);
-    }
-
-    /**
-     * Removes a child of the current node.
-     *
-     * @param child the child to remove
-     * @return <code>true</code> if the param was a child of the current node
-     */
-    public boolean remove(Node child) {
-        child.setParent(null);
-        return getParentList(this).remove(child);
-    }
-
-    /**
-     * Creates a new node as a child of the current node.
-     *
-     * @param name the name of the new node
-     * @param attributes the attributes of the new node
-     * @return the newly created <code>Node</code>
-     */
-    public Node appendNode(Object name, Map attributes) {
-        return new Node(this, name, attributes);
-    }
-
-    /**
-     * Creates a new node as a child of the current node.
-     *
-     * @param name the name of the new node
-     * @return the newly created <code>Node</code>
-     */
-    public Node appendNode(Object name) {
-        return new Node(this, name);
-    }
-
-    /**
-     * Creates a new node as a child of the current node.
-     *
-     * @param name the name of the new node
-     * @param value the value of the new node
-     * @return the newly created <code>Node</code>
-     */
-    public Node appendNode(Object name, Object value) {
-        return new Node(this, name, value);
-    }
-
-    /**
-     * Creates a new node as a child of the current node.
-     *
-     * @param name the name of the new node
-     * @param attributes the attributes of the new node
-     * @param value the value of the new node
-     * @return the newly created <code>Node</code>
-     */
-    public Node appendNode(Object name, Map attributes, Object value) {
-        return new Node(this, name, attributes, value);
-    }
-
-    /**
-     * Replaces the current node with nodes defined using builder-style notation via a Closure.
-     *
-     * @param c A Closure defining the new nodes using builder-style notation.
-     * @return the original now replaced node
-     */
-    public Node replaceNode(Closure c) {
-        if (parent() == null) {
-            throw new UnsupportedOperationException("Replacing the root node is not supported");
-        }
-        appendNodes(c);
-        getParentList(parent()).remove(this);
-        this.setParent(null);
-        return this;
-    }
-
-    /**
-     * Replaces the current node with the supplied node.
-     *
-     * @param n the new Node
-     * @return the original now replaced node
-     */
-    public Node replaceNode(Node n) {
-        if (parent() == null) {
-            throw new UnsupportedOperationException("Replacing the root node is not supported");
-        }
-        List tail = getTail();
-        parent().appendNode(n.name(), n.attributes(), n.value());
-        parent().children().addAll(tail);
-        getParentList(parent()).remove(this);
-        this.setParent(null);
-        return this;
-    }
-
-    private List getTail() {
-        List list = parent().children();
-        int afterIndex = list.indexOf(this);
-        List tail = new ArrayList(list.subList(afterIndex + 1, list.size()));
-        list.subList(afterIndex + 1, list.size()).clear();
-        return tail;
-    }
-
-    /**
-     * Adds sibling nodes (defined using builder-style notation via a Closure) after the current node.
-     *
-     * @param c A Closure defining the new sibling nodes to add using builder-style notation.
-     */
-    public void plus(Closure c) {
-        if (parent() == null) {
-            throw new UnsupportedOperationException("Adding sibling nodes to the root node is not supported");
-        }
-        appendNodes(c);
-    }
-
-    private void appendNodes(Closure c) {
-        List tail = getTail();
-        for (Node child : buildChildrenFromClosure(c)) {
-            parent().appendNode(child.name(), child.attributes(), child.value());
-        }
-        parent().children().addAll(tail);
     }
 
     private static List<Node> buildChildrenFromClosure(Closure c) {
@@ -353,6 +206,157 @@ public class Node implements Serializable, Cloneable {
                 }
             }
         });
+    }
+
+    private static <T> T callClosureForNode(Closure<T> closure, Object node, int level) {
+        if (closure.getMaximumNumberOfParameters() == 2) {
+            return closure.call(node, level);
+        }
+        return closure.call(node);
+    }
+
+    /**
+     * Creates a new Node with the same name, no parent, shallow cloned attributes
+     * and if the value is a NodeList, a (deep) clone of those nodes.
+     *
+     * @return the clone
+     */
+    @Override
+    public Object clone() {
+        Object newValue = value;
+        if (value instanceof NodeList) {
+            NodeList nodes = (NodeList) value;
+            newValue = nodes.clone();
+        }
+        return new Node(null, name, new HashMap(attributes), newValue);
+    }
+
+    /**
+     * Appends a child to the current node.
+     *
+     * @param child the child to append
+     * @return <code>true</code>
+     */
+    public boolean append(Node child) {
+        child.setParent(this);
+        return getParentList(this).add(child);
+    }
+
+    /**
+     * Removes a child of the current node.
+     *
+     * @param child the child to remove
+     * @return <code>true</code> if the param was a child of the current node
+     */
+    public boolean remove(Node child) {
+        child.setParent(null);
+        return getParentList(this).remove(child);
+    }
+
+    /**
+     * Creates a new node as a child of the current node.
+     *
+     * @param name       the name of the new node
+     * @param attributes the attributes of the new node
+     * @return the newly created <code>Node</code>
+     */
+    public Node appendNode(Object name, Map attributes) {
+        return new Node(this, name, attributes);
+    }
+
+    /**
+     * Creates a new node as a child of the current node.
+     *
+     * @param name the name of the new node
+     * @return the newly created <code>Node</code>
+     */
+    public Node appendNode(Object name) {
+        return new Node(this, name);
+    }
+
+    /**
+     * Creates a new node as a child of the current node.
+     *
+     * @param name  the name of the new node
+     * @param value the value of the new node
+     * @return the newly created <code>Node</code>
+     */
+    public Node appendNode(Object name, Object value) {
+        return new Node(this, name, value);
+    }
+
+    /**
+     * Creates a new node as a child of the current node.
+     *
+     * @param name       the name of the new node
+     * @param attributes the attributes of the new node
+     * @param value      the value of the new node
+     * @return the newly created <code>Node</code>
+     */
+    public Node appendNode(Object name, Map attributes, Object value) {
+        return new Node(this, name, attributes, value);
+    }
+
+    /**
+     * Replaces the current node with nodes defined using builder-style notation via a Closure.
+     *
+     * @param c A Closure defining the new nodes using builder-style notation.
+     * @return the original now replaced node
+     */
+    public Node replaceNode(Closure c) {
+        if (parent() == null) {
+            throw new UnsupportedOperationException("Replacing the root node is not supported");
+        }
+        appendNodes(c);
+        getParentList(parent()).remove(this);
+        this.setParent(null);
+        return this;
+    }
+
+    /**
+     * Replaces the current node with the supplied node.
+     *
+     * @param n the new Node
+     * @return the original now replaced node
+     */
+    public Node replaceNode(Node n) {
+        if (parent() == null) {
+            throw new UnsupportedOperationException("Replacing the root node is not supported");
+        }
+        List tail = getTail();
+        parent().appendNode(n.name(), n.attributes(), n.value());
+        parent().children().addAll(tail);
+        getParentList(parent()).remove(this);
+        this.setParent(null);
+        return this;
+    }
+
+    private List getTail() {
+        List list = parent().children();
+        int afterIndex = list.indexOf(this);
+        List tail = new ArrayList(list.subList(afterIndex + 1, list.size()));
+        list.subList(afterIndex + 1, list.size()).clear();
+        return tail;
+    }
+
+    /**
+     * Adds sibling nodes (defined using builder-style notation via a Closure) after the current node.
+     *
+     * @param c A Closure defining the new sibling nodes to add using builder-style notation.
+     */
+    public void plus(Closure c) {
+        if (parent() == null) {
+            throw new UnsupportedOperationException("Adding sibling nodes to the root node is not supported");
+        }
+        appendNodes(c);
+    }
+
+    private void appendNodes(Closure c) {
+        List tail = getTail();
+        for (Node child : buildChildrenFromClosure(c)) {
+            parent().appendNode(child.name(), child.attributes(), child.value());
+        }
+        parent().children().addAll(tail);
     }
 
     /**
@@ -596,7 +600,8 @@ public class Node implements Serializable, Cloneable {
                 Node childNode = (Node) child;
                 List children = childNode.depthFirstRest(preorder);
                 if (preorder) answer.add(childNode);
-                if (children.size() > 1 || (children.size() == 1 && !(children.get(0) instanceof String))) answer.addAll(children);
+                if (children.size() > 1 || (children.size() == 1 && !(children.get(0) instanceof String)))
+                    answer.addAll(children);
                 if (!preorder) answer.add(childNode);
             } else if (child instanceof String) {
                 answer.add(child);
@@ -625,8 +630,8 @@ public class Node implements Serializable, Cloneable {
      * A boolean 'preorder' options is supported.
      *
      * @param options map containing options
-     * @param c the closure to run for each node (a one or two parameter can be used; if one parameter is given the
-     *          closure will be passed the node, for a two param closure the second parameter will be the level).
+     * @param c       the closure to run for each node (a one or two parameter can be used; if one parameter is given the
+     *                closure will be passed the node, for a two param closure the second parameter will be the level).
      * @since 2.5.0
      */
     public void depthFirst(Map<String, Object> options, Closure c) {
@@ -634,13 +639,6 @@ public class Node implements Serializable, Cloneable {
         if (preorder) callClosureForNode(c, this, 1);
         depthFirstRest(preorder, 2, c);
         if (!preorder) callClosureForNode(c, this, 1);
-    }
-
-    private static <T> T callClosureForNode(Closure<T> closure, Object node, int level) {
-        if (closure.getMaximumNumberOfParameters() == 2) {
-            return closure.call(node, level);
-        }
-        return closure.call(node);
     }
 
     private void depthFirstRest(boolean preorder, int level, Closure c) {
@@ -697,7 +695,8 @@ public class Node implements Serializable, Cloneable {
                 if (child instanceof Node) {
                     Node childNode = (Node) child;
                     List children = childNode.getDirectChildren();
-                    if (children.size() > 1 || (children.size() == 1 && !(children.get(0) instanceof String))) nextLevelChildren.addAll(preorder ? children : DefaultGroovyMethods.reverse(children));
+                    if (children.size() > 1 || (children.size() == 1 && !(children.get(0) instanceof String)))
+                        nextLevelChildren.addAll(preorder ? children : DefaultGroovyMethods.reverse(children));
                 }
             }
         }
@@ -727,8 +726,8 @@ public class Node implements Serializable, Cloneable {
      * A boolean 'preorder' options is supported.
      *
      * @param options map containing options
-     * @param c the closure to run for each node (a one or two parameter can be used; if one parameter is given the
-     *          closure will be passed the node, for a two param closure the second parameter will be the level).
+     * @param c       the closure to run for each node (a one or two parameter can be used; if one parameter is given the
+     *                closure will be passed the node, for a two param closure the second parameter will be the level).
      * @since 2.5.0
      */
     public void breadthFirst(Map<String, Object> options, Closure c) {
@@ -753,7 +752,8 @@ public class Node implements Serializable, Cloneable {
                 if (child instanceof Node) {
                     Node childNode = (Node) child;
                     List children = childNode.getDirectChildren();
-                    if (children.size() > 1 || (children.size() == 1 && !(children.get(0) instanceof String))) nextLevelChildren.addAll(preorder ? children : DefaultGroovyMethods.reverse(children));
+                    if (children.size() > 1 || (children.size() == 1 && !(children.get(0) instanceof String)))
+                        nextLevelChildren.addAll(preorder ? children : DefaultGroovyMethods.reverse(children));
                 }
             }
             level++;
@@ -815,10 +815,10 @@ public class Node implements Serializable, Cloneable {
      * @return the GPathResult, converted to a <code>Integer</code>
      */
     public Integer toInteger() {
-        if(textIsEmptyOrNull()){
+        if (textIsEmptyOrNull()) {
             return null;
         }
-        return StringGroovyMethods.toInteger((CharSequence)text());
+        return StringGroovyMethods.toInteger((CharSequence) text());
     }
 
     /**
@@ -827,10 +827,10 @@ public class Node implements Serializable, Cloneable {
      * @return the GPathResult, converted to a <code>Long</code>
      */
     public Long toLong() {
-        if(textIsEmptyOrNull()){
+        if (textIsEmptyOrNull()) {
             return null;
         }
-        return StringGroovyMethods.toLong((CharSequence)text());
+        return StringGroovyMethods.toLong((CharSequence) text());
     }
 
     /**
@@ -839,10 +839,10 @@ public class Node implements Serializable, Cloneable {
      * @return the GPathResult, converted to a <code>Float</code>
      */
     public Float toFloat() {
-        if(textIsEmptyOrNull()){
+        if (textIsEmptyOrNull()) {
             return null;
         }
-        return StringGroovyMethods.toFloat((CharSequence)text());
+        return StringGroovyMethods.toFloat((CharSequence) text());
     }
 
     /**
@@ -851,10 +851,10 @@ public class Node implements Serializable, Cloneable {
      * @return the GPathResult, converted to a <code>Double</code>
      */
     public Double toDouble() {
-        if(textIsEmptyOrNull()){
+        if (textIsEmptyOrNull()) {
             return null;
         }
-        return StringGroovyMethods.toDouble((CharSequence)text());
+        return StringGroovyMethods.toDouble((CharSequence) text());
     }
 
     /**
@@ -863,10 +863,10 @@ public class Node implements Serializable, Cloneable {
      * @return the GPathResult, converted to a <code>BigDecimal</code>
      */
     public BigDecimal toBigDecimal() {
-        if(textIsEmptyOrNull()){
+        if (textIsEmptyOrNull()) {
             return null;
         }
-        return StringGroovyMethods.toBigDecimal((CharSequence)text());
+        return StringGroovyMethods.toBigDecimal((CharSequence) text());
     }
 
     /**
@@ -875,10 +875,10 @@ public class Node implements Serializable, Cloneable {
      * @return the GPathResult, converted to a <code>BigInteger</code>
      */
     public BigInteger toBigInteger() {
-        if(textIsEmptyOrNull()){
+        if (textIsEmptyOrNull()) {
             return null;
         }
-        return StringGroovyMethods.toBigInteger((CharSequence)text());
+        return StringGroovyMethods.toBigInteger((CharSequence) text());
     }
 
     private boolean textIsEmptyOrNull() {

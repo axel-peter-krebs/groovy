@@ -274,8 +274,8 @@ class DelegatesToSTCTest extends StaticTypeCheckingTestCase {
             def obj = new Foo()
             with(obj) { foo() }
         ''',
-        'Not enough arguments found for a @DelegatesTo method call',
-        'Cannot find matching method'
+            'Not enough arguments found for a @DelegatesTo method call',
+            'Cannot find matching method'
     }
 
     void testShouldFailDelegateToParameterIfNoTargetSpecified() {
@@ -293,8 +293,8 @@ class DelegatesToSTCTest extends StaticTypeCheckingTestCase {
             def foo = new Foo()
             m(foo) { -> bar() }
         ''',
-        'Not enough arguments found for a @DelegatesTo method call', '@ line 6, column 29',
-        'Cannot find matching method'
+            'Not enough arguments found for a @DelegatesTo method call', '@ line 6, column 29',
+            'Cannot find matching method'
     }
 
     void testDelegatesToWithSetter() {
@@ -364,7 +364,7 @@ class DelegatesToSTCTest extends StaticTypeCheckingTestCase {
             }
             assert b.value() == 5
         ''',
-        '[Static type checking] - The variable [y] is undeclared.'
+            '[Static type checking] - The variable [y] is undeclared.'
     }
 
     void testDelegatesToWithSetterUsedAsPropertyAndWith() {
@@ -555,7 +555,7 @@ class DelegatesToSTCTest extends StaticTypeCheckingTestCase {
                 toUpperCase()
             }
         ''',
-        'Cannot use @DelegatesTo(genericTypeIndex=0) with a type that doesn\'t use generics', 'Cannot find matching method'
+            'Cannot use @DelegatesTo(genericTypeIndex=0) with a type that doesn\'t use generics', 'Cannot find matching method'
     }
 
     void testDelegatesToGenericTypeArgumentOutOfBounds() {
@@ -569,7 +569,7 @@ class DelegatesToSTCTest extends StaticTypeCheckingTestCase {
                 toUpperCase()
             }
         ''',
-        'Index of generic type @DelegatesTo(genericTypeIndex=1) greater than those of the selected type', 'Cannot find matching method'
+            'Index of generic type @DelegatesTo(genericTypeIndex=1) greater than those of the selected type', 'Cannot find matching method'
     }
 
     void testDelegatesToGenericTypeArgumentWithNegativeIndex() {
@@ -583,7 +583,7 @@ class DelegatesToSTCTest extends StaticTypeCheckingTestCase {
                 toUpperCase()
             }
         ''',
-        'Index of generic type @DelegatesTo(genericTypeIndex=-1) lower than those of the selected type', 'Cannot find matching method'
+            'Index of generic type @DelegatesTo(genericTypeIndex=-1) lower than those of the selected type', 'Cannot find matching method'
     }
 
     void testDelegatesToGenericTypeArgumentUsingMap() {
@@ -616,7 +616,7 @@ class DelegatesToSTCTest extends StaticTypeCheckingTestCase {
                 toUpperCase()
             }
         ''',
-        'Cannot find matching method'
+            'Cannot find matching method'
     }
 
     // GROOVY-6165
@@ -650,8 +650,8 @@ class DelegatesToSTCTest extends StaticTypeCheckingTestCase {
 
             test([new Person('Guillaume'), new Person('Cedric')])
         ''',
-        'Cannot find matching method',
-        'Cannot find matching method'
+            'Cannot find matching method',
+            'Cannot find matching method'
     }
 
     // GROOVY-6323, GROOVY-6325, GROOVY-6332
@@ -830,6 +830,6 @@ class DelegatesToSTCTest extends StaticTypeCheckingTestCase {
 
             new Bar().baz()
         ''',
-        'Closure parameter with resolve strategy OWNER_FIRST passed to method with resolve strategy DELEGATE_FIRST'
+            'Closure parameter with resolve strategy OWNER_FIRST passed to method with resolve strategy DELEGATE_FIRST'
     }
 }

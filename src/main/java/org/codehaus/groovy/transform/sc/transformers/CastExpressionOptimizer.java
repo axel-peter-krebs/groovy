@@ -34,6 +34,16 @@ public class CastExpressionOptimizer {
         transformer = staticCompilationTransformer;
     }
 
+    private static boolean isOptimizable(final ClassNode exprInferredType, final ClassNode castType) {
+        if (StaticTypeCheckingSupport.implementsInterfaceOrIsSubclassOf(exprInferredType, castType)) {
+            return true;
+        }
+        if (ClassHelper.isPrimitiveType(exprInferredType) && ClassHelper.isPrimitiveType(castType)) {
+            return true;
+        }
+        return false;
+    }
+
     public Expression transformCastExpression(final CastExpression cast) {
         if (cast.isCoerce()) {
             Expression expression = cast.getExpression();
@@ -57,8 +67,8 @@ public class CastExpressionOptimizer {
                 ConstantExpression ce = (ConstantExpression) expression;
                 if (ClassHelper.STRING_TYPE.equals(ce.getType())) {
                     String val = (String) ce.getValue();
-                    if (val!=null && val.length()==1) {
-                        ConstantExpression result = new ConstantExpression(val.charAt(0),true);
+                    if (val != null && val.length() == 1) {
+                        ConstantExpression result = new ConstantExpression(val.charAt(0), true);
                         result.setSourcePosition(cast);
                         return result;
                     }
@@ -66,15 +76,5 @@ public class CastExpressionOptimizer {
             }
         }
         return transformer.superTransform(cast);
-    }
-
-    private static boolean isOptimizable(final ClassNode exprInferredType, final ClassNode castType) {
-        if (StaticTypeCheckingSupport.implementsInterfaceOrIsSubclassOf(exprInferredType, castType)) {
-            return true;
-        }
-        if (ClassHelper.isPrimitiveType(exprInferredType) && ClassHelper.isPrimitiveType(castType)) {
-            return true;
-        }
-        return false;
     }
 }

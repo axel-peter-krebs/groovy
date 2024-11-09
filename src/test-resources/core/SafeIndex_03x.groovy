@@ -32,6 +32,7 @@ def csObjArray() {
     array?[1] = 'c';
     assert null == array?[1];
 }
+
 csObjArray();
 
 def objArray() {
@@ -47,6 +48,7 @@ def objArray() {
     array?[1] = 'c';
     assert null == array?[1];
 }
+
 objArray();
 
 @CompileStatic
@@ -63,6 +65,7 @@ def csBooleanArray() {
     array?[1] = true;
     assert null == array?[1];
 }
+
 csBooleanArray();
 
 def booleanArray() {
@@ -78,6 +81,7 @@ def booleanArray() {
     array?[1] = true;
     assert null == array?[1];
 }
+
 booleanArray();
 
 @CompileStatic
@@ -94,6 +98,7 @@ def csCharArray() {
     array?[1] = 'c';
     assert null == array?[1];
 }
+
 csCharArray();
 
 def charArray() {
@@ -109,6 +114,7 @@ def charArray() {
     array?[1] = 'c';
     assert null == array?[1];
 }
+
 charArray();
 
 @CompileStatic
@@ -125,6 +131,7 @@ def csByteArray() {
     array?[1] = 3 as byte;
     assert null == array?[1];
 }
+
 csByteArray();
 
 def byteArray() {
@@ -140,6 +147,7 @@ def byteArray() {
     array?[1] = 3 as byte;
     assert null == array?[1];
 }
+
 byteArray();
 
 @CompileStatic
@@ -156,6 +164,7 @@ def csShortArray() {
     array?[1] = 3 as short;
     assert null == array?[1];
 }
+
 csShortArray();
 
 def shortArray() {
@@ -171,6 +180,7 @@ def shortArray() {
     array?[1] = 3 as short;
     assert null == array?[1];
 }
+
 shortArray();
 
 @CompileStatic
@@ -187,6 +197,7 @@ def csIntArray() {
     array?[1] = 3;
     assert null == array?[1];
 }
+
 csIntArray();
 
 def intArray() {
@@ -202,6 +213,7 @@ def intArray() {
     array?[1] = 3;
     assert null == array?[1];
 }
+
 intArray();
 
 @CompileStatic
@@ -218,6 +230,7 @@ def csLongArray() {
     array?[1] = 3L;
     assert null == array?[1];
 }
+
 csLongArray();
 
 def longArray() {
@@ -233,6 +246,7 @@ def longArray() {
     array?[1] = 3L;
     assert null == array?[1];
 }
+
 longArray();
 
 @CompileStatic
@@ -249,6 +263,7 @@ def csFloatArray() {
     array?[1] = 3.3f;
     assert null == array?[1];
 }
+
 csFloatArray();
 
 def floatArray() {
@@ -264,6 +279,7 @@ def floatArray() {
     array?[1] = 3.3f;
     assert null == array?[1];
 }
+
 floatArray();
 
 @CompileStatic
@@ -280,6 +296,7 @@ def csDoubleArray() {
     array?[1] = 3.3d;
     assert null == array?[1];
 }
+
 csDoubleArray();
 
 def doubleArray() {
@@ -295,4 +312,5 @@ def doubleArray() {
     array?[1] = 3.3d;
     assert null == array?[1];
 }
+
 doubleArray();

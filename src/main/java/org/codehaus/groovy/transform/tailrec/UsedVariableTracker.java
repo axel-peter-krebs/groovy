@@ -24,6 +24,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class UsedVariableTracker implements VariableReplacedListener {
+    private final Set<String> usedVariableNames = new LinkedHashSet<>();
+
     @Override
     public void variableReplaced(VariableExpression oldVar, VariableExpression newVar) {
         usedVariableNames.add(newVar.getName());
@@ -32,6 +34,4 @@ public class UsedVariableTracker implements VariableReplacedListener {
     public Set<String> getUsedVariableNames() {
         return usedVariableNames;
     }
-
-    private final Set<String> usedVariableNames = new LinkedHashSet<>();
 }

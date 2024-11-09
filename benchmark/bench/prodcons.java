@@ -4,6 +4,40 @@
 // Adapted from http://java.sun.com/docs/books/tutorial/essential/threads
 
 public class prodcons {
+    private Producer m_producer;
+    private Consumer m_consumer;
+    private int m_produced = 0;
+    private int m_consumed = 0;
+
+    public prodcons(int count) {
+        CubbyHole m_cubbyhole = new CubbyHole();
+        m_producer = new Producer(m_cubbyhole, count);
+        m_consumer = new Consumer(m_cubbyhole, count);
+    }
+
+    public static void main(String[] args) {
+        int count = 1;
+        try {
+            count = Integer.parseInt(args[0]);
+        } catch (Exception e) {
+        }
+        new prodcons(count).run();
+    }
+
+    public void run() {
+        m_producer.start();
+        m_consumer.start();
+        try {
+            m_producer.join();
+        } catch (InterruptedException e) {
+        }
+        try {
+            m_consumer.join();
+        } catch (InterruptedException e) {
+        }
+        System.out.println(m_produced + " " + m_consumed);
+    }
+
     private class CubbyHole {
         private int m_contents;
         private boolean m_available = false;
@@ -12,7 +46,8 @@ public class prodcons {
             while (m_available == false) {
                 try {
                     wait();
-                } catch (InterruptedException e) { }
+                } catch (InterruptedException e) {
+                }
             }
             m_available = false;
             notifyAll();
@@ -23,7 +58,8 @@ public class prodcons {
             while (m_available == true) {
                 try {
                     wait();
-                } catch (InterruptedException e) { }
+                } catch (InterruptedException e) {
+                }
             }
             m_contents = value;
             m_available = true;
@@ -65,29 +101,4 @@ public class prodcons {
             }
         }
     }
-
-    public void run() {
-        m_producer.start();
-        m_consumer.start();
-        try { m_producer.join(); } catch (InterruptedException e) { }
-        try { m_consumer.join(); } catch (InterruptedException e) { }
-        System.out.println(m_produced + " " + m_consumed);
-    }
-
-    public prodcons(int count) {
-        CubbyHole m_cubbyhole = new CubbyHole();
-        m_producer = new Producer(m_cubbyhole, count);
-        m_consumer = new Consumer(m_cubbyhole, count);
-    }
-
-    public static void main(String[] args) {
-        int count = 1;
-        try { count = Integer.parseInt(args[0]); } catch (Exception e) { }
-        new prodcons(count).run();
-    }
-
-    private Producer m_producer;
-    private Consumer m_consumer;
-    private int m_produced = 0;
-    private int m_consumed = 0;
 }

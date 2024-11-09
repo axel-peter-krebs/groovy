@@ -56,6 +56,7 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.stmt;
 
 /**
  * Handles generation of code for the {@code @GQ} annotation.
+ *
  * @since 4.0.0
  */
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
@@ -111,8 +112,8 @@ public class GinqASTTransformation extends AbstractASTTransformation {
         resultMembers.remove(VALUE);
 
         return mapX(resultMembers.entrySet().stream()
-                    .map(e -> new MapEntryExpression(constX(e.getKey()), constX(e.getValue().getText())))
-                    .collect(Collectors.toList()));
+            .map(e -> new MapEntryExpression(constX(e.getKey()), constX(e.getValue().getText())))
+            .collect(Collectors.toList()));
     }
 
     private static Object getDefaultOptionValue(String optionName) {
@@ -127,7 +128,7 @@ public class GinqASTTransformation extends AbstractASTTransformation {
     private static final ClassNode GQ_CLASS_NODE = make(GQ.class);
     private static final ClassNode DEFAULT_RESULT_TYPE = ClassHelper.makeWithoutCaching((Class<?>) getDefaultOptionValue(VALUE));
     private static final Map<String, Expression> DEFAULT_OPTION_MAP = unmodifiableMap(CONF_LIST.stream().collect(Collectors.toMap(
-            c -> c,
-            c -> constX(getDefaultOptionValue(c))
+        c -> c,
+        c -> constX(getDefaultOptionValue(c))
     )));
 }

@@ -23,12 +23,14 @@ import org.apache.groovy.internal.util.Supplier;
 
 /**
  * Just hold an object
+ *
  * @param <T> the type of object
  */
 public class ObjectHolder<T> {
     private T object;
 
-    public ObjectHolder() {}
+    public ObjectHolder() {
+    }
 
     public ObjectHolder(T object) {
         this.object = object;
@@ -38,14 +40,14 @@ public class ObjectHolder<T> {
         return object;
     }
 
+    public void setObject(T object) {
+        this.object = object;
+    }
+
     public T getObject(Supplier<? extends T> def) {
         if (null == object) {
             object = def.get();
         }
         return object;
-    }
-
-    public void setObject(T object) {
-        this.object = object;
     }
 }

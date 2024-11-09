@@ -20,11 +20,11 @@ package groovy.lang
 
 import groovy.test.GroovyShellTestCase
 
-class SyntheticReturnTest extends GroovyShellTestCase{
+class SyntheticReturnTest extends GroovyShellTestCase {
 
     // GROOVY-5980
     void testImplicitReturnWithFinallyBlockAndCastException() {
-        assertEquals( 'test', evaluate("""
+        assertEquals('test', evaluate("""
               s = ''
               int f() {
                  try { null } finally { s += 'test' }
@@ -35,7 +35,7 @@ class SyntheticReturnTest extends GroovyShellTestCase{
     }
 
     void testImplicitReturnWithFinallyBlockMultipleStmtsAndCastException() {
-        assertEquals( 'test', evaluate("""
+        assertEquals('test', evaluate("""
               i = 0
               s = ''
               int f() {
@@ -47,7 +47,7 @@ class SyntheticReturnTest extends GroovyShellTestCase{
     }
 
     void testImplicitReturnWithFinallyBlockAndTypeCast() {
-        assertEquals( '42', evaluate("""
+        assertEquals('42', evaluate("""
               s = ''
               String f() {
                  try { 42 } finally { s += 'test' }
@@ -58,14 +58,14 @@ class SyntheticReturnTest extends GroovyShellTestCase{
         """))
     }
 
-    void testExpt () {
-        assertEquals( 5, evaluate("""
+    void testExpt() {
+        assertEquals(5, evaluate("""
               5
         """))
     }
 
-    void testIfElse () {
-        assertEquals( 1, evaluate("""
+    void testIfElse() {
+        assertEquals(1, evaluate("""
             if (true)
               1
             else
@@ -73,15 +73,15 @@ class SyntheticReturnTest extends GroovyShellTestCase{
         """))
     }
 
-    void testIfNoElse () {
-        assertEquals( 1, evaluate("""
+    void testIfNoElse() {
+        assertEquals(1, evaluate("""
             if (true)
               1
         """))
     }
 
-    void testEmptyElse () {
-        assertEquals( null, evaluate("""
+    void testEmptyElse() {
+        assertEquals(null, evaluate("""
             if (false)
               {
                 2
@@ -90,8 +90,8 @@ class SyntheticReturnTest extends GroovyShellTestCase{
         """))
     }
 
-    void testEmptyBlockElse () {
-        assertEquals( null, evaluate("""
+    void testEmptyBlockElse() {
+        assertEquals(null, evaluate("""
             if (false)
               {
                 2
@@ -102,8 +102,8 @@ class SyntheticReturnTest extends GroovyShellTestCase{
         """))
     }
 
-    void testNestedIf () {
-        assertEquals( 3, evaluate("""
+    void testNestedIf() {
+        assertEquals(3, evaluate("""
             if (false)
               {
                 2
@@ -116,8 +116,8 @@ class SyntheticReturnTest extends GroovyShellTestCase{
         """))
     }
 
-    void testCatch () {
-        assertEquals( 0, evaluate("""
+    void testCatch() {
+        assertEquals(0, evaluate("""
             try {
                 if (true) {
                     throw new NullPointerException()
@@ -132,25 +132,25 @@ class SyntheticReturnTest extends GroovyShellTestCase{
         """))
     }
 
-    void testClosure () {
+    void testClosure() {
         def s = 0, k = 0
         def f = {
             s++
-            if ((s&1)==0)
-              1
+            if ((s & 1) == 0)
+                1
             else
-              0
+                0
         }
         for (x in 0..9)
-          k += f ()
+            k += f()
 
         assertEquals 10, s
         assertEquals 5, k
     }
 
-    void testSynchronized () {
+    void testSynchronized() {
         assertEquals(20, mm(10))
-        assertEquals(10,  mm(1))
+        assertEquals(10, mm(1))
     }
 
     private def mm(x) {
@@ -159,15 +159,15 @@ class SyntheticReturnTest extends GroovyShellTestCase{
                 if (x == 1)
                     throw new NullPointerException()
                 else
-                    2*x
+                    2 * x
             }
             catch (Throwable t) {
-               10
+                10
             }
         }
     }
 
-    void testTry () {
+    void testTry() {
         def f = {
             try {
                 if (true) {
@@ -183,10 +183,10 @@ class SyntheticReturnTest extends GroovyShellTestCase{
         f = {
             try {
                 if (true) {
-                   1
+                    1
                 }
             }
-            catch(Throwable t) {
+            catch (Throwable t) {
                 return 0
             }
         }
@@ -195,7 +195,7 @@ class SyntheticReturnTest extends GroovyShellTestCase{
         f = {
             try {
                 if (true) {
-                   1
+                    1
                 }
             }
             finally {

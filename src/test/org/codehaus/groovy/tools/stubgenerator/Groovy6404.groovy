@@ -26,7 +26,7 @@ final class Groovy6404 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'foo/Main.java': '''
+            'foo/Main.java'    : '''
                 package foo;
                 import bar.MyEnum;
                 public class Main {

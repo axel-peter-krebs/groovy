@@ -57,10 +57,10 @@ class Log4jTest extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == "log" &&
-                    Modifier.isPrivate(field.getModifiers()) &&
-                    Modifier.isStatic(field.getModifiers()) &&
-                    Modifier.isTransient(field.getModifiers()) &&
-                    Modifier.isFinal(field.getModifiers())
+                Modifier.isPrivate(field.getModifiers()) &&
+                Modifier.isStatic(field.getModifiers()) &&
+                Modifier.isTransient(field.getModifiers()) &&
+                Modifier.isFinal(field.getModifiers())
         }
     }
 
@@ -74,10 +74,10 @@ class Log4jTest extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == "log" &&
-                    Modifier.isPrivate(field.getModifiers()) &&
-                    Modifier.isStatic(field.getModifiers()) &&
-                    Modifier.isTransient(field.getModifiers()) &&
-                    Modifier.isFinal(field.getModifiers())
+                Modifier.isPrivate(field.getModifiers()) &&
+                Modifier.isStatic(field.getModifiers()) &&
+                Modifier.isTransient(field.getModifiers()) &&
+                Modifier.isFinal(field.getModifiers())
         }
     }
 
@@ -91,12 +91,12 @@ class Log4jTest extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == "log" &&
-                    !Modifier.isPrivate(field.getModifiers()) &&
-                    !Modifier.isProtected(field.getModifiers()) &&
-                    !Modifier.isPublic(field.getModifiers()) &&
-                    Modifier.isStatic(field.getModifiers()) &&
-                    Modifier.isTransient(field.getModifiers()) &&
-                    Modifier.isFinal(field.getModifiers())
+                !Modifier.isPrivate(field.getModifiers()) &&
+                !Modifier.isProtected(field.getModifiers()) &&
+                !Modifier.isPublic(field.getModifiers()) &&
+                Modifier.isStatic(field.getModifiers()) &&
+                Modifier.isTransient(field.getModifiers()) &&
+                Modifier.isFinal(field.getModifiers())
         }
     }
 
@@ -110,10 +110,10 @@ class Log4jTest extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == "log" &&
-                    Modifier.isProtected(field.getModifiers()) &&
-                    Modifier.isStatic(field.getModifiers()) &&
-                    Modifier.isTransient(field.getModifiers()) &&
-                    Modifier.isFinal(field.getModifiers())
+                Modifier.isProtected(field.getModifiers()) &&
+                Modifier.isStatic(field.getModifiers()) &&
+                Modifier.isTransient(field.getModifiers()) &&
+                Modifier.isFinal(field.getModifiers())
         }
     }
 
@@ -127,10 +127,10 @@ class Log4jTest extends GroovyTestCase {
 
         assert clazz.declaredFields.find { Field field ->
             field.name == "log" &&
-                    Modifier.isPublic(field.getModifiers()) &&
-                    Modifier.isStatic(field.getModifiers()) &&
-                    Modifier.isTransient(field.getModifiers()) &&
-                    Modifier.isFinal(field.getModifiers())
+                Modifier.isPublic(field.getModifiers()) &&
+                Modifier.isStatic(field.getModifiers()) &&
+                Modifier.isTransient(field.getModifiers()) &&
+                Modifier.isFinal(field.getModifiers())
         }
     }
 

@@ -433,33 +433,33 @@ class ArrayTest extends GroovyTestCase {
     }
 
     void testGroovy5402ArrayPlus() {
-        Integer[] a = [ 1, 2, 3 ]
-        Integer[] b = [ 3, 4, 5 ]
+        Integer[] a = [1, 2, 3]
+        Integer[] b = [3, 4, 5]
         def result = a + b
-        assert result == [ 1, 2, 3, 3, 4, 5 ]
+        assert result == [1, 2, 3, 3, 4, 5]
         assert result.class.isArray()
         // check the originals are untouched
-        assert a == [ 1, 2, 3 ]
-        assert b == [ 3, 4, 5 ]
+        assert a == [1, 2, 3]
+        assert b == [3, 4, 5]
 
         result = a + 4
-        assert result == [ 1, 2, 3, 4 ]
+        assert result == [1, 2, 3, 4]
         assert result.class.isArray()
 
-        result = a + [ 4, 5 ]
-        assert result == [ 1, 2, 3, 4, 5 ]
+        result = a + [4, 5]
+        assert result == [1, 2, 3, 4, 5]
         assert result.class.isArray()
     }
 
-    void doSomething(long[] values){
-         values[1] += 5 
+    void doSomething(long[] values) {
+        values[1] += 5
     }
 
     void testLongArrayIncrement() {
-        long[] l = [1l,0l]
+        long[] l = [1l, 0l]
         doSomething(l)
-        assert l[0]==1
-        assert l[1]==5
+        assert l[0] == 1
+        assert l[1] == 5
     }
 
     void testJoin() {

@@ -23,7 +23,7 @@ final class Groovy7482 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'A.java': '''
+            'A.java'   : '''
                 abstract class A {
                     private Object getProperty(String name) {
                         return null;
@@ -31,7 +31,7 @@ final class Groovy7482 extends StringSourcesStubTestCase {
                 }
             ''',
 
-            'C.groovy': '''
+            'C.groovy' : '''
                 class C extends A {
                 }
             ''',

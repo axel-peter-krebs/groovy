@@ -58,19 +58,19 @@ public class ObjectRangeTest extends TestCase {
         assertEquals("Size of " + r, 4, r.size());
         r = createRange("aa4", "aa1");
         assertEquals("Size of " + r, 4, r.size());
-        r = createRange('7',  ';');
+        r = createRange('7', ';');
         assertEquals(5, r.size());
 
         // '7', '8', '9', ':', ';'
-        Range mixed = createRange('7',  ';');
+        Range mixed = createRange('7', ';');
         assertEquals(5, mixed.size());
-        mixed = createRange('7',  59.5);
+        mixed = createRange('7', 59.5);
         assertEquals(5, mixed.size());
-        mixed = createRange('7',  59);
+        mixed = createRange('7', 59);
         assertEquals(5, mixed.size());
-        mixed = createRange('7',  new BigInteger("59"));
+        mixed = createRange('7', new BigInteger("59"));
         assertEquals(5, mixed.size());
-        mixed = createRange('7',  new BigDecimal("59.5"));
+        mixed = createRange('7', new BigDecimal("59.5"));
         assertEquals(5, mixed.size());
 
         // integer overflow cases
@@ -118,10 +118,9 @@ public class ObjectRangeTest extends TestCase {
     public void testNullForFromOrToIsIllegal() {
         Comparable dontcare = Integer.valueOf(0);
         try {
-            new ObjectRange((Comparable)null, dontcare);
+            new ObjectRange((Comparable) null, dontcare);
             fail("Should have thrown IllegalArgumentException");
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             // worked
         }
     }
@@ -133,16 +132,14 @@ public class ObjectRangeTest extends TestCase {
         try {
             r.get(-1);
             fail("Should have thrown IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             // worked
         }
 
         try {
             r.get(1);
             fail("Should have thrown IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             // worked
         }
 
@@ -151,15 +148,13 @@ public class ObjectRangeTest extends TestCase {
         try {
             r.get(-1);
             fail("Should have thrown IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             // worked
         }
         try {
             r.get(11);
             fail("Should have thrown IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             // worked
         }
 
@@ -168,15 +163,13 @@ public class ObjectRangeTest extends TestCase {
         try {
             r.get(-1);
             fail("Should have thrown IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             // worked
         }
         try {
             r.get(7);
             fail("Should have thrown IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             // worked
         }
 
@@ -204,7 +197,7 @@ public class ObjectRangeTest extends TestCase {
             // pass
         }
 
-        Range mixed = createRange('7',  59.5);
+        Range mixed = createRange('7', 59.5);
         assertEquals(5, mixed.size());
         assertEquals(Arrays.asList(55, 56, 57, 58, 59), mixed.step(1));
 
@@ -318,7 +311,7 @@ public class ObjectRangeTest extends TestCase {
         try {
             iter.next();
             fail("Should have thrown NoSuchElementException");
-        } catch(NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
 
         }
     }
@@ -327,14 +320,14 @@ public class ObjectRangeTest extends TestCase {
         Range r = createRange(5, 11);
 
         int i = 4;
-        for (Iterator it = r.iterator(); it.hasNext();) {
+        for (Iterator it = r.iterator(); it.hasNext(); ) {
             i++;
             assertEquals("equals to " + i, Integer.valueOf(i), (Integer) (it.next()));
         }
         assertEquals(11, i);
 
         i = 4;
-        for (Iterator it = r.step(1).iterator(); it.hasNext();) {
+        for (Iterator it = r.step(1).iterator(); it.hasNext(); ) {
             i++;
             assertEquals("equals to " + i, Integer.valueOf(i), (Integer) (it.next()));
         }
@@ -344,14 +337,14 @@ public class ObjectRangeTest extends TestCase {
         BigDecimal one = new BigDecimal("1.0");
 
         BigDecimal val = new BigDecimal("5.0");
-        for (Iterator it = r.iterator(); it.hasNext();) {
+        for (Iterator it = r.iterator(); it.hasNext(); ) {
             assertEquals("equals to " + val, val, (BigDecimal) (it.next()));
             val = val.add(one);
         }
         assertEquals(11, i);
 
         val = new BigDecimal("5.0");
-        for (Iterator it = r.step(1).iterator(); it.hasNext();) {
+        for (Iterator it = r.step(1).iterator(); it.hasNext(); ) {
             assertEquals("equals to " + val, val, (BigDecimal) (it.next()));
             val = val.add(one);
         }
@@ -359,7 +352,7 @@ public class ObjectRangeTest extends TestCase {
 
         r = createRange(Character.valueOf('a'), Character.valueOf('z'));
         char valChar = 'a';
-        for (Iterator it = r.iterator(); it.hasNext();) {
+        for (Iterator it = r.iterator(); it.hasNext(); ) {
             assertEquals("equals to " + valChar, valChar, ((Character) it.next()).charValue());
             if (it.hasNext()) {
                 valChar = (char) (((int) valChar) + 1);
@@ -368,7 +361,7 @@ public class ObjectRangeTest extends TestCase {
         assertEquals('z', valChar);
 
         valChar = 'a';
-        for (Iterator it = r.step(1).iterator(); it.hasNext();) {
+        for (Iterator it = r.step(1).iterator(); it.hasNext(); ) {
             assertEquals("equals to " + valChar, valChar, ((Character) it.next()).charValue());
             if (it.hasNext()) {
                 valChar = (char) (((int) valChar) + 1);

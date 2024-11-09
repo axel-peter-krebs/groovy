@@ -40,7 +40,8 @@ final class ClosureMethodCallTest {
         assert foo == 'hello sam and james'
     }
 
-    @Test // GROOVY-2266
+    @Test
+    // GROOVY-2266
     void testClosureCallMethodWithObjectArray() {
         def args = [1] as Object[]
         def closure = { x -> x[0] }
@@ -77,7 +78,8 @@ final class ClosureMethodCallTest {
         assert attribute(x: 2, y: 3) == 6
     }
 
-    @Test // GROOVY-6819
+    @Test
+    // GROOVY-6819
     void testFixForIncompatibleClassChangeError() {
         assertScript '''
             class Foo {
@@ -95,7 +97,8 @@ final class ClosureMethodCallTest {
         '''
     }
 
-    @Test // GROOVY-9397
+    @Test
+    // GROOVY-9397
     void testRespondsToIsThreadSafe() {
         def executor = Executors.newCachedThreadPool()
         try {

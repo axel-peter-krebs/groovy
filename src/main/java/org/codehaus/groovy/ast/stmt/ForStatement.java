@@ -29,7 +29,7 @@ import org.codehaus.groovy.ast.expr.Expression;
  * Represents a standard for loop in Groovy
  */
 public class ForStatement extends Statement implements LoopingStatement {
-    public static final Parameter FOR_LOOP_DUMMY = new Parameter(ClassHelper.OBJECT_TYPE,"forLoopDummyParameter");
+    public static final Parameter FOR_LOOP_DUMMY = new Parameter(ClassHelper.OBJECT_TYPE, "forLoopDummyParameter");
 
     private Parameter variable;
     private Expression collectionExpression;
@@ -52,9 +52,18 @@ public class ForStatement extends Statement implements LoopingStatement {
         return collectionExpression;
     }
 
+    public void setCollectionExpression(Expression collectionExpression) {
+        this.collectionExpression = collectionExpression;
+    }
+
     @Override
     public Statement getLoopBlock() {
         return loopBlock;
+    }
+
+    @Override
+    public void setLoopBlock(Statement loopBlock) {
+        this.loopBlock = loopBlock;
     }
 
     public Parameter getVariable() {
@@ -65,20 +74,11 @@ public class ForStatement extends Statement implements LoopingStatement {
         return variable.getType();
     }
 
-    public void setCollectionExpression(Expression collectionExpression) {
-        this.collectionExpression = collectionExpression;
-    }
-
-    public void setVariableScope(VariableScope variableScope) {
-       scope = variableScope;
-    }
-
     public VariableScope getVariableScope() {
         return scope;
     }
 
-    @Override
-    public void setLoopBlock(Statement loopBlock) {
-        this.loopBlock = loopBlock;
+    public void setVariableScope(VariableScope variableScope) {
+        scope = variableScope;
     }
 }

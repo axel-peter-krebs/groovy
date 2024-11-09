@@ -28,4 +28,5 @@ import groovy.transform.Internal;
  * @since 3.0.0
  */
 @Internal
-public interface GeneratedLambda { }
+public interface GeneratedLambda {
+}

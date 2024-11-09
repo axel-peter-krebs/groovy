@@ -23,9 +23,16 @@ import groovy.cli.Unparsed
 
 // tag::withConvertInterfaceSpec[]
 interface WithConvertI {
-    @Option(convert={ it.toLowerCase() }) String a()
-    @Option(convert={ it.toUpperCase() }) String b()
-    @Option(convert={ Date.parse("yyyy-MM-dd", it) }) Date d()
-    @Unparsed List remaining()
+    @Option(convert = { it.toLowerCase() })
+    String a()
+
+    @Option(convert = { it.toUpperCase() })
+    String b()
+
+    @Option(convert = { Date.parse("yyyy-MM-dd", it) })
+    Date d()
+
+    @Unparsed
+    List remaining()
 }
 // end::withConvertInterfaceSpec[]

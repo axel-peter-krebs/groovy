@@ -29,8 +29,8 @@ class GrabExcludeTest {
     @BeforeClass
     static void populateCache() {
         // ensure files are installed locally
-        Grape.resolve([autoDownload:true, classLoader:new GroovyClassLoader()],
-        [groupId:'org.mortbay.jetty', artifactId:'jetty', version:'6.0.0'])
+        Grape.resolve([autoDownload: true, classLoader: new GroovyClassLoader()],
+            [groupId: 'org.mortbay.jetty', artifactId: 'jetty', version: '6.0.0'])
     }
 
     @Test
@@ -43,12 +43,12 @@ class GrabExcludeTest {
                     org.mortbay.util.IO.name
                 }
                 ''',
-                "Apparent variable 'org' was found")
+            "Apparent variable 'org' was found")
     }
 
     @Test
     void testExcludeByValue() {
-       shouldFailCompilationWithMessage('''
+        shouldFailCompilationWithMessage('''
                 @Grab('org.mortbay.jetty:jetty:6.0.0')
                 @GrabExclude('org.mortbay.jetty:jetty-util')
                 static testMethod() {
@@ -56,17 +56,17 @@ class GrabExcludeTest {
                     org.mortbay.util.IO.name
                 }
                 ''',
-                "Apparent variable 'org' was found")
+            "Apparent variable 'org' was found")
     }
 
     @Test
     void testExcludeByGroupAndModule_requiresGroup() {
-       shouldFailCompilationWithMessage('''
+        shouldFailCompilationWithMessage('''
                 @Grab('org.mortbay.jetty:jetty:6.0.0')
                 @GrabExclude(module='jetty-util')
                 class AnnotatedClass { }
                 ''',
-                'The missing attribute "group" is required in @GrabExclude annotations')
+            'The missing attribute "group" is required in @GrabExclude annotations')
     }
 
     @Test
@@ -76,7 +76,7 @@ class GrabExcludeTest {
                 @GrabExclude(group='org.mortbay.jetty')
                 class AnnotatedClass { }
                 ''',
-                'The missing attribute "module" is required in @GrabExclude annotations')
+            'The missing attribute "module" is required in @GrabExclude annotations')
     }
 
     private static shouldFailCompilationWithMessage(String code, String expectedString) {

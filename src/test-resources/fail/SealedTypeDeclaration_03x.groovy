@@ -17,5 +17,5 @@
  *  under the License.
  */
 
-non-sealed @interface ShapeI { }
+non-sealed @interface ShapeI {}
 

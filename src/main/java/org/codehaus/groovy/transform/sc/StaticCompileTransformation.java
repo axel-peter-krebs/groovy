@@ -54,7 +54,7 @@ public class StaticCompileTransformation extends StaticTypesTransformation {
         if (Boolean.TRUE.equals(target.getNodeMetaData(StaticTypeCheckingVisitor.class))) {
             return;
         }
-        Map<String,Expression> members = ((AnnotationNode) nodes[0]).getMembers();
+        Map<String, Expression> members = ((AnnotationNode) nodes[0]).getMembers();
         Expression extensions = members.get("extensions");
         StaticTypeCheckingVisitor visitor = null;
         if (target instanceof ClassNode) {

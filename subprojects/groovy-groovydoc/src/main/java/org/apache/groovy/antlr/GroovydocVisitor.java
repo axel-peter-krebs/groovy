@@ -70,13 +70,14 @@ import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
  * A visitor which collects Groovydoc information.
  */
 public class GroovydocVisitor extends ClassCodeVisitorSupport {
+    private static final String FS = "/";
+    private static final Pattern JAVADOC_COMMENT_PATTERN = Pattern.compile("(?s)/\\*\\*(.*?)\\*/");
     private final SourceUnit unit;
     private final List<LinkArgument> links;
+    private final Properties properties;
     private String packagePath;
     private SimpleGroovyClassDoc currentClassDoc = null;
     private Map<String, GroovyClassDoc> classDocs = new HashMap<>();
-    private final Properties properties;
-    private static final String FS = "/";
 
     public GroovydocVisitor(final SourceUnit unit, String packagePath, List<LinkArgument> links) {
         this(unit, packagePath, links, new Properties());
@@ -106,7 +107,7 @@ public class GroovydocVisitor extends ClassCodeVisitorSupport {
             }
         }
         for (ImportNode iNode : node.getModule().getStarImports()) {
-            String name = iNode.getPackageName()+"*";
+            String name = iNode.getPackageName() + "*";
             imports.add(name.replace('.', '/'));
         }
         String name = node.getNameWithoutPackage();
@@ -177,8 +178,6 @@ public class GroovydocVisitor extends ClassCodeVisitorSupport {
         return imports;
     }
 
-    private static final Pattern JAVADOC_COMMENT_PATTERN = Pattern.compile("(?s)/\\*\\*(.*?)\\*/");
-
     private String getDocContent(Groovydoc groovydoc) {
         if (groovydoc == null) return "";
         String result = groovydoc.getContent();
@@ -219,7 +218,7 @@ public class GroovydocVisitor extends ClassCodeVisitorSupport {
             return;
         if (node.isSynthetic()) return;
         if ("false".equals(properties.getProperty("includeMainForScripts", "true"))
-                && currentClassDoc.isScript() && "main".equals(node.getName()) && node.isStatic() && node.getParameters().length == 1)
+            && currentClassDoc.isScript() && "main".equals(node.getName()) && node.isStatic() && node.getParameters().length == 1)
             return;
 
         SimpleGroovyMethodDoc meth = new SimpleGroovyMethodDoc(node.getName(), currentClassDoc);

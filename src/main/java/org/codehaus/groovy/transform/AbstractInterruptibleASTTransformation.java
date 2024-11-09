@@ -60,14 +60,50 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.throwS;
 public abstract class AbstractInterruptibleASTTransformation extends ClassCodeVisitorSupport implements ASTTransformation, Opcodes {
 
     protected static final String CHECK_METHOD_START_MEMBER = "checkOnMethodStart";
+    protected static final String THROWN_EXCEPTION_TYPE = "thrown";
     private static final String APPLY_TO_ALL_CLASSES = "applyToAllClasses";
     private static final String APPLY_TO_ALL_MEMBERS = "applyToAllMembers";
-    protected static final String THROWN_EXCEPTION_TYPE = "thrown";
     protected SourceUnit source;
     protected boolean checkOnMethodStart;
     protected boolean applyToAllClasses;
     protected boolean applyToAllMembers;
     protected ClassNode thrownExceptionType;
+
+    protected static boolean getBooleanAnnotationParameter(AnnotationNode node, String parameterName, boolean defaultValue) {
+        Expression member = node.getMember(parameterName);
+        if (member != null) {
+            if (member instanceof ConstantExpression) {
+                try {
+                    return DefaultGroovyMethods.asType(((ConstantExpression) member).getValue(), Boolean.class);
+                } catch (Exception e) {
+                    internalError("Expecting boolean value for " + parameterName + " annotation parameter. Found " + member + "member");
+                }
+            } else {
+                internalError("Expecting boolean value for " + parameterName + " annotation parameter. Found " + member + "member");
+            }
+        }
+        return defaultValue;
+    }
+
+    protected static ClassNode getClassAnnotationParameter(AnnotationNode node, String parameterName, ClassNode defaultValue) {
+        Expression member = node.getMember(parameterName);
+        if (member != null) {
+            if (member instanceof ClassExpression) {
+                try {
+                    return member.getType();
+                } catch (Exception e) {
+                    internalError("Expecting class value for " + parameterName + " annotation parameter. Found " + member + "member");
+                }
+            } else {
+                internalError("Expecting class value for " + parameterName + " annotation parameter. Found " + member + "member");
+            }
+        }
+        return defaultValue;
+    }
+
+    protected static void internalError(String message) {
+        throw new GroovyBugError("Internal error: " + message);
+    }
 
     @Override
     protected SourceUnit getSourceUnit() {
@@ -82,7 +118,7 @@ public abstract class AbstractInterruptibleASTTransformation extends ClassCodeVi
     protected abstract Expression createCondition();
 
     /**
-     * Subclasses should implement this method to provide good error resolution. 
+     * Subclasses should implement this method to provide good error resolution.
      */
     protected abstract String getErrorMessage();
 
@@ -144,50 +180,14 @@ public abstract class AbstractInterruptibleASTTransformation extends ClassCodeVi
         }
     }
 
-    protected static boolean getBooleanAnnotationParameter(AnnotationNode node, String parameterName, boolean defaultValue) {
-        Expression member = node.getMember(parameterName);
-        if (member != null) {
-            if (member instanceof ConstantExpression) {
-                try {
-                    return DefaultGroovyMethods.asType(((ConstantExpression) member).getValue(), Boolean.class);
-                } catch (Exception e) {
-                    internalError("Expecting boolean value for " + parameterName + " annotation parameter. Found " + member + "member");
-                }
-            } else {
-                internalError("Expecting boolean value for " + parameterName + " annotation parameter. Found " + member + "member");
-            }
-        }
-        return defaultValue;
-    }
-
-    protected static ClassNode getClassAnnotationParameter(AnnotationNode node, String parameterName, ClassNode defaultValue) {
-        Expression member = node.getMember(parameterName);
-        if (member != null) {
-            if (member instanceof ClassExpression) {
-                try {
-                    return member.getType();
-                } catch (Exception e) {
-                    internalError("Expecting class value for " + parameterName + " annotation parameter. Found " + member + "member");
-                }
-            } else {
-                internalError("Expecting class value for " + parameterName + " annotation parameter. Found " + member + "member");
-            }
-        }
-        return defaultValue;
-    }
-
-    protected static void internalError(String message) {
-        throw new GroovyBugError("Internal error: " + message);
-    }
-
     /**
      * @return Returns the interruption check statement.
      */
     protected Statement createInterruptStatement() {
         return ifS(createCondition(),
-                throwS(
-                        ctorX(thrownExceptionType, args(constX(getErrorMessage())))
-                )
+            throwS(
+                ctorX(thrownExceptionType, args(constX(getErrorMessage())))
+            )
         );
     }
 
@@ -196,7 +196,7 @@ public abstract class AbstractInterruptibleASTTransformation extends ClassCodeVi
      *
      * @param statement the statement to be wrapped
      * @return a {@link BlockStatement block statement}   which first element is for checking interruption, and the
-     *         second one the statement to be wrapped.
+     * second one the statement to be wrapped.
      */
     protected final Statement wrapBlock(Statement statement) {
         BlockStatement stmt = new BlockStatement();
@@ -208,7 +208,7 @@ public abstract class AbstractInterruptibleASTTransformation extends ClassCodeVi
     @Override
     public final void visitForLoop(ForStatement forStatement) {
         visitLoop(forStatement);
-        super.visitForLoop(forStatement); 
+        super.visitForLoop(forStatement);
     }
 
     /**
@@ -222,7 +222,7 @@ public abstract class AbstractInterruptibleASTTransformation extends ClassCodeVi
 
     @Override
     public final void visitDoWhileLoop(DoWhileStatement doWhileStatement) {
-        visitLoop(doWhileStatement); 
+        visitLoop(doWhileStatement);
         super.visitDoWhileLoop(doWhileStatement);
     }
 

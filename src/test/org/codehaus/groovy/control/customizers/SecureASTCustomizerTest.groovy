@@ -381,7 +381,8 @@ final class SecureASTCustomizerTest {
         }
     }
 
-    @Test // GROOVY-8135
+    @Test
+    // GROOVY-8135
     void testAllowedIndirectStarImports2() {
         customizer.allowedStarImports = ['java.lang']
         customizer.indirectImportCheckEnabled = true
@@ -392,7 +393,8 @@ final class SecureASTCustomizerTest {
         shell.evaluate('Object[][] array = new Object[0][0]; array.size()')
     }
 
-    @Test // GROOVY-10184
+    @Test
+    // GROOVY-10184
     void testAllowedIndirectStarImports3() {
         customizer.allowedStarImports = ['java.lang.*']
         customizer.indirectImportCheckEnabled = true
@@ -691,7 +693,8 @@ final class SecureASTCustomizerTest {
         }
     }
 
-    @Test // GROOVY-4978
+    @Test
+    // GROOVY-4978
     void testVisitMethodBody() {
         customizer.disallowedImports = [
             "java.lang.System",
@@ -707,7 +710,8 @@ final class SecureASTCustomizerTest {
         }
     }
 
-    @Test // GROOVY-7424
+    @Test
+    // GROOVY-7424
     void testClassWithInterfaceVisitable() {
         def shell = new GroovyShell(configuration)
         shell.evaluate '''
@@ -717,7 +721,8 @@ final class SecureASTCustomizerTest {
         '''
     }
 
-    @Test // GROOVY-6153
+    @Test
+    // GROOVY-6153
     void testDeterministicAllowedListBehaviour() {
         def allowedClasses = ["java.lang.Object", "test"]
         customizer.with {
@@ -736,7 +741,8 @@ final class SecureASTCustomizerTest {
         }
     }
 
-    @Test // GROOVY-6153
+    @Test
+    // GROOVY-6153
     void testDeterministicAllowedListBehaviour2() {
         def allowedClasses = ["java.lang.Object", "test"]
         customizer.with {

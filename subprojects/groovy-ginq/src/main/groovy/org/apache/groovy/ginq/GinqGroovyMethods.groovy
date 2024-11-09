@@ -39,6 +39,7 @@ import org.codehaus.groovy.macro.runtime.MacroContext
 import org.codehaus.groovy.syntax.SyntaxException
 
 import static org.codehaus.groovy.ast.tools.GeneralUtils.callX
+
 /**
  * Declare GINQ macro methods
  *
@@ -135,10 +136,10 @@ class GinqGroovyMethods {
     private static void collectErrors(String message, ASTNode astNode, SourceUnit sourceUnit) {
         InvalidOptionException invalidOptionException = new InvalidOptionException(message)
         SyntaxException e = new SyntaxException(
-                invalidOptionException.getMessage(),
-                invalidOptionException,
-                astNode.lineNumber,
-                astNode.columnNumber)
+            invalidOptionException.getMessage(),
+            invalidOptionException,
+            astNode.lineNumber,
+            astNode.columnNumber)
         sourceUnit.getErrorCollector().addFatalError(new SyntaxErrorMessage(e, sourceUnit))
     }
 

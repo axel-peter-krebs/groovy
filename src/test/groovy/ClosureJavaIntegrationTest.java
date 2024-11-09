@@ -80,7 +80,7 @@ public class ClosureJavaIntegrationTest extends TestCase {
                 result.add("k=" + k + ",v=" + v);
             }
         });
-        assertEquals(Arrays.asList("k=Monkeys,v=3", "k=Giraffe,v=2", "k=Lions,v=5" ), result);
+        assertEquals(Arrays.asList("k=Monkeys,v=3", "k=Giraffe,v=2", "k=Lions,v=5"), result);
     }
 
     public void testCollectList() {
@@ -202,6 +202,6 @@ public class ClosureJavaIntegrationTest extends TestCase {
                 return total.add(BigDecimal.ONE.divide(new BigDecimal(next)));
             }
         };
-        assertTrue(DefaultTypeTransformation.compareEqual(BigDecimal.ONE, inject((Iterable<Integer>)c, initial, closure)));
+        assertTrue(DefaultTypeTransformation.compareEqual(BigDecimal.ONE, inject((Iterable<Integer>) c, initial, closure)));
     }
 }

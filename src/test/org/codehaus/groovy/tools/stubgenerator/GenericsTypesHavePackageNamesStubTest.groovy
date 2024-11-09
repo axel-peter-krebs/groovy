@@ -35,7 +35,7 @@ class GenericsTypesHavePackageNamesStubTest extends StringSourcesStubTestCase {
                 }
             ''',
 
-            'other_package/Year.java': '''
+            'other_package/Year.java'     : '''
                 package other_package;
 
                 public class Year {

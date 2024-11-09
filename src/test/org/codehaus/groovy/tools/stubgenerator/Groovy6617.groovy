@@ -26,7 +26,7 @@ final class Groovy6617 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'foo/JavaApi.java': '''
+            'foo/JavaApi.java'            : '''
                 package foo;
                 import java.util.List;
                 public interface JavaApi {
@@ -36,7 +36,7 @@ final class Groovy6617 extends StringSourcesStubTestCase {
                 }
             ''',
 
-            'foo/JavaDataObject.java': '''
+            'foo/JavaDataObject.java'     : '''
                 package foo;
                 public class JavaDataObject {
                     boolean active;

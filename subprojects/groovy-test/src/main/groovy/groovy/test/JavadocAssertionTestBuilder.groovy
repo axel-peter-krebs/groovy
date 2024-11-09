@@ -32,9 +32,9 @@ import java.util.regex.Pattern
 class JavadocAssertionTestBuilder {
     // TODO write tests for this classes functionality
     private static final Pattern javadocPattern =
-        Pattern.compile( /(?ims)\/\*\*.*?\*\// )
+        Pattern.compile(/(?ims)\/\*\*.*?\*\//)
     private static final Pattern assertionPattern =
-        Pattern.compile( /(?ims)<([a-z]+)\s+class\s*=\s*['"]groovyTestCase['"]\s*>.*?<\s*\/\s*\1>/ )
+        Pattern.compile(/(?ims)<([a-z]+)\s+class\s*=\s*['"]groovyTestCase['"]\s*>.*?<\s*\/\s*\1>/)
 
     Class buildTest(String filename, String code) {
         Class test = null
@@ -89,11 +89,11 @@ class JavadocAssertionTestBuilder {
     }
 
     private String getAssertion(String tag) {
-        String tagInner = tag.substring(tag.indexOf(">")+1, tag.lastIndexOf("<"))
+        String tagInner = tag.substring(tag.indexOf(">") + 1, tag.lastIndexOf("<"))
         String htmlAssertion = tagInner.replaceAll("(?m)^\\s*\\*\\s?", "")
         String assertion = htmlAssertion
         // TODO improve on this
-        [nbsp:' ', gt:'>', lt:'<', quot:'"', apos:"'", at:'@', '#64':'@', ndash:'-', amp:'&'].each { key, value ->
+        [nbsp: ' ', gt: '>', lt: '<', quot: '"', apos: "'", at: '@', '#64': '@', ndash: '-', amp: '&'].each { key, value ->
             assertion = assertion.replaceAll("(?i)&$key;", value)
         }
         assertion = assertion.replaceAll(/(?i)\{@code ([^}]*)\}/, '$1')
@@ -131,7 +131,7 @@ class JavadocAssertionTestBuilder {
     private String getTestCode(String testName, List testMethods) {
         return """
             class $testName extends junit.framework.TestCase {
-                """+testMethods.join("\n")+"""
+                """ + testMethods.join("\n") + """
             }
         """
     }

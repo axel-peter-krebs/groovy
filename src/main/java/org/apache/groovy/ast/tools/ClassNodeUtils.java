@@ -65,13 +65,15 @@ import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
  */
 public class ClassNodeUtils {
 
+    private ClassNodeUtils() {
+    }
+
     /**
      * Formats a type name into a human-readable version. For arrays, appends "[]" to the formatted
      * type name of the component. For unit class nodes, uses the class node name.
      *
      * @param cNode the type to format
      * @return a human-readable version of the type name (java.lang.String[] for example)
-     *
      * @since 2.5.0
      */
     public static String formatTypeName(final ClassNode cNode) {
@@ -96,11 +98,10 @@ public class ClassNodeUtils {
      * Returns an existing method if one exists or else create a new method and mark it as {@code @Generated}.
      *
      * @see ClassNode#addMethod(String, int, ClassNode, Parameter[], ClassNode[], Statement)
-     *
      * @since 2.5.3
      */
     public static MethodNode addGeneratedMethod(final ClassNode cNode, final String name, final int modifiers,
-            final ClassNode returnType, final Parameter[] parameters, final ClassNode[] exceptions, final Statement code) {
+                                                final ClassNode returnType, final Parameter[] parameters, final ClassNode[] exceptions, final Statement code) {
         MethodNode result = cNode.getDeclaredMethod(name, parameters);
         if (result == null) {
             result = new MethodNode(name, modifiers, returnType, parameters, exceptions, code);
@@ -113,7 +114,6 @@ public class ClassNodeUtils {
      * Adds a method and mark it as {@code @Generated}.
      *
      * @see ClassNode#addMethod(MethodNode)
-     *
      * @since 2.5.3
      */
     public static void addGeneratedMethod(final ClassNode cNode, final MethodNode mNode) {
@@ -125,7 +125,6 @@ public class ClassNodeUtils {
      * Adds a method and mark it as {@code @Generated}.
      *
      * @see ClassNode#addMethod(MethodNode)
-     *
      * @since 3.0.8
      */
     public static void addGeneratedMethod(final ClassNode cNode, final MethodNode mNode, final boolean skipChecks) {
@@ -137,7 +136,6 @@ public class ClassNodeUtils {
      * Adds an inner class that is marked as {@code @Generated}.
      *
      * @see org.codehaus.groovy.ast.ModuleNode#addClass(ClassNode)
-     *
      * @since 2.5.7
      */
     public static void addGeneratedInnerClass(final ClassNode cNode, final ClassNode inner) {
@@ -149,7 +147,6 @@ public class ClassNodeUtils {
      * Adds a method that is marked as {@code @Generated}.
      *
      * @see ClassNode#addConstructor(int, Parameter[], ClassNode[], Statement)
-     *
      * @since 2.5.3
      */
     public static ConstructorNode addGeneratedConstructor(final ClassNode classNode, final int modifiers, final Parameter[] parameters, final ClassNode[] exceptions, final Statement code) {
@@ -162,7 +159,6 @@ public class ClassNodeUtils {
      * Adds a method that is marked as {@code @Generated}.
      *
      * @see ClassNode#addConstructor(ConstructorNode)
-     *
      * @since 2.5.3
      */
     public static void addGeneratedConstructor(final ClassNode classNode, final ConstructorNode ctorNode) {
@@ -188,9 +184,8 @@ public class ClassNodeUtils {
      * take precedence. Methods from interfaces visited early take precedence
      * over later ones.
      *
-     * @param cNode The ClassNode
+     * @param cNode      The ClassNode
      * @param methodsMap A map of existing methods to alter
-     *
      * @since 2.5.0
      */
     public static void addDeclaredMethodsFromInterfaces(final ClassNode cNode, final Map<String, MethodNode> methodsMap) {
@@ -210,7 +205,6 @@ public class ClassNodeUtils {
      *
      * @param cNode The ClassNode
      * @return A map of methods
-     *
      * @since 2.5.0
      */
     public static Map<String, MethodNode> getDeclaredMethodsFromInterfaces(final ClassNode cNode) {
@@ -223,9 +217,8 @@ public class ClassNodeUtils {
      * Adds methods from interfaces and parent interfaces. Existing entries in the methods map take precedence.
      * Methods from interfaces visited early take precedence over later ones.
      *
-     * @param cNode The ClassNode
+     * @param cNode      The ClassNode
      * @param methodsMap A map of existing methods to alter
-     *
      * @since 2.5.0
      */
     public static void addDeclaredMethodsFromAllInterfaces(final ClassNode cNode, final Map<String, MethodNode> methodsMap) {
@@ -249,11 +242,11 @@ public class ClassNodeUtils {
      * @param arguments the arguments to match against
      * @param trySpread whether to try to account for SpreadExpressions within the arguments
      * @return {@code true} if a matching method was found.
-     *
      * @since 2.5.0
      */
     public static boolean hasPossibleStaticMethod(final ClassNode cNode, final String name, final Expression arguments, final boolean trySpread) {
-        int count = 0; boolean foundSpread = false;
+        int count = 0;
+        boolean foundSpread = false;
         if (arguments instanceof TupleExpression) {
             for (Expression arg : (TupleExpression) arguments) {
                 if (arg instanceof SpreadExpression) {
@@ -332,7 +325,6 @@ public class ClassNodeUtils {
      *
      * @param accessorName the accessor name of interest, e.g. getAge
      * @return the property name, e.g. age, or original if not a valid property accessor name
-     *
      * @since 2.5.0
      */
     public static String getPropNameForAccessor(final String accessorName) {
@@ -347,7 +339,6 @@ public class ClassNodeUtils {
      *
      * @param accessorName the accessor name of interest, e.g. getAge
      * @return true if a valid prefix is found
-     *
      * @since 2.5.0
      */
     public static boolean isValidAccessorName(final String accessorName) {
@@ -401,10 +392,9 @@ public class ClassNodeUtils {
     /**
      * Finds static property within the class or super class.
      *
-     * @param cNode the ClassNode of interest
+     * @param cNode    the ClassNode of interest
      * @param propName the property name
      * @return the static property if found or else null
-     *
      * @since 2.5.0
      */
     public static PropertyNode getStaticProperty(final ClassNode cNode, final String propName) {
@@ -437,7 +427,6 @@ public class ClassNodeUtils {
      *
      * @param cNode the ClassNode of interest
      * @return true if the given node is a (non-static) inner class, else false
-     *
      * @since 2.5.0
      */
     public static boolean isInnerClass(final ClassNode cNode) {
@@ -458,7 +447,7 @@ public class ClassNodeUtils {
         }
 
         return !isPrimitiveType(source) && !isPrimitiveType(target)
-                && (source.isDerivedFrom(target) || source.implementsInterface(target));
+            && (source.isDerivedFrom(target) || source.implementsInterface(target));
     }
 
     /**
@@ -482,7 +471,6 @@ public class ClassNodeUtils {
      * @param xform if non-null, add an error if an explicit constructor is found
      * @param cNode the type of the containing class
      * @return true if an explicit (non-generated) constructor was found
-     *
      * @since 2.5.0
      */
     public static boolean hasExplicitConstructor(final AbstractASTTransformation xform, final ClassNode cNode) {
@@ -494,8 +482,8 @@ public class ClassNodeUtils {
             }
             if (xform != null) {
                 xform.addError("Error during " + xform.getAnnotationName() +
-                        " processing. Explicit constructors not allowed for class: " +
-                        cNode.getNameWithoutPackage(), constructorNode);
+                    " processing. Explicit constructors not allowed for class: " +
+                    cNode.getNameWithoutPackage(), constructorNode);
             }
             return true;
         }
@@ -505,10 +493,9 @@ public class ClassNodeUtils {
     /**
      * Determines if the given ClassNode values have the same package name.
      *
-     * @param first a ClassNode
+     * @param first  a ClassNode
      * @param second a ClassNode
      * @return true if both given nodes have the same package name
-     *
      * @since 2.5.0
      */
     public static boolean samePackageName(final ClassNode first, final ClassNode second) {
@@ -582,6 +569,8 @@ public class ClassNodeUtils {
         return null;
     }
 
+    //--------------------------------------------------------------------------
+
     /**
      * Determines if given class is, extends or implements a class or interface.
      *
@@ -589,17 +578,13 @@ public class ClassNodeUtils {
      */
     public static boolean isSubtype(final ClassNode maybeExtendedOrImplemented, final ClassNode cNode) {
         return maybeExtendedOrImplemented.isInterface() || cNode.isInterface()
-                ? isOrImplements(cNode, maybeExtendedOrImplemented)
-                : cNode.isDerivedFrom(maybeExtendedOrImplemented);
+            ? isOrImplements(cNode, maybeExtendedOrImplemented)
+            : cNode.isDerivedFrom(maybeExtendedOrImplemented);
     }
-
-    //--------------------------------------------------------------------------
 
     private static boolean isPackagePrivate(final AnnotatedNode aNode) {
         return aNode.getAnnotations().stream().anyMatch(anno -> "groovy.transform.PackageScope".equals(anno.getClassNode().getName()))
             || aNode.getDeclaringClass().getAnnotations().stream().anyMatch(anno -> "groovy.transform.PackageScope".equals(anno.getClassNode().getName())
-                                                                            && Optional.ofNullable(anno.getMember("value")).filter(expr -> expr.getText().contains("FIELDS")).isPresent());
+            && Optional.ofNullable(anno.getMember("value")).filter(expr -> expr.getText().contains("FIELDS")).isPresent());
     }
-
-    private ClassNodeUtils() {}
 }

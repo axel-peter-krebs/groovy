@@ -71,10 +71,12 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.ternaryX;
 @GroovyASTTransformationClass("org.codehaus.groovy.transform.LogASTTransformation")
 public @interface Log {
     String value() default "log";
+
     String category() default LogASTTransformation.DEFAULT_CATEGORY_NAME;
 
     /**
      * If specified, must match the "id" attribute in a VisibilityOptions annotation to enable a custom visibility.
+     *
      * @since 3.0.0
      */
     String visibilityId() default Undefined.STRING;
@@ -96,12 +98,12 @@ public @interface Log {
         @Override
         public FieldNode addLoggerFieldToClass(ClassNode classNode, String logFieldName, String categoryName, int fieldModifiers) {
             return classNode.addField(logFieldName,
-                        fieldModifiers,
-                        LOGGER_CLASSNODE,
-                        new MethodCallExpression(
-                                new ClassExpression(LOGGER_CLASSNODE),
-                                "getLogger",
-                                new ConstantExpression(getCategoryName(classNode, categoryName))));
+                fieldModifiers,
+                LOGGER_CLASSNODE,
+                new MethodCallExpression(
+                    new ClassExpression(LOGGER_CLASSNODE),
+                    "getLogger",
+                    new ConstantExpression(getCategoryName(classNode, categoryName))));
         }
 
         @Override
@@ -112,8 +114,8 @@ public @interface Log {
         @Override
         public Expression wrapLoggingMethodCall(Expression logVariable, String methodName, Expression originalExpression) {
             AttributeExpression logLevelExpression = new AttributeExpression(
-                    new ClassExpression(LEVEL_CLASSNODE),
-                    new ConstantExpression(methodName.toUpperCase(Locale.ENGLISH)));
+                new ClassExpression(LEVEL_CLASSNODE),
+                new ConstantExpression(methodName.toUpperCase(Locale.ENGLISH)));
 
             ArgumentListExpression args = new ArgumentListExpression();
             args.addExpression(logLevelExpression);

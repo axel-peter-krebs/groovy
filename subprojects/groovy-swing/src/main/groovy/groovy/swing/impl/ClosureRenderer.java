@@ -147,12 +147,12 @@ public class ClosureRenderer implements ListCellRenderer, TableCellRenderer, Tre
         this.update = update;
     }
 
-    public void setTableHeader(boolean tableHeader) {
-        this.tableHeader = tableHeader;
-    }
-
     public boolean isTableHeader() {
         return tableHeader;
+    }
+
+    public void setTableHeader(boolean tableHeader) {
+        this.tableHeader = tableHeader;
     }
 
     public List getChildren() {

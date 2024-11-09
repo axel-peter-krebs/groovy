@@ -44,8 +44,8 @@ class ShortTypeHandlingTest extends GroovyTestCase {
 
     void testCastToCharacter() {
         assert castToChar(null) == null
-        char c = (char)'c'
-        assert castToChar((Object)c) == c
+        char c = (char) 'c'
+        assert castToChar((Object) c) == c
         assert castToChar(Integer.valueOf(99)) == c
         assert castToChar("${c}") == c
         assert castToChar('c') == c
@@ -56,7 +56,7 @@ class ShortTypeHandlingTest extends GroovyTestCase {
 
     void testCastToEnum() {
         assert castToEnum(null, TestStages) == null
-        assert castToEnum((Object)TestStages.AFTER_CLASS, TestStages) == TestStages.AFTER_CLASS
+        assert castToEnum((Object) TestStages.AFTER_CLASS, TestStages) == TestStages.AFTER_CLASS
         assert castToEnum("BEFORE_TEST", TestStages) == TestStages.BEFORE_TEST
     }
 

@@ -33,9 +33,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *  A builder for creating TOML payloads.
+ * A builder for creating TOML payloads.
  *
- *  @since 4.0.0
+ * @since 4.0.0
  */
 @Incubating
 public class TomlBuilder extends GroovyObjectSupport implements Writable {
@@ -134,7 +134,7 @@ public class TomlBuilder extends GroovyObjectSupport implements Writable {
      * </code></pre>
      *
      * @param coll a collection
-     * @param c a closure used to convert the objects of coll
+     * @param c    a closure used to convert the objects of coll
      * @return a list of values
      */
     public Object call(Iterable coll, Closure c) {
@@ -143,6 +143,7 @@ public class TomlBuilder extends GroovyObjectSupport implements Writable {
 
     /**
      * Delegates to {@link #call(Iterable, Closure)}
+     *
      * @param coll
      * @param c
      */
@@ -200,7 +201,7 @@ public class TomlBuilder extends GroovyObjectSupport implements Writable {
      * person.age = 33
      * '''
      * </code></pre>
-     *
+     * <p>
      * Or alternatively with a method call taking named arguments:
      * <pre><code class="groovyTestCase">
      * def toml = new groovy.toml.TomlBuilder()
@@ -211,7 +212,7 @@ public class TomlBuilder extends GroovyObjectSupport implements Writable {
      * person.age = 33
      * '''
      * </code></pre>
-     *
+     * <p>
      * If you use named arguments and a closure as last argument,
      * the key/value pairs of the map (as named arguments)
      * and the key/value pairs represented in the closure
@@ -228,7 +229,7 @@ public class TomlBuilder extends GroovyObjectSupport implements Writable {
      * person.town = 'Paris'
      * '''
      * </code></pre>
-     *
+     * <p>
      * The empty args call will create a key whose value will be an empty YAML object:
      * <pre><code class="groovyTestCase">
      * def toml = new groovy.toml.TomlBuilder()

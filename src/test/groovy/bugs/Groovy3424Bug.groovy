@@ -85,6 +85,7 @@ class Groovy3424ClassProxyMetaClass extends ProxyMetaClass {
     Groovy3424ClassProxyMetaClass(MetaClassRegistry metaClassRegistry, Class aClass, MetaClass adaptee) {
         super(metaClassRegistry, aClass, adaptee)
     }
+
     public Object invokeConstructor(final Object[] arguments) {
         'constructor'
     }

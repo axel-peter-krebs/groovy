@@ -128,17 +128,17 @@ class VetoableTransformTest extends GroovyShellTestCase {
             boolean field = i & 2
             boolean setter = i & 4
             boolean getter = i & 8
-            int expectedCount = (vetoClass && !field)?2:1
+            int expectedCount = (vetoClass && !field) ? 2 : 1
             String script = """
                     import groovy.beans.Vetoable
 
-                    ${vetoClass?'@Vetoable ':''}class VetoableTestSettersAndGetters$i {
+                    ${vetoClass ? '@Vetoable ' : ''}class VetoableTestSettersAndGetters$i {
 
                         @Vetoable String alwaysVetoable
-                        ${field?'protected ':''} String name
+                        ${field ? 'protected ' : ''} String name
 
-                        ${setter?'':'//'}void setName(String newName) { this.@name = "x\$newName" }
-                        ${getter?'':'//'}String getName() { return this.@name }
+                        ${setter ? '' : '//'}void setName(String newName) { this.@name = "x\$newName" }
+                        ${getter ? '' : '//'}String getName() { return this.@name }
                     }
                     sb = new VetoableTestSettersAndGetters$i(name:"foo", alwaysVetoable:"bar")
                     changed = 0
@@ -185,28 +185,28 @@ class VetoableTransformTest extends GroovyShellTestCase {
     void testInheritance() {
         for (int i = 0; i < 15; i++) {
             boolean bindParent = i & 1
-            boolean bindChild  = i & 2
+            boolean bindChild = i & 2
             boolean vetoParent = i & 4
-            boolean vetoChild  = i & 8
-            int count = (bindParent?1:0) + (bindChild?1:0) + (vetoParent?1:0) + (vetoChild?1:0)
+            boolean vetoChild = i & 8
+            int count = (bindParent ? 1 : 0) + (bindChild ? 1 : 0) + (vetoParent ? 1 : 0) + (vetoChild ? 1 : 0)
             String script = """
                     import groovy.beans.Bindable
                     import groovy.beans.Vetoable
 
                     class InheritanceParentBean$i {
-                        ${bindParent?'@Bindable':''} String bp
-                        ${vetoParent?'@Vetoable':''} String vp
+                        ${bindParent ? '@Bindable' : ''} String bp
+                        ${vetoParent ? '@Vetoable' : ''} String vp
                     }
 
                     class InheritanceChildBean$i extends InheritanceParentBean$i {
-                        ${bindChild?'@Bindable':''} String bc
-                        ${vetoChild?'@Vetoable':''} String vc
+                        ${bindChild ? '@Bindable' : ''} String bc
+                        ${vetoChild ? '@Vetoable' : ''} String vc
                     }
 
                     cb = new InheritanceChildBean$i(bp:'a', vp:'b', bc:'c', vc:'d')
                     changed = 0
-                    ${bindParent|bindChild?'cb.propertyChange = { changed++ }':''}
-                    ${vetoParent|vetoChild?'cb.vetoableChange = { changed++ }':''}
+                    ${bindParent | bindChild ? 'cb.propertyChange = { changed++ }' : ''}
+                    ${vetoParent | vetoChild ? 'cb.vetoableChange = { changed++ }' : ''}
                     cb.bp = 'e'
                     cb.vp = 'f'
                     cb.bc = 'g'
@@ -373,35 +373,35 @@ class VetoableTransformTest extends GroovyShellTestCase {
 
     void testClassMarkers() {
         for (int i = 0; i < 31; i++) {
-            boolean bindField  = i & 1
-            boolean bindClass  = i & 2
-            boolean vetoField  = i & 4
-            boolean vetoClass  = i & 8
+            boolean bindField = i & 1
+            boolean bindClass = i & 2
+            boolean vetoField = i & 4
+            boolean vetoClass = i & 8
             boolean staticField = i & 16
-            int vetoCount = vetoClass?(staticField?4:5):(vetoField?2:0);
-            int bindCount = bindClass?(staticField?4:5):(bindField?2:0);
+            int vetoCount = vetoClass ? (staticField ? 4 : 5) : (vetoField ? 2 : 0);
+            int bindCount = bindClass ? (staticField ? 4 : 5) : (bindField ? 2 : 0);
 
             String script = """
                     import groovy.beans.Bindable
                     import groovy.beans.Vetoable
 
-                    ${vetoClass?'@Vetoable ':''}${bindClass?'@Bindable ':''}class ClassMarkerBean$i {
+                    ${vetoClass ? '@Vetoable ' : ''}${bindClass ? '@Bindable ' : ''}class ClassMarkerBean$i {
                         String neither
 
-                        ${vetoField?'@Vetoable ':''}String veto
+                        ${vetoField ? '@Vetoable ' : ''}String veto
 
-                        ${bindField?'@Bindable ':''}String bind
+                        ${bindField ? '@Bindable ' : ''}String bind
 
-                        ${vetoField?'@Vetoable ':''}${bindField?'@Bindable ':''}String both
+                        ${vetoField ? '@Vetoable ' : ''}${bindField ? '@Bindable ' : ''}String both
 
-                        ${staticField?'static ':''}String staticField
+                        ${staticField ? 'static ' : ''}String staticField
                     }
 
                     cb = new ClassMarkerBean$i(neither:'a', veto:'b', bind:'c', both:'d', staticField:'e')
                     vetoCount = 0
                     bindCount = 0
-                    ${bindClass|bindField?'cb.propertyChange = { bindCount++ }':''}
-                    ${vetoClass|vetoField?'cb.vetoableChange = { vetoCount++ }':''}
+                    ${bindClass | bindField ? 'cb.propertyChange = { bindCount++ }' : ''}
+                    ${vetoClass | vetoField ? 'cb.vetoableChange = { vetoCount++ }' : ''}
                     cb.neither = 'f'
                     cb.bind = 'g'
                     cb.veto = 'h'

@@ -24,10 +24,11 @@ package groovy.lang;
  * @since 3.0.0
  */
 public final class Tuple0 extends Tuple {
-    private static final long serialVersionUID = -3791115121904072346L;
     public static final Tuple0 INSTANCE = new Tuple0();
+    private static final long serialVersionUID = -3791115121904072346L;
 
-    private Tuple0() {}
+    private Tuple0() {
+    }
 
     @Override
     public Tuple0 clone() {

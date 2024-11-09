@@ -29,9 +29,8 @@ import java.lang.reflect.Method;
 
 /**
  * Plain ordinary object call site
- *   metaclass - cached
- *   method - cached
- *
+ * metaclass - cached
+ * method - cached
  */
 public abstract class PlainObjectMetaMethodSite extends MetaMethodSite {
     public PlainObjectMetaMethodSite(CallSite site, MetaClass metaClass, MetaMethod metaMethod, Class[] params) {
@@ -44,7 +43,7 @@ public abstract class PlainObjectMetaMethodSite extends MetaMethodSite {
         } catch (InvocationTargetException e) {
             Throwable cause = e.getCause();
             if (cause instanceof GroovyRuntimeException) {
-                throw ScriptBytecodeAdapter.unwrap ((GroovyRuntimeException) cause);
+                throw ScriptBytecodeAdapter.unwrap((GroovyRuntimeException) cause);
             } else {
                 throw cause;
             }

@@ -22,29 +22,29 @@ import groovy.test.GroovyTestCase
 
 class Groovy4078Bug extends GroovyTestCase {
     void testInfiniteLoopDetectionInStepUsage() {
-        (2..2).step 0, {assert it != null} //IntRange
+        (2..2).step 0, { assert it != null } //IntRange
 
-        ('b'..'b').step 0, {assert it != null} //ObjectRange
+        ('b'..'b').step 0, { assert it != null } //ObjectRange
 
-        5.step( 5, 1 ) { assert it != null } // DGM.step(), int
+        5.step(5, 1) { assert it != null } // DGM.step(), int
 
-        5.0.step (5.0, 1 ) { assert it != null } // DGM.step(), BigDecimal
+        5.0.step(5.0, 1) { assert it != null } // DGM.step(), BigDecimal
 
         def from = BigInteger.valueOf(5)
         def to = BigInteger.valueOf(5)
-        from.step (to, 1 ) { assert it != null }  // DGM.step(), BigInteger
+        from.step(to, 1) { assert it != null }  // DGM.step(), BigInteger
 
-        try{
-            (1..2).step 0, {assert it != null} //IntRange
+        try {
+            (1..2).step 0, { assert it != null } //IntRange
             fail('Should have failed as step size 0 causes infinite loop')
-        } catch(ex) {
+        } catch (ex) {
             assert ex.message.contains('Infinite loop detected due to step size of 0')
         }
 
-        try{
-            ('a'..'b').step 0, {assert it != null} // ObjectRange
+        try {
+            ('a'..'b').step 0, { assert it != null } // ObjectRange
             fail('Should have failed as step size 0 causes infinite loop')
-        } catch(ex) {
+        } catch (ex) {
             assert ex.message.contains('Infinite loop detected due to step size of 0')
         }
     }

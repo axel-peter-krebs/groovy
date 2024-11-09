@@ -24,4 +24,4 @@ import groovy.transform.Field
 @Unparsed
 @Field
 @AnnotationCollector
-@interface UnparsedField { }
+@interface UnparsedField {}

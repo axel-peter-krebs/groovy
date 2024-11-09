@@ -55,6 +55,7 @@ public class Comments {
     /*
      * test Comments.m2
      */
+
     private m2() {
         // executing m2
     }
@@ -132,4 +133,5 @@ void someScriptMethod1() {}
 /*
  * test someScriptMethod2
  */
+
 void someScriptMethod2() {}

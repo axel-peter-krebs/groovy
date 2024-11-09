@@ -25,7 +25,7 @@ public class GroovyClass {
     private final byte[] bytes;
 
     public GroovyClass(String name, byte[] bytes) {
-        this.name  = name;
+        this.name = name;
         this.bytes = bytes;
     }
 

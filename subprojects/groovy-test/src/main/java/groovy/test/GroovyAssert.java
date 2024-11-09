@@ -45,7 +45,7 @@ import static org.codehaus.groovy.runtime.DefaultGroovyMethods.isAtLeast;
  * <pre>
  *     groovy.test.GroovyAssert.shouldFail { ... }
  * </pre>
- *
+ * <p>
  * or by importing the static methods with one ore more static imports:
  *
  * <pre>
@@ -69,11 +69,12 @@ import static org.codehaus.groovy.runtime.DefaultGroovyMethods.isAtLeast;
  */
 public class GroovyAssert {
 
-    private static final int MAX_NESTED_EXCEPTIONS = 10;
-
-    private static final AtomicInteger counter = new AtomicInteger(0);
-
     public static final String TEST_SCRIPT_NAME_PREFIX = "TestScript";
+    private static final int MAX_NESTED_EXCEPTIONS = 10;
+    private static final AtomicInteger counter = new AtomicInteger(0);
+    private static final ThreadLocal<Boolean> notYetImplementedFlag = new ThreadLocal<>();
+
+    //--------------------------------------------------------------------------
 
     /**
      * @return a generic script name to be used by {@code GroovyShell#evaluate}.
@@ -81,8 +82,6 @@ public class GroovyAssert {
     protected static String genericScriptName() {
         return TEST_SCRIPT_NAME_PREFIX + (counter.getAndIncrement()) + ".groovy";
     }
-
-    //--------------------------------------------------------------------------
 
     /**
      * Asserts that the script runs without any exceptions
@@ -93,10 +92,12 @@ public class GroovyAssert {
         assertScript(new GroovyShell(), script);
     }
 
+    //--------------------------------------------------------------------------
+
     /**
      * Asserts that the script runs using the given shell without any exceptions
      *
-     * @param shell the shell to use to evaluate the script
+     * @param shell  the shell to use to evaluate the script
      * @param script the script that should pass without any exception
      */
     public static void assertScript(final GroovyShell shell, final String script) {
@@ -112,14 +113,12 @@ public class GroovyAssert {
         throw new AssertionError(message);
     }
 
-    //--------------------------------------------------------------------------
-
     /**
      * Asserts that the given script fails when evaluated.
      *
      * @param script the script expected to fail
-     * @throws AssertionError if no failure
      * @return the caught exception
+     * @throws AssertionError if no failure
      */
     public static Throwable shouldFail(final String script) {
         return shouldFail(new GroovyShell(), script);
@@ -128,10 +127,10 @@ public class GroovyAssert {
     /**
      * Asserts that the given script fails when evaluated using the given shell.
      *
-     * @param shell the shell to use to evaluate the script
+     * @param shell  the shell to use to evaluate the script
      * @param script the script expected to fail
-     * @throws AssertionError if no failure
      * @return the caught exception
+     * @throws AssertionError if no failure
      */
     public static Throwable shouldFail(final GroovyShell shell, final String script) {
         Throwable th = null;
@@ -156,12 +155,14 @@ public class GroovyAssert {
      *
      * @param clazz  the class of the expected exception
      * @param script the script expected to fail
-     * @throws AssertionError if no failure
      * @return the caught exception
+     * @throws AssertionError if no failure
      */
     public static <T extends Throwable> T shouldFail(final Class<T> clazz, final String script) {
         return shouldFail(new GroovyShell(), clazz, script);
     }
+
+    //
 
     /**
      * Asserts that the given script fails when evaluated using the given shell
@@ -170,8 +171,8 @@ public class GroovyAssert {
      * @param shell  the shell to use to evaluate the script
      * @param clazz  the class of the expected exception
      * @param script the script expected to fail
-     * @throws AssertionError if no failure
      * @return the caught exception
+     * @throws AssertionError if no failure
      */
     public static <T extends Throwable> T shouldFail(final GroovyShell shell, final Class<T> clazz, final String script) {
         Throwable th = null;
@@ -194,14 +195,12 @@ public class GroovyAssert {
         return t;
     }
 
-    //
-
     /**
      * Asserts that the given closure fails when executed.
      *
      * @param code the block expected to fail
-     * @throws AssertionError if no failure
      * @return the caught exception
+     * @throws AssertionError if no failure
      */
     public static Throwable shouldFail(final Closure<?> code) {
         Throwable th = null;
@@ -226,8 +225,8 @@ public class GroovyAssert {
      *
      * @param type the class of the expected exception
      * @param code the block expected to fail
-     * @throws AssertionError if no failure
      * @return the caught exception
+     * @throws AssertionError if no failure
      */
     public static <T extends Throwable> T shouldFail(final Class<T> type, final Closure<?> code) {
         Throwable th = null;
@@ -261,8 +260,8 @@ public class GroovyAssert {
      *
      * @param type the class of the expected nested exception
      * @param code the block expected to fail
-     * @throws AssertionError if no failure
      * @return the cause
+     * @throws AssertionError if no failure
      */
     public static <T extends Throwable> T shouldFailWithCause(final Class<T> type, final Closure<?> code) {
         Throwable th = null;
@@ -283,7 +282,8 @@ public class GroovyAssert {
 
         int level = 0;
         while (th != th.getCause() && level < MAX_NESTED_EXCEPTIONS) {
-            th = th.getCause(); if (th == null || type.isInstance(th)) break;
+            th = th.getCause();
+            if (th == null || type.isInstance(th)) break;
             level += 1;
         }
 
@@ -295,6 +295,8 @@ public class GroovyAssert {
         T t = (T) th;
         return t;
     }
+
+    //--------------------------------------------------------------------------
 
     private static String buildExceptionList(Throwable th) {
         StringBuilder sb = new StringBuilder();
@@ -317,8 +319,6 @@ public class GroovyAssert {
         }
         return sb.toString();
     }
-
-    //--------------------------------------------------------------------------
 
     /**
      * From JUnit. Finds from the call stack the active running JUnit test case.
@@ -359,9 +359,9 @@ public class GroovyAssert {
         final Class<?> returnType = method.getReturnType();
 
         return parameters.length == 0
-                && (name.startsWith("test") || hasTestAnnotation(method))
-                && returnType.equals(Void.TYPE)
-                && Modifier.isPublic(method.getModifiers());
+            && (name.startsWith("test") || hasTestAnnotation(method))
+            && returnType.equals(Void.TYPE)
+            && Modifier.isPublic(method.getModifiers());
     }
 
     private static boolean hasTestAnnotation(final Method method) {
@@ -393,7 +393,7 @@ public class GroovyAssert {
      *   ... the real (now failing) unit test
      * }
      * </pre>
-     *
+     * <p>
      * Idea copied from HtmlUnit (many thanks to Marc Guillemot).
      * Future versions maybe available in the JUnit distribution.
      *
@@ -421,8 +421,6 @@ public class GroovyAssert {
         }
         return true;
     }
-
-    private static final ThreadLocal<Boolean> notYetImplementedFlag = new ThreadLocal<>();
 
     //--------------------------------------------------------------------------
 

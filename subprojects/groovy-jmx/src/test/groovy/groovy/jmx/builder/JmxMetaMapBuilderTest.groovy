@@ -138,8 +138,8 @@ class JmxMetaMapBuilderTest extends GroovyTestCase {
     void testBuildObjectWithNameOnly() {
         def object = new MockManagedObject()
         def map = JmxMetaMapBuilder.buildObjectMapFrom(object, [
-                target: object,
-                name  : "jmx.builder:type=TestObject"
+            target: object,
+            name  : "jmx.builder:type=TestObject"
         ])
 
         assert map
@@ -185,8 +185,8 @@ class JmxMetaMapBuilderTest extends GroovyTestCase {
         def object = new MockManagedObject()
         def name = "jmx.builder:type=TestObject@${object.hashCode()}"
         def map = JmxMetaMapBuilder.buildObjectMapFrom(object, [
-                target: object,
-                name  : name
+            target: object,
+            name  : name
         ])
 
         assert map
@@ -196,9 +196,9 @@ class JmxMetaMapBuilderTest extends GroovyTestCase {
     void testBuildAttributeMapFromDescriptorMap() {
         def object = new MockManagedObject()
         def attribs = JmxMetaMapBuilder.buildAttributeMapFrom(object, [
-                something    : "*",
-                somethingElse: [desc: "somethingElse", readable: false, writable: true],
-                available    : [desc: "availability", readable: true, writable: true]
+            something    : "*",
+            somethingElse: [desc: "somethingElse", readable: false, writable: true],
+            available    : [desc: "availability", readable: true, writable: true]
         ])
 
         assert attribs
@@ -286,11 +286,11 @@ class JmxMetaMapBuilderTest extends GroovyTestCase {
         assert map."ctor1".params.size() == 0
 
         map = JmxMetaMapBuilder.buildConstructorMapFrom(object, [
-                "ctor1": [],
-                "ctor2": [desc: "Ctor2 description", params: ["java.lang.String", "int"]],
-                "ctor3": [desc  : "Ctor3 description",
-                          params: ["java.lang.String": [name: "quantity", "desc": "Initial Value"]]
-                ]
+            "ctor1": [],
+            "ctor2": [desc: "Ctor2 description", params: ["java.lang.String", "int"]],
+            "ctor3": [desc  : "Ctor3 description",
+                      params: ["java.lang.String": [name: "quantity", "desc": "Initial Value"]]
+            ]
         ])
         assert map
         assert map."ctor2".params.size() == 2
@@ -299,10 +299,10 @@ class JmxMetaMapBuilderTest extends GroovyTestCase {
         assert map."ctor3".params."java.lang.String".name == "quantity"
 
         map = JmxMetaMapBuilder.buildConstructorMapFrom(object, [
-                "ctor2": [desc: "Ctor2 description", params: ["java.lang.String": "*", "int": "*"]],
-                "ctor3": [desc  : "Ctor3 description",
-                          params: ["java.lang.String": [name: "quantity", "desc": "Initial Value"]]
-                ]
+            "ctor2": [desc: "Ctor2 description", params: ["java.lang.String": "*", "int": "*"]],
+            "ctor3": [desc  : "Ctor3 description",
+                      params: ["java.lang.String": [name: "quantity", "desc": "Initial Value"]]
+            ]
         ])
 
         assert map."ctor2".params.size() == 2
@@ -350,15 +350,15 @@ class JmxMetaMapBuilderTest extends GroovyTestCase {
         assert map."doSomethingElse".params
 
         map = JmxMetaMapBuilder.buildOperationMapFrom(object, [
-                "doSomething"    : "*",
-                "dontDoThis"     : ["java.lang.Object"],
-                "doSomethingElse": [
-                        desc  : "This is doSomethingElse",
-                        params: [
-                                "int"   : [desc: "Quantity"],
-                                "String": "*"
-                        ]
+            "doSomething"    : "*",
+            "dontDoThis"     : ["java.lang.Object"],
+            "doSomethingElse": [
+                desc  : "This is doSomethingElse",
+                params: [
+                    "int"   : [desc: "Quantity"],
+                    "String": "*"
                 ]
+            ]
         ])
 
         assert map
@@ -390,8 +390,8 @@ class JmxMetaMapBuilderTest extends GroovyTestCase {
         }
 
         map = JmxMetaMapBuilder.buildParameterMapFrom(ctor, [
-                "java.lang.String": [name: "place", desc: "the location to execute"],
-                "int"             : "*"
+            "java.lang.String": [name: "place", desc: "the location to execute"],
+            "int"             : "*"
         ])
 
         assert map
@@ -436,8 +436,8 @@ class JmxMetaMapBuilderTest extends GroovyTestCase {
         }
 
         map = JmxMetaMapBuilder.buildParameterMapFrom(method, [
-                "int"             : "*",
-                "java.lang.String": [name: "What to do", desc: "the location to execute"],
+            "int"             : "*",
+            "java.lang.String": [name: "What to do", desc: "the location to execute"],
         ])
 
         assert map
@@ -465,11 +465,11 @@ class JmxMetaMapBuilderTest extends GroovyTestCase {
         def map
 
         map = JmxMetaMapBuilder.buildAttributeMapFrom(object, [
-                "something"  : "*",
-                somethingElse: [
-                        desc    : "somethingElse", readable: true, writable: true,
-                        onChange: { -> "event block" }
-                ]
+            "something"  : "*",
+            somethingElse: [
+                desc    : "somethingElse", readable: true, writable: true,
+                onChange: { -> "event block" }
+            ]
         ])
 
         assert map.Something
@@ -486,10 +486,10 @@ class JmxMetaMapBuilderTest extends GroovyTestCase {
         def map
 
         map = JmxMetaMapBuilder.buildOperationMapFrom(object, [
-                "doSomething": [
-                        params: [],
-                        onCall: { -> "event block" }
-                ]
+            "doSomething": [
+                params: [],
+                onCall: { -> "event block" }
+            ]
         ])
 
         assert map
@@ -500,10 +500,10 @@ class JmxMetaMapBuilderTest extends GroovyTestCase {
 
     void testBuildListenerMap() {
         def map = JmxMetaMapBuilder.buildListenerMapFrom(
-                [
-                        heartbeat: [event: "event.heartbeat", from: "some:type=object", call: { -> "event block" }],
-                        timer    : [event: "event.timer", from: "some:type=object", call: { -> "event block" }]
-                ]
+            [
+                heartbeat: [event: "event.heartbeat", from: "some:type=object", call: { -> "event block" }],
+                timer    : [event: "event.timer", from: "some:type=object", call: { -> "event block" }]
+            ]
         )
         assert map
         assert map.heartbeat.event == "event.heartbeat"

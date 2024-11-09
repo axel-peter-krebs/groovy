@@ -30,14 +30,14 @@ public class StrangeBeanBeanInfo extends SimpleBeanInfo {
             Method removeListener = StrangeBean.class.getMethod("removeStrangeEventListener", StrangeEventListener.class);
             Method getListeners = StrangeBean.class.getMethod("getStrangeEventListeners");
 
-            return new EventSetDescriptor[] {
+            return new EventSetDescriptor[]{
                 new EventSetDescriptor(
-                        "strangeEvent",
-                        StrangeEventListener.class,
-                        events,
-                        addListener,
-                        removeListener,
-                        getListeners)
+                    "strangeEvent",
+                    StrangeEventListener.class,
+                    events,
+                    addListener,
+                    removeListener,
+                    getListeners)
             };
         } catch (Exception e) {
             e.printStackTrace(System.out);

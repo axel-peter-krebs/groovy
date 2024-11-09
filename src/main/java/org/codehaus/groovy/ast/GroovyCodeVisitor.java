@@ -209,7 +209,7 @@ public interface GroovyCodeVisitor {
 
     default void visitListOfExpressions(final List<? extends Expression> list) {
         if (list != null) {
-            for (Expression expr: list) {
+            for (Expression expr : list) {
                 expr.visit(this);
             }
         }

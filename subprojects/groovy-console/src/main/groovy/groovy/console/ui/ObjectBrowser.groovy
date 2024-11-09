@@ -43,6 +43,7 @@ import static groovy.inspect.Inspector.MEMBER_TYPE_IDX
 import static groovy.inspect.Inspector.MEMBER_VALUE_IDX
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION
 import static org.apache.groovy.parser.antlr4.GroovyLexer.VOCABULARY
+
 /**
  * A little GUI to show some of the Inspector capabilities.
  * Starting this script opens the ObjectBrowser on "some String".
@@ -80,7 +81,7 @@ class ObjectBrowser {
         cards.add(makeCard(swing, new Inspector(objectUnderInspection), path), pathId)
         cards.layout.show(cards, pathId)
         cards.revalidate()
-        pathMenu.add(swing.menuItem { action(name: path, enabled: bind{ tracker.current != idx }, closure: this.&showAction.curry(idx)) })
+        pathMenu.add(swing.menuItem { action(name: path, enabled: bind { tracker.current != idx }, closure: this.&showAction.curry(idx)) })
         mb.revalidate()
     }
 
@@ -89,18 +90,19 @@ class ObjectBrowser {
         tracker = new CardTracker()
 
         frame = swing.frame(title: 'Groovy Object Browser', location: [200, 200],
-                size: [800, 600], pack: true, show: true,
-                iconImage: swing.imageIcon(Console.ICON_PATH).image,
-                defaultCloseOperation: WindowConstants.DISPOSE_ON_CLOSE) {
+            size: [800, 600], pack: true, show: true,
+            iconImage: swing.imageIcon(Console.ICON_PATH).image,
+            defaultCloseOperation: WindowConstants.DISPOSE_ON_CLOSE) {
 
             mb = menuBar {
                 pathMenu = menu(text: 'Path') {
                     int idx = pathCount++
-                    menuItem { action(name: path.toString(), enabled: bind{ tracker.current != idx }, closure: this.&showAction.curry(idx)) }
+                    menuItem { action(name: path.toString(), enabled: bind { tracker.current != idx }, closure: this.&showAction.curry(idx)) }
                 }
                 menu(text: 'Help') {
                     menuItem { action(name: 'Usage', closure: this.&usageAction) }
-                    menuItem { action(
+                    menuItem {
+                        action(
                             name: 'About',
                             smallIcon: imageIcon(resource: 'icons/information.png', class: this),
                             closure: this.&aboutAction)
@@ -131,14 +133,15 @@ class ObjectBrowser {
         builder.panel {
             borderLayout()
             panel(name: 'Class Info',
-                    border: titledBorder('Class Info'),
-                    constraints: NORTH) {
+                border: titledBorder('Class Info'),
+                constraints: NORTH) {
                 flowLayout(alignment: FlowLayout.LEFT)
                 def props = inspector.classProps.findAll { it != 'implements ' }
                 try {
                     def module = inspector.object.class.module.name
                     if (module) props.add(0, "module ${module}")
-                } catch(Exception ignore) {}
+                } catch (Exception ignore) {
+                }
 
                 final implementsPrefix = 'implements '
                 def content = props.collect {
@@ -153,8 +156,8 @@ class ObjectBrowser {
                 }.join('\n').trim()
 
                 for (def ln in (HIGHLIGHTED_TOKEN_TYPE_LIST.collect {
-                                    VOCABULARY.getLiteralName(it)?.replace("'", '')
-                                }.grep { it } + ['module', 'true', 'false'])) {
+                    VOCABULARY.getLiteralName(it)?.replace("'", '')
+                }.grep { it } + ['module', 'true', 'false'])) {
                     content = content.replaceAll(/\b(${ln})\b/, '<b>$1</b>')
                 }
                 content = content.replace('\n', '<br/>').replace(',', '<b>,</b>').replace(':', '<b>:</b>')
@@ -284,19 +287,19 @@ class ObjectBrowser {
                 }
             }
             panel(name: 'Path',
-                    border: emptyBorder([5, 10, 5, 10]),
-                    constraints: SOUTH) {
+                border: emptyBorder([5, 10, 5, 10]),
+                constraints: SOUTH) {
                 boxLayout(axis: 2)
                 button(icon: imageIcon(resource: 'icons/resultset_previous.png', class: this),
-                        margin: [5, 5, 5, 5] as Insets,
-                        actionPerformed: { tracker.current--; show() },
-                        enabled: bind { tracker.current > 0 })
+                    margin: [5, 5, 5, 5] as Insets,
+                    actionPerformed: { tracker.current--; show() },
+                    enabled: bind { tracker.current > 0 })
                 label('Path:  ')
                 textField(editable: false, text: path)
                 button(icon: imageIcon(resource: 'icons/resultset_next.png', class: this),
-                        margin: [5, 5, 5, 5] as Insets,
-                        actionPerformed: { tracker.current++; show() },
-                        enabled: bind { tracker.current < pathCount - 1 }
+                    margin: [5, 5, 5, 5] as Insets,
+                    actionPerformed: { tracker.current++; show() },
+                    enabled: bind { tracker.current < pathCount - 1 }
                 )
             }
         }
@@ -324,26 +327,26 @@ class ObjectBrowser {
                 if (e.isPopupTrigger()) {
                     def popup = swing.popupMenu {
                         menuItem(action(
-                                name: 'Copy',
-                                closure: outer.&copyAction.curry(table, e),
-                                mnemonic: 'C',
-                                accelerator: shortcut('C'),
-                                smallIcon: imageIcon(resource: 'icons/page_copy.png', class: this),
-                                shortDescription: 'Copy'
+                            name: 'Copy',
+                            closure: outer.&copyAction.curry(table, e),
+                            mnemonic: 'C',
+                            accelerator: shortcut('C'),
+                            smallIcon: imageIcon(resource: 'icons/page_copy.png', class: this),
+                            shortDescription: 'Copy'
                         ))
                         menuItem(action(
-                                name: 'Browse',
-                                enabled: table.model.getValueAt(table.selectedRow, valueCol) != null,
-                                closure: outer.&launchAction.curry(table, valueCol, false, pathClosure),
-                                smallIcon: imageIcon(resource: 'icons/page_white_stack.png', class: this),
-                                shortDescription: 'Browse'
+                            name: 'Browse',
+                            enabled: table.model.getValueAt(table.selectedRow, valueCol) != null,
+                            closure: outer.&launchAction.curry(table, valueCol, false, pathClosure),
+                            smallIcon: imageIcon(resource: 'icons/page_white_stack.png', class: this),
+                            shortDescription: 'Browse'
                         ))
                         menuItem(action(
-                                name: 'Browse in new window',
-                                enabled: table.model.getValueAt(table.selectedRow, valueCol) != null,
-                                closure: outer.&launchAction.curry(table, valueCol, true, pathClosure),
-                                smallIcon: imageIcon(resource: 'icons/page_white_go.png', class: this),
-                                shortDescription: 'Browse window'
+                            name: 'Browse in new window',
+                            enabled: table.model.getValueAt(table.selectedRow, valueCol) != null,
+                            closure: outer.&launchAction.curry(table, valueCol, true, pathClosure),
+                            smallIcon: imageIcon(resource: 'icons/page_white_go.png', class: this),
+                            shortDescription: 'Browse window'
                         ))
                     }
                     popup.show(e.component, e.x, e.y)
@@ -388,10 +391,10 @@ class ObjectBrowser {
         // work around GROOVY-1048
         pane.setMessage(
             'Double-click on a row to drill-down into the child level.\n' +
-            'A new card is created for the child level. The cards can\n' +
-            'be selected using menu items in the Path menu.\n' +
-            'Shift-double-click on a row to launch new Object Browser\n' +
-            'window.')
+                'A new card is created for the child level. The cards can\n' +
+                'be selected using menu items in the Path menu.\n' +
+                'Shift-double-click on a row to launch new Object Browser\n' +
+                'window.')
         def dialog = pane.createDialog(frame, 'Object Browser Usage')
         dialog.show()
     }
@@ -417,6 +420,7 @@ class ObjectBrowser {
     }
 }
 
-@Bindable class CardTracker {
+@Bindable
+class CardTracker {
     int current = 0
 }

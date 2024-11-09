@@ -182,7 +182,7 @@ class DocGenerator {
         docSource.allDocTypes.each { DocType docType ->
             // the class
             indexItems << [
-                index: docType.simpleClassName.capitalize()[0],
+                index  : docType.simpleClassName.capitalize()[0],
                 docType: docType,
                 sortKey: docType.sortKey,
             ]
@@ -190,10 +190,10 @@ class DocGenerator {
             // the methods
             docType.docMethods.each { DocMethod docMethod ->
                 indexItems << [
-                    index: docMethod.javaMethod.name.capitalize()[0],
-                    docType: docType,
+                    index    : docMethod.javaMethod.name.capitalize()[0],
+                    docType  : docType,
                     docMethod: docMethod,
-                    sortKey: docMethod.sortKey
+                    sortKey  : docMethod.sortKey
                 ]
             }
         }
@@ -208,13 +208,13 @@ class DocGenerator {
      * Main entry point.
      */
     static void main(String... args) {
-        def cli = new CliBuilderInternal(usage : 'DocGenerator [options] [sourcefiles]', posix:false)
+        def cli = new CliBuilderInternal(usage: 'DocGenerator [options] [sourcefiles]', posix: false)
         cli.help(longOpt: 'help', MESSAGES['cli.option.help.description'])
         cli._(longOpt: 'version', MESSAGES['cli.option.version.description'])
-        cli.o(longOpt: 'outputDir', args:1, argName: 'path', MESSAGES['cli.option.output.dir.description'])
-        cli.title(longOpt: 'title', args:1, argName: 'text', MESSAGES['cli.option.title.description'])
-        cli.link(args:2, valueSeparator:'=', argName:'comma-separated-package-prefixes=url',
-                MESSAGES['cli.option.link.patterns.description'])
+        cli.o(longOpt: 'outputDir', args: 1, argName: 'path', MESSAGES['cli.option.output.dir.description'])
+        cli.title(longOpt: 'title', args: 1, argName: 'text', MESSAGES['cli.option.title.description'])
+        cli.link(args: 2, valueSeparator: '=', argName: 'comma-separated-package-prefixes=url',
+            MESSAGES['cli.option.link.patterns.description'])
         def options = cli.parse(args)
 
         if (options.help) {
@@ -237,7 +237,7 @@ class DocGenerator {
         outputDir.mkdirs()
         CONFIG.title = options.title ?: 'Groovy JDK'
         if (options.links) {
-            CONFIG.links = options.links.collate(2).collectMany{ prefixes, url -> prefixes.tokenize(',').collect{[it, url]} }.collectEntries()
+            CONFIG.links = options.links.collate(2).collectMany { prefixes, url -> prefixes.tokenize(',').collect { [it, url] } }.collectEntries()
         }
         CONFIG.locale = Locale.default  // TODO allow locale to be passed in
 
@@ -285,7 +285,7 @@ class DocGenerator {
         }
 
         void populateInheritedMethods() {
-            Map<String, DocType> allTypes = allDocTypes.collectEntries{ [it.fullyQualifiedClassName, it] }
+            Map<String, DocType> allTypes = allDocTypes.collectEntries { [it.fullyQualifiedClassName, it] }
             allTypes.each { name, docType ->
                 if (name.startsWith('primitives-and-primitive-arrays')) return
                 def next = docType.javaClass.superJavaClass
@@ -450,7 +450,7 @@ class DocGenerator {
             if (className in 'A'..'Z') {
                 return 'java.lang.Object'
             }
-            if (className in ('A'..'Z').collect{ it + '[]' }) {
+            if (className in ('A'..'Z').collect { it + '[]' }) {
                 return 'java.lang.Object[]'
             }
             className
@@ -510,7 +510,7 @@ class DocGenerator {
             } else {
                 title = "Class in $packageName"
                 apiBaseUrl = './'
-                String key = CONFIG.links.keySet().find{ packageName.startsWith(it) }
+                String key = CONFIG.links.keySet().find { packageName.startsWith(it) }
                 if (key) {
                     apiBaseUrl = CONFIG.links[key]
                     if (apiBaseUrl.startsWith('..')) apiBaseUrl = '../' * (originPackageName.count('.') + 1) + apiBaseUrl

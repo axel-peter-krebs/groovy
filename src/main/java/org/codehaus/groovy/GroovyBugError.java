@@ -26,10 +26,10 @@ package org.codehaus.groovy;
 public class GroovyBugError extends AssertionError {
 
     private static final long serialVersionUID = -9165076784700059275L;
-    // message string
-    private String message;
     // optional exception
     private final Exception exception;
+    // message string
+    private String message;
 
     /**
      * constructs a bug error using the given text

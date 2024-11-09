@@ -57,7 +57,7 @@ public class BooleanArrayPutAtMetaMethod extends ArrayPutAtMetaMethod {
         @Override
         public Object call(Object receiver, Object[] args) throws Throwable {
             if ((receiver instanceof boolean[] && args[0] instanceof Integer && args[1] instanceof Boolean)
-                    && checkPojoMetaClass()) {
+                && checkPojoMetaClass()) {
                 final boolean[] objects = (boolean[]) receiver;
                 objects[normaliseIndex((Integer) args[0], objects.length)] = (Boolean) args[1];
                 return null;
@@ -72,8 +72,7 @@ public class BooleanArrayPutAtMetaMethod extends ArrayPutAtMetaMethod {
                     final boolean[] objects = (boolean[]) receiver;
                     objects[normaliseIndex((Integer) arg1, objects.length)] = (Boolean) arg2;
                     return null;
-                }
-                catch (ClassCastException e) {
+                } catch (ClassCastException e) {
                     if ((receiver instanceof boolean[]) && (arg1 instanceof Integer))
                         throw e;
                 }

@@ -25,83 +25,83 @@ import groovy.test.GroovyTestCase
  */
 class WithMethodTest extends GroovyTestCase {
 
-     void testDelegateGetsFirstOpportunity() {
-         def sb = new StringBuffer()
+    void testDelegateGetsFirstOpportunity() {
+        def sb = new StringBuffer()
 
-         sb.with {
-             // this should call append() on the 
-             // delegate not, the owner
-             append 'some text'
-         }
+        sb.with {
+            // this should call append() on the
+            // delegate not, the owner
+            append 'some text'
+        }
 
-         assertEquals 'delegate had wrong value', 'some text', sb.toString()
-     }
+        assertEquals 'delegate had wrong value', 'some text', sb.toString()
+    }
 
-     void testOwnerGetsOpportunityIfDelegateCannotRespond() {
-         def sb = new StringBuffer()
+    void testOwnerGetsOpportunityIfDelegateCannotRespond() {
+        def sb = new StringBuffer()
 
-         def returnValue
+        def returnValue
 
-         sb.with {
-             // this should call ownerMethod() on the owner
-             returnValue = ownerMethod()
-         }
+        sb.with {
+            // this should call ownerMethod() on the owner
+            returnValue = ownerMethod()
+        }
 
-         assertEquals 'owner should have responded to method call', 
-                      42, 
-                      returnValue
-     }
+        assertEquals 'owner should have responded to method call',
+            42,
+            returnValue
+    }
 
-     void testCallingNonExistentMethod() {
-         def sb = new StringBuffer()
+    void testCallingNonExistentMethod() {
+        def sb = new StringBuffer()
 
-         shouldFail(MissingMethodException) {
-             sb.with {
-                 someNoneExistentMethod()
-             }
-         }
-     }
+        shouldFail(MissingMethodException) {
+            sb.with {
+                someNoneExistentMethod()
+            }
+        }
+    }
 
-     void testClosureWithResolveStrategyExplicitlySet() {
-         def closure = {
-             append 'some text'
-         }
-         closure.resolveStrategy = Closure.OWNER_ONLY
+    void testClosureWithResolveStrategyExplicitlySet() {
+        def closure = {
+            append 'some text'
+        }
+        closure.resolveStrategy = Closure.OWNER_ONLY
 
-         def sb = new StringBuffer()
+        def sb = new StringBuffer()
 
-         // .with should use DELEGATE_FIRST, even though
-         // the closure has another strategy set
-         sb.with closure
+        // .with should use DELEGATE_FIRST, even though
+        // the closure has another strategy set
+        sb.with closure
 
-         assertEquals 'delegate had wrong value', 'some text', sb.toString()
-     }
+        assertEquals 'delegate had wrong value', 'some text', sb.toString()
+    }
 
-     void testBooleanVariant() {
-         def p = new PersonWith(firstName: 'Johnny', lastName: 'Depp')
-         def result1 = p.with(false) {
-             "$firstName $lastName"
-         }
-         assert result1 instanceof GString
-         assert result1.toString() == 'Johnny Depp'
-         def result2 = p.with(true) {
-             lastName = 'Cash'
-         }
-         assert result2 instanceof PersonWith
-         assert result2.toString() == 'WithMethodTest$PersonWith(Johnny, Cash)'
-     }
+    void testBooleanVariant() {
+        def p = new PersonWith(firstName: 'Johnny', lastName: 'Depp')
+        def result1 = p.with(false) {
+            "$firstName $lastName"
+        }
+        assert result1 instanceof GString
+        assert result1.toString() == 'Johnny Depp'
+        def result2 = p.with(true) {
+            lastName = 'Cash'
+        }
+        assert result2 instanceof PersonWith
+        assert result2.toString() == 'WithMethodTest$PersonWith(Johnny, Cash)'
+    }
 
-     def ownerMethod() {
-         42
-     }
+    def ownerMethod() {
+        42
+    }
 
-     void append(String s) {
-         fail 'this should never have been called'
-     }
+    void append(String s) {
+        fail 'this should never have been called'
+    }
 
-     @groovy.transform.ToString(includePackage = false)
-     class PersonWith {
-         String firstName
-         String lastName
-     }
- }
+    @groovy.transform.ToString(includePackage = false)
+    class PersonWith {
+        String firstName
+        String lastName
+    }
+}

@@ -22,7 +22,7 @@ package org.codehaus.groovy.syntax;
 import groovy.test.GroovyTestCase;
 
 public class TokenTest
-        extends GroovyTestCase {
+    extends GroovyTestCase {
 
     public void testNothing() {
     }

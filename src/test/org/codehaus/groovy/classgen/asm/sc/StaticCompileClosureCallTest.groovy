@@ -26,7 +26,7 @@ import org.codehaus.groovy.classgen.asm.AbstractBytecodeTestCase
 final class StaticCompileClosureCallTest extends AbstractBytecodeTestCase {
 
     void testShouldCallClosure() {
-        def bytecode = compile([method:'m'],'''
+        def bytecode = compile([method: 'm'], '''
             @groovy.transform.CompileStatic
             int m() {
                 def closure = { 666 }
@@ -39,7 +39,7 @@ final class StaticCompileClosureCallTest extends AbstractBytecodeTestCase {
     }
 
     void testShouldCallClosureWithOneArg() {
-        def bytecode = compile([method:'m'],'''
+        def bytecode = compile([method: 'm'], '''
             @groovy.transform.CompileStatic
             int m() {
                 def closure = { int x -> x }
@@ -52,7 +52,7 @@ final class StaticCompileClosureCallTest extends AbstractBytecodeTestCase {
     }
 
     void testShouldCallClosureWithTwoArgs() {
-        def bytecode = compile([method:'m'],'''
+        def bytecode = compile([method: 'm'], '''
             @groovy.transform.CompileStatic
             int m() {
                 def closure = { int x, int y -> x+y }
@@ -65,7 +65,7 @@ final class StaticCompileClosureCallTest extends AbstractBytecodeTestCase {
     }
 
     void testShouldCallClosureWithThreeArgs() {
-        def bytecode = compile([method:'m'],'''
+        def bytecode = compile([method: 'm'], '''
             @groovy.transform.CompileStatic
             int m() {
                 def closure = { int x, int y, int z -> z*(x+y) }
@@ -117,7 +117,7 @@ final class StaticCompileClosureCallTest extends AbstractBytecodeTestCase {
     }
 
     void testWriteSharedVariableInClosure() {
-        def bytecode = compile([method:'m'],'''
+        def bytecode = compile([method: 'm'], '''
             @groovy.transform.CompileStatic
             void m() {
                 String test = 'test'

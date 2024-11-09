@@ -25,7 +25,7 @@ class PrecompiledExtension extends GroovyTypeCheckingExtensionSupport.TypeChecki
     @Override
     Object run() {                                                                          // <2>
         unresolvedVariable { var ->
-            if ('robot'==var.name) {
+            if ('robot' == var.name) {
                 storeType(var, classNodeFor(Robot))                                         // <3>
                 handled = true
             }

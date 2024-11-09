@@ -26,6 +26,12 @@ import java.lang.reflect.Method;
 
 public class NewStaticMetaMethodTest extends TestCase {
 
+    public static String dummyMethod(String foo, String bar) throws Exception {
+        assertEquals("abc", foo);
+        assertEquals("xyz", bar);
+        return "def";
+    }
+
     public void testInvokeMetaMethod() throws Exception {
         Method method = getClass().getMethod("dummyMethod", new Class[]{String.class, String.class});
         assertTrue("Should have found a method", method != null);
@@ -51,12 +57,6 @@ public class NewStaticMetaMethodTest extends TestCase {
     public void testInvokeDefaultGroovyMethodUsingMetaClass() {
         Object answer = InvokerHelper.invokeMethod("abc", "plus", new Object[]{"123"});
         assertEquals("abc123", answer);
-    }
-
-    public static String dummyMethod(String foo, String bar) throws Exception {
-        assertEquals("abc", foo);
-        assertEquals("xyz", bar);
-        return "def";
     }
 
     protected NewInstanceMetaMethod createNewMetaMethod(Method method) {

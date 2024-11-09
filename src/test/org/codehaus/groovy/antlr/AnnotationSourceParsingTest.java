@@ -35,18 +35,18 @@ public class AnnotationSourceParsingTest extends GroovyTestCase {
     public void testMultiLineAttributes() {
         if (notYetImplemented()) return;
         StringReader reader = new StringReader(
-                "class OtherSection\n"
-                        + "{\n"
-                        + "    @CollectionOfElements\n"
-                        + "    @JoinTable\n"
-                        + "    (\n"
-                        + "        table=@Table(name=\"gaga\"),\n"
-                        + "        joinColumns = @JoinColumn(name=\"BoyId\")\n"
-                        + "    )\n"
-                        + "    @Column(name=\"favoritepoupon\", \n"
-                        + "nullable=false)\n"
-                        + "    Set<String> questions = new HashSet<String> ()\n\n"
-                        + "}");
+            "class OtherSection\n"
+                + "{\n"
+                + "    @CollectionOfElements\n"
+                + "    @JoinTable\n"
+                + "    (\n"
+                + "        table=@Table(name=\"gaga\"),\n"
+                + "        joinColumns = @JoinColumn(name=\"BoyId\")\n"
+                + "    )\n"
+                + "    @Column(name=\"favoritepoupon\", \n"
+                + "nullable=false)\n"
+                + "    Set<String> questions = new HashSet<String> ()\n\n"
+                + "}");
         parse("testMultiLineAttributes", reader);
     }
 }

@@ -55,8 +55,7 @@ public class InvokerTest extends GroovyTestCase {
     public void testInvokerException() throws Throwable {
         try {
             throw new GroovyRuntimeException("message", new NullPointerException());
-        }
-        catch (GroovyRuntimeException e) {
+        } catch (GroovyRuntimeException e) {
             // worked
             assertEquals("message", e.getMessage());
             assertTrue(e.getCause() instanceof NullPointerException);
@@ -144,8 +143,8 @@ public class InvokerTest extends GroovyTestCase {
         }
 
         assertFalse(
-                message + ": should not have item after iterating through: " + count + " items",
-                iterator.hasNext());
+            message + ": should not have item after iterating through: " + count + " items",
+            iterator.hasNext());
     }
 
 

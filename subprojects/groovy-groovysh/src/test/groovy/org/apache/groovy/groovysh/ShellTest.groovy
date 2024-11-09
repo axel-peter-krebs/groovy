@@ -35,9 +35,9 @@ class ShellTest extends GroovyTestCase {
         mockErr = new ByteArrayOutputStream()
 
         testio = new IO(
-                new ByteArrayInputStream(),
-                mockOut,
-                mockErr)
+            new ByteArrayInputStream(),
+            mockOut,
+            mockErr)
     }
 
     void testFindCommandNull() {

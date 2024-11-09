@@ -33,6 +33,8 @@ import java.util.Objects;
  */
 public class BytecodeSequence extends Statement {
 
+    private final List<?> instructions;
+
     public BytecodeSequence(final BytecodeInstruction instruction) {
         this.instructions = Collections.singletonList(instruction);
     }
@@ -44,8 +46,6 @@ public class BytecodeSequence extends Statement {
     public List<?> getInstructions() {
         return Collections.unmodifiableList(instructions);
     }
-
-    private final List<?> instructions;
 
     /**
      * Returns the singular BytecodeInstruction.

@@ -26,7 +26,7 @@ public class MixinNode extends ClassNode {
     public static final MixinNode[] EMPTY_ARRAY = {};
 
     /**
-     * @param name is the full name of the class
+     * @param name      is the full name of the class
      * @param modifiers the modifiers, @see org.objectweb.asm.Opcodes
      * @param superType the base class name - use "java.lang.Object" if no direct base class
      */
@@ -35,7 +35,7 @@ public class MixinNode extends ClassNode {
     }
 
     /**
-     * @param name is the full name of the class
+     * @param name      is the full name of the class
      * @param modifiers the modifiers, @see org.objectweb.asm.Opcodes
      * @param superType the base class name - use "java.lang.Object" if no direct base class
      */

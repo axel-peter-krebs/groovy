@@ -73,7 +73,7 @@ class SubscriptAndExpressionBug extends GroovyTestCase {
     }
 
     void testSubscriptAndProperty() {
-        def foo = [['gromit':'cheese']]
+        def foo = [['gromit': 'cheese']]
 
         def cheese = foo[0].gromit
 
@@ -81,8 +81,8 @@ class SubscriptAndExpressionBug extends GroovyTestCase {
     }
 
     void testBooleanExpression() {
-       int[] a = new int[1]
-       assert (a[0] = 42) == 42 
-       assert a[0] == 42
+        int[] a = new int[1]
+        assert (a[0] = 42) == 42
+        assert a[0] == 42
     }
 }

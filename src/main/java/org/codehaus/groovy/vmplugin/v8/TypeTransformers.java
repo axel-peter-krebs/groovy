@@ -46,10 +46,10 @@ import java.util.Map;
 public class TypeTransformers {
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
     private static final MethodHandle
-            TO_STRING, TO_BYTE, TO_INT, TO_LONG, TO_SHORT,
-            TO_FLOAT, TO_DOUBLE, TO_BIG_INT, AS_ARRAY,
-            TO_REFLECTIVE_PROXY, TO_GENERATED_PROXY, TO_SAMTRAIT_PROXY,
-            DOUBLE_TO_BIG_DEC, DOUBLE_TO_BIG_DEC_WITH_CONVERSION, LONG_TO_BIG_DEC, BIG_INT_TO_BIG_DEC;
+        TO_STRING, TO_BYTE, TO_INT, TO_LONG, TO_SHORT,
+        TO_FLOAT, TO_DOUBLE, TO_BIG_INT, AS_ARRAY,
+        TO_REFLECTIVE_PROXY, TO_GENERATED_PROXY, TO_SAMTRAIT_PROXY,
+        DOUBLE_TO_BIG_DEC, DOUBLE_TO_BIG_DEC_WITH_CONVERSION, LONG_TO_BIG_DEC, BIG_INT_TO_BIG_DEC;
 
     static {
         try {
@@ -81,7 +81,7 @@ public class TypeTransformers {
 
             // reflective proxy generation, since we need a ConvertedClosure but have only a normal Closure, we need to create that wrapper object as well
             MethodHandle newProxyInstance = LOOKUP.findStatic(Proxy.class, "newProxyInstance",
-                    MethodType.methodType(Object.class, ClassLoader.class, Class[].class, InvocationHandler.class));
+                MethodType.methodType(Object.class, ClassLoader.class, Class[].class, InvocationHandler.class));
             MethodHandle newConvertedClosure = LOOKUP.findConstructor(ConvertedClosure.class, MethodType.methodType(Void.TYPE, Closure.class, String.class));
             // prepare target newProxyInstance for fold to drop additional arguments needed by newConvertedClosure
             MethodType newOrder = newProxyInstance.type().dropParameterTypes(2, 3);
@@ -93,9 +93,9 @@ public class TypeTransformers {
             {
                 // generated proxy using a map to store the closure
                 MethodHandle map = LOOKUP.findStatic(Collections.class, "singletonMap",
-                        MethodType.methodType(Map.class, Object.class, Object.class));
+                    MethodType.methodType(Map.class, Object.class, Object.class));
                 newProxyInstance = LOOKUP.findVirtual(ProxyGenerator.class, "instantiateAggregateFromBaseClass",
-                        MethodType.methodType(GroovyObject.class, Map.class, Class.class));
+                    MethodType.methodType(GroovyObject.class, Map.class, Class.class));
                 newOrder = newProxyInstance.type().dropParameterTypes(1, 2);
                 newOrder = newOrder.insertParameterTypes(0, Map.class, Object.class, Object.class);
                 tmp = MethodHandles.permuteArguments(newProxyInstance, newOrder, 3, 0, 4);
@@ -105,9 +105,9 @@ public class TypeTransformers {
             {
                 // Trait SAM coercion generated proxy using a map to store the closure
                 MethodHandle map = LOOKUP.findStatic(Collections.class, "singletonMap",
-                        MethodType.methodType(Map.class, Object.class, Object.class));
+                    MethodType.methodType(Map.class, Object.class, Object.class));
                 newProxyInstance = LOOKUP.findVirtual(ProxyGenerator.class, "instantiateAggregate",
-                        MethodType.methodType(GroovyObject.class, Map.class, List.class));
+                    MethodType.methodType(GroovyObject.class, Map.class, List.class));
                 newOrder = newProxyInstance.type().dropParameterTypes(1, 2);
                 newOrder = newOrder.insertParameterTypes(0, Map.class, Object.class, Object.class);
                 tmp = MethodHandles.permuteArguments(newProxyInstance, newOrder, 3, 0, 4);

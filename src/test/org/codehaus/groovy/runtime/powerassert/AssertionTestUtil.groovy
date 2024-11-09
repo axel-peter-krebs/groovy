@@ -34,7 +34,8 @@ final class AssertionTestUtil {
         try {
             assertion.call();
             Assert.fail("assertion should have failed but didn't")
-        } catch (PowerAssertionError expected) {}
+        } catch (PowerAssertionError expected) {
+        }
     }
 
     static isNotTransformed(Closure<Void> failingAssertion) {

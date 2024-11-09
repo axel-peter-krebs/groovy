@@ -84,13 +84,14 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.propX
  *
  * @since 1.8.0
  */
-@AutoFinal @CompileStatic
+@AutoFinal
+@CompileStatic
 class ASTTransformationCustomizer extends CompilationCustomizer implements CompilationUnitAware {
 
     private boolean applied // global xforms
     protected CompilationUnit compilationUnit
     private final AnnotationNode annotationNode
-            final ASTTransformation transformation
+    final ASTTransformation transformation
 
     /**
      * Creates an AST transformation customizer using the specified annotation. The transformation classloader can

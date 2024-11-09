@@ -51,9 +51,9 @@ public class GroovyTestSuite extends TestSuite {
 
     @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
     protected final GroovyClassLoader loader =
-            java.security.AccessController.doPrivileged(
-                    (PrivilegedAction<GroovyClassLoader>) () -> new GroovyClassLoader(GroovyTestSuite.class.getClassLoader())
-            );
+        java.security.AccessController.doPrivileged(
+            (PrivilegedAction<GroovyClassLoader>) () -> new GroovyClassLoader(GroovyTestSuite.class.getClassLoader())
+        );
 
     public static void main(String[] args) {
         if (args.length > 0) {

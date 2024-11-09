@@ -23,7 +23,7 @@ final class Groovy10583 extends StringSourcesStubTestCase {
     @Override
     Map<String, String> provideSources() {
         [
-            'C.groovy': '''
+            'C.groovy' : '''
                 class C {
                     def <S extends CharSequence, N extends Number> List<N>
                       m(Collection<? extends S> input, Class<N> outputType = Integer) {

@@ -21,8 +21,8 @@ package groovy.transform;
 /**
  * Intended mode to use for records when using the {@code @RecordType} annotation (or {@code record} keyword).
  *
- * @since 4.0.0
  * @see RecordType
+ * @since 4.0.0
  */
 public enum RecordTypeMode {
     /**

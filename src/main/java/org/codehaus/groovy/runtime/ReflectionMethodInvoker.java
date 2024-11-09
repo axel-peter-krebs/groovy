@@ -33,7 +33,7 @@ public class ReflectionMethodInvoker {
      * Invoke a method through reflection.
      * Falls through to using the Invoker to call the method in case the reflection call fails..
      *
-     * @param object the object on which to invoke a method
+     * @param object     the object on which to invoke a method
      * @param methodName the name of the method to invoke
      * @param parameters the parameters of the method call
      * @return the result of the method call
@@ -47,7 +47,7 @@ public class ReflectionMethodInvoker {
             Method method = object.getClass().getMethod(methodName, classTypes);
             return method.invoke(object, parameters);
         } catch (Throwable t) {
-            return InvokerHelper.invokeMethod(object, methodName,  parameters);
+            return InvokerHelper.invokeMethod(object, methodName, parameters);
         }
     }
 

@@ -66,6 +66,14 @@ class SuperCallTraitTransformer extends ClassCodeExpressionTransformer {
         this.unit = unit;
     }
 
+    private static boolean isSelfType(final Parameter parameter, final ClassNode traitType) {
+        ClassNode paramType = parameter.getType();
+        if (paramType.equals(traitType)) return true;
+        return ClassHelper.isClassType(paramType)
+            && paramType.getGenericsTypes() != null
+            && paramType.getGenericsTypes()[0].getType().equals(traitType);
+    }
+
     @Override
     protected SourceUnit getSourceUnit() {
         return unit;
@@ -154,7 +162,7 @@ class SuperCallTraitTransformer extends ClassCodeExpressionTransformer {
                 String getterName = getGetterName(exp.getPropertyAsString());
                 for (MethodNode method : helperType.getMethods(getterName)) {
                     if (method.isStatic() && !method.isVoidMethod()
-                            && method.getParameters().length == 1 && isSelfType(method.getParameters()[0], traitType)) {
+                        && method.getParameters().length == 1 && isSelfType(method.getParameters()[0], traitType)) {
                         return xform.apply(method);
                     }
                 }
@@ -162,7 +170,7 @@ class SuperCallTraitTransformer extends ClassCodeExpressionTransformer {
                 String isserName = "is" + getterName.substring(3);
                 for (MethodNode method : helperType.getMethods(isserName)) {
                     if (method.isStatic() && ClassHelper.isPrimitiveBoolean(method.getReturnType())
-                            && method.getParameters().length == 1 && isSelfType(method.getParameters()[0], traitType)) {
+                        && method.getParameters().length == 1 && isSelfType(method.getParameters()[0], traitType)) {
                         return xform.apply(method);
                     }
                 }
@@ -206,14 +214,14 @@ class SuperCallTraitTransformer extends ClassCodeExpressionTransformer {
         // GROOVY-7909: A helper class in the same compilation unit may not have
         // been created when referenced; create a placeholder to be resolved later.
         if (!traitType.redirect().getInnerClasses().hasNext()
-                && getSourceUnit().getAST().getClasses().contains(traitType.redirect())) {
+            && getSourceUnit().getAST().getClasses().contains(traitType.redirect())) {
             ClassNode helperType = new InnerClassNode(
-                    traitType,
-                    Traits.helperClassName(traitType),
-                    ACC_PUBLIC | ACC_STATIC | ACC_ABSTRACT | ACC_SYNTHETIC,
-                    ClassHelper.OBJECT_TYPE,
-                    ClassNode.EMPTY_ARRAY,
-                    null
+                traitType,
+                Traits.helperClassName(traitType),
+                ACC_PUBLIC | ACC_STATIC | ACC_ABSTRACT | ACC_SYNTHETIC,
+                ClassHelper.OBJECT_TYPE,
+                ClassNode.EMPTY_ARRAY,
+                null
             ).getPlainNodeReference();
             helperType.setRedirect(null);
             traitType.redirect().setNodeMetaData(UNRESOLVED_HELPER_CLASS, helperType);
@@ -234,13 +242,5 @@ class SuperCallTraitTransformer extends ClassCodeExpressionTransformer {
             }
         }
         return null;
-    }
-
-    private static boolean isSelfType(final Parameter parameter, final ClassNode traitType) {
-        ClassNode paramType = parameter.getType();
-        if (paramType.equals(traitType)) return true;
-        return ClassHelper.isClassType(paramType)
-                && paramType.getGenericsTypes() != null
-                && paramType.getGenericsTypes()[0].getType().equals(traitType);
     }
 }

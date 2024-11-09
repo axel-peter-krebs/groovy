@@ -27,6 +27,7 @@ final class Groovy9608 {
     static class A {
         public x = 'A'
     }
+
     static class B extends A {
         public x = 'B'
     }
@@ -76,7 +77,8 @@ final class Groovy9608 {
         '''
     }
 
-    @Test // GROOVY-9609
+    @Test
+    // GROOVY-9609
     void testGetPropertyOnSuper() {
         assertScript '''
             import groovy.bugs.Groovy9608.*

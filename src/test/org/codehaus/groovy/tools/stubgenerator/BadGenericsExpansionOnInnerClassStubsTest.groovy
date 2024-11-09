@@ -23,14 +23,14 @@ package org.codehaus.groovy.tools.stubgenerator
  * Stub compiler expands generic-inner-class variable declaration incorrectly
  *
  * GROOVY-6048
- * Stub compiler expends generics for outer class while using static inner class 
+ * Stub compiler expends generics for outer class while using static inner class
  * like a non-static inner class
  */
-class BadGenericsExpansionOnInnerClassStubsTest extends StringSourcesStubTestCase  {
+class BadGenericsExpansionOnInnerClassStubsTest extends StringSourcesStubTestCase {
 
     Map<String, String> provideSources() {
         [
-                    'AbstractProcessingQueue.groovy': '''
+            'AbstractProcessingQueue.groovy': '''
                     abstract class AbstractProcessingQueue<T> extends AbstractAgent {
                         protected Queue<ProcessingQueueMember<T>> items
                         private class ProcessingQueueMember<E> {}
@@ -41,10 +41,10 @@ class BadGenericsExpansionOnInnerClassStubsTest extends StringSourcesStubTestCas
                         static <T> AbstractProcessingQueue<List<T>> createQueue2(List<Closure<T>> closures, List<AbstractProcessingQueue.ItemGenerator2> generators) {}
                     }
                 ''',
-                    'AbstractAgent.java': '''
+            'AbstractAgent.java'            : '''
                     public abstract class AbstractAgent {}
                 '''
-                ]
+        ]
     }
 
     void verifyStubs() {

@@ -63,7 +63,7 @@ public class CandidateChecks {
      */
     public static boolean isClassInvariantCandidate(final PropertyNode propertyNode) {
         return propertyNode != null &&
-                propertyNode.isPublic() && !propertyNode.isStatic() && !propertyNode.isInStaticContext() && !propertyNode.isClosureSharedVariable();
+            propertyNode.isPublic() && !propertyNode.isStatic() && !propertyNode.isInStaticContext() && !propertyNode.isClosureSharedVariable();
     }
 
     /**

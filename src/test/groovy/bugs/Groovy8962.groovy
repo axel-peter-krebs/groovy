@@ -138,7 +138,7 @@ final class Groovy8962 {
             targetDirectory: File.createTempDir(),
             jointCompilationOptions: [memStub: true]
         )
-        try (def loader = new GroovyClassLoader(this.class.classLoader).tap{ addURL(this.class.location) }) {
+        try (def loader = new GroovyClassLoader(this.class.classLoader).tap { addURL(this.class.location) }) {
             def b = new File(sourceDirectory, 'B.java')
             b.write """
                 public class B {

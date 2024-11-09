@@ -65,7 +65,7 @@ class Groovy8669Test extends AntTestCase {
 //            ant.project.addBuildListener(debugLogger)
             ant.mkdir(dir: 'build')
             ant.javac(classpath: '.', destdir: 'build', srcdir: 'src',
-                    includes: '*.java', includeantruntime: 'false', fork: 'true')
+                includes: '*.java', includeantruntime: 'false', fork: 'true')
             ['ValueClass', 'MyAnnotation', 'AnnotatedClass'].each { name ->
                 ant.mkdir(dir: "build$name")
                 ant.copy(file: "build/${name}.class", todir: "build$name")

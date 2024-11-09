@@ -52,6 +52,10 @@ public class SynchronizedASTTransformation extends AbstractASTTransformation {
     private static final ClassNode MY_TYPE = make(MY_CLASS);
     private static final String MY_TYPE_NAME = "@" + MY_TYPE.getNameWithoutPackage();
 
+    private static Expression zeroLengthObjectArray() {
+        return new ArrayExpression(ClassHelper.OBJECT_TYPE, null, Collections.singletonList((Expression) constX(0)));
+    }
+
     @Override
     public void visit(ASTNode[] nodes, SourceUnit source) {
         init(nodes, source);
@@ -107,10 +111,6 @@ public class SynchronizedASTTransformation extends AbstractASTTransformation {
             addError("Error during " + MY_TYPE_NAME + " processing: $lock field must not be static", field);
         }
         return "$lock";
-    }
-
-    private static Expression zeroLengthObjectArray() {
-        return new ArrayExpression(ClassHelper.OBJECT_TYPE, null, Collections.singletonList((Expression) constX(0)));
     }
 
 }

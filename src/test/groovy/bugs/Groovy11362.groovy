@@ -23,7 +23,7 @@ import org.codehaus.groovy.classgen.asm.AbstractBytecodeTestCase
 final class Groovy11362 extends AbstractBytecodeTestCase {
 
     void testCatchException() {
-        def bytecode = compile method:'test', '''
+        def bytecode = compile method: 'test', '''
             void test() {
                 try {
                     print 'f'

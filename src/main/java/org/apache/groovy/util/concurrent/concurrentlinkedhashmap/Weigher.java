@@ -22,17 +22,17 @@ import javax.annotation.concurrent.ThreadSafe;
  * is used to determine when an eviction is required.
  *
  * @see <a href="http://code.google.com/p/concurrentlinkedhashmap/">
- *      http://code.google.com/p/concurrentlinkedhashmap/</a>
+ * http://code.google.com/p/concurrentlinkedhashmap/</a>
  */
 @ThreadSafe
 public interface Weigher<V> {
 
-  /**
-   * Measures an object's weight to determine how many units of capacity that
-   * the value consumes. A value must consume a minimum of one unit.
-   *
-   * @param value the object to weigh
-   * @return the object's weight
-   */
-  int weightOf(V value);
+    /**
+     * Measures an object's weight to determine how many units of capacity that
+     * the value consumes. A value must consume a minimum of one unit.
+     *
+     * @param value the object to weigh
+     * @return the object's weight
+     */
+    int weightOf(V value);
 }

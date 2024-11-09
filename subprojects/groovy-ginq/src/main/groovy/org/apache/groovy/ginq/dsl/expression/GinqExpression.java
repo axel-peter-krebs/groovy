@@ -44,8 +44,8 @@ import java.util.stream.Collectors;
  * @since 4.0.0
  */
 public class GinqExpression extends AbstractGinqExpression {
-    private FromExpression fromExpression;
     private final List<JoinExpression> joinExpressionList = new ArrayList<>(2);
+    private FromExpression fromExpression;
     private WhereExpression whereExpression;
     private GroupExpression groupExpression;
     private OrderExpression orderExpression;
@@ -78,12 +78,12 @@ public class GinqExpression extends AbstractGinqExpression {
         joinExpressionList.add(joinExpression);
     }
 
-    public void setWhereExpression(WhereExpression whereExpression) {
-        this.whereExpression = whereExpression;
-    }
-
     public WhereExpression getWhereExpression() {
         return whereExpression;
+    }
+
+    public void setWhereExpression(WhereExpression whereExpression) {
+        this.whereExpression = whereExpression;
     }
 
     public GroupExpression getGroupExpression() {
@@ -121,12 +121,12 @@ public class GinqExpression extends AbstractGinqExpression {
     @Override
     public String getText() {
         return fromExpression.getText() + " "
-                + (joinExpressionList.isEmpty() ? "" : joinExpressionList.stream().map(e -> e.getText()).collect(Collectors.joining(" ")) + " ")
-                + (null == whereExpression ? "" : whereExpression.getText() + " ")
-                + (null == groupExpression ? "" : groupExpression.getText() + " ")
-                + (null == orderExpression ? "" : orderExpression.getText() + " ")
-                + (null == limitExpression ? "" : limitExpression.getText() + " ")
-                + selectExpression.getText();
+            + (joinExpressionList.isEmpty() ? "" : joinExpressionList.stream().map(e -> e.getText()).collect(Collectors.joining(" ")) + " ")
+            + (null == whereExpression ? "" : whereExpression.getText() + " ")
+            + (null == groupExpression ? "" : groupExpression.getText() + " ")
+            + (null == orderExpression ? "" : orderExpression.getText() + " ")
+            + (null == limitExpression ? "" : limitExpression.getText() + " ")
+            + selectExpression.getText();
     }
 
     @Override

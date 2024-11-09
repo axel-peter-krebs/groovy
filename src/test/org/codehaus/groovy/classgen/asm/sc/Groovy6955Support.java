@@ -22,12 +22,13 @@ import java.util.Collections;
 import java.util.Map;
 
 public class Groovy6955Support {
-    public static class Request {
-        public Map getHeaders() {
-            return Collections.singletonMap("someKey","someValue");
-        }
-    }
     public Request getRequest() {
         return new Request();
+    }
+
+    public static class Request {
+        public Map getHeaders() {
+            return Collections.singletonMap("someKey", "someValue");
+        }
     }
 }

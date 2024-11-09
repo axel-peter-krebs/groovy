@@ -40,9 +40,10 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.ctorX;
 import static org.codehaus.groovy.ast.tools.GeneralUtils.listX;
 
 public final class MacroLibGroovyMethods {
-    private MacroLibGroovyMethods() {}
-
     private static final ClassNode NAMED_VALUE = ClassHelper.make(NamedValue.class);
+
+    private MacroLibGroovyMethods() {
+    }
 
     @Macro
     public static Expression SV(MacroContext ctx, final Expression... exps) {
@@ -56,7 +57,7 @@ public final class MacroLibGroovyMethods {
     @Macro
     public static Expression SVI(MacroContext ctx, final Expression... exps) {
         List<Expression> expList = Arrays.stream(exps).map(exp -> callX(exp, "inspect"))
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
         return new GStringExpression("", makeLabels(exps), expList);
     }
 
@@ -67,7 +68,7 @@ public final class MacroLibGroovyMethods {
     @Macro
     public static Expression SVD(MacroContext ctx, final Expression... exps) {
         List<Expression> expList = Arrays.stream(exps).map(exp -> callX(exp, "dump"))
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
         return new GStringExpression("", makeLabels(exps), expList);
     }
 
@@ -77,9 +78,9 @@ public final class MacroLibGroovyMethods {
 
     private static List<ConstantExpression> makeLabels(Expression[] exps) {
         return IntStream
-                .range(0, exps.length)
-                .mapToObj(i -> constX((i > 0 ? ", " : "") + exps[i].getText() + "="))
-                .collect(Collectors.toList());
+            .range(0, exps.length)
+            .mapToObj(i -> constX((i > 0 ? ", " : "") + exps[i].getText() + "="))
+            .collect(Collectors.toList());
     }
 
     @Macro

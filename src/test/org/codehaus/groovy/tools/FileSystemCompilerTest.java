@@ -32,16 +32,16 @@ import java.util.ArrayList;
  */
 public class FileSystemCompilerTest extends GroovyTestCase {
 
-    FileSystemCompiler compiler = null;
     final boolean dumpClass = true;
+    FileSystemCompiler compiler = null;
 
     public void testMethodCall() throws Exception {
-        runTest(new String[] {"ClosureMethodTest.groovy"});
-        runTest(new String[] {"tree/VerboseTreeTest.groovy"});
-        runTest(new String[] {"tree/NestedClosureBugTest.groovy"});
-        runTest(new String[] {"tree/SmallTreeTest.groovy"});
-        runTest(new String[] {"LittleClosureTest.groovy"});
-        runTest(new String[] {"JointJava.java", "JointGroovy.groovy"});
+        runTest(new String[]{"ClosureMethodTest.groovy"});
+        runTest(new String[]{"tree/VerboseTreeTest.groovy"});
+        runTest(new String[]{"tree/NestedClosureBugTest.groovy"});
+        runTest(new String[]{"tree/SmallTreeTest.groovy"});
+        runTest(new String[]{"LittleClosureTest.groovy"});
+        runTest(new String[]{"JointJava.java", "JointGroovy.groovy"});
     }
 
     protected void runTest(String[] names) throws Exception {
@@ -72,7 +72,7 @@ public class FileSystemCompilerTest extends GroovyTestCase {
 
     public void testCommandLine() throws Exception {
         try {
-            FileSystemCompiler.commandLineCompile(new String[] {"--bogus-option"});
+            FileSystemCompiler.commandLineCompile(new String[]{"--bogus-option"});
             fail("Compiler fails to reject bogus command line");
         } catch (Exception re) {
             // this is why shouldFail {} exists in Groovy tests
@@ -80,7 +80,7 @@ public class FileSystemCompilerTest extends GroovyTestCase {
 
         File dir = new File("build/test-generated-classes/cl");
         dir.mkdirs();
-        FileSystemCompiler.commandLineCompile(new String[] {"src/test/groovy/LittleClosureTest.groovy", "-d", dir.getPath()});
+        FileSystemCompiler.commandLineCompile(new String[]{"src/test/groovy/LittleClosureTest.groovy", "-d", dir.getPath()});
     }
 
 }

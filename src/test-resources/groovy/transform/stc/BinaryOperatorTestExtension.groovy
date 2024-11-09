@@ -25,9 +25,9 @@ import org.objectweb.asm.Opcodes
 
 // A simple extension that says that the "plus" method returns a String
 methodNotFound { receiver, name, argumentList, argTypes, call ->
-    if (name=='plus') {
+    if (name == 'plus') {
         return new MethodNode("plus", Opcodes.ACC_PUBLIC, STRING_TYPE, [new Parameter(argTypes[0], "op")] as Parameter[], ClassNode.EMPTY_ARRAY, null)
-    } else if (name=="leftShift") {
+    } else if (name == "leftShift") {
         return new MethodNode("leftShift", Opcodes.ACC_PUBLIC, STRING_TYPE, [new Parameter(argTypes[0], "op")] as Parameter[], ClassNode.EMPTY_ARRAY, null)
     }
 }

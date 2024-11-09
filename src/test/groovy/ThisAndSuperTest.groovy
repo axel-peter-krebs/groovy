@@ -67,7 +67,7 @@ final class ThisAndSuperTest {
         assert helper.aField == 4
         assert map.aField == null
 
-        def closure = {this.foo = 1}
+        def closure = { this.foo = 1 }
         shouldFail {
             closure()
         }
@@ -77,7 +77,7 @@ final class ThisAndSuperTest {
         }
         assert map.foo == null
 
-        closure = {foo = 1}
+        closure = { foo = 1 }
         shouldFail {
             closure()
         }
@@ -169,7 +169,8 @@ final class ThisAndSuperTest {
     }
 
     // GROOVY-5285
-    @Test @NotYetImplemented
+    @Test
+    @NotYetImplemented
     void testSuperSetMetaClassChain() {
         assertScript '''
             class C {
@@ -499,7 +500,8 @@ final class ThisAndSuperTest {
     }
 
     // GROOVY-1729
-    @Test @NotYetImplemented
+    @Test
+    @NotYetImplemented
     void testThisThatDifference() {
         assertScript '''
             class C {
@@ -522,24 +524,24 @@ final class ThisAndSuperTest {
 //------------------------------------------------------------------------------
 
 class TestForSuperHelper1 {
-    def foo() {1}
+    def foo() { 1 }
 
-    private bar() {'bar'}
+    private bar() { 'bar' }
 
-    def closureUsingPrivateMethod() {bar()}
+    def closureUsingPrivateMethod() { bar() }
 }
 
 class TestForSuperHelper2 extends TestForSuperHelper1 {
-    def foo() {2}
+    def foo() { 2 }
 
-    def callFooInSuper() {super.foo()}
+    def callFooInSuper() { super.foo() }
 
-    def aClosureUsingSuper = {super.foo()}
-    def aClosureUsingThis = {this.foo()}
+    def aClosureUsingSuper = { super.foo() }
+    def aClosureUsingThis = { this.foo() }
 
-    def bar() {'no bar'}
+    def bar() { 'no bar' }
 
     public aField = 'I am a field'
-    def closureFieldAccessUsingImplicitThis = {x -> aField = x}
-    def closureFieldAccessUsingExplicitThis = {x -> this.aField = x}
+    def closureFieldAccessUsingImplicitThis = { x -> aField = x }
+    def closureFieldAccessUsingExplicitThis = { x -> this.aField = x }
 }

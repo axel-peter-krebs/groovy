@@ -52,10 +52,10 @@ class MinMaxTest extends GroovyTestCase {
 
     void testMinMaxOnArraysWithComparator() {
         Person[] people = [
-                new Person(name: 'James', cheese: 'Edam', location: 'London'),
-                new Person(name: 'Bob', cheese: 'Cheddar', location: 'Atlanta'),
-                new Person(name: 'Chris', cheese: 'Red Leicester', location: 'London'),
-                new Person(name: 'Joe', cheese: 'Brie', location: 'London')
+            new Person(name: 'James', cheese: 'Edam', location: 'London'),
+            new Person(name: 'Bob', cheese: 'Cheddar', location: 'Atlanta'),
+            new Person(name: 'Chris', cheese: 'Red Leicester', location: 'London'),
+            new Person(name: 'Joe', cheese: 'Brie', location: 'London')
         ]
 
         // let's find the maximum by name

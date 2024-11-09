@@ -72,12 +72,12 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target({
-        ElementType.CONSTRUCTOR,
-        ElementType.FIELD,
-        ElementType.LOCAL_VARIABLE,
-        ElementType.METHOD,
-        ElementType.PARAMETER,
-        ElementType.TYPE})
+    ElementType.CONSTRUCTOR,
+    ElementType.FIELD,
+    ElementType.LOCAL_VARIABLE,
+    ElementType.METHOD,
+    ElementType.PARAMETER,
+    ElementType.TYPE})
 public @interface GrabConfig {
     /**
      * Set to true if you want to use the system classloader when loading the grape.

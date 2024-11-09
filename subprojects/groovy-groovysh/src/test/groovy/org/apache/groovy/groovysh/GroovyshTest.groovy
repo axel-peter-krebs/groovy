@@ -91,7 +91,6 @@ class GroovyshTest extends GroovyTestCase {
     }
 
 
-
     void testIncompleteExpr() {
         Groovysh groovysh = createGroovysh()
         groovysh.execute('def x() {')
@@ -188,15 +187,15 @@ class GroovyshTest extends GroovyTestCase {
         Groovysh groovysh = createGroovysh()
         groovysh.defaultErrorHook(new Throwable() {
             StackTraceElement[] stackTrace = [
-                    new StackTraceElement('fooClass', 'fooMethod', 'fooFile', 42),
-                    new StackTraceElement(Interpreter.SCRIPT_FILENAME, 'run', 'scriptFile', 42)]
+                new StackTraceElement('fooClass', 'fooMethod', 'fooFile', 42),
+                new StackTraceElement(Interpreter.SCRIPT_FILENAME, 'run', 'scriptFile', 42)]
         })
         assert '' == mockOut.toString()
         assert mockErr.toString().contains('org.apache.groovy.groovysh.GroovyshTest$')
         assert mockErr.toString().contains('fooClass')
         assert mockErr.toString().contains('foo')
-        assert ! mockErr.toString().contains(Interpreter.SCRIPT_FILENAME)
-        assert ! mockErr.toString().contains('...')
+        assert !mockErr.toString().contains(Interpreter.SCRIPT_FILENAME)
+        assert !mockErr.toString().contains('...')
     }
 
     void testDefaultResultHookStringArray() {
@@ -315,7 +314,7 @@ class GroovyshTest extends GroovyTestCase {
     void testExecuteCommandFoo() {
         Groovysh groovysh = createGroovysh()
         assertNull(groovysh.findCommand(' foo import '))
-        assert ! groovysh.isExecutable(' foo import ')
+        assert !groovysh.isExecutable(' foo import ')
         CommandSupport command2 = new CommandSupport(groovysh, 'foo', '/foo') {
             @Override
             Object execute(List args) {
@@ -352,7 +351,8 @@ class GroovyshTest extends GroovyTestCase {
         try {
             groovysh.loadUserScript(file.name)
             fail('Expected ArithmeticException')
-        } catch (ArithmeticException e) {}
+        } catch (ArithmeticException e) {
+        }
     }
 
     void testImports() {
@@ -442,7 +442,7 @@ class GroovyshCompleterTest extends GroovyTestCase {
         IO testio = new IO()
         Groovysh groovysh = new Groovysh(testio)
         List<ReflectionCompletionCandidate> candResult = (List<ReflectionCompletionCandidate>) groovysh.interp.evaluate([
-                """\
+            """\
 import ${ReflectionCompleter.getCanonicalName()}
 class Foo extends HashSet implements Comparable {
   int compareTo(Object) {0};
@@ -486,7 +486,7 @@ ReflectionCompleter.getPublicFieldsAndMethods(Foo, '')
         IO testio = new IO()
         Groovysh groovysh = new Groovysh(testio)
         List<ReflectionCompletionCandidate> candResult = (List<ReflectionCompletionCandidate>) groovysh.interp.evaluate([
-                """\
+            """\
 import ${ReflectionCompleter.getCanonicalName()}
 class Foo extends HashSet implements Comparable {
   int compareTo(Object) {0};
@@ -545,8 +545,8 @@ ReflectionCompleter.getPublicFieldsAndMethods(new Foo(), '')
     }
 
     /**
-    * copied from jline2 ConsoleReader
-    */
+     * copied from jline2 ConsoleReader
+     */
     private static CharSequence stripAnsi(final CharSequence str) {
         if (str == null) return ''
         try {
@@ -561,7 +561,6 @@ ReflectionCompleter.getPublicFieldsAndMethods(new Foo(), '')
     }
 
 }
-
 
 
 class GroovyshUtilsTest extends GroovyTestCase {

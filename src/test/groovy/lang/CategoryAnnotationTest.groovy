@@ -25,7 +25,8 @@ import static groovy.test.GroovyAssert.shouldFail
 
 final class CategoryAnnotationTest {
 
-    @Test // GROOVY-3367
+    @Test
+    // GROOVY-3367
     void testTransformationOfPropertyInvokedOnThis() {
         assertScript '''
             class Distance {
@@ -47,7 +48,8 @@ final class CategoryAnnotationTest {
         '''
     }
 
-    @Test // GROOVY-3543
+    @Test
+    // GROOVY-3543
     void testCategoryMethodsHavingDeclarationStatements() {
         // Declaration statements in category class' methods were not being visited by
         // CategoryASTTransformation's expressionTransformer resulting in declaration
@@ -90,7 +92,8 @@ final class CategoryAnnotationTest {
         '''
     }
 
-    @Test // GROOVY-3543
+    @Test
+    // GROOVY-3543
     void testPropertyNameExpandingToGetterInsideCategoryMethod() {
         // Inside the category method, this.getType().name was failing but this.getType().getName() was not.
         assertScript '''
@@ -150,7 +153,8 @@ final class CategoryAnnotationTest {
         '''
     }
 
-    @Test // GROOVY-6510
+    @Test
+    // GROOVY-6510
     void testClosureUsingImplicitThis() {
         assertScript '''
             @Category(Number)
@@ -203,7 +207,8 @@ final class CategoryAnnotationTest {
         '''
     }
 
-    @Test // GROOVY-4546
+    @Test
+    // GROOVY-4546
     void testClosureWithinDeclarationExpressionAndMultipleAssignment() {
         assertScript '''
             @Category(Integer)
@@ -231,7 +236,8 @@ final class CategoryAnnotationTest {
         '''
     }
 
-    @Test // GROOVY-6120
+    @Test
+    // GROOVY-6120
     void testFieldShouldNotBeAllowedInCategory() {
         def err = shouldFail RuntimeException, '''
             @Category(Bar)
@@ -250,7 +256,8 @@ final class CategoryAnnotationTest {
         assert err =~ /The @Category transformation does not support instance fields/
     }
 
-    @Test // GROOVY-6120
+    @Test
+    // GROOVY-6120
     void testPropertyShouldNotBeAllowedInCategory() {
         def err = shouldFail RuntimeException, '''
             @Category(Bar)
@@ -269,7 +276,8 @@ final class CategoryAnnotationTest {
         assert err =~ /The @Category transformation does not support instance properties/
     }
 
-    @Test // GROOVY-6120
+    @Test
+    // GROOVY-6120
     void testShouldNotThrowVerifyError() {
         assertScript '''
             @Category(Bar)
@@ -287,7 +295,8 @@ final class CategoryAnnotationTest {
         '''
     }
 
-    @Test // GROOVY-6120
+    @Test
+    // GROOVY-6120
     void testCategoryShouldBeCompatibleWithCompileStatic() {
         assertScript '''
             import groovy.transform.CompileStatic
@@ -308,7 +317,8 @@ final class CategoryAnnotationTest {
         '''
     }
 
-    @Test // GROOVY-6917
+    @Test
+    // GROOVY-6917
     void testCategoryShouldBeCompatibleWithCompileStatic2() {
         assertScript '''
             import groovy.transform.CompileStatic
@@ -335,7 +345,8 @@ final class CategoryAnnotationTest {
         '''
     }
 
-    @Test // GROOVY-6363
+    @Test
+    // GROOVY-6363
     void testCategoryMethodOverridesPrivateMethod() {
         assertScript '''
             import groovy.transform.CompileStatic

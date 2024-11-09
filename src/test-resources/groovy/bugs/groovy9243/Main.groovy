@@ -21,24 +21,29 @@ package groovy.bugs.groovy9243
 final class Groovy9243 extends Base {
     def accessX1() {
         String name = new X().name
-        assert name =='staticClassX'
+        assert name == 'staticClassX'
     }
+
     def accessX2() {
         String name = new Base.X().name
         assert name == 'staticClassX'
     }
+
     def accessX3() {
         String name = new groovy.bugs.groovy9243.Base.X().name
         assert name == 'staticClassX'
     }
+
     def accessY1() {
         String name = new Y().name
         assert name == 'classY'
     }
+
     def accessY2() {
         String name = this.new Y().name
         assert name == 'classY'
     }
+
     def accessY3() {
         def that = new Groovy9243()
         String name = that.new Y().name

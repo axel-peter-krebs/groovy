@@ -51,6 +51,8 @@ import static org.codehaus.groovy.runtime.DefaultGroovyMethods.transpose;
  * </ul>
  */
 public class RecursivenessTester {
+    private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
+
     public boolean isRecursive(Map<String, ASTNode> params) {
         ASTNode method = params.get("method");
         assert MethodNode.class.equals(method.getClass());
@@ -102,9 +104,9 @@ public class RecursivenessTester {
             return false;
 
         List<List<ClassNode>> classNodePairs =
-                transpose(Arrays.asList(
-                        Arrays.stream(method.getParameters()).map(Parameter::getType).collect(Collectors.toList()),
-                        arguments.getExpressions().stream().map(Expression::getType).collect(Collectors.toList())));
+            transpose(Arrays.asList(
+                Arrays.stream(method.getParameters()).map(Parameter::getType).collect(Collectors.toList()),
+                arguments.getExpressions().stream().map(Expression::getType).collect(Collectors.toList())));
         return classNodePairs.stream().allMatch(t -> areTypesCallCompatible(t.get(0), t.get(1)));
     }
 
@@ -118,6 +120,4 @@ public class RecursivenessTester {
         ClassNode boxedParam = ClassHelper.getWrapper(paramType);
         return boxedArg.isDerivedFrom(boxedParam) || boxedParam.isDerivedFrom(boxedArg);
     }
-
-    private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
 }

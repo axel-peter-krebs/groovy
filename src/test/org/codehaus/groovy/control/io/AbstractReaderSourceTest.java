@@ -82,7 +82,7 @@ public class AbstractReaderSourceTest {
 
         public Reader getReader() throws IOException {
             return new StringReader(
-                    String.format("%s\n%s\n%s", SAMPLE_SOURCE_LINE1, SAMPLE_SOURCE_LINE2, SAMPLE_SOURCE_LINE3)
+                String.format("%s\n%s\n%s", SAMPLE_SOURCE_LINE1, SAMPLE_SOURCE_LINE2, SAMPLE_SOURCE_LINE3)
             );
         }
 

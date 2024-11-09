@@ -28,8 +28,8 @@ class Groovy831_Bug extends GroovyTestCase {
     String[] cities = ['Seoul', 'London', 'Wasington']
     int[] intArrayData = [1, 3, 5]
 
-    public String[] countries = [ 'Republic of Korea', 'United Kingdom', 'United State of America']
-    public  int[] intArray  = [ 2, 4, 6 ]
+    public String[] countries = ['Republic of Korea', 'United Kingdom', 'United State of America']
+    public int[] intArray = [2, 4, 6]
 
     void testSetFieldProperty() {
         assert cities.size() == 3

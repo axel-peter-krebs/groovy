@@ -24,7 +24,8 @@ import static groovy.test.GroovyAssert.assertScript
 
 final class Groovy6808 {
 
-    @Test // GROOVY-6808
+    @Test
+    // GROOVY-6808
     void testInnerClassTable1() {
         assertScript '''
             class Foo {
@@ -38,7 +39,8 @@ final class Groovy6808 {
         '''
     }
 
-    @Test // GROOVY-9842
+    @Test
+    // GROOVY-9842
     void testInnerClassTable2() {
         assertScript '''
             class Foo {

@@ -45,7 +45,7 @@ jdk = "oraclejdk8"
         assert 'groovy' == toml.language
         assert 'required' == toml.sudo
         assert 'trusty' == toml.dist
-        assert ['openjdk10', 'oraclejdk9', 'oraclejdk8'] ==  toml.matrix.include.jdk
+        assert ['openjdk10', 'oraclejdk9', 'oraclejdk8'] == toml.matrix.include.jdk
         assert ['unset _JAVA_OPTIONS'] == toml.before_script*.trim()
         // end::parse_text[]
     }
@@ -80,7 +80,7 @@ jdk = "oraclejdk8"
 
 
     void testParsePath() {
-        def file = File.createTempFile('test','yml')
+        def file = File.createTempFile('test', 'yml')
         file.deleteOnExit()
         file.text = '''
 language = "groovy"
@@ -104,7 +104,7 @@ jdk = "oraclejdk8"
         assert 'groovy' == toml.language
         assert 'required' == toml.sudo
         assert 'trusty' == toml.dist
-        assert ['openjdk10', 'oraclejdk9', 'oraclejdk8'] ==  toml.matrix.include.jdk
+        assert ['openjdk10', 'oraclejdk9', 'oraclejdk8'] == toml.matrix.include.jdk
 
     }
 }

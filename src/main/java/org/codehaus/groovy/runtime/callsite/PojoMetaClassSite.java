@@ -25,8 +25,8 @@ import org.codehaus.groovy.runtime.ScriptBytecodeAdapter;
 
 /**
  * POJO call site
- *   metaclass - cached
- *   method - not cached
+ * metaclass - cached
+ * method - not cached
  */
 public class PojoMetaClassSite extends MetaClassSite {
 

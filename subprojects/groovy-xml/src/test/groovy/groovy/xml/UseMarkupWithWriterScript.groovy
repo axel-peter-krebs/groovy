@@ -23,6 +23,6 @@ package groovy.xml
 writer = new StringWriter()
 b = new MarkupBuilder(writer)
 
-b.root1(a:5)
+b.root1(a: 5)
 println writer.toString()
 assert "<root1 a='5' />" == writer.toString()

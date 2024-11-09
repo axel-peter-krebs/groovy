@@ -37,34 +37,33 @@ import java.security.PrivilegedExceptionAction;
 @Incubating
 public class ReevaluatingReference<T> {
     private static final MethodHandle FALLBACK_HANDLE;
+
     static {
         try {
             //TODO Jochen: move the findSpecial to a central place together with others to easy security configuration
             FALLBACK_HANDLE = doPrivileged((PrivilegedExceptionAction<MethodHandle>) () -> MethodHandles.lookup().findSpecial(
-                    ReevaluatingReference.class, "replacePayLoad",
-                    MethodType.methodType(Object.class),
-                    ReevaluatingReference.class));
+                ReevaluatingReference.class, "replacePayLoad",
+                MethodType.methodType(Object.class),
+                ReevaluatingReference.class));
         } catch (PrivilegedActionException e) {
             throw new GroovyBugError(e);
         }
-    }
-
-    @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
-    private static <T> T doPrivileged(PrivilegedExceptionAction<T> action) throws PrivilegedActionException {
-        return java.security.AccessController.doPrivileged(action);
     }
 
     private final Supplier<T> valueSupplier;
     private final Function<T, SwitchPoint> validationSupplier;
     private final WeakReference<Class<T>> clazzRef;
     private MethodHandle returnRef;
-
-
     public ReevaluatingReference(Class clazz, Supplier<T> valueSupplier, Function<T, SwitchPoint> validationSupplier) {
         this.valueSupplier = valueSupplier;
         this.validationSupplier = validationSupplier;
         clazzRef = new WeakReference<Class<T>>(clazz);
         replacePayLoad();
+    }
+
+    @SuppressWarnings("removal") // TODO a future Groovy version should perform the operation not as a privileged action
+    private static <T> T doPrivileged(PrivilegedExceptionAction<T> action) throws PrivilegedActionException {
+        return java.security.AccessController.doPrivileged(action);
     }
 
     private T replacePayLoad() {

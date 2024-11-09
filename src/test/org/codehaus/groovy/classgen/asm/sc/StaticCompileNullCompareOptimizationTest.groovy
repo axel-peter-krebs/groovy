@@ -26,7 +26,7 @@ import org.codehaus.groovy.classgen.asm.AbstractBytecodeTestCase
 final class StaticCompileNullCompareOptimizationTest extends AbstractBytecodeTestCase {
 
     void testShouldUseIfNull1() {
-        def bytecode = compile(method:'m', '''
+        def bytecode = compile(method: 'm', '''
             @groovy.transform.CompileStatic
             void m(Object o) {
                 o != null
@@ -36,7 +36,7 @@ final class StaticCompileNullCompareOptimizationTest extends AbstractBytecodeTes
     }
 
     void testShouldUseIfNull2() {
-        def bytecode = compile(method:'m', '''
+        def bytecode = compile(method: 'm', '''
             @groovy.transform.CompileStatic
             void m(Object o) {
                 null != o
@@ -46,7 +46,7 @@ final class StaticCompileNullCompareOptimizationTest extends AbstractBytecodeTes
     }
 
     void testShouldUseIfNonNull1() {
-        def bytecode = compile(method:'m', '''
+        def bytecode = compile(method: 'm', '''
             @groovy.transform.CompileStatic
             void m(Object o) {
                 o == null
@@ -56,7 +56,7 @@ final class StaticCompileNullCompareOptimizationTest extends AbstractBytecodeTes
     }
 
     void testShouldUseIfNonNull2() {
-        def bytecode = compile(method:'m', '''
+        def bytecode = compile(method: 'm', '''
             @groovy.transform.CompileStatic
             void m(Object o) {
                 null == o
@@ -66,7 +66,7 @@ final class StaticCompileNullCompareOptimizationTest extends AbstractBytecodeTes
     }
 
     void testPrimitiveWithNullShouldBeOptimized1() {
-        def bytecode = compile(method:'m', '''
+        def bytecode = compile(method: 'm', '''
             @groovy.transform.CompileStatic
             void m(int x) {
                 null == x
@@ -76,7 +76,7 @@ final class StaticCompileNullCompareOptimizationTest extends AbstractBytecodeTes
     }
 
     void testPrimitiveWithNullShouldBeOptimized2() {
-        def bytecode = compile(method:'m', '''
+        def bytecode = compile(method: 'm', '''
             @groovy.transform.CompileStatic
             void m(int x) {
                 x == null
@@ -86,7 +86,7 @@ final class StaticCompileNullCompareOptimizationTest extends AbstractBytecodeTes
     }
 
     void testOptimizeGroovyTruthForPrimitiveBoolean1() {
-        def bytecode = compile(method:'m', '''
+        def bytecode = compile(method: 'm', '''
             @groovy.transform.CompileStatic
             void m(boolean x) {
                 if (x) {
@@ -102,7 +102,7 @@ final class StaticCompileNullCompareOptimizationTest extends AbstractBytecodeTes
     }
 
     void testOptimizeGroovyTruthForPrimitiveBoolean2() {
-        def bytecode = compile(method:'m', '''
+        def bytecode = compile(method: 'm', '''
             @groovy.transform.CompileStatic
             void m(boolean x) {
                 if (!x) {
@@ -124,7 +124,7 @@ final class StaticCompileNullCompareOptimizationTest extends AbstractBytecodeTes
     }
 
     void testOptimizeGroovyTruthForPrimitiveBoolean3() {
-        def bytecode = compile(method:'m', '''
+        def bytecode = compile(method: 'm', '''
             @groovy.transform.CompileStatic
             void m(boolean x) {
                 if (!!x) {
@@ -140,7 +140,7 @@ final class StaticCompileNullCompareOptimizationTest extends AbstractBytecodeTes
     }
 
     void testOptimizeGroovyTruthForNonPrimitiveBoolean() {
-        def bytecode = compile(method:'m', '''
+        def bytecode = compile(method: 'm', '''
             @groovy.transform.CompileStatic
             void m(Boolean x) {
                 if (x) {
@@ -162,7 +162,7 @@ final class StaticCompileNullCompareOptimizationTest extends AbstractBytecodeTes
     }
 
     void testOptimizeGroovyTruthForPrimitiveNumberType() {
-        def bytecode = compile(method:'m', '''
+        def bytecode = compile(method: 'm', '''
             @groovy.transform.CompileStatic
             void m(int x) {
                 if (x) {
@@ -184,7 +184,7 @@ final class StaticCompileNullCompareOptimizationTest extends AbstractBytecodeTes
     }
 
     void testNoGroovyTruthOptimizationForObject() {
-        def bytecode = compile(method:'m', '''
+        def bytecode = compile(method: 'm', '''
             @groovy.transform.CompileStatic
             void m(Object x) {
                 if (x) {
@@ -204,7 +204,7 @@ final class StaticCompileNullCompareOptimizationTest extends AbstractBytecodeTes
     }
 
     void testNoGroovyTruthOptimizationForString() {
-        def bytecode = compile(method:'m', '''
+        def bytecode = compile(method: 'm', '''
             @groovy.transform.CompileStatic
             void m(String x) {
                 if (x) {
@@ -224,7 +224,7 @@ final class StaticCompileNullCompareOptimizationTest extends AbstractBytecodeTes
     }
 
     void testGroovyTruthOptimizationForFinalClass() {
-        def bytecode = compile(method:'m', '''
+        def bytecode = compile(method: 'm', '''
             final class A {
             }
             @groovy.transform.CompileStatic
@@ -247,7 +247,7 @@ final class StaticCompileNullCompareOptimizationTest extends AbstractBytecodeTes
     }
 
     void testGroovyTruthOptimizationForPrivateInnerClass() {
-        def bytecode = compile(method:'m', '''
+        def bytecode = compile(method: 'm', '''
             class A {
                 private static class B {
                 }
@@ -272,7 +272,7 @@ final class StaticCompileNullCompareOptimizationTest extends AbstractBytecodeTes
     }
 
     void testNoGroovyTruthOptimizationForPublicInnerClass() {
-        def bytecode = compile(method:'m', '''
+        def bytecode = compile(method: 'm', '''
             class A {
                 public static class B {
                 }
@@ -297,7 +297,7 @@ final class StaticCompileNullCompareOptimizationTest extends AbstractBytecodeTes
 
     // GROOVY-10711
     void testNoGroovyTruthOptimizationIfProvidesAsBoolean() {
-        def bytecode = compile(method:'m', '''
+        def bytecode = compile(method: 'm', '''
             @groovy.transform.CompileStatic
             @groovy.transform.Immutable
             class C {

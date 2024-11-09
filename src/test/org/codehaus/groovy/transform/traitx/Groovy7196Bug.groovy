@@ -27,6 +27,7 @@ class Groovy7196Bug extends GroovyTestCase {
             assert SomeTestClass.org_codehaus_groovy_transform_traitx_Groovy7196SupportTrait__someString == 'ok'
         '''
     }
+
     void testStaticFieldShouldBeInitialized() {
         assert Groovy7196SupportTraitImpl.org_codehaus_groovy_transform_traitx_Groovy7196SupportTrait__someString == 'ok'
     }

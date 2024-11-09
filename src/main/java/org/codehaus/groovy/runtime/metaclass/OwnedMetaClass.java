@@ -153,7 +153,7 @@ public abstract class OwnedMetaClass extends DelegatingMetaClass {
 
     @Override
     public String toString() {
-        return super.toString() + "[" + delegate.toString()+ "]";
+        return super.toString() + "[" + delegate.toString() + "]";
     }
 
     @Override

@@ -55,7 +55,7 @@ class ClosureSwingListenerTest extends GroovySwingTestCase {
             def myWhat = null
             def myWhere = null
             def strangeBean = new StrangeBean()
-            strangeBean.somethingStrangeHappened = { what, where -> myWhat = what; myWhere = where}
+            strangeBean.somethingStrangeHappened = { what, where -> myWhat = what; myWhere = where }
             strangeBean.somethingStrangeHappened('?', '!')
             assert myWhat == '?'
             assert myWhere == '!'

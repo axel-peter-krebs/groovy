@@ -25,12 +25,12 @@ import java.util.Objects;
  */
 public class ImportNode extends AnnotatedNode {
 
-    private ClassNode type;
     private final String alias;
     private final String fieldName;
     private final String packageName;
     private final boolean isStar;
     private final boolean isStatic;
+    private ClassNode type;
     private transient int hashCode;
 
     /**
@@ -104,7 +104,7 @@ public class ImportNode extends AnnotatedNode {
             if (isStar()) {
                 return "import " + getPackageName() + "*";
             } else if (simpleName == null || simpleName.isEmpty()
-                    || simpleName.equals(getType().getNameWithoutPackage())) {
+                || simpleName.equals(getType().getNameWithoutPackage())) {
                 return "import " + getClassName();
             } else {
                 return "import " + getClassName() + " as " + simpleName;

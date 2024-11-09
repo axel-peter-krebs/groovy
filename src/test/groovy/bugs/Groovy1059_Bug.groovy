@@ -58,6 +58,6 @@ class Groovy1059Foo {
     def public say2 = this.&say
 
     public Object say() {
-       return "I am a Method"
+        return "I am a Method"
     }
 }

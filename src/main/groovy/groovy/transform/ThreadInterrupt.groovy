@@ -98,9 +98,7 @@ import java.lang.annotation.Target
  * </pre>
  * Additional usage examples can be found in the unit test for this class.
  *
- * @see TimedInterrupt
- * @see ConditionalInterrupt
- * @since 1.8.0
+ * @see TimedInterrupt* @see ConditionalInterrupt* @since 1.8.0
  */
 @Documented
 @Retention(RetentionPolicy.SOURCE)

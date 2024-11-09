@@ -99,8 +99,8 @@ public class VerifyClass extends MatchingTask {
     private boolean readClass(String clazz) throws IOException {
         ClassNode ca;
         try (InputStream inputStream =
-                     new BufferedInputStream(
-                             new FileInputStream(clazz))) {
+                 new BufferedInputStream(
+                     new FileInputStream(clazz))) {
             ClassReader cr = new ClassReader(inputStream);
             ca = new ClassNode() {
                 @Override

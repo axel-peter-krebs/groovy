@@ -31,6 +31,23 @@ import java.io.IOException;
 public class GroovyClassLoaderDeadlockTest extends TestCase {
     private static final String PATH = "./src/test/groovy/lang/gcldeadlock/";
 
+    public void testNoDeadlockWhenTwoThreadsCompileScripts() throws IOException, InterruptedException {
+        String[] roots = new String[]{PATH};
+        GroovyScriptEngine gse = new GroovyScriptEngine(roots);
+        Runner[] runners = new Runner[]{
+            new Runner(gse, "script0.groovy", 0),
+            new Runner(gse, "script1.groovy", 1)
+        };
+        for (Runner runner : runners) {
+            runner.start();
+        }
+        for (Runner runner : runners) {
+            runner.join();
+        }
+        assertEquals("0+0=0", runners[0].getResult());
+        assertEquals("1+1=2", runners[1].getResult());
+    }
+
     private static class Runner extends Thread {
         private GroovyScriptEngine gse;
         private String script;
@@ -57,22 +74,5 @@ public class GroovyClassLoaderDeadlockTest extends TestCase {
         public String getResult() {
             return result;
         }
-    }
-
-    public void testNoDeadlockWhenTwoThreadsCompileScripts() throws IOException, InterruptedException {
-        String[] roots = new String[] { PATH };
-        GroovyScriptEngine gse = new GroovyScriptEngine(roots);
-        Runner[] runners = new Runner[] {
-                new Runner(gse, "script0.groovy", 0),
-                new Runner(gse, "script1.groovy", 1)
-        };
-        for (Runner runner : runners) {
-            runner.start();
-        }
-        for (Runner runner : runners) {
-            runner.join();
-        }
-        assertEquals("0+0=0", runners[0].getResult());
-        assertEquals("1+1=2", runners[1].getResult());
     }
 }

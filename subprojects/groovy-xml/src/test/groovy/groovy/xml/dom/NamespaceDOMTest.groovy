@@ -91,8 +91,8 @@ class NamespaceDOMTest extends TestXmlSupport {
         def builder = DOMBuilder.newInstance()
         def multi = NamespaceBuilder.newInstance(builder)
         multi.declareNamespace(
-                '':'http://example.org/ord',
-                prod:'http://example.org/prod'
+            '': 'http://example.org/ord',
+            prod: 'http://example.org/prod'
         )
         checkXml(multi)
     }

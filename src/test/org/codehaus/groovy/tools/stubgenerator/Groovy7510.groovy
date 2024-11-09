@@ -40,7 +40,7 @@ final class Groovy7510 extends StringSourcesStubTestCase {
                 }
             ''',
 
-            'p/C.java': '''
+            'p/C.java'  : '''
                 package p;
                 public class C {
                     public static void main(String[] args) {

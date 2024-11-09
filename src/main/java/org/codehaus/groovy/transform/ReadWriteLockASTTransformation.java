@@ -56,11 +56,15 @@ import static org.objectweb.asm.Opcodes.ACC_STATIC;
 @GroovyASTTransformation(phase = CompilePhase.CANONICALIZATION)
 public class ReadWriteLockASTTransformation extends AbstractASTTransformation {
 
+    public static final String DEFAULT_STATIC_LOCKNAME = "$REENTRANTLOCK";
+    public static final String DEFAULT_INSTANCE_LOCKNAME = "$reentrantlock";
     private static final ClassNode READ_LOCK_TYPE = make(WithReadLock.class);
     private static final ClassNode WRITE_LOCK_TYPE = make(WithWriteLock.class);
     private static final ClassNode LOCK_TYPE = make(ReentrantReadWriteLock.class);
-    public static final String DEFAULT_STATIC_LOCKNAME = "$REENTRANTLOCK";
-    public static final String DEFAULT_INSTANCE_LOCKNAME = "$reentrantlock";
+
+    private static Expression createLockObject() {
+        return ctorX(LOCK_TYPE);
+    }
 
     @Override
     public void visit(ASTNode[] nodes, SourceUnit source) {
@@ -134,9 +138,5 @@ public class ReadWriteLockASTTransformation extends AbstractASTTransformation {
             return null;
         }
         return field;
-    }
-
-    private static Expression createLockObject() {
-        return ctorX(LOCK_TYPE);
     }
 }

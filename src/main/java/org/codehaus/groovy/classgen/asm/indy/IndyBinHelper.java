@@ -35,10 +35,10 @@ public class IndyBinHelper extends BinaryExpressionHelper {
     @Override
     protected void writePostOrPrefixMethod(int op, String method, Expression expression, Expression orig) {
         getController().getInvocationWriter().makeCall(
-                orig, EmptyExpression.INSTANCE, 
-                new ConstantExpression(method), 
-                MethodCallExpression.NO_ARGUMENTS, 
-                InvocationWriter.invokeMethod, 
-                false, false, false);
+            orig, EmptyExpression.INSTANCE,
+            new ConstantExpression(method),
+            MethodCallExpression.NO_ARGUMENTS,
+            InvocationWriter.invokeMethod,
+            false, false, false);
     }
 }

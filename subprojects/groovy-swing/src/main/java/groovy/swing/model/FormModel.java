@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Represents a number of field models which can be ValueModel, 
+ * Represents a number of field models which can be ValueModel,
  * PropertyModel, TableModel, TreeModel or nested FormModel instances
  */
 public class FormModel {

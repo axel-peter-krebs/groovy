@@ -37,9 +37,9 @@ public class Attributes extends NodeChildren {
     final String attributeName;
 
     /**
-     * @param parent the GPathResult prior to the application of the expression creating this GPathResult
-     * @param name if the GPathResult corresponds to something with a name, e.g. a node
-     * @param namespacePrefix the namespace prefix if any
+     * @param parent            the GPathResult prior to the application of the expression creating this GPathResult
+     * @param name              if the GPathResult corresponds to something with a name, e.g. a node
+     * @param namespacePrefix   the namespace prefix if any
      * @param namespaceTagHints the known tag to namespace mappings
      */
     public Attributes(final GPathResult parent, final String name, final String namespacePrefix, final Map<String, String> namespaceTagHints) {
@@ -48,8 +48,8 @@ public class Attributes extends NodeChildren {
     }
 
     /**
-     * @param parent the GPathResult prior to the application of the expression creating this GPathResult
-     * @param name if the GPathResult corresponds to something with a name, e.g. a node
+     * @param parent            the GPathResult prior to the application of the expression creating this GPathResult
+     * @param name              if the GPathResult corresponds to something with a name, e.g. a node
      * @param namespaceTagHints the known tag to namespace mappings
      */
     public Attributes(final GPathResult parent, final String name, final Map<String, String> namespaceTagHints) {
@@ -82,17 +82,17 @@ public class Attributes extends NodeChildren {
                     } else {
                         String attributeKey = Attributes.this.attributeName;
                         if (Attributes.this.namespacePrefix != null &&
-                                !"*".equals(Attributes.this.namespacePrefix) &&
-                                Attributes.this.namespacePrefix.length() > 0) {
+                            !"*".equals(Attributes.this.namespacePrefix) &&
+                            Attributes.this.namespacePrefix.length() > 0) {
                             attributeKey = new QName(Attributes.this.lookupNamespace(Attributes.this.namespacePrefix), Attributes.this.attributeName).toString();
                         }
                         final String value = (String) ((Node) next).attributes().get(attributeKey);
                         if (value != null) {
                             return new Attribute(Attributes.this.name,
-                                    value,
-                                    new NodeChild((Node) next, Attributes.this.parent.parent, "", Attributes.this.namespaceTagHints),
-                                    (Attributes.this.namespacePrefix == null || "*".equals(Attributes.this.namespacePrefix)) ? "" : Attributes.this.namespacePrefix,
-                                    Attributes.this.namespaceTagHints);
+                                value,
+                                new NodeChild((Node) next, Attributes.this.parent.parent, "", Attributes.this.namespaceTagHints),
+                                (Attributes.this.namespacePrefix == null || "*".equals(Attributes.this.namespacePrefix)) ? "" : Attributes.this.namespacePrefix,
+                                Attributes.this.namespaceTagHints);
                         }
                     }
                 }

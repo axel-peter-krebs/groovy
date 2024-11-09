@@ -152,7 +152,7 @@ final class MethodSelectionTest extends gls.CompilableTestSupport {
     }
 
     void testNullUsageForPrimitivesWithExplicitNull() {
-        [byte,int,short,float,double,boolean,char].each { type ->
+        [byte, int, short, float, double, boolean, char].each { type ->
             assertScript """
                 def foo($type x) {}
 
@@ -170,7 +170,7 @@ final class MethodSelectionTest extends gls.CompilableTestSupport {
     }
 
     void testNullUsageForPrimitivesWithImplicitNull() {
-        [byte,int,short,float,double,boolean,char].each { type ->
+        [byte, int, short, float, double, boolean, char].each { type ->
             assertScript """
                 def foo($type x) {}
 
@@ -188,7 +188,7 @@ final class MethodSelectionTest extends gls.CompilableTestSupport {
     }
 
     void testNullUsageForPrimitivesAndOverloading() {
-        [byte,int,short,float,double].each { type ->
+        [byte, int, short, float, double].each { type ->
             assertScript """
                 def foo(String x){1}
                 def foo($type x) {2}
@@ -199,7 +199,7 @@ final class MethodSelectionTest extends gls.CompilableTestSupport {
         }
     }
 
-    void testPrivateMethodSelectionFromClosure(){
+    void testPrivateMethodSelectionFromClosure() {
         assertScript '''
             class I1 {
                 private foo() {1}
@@ -216,7 +216,7 @@ final class MethodSelectionTest extends gls.CompilableTestSupport {
         '''
     }
 
-    void testCachingForNullAndPrimitive(){
+    void testCachingForNullAndPrimitive() {
         assertScript '''
             boolean shaky(boolean defaultValue) {false}
             shaky(false)
@@ -287,7 +287,7 @@ final class MethodSelectionTest extends gls.CompilableTestSupport {
 
     // GROOVY-6431
     void testBigDecAndBigIntSubClass() {
-        assertScript'''
+        assertScript '''
             class MyDecimal extends BigDecimal {
                 public MyDecimal(String s) {super(s)}
             }

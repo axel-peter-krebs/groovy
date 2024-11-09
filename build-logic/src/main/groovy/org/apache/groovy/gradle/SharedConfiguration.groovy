@@ -68,17 +68,17 @@ class SharedConfiguration {
         isReleaseVersion = groovyVersion.map { !it.toLowerCase().contains("snapshot") } as Provider<Boolean>
         buildDate = isReleaseVersion.map { it ? new Date() : new Date(0) }
         installationDirectory = providers.gradleProperty("groovy_installPath")
-                .orElse(providers.systemProperty("installDirectory"))
+            .orElse(providers.systemProperty("installDirectory"))
         isRunningOnCI = detectCi(rootProjectDirectory, logger)
         artifactory = new Artifactory(layout, providers, logger)
         signing = new Signing(this, objects, providers)
         binaryCompatibilityBaselineVersion = providers.gradleProperty("binaryCompatibilityBaseline")
         hasCodeCoverage = providers.gradleProperty("coverage")
-                .map { Boolean.valueOf(it) }
-                .orElse(
-                        providers.provider { startParameter.taskNames.any { it =~ /jacoco/ } }
-                )
-                .orElse(false)
+            .map { Boolean.valueOf(it) }
+            .orElse(
+                providers.provider { startParameter.taskNames.any { it =~ /jacoco/ } }
+            )
+            .orElse(false)
         targetJavaVersion = providers.gradleProperty("targetJavaVersion")
         groovyTargetBytecodeVersion = providers.gradleProperty("groovyTargetBytecodeVersion")
         File javaHome = new File(providers.systemProperty('java.home').get())
@@ -129,8 +129,8 @@ class SharedConfiguration {
 
         private static Provider<String> provider(ProviderFactory providers, Provider<Properties> properties, String propertyName, String gradlePropertyName, String envVarName) {
             return providers.gradleProperty(gradlePropertyName)
-                    .orElse(providers.environmentVariable(envVarName))
-                    .orElse(properties.map { it.getProperty(propertyName) })
+                .orElse(providers.environmentVariable(envVarName))
+                .orElse(properties.map { it.getProperty(propertyName) })
         }
     }
 
@@ -145,33 +145,33 @@ class SharedConfiguration {
 
         Signing(SharedConfiguration config, ObjectFactory objects, ProviderFactory providers) {
             keyId = objects.property(String).convention(
-                    providers.gradleProperty("signing.keyId")
+                providers.gradleProperty("signing.keyId")
             )
             secretKeyRingFile = objects.property(String).convention(
-                    providers.gradleProperty("signing.secretKeyRingFile")
+                providers.gradleProperty("signing.secretKeyRingFile")
             )
             password = objects.property(String).convention(
-                    providers.gradleProperty("signing.password")
+                providers.gradleProperty("signing.password")
             )
             useGpgCmd = providers.gradleProperty("usegpg")
-                    .map { Boolean.valueOf(it) }.orElse(false)
+                .map { Boolean.valueOf(it) }.orElse(false)
             forceSign = providers.gradleProperty("forceSign")
-                    .map { Boolean.valueOf(it) }.orElse(false)
+                .map { Boolean.valueOf(it) }.orElse(false)
             trySign = providers.gradleProperty("trySign")
-                    .map { Boolean.valueOf(it) }.orElse(false)
+                .map { Boolean.valueOf(it) }.orElse(false)
             this.config = config
         }
 
         boolean shouldSign(TaskExecutionGraph taskGraph) {
             trySign.get() || (config.isReleaseVersion.get() &&
-                    (forceSign.get() || [':artifactoryPublish', ':publishAllPublicationsToApacheRepository'].any {
-                        taskGraph.hasTask(it)
-                    }))
+                (forceSign.get() || [':artifactoryPublish', ':publishAllPublicationsToApacheRepository'].any {
+                    taskGraph.hasTask(it)
+                }))
         }
 
         boolean hasAllKeyDetails() {
             return useGpgCmd.get() ||
-                    keyId.present && secretKeyRingFile.present && password.present
+                keyId.present && secretKeyRingFile.present && password.present
         }
     }
 }

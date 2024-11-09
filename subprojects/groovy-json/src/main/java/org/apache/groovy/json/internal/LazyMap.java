@@ -53,13 +53,19 @@ public class LazyMap extends AbstractMap<String, Object> {
         values = new Object[initialSize];
     }
 
+    public static <V> V[] grow(V[] array) {
+        Object newArray = Array.newInstance(array.getClass().getComponentType(), array.length * 2);
+        System.arraycopy(array, 0, newArray, 0, array.length);
+        return (V[]) newArray;
+    }
+
     @Override
     public Object put(String key, Object value) {
         if (map == null) {
             for (int i = 0; i < size; i++) {
                 String curKey = keys[i];
                 if ((key == null && curKey == null)
-                     || (key != null && key.equals(curKey))) {
+                    || (key != null && key.equals(curKey))) {
                     Object val = values[i];
                     keys[i] = key;
                     values[i] = value;
@@ -209,11 +215,5 @@ public class LazyMap extends AbstractMap<String, Object> {
         }
         size = 0;
         return map;
-    }
-
-    public static <V> V[] grow(V[] array) {
-        Object newArray = Array.newInstance(array.getClass().getComponentType(), array.length * 2);
-        System.arraycopy(array, 0, newArray, 0, array.length);
-        return (V[]) newArray;
     }
 }

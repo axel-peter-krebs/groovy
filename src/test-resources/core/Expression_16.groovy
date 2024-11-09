@@ -22,8 +22,8 @@ this.name
 super.name
 
 
-def x = {->}()
-x = {a, b -> a + b }(1, 2)
+def x = { -> }()
+x = { a, b -> a + b }(1, 2)
 
 void()
 void(1, 2)

@@ -79,8 +79,8 @@ public class StaticTypesWriterController extends DelegatingController {
 
         CompilerConfiguration config = cn.getCompileUnit().getConfig();
         this.binaryExpressionHelper = config.isIndyEnabled()
-                ? new IndyStaticTypesMultiTypeDispatcher(this)
-                : new StaticTypesBinaryExpressionMultiTypeDispatcher(this);
+            ? new IndyStaticTypesMultiTypeDispatcher(this)
+            : new StaticTypesBinaryExpressionMultiTypeDispatcher(this);
     }
 
     @Override
@@ -105,7 +105,7 @@ public class StaticTypesWriterController extends DelegatingController {
     public CallSiteWriter getCallSiteWriter() {
         MethodNode methodNode = getMethodNode();
         if (isInStaticallyCheckedMethod && (methodNode == null
-                || !Boolean.TRUE.equals(methodNode.getNodeMetaData(StaticTypesMarker.DYNAMIC_RESOLUTION)))) {
+            || !Boolean.TRUE.equals(methodNode.getNodeMetaData(StaticTypesMarker.DYNAMIC_RESOLUTION)))) {
             return callSiteWriter;
         }
         return super.getCallSiteWriter();

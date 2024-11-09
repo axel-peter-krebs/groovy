@@ -28,6 +28,11 @@ public class Groovy7538Support {
         return new StringAssert(actual);
     }
 
+    public void assertString() {
+        assertThat("true").isNotEmpty().isNotEqualTo("false");
+        assertThat("true").isNotEqualTo("false").isNotEmpty();
+    }
+
     public static class StringAssert extends AbstractCharSequenceAssert<StringAssert, String> {
         protected StringAssert(String actual) {
             super(actual, StringAssert.class);
@@ -35,9 +40,13 @@ public class Groovy7538Support {
     }
 
     public static abstract class AbstractCharSequenceAssert<S extends AbstractCharSequenceAssert<S, A>, A extends CharSequence>
-            extends AbstractAssert<S, A> {
+        extends AbstractAssert<S, A> {
         protected AbstractCharSequenceAssert(A actual, Class<?> selfType) {
             super(actual, selfType);
+        }
+
+        private static boolean hasContents(CharSequence s) {
+            return s.length() > 0;
         }
 
         public S isNotEmpty() {
@@ -59,10 +68,6 @@ public class Groovy7538Support {
             }
             throw new IllegalArgumentException("Expecting actual not to be null");
         }
-
-        private static boolean hasContents(CharSequence s) {
-            return s.length() > 0;
-        }
     }
 
     public static abstract class AbstractAssert<S extends AbstractAssert<S, A>, A> {
@@ -72,6 +77,10 @@ public class Groovy7538Support {
         protected AbstractAssert(A actual, Class<?> selfType) {
             myself = (S) selfType.cast(this);
             this.actual = actual;
+        }
+
+        private static boolean equal(Object actual, Object other) {
+            return Objects.equals(actual, other);
         }
 
         public S isNotEqualTo(Object other) {
@@ -85,14 +94,5 @@ public class Groovy7538Support {
             }
             throw new IllegalArgumentException("Expecting actual not to be equal to other");
         }
-
-        private static boolean equal(Object actual, Object other) {
-            return Objects.equals(actual, other);
-        }
-    }
-
-    public void assertString() {
-        assertThat("true").isNotEmpty().isNotEqualTo("false");
-        assertThat("true").isNotEqualTo("false").isNotEmpty();
     }
 }

@@ -56,13 +56,12 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.param;
 @GroovyASTTransformation(phase = CompilePhase.SEMANTIC_ANALYSIS)
 public class BuilderASTTransformation extends AbstractASTTransformation implements CompilationUnitAware, TransformWithPriority {
 
+    public static final ClassNode[] NO_EXCEPTIONS = ClassNode.EMPTY_ARRAY;
+    public static final Parameter[] NO_PARAMS = Parameter.EMPTY_ARRAY;
     private static final Class MY_CLASS = Builder.class;
     private static final ClassNode MY_TYPE = make(MY_CLASS);
     public static final String MY_TYPE_NAME = "@" + MY_TYPE.getNameWithoutPackage();
     private static final ClassNode RECORD_TYPE = make(RecordBase.class, false);
-    public static final ClassNode[] NO_EXCEPTIONS = ClassNode.EMPTY_ARRAY;
-    public static final Parameter[] NO_PARAMS = Parameter.EMPTY_ARRAY;
-
     private CompilationUnit compilationUnit;
 
     @Override
@@ -104,6 +103,43 @@ public class BuilderASTTransformation extends AbstractASTTransformation implemen
     @Override
     public int priority() {
         return -5;
+    }
+
+    private boolean checkStatic(MethodNode mNode, String annotationName) {
+        if (!mNode.isStatic() && !mNode.isStaticConstructor() && !(mNode instanceof ConstructorNode)) {
+            addError("Error processing method '" + mNode.getName() + "'. " +
+                annotationName + " not allowed for instance methods.", mNode);
+            return false;
+        }
+        return true;
+    }
+
+    private BuilderStrategy createBuilderStrategy(AnnotationNode anno, GroovyClassLoader loader) {
+        ClassNode strategyClass = getMemberClassValue(anno, "builderStrategy", make(DefaultStrategy.class));
+
+        if (strategyClass == null) {
+            addError("Couldn't determine builderStrategy class", anno);
+            return null;
+        }
+
+        String className = strategyClass.getName();
+        try {
+            Object instance = loader.loadClass(className).getDeclaredConstructor().newInstance();
+            if (!BuilderStrategy.class.isAssignableFrom(instance.getClass())) {
+                addError("The builderStrategy class '" + strategyClass.getName() + "' on " + MY_TYPE_NAME + " is not a builderStrategy", anno);
+                return null;
+            }
+
+            return (BuilderStrategy) instance;
+        } catch (Exception e) {
+            addError("Can't load builderStrategy '" + className + "' " + e, anno);
+            return null;
+        }
+    }
+
+    @Override
+    public void setCompilationUnit(final CompilationUnit unit) {
+        this.compilationUnit = unit;
     }
 
     public interface BuilderStrategy {
@@ -165,7 +201,7 @@ public class BuilderASTTransformation extends AbstractASTTransformation implemen
         }
 
         protected void checkKnownProperty(BuilderASTTransformation transform, AnnotationNode anno, String name, List<PropertyInfo> properties) {
-            for (PropertyInfo prop: properties) {
+            for (PropertyInfo prop : properties) {
                 if (name.equals(prop.getName())) {
                     return;
                 }
@@ -174,7 +210,7 @@ public class BuilderASTTransformation extends AbstractASTTransformation implemen
         }
 
         protected void checkKnownField(BuilderASTTransformation transform, AnnotationNode anno, String name, List<FieldNode> fields) {
-            for (FieldNode field: fields) {
+            for (FieldNode field : fields) {
                 if (name.equals(field.getName())) {
                     return;
                 }
@@ -194,11 +230,11 @@ public class BuilderASTTransformation extends AbstractASTTransformation implemen
                 if (transform.hasAnnotation(cNode, TupleConstructorASTTransformation.MY_TYPE)) {
                     AnnotationNode tupleConstructor = cNode.getAnnotations(TupleConstructorASTTransformation.MY_TYPE).get(0);
                     if (excludes.isEmpty()) {
-                        List<String>  tupleExcludes = transform.getMemberStringList(tupleConstructor, "excludes");
+                        List<String> tupleExcludes = transform.getMemberStringList(tupleConstructor, "excludes");
                         if (tupleExcludes != null) excludes.addAll(tupleExcludes);
                     }
                     if (includes.isEmpty()) {
-                        List<String>  tupleIncludes = transform.getMemberStringList(tupleConstructor, "includes");
+                        List<String> tupleIncludes = transform.getMemberStringList(tupleConstructor, "includes");
                         if (tupleIncludes != null) {
                             includes.clear();
                             includes.addAll(tupleIncludes);
@@ -211,8 +247,8 @@ public class BuilderASTTransformation extends AbstractASTTransformation implemen
         }
 
         protected List<FieldNode> getFields(BuilderASTTransformation transform, AnnotationNode anno, ClassNode buildee) {
-           boolean includeSuperProperties = transform.memberHasValue(anno, "includeSuperProperties", true);
-           return includeSuperProperties ? getSuperPropertyFields(buildee) : getInstancePropertyFields(buildee);
+            boolean includeSuperProperties = transform.memberHasValue(anno, "includeSuperProperties", true);
+            return includeSuperProperties ? getSuperPropertyFields(buildee) : getInstancePropertyFields(buildee);
         }
 
         protected List<PropertyInfo> getPropertyInfoFromClassNode(BuilderASTTransformation transform, AnnotationNode anno, ClassNode cNode, List<String> includes, List<String> excludes, boolean allNames, boolean allProperties) {
@@ -224,7 +260,8 @@ public class BuilderASTTransformation extends AbstractASTTransformation implemen
                 seen.add(pNode.getName());
             }
             for (FieldNode fNode : getFields(transform, anno, cNode)) {
-                if (seen.contains(fNode.getName()) || shouldSkip(fNode.getName(), excludes, includes, allNames)) continue;
+                if (seen.contains(fNode.getName()) || shouldSkip(fNode.getName(), excludes, includes, allNames))
+                    continue;
                 props.add(new PropertyInfo(fNode.getName(), fNode.getType()));
             }
             return props;
@@ -238,66 +275,28 @@ public class BuilderASTTransformation extends AbstractASTTransformation implemen
         }
 
         protected static class PropertyInfo {
+            private String name;
+            private ClassNode type;
             public PropertyInfo(String name, ClassNode type) {
                 this.name = name;
                 this.type = type;
             }
 
-            private String name;
-            private ClassNode type;
-
             public String getName() {
                 return name;
-            }
-
-            public ClassNode getType() {
-                return type;
             }
 
             public void setName(String name) {
                 this.name = name;
             }
 
+            public ClassNode getType() {
+                return type;
+            }
+
             public void setType(ClassNode type) {
                 this.type = type;
             }
         }
-    }
-
-    private boolean checkStatic(MethodNode mNode, String annotationName) {
-        if (!mNode.isStatic() && !mNode.isStaticConstructor() && !(mNode instanceof ConstructorNode)) {
-            addError("Error processing method '" + mNode.getName() + "'. " +
-                    annotationName + " not allowed for instance methods.", mNode);
-            return false;
-        }
-        return true;
-    }
-
-    private BuilderStrategy createBuilderStrategy(AnnotationNode anno, GroovyClassLoader loader) {
-        ClassNode strategyClass = getMemberClassValue(anno, "builderStrategy", make(DefaultStrategy.class));
-
-        if (strategyClass == null) {
-            addError("Couldn't determine builderStrategy class", anno);
-            return null;
-        }
-
-        String className = strategyClass.getName();
-        try {
-            Object instance = loader.loadClass(className).getDeclaredConstructor().newInstance();
-            if (!BuilderStrategy.class.isAssignableFrom(instance.getClass())) {
-                addError("The builderStrategy class '" + strategyClass.getName() + "' on " + MY_TYPE_NAME + " is not a builderStrategy", anno);
-                return null;
-            }
-
-            return (BuilderStrategy) instance;
-        } catch (Exception e) {
-            addError("Can't load builderStrategy '" + className + "' " + e, anno);
-            return null;
-        }
-    }
-
-    @Override
-    public void setCompilationUnit(final CompilationUnit unit) {
-        this.compilationUnit = unit;
     }
 }

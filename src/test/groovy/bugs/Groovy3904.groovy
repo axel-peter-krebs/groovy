@@ -82,7 +82,8 @@ final class Groovy3904 {
         '''
     }
 
-    @Test // GROOVY-11036
+    @Test
+    // GROOVY-11036
     void testCyclicInheritence7() {
         compileAndVerifyCyclicInheritenceCompilationError '''
             interface I11036 {}

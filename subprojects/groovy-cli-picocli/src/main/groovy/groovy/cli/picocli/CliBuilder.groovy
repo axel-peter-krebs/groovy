@@ -392,7 +392,7 @@ class CliBuilder {
 
     /**
      * The PrintWriter to write to when invalid user input was provided to
-     * the {@link #parse(java.lang.String[])} method.
+     * the {@link #parse(java.lang.String [ ])} method.
      * Defaults to stderr but you can provide your own PrintWriter if desired.
      * @since 2.5
      */
@@ -422,12 +422,12 @@ class CliBuilder {
     // Implementation note: this object is separate from the CommandSpec.
     // The values collected here are copied into the ParserSpec of the command.
     final ParserSpec parser = new ParserSpec()
-            .stopAtPositional(true)
-            .unmatchedOptionsArePositionalParams(true)
-            .aritySatisfiedByAttachedOptionParam(true)
-            .limitSplit(true)
-            .overwrittenOptionsAllowed(true)
-            .toggleBooleanFlags(false)
+        .stopAtPositional(true)
+        .unmatchedOptionsArePositionalParams(true)
+        .aritySatisfiedByAttachedOptionParam(true)
+        .limitSplit(true)
+        .overwrittenOptionsAllowed(true)
+        .toggleBooleanFlags(false)
 
     /**
      * Not normally accessed directly but allows fine-grained control over the
@@ -681,7 +681,9 @@ class CliBuilder {
             optionAccessor.parseResult.commandSpec().options().each { option ->
                 if (!optionAccessor.parseResult.hasMatchedOption(option)) {
                     boolean isFlag = option.arity().max == 0 && option.type().simpleName.toLowerCase() == 'boolean'
-                    if (isFlag) { option.value = false } // else default has already been applied
+                    if (isFlag) {
+                        option.value = false
+                    } // else default has already been applied
                 }
             }
         }
@@ -689,7 +691,7 @@ class CliBuilder {
     }
 
     private void addOptionsFromAnnotations(Class optionClass, Object target, boolean isCoercedMap) {
-        optionClass.methods.findAll{ it.getAnnotation(Option) }.each { Method m ->
+        optionClass.methods.findAll { it.getAnnotation(Option) }.each { Method m ->
             Option annotation = m.getAnnotation(Option)
             ArgSpecAttributes attributes = extractAttributesFromMethod(m, isCoercedMap, target)
             commandSpec.addOption(createOptionSpec(annotation, attributes, target))
@@ -706,7 +708,7 @@ class CliBuilder {
     }
 
     private void addPositionalsFromAnnotations(Class optionClass, Object target, boolean isCoercedMap) {
-        optionClass.methods.findAll{ it.getAnnotation(Unparsed) }.each { Method m ->
+        optionClass.methods.findAll { it.getAnnotation(Unparsed) }.each { Method m ->
             Unparsed annotation = m.getAnnotation(Unparsed)
             ArgSpecAttributes attributes = extractAttributesFromMethod(m, isCoercedMap, target)
             commandSpec.addPositional(createPositionalParamSpec(annotation, attributes, target))
@@ -803,9 +805,15 @@ class CliBuilder {
         PositionalParamSpec.Builder builder = PositionalParamSpec.builder()
 
         CommandLine.Range arity = CommandLine.Range.valueOf("0..*")
-        if (attr.type == Object) { attr.type = String[] }
-        if (attr.type)           { builder.type(attr.type) } // cannot set type to null
-        if (attr.auxiliaryTypes) { builder.auxiliaryTypes(attr.auxiliaryTypes) } // cannot set aux types to null
+        if (attr.type == Object) {
+            attr.type = String[]
+        }
+        if (attr.type) {
+            builder.type(attr.type)
+        } // cannot set type to null
+        if (attr.auxiliaryTypes) {
+            builder.auxiliaryTypes(attr.auxiliaryTypes)
+        } // cannot set aux types to null
         builder.arity(arity)
         builder.description(unparsed.description())
         builder.paramLabel("<$attr.label>")
@@ -827,14 +835,22 @@ class CliBuilder {
         Map names = calculateNames(annotation.longName(), annotation.shortName(), attr.label)
         String arityString = extractArity(attr.type, annotation.optionalArg(), annotation.numberOfArguments(), annotation.numberOfArgumentsString(), names)
         CommandLine.Range arity = CommandLine.Range.valueOf(arityString)
-        if (attr.type == Object && arity.max == 0) { attr.type = boolean }
+        if (attr.type == Object && arity.max == 0) {
+            attr.type = boolean
+        }
         OptionSpec.Builder builder = OptionSpec.builder(hyphenate(names))
-        if (attr.type)           { builder.type(attr.type) } // cannot set type to null
-        if (attr.auxiliaryTypes) { builder.auxiliaryTypes(attr.auxiliaryTypes) } // cannot set aux types to null
+        if (attr.type) {
+            builder.type(attr.type)
+        } // cannot set type to null
+        if (attr.auxiliaryTypes) {
+            builder.auxiliaryTypes(attr.auxiliaryTypes)
+        } // cannot set aux types to null
         builder.arity(arity)
         builder.description(annotation.description())
         builder.splitRegex(annotation.valueSeparator())
-        if (annotation.defaultValue()) { builder.defaultValue(annotation.defaultValue()) } // don't default picocli model to empty string
+        if (annotation.defaultValue()) {
+            builder.defaultValue(annotation.defaultValue())
+        } // don't default picocli model to empty string
         builder.paramLabel("<$attr.label>")
         if (annotation.convert() != Undefined.CLASS) {
             if (annotation.convert() instanceof Class) {
@@ -868,7 +884,7 @@ class CliBuilder {
             throw new CliBuilderException("You can't specify both 'numberOfArguments' and 'numberOfArgumentsString' on flag '${names.long ?: names.short}'")
         }
         def isFlag = type.simpleName.toLowerCase() == 'boolean' ||
-                     (type.simpleName.toLowerCase() == 'object' && (numberOfArguments == 0 || numberOfArgumentsString == "0"))
+            (type.simpleName.toLowerCase() == 'object' && (numberOfArguments == 0 || numberOfArgumentsString == "0"))
         String arity = "0"
         if (numberOfArgumentsString) {
             String max = numberOfArgumentsString.replace('+', '*')
@@ -883,6 +899,7 @@ class CliBuilder {
         }
         arity
     }
+
     private static boolean isMultiValue(Class<?> cls) {
         cls.isArray() || Collection.class.isAssignableFrom(cls) || Map.class.isAssignableFrom(cls)
     }
@@ -956,12 +973,12 @@ class CliBuilder {
                 [[paramLabel: "<$v>"]]
             } else if (k == 'longOpt') {
                 acceptLongOptionsWithSingleHyphen ?
-                        [[names: ["-$shortname", "-$v", "--$v"] as String[] ]] :
-                        [[names: ["-$shortname",        "--$v"] as String[] ]]
+                    [[names: ["-$shortname", "-$v", "--$v"] as String[]]] :
+                    [[names: ["-$shortname", "--$v"] as String[]]]
             } else if (k == 'valueSeparator') {
                 [[splitRegex: "$v"]]
             } else if (k == 'convert') {
-                [[converters: [v] as ITypeConverter[] ]]
+                [[converters: [v] as ITypeConverter[]]]
             } else {
                 [[(k): v]]
             }

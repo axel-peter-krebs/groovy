@@ -18,6 +18,7 @@ import groovy.test.GroovyTestCase
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 class DifferencesFromJavaTest extends GroovyTestCase {
     void testMultiMethods() {
         assertScript '''import static org.junit.Assert.*

@@ -65,12 +65,11 @@ import java.util.Set;
  * </ul>
  */
 public class ObservableList implements List {
+    public static final String SIZE_PROPERTY = "size";
+    public static final String CONTENT_PROPERTY = "content";
     private final List delegate;
     private final PropertyChangeSupport pcs;
     private final Closure test;
-
-    public static final String SIZE_PROPERTY = "size";
-    public static final String CONTENT_PROPERTY = "content";
 
     public ObservableList() {
         this(new ArrayList(), null);
@@ -375,84 +374,6 @@ public class ObservableList implements List {
         return delegate.toArray(a);
     }
 
-    protected class ObservableIterator implements Iterator {
-        private final Iterator iterDelegate;
-        protected int cursor = -1 ;
-
-        public ObservableIterator(Iterator iterDelegate) {
-            this.iterDelegate = iterDelegate;
-        }
-
-        public Iterator getDelegate() {
-            return iterDelegate;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return iterDelegate.hasNext();
-        }
-
-        @Override
-        public Object next() {
-            cursor++;
-            return iterDelegate.next();
-        }
-
-        @Override
-        public void remove() {
-            int oldSize = ObservableList.this.size();
-            Object element = ObservableList.this.get(cursor);
-            iterDelegate.remove();
-            fireElementRemovedEvent(cursor, element);
-            fireSizeChangedEvent(oldSize, size());
-            cursor--;
-        }
-    }
-
-    protected class ObservableListIterator extends ObservableIterator implements ListIterator {
-        public ObservableListIterator(ListIterator iterDelegate, int index) {
-            super(iterDelegate);
-            cursor = index - 1;
-        }
-
-        public ListIterator getListIterator() {
-            return (ListIterator) getDelegate();
-        }
-
-        @Override
-        public void add(Object o) {
-            ObservableList.this.add(o);
-            cursor++;
-        }
-
-        @Override
-        public boolean hasPrevious() {
-            return getListIterator().hasPrevious();
-        }
-
-        @Override
-        public int nextIndex() {
-            return getListIterator().nextIndex();
-        }
-
-        @Override
-        public Object previous() {
-            return getListIterator().previous();
-        }
-
-        @Override
-        public int previousIndex() {
-            return getListIterator().previousIndex();
-        }
-
-        @Override
-        public void set(Object o) {
-            ObservableList.this.set(cursor, o);
-        }
-    }
-
-    // observable interface
-
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
     }
@@ -460,6 +381,8 @@ public class ObservableList implements List {
     public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(propertyName, listener);
     }
+
+    // observable interface
 
     public PropertyChangeListener[] getPropertyChangeListeners() {
         return pcs.getPropertyChangeListeners();
@@ -606,6 +529,82 @@ public class ObservableList implements List {
 
         public List getValues() {
             return Collections.unmodifiableList(values);
+        }
+    }
+
+    protected class ObservableIterator implements Iterator {
+        private final Iterator iterDelegate;
+        protected int cursor = -1;
+
+        public ObservableIterator(Iterator iterDelegate) {
+            this.iterDelegate = iterDelegate;
+        }
+
+        public Iterator getDelegate() {
+            return iterDelegate;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return iterDelegate.hasNext();
+        }
+
+        @Override
+        public Object next() {
+            cursor++;
+            return iterDelegate.next();
+        }
+
+        @Override
+        public void remove() {
+            int oldSize = ObservableList.this.size();
+            Object element = ObservableList.this.get(cursor);
+            iterDelegate.remove();
+            fireElementRemovedEvent(cursor, element);
+            fireSizeChangedEvent(oldSize, size());
+            cursor--;
+        }
+    }
+
+    protected class ObservableListIterator extends ObservableIterator implements ListIterator {
+        public ObservableListIterator(ListIterator iterDelegate, int index) {
+            super(iterDelegate);
+            cursor = index - 1;
+        }
+
+        public ListIterator getListIterator() {
+            return (ListIterator) getDelegate();
+        }
+
+        @Override
+        public void add(Object o) {
+            ObservableList.this.add(o);
+            cursor++;
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return getListIterator().hasPrevious();
+        }
+
+        @Override
+        public int nextIndex() {
+            return getListIterator().nextIndex();
+        }
+
+        @Override
+        public Object previous() {
+            return getListIterator().previous();
+        }
+
+        @Override
+        public int previousIndex() {
+            return getListIterator().previousIndex();
+        }
+
+        @Override
+        public void set(Object o) {
+            ObservableList.this.set(cursor, o);
         }
     }
 }

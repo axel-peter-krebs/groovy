@@ -16,6 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 class XX {
     @groovy.transform.PackageScope
     int x() {}
@@ -28,7 +29,10 @@ int y() {}
 @groovy.transform.PackageScope(groovy.transform.PackageScopeTarget.METHODS)
 class Foo2 {
     Object method1() {}
+
     public Object method2() {}
+
     private Object method3() {}
+
     protected Object method4() {}
 }

@@ -43,6 +43,10 @@ public class DecompiledClassNode extends ClassNode {
 
     private final ClassStub classData;
     private final AsmReferenceResolver resolver;
+    private volatile boolean supersInitialized;
+    private volatile boolean membersInitialized;
+
+    //
 
     public DecompiledClassNode(final ClassStub classData, final AsmReferenceResolver resolver) {
         super(classData.className, getModifiers(classData), null, null, MixinNode.EMPTY_ARRAY);
@@ -59,8 +63,6 @@ public class DecompiledClassNode extends ClassNode {
     private static int getModifiers(ClassStub classData) {
         return (classData.innerClassModifiers != -1 ? classData.innerClassModifiers : classData.accessModifiers);
     }
-
-    //
 
     public long getCompilationTimeStamp() {
         if (classData.fields != null) {
@@ -119,17 +121,12 @@ public class DecompiledClassNode extends ClassNode {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public void setUsingGenerics(boolean b) {
-        throw new UnsupportedOperationException();
-    }
+    //--------------------------------------------------------------------------
 
     @Override
     public void setGenericsPlaceHolder(boolean b) {
         throw new UnsupportedOperationException();
     }
-
-    //--------------------------------------------------------------------------
 
     @Override
     public List<AnnotationNode> getAnnotations() {
@@ -179,7 +176,12 @@ public class DecompiledClassNode extends ClassNode {
         return super.isUsingGenerics();
     }
 
-    private volatile boolean supersInitialized;
+    @Override
+    public void setUsingGenerics(boolean b) {
+        throw new UnsupportedOperationException();
+    }
+
+    //--------------------------------------------------------------------------
 
     private void lazyInitSupers() {
         if (supersInitialized) return;
@@ -192,8 +194,6 @@ public class DecompiledClassNode extends ClassNode {
             }
         }
     }
-
-    //--------------------------------------------------------------------------
 
     @Override
     public List<ConstructorNode> getDeclaredConstructors() {
@@ -224,8 +224,6 @@ public class DecompiledClassNode extends ClassNode {
         lazyInitMembers();
         return super.getMethods();
     }
-
-    private volatile boolean membersInitialized;
 
     private void lazyInitMembers() {
         if (membersInitialized) return;

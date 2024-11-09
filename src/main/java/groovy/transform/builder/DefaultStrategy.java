@@ -67,7 +67,7 @@ import static org.objectweb.asm.Opcodes.ACC_STATIC;
  * This strategy is used with the {@link Builder} AST transform to create a builder helper class
  * for the fluent creation of instances of a specified class.&nbsp;It can be used at the class,
  * static method or constructor levels.
- *
+ * <p>
  * You use it as follows:
  * <pre class="groovyTestCase">
  * import groovy.transform.builder.*
@@ -98,7 +98,7 @@ import static org.objectweb.asm.Opcodes.ACC_STATIC;
  * <pre>
  * def p3 = Person.builder().withFirstName("Robert").withLastName("Lewandowski").withAge(21).build()
  * </pre>
- *
+ * <p>
  * You can also use the {@code @Builder} annotation in combination with this strategy on one or more constructor or
  * static method instead of or in addition to using it at the class level. An example with a constructor follows:
  * <pre class="groovyTestCase">
@@ -123,7 +123,7 @@ import static org.objectweb.asm.Opcodes.ACC_STATIC;
  * in the builder. For the case of a static method, the return type of the static method becomes the
  * class of the instance being created. For static factory methods, this is normally the class containing the
  * static method but in general it can be any class.
- *
+ * <p>
  * Note: if using more than one {@code @Builder} annotation, which is only possible when using static method
  * or constructor variants, it is up to you to ensure that any generated helper classes or builder methods
  * have unique names. E.g.&nbsp;we can modify the previous example to have three builders. At least two of the builders
@@ -159,60 +159,13 @@ import static org.objectweb.asm.Opcodes.ACC_STATIC;
  * assert Person.byRoleBuilder().roleName("Jack Sparrow").build().toString() == 'Person(Johnny, Depp, 1963)'
  * assert Person.builder().first("Johnny").last('Depp').born(1963).build().toString() == 'Person(Johnny, Depp, 1963)'
  * </pre>
- *
+ * <p>
  * The 'forClass' annotation attribute for the {@code @Builder} transform isn't applicable for this strategy.
  * The 'useSetters' annotation attribute for the {@code @Builder} transform is ignored by this strategy which always uses setters.
  */
 public class DefaultStrategy extends BuilderASTTransformation.AbstractBuilderStrategy {
     private static final Expression DEFAULT_INITIAL_VALUE = null;
     private static final int PUBLIC_STATIC = ACC_PUBLIC | ACC_STATIC;
-
-    @Override
-    public void build(BuilderASTTransformation transform, AnnotatedNode annotatedNode, AnnotationNode anno) {
-        if (unsupportedAttribute(transform, anno, "forClass")) return;
-        if (unsupportedAttribute(transform, anno, "force")) return;
-        if (annotatedNode instanceof ClassNode) {
-            buildClass(transform, (ClassNode) annotatedNode, anno);
-        } else if (annotatedNode instanceof MethodNode) {
-            buildMethod(transform, (MethodNode) annotatedNode, anno);
-        }
-    }
-
-    public void buildMethod(BuilderASTTransformation transform, MethodNode mNode, AnnotationNode anno) {
-        if (transform.getMemberValue(anno, "includes") != null || transform.getMemberValue(anno, "excludes") != null) {
-            transform.addError("Error during " + BuilderASTTransformation.MY_TYPE_NAME +
-                    " processing: includes/excludes only allowed on classes", anno);
-        }
-        ClassNode buildee = mNode.getDeclaringClass();
-        ClassNode builder = createBuilder(anno, buildee);
-        createBuilderFactoryMethod(anno, buildee, builder);
-        for (Parameter parameter : mNode.getParameters()) {
-            builder.addField(createFieldCopy(buildee, parameter));
-            addGeneratedMethod(builder, createBuilderMethodForProp(builder, new PropertyInfo(parameter.getName(), parameter.getType()), getPrefix(anno)));
-        }
-        addGeneratedMethod(builder, createBuildMethodForMethod(anno, buildee, mNode, mNode.getParameters()));
-    }
-
-    public void buildClass(BuilderASTTransformation transform, ClassNode buildee, AnnotationNode anno) {
-        List<String> excludes = new ArrayList<String>();
-        List<String> includes = new ArrayList<String>();
-        includes.add(Undefined.STRING);
-        if (!getIncludeExclude(transform, anno, buildee, excludes, includes)) return;
-        if (includes.size() == 1 && Undefined.isUndefined(includes.get(0))) includes = null;
-        ClassNode builder = createBuilder(anno, buildee);
-        createBuilderFactoryMethod(anno, buildee, builder);
-//        List<FieldNode> fields = getFields(transform, anno, buildee);
-        boolean allNames = transform.memberHasValue(anno, "allNames", true);
-        boolean allProperties = !transform.memberHasValue(anno, "allProperties", false);
-        List<PropertyInfo> props = getPropertyInfos(transform, anno, buildee, excludes, includes, allNames, allProperties);
-        for (PropertyInfo pi : props) {
-            ClassNode correctedType = getCorrectedType(buildee, pi.getType(), builder);
-            String fieldName = pi.getName();
-            builder.addField(createFieldCopy(buildee, fieldName, correctedType));
-            addGeneratedMethod(builder, createBuilderMethodForProp(builder, new PropertyInfo(fieldName, correctedType), getPrefix(anno)));
-        }
-        addGeneratedMethod(builder, createBuildMethod(anno, buildee, props));
-    }
 
     private static ClassNode getCorrectedType(ClassNode buildee, ClassNode fieldType, ClassNode declaringClass) {
         Map<String, ClassNode> genericsSpec = createGenericsSpec(declaringClass);
@@ -266,16 +219,6 @@ public class DefaultStrategy extends BuilderASTTransformation.AbstractBuilderStr
         return new MethodNode(buildMethodName, ACC_PUBLIC, newClass(buildee), NO_PARAMS, NO_EXCEPTIONS, body);
     }
 
-    private MethodNode createBuilderMethodForProp(ClassNode builder, PropertyInfo pinfo, String prefix) {
-        ClassNode fieldType = pinfo.getType();
-        String fieldName = pinfo.getName();
-        String setterName = getSetterName(prefix, fieldName);
-        return new MethodNode(setterName, ACC_PUBLIC, newClass(builder), params(param(fieldType, fieldName)), NO_EXCEPTIONS, block(
-                stmt(assignX(propX(varX("this"), constX(fieldName)), varX(fieldName, fieldType))),
-                returnS(varX("this", builder))
-        ));
-    }
-
     private static FieldNode createFieldCopy(ClassNode buildee, Parameter param) {
         Map<String, ClassNode> genericsSpec = createGenericsSpec(buildee);
         extractSuperClassGenerics(param.getType(), buildee, genericsSpec);
@@ -294,5 +237,62 @@ public class DefaultStrategy extends BuilderASTTransformation.AbstractBuilderStr
             body.addStatement(stmt(assignX(propX(instance, pi.getName()), varX(pi.getName(), pi.getType()))));
         }
         return instance;
+    }
+
+    @Override
+    public void build(BuilderASTTransformation transform, AnnotatedNode annotatedNode, AnnotationNode anno) {
+        if (unsupportedAttribute(transform, anno, "forClass")) return;
+        if (unsupportedAttribute(transform, anno, "force")) return;
+        if (annotatedNode instanceof ClassNode) {
+            buildClass(transform, (ClassNode) annotatedNode, anno);
+        } else if (annotatedNode instanceof MethodNode) {
+            buildMethod(transform, (MethodNode) annotatedNode, anno);
+        }
+    }
+
+    public void buildMethod(BuilderASTTransformation transform, MethodNode mNode, AnnotationNode anno) {
+        if (transform.getMemberValue(anno, "includes") != null || transform.getMemberValue(anno, "excludes") != null) {
+            transform.addError("Error during " + BuilderASTTransformation.MY_TYPE_NAME +
+                " processing: includes/excludes only allowed on classes", anno);
+        }
+        ClassNode buildee = mNode.getDeclaringClass();
+        ClassNode builder = createBuilder(anno, buildee);
+        createBuilderFactoryMethod(anno, buildee, builder);
+        for (Parameter parameter : mNode.getParameters()) {
+            builder.addField(createFieldCopy(buildee, parameter));
+            addGeneratedMethod(builder, createBuilderMethodForProp(builder, new PropertyInfo(parameter.getName(), parameter.getType()), getPrefix(anno)));
+        }
+        addGeneratedMethod(builder, createBuildMethodForMethod(anno, buildee, mNode, mNode.getParameters()));
+    }
+
+    public void buildClass(BuilderASTTransformation transform, ClassNode buildee, AnnotationNode anno) {
+        List<String> excludes = new ArrayList<String>();
+        List<String> includes = new ArrayList<String>();
+        includes.add(Undefined.STRING);
+        if (!getIncludeExclude(transform, anno, buildee, excludes, includes)) return;
+        if (includes.size() == 1 && Undefined.isUndefined(includes.get(0))) includes = null;
+        ClassNode builder = createBuilder(anno, buildee);
+        createBuilderFactoryMethod(anno, buildee, builder);
+//        List<FieldNode> fields = getFields(transform, anno, buildee);
+        boolean allNames = transform.memberHasValue(anno, "allNames", true);
+        boolean allProperties = !transform.memberHasValue(anno, "allProperties", false);
+        List<PropertyInfo> props = getPropertyInfos(transform, anno, buildee, excludes, includes, allNames, allProperties);
+        for (PropertyInfo pi : props) {
+            ClassNode correctedType = getCorrectedType(buildee, pi.getType(), builder);
+            String fieldName = pi.getName();
+            builder.addField(createFieldCopy(buildee, fieldName, correctedType));
+            addGeneratedMethod(builder, createBuilderMethodForProp(builder, new PropertyInfo(fieldName, correctedType), getPrefix(anno)));
+        }
+        addGeneratedMethod(builder, createBuildMethod(anno, buildee, props));
+    }
+
+    private MethodNode createBuilderMethodForProp(ClassNode builder, PropertyInfo pinfo, String prefix) {
+        ClassNode fieldType = pinfo.getType();
+        String fieldName = pinfo.getName();
+        String setterName = getSetterName(prefix, fieldName);
+        return new MethodNode(setterName, ACC_PUBLIC, newClass(builder), params(param(fieldType, fieldName)), NO_EXCEPTIONS, block(
+            stmt(assignX(propX(varX("this"), constX(fieldName)), varX(fieldName, fieldType))),
+            returnS(varX("this", builder))
+        ));
     }
 }

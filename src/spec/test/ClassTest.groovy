@@ -414,7 +414,7 @@ final class ClassTest extends GroovyTestCase {
             // end::ann_member_int[]
             SomeAnnotation
         '''
-       assertScript '''
+        assertScript '''
             // tag::ann_member_class[]
             @interface SomeAnnotation {
                 Class appliesTo()                       // <4>
@@ -422,7 +422,7 @@ final class ClassTest extends GroovyTestCase {
             // end::ann_member_class[]
             SomeAnnotation
         '''
-       assertScript '''
+        assertScript '''
             // tag::ann_member_annotation[]
             @interface SomeAnnotation {}
             @interface SomeAnnotations {

@@ -17,26 +17,36 @@
  *  under the License.
  */
 
-@interface CollectionOfElements{}
-@interface JoinTable{
+@interface CollectionOfElements {}
+
+@interface JoinTable {
     Table table()
+
     JoinColumn[] joinColumns()
 }
-@interface Table{ String name() }
-@interface JoinColumn{ String name() }
-@interface Column{
+
+@interface Table {
     String name()
+}
+
+@interface JoinColumn {
+    String name()
+}
+
+@interface Column {
+    String name()
+
     boolean nullable()
 }
 
 class OtherSection {
     @CollectionOfElements
     @JoinTable
-            (
-                    table = @Table(name="gaga"),
-                    joinColumns = @JoinColumn(name="BoyId")
-            )
-    @Column(name="favoritepoupon",
-            nullable=false)
-    Set<String> questions = new HashSet<String> ()
+        (
+            table = @Table(name = "gaga"),
+            joinColumns = @JoinColumn(name = "BoyId")
+        )
+    @Column(name = "favoritepoupon",
+        nullable = false)
+    Set<String> questions = new HashSet<String>()
 }

@@ -23,10 +23,10 @@ import gls.CompilableTestSupport
 class ClosureDelegationTest extends CompilableTestSupport {
 
     void testMissingMethodMissingMethod() {
-      assertScript """
+        assertScript """
 class A {
   def methodMissing(String name, args) {
-     "A" 
+     "A"
   }
 }
 
@@ -44,10 +44,10 @@ assert visited==true
     }
 
     void testInvokeMethodMissingMethod() {
-      assertScript """
+        assertScript """
 class A {
   def invokeMethod(String name, args) {
-     "A" 
+     "A"
   }
 }
 
@@ -65,10 +65,10 @@ assert visited==true
     }
 
     void testMissingMethodInvokeMethod() {
-      assertScript """
+        assertScript """
 class A {
   def methodMissing(String name, args) {
-     "A" 
+     "A"
   }
 }
 
@@ -86,10 +86,10 @@ assert visited==true
     }
 
     void testInvokeMethodInvokeMethod() {
-      assertScript """
+        assertScript """
 class A {
   def invokeMethod(String name, args) {
-     "A" 
+     "A"
   }
 }
 
@@ -109,7 +109,7 @@ assert visited==true
     void testStaticMethod() {
         assertScript '''
             class Foo {
-                static visited 
+                static visited
                 static closureInStaticContext = {
                     foo()
                 }

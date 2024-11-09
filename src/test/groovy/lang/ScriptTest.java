@@ -52,17 +52,10 @@ public class ScriptTest extends TestSupport {
         script.run();
     }
 
-    public static class Dummy {
-        public Integer method() {
-            return 3;
-        }
-    }
-
     /**
      * GROOVY-6582 : Script.invokeMethod bypasses getProperty when looking for closure-valued properties.
-     *
+     * <p>
      * Make sure that getProperty and invokeMethod are consistent.
-     *
      */
     public void testGROOVY_6582() {
         String script = "" +
@@ -83,8 +76,14 @@ public class ScriptTest extends TestSupport {
     public void testScriptNameMangling() {
         String script = "this.getClass().getName()";
         GroovyShell shell = new GroovyShell();
-        String name = (String) shell.evaluate(script,"a!b");
+        String name = (String) shell.evaluate(script, "a!b");
         assertEquals("a_b", name);
+    }
+
+    public static class Dummy {
+        public Integer method() {
+            return 3;
+        }
     }
 
 }

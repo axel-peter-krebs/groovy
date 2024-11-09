@@ -27,7 +27,7 @@ class InstanceofTest extends GroovyTestCase {
         def x = false
         def o = 12
 
-        if ( o instanceof Integer ) {
+        if (o instanceof Integer) {
             x = true
         }
 
@@ -39,7 +39,7 @@ class InstanceofTest extends GroovyTestCase {
         def x = false
         def o = 12
 
-        if ( o instanceof Double ) {
+        if (o instanceof Double) {
             x = true
         }
 
@@ -47,7 +47,7 @@ class InstanceofTest extends GroovyTestCase {
     }
 
     void testImportedClass() {
-        def m = ["xyz":2]
+        def m = ["xyz": 2]
         assert m instanceof Map
         assert !(m instanceof Double)
 
@@ -64,11 +64,11 @@ class InstanceofTest extends GroovyTestCase {
         assertFalse(l instanceof Map)
     }
 
-    void testBoolean(){
-       assert true instanceof Object
-       assert true==true instanceof Object
-       assert true==false instanceof Object
-       assert true==false instanceof Boolean
-       assert !new Object() instanceof Boolean
+    void testBoolean() {
+        assert true instanceof Object
+        assert true == true instanceof Object
+        assert true == false instanceof Object
+        assert true == false instanceof Boolean
+        assert !new Object() instanceof Boolean
     }
 }

@@ -28,22 +28,23 @@ final class ContractsSpec extends Specification {
     private contractedMethod(String dir, String file, String path) {
     }
 
-    @spock.lang.Ignore // until Spock fixes thrown
+    @spock.lang.Ignore
+    // until Spock fixes thrown
     def "contracted method with precondition violation"(String dir, String file, String path) {
-      when:
+        when:
         contractedMethod(dir, file, path)
-      then:
+        then:
         thrown(PreconditionViolation)
-      where:
+        where:
         dir | file | path
         42  | ''   | null
     }
 
     @spock.lang.Requires({ data.count < data.max })
     def "spock Requires annotation still works with groovy-contracts"(Integer count, Integer max) {
-      expect:
+        expect:
         count < max
-      where:
+        where:
         count | max
         10    | 20
         20    | 10 // should be aborted/ignored and not throw a groovy-contracts related exception

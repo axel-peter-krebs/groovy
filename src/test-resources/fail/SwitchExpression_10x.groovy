@@ -17,4 +17,5 @@
  *  under the License.
  */
 
-println switch (10) {}
+println switch (10) {
+}

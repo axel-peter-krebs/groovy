@@ -1,7 +1,7 @@
 // $Id: strcat.java,v 1.1 2004-05-23 07:14:28 bfulgham Exp $
 // http://www.bagley.org/~doug/shootout/
 // Pelle Nilsson suggested we also illustrate StringBuffer
-// since it is the preferred method for concatenating 
+// since it is the preferred method for concatenating
 // strings in Java
 
 import java.io.*;
@@ -13,7 +13,7 @@ public class strcat {
         String hello = "hello\n";
         StringBuffer stringBuffer = new StringBuffer(32);
 
-        for (int i=0; i<n; i++) {
+        for (int i = 0; i < n; i++) {
             stringBuffer.append(hello);
         }
 

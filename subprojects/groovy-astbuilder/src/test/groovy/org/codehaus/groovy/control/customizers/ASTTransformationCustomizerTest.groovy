@@ -50,7 +50,7 @@ class ASTTransformationCustomizerTest extends GroovyTestCase {
     void testLocalTransformationWithClosureAnnotationParameter() {
         // add @Contract({distance = 1 })
         customizer = new ASTTransformationCustomizer(Contract)
-        final expression = new AstBuilder().buildFromCode(CompilePhase.CONVERSION) {->
+        final expression = new AstBuilder().buildFromCode(CompilePhase.CONVERSION) { ->
             distance = 1
         }.expression[0]
         customizer.annotationParameters = [value: expression]
@@ -69,7 +69,7 @@ class ASTTransformationCustomizerTest extends GroovyTestCase {
     void testLocalTransformationWithClosureAnnotationParameter_notAnnotatedAsASTInterface() {
         // add @Contract2({distance = 1 })
         customizer = new ASTTransformationCustomizer(Contract2, "org.codehaus.groovy.control.customizers.ContractAnnotation")
-        final expression = new AstBuilder().buildFromCode(CompilePhase.CONVERSION) {->
+        final expression = new AstBuilder().buildFromCode(CompilePhase.CONVERSION) { ->
             distance = 1
         }.expression[0]
         customizer.annotationParameters = [value: expression]
@@ -87,10 +87,10 @@ class ASTTransformationCustomizerTest extends GroovyTestCase {
 
     void testLocalTransformationWithClassAnnotationParameter() {
         // add @ConditionalInterrupt(value={ true }, thrown=SecurityException)
-        final expression = new AstBuilder().buildFromCode(CompilePhase.CONVERSION) {->
+        final expression = new AstBuilder().buildFromCode(CompilePhase.CONVERSION) { ->
             true
         }.expression[0]
-        customizer = new ASTTransformationCustomizer(ConditionalInterrupt, value:expression, thrown:SecurityException)
+        customizer = new ASTTransformationCustomizer(ConditionalInterrupt, value: expression, thrown: SecurityException)
         configuration.addCompilationCustomizers(customizer)
         def shell = new GroovyShell(configuration)
         shouldFail(SecurityException) {
@@ -112,12 +112,12 @@ protected @interface Contract {
     Class value();
 }
 
-@GroovyASTTransformation(phase=CompilePhase.CONVERSION)
+@GroovyASTTransformation(phase = CompilePhase.CONVERSION)
 protected class ContractAnnotation implements ASTTransformation, Opcodes {
     void visit(ASTNode[] nodes, SourceUnit source) {
         def node = nodes[0]
         def member = node.getMember("value")
-        ((ClassNode)nodes[1]).getDeclaredConstructors()[0].code = member.code
+        ((ClassNode) nodes[1]).getDeclaredConstructors()[0].code = member.code
     }
 }
 

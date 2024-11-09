@@ -31,40 +31,40 @@ import java.util.Map.Entry
 @RunWith(JUnit4)
 class NewifyTransformBlackBoxTest extends CompilableTestSupport {
 
-  @Test
-  void testNewifyWithoutNamePattern() {
-    final String classPart = """
+    @Test
+    void testNewifyWithoutNamePattern() {
+        final String classPart = """
             final a = A('XyZ')
             String foo(final x = null) { x?.toString() }
         """
-    final script = newifyTestScript(true, [value: "[A]"], classPart, "final foo = new $newifyTestClassName(); foo.foo()")
-    println script
-    assert script.contains('@Newify')
-    assertScript(script)
-  }
+        final script = newifyTestScript(true, [value: "[A]"], classPart, "final foo = new $newifyTestClassName(); foo.foo()")
+        println script
+        assert script.contains('@Newify')
+        assertScript(script)
+    }
 
-  @Test
-  void testNewifyWithoutNamePatternFails() {
-    final String classPart = classCode([
-        "final a = A('XyZ')",
-        "final ab0 = new AB('XyZ')",
-        "final ab1 = AB('XyZ')",
-        "String foo(final x = null) { x?.toString() }"
-    ])
+    @Test
+    void testNewifyWithoutNamePatternFails() {
+        final String classPart = classCode([
+            "final a = A('XyZ')",
+            "final ab0 = new AB('XyZ')",
+            "final ab1 = AB('XyZ')",
+            "String foo(final x = null) { x?.toString() }"
+        ])
 
-    final script0 = newifyTestScript(true, [value: "[A,AB]"], classPart, "final foo = new $newifyTestClassName(); foo.foo()")
-    final script1 = newifyTestScript(true, [value: "[A]"], classPart, "final foo = new $newifyTestClassName(); foo.foo()")
+        final script0 = newifyTestScript(true, [value: "[A,AB]"], classPart, "final foo = new $newifyTestClassName(); foo.foo()")
+        final script1 = newifyTestScript(true, [value: "[A]"], classPart, "final foo = new $newifyTestClassName(); foo.foo()")
 
-    assertScript(script0)
+        assertScript(script0)
 
-    final result = shouldNotCompile(script1)
-    assert result.contains("Cannot find matching method NewifyFoo#AB(java.lang.String)")
-  }
+        final result = shouldNotCompile(script1)
+        assert result.contains("Cannot find matching method NewifyFoo#AB(java.lang.String)")
+    }
 
 
-  @Test
-  void testRegularClassNewifyWithNamePattern() {
-    final String script = """
+    @Test
+    void testRegularClassNewifyWithNamePattern() {
+        final String script = """
               import groovy.transform.Canonical
               import groovy.transform.CompileStatic
               import groovy.lang.Newify
@@ -86,17 +86,17 @@ class NewifyTransformBlackBoxTest extends CompilableTestSupport {
                newTheClassField()
           """
 
-    println "script=|$script|"
-    final result = evalScript(script)
-    println "result=$result"
-    assert result instanceof java.lang.StringBuilder
-    assert result.toString() == 'abc_123_13'
-  }
+        println "script=|$script|"
+        final result = evalScript(script)
+        println "result=$result"
+        assert result instanceof java.lang.StringBuilder
+        assert result.toString() == 'abc_123_13'
+    }
 
 
-  @Test
-  void testInnerScriptClassNewifyWithNamePattern() {
-    final String script = """
+    @Test
+    void testInnerScriptClassNewifyWithNamePattern() {
+        final String script = """
               import groovy.transform.Canonical
               import groovy.transform.CompileStatic
               import groovy.lang.Newify
@@ -116,18 +116,18 @@ class NewifyTransformBlackBoxTest extends CompilableTestSupport {
               createClassList()
           """
 
-    println "script=|$script|"
-    final List resultList = (List) evalScript(script)
-    println "result=$resultList"
+        println "script=|$script|"
+        final List resultList = (List) evalScript(script)
+        println "result=$resultList"
 
-    assert resultList[0] == ['A', 'AB', 'ABC']
-    assert resultList[1] == ['A(2018-04-08)', 'AB(I am, class AB)', 'ABC(A, B, C)']
-  }
+        assert resultList[0] == ['A', 'AB', 'ABC']
+        assert resultList[1] == ['A(2018-04-08)', 'AB(I am, class AB)', 'ABC(A, B, C)']
+    }
 
 
-  @Test
-  void testInnerClassesNewifyWithNamePattern() {
-    final String script = """
+    @Test
+    void testInnerClassesNewifyWithNamePattern() {
+        final String script = """
         import groovy.transform.Canonical
         import groovy.transform.CompileStatic
         import groovy.lang.Newify
@@ -150,18 +150,18 @@ class NewifyTransformBlackBoxTest extends CompilableTestSupport {
         foo.createClassList()
       """
 
-    println "script=|$script|"
-    final List resultList = (List) evalScript(script)
-    println "result=$resultList"
+        println "script=|$script|"
+        final List resultList = (List) evalScript(script)
+        println "result=$resultList"
 
-    assert resultList[0] == ['Foo.A', 'Foo.AB', 'Foo.ABC']
-    assert resultList[1] == ['Foo$A(2018-04-08)', 'Foo$AB(I am, class AB)', 'Foo$ABC(A, B, C)']
-  }
+        assert resultList[0] == ['Foo.A', 'Foo.AB', 'Foo.ABC']
+        assert resultList[1] == ['Foo$A(2018-04-08)', 'Foo$AB(I am, class AB)', 'Foo$ABC(A, B, C)']
+    }
 
 
-  @Test
-  void testInnerStaticClassesNewifyWithNamePattern() {
-    final String script = """
+    @Test
+    void testInnerStaticClassesNewifyWithNamePattern() {
+        final String script = """
           import groovy.transform.Canonical
           import groovy.transform.CompileStatic
           import groovy.lang.Newify
@@ -183,18 +183,18 @@ class NewifyTransformBlackBoxTest extends CompilableTestSupport {
           foo.createClassList()
       """
 
-    println "script=|$script|"
-    final List resultList = (List) evalScript(script)
-    println "result=$resultList"
+        println "script=|$script|"
+        final List resultList = (List) evalScript(script)
+        println "result=$resultList"
 
-    assert resultList[0] == ['Foo.A', 'Foo.AB', 'Foo.ABC']
-    assert resultList[1] == ['Foo$A(2018-04-08)', 'Foo$AB(I am, class AB)', 'Foo$ABC(A, B, C)']
-  }
+        assert resultList[0] == ['Foo.A', 'Foo.AB', 'Foo.ABC']
+        assert resultList[1] == ['Foo$A(2018-04-08)', 'Foo$AB(I am, class AB)', 'Foo$ABC(A, B, C)']
+    }
 
 
-  @Test
-  void testAmbiguousInnerStaticClassesNewifyWithNamePatternFails() {
-    final String script = """
+    @Test
+    void testAmbiguousInnerStaticClassesNewifyWithNamePatternFails() {
+        final String script = """
           import groovy.transform.CompileStatic
           import groovy.lang.Newify
           import static org.codehaus.groovy.control.CompilePhase.SEMANTIC_ANALYSIS
@@ -214,16 +214,16 @@ class NewifyTransformBlackBoxTest extends CompilableTestSupport {
           foo.createClassList()
       """
 
-    println "script=|$script|"
+        println "script=|$script|"
 
-    final String result = shouldNotCompile(script)
-    assert result ==~ '(?s).*Inner class name lookup is ambiguous between the following classes: Foo, Foo\\$Foo, Foo\\$Foo\\$Foo\\..*'
-  }
+        final String result = shouldNotCompile(script)
+        assert result ==~ '(?s).*Inner class name lookup is ambiguous between the following classes: Foo, Foo\\$Foo, Foo\\$Foo\\$Foo\\..*'
+    }
 
 
-  @Test
-  void testImportedClassesNewifyWithNamePattern() {
-    final String script = """
+    @Test
+    void testImportedClassesNewifyWithNamePattern() {
+        final String script = """
         import groovy.transform.Canonical
         import groovy.transform.CompileStatic
         import groovy.lang.Newify
@@ -244,18 +244,18 @@ class NewifyTransformBlackBoxTest extends CompilableTestSupport {
         createClassList()
       """
 
-    println "script=|$script|"
-    final List resultList = (List) evalScript(script)
-    println "result=$resultList"
+        println "script=|$script|"
+        final List resultList = (List) evalScript(script)
+        println "result=$resultList"
 
-    assert resultList[0] == ['A', 'java.lang.StringBuilder', 'AB', 'ABC']
-    assert resultList[1] == ['A(2018-04-08)', '*lol*', 'AB(I am, class AB)', 'ABC(A, B, C)']
-  }
+        assert resultList[0] == ['A', 'java.lang.StringBuilder', 'AB', 'ABC']
+        assert resultList[1] == ['A(2018-04-08)', '*lol*', 'AB(I am, class AB)', 'ABC(A, B, C)']
+    }
 
 
-  @Test
-  void testAlwaysExistingClassesNewifyWithNamePattern() {
-    final String script = """
+    @Test
+    void testAlwaysExistingClassesNewifyWithNamePattern() {
+        final String script = """
               import groovy.transform.Canonical
               import groovy.transform.CompileStatic
               import groovy.lang.Newify
@@ -276,18 +276,18 @@ class NewifyTransformBlackBoxTest extends CompilableTestSupport {
               createClassList()
           """
 
-    println "script=|$script|"
-    final List resultList = (List) evalScript(script)
-    println "result=$resultList"
+        println "script=|$script|"
+        final List resultList = (List) evalScript(script)
+        println "result=$resultList"
 
-    assert resultList[0] == ['A', 'java.lang.StringBuilder', 'AB', 'ABC', 'java.lang.Object']
-    assert resultList[1] == ['A(2018-04-08)', '*lol*', 'AB(I am, class AB)', 'ABC(A, B, C)', 'java.lang.Object']
-  }
+        assert resultList[0] == ['A', 'java.lang.StringBuilder', 'AB', 'ABC', 'java.lang.Object']
+        assert resultList[1] == ['A(2018-04-08)', '*lol*', 'AB(I am, class AB)', 'ABC(A, B, C)', 'java.lang.Object']
+    }
 
 
-  @Test
-  void testNewifyWithNamePatternMixed() {
-    final String script = """
+    @Test
+    void testNewifyWithNamePatternMixed() {
+        final String script = """
               import groovy.transform.Canonical
               import groovy.transform.CompileStatic
               import groovy.lang.Newify
@@ -313,26 +313,26 @@ class NewifyTransformBlackBoxTest extends CompilableTestSupport {
               createClassList()
           """
 
-    println "script=|$script|"
-    final List resultList = (List) evalScript(script)
-    println "result=$resultList"
+        println "script=|$script|"
+        final List resultList = (List) evalScript(script)
+        println "result=$resultList"
 
-    assert resultList[0] == [
-        'A', 'java.lang.StringBuilder', 'AB', 'ABC', 'java.lang.Object',
-        'groovy.lang.Reference', 'groovy.lang.Binding', 'java.lang.Double', 'java.lang.Integer', 'java.math.BigInteger',
-        'java.math.BigDecimal'
-    ]
-    assert resultList[1] == [
-        'A(2018-04-08)', '*lol*', 'AB(I am, class AB)', 'ABC(A, B, C)', 'java.lang.Object',
-        'groovy.lang.Reference', 'groovy.lang.Binding', '123.456', '987', '987654321',
-        '1234.5678'
-    ]
-  }
+        assert resultList[0] == [
+            'A', 'java.lang.StringBuilder', 'AB', 'ABC', 'java.lang.Object',
+            'groovy.lang.Reference', 'groovy.lang.Binding', 'java.lang.Double', 'java.lang.Integer', 'java.math.BigInteger',
+            'java.math.BigDecimal'
+        ]
+        assert resultList[1] == [
+            'A(2018-04-08)', '*lol*', 'AB(I am, class AB)', 'ABC(A, B, C)', 'java.lang.Object',
+            'groovy.lang.Reference', 'groovy.lang.Binding', '123.456', '987', '987654321',
+            '1234.5678'
+        ]
+    }
 
 
-  @Test
-  void testAliasImportedClassesNewifyWithNamePattern() {
-    final String script = """
+    @Test
+    void testAliasImportedClassesNewifyWithNamePattern() {
+        final String script = """
         import groovy.lang.Newify
         import java.lang.StringBuilder as WobblyOneDimensionalObjectBuilda
         import static org.codehaus.groovy.control.CompilePhase.SEMANTIC_ANALYSIS
@@ -346,18 +346,18 @@ class NewifyTransformBlackBoxTest extends CompilableTestSupport {
         createClassList()
       """
 
-    println "script=|$script|"
-    final List resultList = (List) evalScript(script)
-    println "result=$resultList"
+        println "script=|$script|"
+        final List resultList = (List) evalScript(script)
+        println "result=$resultList"
 
-    assert resultList[0] == ['java.lang.StringBuilder']
-    assert resultList[1] == ['Discrete Reality']
-  }
+        assert resultList[0] == ['java.lang.StringBuilder']
+        assert resultList[1] == ['Discrete Reality']
+    }
 
 
-  @Test
-  void testAliasShadowededImportedClassesNewifyWithNamePatternFails() {
-    final String script = """
+    @Test
+    void testAliasShadowededImportedClassesNewifyWithNamePatternFails() {
+        final String script = """
         import groovy.transform.CompileStatic
         import groovy.lang.Newify
         import java.lang.StringBuilder as WobblyOneDimensionalObjectBuilda
@@ -373,16 +373,16 @@ class NewifyTransformBlackBoxTest extends CompilableTestSupport {
         createClassList()
       """
 
-    println "script=|$script|"
+        println "script=|$script|"
 
-    final String result = shouldNotCompile(script)
-    assert result ==~ /(?s).*\[Static type checking] - Cannot find matching method TestScript[A-Za-z0-9]*#StringBuilder\(java\.lang\.String\).*/
-  }
+        final String result = shouldNotCompile(script)
+        assert result ==~ /(?s).*\[Static type checking] - Cannot find matching method TestScript[A-Za-z0-9]*#StringBuilder\(java\.lang\.String\).*/
+    }
 
 
-  @Test
-  void testInvalidNamePatternNewifyWithNamePatternFails() {
-    final String script = """
+    @Test
+    void testInvalidNamePatternNewifyWithNamePatternFails() {
+        final String script = """
         import groovy.transform.CompileStatic
         import groovy.lang.Newify
         import java.lang.StringBuilder as WobblyOneDimensionalObjectBuilda
@@ -398,89 +398,89 @@ class NewifyTransformBlackBoxTest extends CompilableTestSupport {
         createClassList()
       """
 
-    println "script=|$script|"
+        println "script=|$script|"
 
-    final String result = shouldNotCompile(script)
-    assert result ==~ /(?s).*Invalid class name pattern: Illegal character range near index 3.*/
-  }
-
-
-  @Test
-  void testStaticallyAndDynamicallyCompiledMixedClassesNewifyWithNamePattern() {
-    final List<Boolean> compileStaticFlags = [true]
-    assertMixedClassesNewifyWithNamePatternResult("@Newify(pattern=/[A-Z].*/)", compileStaticFlags,
-        ['Foo.A', 'Foo.AB', 'Foo.ABC'], ['Foo$A(2018-04-08)', 'Foo$AB(I am, class AB)', 'Foo$ABC(A, B, C)']
-    )
-  }
-
-  @Test
-  void testStaticallyCompiledMixedClassesNoNewify() {
-    assertMixedClassesNewifyWithNamePatternFails("", [true], standardCompileStaticErrorMsg)
-  }
-
-  @Test
-  void testStaticallyCompiledMixedClassesNewifyWithNamePattern() {
-    assertMixedClassesNewifyWithNamePatternFails("@Newify(pattern=/XXX/)", [true], standardCompileStaticErrorMsg)
-  }
-
-  @Test
-  void testDynmaicallyCompiledMixedClassesNoNewify() {
-    assertMixedClassesNewifyWithNamePatternFails("", [false], standardCompileDynamiccErrorMsg)
-  }
-
-  @Test
-  void testDynmaicallyCompiledMixedClassesNewifyWithNamePattern() {
-    assertMixedClassesNewifyWithNamePatternFails("@Newify(pattern=/XXX/)", [false], standardCompileDynamiccErrorMsg)
-  }
-
-
-  @Test
-  void testExtractName() {
-    ['', 'A', 'Bc', 'DEF'].each { String s ->
-      assertExtractName(s, s)
-      assertExtractName("\$$s", s)
-      assertExtractName("A\$$s", s)
-      assertExtractName("Foo\$$s", s)
-      assertExtractName("Foo\$Foo\$$s", s)
-      assertExtractName("A\$AB\$ABC\$$s", s)
-    }
-  }
-
-
-  String getStandardCompileDynamiccErrorMsg() {
-    "No signature of method: Foo.A() is applicable for argument types: (String) values: [2018-04-08]"
-  }
-
-  String getStandardCompileStaticErrorMsg() {
-    "[Static type checking] - Cannot find matching method Foo#A(java.lang.String)."
-  }
-
-  void assertMixedClassesNewifyWithNamePatternFails(
-      final String newifyAnnotation, final List<Boolean> compileStaticFlags, final String errorMsgStartsWith) {
-    try {
-      mixedClassesNewifyWithNamePattern(newifyAnnotation, compileStaticFlags)
-    }
-    catch(Exception e) {
-      assert e.message.contains(errorMsgStartsWith)
-    }
-  }
-
-  void assertMixedClassesNewifyWithNamePatternResult(
-      final String newifyAnnotation,
-      final List<Boolean> compileStaticFlags, final List<String> classNameList, final List<String> resultList) {
-    final List list = mixedClassesNewifyWithNamePattern(newifyAnnotation, compileStaticFlags)
-    assert list[0] == classNameList
-    assert list[1] == resultList
-  }
-
-  List mixedClassesNewifyWithNamePattern(final String newifyAnnotation, final List<Boolean> compileStaticFlags) {
-
-    int iCompileStaticOrDynamic = 0
-    final Closure<String> compileStaticOrDynamicCls = {
-      compileStaticFlags[iCompileStaticOrDynamic++] ? "@CompileStatic" : "@CompileDynamic"
+        final String result = shouldNotCompile(script)
+        assert result ==~ /(?s).*Invalid class name pattern: Illegal character range near index 3.*/
     }
 
-    final String script = """
+
+    @Test
+    void testStaticallyAndDynamicallyCompiledMixedClassesNewifyWithNamePattern() {
+        final List<Boolean> compileStaticFlags = [true]
+        assertMixedClassesNewifyWithNamePatternResult("@Newify(pattern=/[A-Z].*/)", compileStaticFlags,
+            ['Foo.A', 'Foo.AB', 'Foo.ABC'], ['Foo$A(2018-04-08)', 'Foo$AB(I am, class AB)', 'Foo$ABC(A, B, C)']
+        )
+    }
+
+    @Test
+    void testStaticallyCompiledMixedClassesNoNewify() {
+        assertMixedClassesNewifyWithNamePatternFails("", [true], standardCompileStaticErrorMsg)
+    }
+
+    @Test
+    void testStaticallyCompiledMixedClassesNewifyWithNamePattern() {
+        assertMixedClassesNewifyWithNamePatternFails("@Newify(pattern=/XXX/)", [true], standardCompileStaticErrorMsg)
+    }
+
+    @Test
+    void testDynmaicallyCompiledMixedClassesNoNewify() {
+        assertMixedClassesNewifyWithNamePatternFails("", [false], standardCompileDynamiccErrorMsg)
+    }
+
+    @Test
+    void testDynmaicallyCompiledMixedClassesNewifyWithNamePattern() {
+        assertMixedClassesNewifyWithNamePatternFails("@Newify(pattern=/XXX/)", [false], standardCompileDynamiccErrorMsg)
+    }
+
+
+    @Test
+    void testExtractName() {
+        ['', 'A', 'Bc', 'DEF'].each { String s ->
+            assertExtractName(s, s)
+            assertExtractName("\$$s", s)
+            assertExtractName("A\$$s", s)
+            assertExtractName("Foo\$$s", s)
+            assertExtractName("Foo\$Foo\$$s", s)
+            assertExtractName("A\$AB\$ABC\$$s", s)
+        }
+    }
+
+
+    String getStandardCompileDynamiccErrorMsg() {
+        "No signature of method: Foo.A() is applicable for argument types: (String) values: [2018-04-08]"
+    }
+
+    String getStandardCompileStaticErrorMsg() {
+        "[Static type checking] - Cannot find matching method Foo#A(java.lang.String)."
+    }
+
+    void assertMixedClassesNewifyWithNamePatternFails(
+        final String newifyAnnotation, final List<Boolean> compileStaticFlags, final String errorMsgStartsWith) {
+        try {
+            mixedClassesNewifyWithNamePattern(newifyAnnotation, compileStaticFlags)
+        }
+        catch (Exception e) {
+            assert e.message.contains(errorMsgStartsWith)
+        }
+    }
+
+    void assertMixedClassesNewifyWithNamePatternResult(
+        final String newifyAnnotation,
+        final List<Boolean> compileStaticFlags, final List<String> classNameList, final List<String> resultList) {
+        final List list = mixedClassesNewifyWithNamePattern(newifyAnnotation, compileStaticFlags)
+        assert list[0] == classNameList
+        assert list[1] == resultList
+    }
+
+    List mixedClassesNewifyWithNamePattern(final String newifyAnnotation, final List<Boolean> compileStaticFlags) {
+
+        int iCompileStaticOrDynamic = 0
+        final Closure<String> compileStaticOrDynamicCls = {
+            compileStaticFlags[iCompileStaticOrDynamic++] ? "@CompileStatic" : "@CompileDynamic"
+        }
+
+        final String script = """
             import groovy.transform.Canonical
             import groovy.transform.CompileStatic
             import groovy.transform.CompileDynamic
@@ -506,36 +506,36 @@ class NewifyTransformBlackBoxTest extends CompilableTestSupport {
             foo.createClassList()
         """
 
-    println "script=|$script|"
-    final List resultList = (List) evalScript(script)
-    println "result=$resultList"
+        println "script=|$script|"
+        final List resultList = (List) evalScript(script)
+        println "result=$resultList"
 
-    return resultList
-  }
-
-
-  void assertExtractName(final String s, final String expected) {
-    final String result = NewifyASTTransformation.extractName(s)
-    println "|$s| -> |$result|"
-    assert result == expected
-  }
+        return resultList
+    }
 
 
-  String classCode(final List<String> lines) { code(lines, 1) }
+    void assertExtractName(final String s, final String expected) {
+        final String result = NewifyASTTransformation.extractName(s)
+        println "|$s| -> |$result|"
+        assert result == expected
+    }
 
-  String scriptCode(final List<String> lines) { code(lines, 0) }
 
-  String code(final List<String> lines, final int indent = 0) {
-    lines.collect { "${'\t' * indent}${it};" }.join('\n')
-  }
+    String classCode(final List<String> lines) { code(lines, 1) }
 
-  String newifyTestScript(
-      final boolean hasAnnotation,
-      final Map<String, Object> annotationParameters,
-      final String classPart, final String scriptPart = '') {
-    assert !hasAnnotation || (annotationParameters != null); assert classPart
-    final String annotationParametersTerm = annotationParameters ? "(${annotationParameters.collect { final Entry<String, Object> e -> "$e.key=$e.value" }.join(', ')})" : ''
-    final String script = """
+    String scriptCode(final List<String> lines) { code(lines, 0) }
+
+    String code(final List<String> lines, final int indent = 0) {
+        lines.collect { "${'\t' * indent}${it};" }.join('\n')
+    }
+
+    String newifyTestScript(
+        final boolean hasAnnotation,
+        final Map<String, Object> annotationParameters,
+        final String classPart, final String scriptPart = '') {
+        assert !hasAnnotation || (annotationParameters != null); assert classPart
+        final String annotationParametersTerm = annotationParameters ? "(${annotationParameters.collect { final Entry<String, Object> e -> "$e.key=$e.value" }.join(', ')})" : ''
+        final String script = """
             import groovy.transform.Canonical
             import groovy.transform.CompileStatic
             import groovy.lang.Newify
@@ -553,29 +553,29 @@ class NewifyTransformBlackBoxTest extends CompilableTestSupport {
 
             $scriptPart
         """
-    return script
-  }
-
-  String getNewifyTestClassName() {
-    'NewifyFoo'
-  }
-
-
-  static def evalScript(final String script) throws Exception {
-    GroovyShell shell = new GroovyShell();
-    shell.evaluate(script);
-  }
-
-
-  static Throwable compileShouldThrow(final String script, final String testClassName) {
-    try {
-      final GroovyClassLoader gcl = new GroovyClassLoader()
-      gcl.parseClass(script, testClassName)
+        return script
     }
-    catch(Throwable throwable) {
-      return throwable
+
+    String getNewifyTestClassName() {
+        'NewifyFoo'
     }
-    throw new Exception("Script was expected to throw here!")
-  }
+
+
+    static def evalScript(final String script) throws Exception {
+        GroovyShell shell = new GroovyShell();
+        shell.evaluate(script);
+    }
+
+
+    static Throwable compileShouldThrow(final String script, final String testClassName) {
+        try {
+            final GroovyClassLoader gcl = new GroovyClassLoader()
+            gcl.parseClass(script, testClassName)
+        }
+        catch (Throwable throwable) {
+            return throwable
+        }
+        throw new Exception("Script was expected to throw here!")
+    }
 
 }

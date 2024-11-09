@@ -108,11 +108,11 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new MethodCallExpression(
-                new VariableExpression("this"),
-                new ConstantExpression("println"),
-                new ArgumentListExpression(
-                        [new ConstantExpression("Hello")]
-                )
+            new VariableExpression("this"),
+            new ConstantExpression("println"),
+            new ArgumentListExpression(
+                [new ConstantExpression("Hello")]
+            )
         )
         AstAssert.assertSyntaxTree([expected], result)
     }
@@ -161,9 +161,9 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new AnnotationConstantExpression(
-                new AnnotationNode(
-                        ClassHelper.OVERRIDE_TYPE
-                )
+            new AnnotationNode(
+                ClassHelper.OVERRIDE_TYPE
+            )
         )
         AstAssert.assertSyntaxTree([expected], result)
     }
@@ -190,11 +190,11 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new ArgumentListExpression(
-                [new ConstantExpression("constant1"),
-                        new ConstantExpression("constant2"),
-                        new ConstantExpression("constant3"),
-                        new ConstantExpression("constant4"),
-                ]
+            [new ConstantExpression("constant1"),
+             new ConstantExpression("constant2"),
+             new ConstantExpression("constant3"),
+             new ConstantExpression("constant4"),
+            ]
         )
         AstAssert.assertSyntaxTree([expected], result)
     }
@@ -210,8 +210,8 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new AttributeExpression(
-                new VariableExpression("foo"),
-                new ConstantExpression("bar")
+            new VariableExpression("foo"),
+            new ConstantExpression("bar")
         )
         AstAssert.assertSyntaxTree([expected], result)
     }
@@ -255,31 +255,31 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new IfStatement(
-                new BooleanExpression(
-                        new BinaryExpression(
-                                new VariableExpression("foo"),
-                                new Token(Types.COMPARE_EQUAL, "==", -1, -1),
-                                new VariableExpression("bar")
-                        )
-                ),
-                new ExpressionStatement(
-                        new MethodCallExpression(
-                                new VariableExpression("this"),
-                                new ConstantExpression("println"),
-                                new ArgumentListExpression(
-                                        [new ConstantExpression("Hello")]
-                                )
-                        )
-                ),
-                new ExpressionStatement(
-                        new MethodCallExpression(
-                                new VariableExpression("this"),
-                                new ConstantExpression("println"),
-                                new ArgumentListExpression(
-                                        [new ConstantExpression("World")]
-                                )
-                        )
+            new BooleanExpression(
+                new BinaryExpression(
+                    new VariableExpression("foo"),
+                    new Token(Types.COMPARE_EQUAL, "==", -1, -1),
+                    new VariableExpression("bar")
                 )
+            ),
+            new ExpressionStatement(
+                new MethodCallExpression(
+                    new VariableExpression("this"),
+                    new ConstantExpression("println"),
+                    new ArgumentListExpression(
+                        [new ConstantExpression("Hello")]
+                    )
+                )
+            ),
+            new ExpressionStatement(
+                new MethodCallExpression(
+                    new VariableExpression("this"),
+                    new ConstantExpression("println"),
+                    new ArgumentListExpression(
+                        [new ConstantExpression("World")]
+                    )
+                )
+            )
         )
         AstAssert.assertSyntaxTree([expected], result)
     }
@@ -300,13 +300,13 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new DeclarationExpression(
-                new VariableExpression("foo"),
-                new Token(Types.EQUALS, "=", -1, -1),
-                new ListExpression(
-                        [new ConstantExpression(1),
-                                new ConstantExpression(2),
-                                new ConstantExpression(3),]
-                )
+            new VariableExpression("foo"),
+            new Token(Types.EQUALS, "=", -1, -1),
+            new ListExpression(
+                [new ConstantExpression(1),
+                 new ConstantExpression(2),
+                 new ConstantExpression(3),]
+            )
         )
         AstAssert.assertSyntaxTree([expected], result)
     }
@@ -323,11 +323,11 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new ArrayExpression(
-                ClassHelper.make(Integer, false),
-                [
-                        new ConstantExpression(1),
-                        new ConstantExpression(2),
-                        new ConstantExpression(3),]
+            ClassHelper.make(Integer, false),
+            [
+                new ConstantExpression(1),
+                new ConstantExpression(2),
+                new ConstantExpression(3),]
         )
         AstAssert.assertSyntaxTree([expected], result)
     }
@@ -340,7 +340,7 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new BitwiseNegationExpression(
-                new ConstantExpression(1)
+            new ConstantExpression(1)
         )
         AstAssert.assertSyntaxTree([expected], result)
     }
@@ -353,8 +353,8 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new CastExpression(
-                ClassHelper.make(Integer, false),
-                new ConstantExpression("")
+            ClassHelper.make(Integer, false),
+            new ConstantExpression("")
         )
         AstAssert.assertSyntaxTree([expected], result)
     }
@@ -383,21 +383,21 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new ClosureExpression(
-                [new Parameter(
-                        ClassHelper.make(Object, false), "parm"
-                )] as Parameter[],
-                new BlockStatement(
-                        [new ExpressionStatement(
-                                new MethodCallExpression(
-                                        new VariableExpression("this"),
-                                        new ConstantExpression("println"),
-                                        new ArgumentListExpression(
-                                                new VariableExpression("parm")
-                                        )
-                                )
-                        )],
-                        new VariableScope()
-                )
+            [new Parameter(
+                ClassHelper.make(Object, false), "parm"
+            )] as Parameter[],
+            new BlockStatement(
+                [new ExpressionStatement(
+                    new MethodCallExpression(
+                        new VariableExpression("this"),
+                        new ConstantExpression("println"),
+                        new ArgumentListExpression(
+                            new VariableExpression("parm")
+                        )
+                    )
+                )],
+                new VariableScope()
+            )
 
         )
         AstAssert.assertSyntaxTree([expected], result)
@@ -428,22 +428,22 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new ClosureExpression(
-                [
-                        new Parameter(ClassHelper.make(Object, false), "x"),
-                        new Parameter(ClassHelper.make(Object, false), "y"),
-                        new Parameter(ClassHelper.make(Object, false), "z")] as Parameter[],
-                new BlockStatement(
-                        [new ExpressionStatement(
-                                new MethodCallExpression(
-                                        new VariableExpression("this"),
-                                        new ConstantExpression("println"),
-                                        new ArgumentListExpression(
-                                                new VariableExpression("z")
-                                        )
-                                )
-                        )],
-                        new VariableScope()
-                )
+            [
+                new Parameter(ClassHelper.make(Object, false), "x"),
+                new Parameter(ClassHelper.make(Object, false), "y"),
+                new Parameter(ClassHelper.make(Object, false), "z")] as Parameter[],
+            new BlockStatement(
+                [new ExpressionStatement(
+                    new MethodCallExpression(
+                        new VariableExpression("this"),
+                        new ConstantExpression("println"),
+                        new ArgumentListExpression(
+                            new VariableExpression("z")
+                        )
+                    )
+                )],
+                new VariableScope()
+            )
 
         )
         AstAssert.assertSyntaxTree([expected], result)
@@ -461,10 +461,10 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new ConstructorCallExpression(
-                ClassHelper.make(Integer, false),
-                new ArgumentListExpression(
-                        new ConstantExpression(4)
-                )
+            ClassHelper.make(Integer, false),
+            new ArgumentListExpression(
+                new ConstantExpression(4)
+            )
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -479,7 +479,7 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new NotExpression(
-                new ConstantExpression(true)
+            new ConstantExpression(true)
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -495,8 +495,8 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new PostfixExpression(
-                new ConstantExpression(1),
-                new Token(Types.PLUS_PLUS, "++", -1, -1)
+            new ConstantExpression(1),
+            new Token(Types.PLUS_PLUS, "++", -1, -1)
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -512,8 +512,8 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new PrefixExpression(
-                new Token(Types.PLUS_PLUS, "++", -1, -1),
-                new ConstantExpression(1)
+            new Token(Types.PLUS_PLUS, "++", -1, -1),
+            new ConstantExpression(1)
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -528,7 +528,7 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new UnaryMinusExpression(
-                new VariableExpression("foo")
+            new VariableExpression("foo")
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -543,7 +543,7 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new UnaryPlusExpression(
-                new VariableExpression("foo")
+            new VariableExpression("foo")
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -561,9 +561,9 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new DeclarationExpression(
-                new VariableExpression("foo"),
-                new Token(Types.EQUALS, "=", -1, -1),
-                new ClassExpression(ClassHelper.make(String, false))
+            new VariableExpression("foo"),
+            new Token(Types.EQUALS, "=", -1, -1),
+            new ClassExpression(ClassHelper.make(String, false))
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -583,11 +583,11 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def fieldNode = new FieldNode(
-                "foo",
-                ACC_PUBLIC | ACC_STATIC,
-                ClassHelper.make(String, false),
-                ClassHelper.make(this.class, false),
-                new ConstantExpression("a value")
+            "foo",
+            ACC_PUBLIC | ACC_STATIC,
+            ClassHelper.make(String, false),
+            ClassHelper.make(this.class, false),
+            new ConstantExpression("a value")
         )
         fieldNode.addAnnotation(new AnnotationNode(ClassHelper.make(Deprecated, false)))
         def expected = new FieldExpression(fieldNode)
@@ -612,8 +612,8 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new MapExpression([
-                new MapEntryExpression(new ConstantExpression('foo'), new ConstantExpression('bar')),
-                new MapEntryExpression(new ConstantExpression('baz'), new ConstantExpression('buz')),
+            new MapEntryExpression(new ConstantExpression('foo'), new ConstantExpression('bar')),
+            new MapEntryExpression(new ConstantExpression('baz'), new ConstantExpression('buz')),
         ])
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -631,10 +631,10 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new MapExpression([
-                new MapEntryExpression(new ConstantExpression('foo'), new ConstantExpression('bar')),
-                new MapEntryExpression(new ConstantExpression('baz'), new ConstantExpression('buz')),
-                new MapEntryExpression(new ConstantExpression('qux'), new ConstantExpression('quux')),
-                new MapEntryExpression(new ConstantExpression('corge'), new ConstantExpression('grault')),
+            new MapEntryExpression(new ConstantExpression('foo'), new ConstantExpression('bar')),
+            new MapEntryExpression(new ConstantExpression('baz'), new ConstantExpression('buz')),
+            new MapEntryExpression(new ConstantExpression('qux'), new ConstantExpression('quux')),
+            new MapEntryExpression(new ConstantExpression('corge'), new ConstantExpression('grault')),
         ])
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -657,8 +657,8 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new GStringExpression('$foo astring $bar',
-                [new ConstantExpression(''), new ConstantExpression(' astring '), new ConstantExpression('')],
-                [new VariableExpression('foo'), new VariableExpression('bar')])
+            [new ConstantExpression(''), new ConstantExpression(' astring '), new ConstantExpression('')],
+            [new VariableExpression('foo'), new VariableExpression('bar')])
 
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -674,8 +674,8 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new MethodPointerExpression(
-                new ClassExpression(ClassHelper.make(Integer, false)),
-                new ConstantExpression("toString")
+            new ClassExpression(ClassHelper.make(Integer, false)),
+            new ConstantExpression("toString")
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -692,9 +692,9 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new RangeExpression(
-                new ConstantExpression(0),
-                new ConstantExpression(10),
-                true
+            new ConstantExpression(0),
+            new ConstantExpression(10),
+            true
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -711,9 +711,9 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new RangeExpression(
-                new ConstantExpression(0),
-                new ConstantExpression(10),
-                false
+            new ConstantExpression(0),
+            new ConstantExpression(10),
+            false
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -726,9 +726,9 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new RangeExpression(
-                new ConstantExpression(0),
-                new ConstantExpression(10),
-                true
+            new ConstantExpression(0),
+            new ConstantExpression(10),
+            true
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -744,8 +744,8 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new PropertyExpression(
-                new VariableExpression("foo"),
-                new ConstantExpression("bar")
+            new VariableExpression("foo"),
+            new ConstantExpression("bar")
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -804,46 +804,46 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new SwitchStatement(
-                new VariableExpression("foo"),
-                [
-                        new CaseStatement(
-                                new ConstantExpression(0),
-                                new BreakStatement("some label")
-                        ),
-                        new CaseStatement(
-                                new ConstantExpression(1),
-                                EmptyStatement.INSTANCE
-                        ),
-                        new CaseStatement(
-                                new ConstantExpression(2),
-                                new BlockStatement(
-                                        [
-                                                new ExpressionStatement(
-                                                        new MethodCallExpression(
-                                                                new VariableExpression("this"),
-                                                                new ConstantExpression("println"),
-                                                                new ArgumentListExpression(
-                                                                        [new ConstantExpression("<3")]
-                                                                )
-                                                        )
-                                                ),
-                                                new BreakStatement()
-                                        ], new VariableScope()
-                                )
-                        )
-                ],
-                new BlockStatement(
-                        [new ExpressionStatement(
+            new VariableExpression("foo"),
+            [
+                new CaseStatement(
+                    new ConstantExpression(0),
+                    new BreakStatement("some label")
+                ),
+                new CaseStatement(
+                    new ConstantExpression(1),
+                    EmptyStatement.INSTANCE
+                ),
+                new CaseStatement(
+                    new ConstantExpression(2),
+                    new BlockStatement(
+                        [
+                            new ExpressionStatement(
                                 new MethodCallExpression(
-                                        new VariableExpression("this"),
-                                        new ConstantExpression("println"),
-                                        new ArgumentListExpression(
-                                                [new ConstantExpression(">2")]
-                                        )
+                                    new VariableExpression("this"),
+                                    new ConstantExpression("println"),
+                                    new ArgumentListExpression(
+                                        [new ConstantExpression("<3")]
+                                    )
                                 )
-                        )],
-                        new VariableScope()
+                            ),
+                            new BreakStatement()
+                        ], new VariableScope()
+                    )
                 )
+            ],
+            new BlockStatement(
+                [new ExpressionStatement(
+                    new MethodCallExpression(
+                        new VariableExpression("this"),
+                        new ConstantExpression("println"),
+                        new ArgumentListExpression(
+                            [new ConstantExpression(">2")]
+                        )
+                    )
+                )],
+                new VariableScope()
+            )
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -875,24 +875,24 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new BlockStatement(
-                [
-                        new AssertStatement(
-                                new BooleanExpression(
-                                        new ConstantExpression(true)
-                                ),
-                                new ConstantExpression("should always be true")
-                        ),
-                        new AssertStatement(
-                                new BooleanExpression(
-                                        new BinaryExpression(
-                                                new ConstantExpression(1),
-                                                new Token(Types.COMPARE_EQUAL, "==", -1, -1),
-                                                new ConstantExpression(2)
-                                        )
-                                )
-                        ),
-                ],
-                new VariableScope()
+            [
+                new AssertStatement(
+                    new BooleanExpression(
+                        new ConstantExpression(true)
+                    ),
+                    new ConstantExpression("should always be true")
+                ),
+                new AssertStatement(
+                    new BooleanExpression(
+                        new BinaryExpression(
+                            new ConstantExpression(1),
+                            new Token(Types.COMPARE_EQUAL, "==", -1, -1),
+                            new ConstantExpression(2)
+                        )
+                    )
+                ),
+            ],
+            new VariableScope()
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -917,13 +917,13 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new SynchronizedStatement(
-                new VariableExpression("this"),
-                new BlockStatement(
-                        [new ReturnStatement(
-                                new ConstantExpression(1)
-                        )],
-                        new VariableScope()
-                )
+            new VariableExpression("this"),
+            new BlockStatement(
+                [new ReturnStatement(
+                    new ConstantExpression(1)
+                )],
+                new VariableScope()
+            )
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -957,26 +957,26 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         TryCatchStatement expected = new TryCatchStatement(
-                new BlockStatement(
-                        [new ReturnStatement(
-                                new ConstantExpression(1)
-                        )],
-                        new VariableScope()
-                ),
-                EmptyStatement.INSTANCE
+            new BlockStatement(
+                [new ReturnStatement(
+                    new ConstantExpression(1)
+                )],
+                new VariableScope()
+            ),
+            EmptyStatement.INSTANCE
         )
         expected.addCatch(
-                new CatchStatement(
-                        new Parameter(
-                                ClassHelper.make(Exception, false), "e"
-                        ),
-                        new BlockStatement(
-                                [new ThrowStatement(
-                                        new VariableExpression("e")
-                                )],
-                                new VariableScope()
-                        )
+            new CatchStatement(
+                new Parameter(
+                    ClassHelper.make(Exception, false), "e"
+                ),
+                new BlockStatement(
+                    [new ThrowStatement(
+                        new VariableExpression("e")
+                    )],
+                    new VariableScope()
                 )
+            )
         )
         AstAssert.assertSyntaxTree([expected], result)
     }
@@ -1011,28 +1011,28 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         TryCatchStatement expected = new TryCatchStatement(
-                new BlockStatement(
-                        [new ReturnStatement(
-                                new ConstantExpression(1)
-                        )],
-                        new VariableScope()
-                ),
-                new BlockStatement(
+            new BlockStatement(
+                [new ReturnStatement(
+                    new ConstantExpression(1)
+                )],
+                new VariableScope()
+            ),
+            new BlockStatement(
+                [
+                    new BlockStatement(
                         [
-                                new BlockStatement(
-                                        [
-                                                new ExpressionStatement(
-                                                        new MethodCallExpression(
-                                                                new VariableExpression('x'),
-                                                                'close',
-                                                                new ArgumentListExpression()
-                                                        )
-                                                )
-                                        ],
-                                        new VariableScope())
+                            new ExpressionStatement(
+                                new MethodCallExpression(
+                                    new VariableExpression('x'),
+                                    'close',
+                                    new ArgumentListExpression()
+                                )
+                            )
                         ],
-                        new VariableScope()
-                )
+                        new VariableScope())
+                ],
+                new VariableScope()
+            )
         )
         AstAssert.assertSyntaxTree([expected], result)
     }
@@ -1078,39 +1078,39 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new ForStatement(
-                new Parameter(ClassHelper.make(Object, false), "forLoopDummyParameter"),
-                new ClosureListExpression(
-                        [
-                                new DeclarationExpression(
-                                        new VariableExpression("x"),
-                                        new Token(Types.EQUALS, "=", -1, -1),
-                                        new ConstantExpression(0)
-                                ),
-                                new BinaryExpression(
-                                        new VariableExpression("x"),
-                                        new Token(Types.COMPARE_LESS_THAN, "<", -1, -1),
-                                        new ConstantExpression(10)
-                                ),
-                                new PostfixExpression(
-                                        new VariableExpression("x"),
-                                        new Token(Types.PLUS_PLUS, "++", -1, -1)
-                                )
-                        ]
-                ),
-                new BlockStatement(
-                        [
-                                new ExpressionStatement(
-                                        new MethodCallExpression(
-                                                new VariableExpression("this"),
-                                                new ConstantExpression("println"),
-                                                new ArgumentListExpression(
-                                                        new VariableExpression("x"),
-                                                )
-                                        )
-                                )
-                        ],
-                        new VariableScope()
-                )
+            new Parameter(ClassHelper.make(Object, false), "forLoopDummyParameter"),
+            new ClosureListExpression(
+                [
+                    new DeclarationExpression(
+                        new VariableExpression("x"),
+                        new Token(Types.EQUALS, "=", -1, -1),
+                        new ConstantExpression(0)
+                    ),
+                    new BinaryExpression(
+                        new VariableExpression("x"),
+                        new Token(Types.COMPARE_LESS_THAN, "<", -1, -1),
+                        new ConstantExpression(10)
+                    ),
+                    new PostfixExpression(
+                        new VariableExpression("x"),
+                        new Token(Types.PLUS_PLUS, "++", -1, -1)
+                    )
+                ]
+            ),
+            new BlockStatement(
+                [
+                    new ExpressionStatement(
+                        new MethodCallExpression(
+                            new VariableExpression("this"),
+                            new ConstantExpression("println"),
+                            new ArgumentListExpression(
+                                new VariableExpression("x"),
+                            )
+                        )
+                    )
+                ],
+                new VariableScope()
+            )
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -1128,12 +1128,12 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new StaticMethodCallExpression(
-                ClassHelper.make(Math, false),
-                "min",
-                new ArgumentListExpression(
-                        new ConstantExpression(1),
-                        new ConstantExpression(2)
-                )
+            ClassHelper.make(Math, false),
+            "min",
+            new ArgumentListExpression(
+                new ConstantExpression(1),
+                new ConstantExpression(2)
+            )
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -1151,12 +1151,12 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new StaticMethodCallExpression(
-                ClassHelper.make(Math, false),
-                "min",
-                new ArgumentListExpression(
-                        new ConstantExpression(1),
-                        new ConstantExpression(2)
-                )
+            ClassHelper.make(Math, false),
+            "min",
+            new ArgumentListExpression(
+                new ConstantExpression(1),
+                new ConstantExpression(2)
+            )
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -1180,8 +1180,8 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
             new ConstantExpression('foo'),
             new SpreadExpression(
                 new ListExpression([
-                        new ConstantExpression('bar'),
-                        new ConstantExpression('baz'),
+                    new ConstantExpression('bar'),
+                    new ConstantExpression('baz'),
                 ])
             )
         ])
@@ -1205,12 +1205,12 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new MethodCallExpression(
-                new VariableExpression('this', ClassHelper.make(Object, false)),
-                'func',
-                new MapEntryExpression(
-                        new SpreadMapExpression(new VariableExpression('m', ClassHelper.make(Object, false))),
-                        new VariableExpression('m', ClassHelper.make(Object, false))
-                )
+            new VariableExpression('this', ClassHelper.make(Object, false)),
+            'func',
+            new MapEntryExpression(
+                new SpreadMapExpression(new VariableExpression('m', ClassHelper.make(Object, false))),
+                new VariableExpression('m', ClassHelper.make(Object, false))
+            )
 
         )
 
@@ -1230,9 +1230,9 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new TernaryExpression(
-                new BooleanExpression(new ConstantExpression(true)),
-                new ConstantExpression('male'),
-                new ConstantExpression('female')
+            new BooleanExpression(new ConstantExpression(true)),
+            new ConstantExpression('male'),
+            new ConstantExpression('female')
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -1271,21 +1271,21 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new WhileStatement(
-                new BooleanExpression(
-                        new ConstantExpression(true)
-                ),
-                new BlockStatement(
-                        [
-                                new ExpressionStatement(
-                                        new PostfixExpression(
-                                                new VariableExpression("x"),
-                                                new Token(Types.PLUS_PLUS, "++", -1, -1),
-                                        )
-                                ),
-                                new ContinueStatement()
-                        ],
-                        new VariableScope()
-                )
+            new BooleanExpression(
+                new ConstantExpression(true)
+            ),
+            new BlockStatement(
+                [
+                    new ExpressionStatement(
+                        new PostfixExpression(
+                            new VariableExpression("x"),
+                            new Token(Types.PLUS_PLUS, "++", -1, -1),
+                        )
+                    ),
+                    new ContinueStatement()
+                ],
+                new VariableScope()
+            )
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -1318,21 +1318,21 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new WhileStatement(
-                new BooleanExpression(
-                        new ConstantExpression(true)
-                ),
-                new BlockStatement(
-                        [
-                                new ExpressionStatement(
-                                        new PostfixExpression(
-                                                new VariableExpression("x"),
-                                                new Token(Types.PLUS_PLUS, "++", -1, -1),
-                                        )
-                                ),
-                                new ContinueStatement("some label")
-                        ],
-                        new VariableScope()
-                )
+            new BooleanExpression(
+                new ConstantExpression(true)
+            ),
+            new BlockStatement(
+                [
+                    new ExpressionStatement(
+                        new PostfixExpression(
+                            new VariableExpression("x"),
+                            new Token(Types.PLUS_PLUS, "++", -1, -1),
+                        )
+                    ),
+                    new ContinueStatement("some label")
+                ],
+                new VariableScope()
+            )
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -1348,8 +1348,8 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new ElvisOperatorExpression(
-                new VariableExpression('name'),
-                new ConstantExpression('Anonymous')
+            new VariableExpression('name'),
+            new ConstantExpression('Anonymous')
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -1372,17 +1372,17 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new ConstructorCallExpression(
-                ClassHelper.make(String),
-                new TupleExpression(
-                        new NamedArgumentListExpression(
-                                [
-                                        new MapEntryExpression(
-                                                new ConstantExpression('foo'),
-                                                new ConstantExpression('bar'),
-                                        )
-                                ]
+            ClassHelper.make(String),
+            new TupleExpression(
+                new NamedArgumentListExpression(
+                    [
+                        new MapEntryExpression(
+                            new ConstantExpression('foo'),
+                            new ConstantExpression('bar'),
                         )
+                    ]
                 )
+            )
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -1413,17 +1413,17 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new MethodNode(
-                "myMethod",
-                ACC_PUBLIC,
-                ClassHelper.make(String.class, false),
-                [new Parameter(ClassHelper.make(String, false), "parameter", new ConstantExpression(null))] as Parameter[],
-                [] as ClassNode[],
-                new BlockStatement(
-                        [new ReturnStatement(
-                                new ConstantExpression('some result')
-                        )],
-                        new VariableScope()
-                ))
+            "myMethod",
+            ACC_PUBLIC,
+            ClassHelper.make(String.class, false),
+            [new Parameter(ClassHelper.make(String, false), "parameter", new ConstantExpression(null))] as Parameter[],
+            [] as ClassNode[],
+            new BlockStatement(
+                [new ReturnStatement(
+                    new ConstantExpression('some result')
+                )],
+                new VariableScope()
+            ))
         AstAssert.assertSyntaxTree([expected], result)
     }
 
@@ -1449,17 +1449,17 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new MethodNode(
-                "myMethod",
-                ACC_PUBLIC,
-                ClassHelper.make(String.class, false),
-                [new Parameter(ClassHelper.make(String[], false), "parameters")] as Parameter[],
-                [] as ClassNode[],
-                new BlockStatement(
-                        [new ReturnStatement(
-                                new ConstantExpression('some result')
-                        )],
-                        new VariableScope()
-                ))
+            "myMethod",
+            ACC_PUBLIC,
+            ClassHelper.make(String.class, false),
+            [new Parameter(ClassHelper.make(String[], false), "parameters")] as Parameter[],
+            [] as ClassNode[],
+            new BlockStatement(
+                [new ReturnStatement(
+                    new ConstantExpression('some result')
+                )],
+                new VariableScope()
+            ))
         AstAssert.assertSyntaxTree([expected], result)
 
     }
@@ -1490,18 +1490,18 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new InnerClassNode(
-                new ClassNode(
-                        "Foo",
-                        ACC_PUBLIC,
-                        ClassHelper.make(Object, false),
-                        [ClassHelper.make(GroovyObject, false)] as ClassNode[],
-                        [] as MixinNode[]
-                ),
-                'Foo$Bar',
+            new ClassNode(
+                "Foo",
                 ACC_PUBLIC,
                 ClassHelper.make(Object, false),
                 [ClassHelper.make(GroovyObject, false)] as ClassNode[],
                 [] as MixinNode[]
+            ),
+            'Foo$Bar',
+            ACC_PUBLIC,
+            ClassHelper.make(Object, false),
+            [ClassHelper.make(GroovyObject, false)] as ClassNode[],
+            [] as MixinNode[]
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -1531,16 +1531,16 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new ConstructorNode(
-                ACC_PUBLIC,
-                [
-                        new Parameter(ClassHelper.make(String, false), "foo"),
-                        new Parameter(ClassHelper.make(Integer, false), "bar")
-                ] as Parameter[],
-                [
-                        ClassHelper.make(Exception, false),
-                        ClassHelper.make(IOException, false)
-                ] as ClassNode[],
-                new BlockStatement()
+            ACC_PUBLIC,
+            [
+                new Parameter(ClassHelper.make(String, false), "foo"),
+                new Parameter(ClassHelper.make(Integer, false), "bar")
+            ] as Parameter[],
+            [
+                ClassHelper.make(Exception, false),
+                ClassHelper.make(IOException, false)
+            ] as ClassNode[],
+            new BlockStatement()
         )
         AstAssert.assertSyntaxTree([expected], result)
     }
@@ -1567,13 +1567,13 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new ClassNode(
-                "MyClass", ACC_PUBLIC, ClassHelper.make(Object, false)
+            "MyClass", ACC_PUBLIC, ClassHelper.make(Object, false)
         )
         expected.setGenericsTypes(
-                [
-                        new GenericsType(ClassHelper.make(Object, false)),
-                        new GenericsType(ClassHelper.make(Number, false), [ClassHelper.make(Number, false)] as ClassNode[], null),
-                ] as GenericsType[]
+            [
+                new GenericsType(ClassHelper.make(Object, false)),
+                new GenericsType(ClassHelper.make(Number, false), [ClassHelper.make(Number, false)] as ClassNode[], null),
+            ] as GenericsType[]
         )
         AstAssert.assertSyntaxTree([expected], result)
     }
@@ -1633,27 +1633,27 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         def expected = new ClassNode("MyClass", ACC_PUBLIC, ClassHelper.make(Object, false))
         expected.addAnnotation(new AnnotationNode(ClassHelper.make(Deprecated, false)))
         def pNode = new PropertyNode("myProp", ACC_PUBLIC, ClassHelper.make(String, false),
-                ClassHelper.make(this.class, false), new ConstantExpression("foo"), null, null)
+            ClassHelper.make(this.class, false), new ConstantExpression("foo"), null, null)
         pNode.addAnnotation(new AnnotationNode(ClassHelper.make(Deprecated, false)))
         expected.addProperty(pNode)
         expected.addMethod(new MethodNode(
-                "myMethod",
-                ACC_PUBLIC,
-                ClassHelper.make(String, false),
-                [new Parameter(ClassHelper.make(String, false), "parameter")] as Parameter[],
-                [ClassHelper.make(IOException, false)] as ClassNode[],
-                new BlockStatement(
-                        [new ReturnStatement(new ConstantExpression('some result'))], new VariableScope()
-                )))
+            "myMethod",
+            ACC_PUBLIC,
+            ClassHelper.make(String, false),
+            [new Parameter(ClassHelper.make(String, false), "parameter")] as Parameter[],
+            [ClassHelper.make(IOException, false)] as ClassNode[],
+            new BlockStatement(
+                [new ReturnStatement(new ConstantExpression('some result'))], new VariableScope()
+            )))
         expected.addMethod(new MethodNode(
-                "myOtherMethod",
-                ACC_PUBLIC,
-                ClassHelper.make(String, false),
-                [] as Parameter[],
-                [] as ClassNode[],
-                new BlockStatement(
-                        [new ReturnStatement(new ConstantExpression('some other result'))], new VariableScope()
-                )))
+            "myOtherMethod",
+            ACC_PUBLIC,
+            ClassHelper.make(String, false),
+            [] as Parameter[],
+            [] as ClassNode[],
+            new BlockStatement(
+                [new ReturnStatement(new ConstantExpression('some other result'))], new VariableScope()
+            )))
         AstAssert.assertSyntaxTree([expected], result)
     }
 
@@ -1681,16 +1681,16 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new ClassNode(
-                "MyClass", ACC_PUBLIC, ClassHelper.make(Object, false)
+            "MyClass", ACC_PUBLIC, ClassHelper.make(Object, false)
         )
         expected.setGenericsTypes(
-                [
-                        new GenericsType(ClassHelper.make(Object, false)),
-                        new GenericsType(
-                                ClassHelper.make(Number, false),
-                                [ClassHelper.make(Number, false), ClassHelper.make(Comparable, false)] as ClassNode[],
-                                ClassHelper.make(Integer, false)),
-                ] as GenericsType[]
+            [
+                new GenericsType(ClassHelper.make(Object, false)),
+                new GenericsType(
+                    ClassHelper.make(Number, false),
+                    [ClassHelper.make(Number, false), ClassHelper.make(Comparable, false)] as ClassNode[],
+                    ClassHelper.make(Integer, false)),
+            ] as GenericsType[]
         )
         AstAssert.assertSyntaxTree([expected], result)
     }
@@ -1703,8 +1703,8 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = [
-                new ImportNode(ClassHelper.make(String, false), "string"),
-                new ImportNode(ClassHelper.make(Integer, false), null)
+            new ImportNode(ClassHelper.make(String, false), "string"),
+            new ImportNode(ClassHelper.make(Integer, false), null)
         ]
 
         AstAssert.assertSyntaxTree(expected, result)
@@ -1740,17 +1740,17 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new MethodNode(
-                "myMethod",
-                ACC_PUBLIC,
-                ClassHelper.make(String, false),
-                [new Parameter(ClassHelper.make(String, false), "parameter")] as Parameter[],
-                [ClassHelper.make(Exception, false), ClassHelper.make(IOException, false)] as ClassNode[],
-                new BlockStatement(
-                        [new ReturnStatement(
-                                new ConstantExpression('some result')
-                        )],
-                        new VariableScope()
-                ))
+            "myMethod",
+            ACC_PUBLIC,
+            ClassHelper.make(String, false),
+            [new Parameter(ClassHelper.make(String, false), "parameter")] as Parameter[],
+            [ClassHelper.make(Exception, false), ClassHelper.make(IOException, false)] as ClassNode[],
+            new BlockStatement(
+                [new ReturnStatement(
+                    new ConstantExpression('some result')
+                )],
+                new VariableScope()
+            ))
         expected.addAnnotation(new AnnotationNode(ClassHelper.make(Override, false)))
         AstAssert.assertSyntaxTree([expected], result)
     }
@@ -1761,7 +1761,7 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
             method 'myMethod', ACC_PUBLIC, Object, {
                 parameters {}
                 exceptions {}
-                block { }
+                block {}
                 annotations {
                     annotation(Override) {
                         member 'timeout', {
@@ -1773,12 +1773,12 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new MethodNode(
-                "myMethod",
-                ACC_PUBLIC,
-                ClassHelper.make(Object, false),
-                [] as Parameter[],
-                [] as ClassNode[],
-                new BlockStatement([], new VariableScope()))
+            "myMethod",
+            ACC_PUBLIC,
+            ClassHelper.make(Object, false),
+            [] as Parameter[],
+            [] as ClassNode[],
+            new BlockStatement([], new VariableScope()))
 
         def annotation = new AnnotationNode(ClassHelper.make(Override, false))
         annotation.setMember('timeout', new ConstantExpression(50L))
@@ -1811,17 +1811,17 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new ClassNode(
-                "MyClass", ACC_PUBLIC,
-                ClassHelper.make(Object, false),
-                [ClassHelper.make(GroovyObject, false)] as ClassNode[],
-                [
-                        new MixinNode("ClassA", ACC_PUBLIC, ClassHelper.make(String, false)),
-                        new MixinNode(
-                                "ClassB",
-                                ACC_PUBLIC,
-                                ClassHelper.make(String, false),
-                                [ClassHelper.make(GroovyObject, false)] as ClassNode[]), // interfaces
-                ] as MixinNode[]
+            "MyClass", ACC_PUBLIC,
+            ClassHelper.make(Object, false),
+            [ClassHelper.make(GroovyObject, false)] as ClassNode[],
+            [
+                new MixinNode("ClassA", ACC_PUBLIC, ClassHelper.make(String, false)),
+                new MixinNode(
+                    "ClassB",
+                    ACC_PUBLIC,
+                    ClassHelper.make(String, false),
+                    [ClassHelper.make(GroovyObject, false)] as ClassNode[]), // interfaces
+            ] as MixinNode[]
         )
 
         AstAssert.assertSyntaxTree([expected], result)
@@ -1840,13 +1840,13 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
         }
 
         def expected = new PropertyNode(
-                "MY_VALUE",
-                ACC_PUBLIC,
-                ClassHelper.make(String, false),
-                ClassHelper.make(this.class, false),
-                new ConstantExpression("foo"),
-                null,
-                null        //todo: do we need to support getter and setter blocks?
+            "MY_VALUE",
+            ACC_PUBLIC,
+            ClassHelper.make(String, false),
+            ClassHelper.make(this.class, false),
+            new ConstantExpression("foo"),
+            null,
+            null        //todo: do we need to support getter and setter blocks?
         )
         AstAssert.assertSyntaxTree([expected], result)
     }
@@ -1866,8 +1866,8 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
             }
         }
         assertEquals("Wrong exception message",
-                "methodCall could not be invoked. Expected to receive parameters [class org.codehaus.groovy.ast.expr.Expression, class org.codehaus.groovy.ast.expr.Expression, class org.codehaus.groovy.ast.expr.Expression] but found [class org.codehaus.groovy.ast.expr.VariableExpression, class org.codehaus.groovy.ast.expr.ConstantExpression, class org.codehaus.groovy.ast.expr.ArgumentListExpression, class org.codehaus.groovy.ast.expr.ConstantExpression]",
-                msg)
+            "methodCall could not be invoked. Expected to receive parameters [class org.codehaus.groovy.ast.expr.Expression, class org.codehaus.groovy.ast.expr.Expression, class org.codehaus.groovy.ast.expr.Expression] but found [class org.codehaus.groovy.ast.expr.VariableExpression, class org.codehaus.groovy.ast.expr.ConstantExpression, class org.codehaus.groovy.ast.expr.ArgumentListExpression, class org.codehaus.groovy.ast.expr.ConstantExpression]",
+            msg)
     }
 
     void testMethodCallContract_TooFewArguments() {
@@ -1882,8 +1882,8 @@ class AstBuilderFromSpecificationTest extends GroovyTestCase {
             }
         }
         assertEquals("Wrong exception message",
-                "methodCall could not be invoked. Expected to receive parameters [class org.codehaus.groovy.ast.expr.Expression, class org.codehaus.groovy.ast.expr.Expression, class org.codehaus.groovy.ast.expr.Expression] but found [class org.codehaus.groovy.ast.expr.VariableExpression, class org.codehaus.groovy.ast.expr.ConstantExpression]",
-                msg)
+            "methodCall could not be invoked. Expected to receive parameters [class org.codehaus.groovy.ast.expr.Expression, class org.codehaus.groovy.ast.expr.Expression, class org.codehaus.groovy.ast.expr.Expression] but found [class org.codehaus.groovy.ast.expr.VariableExpression, class org.codehaus.groovy.ast.expr.ConstantExpression]",
+            msg)
     }
 
     void testAnnotationConstantExpressionContract_TooFewArguments() {

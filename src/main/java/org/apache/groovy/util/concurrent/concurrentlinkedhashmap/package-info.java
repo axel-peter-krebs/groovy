@@ -36,6 +36,6 @@
  * indicate that the map is not governed by a single exclusion lock.
  *
  * @see <a href="http://code.google.com/p/concurrentlinkedhashmap/">
- *      http://code.google.com/p/concurrentlinkedhashmap/</a>
+ * http://code.google.com/p/concurrentlinkedhashmap/</a>
  */
 package org.apache.groovy.util.concurrent.concurrentlinkedhashmap;

@@ -18,6 +18,7 @@ import groovy.test.GroovyTestCase
  *  specific language governing permissions and limitations
  *  under the License.
  */
+
 class CloningASTTransformsTest extends GroovyTestCase {
     void testAutoCloneAnnotation() {
         assertScript '''
@@ -209,6 +210,7 @@ assert book.title == 'Auto externalization for dummies'
 assert book.price == 0 // because price is excluded
 '''
     }
+
     void testAutoExternalizeWithIncludeFields() {
         assertScript '''
 // tag::example_autoext_includeFields[]

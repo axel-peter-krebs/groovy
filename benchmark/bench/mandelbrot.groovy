@@ -15,17 +15,17 @@ String pbm_header = new String('P4' + ((char) 012) + res + ' ' + res + ((char) 0
 System.out.write(pbm_header.getBytes(), 0, pbm_header.length())
 
 while (pos < max) {
-    Cr = (2*((double)x++)/res - 1.5)
-    Ci = (2*((double)y)/res - 1)
+    Cr = (2 * ((double) x++) / res - 1.5)
+    Ci = (2 * ((double) y) / res - 1)
 
     acc <<= 1
     while (((acc & 1) == 0) && (i++ < iter)) {
-        Tr = Zr*Zr - Zi*Zi + Cr
-        Ti = 2*Zr*Zi + Ci
+        Tr = Zr * Zr - Zi * Zi + Cr
+        Ti = 2 * Zr * Zi + Ci
         Zr = Tr
         Zi = Ti
 
-        acc |= (Zr*Zr+Zi*Zi > limit_sq) ? 1 : 0
+        acc |= (Zr * Zr + Zi * Zi > limit_sq) ? 1 : 0
     }
 
     if (x == res) {

@@ -25,12 +25,12 @@ class OperatorsTest extends CompilableTestSupport {
 
     void testArithmeticOperators() {
         // tag::binary_arith_ops[]
-        assert  1  + 2 == 3
-        assert  4  - 3 == 1
-        assert  3  * 5 == 15
-        assert  3  / 2 == 1.5
-        assert 10  % 3 == 1
-        assert  2 ** 3 == 8
+        assert 1 + 2 == 3
+        assert 4 - 3 == 1
+        assert 3 * 5 == 15
+        assert 3 / 2 == 1.5
+        assert 10 % 3 == 1
+        assert 2**3 == 8
         // end::binary_arith_ops[]
 
         // tag::unary_plus_minus[]
@@ -133,7 +133,7 @@ class OperatorsTest extends CompilableTestSupport {
         int mask = 0b11111111                   // <5>
         assert ((a ^ a) & mask) == 0b00000000   // <6>
         assert ((a ^ b) & mask) == 0b00100010   // <7>
-        assert ((~a) & mask)    == 0b11010101   // <8>
+        assert ((~a) & mask) == 0b11010101   // <8>
         // end::bitwise_op[]
     }
 
@@ -188,14 +188,14 @@ class OperatorsTest extends CompilableTestSupport {
 
     void testConditionalOperators() {
         // tag::conditional_op_not[]
-        assert (!true)    == false                      // <1>
-        assert (!'foo')   == false                      // <2>
-        assert (!'')      == true                       // <3>
+        assert (!true) == false                      // <1>
+        assert (!'foo') == false                      // <2>
+        assert (!'') == true                       // <3>
         // end::conditional_op_not[]
         def result
         def string = 'some string'
         // tag::conditional_op_ternary_if[]
-        if (string!=null && string.length()>0) {
+        if (string != null && string.length() > 0) {
             result = 'Found'
         } else {
             result = 'Not found'
@@ -204,7 +204,7 @@ class OperatorsTest extends CompilableTestSupport {
         assert result == 'Found'
         result = null
         // tag::conditional_op_ternary_ternary[]
-        result = (string!=null && string.length()>0) ? 'Found' : 'Not found'
+        result = (string != null && string.length() > 0) ? 'Found' : 'Not found'
         // end::conditional_op_ternary_ternary[]
         assert result == 'Found'
 
@@ -512,9 +512,9 @@ assert function(*args,5,6) == 26
 
     void testSpreadList() {
         // tag::spread_list[]
-        def items = [4,5]                      // <1>
-        def list = [1,2,3,*items,6]            // <2>
-        assert list == [1,2,3,4,5,6]           // <3>
+        def items = [4, 5]                      // <1>
+        def list = [1, 2, 3, *items, 6]            // <2>
+        assert list == [1, 2, 3, 4, 5, 6]           // <3>
         // end::spread_list[]
     }
 
@@ -610,7 +610,7 @@ assert function(*args,5,6) == 26
 
     void testMembershipOperator() {
         // tag::membership_op[]
-        def list = ['Grace','Rob','Emmy']
+        def list = ['Grace', 'Rob', 'Emmy']
         assert ('Emmy' in list)                     // <1>
         assert ('Alex' !in list)                    // <2>
         // end::membership_op[]
@@ -618,8 +618,8 @@ assert function(*args,5,6) == 26
 
     void testIdentityOperator() {
         // tag::identity_op[]
-        def list1 = ['Groovy 1.8','Groovy 2.0','Groovy 2.3']        // <1>
-        def list2 = ['Groovy 1.8','Groovy 2.0','Groovy 2.3']        // <2>
+        def list1 = ['Groovy 1.8', 'Groovy 2.0', 'Groovy 2.3']        // <1>
+        def list2 = ['Groovy 1.8', 'Groovy 2.0', 'Groovy 2.3']        // <2>
         assert list1 == list2                                       // <3>
         assert !list1.is(list2)                                     // <4>
         assert list1 !== list2                                      // <5>
@@ -706,6 +706,7 @@ assert (b1 + b2).size == 15                         // <1>
 // end::operator_overload_op[]
 '''
     }
+
     void testOperatorOverloadingWithDifferentArgumentType() {
         assertScript '''
 class Bucket {
@@ -729,6 +730,7 @@ assert (b1 + 11).size == 15
     private static class Person {
         Long id
         String name
+
         static Person find(Closure c) { null }
     }
 

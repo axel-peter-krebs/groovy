@@ -25,13 +25,27 @@ import java.util.List;
 
 public class ValueList extends AbstractList<Object> {
 
-    List<Object> list = new ArrayList<Object>(5);
-
     private final boolean lazyChop;
+    List<Object> list = new ArrayList<Object>(5);
     boolean converted = false;
 
     public ValueList(boolean lazyChop) {
         this.lazyChop = lazyChop;
+    }
+
+    private static Object convert(Value value) {
+        return value.toValue();
+    }
+
+    static void chopContainer(Value value) {
+        Object obj = value.toValue();
+        if (obj instanceof LazyValueMap) {
+            LazyValueMap map = (LazyValueMap) obj;
+            map.chopMap();
+        } else if (obj instanceof ValueList) {
+            ValueList list = (ValueList) obj;
+            list.chopList();
+        }
     }
 
     @Override
@@ -45,10 +59,6 @@ public class ValueList extends AbstractList<Object> {
 
         chopIfNeeded(obj);
         return obj;
-    }
-
-    private static Object convert(Value value) {
-        return value.toValue();
     }
 
     @Override
@@ -105,17 +115,6 @@ public class ValueList extends AbstractList<Object> {
                 ValueList list = (ValueList) object;
                 list.chopList();
             }
-        }
-    }
-
-    static void chopContainer(Value value) {
-        Object obj = value.toValue();
-        if (obj instanceof LazyValueMap) {
-            LazyValueMap map = (LazyValueMap) obj;
-            map.chopMap();
-        } else if (obj instanceof ValueList) {
-            ValueList list = (ValueList) obj;
-            list.chopList();
         }
     }
 

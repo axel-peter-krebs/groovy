@@ -34,7 +34,8 @@ interface Evaluator {
 /**
  * Helper to interpret a source buffer.
  */
-@AutoFinal @CompileStatic
+@AutoFinal
+@CompileStatic
 class Interpreter implements Evaluator {
 
     protected static final String SCRIPT_FILENAME = 'groovysh_evaluate'
@@ -64,7 +65,8 @@ class Interpreter implements Evaluator {
 
     //--------------------------------------------------------------------------
 
-    @Override @CompileDynamic
+    @Override
+    @CompileDynamic
     Object evaluate(Collection<String> buffer) {
         assert buffer
 

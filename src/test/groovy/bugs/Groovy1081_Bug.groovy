@@ -28,7 +28,7 @@ import groovy.test.GroovyTestCase
 class Groovy1081_Bug extends GroovyTestCase {
 
     void testShort() {
-         def reader = new StringReader('abc')
+        def reader = new StringReader('abc')
         def writer = new StringWriter()
 
         reader.transformLine(writer) { it }

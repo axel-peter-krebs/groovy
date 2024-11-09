@@ -37,9 +37,9 @@ class MethodMissingTest extends GroovyTestCase {
 
     void testOverrideStaticMethodMissingTwice() {
         MMTest2.metaClass.'static'.methodMissing = { String name, args -> "foo" }
-        assertEquals "foo",MMTest2.doStuff()
+        assertEquals "foo", MMTest2.doStuff()
         MMTest2.metaClass.'static'.methodMissing = { String name, args -> "bar" }
-        assertEquals "bar",MMTest2.doStuff()
+        assertEquals "bar", MMTest2.doStuff()
     }
 
     void testSimpleMethodMissing() {
@@ -64,7 +64,7 @@ class MethodMissingTest extends GroovyTestCase {
 
     void testMethodMissingWithRegistration() {
         MMTest2.metaClass.methodMissing = { String name, args ->
-             MMTest2.metaClass."$name" = {-> "bar" }        
+            MMTest2.metaClass."$name" = { -> "bar" }
             "foo"
         }
         def t2 = new MMTest2()
@@ -77,27 +77,27 @@ class MethodMissingTest extends GroovyTestCase {
     void testStaticMethodMissingViaMetaClass() {
         assertEquals "world", MMTest3.hello()
         shouldFail(MissingMethodException) {
-            MMTest3.stuff()            
+            MMTest3.stuff()
         }
-        MMTest3.metaClass.'static'.methodMissing = { String name, args->
-             "foo"
+        MMTest3.metaClass.'static'.methodMissing = { String name, args ->
+            "foo"
         }
         assertEquals "world", MMTest3.hello()
         assertEquals "foo", MMTest3.stuff()
     }
 
     void testMethodMissingWithInheritance() {
-         assertEquals "world",MMTest6.hello()
-         assertEquals "cruel world",MMTest6.goodbye()
+        assertEquals "world", MMTest6.hello()
+        assertEquals "cruel world", MMTest6.goodbye()
 
-         MMTest6.metaClass.'static'.methodMissing = { String name, args ->
+        MMTest6.metaClass.'static'.methodMissing = { String name, args ->
             "foo"
-         }
-         assertEquals "foo",MMTest6.bar()
+        }
+        assertEquals "foo", MMTest6.bar()
 
-         shouldFail(MissingMethodException) {
-             MMTest5.bar()
-         }
+        shouldFail(MissingMethodException) {
+            MMTest5.bar()
+        }
     }
 
     // GROOVY-4701
@@ -111,7 +111,7 @@ class MethodMissingTest extends GroovyTestCase {
             assert !sw.toString().contains("toString broken")
         }
         sw = new StringWriter()
-        exception = new MissingMethodException("methodName", getClass(), new Broken(hash:  9))
+        exception = new MissingMethodException("methodName", getClass(), new Broken(hash: 9))
         sw.withPrintWriter { pw ->
             exception.printStackTrace(pw)
             assert sw.toString().contains("groovy.lang.MissingMethodException: No signature of method")
@@ -123,6 +123,7 @@ class MethodMissingTest extends GroovyTestCase {
 
 class MMTest {
     def hello() { "world" }
+
     def methodMissing(String name, args) {
         "foo"
     }
@@ -146,10 +147,12 @@ class MMTest6 extends MMTest5 {
 
 class Broken {
     int hash = -1
+
     @Override
     String toString() {
         throw new RuntimeException("toString broken")
     }
+
     @Override
     int hashCode() {
         if (hash == -1) throw new RuntimeException("hashCode broken")

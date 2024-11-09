@@ -40,7 +40,8 @@ class Resource implements Closeable {
 // test case 1
 def a = 1;
 Resource resource1 = new Resource(1)
-try (resource1) {
+try (
+resource1 ) {
     a = 2;
 }
 assert Resource.closedResourceIds == [1]
@@ -52,10 +53,11 @@ final exMsg = "resource not found";
 try {
     // try { ... } should throw the IOException, while the resource should be closed
     Resource r1 = new Resource(2)
-    try (r1) {
+    try (
+    r1 ) {
         throw new FileNotFoundException(exMsg)
     }
-} catch(FileNotFoundException e) {
+} catch (FileNotFoundException e) {
     assert exMsg == e.getMessage()
 }
 assert Resource.closedResourceIds == [2]
@@ -65,7 +67,8 @@ Resource.closedResourceIds = []
 a = 1;
 try {
     Resource r1 = new Resource(3)
-    try (r1) {
+    try (
+    r1 ) {
         a = 2;
     }
 } catch (IOException e) {
@@ -79,10 +82,11 @@ Resource.closedResourceIds = []
 try {
     // try { ... } should throw the IOException, while the resource should be closed
     Resource r1 = new Resource(3)
-    try (r1) {
+    try (
+    r1 ) {
         throw new FileNotFoundException(exMsg)
     }
-} catch(FileNotFoundException e) {
+} catch (FileNotFoundException e) {
     assert exMsg == e.getMessage()
 
     def suppressedExceptions = e.getSuppressed();
@@ -97,8 +101,9 @@ assert Resource.closedResourceIds == []
 Resource.closedResourceIds = []
 a = 1;
 Resource rr1 = new Resource(5)
-try (rr1;
-Resource r2 = new Resource(6);) {
+try (
+rr1;
+Resource r2 = new Resource(6); ) {
     a = 2;
 }
 assert Resource.closedResourceIds == [6, 5]
@@ -110,7 +115,7 @@ a = 1;
 Resource rr2 = new Resource(6)
 try (Resource r1 = new Resource(5);
 rr2;
-Resource r3 = new Resource(7);) {
+Resource r3 = new Resource(7); ) {
     a = 2;
 }
 assert Resource.closedResourceIds == [7, 6, 5]
@@ -120,9 +125,10 @@ assert 2 == a
 // test case 7
 Resource.closedResourceIds = []
 Resource rrr1 = new Resource(7)
-try (rrr1) {
+try (
+rrr1 ) {
     throw new FileNotFoundException(exMsg)
-} catch(FileNotFoundException e) {
+} catch (FileNotFoundException e) {
     assert exMsg == e.getMessage()
 }
 assert Resource.closedResourceIds == [7]
@@ -131,9 +137,9 @@ assert Resource.closedResourceIds == [7]
 Resource rrr2 = new Resource(8)
 Resource.closedResourceIds = []
 try (Resource r1 = new Resource(7);
-rrr2) {
+rrr2 ) {
     throw new FileNotFoundException(exMsg)
-} catch(FileNotFoundException e) {
+} catch (FileNotFoundException e) {
     assert exMsg == e.getMessage()
 }
 assert Resource.closedResourceIds == [8, 7]
@@ -143,7 +149,8 @@ assert Resource.closedResourceIds == [8, 7]
 Resource.closedResourceIds = []
 a = 1;
 Resource rrrr1 = new Resource(3)
-try (rrrr1) {
+try (
+rrrr1 ) {
     a = 2;
 } catch (IOException e) {
     assert Resource.exMsg == e.getMessage()
@@ -157,7 +164,8 @@ Resource.closedResourceIds = []
 a = 1;
 Resource rrrrr1 = new Resource(3);
 Resource rrrrr2 = new Resource(4);
-try (rrrrr1; rrrrr2) {
+try (
+rrrrr1; rrrrr2 ) {
     a = 2;
 } catch (IOException e) {
     assert Resource.exMsg == e.getMessage()
@@ -170,8 +178,9 @@ Resource.closedResourceIds = []
 a = 1;
 Resource rrrrrr0 = new Resource(2);
 Resource rrrrrr2 = new Resource(4)
-try (rrrrrr0;
-Resource rrrrrr1 = new Resource(3); rrrrrr2) {
+try (
+rrrrrr0;
+Resource rrrrrr1 = new Resource(3); rrrrrr2 ) {
     a = 2;
 } catch (IOException e) {
     assert Resource.exMsg == e.getMessage()
@@ -184,10 +193,11 @@ assert Resource.closedResourceIds == [4, 2]
 Resource.closedResourceIds = []
 Resource rrrrrrr1 = new Resource(3);
 Resource rrrrrrr2 = new Resource(4)
-try (rrrrrrr1;
-rrrrrrr2) {
+try (
+rrrrrrr1;
+rrrrrrr2 ) {
     throw new FileNotFoundException(exMsg)
-} catch(FileNotFoundException e) {
+} catch (FileNotFoundException e) {
     assert exMsg == e.getMessage()
 
     def suppressedExceptions = e.getSuppressed();
@@ -201,10 +211,10 @@ assert Resource.closedResourceIds == [4]
 Resource.closedResourceIds = []
 Resource rrrrrrrr2 = new Resource(4)
 try (Resource r0 = new Resource(2);
-Resource r1 = new Resource(3);
-rrrrrrrr2) {
+     Resource r1 = new Resource(3);
+rrrrrrrr2 ) {
     throw new FileNotFoundException(exMsg)
-} catch(FileNotFoundException e) {
+} catch (FileNotFoundException e) {
     assert exMsg == e.getMessage()
 
     def suppressedExceptions = e.getSuppressed();
@@ -218,25 +228,29 @@ assert Resource.closedResourceIds == [4, 2]
 Resource.closedResourceIds = []
 a = 1;
 Resource rrrrrrrrr1 = new Resource(1)
-try (rrrrrrrrr1) {
+try (
+rrrrrrrrr1 ) {
     a += 2;
     Resource rrrrrrrrr2 = new Resource(2);
     Resource rrrrrrrrr4 = new Resource(4)
-    try (rrrrrrrrr2; rrrrrrrrr4) {
+    try (
+    rrrrrrrrr2; rrrrrrrrr4 ) {
         a += 3;
         Resource rrrrrrrrr6 = new Resource(6)
-        try (Resource r5 = new Resource(5); rrrrrrrrr6; Resource r7 = new Resource(7)) {
+        try (Resource r5 = new Resource(5);
+        rrrrrrrrr6; Resource r7 = new Resource(7) ) {
             a += 4;
             try {
                 Resource rrrrrrrrr3 = new Resource(3)
-                try (rrrrrrrrr3) {
+                try (
+                rrrrrrrrr3 ) {
                     a += 5;
                 }
             } catch (IOException e) {
                 assert Resource.exMsg == e.getMessage()
             }
         }
-    } catch(Exception e) {
+    } catch (Exception e) {
         // ignored
     } finally {
         a += 10
@@ -251,25 +265,29 @@ void tryWithResources() {
     Resource.closedResourceIds = []
     int cs = 1;
     Resource r1 = new Resource(1)
-    try (r1) {
+    try (
+    r1 ) {
         cs += 2;
         Resource r2 = new Resource(2);
         Resource r4 = new Resource(4)
-        try (r2; r4) {
+        try (
+        r2; r4 ) {
             cs += 3;
             Resource r6 = new Resource(6);
-            try (Resource r5 = new Resource(5); r6; Resource r7 = new Resource(7)) {
+            try (Resource r5 = new Resource(5);
+            r6; Resource r7 = new Resource(7) ) {
                 cs += 4;
                 try {
                     Resource r3 = new Resource(3)
-                    try (r3) {
+                    try (
+                    r3 ) {
                         cs += 5;
                     }
                 } catch (IOException e) {
                     assert Resource.exMsg == e.getMessage()
                 }
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             // ignored
         } finally {
             cs += 10
@@ -286,11 +304,11 @@ tryWithResources()
 Resource.closedResourceIds = []
 a = 1;
 Resource rrrrrrrrrr1 = new Resource(
-        1
+    1
 )
 try (
-        rrrrrrrrrr1
-        Resource r2 = new Resource(2)
+rrrrrrrrrr1
+Resource r2 = new Resource(2)
 ) {
     a = 2;
 }
@@ -301,8 +319,9 @@ assert 2 == a
 Resource.closedResourceIds = []
 a = 1;
 rrrrrrrrrrr2 = new Resource(2)
-try (r1 = new Resource(1)
-rrrrrrrrrrr2) {
+try (
+r1 = new Resource(1)
+rrrrrrrrrrr2 ) {
     a = 2;
 }
 assert Resource.closedResourceIds == [2, 1]

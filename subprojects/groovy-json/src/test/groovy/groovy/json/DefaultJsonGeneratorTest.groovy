@@ -24,8 +24,8 @@ class DefaultJsonGeneratorTest extends GroovyTestCase {
 
     void testExcludesNullValues() {
         def generator = new JsonGenerator.Options()
-                .excludeNulls()
-                .build()
+            .excludeNulls()
+            .build()
 
         def json = generator.toJson(new JsonObject(name: 'test', properties: null))
         assert json == '{"name":"test"}'
@@ -34,7 +34,7 @@ class DefaultJsonGeneratorTest extends GroovyTestCase {
         assert json == '{"field2":"test"}'
 
         assert generator.toJson([null]) == '[]'
-        assert generator.toJson(['a','b','c','d', null]) == '["a","b","c","d"]'
+        assert generator.toJson(['a', 'b', 'c', 'd', null]) == '["a","b","c","d"]'
         assert generator.toJson(['a', null, null, null, null]) == '["a"]'
         assert generator.toJson(['a', null, null, null, 'e']) == '["a","e"]'
 
@@ -43,25 +43,25 @@ class DefaultJsonGeneratorTest extends GroovyTestCase {
         assert generator.toJson(jsonArray) == jsonExpected
         assert generator.toJson(jsonArray as Object[]) == jsonExpected
         assert generator.toJson(jsonArray.iterator()) == jsonExpected
-        assert generator.toJson((Iterable)jsonArray) == jsonExpected
+        assert generator.toJson((Iterable) jsonArray) == jsonExpected
 
-        assert generator.toJson((Boolean)null) == ''
-        assert generator.toJson((Number)null) == ''
-        assert generator.toJson((Character)null) == ''
-        assert generator.toJson((String)null) == ''
-        assert generator.toJson((Date)null) == ''
-        assert generator.toJson((Calendar)null) == ''
-        assert generator.toJson((UUID)null) == ''
-        assert generator.toJson((Closure)null) == ''
-        assert generator.toJson((Expando)null) == ''
-        assert generator.toJson((Object)null) == ''
-        assert generator.toJson((Map)null) == ''
+        assert generator.toJson((Boolean) null) == ''
+        assert generator.toJson((Number) null) == ''
+        assert generator.toJson((Character) null) == ''
+        assert generator.toJson((String) null) == ''
+        assert generator.toJson((Date) null) == ''
+        assert generator.toJson((Calendar) null) == ''
+        assert generator.toJson((UUID) null) == ''
+        assert generator.toJson((Closure) null) == ''
+        assert generator.toJson((Expando) null) == ''
+        assert generator.toJson((Object) null) == ''
+        assert generator.toJson((Map) null) == ''
     }
 
     void testCustomDateFormat() {
         def generator = new JsonGenerator.Options()
-                .dateFormat('yyyy-MM')
-                .build()
+            .dateFormat('yyyy-MM')
+            .build()
 
         Date aDate = Date.parse('yyyy-MM-dd', '2016-07-04')
         assert generator.toJson(aDate) == '"2016-07"'
@@ -75,7 +75,7 @@ class DefaultJsonGeneratorTest extends GroovyTestCase {
         assert generator.toJson(jsonArray) == jsonExpected
         assert generator.toJson(jsonArray as Object[]) == jsonExpected
         assert generator.toJson(jsonArray.iterator()) == jsonExpected
-        assert generator.toJson((Iterable)jsonArray) == jsonExpected
+        assert generator.toJson((Iterable) jsonArray) == jsonExpected
     }
 
     void testDateFormatBadInput() {
@@ -92,16 +92,16 @@ class DefaultJsonGeneratorTest extends GroovyTestCase {
 
     void testClosureConverters() {
         def generator = new JsonGenerator.Options()
-                .addConverter(JsonCyclicReference) { object, key ->
-            return "JsonCyclicReference causes a stackoverflow"
-        }
-        .addConverter(Date) { object ->
-            return "4 score and 7 years ago"
-        }
-        .addConverter(Calendar) { object ->
-            return "22 days ago"
-        }
-        .build()
+            .addConverter(JsonCyclicReference) { object, key ->
+                return "JsonCyclicReference causes a stackoverflow"
+            }
+            .addConverter(Date) { object ->
+                return "4 score and 7 years ago"
+            }
+            .addConverter(Calendar) { object ->
+                return "22 days ago"
+            }
+            .build()
 
         assert generator.toJson(new Date()) == '"4 score and 7 years ago"'
 
@@ -115,7 +115,7 @@ class DefaultJsonGeneratorTest extends GroovyTestCase {
         assert generator.toJson(jsonArray) == jsonExpected
         assert generator.toJson(jsonArray as Object[]) == jsonExpected
         assert generator.toJson(jsonArray.iterator()) == jsonExpected
-        assert generator.toJson((Iterable)jsonArray) == jsonExpected
+        assert generator.toJson((Iterable) jsonArray) == jsonExpected
 
         assert generator.toJson([timeline: Calendar.getInstance()]) == '{"timeline":"22 days ago"}'
     }
@@ -124,20 +124,21 @@ class DefaultJsonGeneratorTest extends GroovyTestCase {
         def converter = new JsonGenerator.Converter() {
             @Override
             boolean handles(Class<?> type) { Date.class == type }
+
             @Override
             Object convert(Object value, String key) { '42' }
         }
 
         def generator = new JsonGenerator.Options()
-                            .addConverter(converter)
-                            .build()
+            .addConverter(converter)
+            .build()
 
         assert generator.toJson([new Date()]) == '["42"]'
 
         def mapConverter = [handles: { Date.class == it }, convert: { obj, key -> 7 }]
         generator = new JsonGenerator.Options()
-                       .addConverter(mapConverter as JsonGenerator.Converter)
-                        .build()
+            .addConverter(mapConverter as JsonGenerator.Converter)
+            .build()
 
         assert generator.toJson([new Date()]) == '[7]'
     }
@@ -165,36 +166,36 @@ class DefaultJsonGeneratorTest extends GroovyTestCase {
             new JsonGenerator.Options().addConverter(Date, null)
         }
         shouldFail(IllegalArgumentException) {
-            new JsonGenerator.Options().addConverter(Date, {-> 'no args closure'})
+            new JsonGenerator.Options().addConverter(Date, { -> 'no args closure' })
         }
         shouldFail(IllegalArgumentException) {
-            new JsonGenerator.Options().addConverter(Date, { UUID obj -> 'mis-matched types'})
+            new JsonGenerator.Options().addConverter(Date, { UUID obj -> 'mis-matched types' })
         }
         shouldFail(IllegalArgumentException) {
-            new JsonGenerator.Options().addConverter(Date, { Date obj, UUID cs -> 'mis-matched types'})
+            new JsonGenerator.Options().addConverter(Date, { Date obj, UUID cs -> 'mis-matched types' })
         }
     }
 
     void testExcludesFieldsByName() {
         def generator = new JsonGenerator.Options()
-                .excludeFieldsByName('name')
-                .build()
+            .excludeFieldsByName('name')
+            .build()
 
         def ref = new JsonObject(name: 'Jason', properties: ['foo': 'bar'])
         def json = generator.toJson(ref)
         assert json == '{"properties":{"foo":"bar"}}'
 
-        def jsonArray = ["foo", ["bar":"test","name":"Jane"], "baz"]
+        def jsonArray = ["foo", ["bar": "test", "name": "Jane"], "baz"]
         def jsonExpected = '["foo",{"bar":"test"},"baz"]'
         assert generator.toJson(jsonArray) == jsonExpected
         assert generator.toJson(jsonArray as Object[]) == jsonExpected
         assert generator.toJson(jsonArray.iterator()) == jsonExpected
-        assert generator.toJson((Iterable)jsonArray) == jsonExpected
+        assert generator.toJson((Iterable) jsonArray) == jsonExpected
 
         def excludeList = ['foo', 'bar', "${'zoo'}"]
         generator = new JsonGenerator.Options()
-                .excludeFieldsByName(excludeList)
-                .build()
+            .excludeFieldsByName(excludeList)
+            .build()
 
         json = generator.toJson([foo: 'one', bar: 'two', baz: 'three', zoo: 'four'])
         assert json == '{"baz":"three"}'
@@ -208,8 +209,8 @@ class DefaultJsonGeneratorTest extends GroovyTestCase {
 
     void testExcludeFieldsByNameShouldIgnoreNulls() {
         def opts = new JsonGenerator.Options()
-                .excludeFieldsByName('foo', null, "${'bar'}")
-                .excludeFieldsByName([new StringBuilder('one'), null, 'two'])
+            .excludeFieldsByName('foo', null, "${'bar'}")
+            .excludeFieldsByName([new StringBuilder('one'), null, 'two'])
 
         assert opts.@excludedFieldNames.size() == 4
         assert !opts.@excludedFieldNames.contains(null)
@@ -217,8 +218,8 @@ class DefaultJsonGeneratorTest extends GroovyTestCase {
 
     void testExcludesFieldsByType() {
         def generator = new JsonGenerator.Options()
-                .excludeFieldsByType(Date)
-                .build()
+            .excludeFieldsByType(Date)
+            .build()
 
         def ref = [name: 'Jason', dob: new Date(), location: 'Los Angeles']
         assert generator.toJson(ref) == '{"name":"Jason","location":"Los Angeles"}'
@@ -228,24 +229,24 @@ class DefaultJsonGeneratorTest extends GroovyTestCase {
         assert generator.toJson(jsonArray) == jsonExpected
         assert generator.toJson(jsonArray as Object[]) == jsonExpected
         assert generator.toJson(jsonArray.iterator()) == jsonExpected
-        assert generator.toJson((Iterable)jsonArray) == jsonExpected
+        assert generator.toJson((Iterable) jsonArray) == jsonExpected
 
         generator = new JsonGenerator.Options()
-                .excludeFieldsByType(Integer)
-                .excludeFieldsByType(Boolean)
-                .excludeFieldsByType(Character)
-                .excludeFieldsByType(Calendar)
-                .excludeFieldsByType(UUID)
-                .excludeFieldsByType(URL)
-                .excludeFieldsByType(Closure)
-                .excludeFieldsByType(Expando)
-                .excludeFieldsByType(TreeMap)
-                .excludeFieldsByType(Date)
-                .build()
+            .excludeFieldsByType(Integer)
+            .excludeFieldsByType(Boolean)
+            .excludeFieldsByType(Character)
+            .excludeFieldsByType(Calendar)
+            .excludeFieldsByType(UUID)
+            .excludeFieldsByType(URL)
+            .excludeFieldsByType(Closure)
+            .excludeFieldsByType(Expando)
+            .excludeFieldsByType(TreeMap)
+            .excludeFieldsByType(Date)
+            .build()
 
         assert generator.toJson(Integer.valueOf(7)) == ''
         assert generator.toJson(Boolean.TRUE) == ''
-        assert generator.toJson((Character)'c') == ''
+        assert generator.toJson((Character) 'c') == ''
         assert generator.toJson(Calendar.getInstance()) == ''
         assert generator.toJson(UUID.randomUUID()) == ''
         assert generator.toJson(new URL('http://groovy-lang.org')) == ''
@@ -256,8 +257,8 @@ class DefaultJsonGeneratorTest extends GroovyTestCase {
 
         def excludeList = [URL, Date]
         generator = new JsonGenerator.Options()
-                .excludeFieldsByType(excludeList)
-                .build()
+            .excludeFieldsByType(excludeList)
+            .build()
 
         def json = generator.toJson([foo: new Date(), bar: 'two', baz: new URL('http://groovy-lang.org')])
         assert json == '{"bar":"two"}'
@@ -271,8 +272,8 @@ class DefaultJsonGeneratorTest extends GroovyTestCase {
 
     void testExcludeFieldsByTypeShouldIgnoreNulls() {
         def opts = new JsonGenerator.Options()
-                .excludeFieldsByType(Date, null, URL)
-                .excludeFieldsByType([Calendar, null, TreeMap])
+            .excludeFieldsByType(Date, null, URL)
+            .excludeFieldsByType([Calendar, null, TreeMap])
 
         assert opts.@excludedFieldTypes.size() == 4
         assert !opts.@excludedFieldTypes.contains(null)
@@ -280,13 +281,13 @@ class DefaultJsonGeneratorTest extends GroovyTestCase {
 
     void testDisableUnicodeEscaping() {
         def json = new JsonGenerator.Options()
-                .disableUnicodeEscaping()
-                .build()
+            .disableUnicodeEscaping()
+            .build()
 
         String unicodeString = 'ΚΡΕΩΠΟΛΕΙΟ'
         assert json.toJson([unicodeString]) == """["${unicodeString}"]"""
 
-        assert json.toJson(['KÉY':'VALUE']) == '{"KÉY":"VALUE"}'
+        assert json.toJson(['KÉY': 'VALUE']) == '{"KÉY":"VALUE"}'
     }
 
 }
@@ -300,6 +301,7 @@ class JsonBar {
     String favoriteDrink
     Date lastVisit
     JsonCyclicReference cycle = new JsonCyclicReference()
+
     JsonBar(String favoriteDrink, Date lastVisit) {
         this.favoriteDrink = favoriteDrink
         this.lastVisit = lastVisit
@@ -308,5 +310,6 @@ class JsonBar {
 
 class JsonCyclicReference {
     static final DEFAULT = new JsonCyclicReference()
-    JsonCyclicReference() { }
+
+    JsonCyclicReference() {}
 }

@@ -32,9 +32,9 @@ public class JdkDynamicProxyInvocationHandler implements InvocationHandler {
     public static Object getProxiedObject(Object obj) {
         Class cl = obj.getClass();
         return Proxy.newProxyInstance(
-                cl.getClassLoader(),
-                cl.getInterfaces(),
-                new JdkDynamicProxyInvocationHandler(obj)
+            cl.getClassLoader(),
+            cl.getInterfaces(),
+            new JdkDynamicProxyInvocationHandler(obj)
         );
     }
 

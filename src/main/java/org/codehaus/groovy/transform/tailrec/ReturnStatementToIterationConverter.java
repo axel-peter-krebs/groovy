@@ -53,7 +53,10 @@ import static org.codehaus.groovy.runtime.DefaultGroovyMethods.minus;
  * parameters that are only handed through must not be copied at all.
  */
 public class ReturnStatementToIterationConverter {
-    public ReturnStatementToIterationConverter() {}
+    private Statement recurStatement = AstHelper.recurStatement();
+
+    public ReturnStatementToIterationConverter() {
+    }
 
     public ReturnStatementToIterationConverter(Statement recurStatement) {
         this.recurStatement = recurStatement;
@@ -155,7 +158,5 @@ public class ReturnStatementToIterationConverter {
     public void setRecurStatement(Statement recurStatement) {
         this.recurStatement = recurStatement;
     }
-
-    private Statement recurStatement = AstHelper.recurStatement();
 }
 

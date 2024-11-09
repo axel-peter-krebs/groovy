@@ -40,9 +40,11 @@ class Groovy7951Bug extends GroovyTestCase {
         // Just visiting the transform method on each expression is enough to verify
         // that the checker is able to see the generic types in the later phase.
         def transformer = new CompilationCustomizer(CANONICALIZATION) {
-            @Override void call(SourceUnit src, GeneratorContext ctxt, ClassNode cn) {
+            @Override
+            void call(SourceUnit src, GeneratorContext ctxt, ClassNode cn) {
                 new ClassCodeExpressionTransformer() {
-                    @Override SourceUnit getSourceUnit() { src }
+                    @Override
+                    SourceUnit getSourceUnit() { src }
                 }.visitClass(cn)
             }
         }
@@ -51,15 +53,18 @@ class Groovy7951Bug extends GroovyTestCase {
         def checker = new CompilationCustomizer(INSTRUCTION_SELECTION) {
             void call(SourceUnit src, GeneratorContext ctxt, ClassNode cn) {
                 new ClassCodeVisitorSupport() {
-                    @Override void visitMethodCallExpression(MethodCallExpression mce) {
+                    @Override
+                    void visitMethodCallExpression(MethodCallExpression mce) {
                         if (mce.objectExpression.text == 'java.util.Collections' &&
-                                mce.method.text == 'emptyList') {
+                            mce.method.text == 'emptyList') {
                             assert mce.genericsTypes != null && mce.genericsTypes*.name == ['Date']
                             assertWasChecked = true
                         }
                         super.visitMethodCallExpression(mce)
                     }
-                    @Override SourceUnit getSourceUnit() { src }
+
+                    @Override
+                    SourceUnit getSourceUnit() { src }
                 }.visitClass(cn)
             }
         }

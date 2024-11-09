@@ -60,7 +60,7 @@ public class CharacterArrayGetAtMetaMethod extends ArrayGetAtMetaMethod {
         @Override
         public Object call(Object receiver, Object arg) throws Throwable {
             if ((receiver instanceof char[] && arg instanceof Integer)
-                    && checkPojoMetaClass()) {
+                && checkPojoMetaClass()) {
                 final char[] objects = (char[]) receiver;
                 return objects[normaliseIndex((Integer) arg, objects.length)];
             } else

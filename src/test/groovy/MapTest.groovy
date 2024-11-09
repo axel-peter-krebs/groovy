@@ -23,7 +23,7 @@ import groovy.test.GroovyTestCase
 final class MapTest extends GroovyTestCase {
 
     void testMap() {
-        def m = [1:'one', '2':'two', 3:'three']
+        def m = [1: 'one', '2': 'two', 3: 'three']
 
         assert m.size() == 3
         assert m.get(1) == 'one'
@@ -58,18 +58,16 @@ final class MapTest extends GroovyTestCase {
         assert m.containsValue('cheddar')
 
 
-        if ( m.containsKey('cheese') ) {
+        if (m.containsKey('cheese')) {
             // ignore
-        }
-        else {
-            assert false , 'should contain cheese!'
+        } else {
+            assert false, 'should contain cheese!'
         }
 
-        if ( m.containsKey(3) ) {
+        if (m.containsKey(3)) {
             // ignore
-        }
-        else {
-            assert false , 'should contain 3!'
+        } else {
+            assert false, 'should contain 3!'
         }
     }
 
@@ -89,7 +87,7 @@ final class MapTest extends GroovyTestCase {
      * Map "empty" property isn't Map#isEmpty.
      */
     void testMapEmpty() {
-        def m = [:].withDefault{ 'entry' }
+        def m = [:].withDefault { 'entry' }
 
         assert m.get('empty') == 'entry'
         assert m['empty'] == 'entry'
@@ -101,7 +99,7 @@ final class MapTest extends GroovyTestCase {
      * Map "class" property isn't Object#getClass.
      */
     void testMapClass() {
-        def m = [:].withDefault{ 'entry' }
+        def m = [:].withDefault { 'entry' }
 
         assert m.get('class') == 'entry'
         assert m['class'] == 'entry'
@@ -111,7 +109,7 @@ final class MapTest extends GroovyTestCase {
 
     // GROOVY-5001, GROOVY-11367
     void testMapDelegate() {
-        for (mode in ['','static']) {
+        for (mode in ['', 'static']) {
             assertScript """import groovy.transform.*
                 class M {
                     @Delegate final Map m = [:].withDefault{ 'entry' }
@@ -176,7 +174,7 @@ final class MapTest extends GroovyTestCase {
         def m = [(k): 'xyz', 'def': 123, ghi: null]
 
         assert m['abc'] == 'xyz'
-        assert m['def'] ==  123
+        assert m['def'] == 123
         assert m['ghi'] == null
         assert m['jkl'] == null
 
@@ -205,7 +203,7 @@ final class MapTest extends GroovyTestCase {
 
     // GROOVY-5001, GROOVY-5491, GROOVY-11367
     void testMapMutation2() {
-        for (mode in ['','static']) {
+        for (mode in ['', 'static']) {
             assertScript """import groovy.transform.*
                 class M extends HashMap { // just like GROOVY-662, GROOVY-8065, GROOVY-8074
                     def           $mode v = 'v'
@@ -303,131 +301,131 @@ final class MapTest extends GroovyTestCase {
     }
 
     void testMapLeftShift() {
-        def map = [a:1, b:2]
-        def other = [c:3]
-        def entry = [d:4].iterator().toList()[0]
+        def map = [a: 1, b: 2]
+        def other = [c: 3]
+        def entry = [d: 4].iterator().toList()[0]
         map += other
-        assert map == [a:1, b:2, c:3]
+        assert map == [a: 1, b: 2, c: 3]
         map << entry
-        assert map == [a:1, b:2, c:3, d:4]
+        assert map == [a: 1, b: 2, c: 3, d: 4]
     }
 
     void testFindAll() {
-        assert [a:1] == ['a':1, 'b':2].findAll {it.value == 1}
-        assert [a:1] == ['a':1, 'b':2].findAll {it.key == 'a'}
-        assert [a:1] == ['a':1, 'b':2].findAll {key,value -> key == 'a'}
-        assert [a:1] == ['a':1].findAll {true}
-        assert [:]   == ['a':1].findAll {false}
+        assert [a: 1] == ['a': 1, 'b': 2].findAll { it.value == 1 }
+        assert [a: 1] == ['a': 1, 'b': 2].findAll { it.key == 'a' }
+        assert [a: 1] == ['a': 1, 'b': 2].findAll { key, value -> key == 'a' }
+        assert [a: 1] == ['a': 1].findAll { true }
+        assert [:] == ['a': 1].findAll { false }
     }
 
     void testPutAllCollectionMapEntry() {
-        def map1 = [a:1, b:2]
-        def map2 = [c:3, d:4]
-        def map3 = [3:'c', 4:'d']
+        def map1 = [a: 1, b: 2]
+        def map2 = [c: 3, d: 4]
+        def map3 = [3: 'c', 4: 'd']
         def control = map1 + map2
 
         map1.putAll(map2.entrySet())
         assert map1 == control
 
-        map1 = [a:1, b:2]
-        map1.putAll(map3.entrySet().collect{ [it.value, it.key] as MapEntry })
+        map1 = [a: 1, b: 2]
+        map1.putAll(map3.entrySet().collect { [it.value, it.key] as MapEntry })
         assert map1 == control
 
-        map1 = [a:1, b:2]
+        map1 = [a: 1, b: 2]
         def values = [3, 4]
         def keys = ['c', 'd']
         def items = [keys, values].transpose()
-        map1.putAll(items.collect{ it as MapEntry })
+        map1.putAll(items.collect { it as MapEntry })
         assert map1 == control
     }
 
     void testRemoveAll() {
         // given:
-        def map1 = [a:1, b:2]
-        def map2 = [c:3, d:4]
+        def map1 = [a: 1, b: 2]
+        def map2 = [c: 3, d: 4]
 
         // when: 'two parameters = key,value'
-        map1.removeAll { k,v ->
+        map1.removeAll { k, v ->
             k == 'a'
         }
         // then:
-        assert map1 == [b:2]
+        assert map1 == [b: 2]
 
         // when: 'one parameter = entry'
         map2.removeAll { e ->
             e.value == 3
         }
         // then:
-        assert map2 == [d:4]
+        assert map2 == [d: 4]
     }
 
     void testRetainAll() {
         // given:
-        def map1 = [a:1, b:2]
-        def map2 = [c:3, d:4]
+        def map1 = [a: 1, b: 2]
+        def map2 = [c: 3, d: 4]
 
         // when: 'two parameters = key,value'
-        map1.retainAll { k,v ->
+        map1.retainAll { k, v ->
             k == 'a'
         }
         // then:
-        assert map1 == [a:1]
+        assert map1 == [a: 1]
 
         // when: 'one parameter = entry'
         map2.retainAll { e ->
             e.value == 3
         }
         // then:
-        assert map2 == [c:3]
+        assert map2 == [c: 3]
     }
 
     void testPlusCollectionMapEntry() {
-        def map1 = [a:1, b:2]
-        def map2 = [c:3, d:4]
-        def map3 = [3:'c', 4:'d']
+        def map1 = [a: 1, b: 2]
+        def map2 = [c: 3, d: 4]
+        def map3 = [3: 'c', 4: 'd']
         def control = map1 + map2
 
         assert control == map1 + map2.entrySet()
-        assert map1 == [a:1, b:2]
+        assert map1 == [a: 1, b: 2]
 
-        assert control == map1 + map3.entrySet().collect{ [it.value, it.key] as MapEntry }
-        assert map1 == [a:1, b:2]
+        assert control == map1 + map3.entrySet().collect { [it.value, it.key] as MapEntry }
+        assert map1 == [a: 1, b: 2]
 
-        map1 = [a:1, b:2]
+        map1 = [a: 1, b: 2]
         def values = [3, 4]
         def keys = ['c', 'd']
         def items = [keys, values].transpose()
-        assert control == map1 + items.collect{ it as MapEntry }
-        assert map1 == [a:1, b:2]
+        assert control == map1 + items.collect { it as MapEntry }
+        assert map1 == [a: 1, b: 2]
     }
 
     void testMapSort() {
-        def map = [a:100, c:20, b:3]
-        def mapByValue = map.sort{ it.value }
-        assert mapByValue.collect{ it.key } == ['b', 'c', 'a']
-        def mapByKey = map.sort{ it.key }
-        assert mapByKey.collect{ it.value } == [100, 3, 20]
+        def map = [a: 100, c: 20, b: 3]
+        def mapByValue = map.sort { it.value }
+        assert mapByValue.collect { it.key } == ['b', 'c', 'a']
+        def mapByKey = map.sort { it.key }
+        assert mapByKey.collect { it.value } == [100, 3, 20]
     }
 
     void testMapAdditionProducesCorrectValueAndPreservesOriginalMaps() {
-        def left = [a:1, b:2]
-        def right = [c:3]
-        assert left + right == [a:1, b:2, c:3], 'should contain all entries from both maps'
-        assert left == [a:1, b:2] && right == [c:3], 'LHS/RHS should not be modified'
+        def left = [a: 1, b: 2]
+        def right = [c: 3]
+        assert left + right == [a: 1, b: 2, c: 3], 'should contain all entries from both maps'
+        assert left == [a: 1, b: 2] && right == [c: 3], 'LHS/RHS should not be modified'
     }
 
     void testMapAdditionGivesPrecedenceOfOverlappingValuesToRightMap() {
-        def left = [a:1, b:1]
-        def right = [a:2]
-        assert left + right == [a:2, b:1], 'RHS should take precedence when entries have same key'
+        def left = [a: 1, b: 1]
+        def right = [a: 2]
+        assert left + right == [a: 2, b: 1], 'RHS should take precedence when entries have same key'
     }
 
     void testMapAdditionPreservesOriginalTypeForCommonCases() {
         def other = [c: 3]
-        assert ([a: 1, b: 2] as Properties)    + other == [a:1, b:2, c:3] as Properties
-        assert ([a: 1, b: 2] as Hashtable)     + other == [a:1, b:2, c:3] as Hashtable
-        assert ([a: 1, b: 2] as LinkedHashMap) + other == [a:1, b:2, c:3] as LinkedHashMap
-        assert ([a: 1, b: 2] as TreeMap)       + other == [a:1, b:2, c:3] as TreeMap
+        assert ([a: 1, b: 2] as Properties) + other == [a: 1, b: 2, c: 3] as Properties
+        assert ([a: 1, b: 2] as Hashtable) + other == [a: 1, b: 2, c: 3] as Hashtable
+        assert ([a: 1, b: 2] as LinkedHashMap) + other == [a: 1, b: 2, c: 3] as LinkedHashMap
+        assert ([a: 1, b: 2] as TreeMap) + other == [a: 1, b: 2, c: 3] as TreeMap
     }
 
     void testFlattenUsingClosure() {
@@ -438,16 +436,16 @@ final class MapTest extends GroovyTestCase {
     }
 
     void testTreeMapEach() {
-        TreeMap map = [c:2, b:3, a:1]
+        TreeMap map = [c: 2, b: 3, a: 1]
         String result1 = '', result2 = ''
-        map.each{ k, v -> result1 += "$k$v " }
+        map.each { k, v -> result1 += "$k$v " }
         assert result1 == 'a1 b3 c2 '
-        map.reverseEach{ e -> result2 += "$e.key$e.value " }
+        map.reverseEach { e -> result2 += "$e.key$e.value " }
         assert result2 == 'c2 b3 a1 '
     }
 
     void testMapWithDefault() {
-        def m = [:].withDefault {k -> k * 2}
+        def m = [:].withDefault { k -> k * 2 }
         m[1] = 3
         assert m[1] == 3
         assert m[2] == 4
@@ -456,7 +454,7 @@ final class MapTest extends GroovyTestCase {
     }
 
     void testMapIsCaseWithGrep() {
-        def predicate = [apple:true, banana:true, lemon:false, orange:false, pear:true]
+        def predicate = [apple: true, banana: true, lemon: false, orange: false, pear: true]
         def fruitList = ['apple', 'apple', 'pear', 'orange', 'pear', 'lemon', 'banana']
         def expected = ['apple', 'apple', 'pear', 'pear', 'banana']
         assert fruitList.grep(predicate) == expected
@@ -487,7 +485,7 @@ final class MapTest extends GroovyTestCase {
         m[1]--
         assert m.isEmpty()
 
-        m.putAll([a:0, b:1, c:0])
+        m.putAll([a: 0, b: 1, c: 0])
         assert m.size() == 1
     }
 }

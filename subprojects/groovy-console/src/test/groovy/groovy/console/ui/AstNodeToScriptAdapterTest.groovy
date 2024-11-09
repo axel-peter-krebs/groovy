@@ -125,8 +125,8 @@ final class AstNodeToScriptAdapterTest extends GroovyTestCase {
         String result = compileToScript(script)
 
         assert result.contains('MyClass<T extends java.lang.String & java.util.concurrent.Callable<String>, U extends java.lang.Integer> ' +
-                'extends java.util.AbstractList<String> ' +
-                'implements java.util.concurrent.Callable<? super java.lang.Number> {')
+            'extends java.util.AbstractList<String> ' +
+            'implements java.util.concurrent.Callable<? super java.lang.Number> {')
     }
 
     void testGenericsInVariables() {
@@ -440,8 +440,8 @@ final class AstNodeToScriptAdapterTest extends GroovyTestCase {
         assert result.contains("@java.lang.SuppressWarnings(value = ['p1', 'p2'])")
         assert result.contains('@MyAnnotation(classes = [java.lang.String, java.lang.Integer])')
         assert result.contains('@groovy.transform.ToString(') &&
-                result.contains('includeFields = true') &&
-                result.contains('includeNames = false')
+            result.contains('includeFields = true') &&
+            result.contains('includeNames = false')
     }
 
     void testMethodAnnotations() {
@@ -805,11 +805,11 @@ final class AstNodeToScriptAdapterTest extends GroovyTestCase {
 
     void testDoWhileLoop() {
         def doWhile = new DoWhileStatement(
-                new BooleanExpression(constX(true)),
-                new BlockStatement(
-                        [stmt(callThisX('println', args(constX('value'))))],
-                        new VariableScope()
-                ))
+            new BooleanExpression(constX(true)),
+            new BlockStatement(
+                [stmt(callThisX('println', args(constX('value'))))],
+                new VariableScope()
+            ))
 
         StringWriter writer = new StringWriter()
         new AstNodeToScriptVisitor(writer).visitDoWhileLoop doWhile
@@ -1041,11 +1041,11 @@ final class AstNodeToScriptAdapterTest extends GroovyTestCase {
 
     void testStatementLabelsForDoWhileLoop() {
         def doWhile = new DoWhileStatement(
-                new BooleanExpression(constX(true)),
-                new BlockStatement(
-                        [stmt(callThisX('println', args(constX('value'))))],
-                        new VariableScope()
-                ))
+            new BooleanExpression(constX(true)),
+            new BlockStatement(
+                [stmt(callThisX('println', args(constX('value'))))],
+                new VariableScope()
+            ))
         doWhile.addStatementLabel('label1')
 
         StringWriter writer = new StringWriter()

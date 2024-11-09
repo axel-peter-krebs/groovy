@@ -26,7 +26,7 @@ import org.codehaus.groovy.classgen.asm.sc.StaticCompilationTestSupport
 class Groovy6733Bug extends StaticTypeCheckingTestCase implements StaticCompilationTestSupport {
 
     void testClosureParamTypeInferenceShouldNotInterfereWithPowerOptimization() {
-            assertScript '''
+        assertScript '''
       def integers = [4,5]
       def powers = integers.collect{ it ** it }
 

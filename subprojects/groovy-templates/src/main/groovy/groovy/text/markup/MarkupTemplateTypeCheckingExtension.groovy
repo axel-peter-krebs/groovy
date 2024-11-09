@@ -182,8 +182,8 @@ class MarkupTemplateTypeCheckingExtension extends GroovyTypeCheckingExtensionSup
             @Override
             void addError(final String msg, final ASTNode expr) {
                 ctx.errorCollector.addErrorAndContinue(
-                        new SyntaxException(msg + '\n', expr.lineNumber, expr.columnNumber, expr.lastLineNumber, expr.lastColumnNumber),
-                        ctx.source
+                    new SyntaxException(msg + '\n', expr.lineNumber, expr.columnNumber, expr.lastLineNumber, expr.lastColumnNumber),
+                    ctx.source
                 )
             }
         }
@@ -221,15 +221,15 @@ class MarkupTemplateTypeCheckingExtension extends GroovyTypeCheckingExtensionSup
                 args*.visit(this)
                 // replace with direct call to methodMissing
                 def call = new MethodCallExpression(
-                        new VariableExpression('this'),
-                        'methodMissing',
-                        new ArgumentListExpression(
-                                new ConstantExpression(exp.methodAsString),
-                                new ArrayExpression(
-                                        OBJECT_TYPE,
-                                        [*args]
-                                )
+                    new VariableExpression('this'),
+                    'methodMissing',
+                    new ArgumentListExpression(
+                        new ConstantExpression(exp.methodAsString),
+                        new ArrayExpression(
+                            OBJECT_TYPE,
+                            [*args]
                         )
+                    )
                 )
                 call.implicitThis = true
                 call.safe = exp.safe

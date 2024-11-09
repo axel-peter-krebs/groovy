@@ -36,7 +36,7 @@ for (def i in [1, 2]) {
 }
 
 
-for (;;)
+for (; ;)
     int number = 1
 
 

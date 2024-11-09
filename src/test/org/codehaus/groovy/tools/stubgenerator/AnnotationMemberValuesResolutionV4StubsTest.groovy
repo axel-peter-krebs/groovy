@@ -27,7 +27,7 @@ final class AnnotationMemberValuesResolutionV4StubsTest extends StringSourcesStu
     @Override
     Map<String, String> provideSources() {
         [
-            'foo/MainAnno4768.java': '''package foo;
+            'foo/MainAnno4768.java' : '''package foo;
                 import java.lang.annotation.*;
                 import static java.lang.annotation.ElementType.*;
                 import static java.lang.annotation.RetentionPolicy.*;
@@ -49,7 +49,7 @@ final class AnnotationMemberValuesResolutionV4StubsTest extends StringSourcesStu
                 }
             ''',
 
-            'Main4768.groovy': '''
+            'Main4768.groovy'       : '''
                 import foo.*
 
                 @MainAnno4768(other = @OtherAnno4768(name='baz'))

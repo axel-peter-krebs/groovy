@@ -72,7 +72,7 @@ foo {
         def slurper = new ConfigSlurper()
         slurper.binding = [foo: "bar"]
         def config = slurper.parse('''
-test=foo + 1        
+test=foo + 1
         ''')
         assertEquals "bar1", config.test
 
@@ -129,7 +129,8 @@ environments {
 
         def config = new ConfigSlurper().parse(props)
 
-        assertEquals "org.apache.log4j.PatternLayout", config.log4j.appender.'NULL.layout' // tests overlapping properties
+        assertEquals "org.apache.log4j.PatternLayout", config.log4j.appender.'NULL.layout'
+        // tests overlapping properties
         assertEquals "org.apache.log4j.varia.NullAppender", config.log4j.appender.NULL // tests overlapping properties
         assertEquals 'error, NULL', config.log4j.rootLogger
         assertEquals 'info,NULL', config.log4j.logger.org.codehaus.groovy.grails.plugins
@@ -192,7 +193,7 @@ smtp.dummy = null
           a1 = "$a0"
           a2."$a0" = "Mickey Mouse and " + "$a0"
           group1 { a0 = "Donald Duck" }
-          group2 { 
+          group2 {
               a0 = a0
               a1 = "$group1.a0"
               group3 {
@@ -226,7 +227,7 @@ log4j {
     appender {
         stdout("org.apache.log4j.ConsoleAppender") {
             layout="org.apache.log4j.PatternLayout"
-        }                
+        }
     }
     rootLogger="error,stdout"
     logger {
@@ -258,7 +259,7 @@ log4j {
     appender {
         stdout("org.apache.log4j.ConsoleAppender") {
             layout="org.apache.log4j.PatternLayout"
-        }        
+        }
     }
     rootLogger="error,stdout"
     logger {
@@ -289,7 +290,7 @@ environments {
         config = slurper.parse('''
 log4j {
     appender {
-        stdout("org.apache.log4j.ConsoleAppender") {        
+        stdout("org.apache.log4j.ConsoleAppender") {
             layout="org.apache.log4j.PatternLayout"
         }
     }
@@ -328,7 +329,7 @@ environments {
         def config = slurper.parse('''
 log4j {
     appender {
-        stdout("org.apache.log4j.ConsoleAppender") {        
+        stdout("org.apache.log4j.ConsoleAppender") {
             layout="org.apache.log4j.PatternLayout"
         }
     }
@@ -401,7 +402,7 @@ log4j {
 log4j {
     appender.stdout = "org.apache.log4j.ConsoleAppender"
     appender."stdout.layout"="org.apache.log4j.PatternLayout"
-    rootLogger="error,stdout"    
+    rootLogger="error,stdout"
 }
         ''')
 
@@ -426,7 +427,7 @@ log4j {
         def text = '''
 log4j {
     appender.stdout="org.apache.log4j.ConsoleAppender"
-    appender.'stdout.layout'="org.apache.log4j.PatternLayout"        
+    appender.'stdout.layout'="org.apache.log4j.PatternLayout"
     rootLogger="error,stdout"
     logger {
         org.codehaus.groovy.grails="info,stdout"
@@ -481,8 +482,8 @@ log4j {
     }
 
     void testSameElementNestingWithoutDuplication() {
-        def cfg = """ 
-            a { b { a { foo = 1 } } } 
+        def cfg = """
+            a { b { a { foo = 1 } } }
             a.foo = 2
             a { b { a { bar = 3 } } }
         """
@@ -542,7 +543,7 @@ log4j {
             }
         """)
 
-       assert config == [a:1, b:2]
+        assert config == [a: 1, b: 2]
     }
 
     /**
@@ -564,7 +565,7 @@ log4j {
             }
         """)
 
-        assert config == [a:1, blah:[c: 3]]
+        assert config == [a: 1, blah: [c: 3]]
     }
 
     void testVariableAssignments() {
@@ -639,7 +640,7 @@ log4j {
         '''
 
         ConfigSlurper slurper = new ConfigSlurper()
-        slurper.binding = [slurper:slurper]
+        slurper.binding = [slurper: slurper]
         def config = slurper.parse(conf)
         assert config.var == 1
 
@@ -681,7 +682,7 @@ log4j {
         '''
 
         ConfigSlurper slurper = new ConfigSlurper()
-        slurper.binding = [slurper:slurper]
+        slurper.binding = [slurper: slurper]
         def config = slurper.parse(conf)
         assert config.var1 == 5
         assert config.var2 == 6

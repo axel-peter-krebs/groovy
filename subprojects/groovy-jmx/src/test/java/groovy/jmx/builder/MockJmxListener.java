@@ -21,6 +21,12 @@ package groovy.jmx.builder;
 import javax.management.Notification;
 import javax.management.NotificationListener;
 
+interface MockJmxListenerMBean {
+    String getObjectName();
+
+    void makeObject();
+}
+
 public class MockJmxListener implements MockJmxListenerMBean, NotificationListener {
 
     public void handleNotification(Notification note, Object handback) {
@@ -34,10 +40,4 @@ public class MockJmxListener implements MockJmxListenerMBean, NotificationListen
     public void makeObject() {
         // do nothing
     }
-}
-
-interface MockJmxListenerMBean {
-    String getObjectName();
-
-    void makeObject();
 }

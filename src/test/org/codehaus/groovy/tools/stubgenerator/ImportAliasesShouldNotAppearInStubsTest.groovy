@@ -35,7 +35,7 @@ class ImportAliasesShouldNotAppearInStubsTest extends StringSourcesStubTestCase 
                 List1 method1() {}
                 List2 method2() {}
             }''',
-            'Dummy.java': 'interface Dummy{}'
+            'Dummy.java'        : 'interface Dummy{}'
         ]
     }
 

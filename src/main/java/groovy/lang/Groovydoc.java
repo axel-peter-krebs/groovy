@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
 /**
  * An annotation to hold the groovydoc for the annotated element at runtime, we call it "Runtime Groovydoc".
  * Runtime Groovydoc is a bit like Python's Documentation Strings and will be useful for IDE and developers who set a high value on documentations.
- *
+ * <p>
  * The usage is very simple, just place @ at the beginning of the content of groovydoc, i.e. starts with /**@,
  * then the new parser Parrot will attach the annotation Groovydoc automatically
  *

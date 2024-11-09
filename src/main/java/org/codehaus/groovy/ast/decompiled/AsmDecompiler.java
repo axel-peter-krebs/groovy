@@ -52,7 +52,7 @@ public abstract class AsmDecompiler {
 
     /**
      * Caches stubs per URI. This cache is useful when performing multiple compilations in the same JVM/class loader and in tests.
-     *
+     * <p>
      * It's synchronized "just in case". Occasional misses are expected if several threads attempt to load the same class,
      * but this shouldn't result in serious memory issues.
      */
@@ -195,7 +195,7 @@ public abstract class AsmDecompiler {
 
         @Override
         public RecordComponentVisitor visitRecordComponent(
-                final String name, final String descriptor, final String signature) {
+            final String name, final String descriptor, final String signature) {
 
             RecordComponentStub recordComponentStub = new RecordComponentStub(name, descriptor, signature);
             result.recordComponents.add(recordComponentStub);

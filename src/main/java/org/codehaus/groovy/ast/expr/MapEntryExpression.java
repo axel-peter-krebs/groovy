@@ -54,12 +54,12 @@ public class MapEntryExpression extends Expression {
         return keyExpression;
     }
 
-    public Expression getValueExpression() {
-        return valueExpression;
-    }
-
     public void setKeyExpression(Expression keyExpression) {
         this.keyExpression = keyExpression;
+    }
+
+    public Expression getValueExpression() {
+        return valueExpression;
     }
 
     public void setValueExpression(Expression valueExpression) {

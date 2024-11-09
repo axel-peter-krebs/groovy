@@ -23,7 +23,7 @@ import org.codehaus.groovy.classgen.asm.AbstractBytecodeTestCase
 final class Groovy10314 extends AbstractBytecodeTestCase {
 
     void testTryFinallyWhereAllPathsReturn() {
-        def result = compile method:'test', '''
+        def result = compile method: 'test', '''
             def test() {
                 try {
                     print 'hello'

@@ -34,15 +34,9 @@ import groovy.lang.ProxyMetaClass;
 
 public class MockProxyMetaClass extends ProxyMetaClass {
 
+    static final FallThroughMarker FALL_THROUGH_MARKER = new FallThroughMarker(new Object());
     public final boolean interceptConstruction;
     private boolean fallingThrough;
-
-    static class FallThroughMarker extends Closure {
-        FallThroughMarker(Object owner) {
-            super(owner);
-        }
-    }
-    static final FallThroughMarker FALL_THROUGH_MARKER = new FallThroughMarker(new Object());
 
     /**
      * @param adaptee the MetaClass to decorate with interceptability
@@ -199,6 +193,12 @@ public class MockProxyMetaClass extends ProxyMetaClass {
         }
 
         return adaptee.invokeConstructor(arguments);
+    }
+
+    static class FallThroughMarker extends Closure {
+        FallThroughMarker(Object owner) {
+            super(owner);
+        }
     }
 
 }

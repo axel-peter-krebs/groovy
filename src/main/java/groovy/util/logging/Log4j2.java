@@ -66,10 +66,12 @@ import static org.codehaus.groovy.ast.tools.GeneralUtils.ternaryX;
 @GroovyASTTransformationClass("org.codehaus.groovy.transform.LogASTTransformation")
 public @interface Log4j2 {
     String value() default "log";
+
     String category() default LogASTTransformation.DEFAULT_CATEGORY_NAME;
 
     /**
      * If specified, must match the "id" attribute in a VisibilityOptions annotation to enable a custom visibility.
+     *
      * @since 3.0.0
      */
     String visibilityId() default Undefined.STRING;
@@ -87,12 +89,12 @@ public @interface Log4j2 {
         @Override
         public FieldNode addLoggerFieldToClass(ClassNode classNode, String logFieldName, String categoryName, int fieldModifiers) {
             return classNode.addField(logFieldName,
-                    fieldModifiers,
-                    classNode(LOGGER_NAME),
-                    new MethodCallExpression(
-                            new ClassExpression(classNode(LOG_MANAGER_NAME)),
-                            "getLogger",
-                            new ConstantExpression(getCategoryName(classNode, categoryName))));
+                fieldModifiers,
+                classNode(LOGGER_NAME),
+                new MethodCallExpression(
+                    new ClassExpression(classNode(LOG_MANAGER_NAME)),
+                    "getLogger",
+                    new ConstantExpression(getCategoryName(classNode, categoryName))));
         }
 
         @Override
@@ -103,9 +105,9 @@ public @interface Log4j2 {
         @Override
         public Expression wrapLoggingMethodCall(Expression logVariable, String methodName, Expression originalExpression) {
             MethodCallExpression condition = new MethodCallExpression(
-                    logVariable,
-                    "is" + methodName.substring(0, 1).toUpperCase(Locale.ENGLISH) + methodName.substring(1) + "Enabled",
-                    ArgumentListExpression.EMPTY_ARGUMENTS);
+                logVariable,
+                "is" + methodName.substring(0, 1).toUpperCase(Locale.ENGLISH) + methodName.substring(1) + "Enabled",
+                ArgumentListExpression.EMPTY_ARGUMENTS);
             condition.setImplicitThis(false);
 
             return ternaryX(condition, originalExpression, nullX());

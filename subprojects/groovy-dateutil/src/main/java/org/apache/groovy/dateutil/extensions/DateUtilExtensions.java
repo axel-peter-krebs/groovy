@@ -39,7 +39,20 @@ import java.util.TimeZone;
  * Date and Calendar classes inside the Groovy environment.
  */
 public final class DateUtilExtensions {
-    private DateUtilExtensions() {}
+    private static final Map<String, Integer> CAL_MAP = new HashMap<String, Integer>();
+
+    static {
+        CAL_MAP.put("year", Calendar.YEAR);
+        CAL_MAP.put("month", Calendar.MONTH);
+        CAL_MAP.put("date", Calendar.DATE);
+        CAL_MAP.put("dayOfMonth", Calendar.DATE);
+        CAL_MAP.put("hourOfDay", Calendar.HOUR_OF_DAY);
+        CAL_MAP.put("minute", Calendar.MINUTE);
+        CAL_MAP.put("second", Calendar.SECOND);
+    }
+
+    private DateUtilExtensions() {
+    }
 
     /**
      * Support the subscript operator for a Date.
@@ -324,18 +337,6 @@ public final class DateUtilExtensions {
         cal.setTime(self);
         set(cal, updates);
         return cal.getTime();
-    }
-
-    private static final Map<String, Integer> CAL_MAP = new HashMap<String, Integer>();
-
-    static {
-        CAL_MAP.put("year", Calendar.YEAR);
-        CAL_MAP.put("month", Calendar.MONTH);
-        CAL_MAP.put("date", Calendar.DATE);
-        CAL_MAP.put("dayOfMonth", Calendar.DATE);
-        CAL_MAP.put("hourOfDay", Calendar.HOUR_OF_DAY);
-        CAL_MAP.put("minute", Calendar.MINUTE);
-        CAL_MAP.put("second", Calendar.SECOND);
     }
 
     /**
@@ -755,7 +756,7 @@ public final class DateUtilExtensions {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to upto() cannot be earlier than the value (" + self + ") it's called on.");
+                ") to upto() cannot be earlier than the value (" + self + ") it's called on.");
     }
 
     /**
@@ -774,7 +775,7 @@ public final class DateUtilExtensions {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to upto() cannot be earlier than the value (" + self + ") it's called on.");
+                ") to upto() cannot be earlier than the value (" + self + ") it's called on.");
     }
 
     /**
@@ -793,7 +794,7 @@ public final class DateUtilExtensions {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to downto() cannot be later than the value (" + self + ") it's called on.");
+                ") to downto() cannot be later than the value (" + self + ") it's called on.");
     }
 
     /**
@@ -812,7 +813,7 @@ public final class DateUtilExtensions {
             }
         } else
             throw new GroovyRuntimeException("The argument (" + to +
-                    ") to downto() cannot be later than the value (" + self + ") it's called on.");
+                ") to downto() cannot be later than the value (" + self + ") it's called on.");
     }
 
 

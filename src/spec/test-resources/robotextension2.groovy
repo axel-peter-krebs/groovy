@@ -23,8 +23,8 @@ import typing.Robot
 methodNotFound { receiver, name, argList, argTypes, call ->
     if (isMethodCallExpression(call)                        // <1>
         && call.implicitThis                                // <2>
-        && 'move'==name                                     // <3>
-        && argTypes.length==1                               // <4>
+        && 'move' == name                                     // <3>
+        && argTypes.length == 1                               // <4>
         && argTypes[0] == classNodeFor(int)                 // <5>
     ) {
         handled = true                                      // <6>

@@ -101,7 +101,7 @@ class DateTimeTest extends GroovyTestCase {
 
     void testOffsetDateTimePlusMinusPositiveNegative() {
         def epoch = OffsetDateTime.of(LocalDateTime.of(1970, Month.JANUARY, 1, 0, 0, 0, 0),
-                ZoneOffset.ofHours(0))
+            ZoneOffset.ofHours(0))
 
         def twoSecsPastEpoch = epoch + 2
         def oneSecPastEpoch = twoSecsPastEpoch - 1
@@ -114,7 +114,7 @@ class DateTimeTest extends GroovyTestCase {
 
     void testOffsetTimePlusMinusPositiveNegative() {
         def epoch = OffsetTime.of(LocalTime.of(0, 0, 0, 0),
-                ZoneOffset.ofHours(0))
+            ZoneOffset.ofHours(0))
 
         def twoSecsPastEpoch = epoch + 2
         def oneSecPastEpoch = twoSecsPastEpoch - 1
@@ -163,7 +163,7 @@ class DateTimeTest extends GroovyTestCase {
 
     void testZonedDateTimePlusMinusPositiveNegative() {
         def epoch = ZonedDateTime.of(LocalDateTime.of(1970, Month.JANUARY, 1, 0, 0, 0, 0),
-                ZoneId.systemDefault())
+            ZoneId.systemDefault())
 
         def twoSecsPastEpoch = epoch + 2
         def oneSecPastEpoch = twoSecsPastEpoch - 1
@@ -220,21 +220,21 @@ class DateTimeTest extends GroovyTestCase {
     }
 
     void testPeriodPositiveNegative() {
-        def positivePeriod = Period.of(1,2,3)
+        def positivePeriod = Period.of(1, 2, 3)
         Period madeNegative = -positivePeriod
-        assert madeNegative.years == -1 : "All Period fields should be made negative"
+        assert madeNegative.years == -1: "All Period fields should be made negative"
         assert madeNegative.months == -2
         assert madeNegative.days == -3
 
-        def negativePeriod = Period.of(-1,2,-3)
+        def negativePeriod = Period.of(-1, 2, -3)
         Period madePositive = +negativePeriod
-        assert madePositive.years == 1 : "Negative Period fields should be made positive"
-        assert madePositive.months == 2 : "Positive Period fields should remain positive"
+        assert madePositive.years == 1: "Negative Period fields should be made positive"
+        assert madePositive.months == 2: "Positive Period fields should remain positive"
         assert madePositive.days == 3
     }
 
     void testPeriodMultiply() {
-        def period = Period.of(1,1,1)
+        def period = Period.of(1, 1, 1)
         Period doublePeriod = period * 2
         assert doublePeriod.years == 2
         assert doublePeriod.months == 2
@@ -370,8 +370,8 @@ class DateTimeTest extends GroovyTestCase {
             ++iterations
             end = it
         }
-        assert iterations == 2 : 'Iterating downto Temporal+1 value should call closure twice'
-        assert end.epochSecond == -1 : 'Unexpected downto final value'
+        assert iterations == 2: 'Iterating downto Temporal+1 value should call closure twice'
+        assert end.epochSecond == -1: 'Unexpected downto final value'
     }
 
     void testUptoWithYearsDefaultUnit() {
@@ -404,7 +404,7 @@ class DateTimeTest extends GroovyTestCase {
 
     void testUptoWithDaysDefaultUnit() {
         def endLocalDate = null
-        LocalDate.of(1970, Month.JANUARY, 1).upto(LocalDate.of(1970, Month.JANUARY, 2)) {  localDate ->
+        LocalDate.of(1970, Month.JANUARY, 1).upto(LocalDate.of(1970, Month.JANUARY, 2)) { localDate ->
             endLocalDate = localDate
         }
         assert endLocalDate.dayOfMonth == 2
@@ -412,7 +412,7 @@ class DateTimeTest extends GroovyTestCase {
 
     void testDowntoWithDaysDefaultUnit() {
         def endLocalDate = null
-        LocalDate.of(1970, Month.JANUARY, 2).downto(LocalDate.of(1970, Month.JANUARY, 1)) {  localDate ->
+        LocalDate.of(1970, Month.JANUARY, 2).downto(LocalDate.of(1970, Month.JANUARY, 1)) { localDate ->
             endLocalDate = localDate
         }
         assert endLocalDate.dayOfMonth == 1
@@ -434,7 +434,8 @@ class DateTimeTest extends GroovyTestCase {
             epoch.downto(epoch + 1) {
                 fail('downto() should fail when passed earlier arg')
             }
-        } catch (GroovyRuntimeException e) {}
+        } catch (GroovyRuntimeException e) {
+        }
     }
 
     void testUptoSelfWithCustomUnit() {
@@ -486,7 +487,7 @@ class DateTimeTest extends GroovyTestCase {
             end = it
         }
         assert iterations == 2
-        assert end.year == 2017 : "Downto should have iterated by YEARS twice"
+        assert end.year == 2017: "Downto should have iterated by YEARS twice"
     }
 
     void testInstantToDateToCalendar() {
@@ -535,9 +536,9 @@ class DateTimeTest extends GroovyTestCase {
         def lt = LocalTime.of(22, 38, 20, 9_999_999)
 
         Calendar cal = lt.toCalendar()
-        assert cal.get(Calendar.YEAR) == today.get(Calendar.YEAR) : 'LocalTime.toCalendar() should have current year'
-        assert cal.get(Calendar.MONTH) == today.get(Calendar.MONTH) : 'LocalTime.toCalendar() should have current month'
-        assert cal.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH) : 'LocalTime.toCalendar() should have current day'
+        assert cal.get(Calendar.YEAR) == today.get(Calendar.YEAR): 'LocalTime.toCalendar() should have current year'
+        assert cal.get(Calendar.MONTH) == today.get(Calendar.MONTH): 'LocalTime.toCalendar() should have current month'
+        assert cal.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH): 'LocalTime.toCalendar() should have current day'
         assert cal.get(Calendar.HOUR_OF_DAY) == 22
         assert cal.get(Calendar.MINUTE) == 38
         assert cal.get(Calendar.SECOND) == 20
@@ -577,9 +578,9 @@ class DateTimeTest extends GroovyTestCase {
         Calendar today = Calendar.getInstance(TimeZone.getTimeZone('GMT-4'))
 
         Calendar cal = ot.toCalendar()
-        assert cal.get(Calendar.YEAR) == today.get(Calendar.YEAR) : 'OffsetTime.toCalendar() should have current year'
-        assert cal.get(Calendar.MONTH) == today.get(Calendar.MONTH) : 'OffsetTime.toCalendar() should have current month'
-        assert cal.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH) : 'OffsetTime.toCalendar() should have current day'
+        assert cal.get(Calendar.YEAR) == today.get(Calendar.YEAR): 'OffsetTime.toCalendar() should have current year'
+        assert cal.get(Calendar.MONTH) == today.get(Calendar.MONTH): 'OffsetTime.toCalendar() should have current month'
+        assert cal.get(Calendar.DAY_OF_MONTH) == today.get(Calendar.DAY_OF_MONTH): 'OffsetTime.toCalendar() should have current day'
         assert cal.get(Calendar.HOUR_OF_DAY) == 22
         assert cal.get(Calendar.MINUTE) == 53
         assert cal.get(Calendar.SECOND) == 2
@@ -614,7 +615,7 @@ class DateTimeTest extends GroovyTestCase {
     }
 
     void testZoneOffsetExtensionProperties() {
-        def offset = ZoneOffset.ofHoursMinutesSeconds(3,4,5)
+        def offset = ZoneOffset.ofHoursMinutesSeconds(3, 4, 5)
         assert offset.hours == 3
         assert offset.minutes == 4
         assert offset.seconds == 5
@@ -762,11 +763,11 @@ class DateTimeTest extends GroovyTestCase {
         assert d.minute == 0
         assert d.second == 0
         assert d.nano == 0
-        assert d.offset == offset : 'cleartTime() should not change offset'
+        assert d.offset == offset: 'cleartTime() should not change offset'
     }
 
     void testZonedDateTimeClearTime() {
-        def zone =  ZoneId.of('America/New_York')
+        def zone = ZoneId.of('America/New_York')
         def d = ZonedDateTime.of(LocalDate.now(), LocalTime.of(8, 9, 10, 100_032), zone)
         d = d.clearTime()
 
@@ -774,15 +775,15 @@ class DateTimeTest extends GroovyTestCase {
         assert d.minute == 0
         assert d.second == 0
         assert d.nano == 0
-        assert d.zone == zone : 'cleartTime() should not change zone'
+        assert d.zone == zone: 'cleartTime() should not change zone'
     }
 
     void testFormatByPattern() {
-        def zone =  ZoneId.of('America/New_York')
+        def zone = ZoneId.of('America/New_York')
         def offset = ZoneOffset.ofHours(2)
 
         LocalDate ld = LocalDate.of(2018, Month.FEBRUARY, 13)
-        LocalTime lt = LocalTime.of(3,4,5,6_000_000)
+        LocalTime lt = LocalTime.of(3, 4, 5, 6_000_000)
         LocalDateTime ldt = LocalDateTime.of(ld, lt)
         OffsetTime ot = OffsetTime.of(lt, offset)
         OffsetDateTime odt = OffsetDateTime.of(ldt, offset)

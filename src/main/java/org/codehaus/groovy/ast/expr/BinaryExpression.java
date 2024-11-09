@@ -31,9 +31,9 @@ import static java.util.Objects.requireNonNull;
  */
 public class BinaryExpression extends Expression {
 
+    private final Token operation;
     private Expression leftExpression;
     private Expression rightExpression;
-    private final Token operation;
     private boolean safe = false;
 
     public BinaryExpression(final Expression leftExpression, final Token operation, final Expression rightExpression) {
@@ -45,6 +45,35 @@ public class BinaryExpression extends Expression {
     public BinaryExpression(final Expression leftExpression, final Token operation, final Expression rightExpression, final boolean safe) {
         this(leftExpression, operation, rightExpression);
         this.safe = safe;
+    }
+
+    /**
+     * Creates an assignment expression in which the specified expression
+     * is written into the specified variable name.
+     */
+
+    public static BinaryExpression newAssignmentExpression(Variable variable, Expression rhs) {
+        VariableExpression lhs = new VariableExpression(variable);
+        Token operator = Token.newPlaceholder(Types.ASSIGN);
+
+        return new BinaryExpression(lhs, operator, rhs);
+    }
+
+    /**
+     * Creates variable initialization expression in which the specified expression
+     * is written into the specified variable name.
+     */
+
+    public static BinaryExpression newInitializationExpression(String variable, ClassNode type, Expression rhs) {
+        VariableExpression lhs = new VariableExpression(variable);
+
+        if (type != null) {
+            lhs.setType(type);
+        }
+
+        Token operator = Token.newPlaceholder(Types.ASSIGN);
+
+        return new BinaryExpression(lhs, operator, rhs);
     }
 
     @Override
@@ -73,16 +102,16 @@ public class BinaryExpression extends Expression {
         this.leftExpression = leftExpression;
     }
 
-    public void setRightExpression(Expression rightExpression) {
-        this.rightExpression = rightExpression;
-    }
-
     public Token getOperation() {
         return operation;
     }
 
     public Expression getRightExpression() {
         return rightExpression;
+    }
+
+    public void setRightExpression(Expression rightExpression) {
+        this.rightExpression = rightExpression;
     }
 
     @Override
@@ -99,36 +128,6 @@ public class BinaryExpression extends Expression {
 
     public void setSafe(boolean safe) {
         this.safe = safe;
-    }
-
-    /**
-     * Creates an assignment expression in which the specified expression
-     * is written into the specified variable name.
-     */
-
-    public static BinaryExpression newAssignmentExpression(Variable variable, Expression rhs) {
-        VariableExpression lhs = new VariableExpression(variable);
-        Token operator = Token.newPlaceholder(Types.ASSIGN);
-
-        return new BinaryExpression(lhs, operator, rhs);
-    }
-
-
-    /**
-     * Creates variable initialization expression in which the specified expression
-     * is written into the specified variable name.
-     */
-
-    public static BinaryExpression newInitializationExpression(String variable, ClassNode type, Expression rhs) {
-        VariableExpression lhs = new VariableExpression(variable);
-
-        if (type != null) {
-            lhs.setType(type);
-        }
-
-        Token operator = Token.newPlaceholder(Types.ASSIGN);
-
-        return new BinaryExpression(lhs, operator, rhs);
     }
 
 }
